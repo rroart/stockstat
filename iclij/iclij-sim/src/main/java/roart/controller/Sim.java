@@ -112,6 +112,11 @@ public class Sim {
                 SimulateFilter[] filters = list.get(0);
                 filter = filters[adviser];
             }
+            if (!list.isEmpty() && !b) {
+                Set<String> set = filter.getPrintconfig();
+                filter = list.get(0)[0];
+                filter.setPrintconfig(set);
+            }
             List<String> output = new ArrayList<>();
 
             //output.add("Sim " + simtext);
