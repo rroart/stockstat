@@ -76,4 +76,8 @@ public class FindProfitActionData extends MarketActionData {
         return conf.getFindProfitFuturedays();
     }
 
+    @Override
+    protected boolean wantsUpdate(IclijConfig config) {
+        return config.wantsFindProfitUpdate();
+    }
 }

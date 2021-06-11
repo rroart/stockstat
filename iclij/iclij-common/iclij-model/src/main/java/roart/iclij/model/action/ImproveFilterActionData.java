@@ -80,4 +80,9 @@ public class ImproveFilterActionData extends MarketActionData {
         }
         return null;
     }
+
+    @Override
+    protected boolean wantsUpdate(IclijConfig config) {
+        return false;
+    }
 }

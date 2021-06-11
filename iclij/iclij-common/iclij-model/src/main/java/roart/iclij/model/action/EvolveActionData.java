@@ -104,4 +104,9 @@ public class EvolveActionData extends MarketActionData {
         }
         return null;
     }
+    
+    @Override
+    protected boolean wantsUpdate(IclijConfig config) {
+        return true;
+    }
 }

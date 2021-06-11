@@ -101,4 +101,9 @@ public class CrossTestActionData extends MarketActionData {
         }
         return null;
     }
+
+    @Override
+    protected boolean wantsUpdate(IclijConfig config) {
+        return false;
+    }
 }

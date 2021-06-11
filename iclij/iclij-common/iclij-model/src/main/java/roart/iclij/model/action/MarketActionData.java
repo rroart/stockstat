@@ -40,5 +40,7 @@ public abstract class MarketActionData {
     public String getParamDateFromConfig(Market market, List<String> stockDates) {
         return null;
     }
+
+    protected abstract boolean wantsUpdate(IclijConfig config);
     
 }

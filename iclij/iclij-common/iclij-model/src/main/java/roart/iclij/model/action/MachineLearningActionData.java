@@ -100,4 +100,9 @@ public class MachineLearningActionData extends MarketActionData {
         }
         return null;
     }
+    
+    @Override
+    protected boolean wantsUpdate(IclijConfig config) {
+        return config.wantsMachineLearningUpdate();
+    }
 }

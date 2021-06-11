@@ -71,6 +71,7 @@ public class IclijConfigConstants {
     public static final String DATASETPREDICTOR = "dataset.predictor";
     public static final String DATASETPREDICTOREVOLUTIONCONFIG = "dataset.predictor.evolutionconfig";
     public static final String DATASETPREDICTORMLCONFIG = "dataset.predictor.mlconfig";
+    public static final String DATASETUPDATE = "dataset.update";
     public static final String EVOLVE = "evolve";
     public static final String EVOLVEGA = "evolve.ga";
     public static final String EVOLVEINDICATORRECOMMENDER = "evolve.indicatorrecommender";
@@ -154,6 +155,7 @@ public class IclijConfigConstants {
     public static final String FINDPROFITMANUALTHRESHOLD = "findprofit.manualthreshold";
     public static final String FINDPROFITMEMORYFILTER = "findprofit.memoryfilter";
     public static final String FINDPROFITRERUNSAVE = "findprofit.rerunsave";
+    public static final String FINDPROFITUPDATE = "findprofit.update";
     public static final String IMPROVEPROFIT = "improveprofit";
     public static final String IMPROVEPROFITAUTORUN = "improveprofit.autorun";
     public static final String IMPROVEPROFITFITNESSMINIMUM = "improveprofit.fitnessminimum";
@@ -243,6 +245,7 @@ public class IclijConfigConstants {
     public static final String MACHINELEARNINGPREDICTORMLCONFIG = "machinelearning.predictor.mlconfig";
     public static final String MACHINELEARNINGFUTUREDAYS = "machinelearning.futuredays";
     public static final String MACHINELEARNINGTHRESHOLD = "machinelearning.threshold";
+    public static final String MACHINELEARNINGUPDATE = "machinelearning.update";
     public static final String SIMULATEINVEST = "simulateinvest";
     public static final String SIMULATEINVESTAUTORUN = "simulateinvest.autorun";
     public static final String SIMULATEINVESTCONFIDENCE = "simulateinvest.confidence";

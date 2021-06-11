@@ -126,11 +126,13 @@ public abstract class Component {
         if (subcomponent != null) {
             this.subenable(valueMap, subcomponent);
         }
+        if (action.getActionData().wantsUpdate(config)) {
         try {
             Map<String, Object> loadValues = mlLoads(param, null, market, null, subcomponent, mlmarket, action, parameters);
             valueMap.putAll(loadValues);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
+        }
         }
         String pipeline = getPipeline();
         param.getService().conf.getConfigValueMap().putAll(valueMap);

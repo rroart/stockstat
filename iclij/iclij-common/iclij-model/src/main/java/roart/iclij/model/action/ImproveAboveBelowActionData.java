@@ -53,4 +53,8 @@ public class ImproveAboveBelowActionData extends MarketActionData {
         return IclijConfigConstants.IMPROVEABOVEBELOW;
     }
 
+    @Override
+    protected boolean wantsUpdate(IclijConfig config) {
+        return true;
+    }
 }

@@ -103,6 +103,7 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.DATASETPREDICTOREVOLUTIONCONFIG, String.class);
         map.put(IclijConfigConstants.DATASETPREDICTORMLCONFIG, String.class);
         map.put(IclijConfigConstants.DATASETINDICATORRECOMMENDER, Boolean.class);
+        map.put(IclijConfigConstants.DATASETUPDATE, Boolean.class);
         map.put(IclijConfigConstants.EVOLVEGA, Integer.class);
         map.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER, Boolean.class);
         map.put(IclijConfigConstants.EVOLVEML, Boolean.class);
@@ -183,6 +184,7 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.FINDPROFITMANUALTHRESHOLD, Double.class);
         map.put(IclijConfigConstants.FINDPROFITMEMORYFILTER, Boolean.class);
         map.put(IclijConfigConstants.FINDPROFITRERUNSAVE, Boolean.class);
+        map.put(IclijConfigConstants.FINDPROFITUPDATE, Boolean.class);
         map.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, Boolean.class);
         map.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, Integer.class);
         map.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, Boolean.class);
@@ -241,6 +243,7 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.IMPROVEABOVEBELOWEVOLUTIONCONFIG, String.class);
         map.put(IclijConfigConstants.IMPROVEABOVEBELOWFITNESSMINIMUM, Integer.class);
         map.put(IclijConfigConstants.MACHINELEARNINGAUTORUN, Boolean.class);
+        map.put(IclijConfigConstants.MACHINELEARNINGUPDATE, Boolean.class);
         map.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOR, Boolean.class);
         map.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOREVOLUTIONCONFIG, String.class);
         map.put(IclijConfigConstants.MACHINELEARNINGMLINDICATORMLCONFIG, String.class);
@@ -394,6 +397,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.DATASETRECOMMENDER, Boolean.TRUE);
         deflt.put(IclijConfigConstants.DATASETPREDICTOR, Boolean.TRUE);
         deflt.put(IclijConfigConstants.DATASETPREDICTOREVOLUTIONCONFIG, null);
+        deflt.put(IclijConfigConstants.DATASETUPDATE, Boolean.FALSE);
         deflt.put(IclijConfigConstants.EVOLVEGA, 0);
         deflt.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER, Boolean.TRUE);
         deflt.put(IclijConfigConstants.EVOLVEML, Boolean.FALSE);
@@ -457,6 +461,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.FINDPROFITMANUALTHRESHOLD, 1.0);
         deflt.put(IclijConfigConstants.FINDPROFITMEMORYFILTER, Boolean.TRUE);
         deflt.put(IclijConfigConstants.FINDPROFITRERUNSAVE, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.FINDPROFITUPDATE, Boolean.FALSE);
         deflt.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, Boolean.FALSE);
         deflt.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, 10);
         deflt.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, Boolean.TRUE);
@@ -517,6 +522,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.MACHINELEARNINGPREDICTOREVOLUTIONCONFIG, null);
         deflt.put(IclijConfigConstants.MACHINELEARNINGFUTUREDAYS, " [ 10 ] ");
         deflt.put(IclijConfigConstants.MACHINELEARNINGTHRESHOLD, " [ 1.0 ] ");
+        deflt.put(IclijConfigConstants.MACHINELEARNINGUPDATE, Boolean.FALSE);
         deflt.put(IclijConfigConstants.SIMULATEINVESTAUTORUN, Boolean.FALSE);
 	deflt.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCE, Boolean.FALSE);
 	deflt.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEVALUE, 0.75);
@@ -647,6 +653,7 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.DATASETPREDICTOR, "Enable dataset predictor");
         text.put(IclijConfigConstants.DATASETPREDICTOREVOLUTIONCONFIG, "dataset predictor evolution config");
         text.put(IclijConfigConstants.DATASETPREDICTORMLCONFIG, "dataset predictor ml enable");
+        text.put(IclijConfigConstants.DATASETUPDATE, "Enable dataset update");
         text.put(IclijConfigConstants.EVOLVEGA, "Evolve GA");
         text.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER, "Enable evolution generated recommender settings");
         text.put(IclijConfigConstants.EVOLVEML, "Enable evolution generated ml configs");
@@ -727,6 +734,7 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.FINDPROFITMANUALTHRESHOLD, "Find profit manual threshold");
         text.put(IclijConfigConstants.FINDPROFITMEMORYFILTER, "Find profit memory filter");
         text.put(IclijConfigConstants.FINDPROFITRERUNSAVE, "Find profit rerun save");
+        text.put(IclijConfigConstants.FINDPROFITUPDATE, "Enable find profit update");
         text.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, "Enable improve profit autorun");
         text.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, "Enable improve profit fitness minimum");
         text.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, "Enable improve profit mlindicator");
@@ -811,6 +819,7 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.MACHINELEARNINGPREDICTORMLCONFIG, "machine learning predictor ml enabled");
         text.put(IclijConfigConstants.MACHINELEARNINGFUTUREDAYS, "machine learning futuredays");
         text.put(IclijConfigConstants.MACHINELEARNINGTHRESHOLD, "machine learning threshold");
+        text.put(IclijConfigConstants.MACHINELEARNINGUPDATE, "Enable machine learning update");
         text.put(IclijConfigConstants.SIMULATEINVESTAUTORUN, "Enable simulate invest autorun");
 	text.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCE, "Simulate invest confidence enable");
 	text.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEVALUE, "Simulate invest confidence value");
@@ -975,6 +984,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.DATASETPREDICTOR, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable dataset predictor"));
         mymap.put(IclijConfigConstants.DATASETPREDICTOREVOLUTIONCONFIG, new IclijXMLType(String.class, null, "dataset predictor evolution config"));
         mymap.put(IclijConfigConstants.DATASETPREDICTORMLCONFIG, new IclijXMLType(String.class, MLCONFIG, "dataset predictor ml enable"));
+        mymap.put(IclijConfigConstants.DATASETUPDATE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable dataset update"));
         mymap.put(IclijConfigConstants.EVOLVE, new IclijXMLType(null, null, null));
         mymap.put(IclijConfigConstants.EVOLVEGA, new IclijXMLType(Integer.class, 0, "Evolve GA"));
         mymap.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable evolution generated recommender settings"));
@@ -1056,6 +1066,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.FINDPROFITMANUALTHRESHOLD, new IclijXMLType(Double.class, 1.0, "Find profit manual threshold"));
         mymap.put(IclijConfigConstants.FINDPROFITMEMORYFILTER, new IclijXMLType(Boolean.class, Boolean.TRUE, "Find profit memory filter"));
         mymap.put(IclijConfigConstants.FINDPROFITRERUNSAVE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Find profit rerun save"));
+        mymap.put(IclijConfigConstants.FINDPROFITUPDATE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable find profit update"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve profit autorun"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, new IclijXMLType(Integer.class, 10, "Enable improve profit fitness minimum"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable improve profit mlindicator"));
@@ -1140,6 +1151,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.MACHINELEARNINGPREDICTORMLCONFIG, new IclijXMLType(String.class, MLCONFIG, "machine learning predictor ml enable"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGFUTUREDAYS, new IclijXMLType(String.class, " [ 10 ]", "machine learning futuredays"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGTHRESHOLD, new IclijXMLType(String.class, " [ 1.0 ]", "machine learning threshold"));
+        mymap.put(IclijConfigConstants.MACHINELEARNINGUPDATE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable machine learning update"));
         mymap.put(IclijConfigConstants.SIMULATEINVESTAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable simulate invest autorun"));
 	mymap.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Simulate invest confidence enable"));
 	mymap.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEVALUE, new IclijXMLType(Integer.class, 0.75, "Simulate invest confidence value"));

@@ -54,4 +54,8 @@ public class DatasetActionData extends MarketActionData {
         return "[ null ]";
     }
 
+    @Override
+    protected boolean wantsUpdate(IclijConfig config) {
+        return config.wantsDatasetUpdate();
+    }
 }

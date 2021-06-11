@@ -104,4 +104,9 @@ public class ImproveProfitActionData extends MarketActionData {
         }
         return null;
     }
+    
+    @Override
+    protected boolean wantsUpdate(IclijConfig config) {
+        return true;
+    }
 }

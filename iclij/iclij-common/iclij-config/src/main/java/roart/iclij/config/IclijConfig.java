@@ -299,6 +299,10 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITRERUNSAVE);
     }
 
+    public boolean wantsFindProfitUpdate() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITUPDATE);
+    }
+
     public boolean wantsImproveProfitAutorun() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITAUTORUN);
     }
@@ -633,6 +637,10 @@ public class IclijConfig {
 
     public String getMachineLearningPredictorEvolutionConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGPREDICTOREVOLUTIONCONFIG);
+    }
+
+    public boolean wantsMachineLearningUpdate() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGUPDATE);
     }
 
     public boolean wantsSimulateInvestAutorun() {
@@ -1135,6 +1143,10 @@ public class IclijConfig {
 
     public String getDatasetPredictorEvolutionConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.DATASETPREDICTOREVOLUTIONCONFIG);
+    }
+
+    public boolean wantsDatasetUpdate() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.DATASETUPDATE);
     }
 
     public boolean wantCrosstestML() {
