@@ -126,7 +126,7 @@ public abstract class Component {
         if (subcomponent != null) {
             this.subenable(valueMap, subcomponent);
         }
-        if (action.getActionData().wantsUpdate(config)) {
+        if (action.getActionData().wantsUpdate(param.getInput().getConfig())) {
         try {
             Map<String, Object> loadValues = mlLoads(param, null, market, null, subcomponent, mlmarket, action, parameters);
             valueMap.putAll(loadValues);

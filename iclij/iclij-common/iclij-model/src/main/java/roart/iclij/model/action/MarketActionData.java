@@ -41,6 +41,6 @@ public abstract class MarketActionData {
         return null;
     }
 
-    protected abstract boolean wantsUpdate(IclijConfig config);
+    public abstract boolean wantsUpdate(IclijConfig config);
     
 }

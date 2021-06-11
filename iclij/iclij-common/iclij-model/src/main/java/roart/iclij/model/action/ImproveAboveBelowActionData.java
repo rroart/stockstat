@@ -54,7 +54,7 @@ public class ImproveAboveBelowActionData extends MarketActionData {
     }
 
     @Override
-    protected boolean wantsUpdate(IclijConfig config) {
+    public boolean wantsUpdate(IclijConfig config) {
         return true;
     }
 }

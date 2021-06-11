@@ -77,7 +77,7 @@ public class FindProfitActionData extends MarketActionData {
     }
 
     @Override
-    protected boolean wantsUpdate(IclijConfig config) {
+    public boolean wantsUpdate(IclijConfig config) {
         return config.wantsFindProfitUpdate();
     }
 }
