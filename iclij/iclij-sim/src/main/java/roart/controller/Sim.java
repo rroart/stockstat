@@ -148,13 +148,18 @@ public class Sim {
                 }
                 if (filter.getStable() > 0) {
                     getStable(resultMap, filter, output, summary);
+                } else {
+                    summary.add(new Summary(true, "Stable"));                
                 }
                 if (filter.getLucky() > 0) {
                     getLucky(resultMap, filter, output, summary);
-
+                } else {
+                    summary.add(new Summary(true, "Lucky"));                
                 }
                 if (filter.getShortrun() > 0) {
                     getShortRun(resultMap, filter, output, summary);
+                } else {
+                    summary.add(new Summary(true, "ShortRun"));                
                 }
                 if (true /*findcluster equal value*/) {
                     // use config compare
