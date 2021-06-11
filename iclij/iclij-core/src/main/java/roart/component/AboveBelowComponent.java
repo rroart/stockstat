@@ -59,6 +59,7 @@ public class AboveBelowComponent extends ComponentML {
     public ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata,
             Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket,
             Parameters parameters) {
+        long time0 = System.currentTimeMillis();
         ComponentData componentData = new ComponentData(param);
         WebData myData = new WebData();
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
@@ -232,6 +233,10 @@ public class AboveBelowComponent extends ComponentML {
         //Map resultMaps = param.getResultMap();
         //handleMLMeta(param, resultMaps);
         //Map<String, Object> resultMap = param.getResultMap();
+        
+        if (parametersList.isEmpty()) {
+            saveTiming(param, true, time0, null, null, subcomponent, null, null, null, action.getParent() != null);
+        }
         return componentData;
     }
 
