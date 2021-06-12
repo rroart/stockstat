@@ -52,8 +52,16 @@ public class ActionThread extends Thread {
             list.addAll(copy);
             Comparator<ActionComponentItem> comparator = (ActionComponentItem i1, ActionComponentItem i2) -> getScore(i1) - getScore(i2);
             Collections.sort(list, comparator);
-            for (ActionComponentItem item : list) {
+            if (!list.isEmpty()) {
+                ActionComponentItem item = list.get(0);
+                if (item.getDbid() == null) {
+                    copy.remove(0);
+                    queue.addAll(copy);
+                }
                 if (!MarketAction.enoughTime(instance, item)) {
+                    if (item.getDbid() == null) {
+                        queue.add(item);
+                    }
                     continue;
                 }
                 IclijConfig config = new IclijConfig(instance);
@@ -88,8 +96,6 @@ public class ActionThread extends Thread {
                     log.error(Constants.EXCEPTION, e);
                 }
             }
-            List<ActionComponentItem> run = queue.stream().filter(m -> m.isHaverun()).collect(Collectors.toList());
-            List<ActionComponentItem> notrun = queue.stream().filter(m -> !m.isHaverun()).collect(Collectors.toList());
             try {
                 TimeUnit.SECONDS.sleep(3);
             } catch (InterruptedException e) {
