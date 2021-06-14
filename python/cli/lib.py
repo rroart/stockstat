@@ -5,6 +5,7 @@
 import pandas as pd
 #import tensorflow as tf
 import numpy as np
+import scipy.stats
 import psycopg2
 import matplotlib.pyplot as plt
 
@@ -2210,12 +2211,19 @@ def simulateinvest(market, startdate = None, enddate = None, confidence = False,
     #print(type(dates))
     default = updatemap['plotdefault']
     capital = updatemap['plotcapital']
-    commonls = [ default, capital ]
-    mynames = [ "default", "capital" ]
+    geom = np.geomspace(capital[0], capital[-1],num=len(capital),endpoint=True, dtype=None, axis=0)
+    pearson = scipy.stats.pearsonr(capital, geom)
+    spearman = scipy.stats.spearmanr(capital, geom)
+    kendalltau = scipy.stats.kendalltau(capital, geom)
+    pearson = round(pearson[0], 2)
+    spearman = round(spearman[0], 2)
+    kendalltau = round(kendalltau[0], 2)
+    commonls = [ default, capital, geom ]
+    mynames = [ "default", "capital", "geom" ]
     plt.rc('axes', grid=True)
     plt.rc('grid', color='0.75', linestyle='-', linewidth=0.5)
 
-    mynames=["default","my"]
+    mynames=["default","my" + " " + str(pearson) + " " + str(spearman) + " " + str(kendalltau), "geom"]
     olddate = dates[0]
     newdate = dates[len(dates) - 1]
     
@@ -2428,12 +2436,20 @@ def autosimulateinvest(market, startdate = None, enddate = None, interval = 1, p
     commondays = dates
     default = updatemap['plotdefault']
     capital = updatemap['plotcapital']
-    commonls = [ default, capital ]
-    mynames = [ "default", "capital" ]
+    geom = np.geomspace(capital[0], capital[-1],num=len(capital),endpoint=True, dtype=None, axis=0)
+    pearson = scipy.stats.pearsonr(capital, geom)
+    spearman = scipy.stats.spearmanr(capital, geom)
+    kendalltau = scipy.stats.kendalltau(capital, geom)
+    pearson = round(pearson[0], 2)
+    spearman = round(spearman[0], 2)
+    kendalltau = round(kendalltau[0], 2)
+    commonls = [ default, capital, geom ]
+    mynames = [ "default", "capital", "geom" ]
     plt.rc('axes', grid=True)
     plt.rc('grid', color='0.75', linestyle='-', linewidth=0.5)
 
-    mynames=["default","my"]
+    mynames=["default","my", "geom"]
+    mynames=["default","my" + " " + str(pearson) + " " + str(spearman) + " " + str(kendalltau), "geom"]
     olddate = None
     newdate = None
     if len(dates) > 0:
