@@ -17,11 +17,14 @@ public class SimulateFilter {
     
     private Boolean useclusters;
     
+    private Double correlation;
+    
     private Set<String> printconfig;
     
-    public SimulateFilter(Integer shortrun, Double lucky, Double stable, Boolean allabove, Integer populationabove, Boolean useclusters, Set<String> printconfig) {
+    public SimulateFilter(Integer shortrun, Double correlation, Double lucky, Double stable, Boolean allabove, Integer populationabove, Boolean useclusters, Set<String> printconfig) {
         super();
         this.shortrun = shortrun;
+        this.correlation = correlation;
         this.lucky = lucky;
         this.stable = stable;
         this.allabove = allabove;
@@ -82,6 +85,14 @@ public class SimulateFilter {
         this.useclusters = useclusters;
     }
 
+    public Double getCorrelation() {
+        return correlation;
+    }
+
+    public void setCorrelation(Double correlation) {
+        this.correlation = correlation;
+    }
+
     public Set<String> getPrintconfig() {
         return printconfig;
     }
@@ -96,6 +107,9 @@ public class SimulateFilter {
         }
         if (other.shortrun != null) {
             this.shortrun = other.shortrun;
+        }
+        if (other.correlation != null) {
+            this.correlation = other.correlation;
         }
         if (other.lucky != null) {
             this.lucky = other.lucky;
@@ -135,6 +149,7 @@ public class SimulateFilter {
         SimulateFilter s = (SimulateFilter) o;
         
         return Objects.equals(shortrun, s.shortrun)
+                && Objects.equals(correlation, s.correlation)
                 && Objects.equals(lucky, s.lucky)
                 && Objects.equals(stable, s.stable)
                 && Objects.equals(allabove, s.allabove)

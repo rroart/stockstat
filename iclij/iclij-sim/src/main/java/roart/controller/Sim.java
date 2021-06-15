@@ -36,6 +36,7 @@ import com.google.common.collect.Maps;
 
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
+import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
 import roart.common.util.MathUtil;
 import roart.common.util.TimeUtil;
@@ -54,6 +55,9 @@ import roart.constants.SimConstants;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.factory.InmemoryFactory;
+import org.apache.commons.math3.stat.correlation.KendallsCorrelation;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
 
 public class Sim {
 
@@ -151,7 +155,12 @@ public class Sim {
                 } else {
                     summary.add(new Summary(true, "Stable"));                
                 }
-                if (filter.getLucky() > 0) {
+                if (filter.getCorrelation() > 0) {
+                    getCorrelation(resultMap, filter, output, summary);
+                } else {
+                    summary.add(new Summary(true, "Correlation"));                
+                }
+               if (filter.getLucky() > 0) {
                     getLucky(resultMap, filter, output, summary);
                 } else {
                     summary.add(new Summary(true, "Lucky"));                
@@ -350,17 +359,17 @@ public class Sim {
         timeSimConfig.add(IclijConfigConstants.SIMULATEINVESTDAY);
         timeSimConfig.add(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE);
         SimulateFilter[] filters = new SimulateFilter[10];
-        filter = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
-        filters[0] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
-        filters[1] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, periodSimConfig);
-        filters[2] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
-        filters[3] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
-        filters[4] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
-        filters[5] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
-        filters[6] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, timeSimConfig);
-        filters[7] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
-        filters[8] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
-        filters[9] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
+        filter = new SimulateFilter(5, 0.9, 0.5, 0.8, true, 16, true, generalSimConfig);
+        filters[0] = new SimulateFilter(5, 0.9, 0.5, 0.8, true, 16, true, generalSimConfig);
+        filters[1] = new SimulateFilter(5, 0.9, 0.5, 0.8, true, 16, true, periodSimConfig);
+        filters[2] = new SimulateFilter(5, 0.9, 0.5, 0.8, true, 16, true, generalSimConfig);
+        filters[3] = new SimulateFilter(5, 0.9, 0.5, 0.8, true, 16, true, generalSimConfig);
+        filters[4] = new SimulateFilter(5, 0.9, 0.5, 0.8, true, 16, true, generalSimConfig);
+        filters[5] = new SimulateFilter(5, 0.9, 0.5, 0.8, true, 16, true, generalSimConfig);
+        filters[6] = new SimulateFilter(5, 0.9, 0.5, 0.8, true, 16, true, timeSimConfig);
+        filters[7] = new SimulateFilter(5, 0.9, 0.5, 0.8, true, 16, true, generalSimConfig);
+        filters[8] = new SimulateFilter(5, 0.9, 0.5, 0.8, true, 16, true, generalSimConfig);
+        filters[9] = new SimulateFilter(5, 0.9, 0.5, 0.8, true, 16, true, generalSimConfig);
         filter = filters[adviser];
         return filter;
     }
@@ -370,7 +379,7 @@ public class Sim {
         Set<String> generalSimConfig = new HashSet<>();
         generalSimConfig.add(IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL);
         generalSimConfig.add(IclijConfigConstants.AUTOSIMULATEINVESTPERIOD);
-        filter = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
+        filter = new SimulateFilter(5, 0.9, 0.5, 0.8, true, 16, true, generalSimConfig);
         return filter;
     }
 
@@ -498,6 +507,34 @@ public class Sim {
             output.add("Stable " + MathUtil.round(total, 2) + " " + MathUtil.round(lasttotal, 2) + " " + MathUtil.round(total / lasttotal, 2));
         }
         summary.add(new Summary(stable, "Stable"));
+    }
+
+    private void getCorrelation(Map<String, Object> resultMap, SimulateFilter filter, List<String> output, List<Summary> summary) {
+        boolean correlation = true;
+        for (Entry<String, Object> entry : resultMap.entrySet()) {
+            Map<String, Object> aMap = (Map<String, Object>) entry.getValue();
+            List<Double> capitalList = (List<Double>) aMap.get(SimConstants.PLOTCAPITAL);
+            if (capitalList.isEmpty()) {
+                continue;
+            }
+            Double[] capArray = capitalList.toArray(new Double[0]);
+            double[] cap = ArraysUtil.convert(capArray);
+            double[] geom = MathUtil.getGeoSeq(cap);
+            SpearmansCorrelation sc = new SpearmansCorrelation();
+            double sp = sc.correlation(cap, geom);
+            KendallsCorrelation kc = new KendallsCorrelation();
+            double ke = kc.correlation(cap, geom);
+            PearsonsCorrelation pc = new PearsonsCorrelation();
+            double pe = pc.correlation(cap, geom);
+            
+            double average = (sp + ke + pe) / 3;
+            if (average > filter.getStable()) {
+                correlation = false;
+                //break;
+            }
+            output.add("Correlation " + MathUtil.round(sp, 2) + " " + MathUtil.round(ke, 2) + " " + MathUtil.round(pe, 2) + " " + MathUtil.round(average, 2));
+        }
+        summary.add(new Summary(correlation, "Correlation"));
     }
 
     private Double getAllAbove(Map<String, Object> resultMap, List<String> output, List<Summary> summary) {

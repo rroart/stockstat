@@ -742,6 +742,9 @@ public class SimulateInvestComponent extends ComponentML {
                         if (autoSimConfFilters != null) {
                             SimulateFilter autoSimConfFilter = autoSimConfFilters[adviser];
                             if (myFilter != null && autoSimConfFilter != null) {
+                                if (autoSimConfFilter.getCorrelation() > 0 && autoSimConfFilter.getCorrelation() > myFilter.getCorrelation()) {
+                                    continue;
+                                }
                                 if (autoSimConfFilter.getLucky() > 0 && autoSimConfFilter.getLucky() < myFilter.getLucky()) {
                                     continue;
                                 }

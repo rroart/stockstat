@@ -38,4 +38,5 @@ module iclij.sim {
     requires common.inmemory.model;
     requires iclij.common.model;
     requires db;
+    requires commons.math3;
 }

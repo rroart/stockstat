@@ -9,6 +9,9 @@ import org.apache.commons.math3.util.Precision;
 
 public class MathUtil {
     public static double round(Double d, int n) {
+        if (d.isInfinite()) {
+            int jj = 0;
+        }
         String hashes = StringUtils.repeat("#", n);
         DecimalFormat df = new DecimalFormat("#." + hashes);
         //df.setRoundingMode(RoundingMode.HALF_UP);
@@ -76,6 +79,16 @@ public class MathUtil {
             }
         }
         return objs;
+    }
+
+    public static double[] getGeoSeq(double[] cap) {
+        double[] geom = new double[cap.length];
+        Double first = cap[0];
+        Double last = cap[cap.length - 1];        
+        for (int i = 0; i < cap.length - 1; i++) {
+            geom[i] = first * Math.pow((double)last/first, (double) i/(cap.length - 1));
+        }
+        return geom;
     }
 
 }
