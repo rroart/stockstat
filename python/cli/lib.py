@@ -2263,8 +2263,8 @@ def simulateinvest(market, startdate = None, enddate = None, confidence = False,
     print(updatemap['lastbuysell'])
     return
 
-def improvesimulateinvest(market = None, startdate = None, enddate = None, ga = 0, adviser = None, indicatorpure = None, delay = 1, intervalwhole = True, stocks = None, indicatorreverse = None, interval = None, buyweight = None, volumelimits = None, filters = None):
-    data = { 'startdate' : startdate, 'enddate' : enddate, 'ga' : ga, 'adviser' : adviser, 'indicatorPure' : indicatorpure, 'delay' : delay, 'intervalwhole' : intervalwhole, 'stocks' : stocks, 'indicatorReverse' : indicatorreverse, 'interval' : interval, 'buyweight' : buyweight, 'volumelimits' : volumelimits, 'filters' : filters }
+def improvesimulateinvest(market = None, startdate = None, enddate = None, ga = 0, adviser = None, indicatorpure = None, delay = 1, intervalwhole = True, stocks = None, indicatorreverse = None, interval = None, buyweight = None, volumelimits = None, filters = None, futurecount = 0, futuretime = 0):
+    data = { 'startdate' : startdate, 'enddate' : enddate, 'ga' : ga, 'adviser' : adviser, 'indicatorPure' : indicatorpure, 'delay' : delay, 'intervalwhole' : intervalwhole, 'stocks' : stocks, 'indicatorReverse' : indicatorreverse, 'interval' : interval, 'buyweight' : buyweight, 'volumelimits' : volumelimits, 'filters' : filters, 'futurecount' : futurecount, 'futuretime' : futuretime }
     from datetime import datetime
     tsstart = datetime.now().timestamp()
     response = request.request2(market, data)
@@ -2388,17 +2388,17 @@ t = True
 def simulateinvestsG(market, startdate = None, enddate = None, c = f, cv = 0.7, ct = 4, st = t, stv = 0.9, ip = t, ib = f, ir = f, m = f, s = 3, b = t, i = 7, a = 0, p = 0, f = t, ist = t, istv = 0.9, d = 1, w = 1, iw = f, ch = f, nch = t, nctd = f, nctdt = 1, cti = f, ctit = 1, id = f, idu = t, vl = None):
     mp.Process(target=simulateinvest2Gwrap, args=(market, startdate, enddate, c, cv, ct, st, stv, ip, ib, ir, m, s, b, i, a, p, f, ist, istv, d, w, iw, ch, nch, nctd, nctdt, cti, ctit, id, idu, vl)).start()
 
-def improvesimulateinvestGwrap(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole, stocks, volumelimits, filters):
+def improvesimulateinvestGwrap(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole, stocks, volumelimits, filters, futurecount, futuretime):
     import io
     from contextlib import redirect_stdout
     file = io.StringIO()
     with redirect_stdout(file):                                                
-        improvesimulateinvest(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole, stocks, volumelimits, filters)
+        improvesimulateinvest(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole, stocks, volumelimits, filters, futurecount, futuretime)
     output = file.getvalue()
     gui.view(output)
 
-def improvesimulateinvestG(market, startdate = None, enddate = None, ga = 0, adviser = None, indicatorPure = None, delay = 1, intervalwhole = True, stocks = None, volumelimits = None, filters = None):
-    mp.Process(target=improvesimulateinvestGwrap, args=(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole, stocks, volumelimits, filters)).start()
+def improvesimulateinvestG(market, startdate = None, enddate = None, ga = 0, adviser = None, indicatorPure = None, delay = 1, intervalwhole = True, stocks = None, volumelimits = None, filters = None, futurecount = 0, futuretime = 0):
+    mp.Process(target=improvesimulateinvestGwrap, args=(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole, stocks, volumelimits, filters, futurecount, futuretime)).start()
 
 #engine = create_engine('postgresql://stockread@localhost:5432/stockstat')
 conn = psycopg2.connect("host=localhost dbname=stockstat user=stockread password=password")
@@ -2492,8 +2492,8 @@ def autosimulateinvest(market, startdate = None, enddate = None, interval = 1, p
     print(updatemap['lastbuysell'])
     return
 
-def improveautosimulateinvest(market = None, startdate = None, enddate = None, ga = 0, stocks = 5, intervalwhole = False, filters = None, volumelimits = None):
-    data = { 'startdate' : startdate, 'enddate' : enddate, 'ga' : ga, 'stocks' : stocks, 'intervalwhole' : intervalwhole, 'volumelimits' : volumelimits, 'filters' : filters }
+def improveautosimulateinvest(market = None, startdate = None, enddate = None, ga = 0, stocks = 5, intervalwhole = False, filters = None, volumelimits = None, futurecount = 0, futuretime = 0):
+    data = { 'startdate' : startdate, 'enddate' : enddate, 'ga' : ga, 'stocks' : stocks, 'intervalwhole' : intervalwhole, 'volumelimits' : volumelimits, 'filters' : filters, 'futurecount' : futurecount, 'futuretime' : futuretime }
     from datetime import datetime
     tsstart = datetime.now().timestamp()
     response = request.request4(market, data)
@@ -2515,17 +2515,17 @@ def improveautosimulateinvest(market = None, startdate = None, enddate = None, g
     print("improve complete", market, startdate, enddate, time)
     #print(response.text)
 
-def improveautosimulateinvestGwrap(market, startdate, enddate, ga, stocks, intervalwhole, filters, volumelimits):
+def improveautosimulateinvestGwrap(market, startdate, enddate, ga, stocks, intervalwhole, filters, volumelimits, futurecount, futuretime):
     import io
     from contextlib import redirect_stdout
     file = io.StringIO()
     with redirect_stdout(file):                                                
-        improveautosimulateinvest(market, startdate, enddate, ga, stocks, intervalwhole, filters, volumelimits)
+        improveautosimulateinvest(market, startdate, enddate, ga, stocks, intervalwhole, filters, volumelimits, futurecount, futuretime)
     output = file.getvalue()
     gui.view(output)
 
-def improveautosimulateinvestG(market, startdate = None, enddate = None, ga = 0, intervalwhole = False):
-    mp.Process(target=improveautosimulateinvestGwrap, args=(market, startdate, enddate, ga, stocks, intervalwhole, filters, volumelimits)).start()
+def improveautosimulateinvestG(market, startdate = None, enddate = None, ga = 0, intervalwhole = False, futurecount = 0, futuretime = 0):
+    mp.Process(target=improveautosimulateinvestGwrap, args=(market, startdate, enddate, ga, stocks, intervalwhole, filters, volumelimits, futurecount, futuretime)).start()
 
 if not 'allstocks' in globals():
     allstocks = getstocks(conn)

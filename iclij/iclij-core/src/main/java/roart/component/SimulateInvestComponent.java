@@ -1639,6 +1639,8 @@ public class SimulateInvestComponent extends ComponentML {
         simConfig.setInterpolate(config.wantsSimulateInvestInterpolate());
         simConfig.setDay(config.getSimulateInvestDay());
         simConfig.setDelay(config.getSimulateInvestDelay());
+        simConfig.setFuturecount(config.getSimulateInvestFutureCount());
+        simConfig.setFuturetime(config.getSimulateInvestFutureTime());
         Map<String, Double> map = JsonUtil.convert(config.getSimulateInvestVolumelimits(), Map.class);
         simConfig.setVolumelimits(map);
 
@@ -1667,6 +1669,8 @@ public class SimulateInvestComponent extends ComponentML {
         simConfig.setDellimit(config.getAutoSimulateInvestDelLimit());
         simConfig.setScorelimit(config.getAutoSimulateInvestScoreLimit());
         simConfig.setAutoscorelimit(config.getAutoSimulateInvestAutoScoreLimit());
+        simConfig.setFuturecount(config.getAutoSimulateInvestFutureCount());
+        simConfig.setFuturetime(config.getAutoSimulateInvestFutureTime());
         Map<String, Double> map = JsonUtil.convert(config.getAutoSimulateInvestVolumelimits(), Map.class);
         simConfig.setVolumelimits(map);
         SimulateFilter[] array = JsonUtil.convert(config.getAutoSimulateInvestFilters(), SimulateFilter[].class);

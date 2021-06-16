@@ -1,7 +1,9 @@
 package roart.component;
 
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +15,7 @@ import roart.common.constants.ServiceConstants;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
+import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.constants.SimConstants;
@@ -50,7 +53,38 @@ public class ImproveAutoSimulateInvestComponent extends ComponentML {
         if (true) {
             SimulateInvestComponent component = new SimulateInvestComponent();
             component.setConfig(getConfig());
-            return component.handle(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
+            ComponentData ret = component.handle(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
+            Map<String, Double> scoreMap = ret.getScoreMap();
+            List<Double> scores = new ArrayList<>();
+            scores.add(scoreMap.get(SimConstants.SCORE));
+            if (param.getInput().getConfig().getAutoSimulateInvestFutureCount() > 0) {
+                ComponentData newComponentData = new ComponentData(param);
+                IclijConfig config = newComponentData.getInput().getConfig();
+                int count = config.getAutoSimulateInvestFutureCount();
+                int time = config.getAutoSimulateInvestFutureTime();
+                String startDateOrig = config.getAutoSimulateInvestStartdate();
+                String endDateOrig = config.getAutoSimulateInvestEnddate();
+                String startDate = TimeUtil.replace(endDateOrig);
+                String endDate;
+                for (int i = 0; i < count; i++) {
+                    LocalDate start = null;
+                    try {
+                        start = TimeUtil.convertDate(startDate);
+                    } catch (ParseException e) {
+                        log.error(Constants.EXCEPTION, e);
+                    }
+                    LocalDate end = start.plusMonths(time);
+                    endDate = TimeUtil.convertDate2(end);
+                    config.getConfigValueMap().put(IclijConfigConstants.AUTOSIMULATEINVESTSTARTDATE, startDate);
+                    config.getConfigValueMap().put(IclijConfigConstants.AUTOSIMULATEINVESTENDDATE, endDate);
+                    ComponentData ret2 = component.handle(action, market, newComponentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
+                    Map<String, Double> scoreMap2 = ret2.getScoreMap();
+                    scores.add(scoreMap2.get(SimConstants.SCORE));
+                    startDate = endDate;
+                }
+                scoreMap.put(SimConstants.SCORE, Collections.min(scores));
+            }
+            return ret;
         }
         ComponentData componentData = new ComponentData(param);
 

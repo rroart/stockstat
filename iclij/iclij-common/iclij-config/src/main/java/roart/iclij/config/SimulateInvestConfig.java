@@ -51,6 +51,10 @@ public class SimulateInvestConfig {
     
     private String enddate;
     
+    private Integer futurecount;
+    
+    private Integer futuretime;
+    
     private Boolean intervalStoploss;
     
     private Double intervalStoplossValue;
@@ -225,6 +229,22 @@ public class SimulateInvestConfig {
 
     public void setEnddate(String enddate) {
         this.enddate = enddate;
+    }
+
+    public Integer getFuturecount() {
+        return futurecount;
+    }
+
+    public void setFuturecount(Integer futurecount) {
+        this.futurecount = futurecount;
+    }
+
+    public Integer getFuturetime() {
+        return futuretime;
+    }
+
+    public void setFuturetime(Integer futuretime) {
+        this.futuretime = futuretime;
     }
 
     public Boolean getIntervalStoploss() {
@@ -435,6 +455,12 @@ public class SimulateInvestConfig {
         if (other.enddate != null) {
             this.enddate = other.enddate;
         }
+        if (other.futurecount != null) {
+            this.futurecount = other.futurecount;
+        }
+        if (other.futuretime != null) {
+            this.futuretime = other.futuretime;
+        }
         if (other.excludes != null) {
             this.excludes = other.excludes;
         }
@@ -508,6 +534,8 @@ public class SimulateInvestConfig {
         map.put(IclijConfigConstants.SIMULATEINVESTPERIOD, period);
         map.put(IclijConfigConstants.SIMULATEINVESTSTARTDATE, startdate);
         map.put(IclijConfigConstants.SIMULATEINVESTENDDATE, enddate);
+        map.put(IclijConfigConstants.SIMULATEINVESTFUTURECOUNT, futurecount);
+        map.put(IclijConfigConstants.SIMULATEINVESTFUTURETIME, futuretime);
         map.put(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSS, intervalStoploss);
         map.put(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSSVALUE, intervalStoplossValue);
         map.put(IclijConfigConstants.SIMULATEINVESTINTERPOLATE, interpolate);
@@ -582,6 +610,8 @@ public class SimulateInvestConfig {
                 && Arrays.equals(excludes, s.excludes)
                 && Objects.equals(startdate, s.startdate)
                 && Objects.equals(enddate, s.enddate)
+                && Objects.equals(futurecount, s.futurecount)
+                && Objects.equals(futuretime, s.futuretime)
                 && Objects.equals(intervalStoploss, s.intervalStoploss)
                 && Objects.equals(intervalStoplossValue, s.intervalStoplossValue)
                 && Objects.equals(interpolate, s.interpolate)

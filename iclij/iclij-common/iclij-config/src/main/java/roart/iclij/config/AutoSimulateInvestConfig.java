@@ -19,6 +19,10 @@ public class AutoSimulateInvestConfig {
     
     private String enddate;
     
+    private Integer futurecount;
+    
+    private Integer futuretime;
+    
     private Integer interval;
 
     private Integer period;
@@ -53,6 +57,22 @@ public class AutoSimulateInvestConfig {
 
     public void setEnddate(String enddate) {
         this.enddate = enddate;
+    }
+
+    public Integer getFuturecount() {
+        return futurecount;
+    }
+
+    public void setFuturecount(Integer futurecount) {
+        this.futurecount = futurecount;
+    }
+
+    public Integer getFuturetime() {
+        return futuretime;
+    }
+
+    public void setFuturetime(Integer futuretime) {
+        this.futuretime = futuretime;
     }
 
     public Integer getInterval() {
@@ -150,6 +170,8 @@ public class AutoSimulateInvestConfig {
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTLASTCOUNT, lastcount);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTSTARTDATE, startdate);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTENDDATE, enddate);
+        map.put(IclijConfigConstants.AUTOSIMULATEINVESTFUTURECOUNT, futurecount);
+        map.put(IclijConfigConstants.AUTOSIMULATEINVESTFUTURETIME, futuretime);
         String volumelimitString = null;
         if (volumelimits != null) {
             volumelimitString = convert(volumelimits);

@@ -274,6 +274,8 @@ public class IclijConfigConstants {
     public static final String SIMULATEINVESTADVISER = "simulateinvest.adviser";
     public static final String SIMULATEINVESTINTERPOLATE = "simulateinvest.interpolate";
     public static final String SIMULATEINVESTDAY = "simulateinvest.day";
+    public static final String SIMULATEINVESTFUTURECOUNT = "simulateinvest.futurecount";
+    public static final String SIMULATEINVESTFUTURETIME = "simulateinvest.futuretime";
     // special
     public static final String SIMULATEINVESTPERIOD = "simulateinvest.period";
     // special
@@ -297,6 +299,8 @@ public class IclijConfigConstants {
     public static final String AUTOSIMULATEINVESTDELLIMIT = "autosimulateinvest.dellimit";
     public static final String AUTOSIMULATEINVESTSCORELIMIT = "autosimulateinvest.scorelimit";
     public static final String AUTOSIMULATEINVESTAUTOSCORELIMIT = "autosimulateinvest.autoscorelimit";
+    public static final String AUTOSIMULATEINVESTFUTURECOUNT = "autosimulateinvest.futurecount";
+    public static final String AUTOSIMULATEINVESTFUTURETIME = "autosimulateinvest.futuretime";
     // special
     public static final String AUTOSIMULATEINVESTSTARTDATE = "autosimulateinvest.startdate";
     public static final String AUTOSIMULATEINVESTENDDATE = "autosimulateinvest.enddate";
