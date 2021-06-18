@@ -38,4 +38,5 @@ module iclij.evolve {
     requires common.inmemory.factory;
     requires common.inmemory.model;
     requires evolution.gene;
+    requires db;
 }
