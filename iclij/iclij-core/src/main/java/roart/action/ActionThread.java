@@ -86,8 +86,9 @@ public class ActionThread extends Thread {
                 Component component = action.getComponentFactory().factory(item.getComponent());
                 boolean evolve = action.getEvolve(component, param);
                 WebData myData = action.getWebData();
-                action.getPicksFiltered(myData, param, config, item, evolve, wantThree);                
-
+                if (item.getDbid() == null || action.getActionData().wantsUpdate(config)) {
+                    action.getPicksFiltered(myData, param, config, item, evolve, wantThree);                
+                }
                 try {
                     if (item.getDbid() != null) {
                         item.delete();
