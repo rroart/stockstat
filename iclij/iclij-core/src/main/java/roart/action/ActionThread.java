@@ -45,7 +45,7 @@ public class ActionThread extends Thread {
             try {
                  list = ac.getAll();
             } catch (Exception e) {
-                log.info(Constants.EXCEPTION, e);
+                log.error(Constants.EXCEPTION, e);
             }
             List<ActionComponentItem> copy = new ArrayList<>(queue);
             queue.removeAll(copy);
