@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.common.cache.MyCache;
+import roart.db.thread.DatabaseThread;
 import roart.executor.MyExecutors;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
@@ -48,6 +49,7 @@ public class IclijController implements CommandLineRunner {
             String services = instance.getServices();
             String communications = instance.getCommunications();
             new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class).start();
+            new DatabaseThread().start();
             MyCache.setCache(instance.wantCache());
             MyCache.setCacheTTL(instance.getCacheTTL());
 	    } catch (Exception e) {
