@@ -1639,8 +1639,12 @@ public class SimulateInvestComponent extends ComponentML {
         simConfig.setInterpolate(config.wantsSimulateInvestInterpolate());
         simConfig.setDay(config.getSimulateInvestDay());
         simConfig.setDelay(config.getSimulateInvestDelay());
+        try {
         simConfig.setFuturecount(config.getSimulateInvestFutureCount());
         simConfig.setFuturetime(config.getSimulateInvestFutureTime());
+        } catch (Exception e) {
+
+        }
         Map<String, Double> map = JsonUtil.convert(config.getSimulateInvestVolumelimits(), Map.class);
         simConfig.setVolumelimits(map);
 
