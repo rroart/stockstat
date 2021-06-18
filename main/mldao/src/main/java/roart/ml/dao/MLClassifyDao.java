@@ -51,7 +51,7 @@ public class MLClassifyDao {
             if (type.equals(MLConstants.GEM)) {
                 access = new MLClassifyGemAccess(conf);
             }
-            if (type.equals("RANDOM")) {
+            if (type.equals(MLConstants.RANDOM)) {
                 access = new MLClassifyRandomAccess(conf);
             }
         }
