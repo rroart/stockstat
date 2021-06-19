@@ -48,6 +48,7 @@ import roart.iclij.evolution.marketfilter.chromosome.impl.AboveBelowChromosome;
 import roart.iclij.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.MLMetricsItem;
+import roart.iclij.model.Parameters;
 import roart.iclij.model.action.ActionComponentItem;
 import roart.iclij.util.MiscUtil;
 import roart.iclij.config.IclijConfig;
@@ -123,6 +124,9 @@ public class Evolve {
 
     private void saveBetter(List<Pair<Double, AbstractChromosome>> myList, String market, String component,
             Pair<String, String> subcomponent, String action) {
+        Parameters p = new Parameters();
+        p.setFuturedays(10);
+        p.setThreshold(1.0);
         ConfigItem i = new ConfigItem();
         i.setMarket(market);
         i.setComponent(component);
@@ -131,6 +135,7 @@ public class Evolve {
         String key = new NeuralNetConfigs().getConfigMap().get(ml);
         i.setId(key);
         i.setAction(action);
+        i.setParameters(JsonUtil.convert(p));
         i.setRecord(LocalDate.now());
         i.setDate(LocalDate.now());
         i.setScore(myList.get(0).getLeft());
@@ -151,6 +156,7 @@ public class Evolve {
         mct.setSubcomponent(subcomponent.getLeft() + " " + subcomponent.getRight());
         mct.setRecord(LocalDate.now());
         mct.setPriority(-10);
+        mct.setParameters(JsonUtil.convert(p));
         try {
             mct.save();
         } catch (Exception e) {

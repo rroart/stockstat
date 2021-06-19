@@ -148,7 +148,7 @@ public class FindProfitAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, config.wantsFindProfitMLDynamic());
             aMap.put(ConfigConstants.MACHINELEARNINGMLCROSS, false);
 
-            Parameters parameters = marketTime.getParameters();
+            Parameters parameters = JsonUtil.convert(marketTime.getParameters(), Parameters.class);
             String key = component.getThreshold();
             aMap.put(key, "[" + parameters.getThreshold() + "]");
             String key2 = component.getFuturedays();
@@ -156,13 +156,13 @@ public class FindProfitAction extends MarketAction {
                         
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
             
-            ComponentData componentData = component.handle(this, market, param, profitdata, new Memories(market), evolve, aMap, marketTime.getSubcomponent(), null, marketTime.getParameters());
+            ComponentData componentData = component.handle(this, market, param, profitdata, new Memories(market), evolve, aMap, marketTime.getSubcomponent(), null, parameters);
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
             myData.getUpdateMap().putAll(componentData.getUpdateMap());
             List<MemoryItem> memories;
             try {
-                memories = component.calculateMemory(componentData, marketTime.getParameters());
+                memories = component.calculateMemory(componentData, parameters);
                 allMemories.addAll(memories);
            } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);

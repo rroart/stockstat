@@ -51,6 +51,9 @@ public class ActionComponent implements Serializable {
     private Boolean buy;
     
     @Column
+    private String parameters;
+    
+    @Column
     private int priority;
     
     public Long getDbid() {
@@ -107,6 +110,14 @@ public class ActionComponent implements Serializable {
 
     public void setBuy(Boolean buy) {
         this.buy = buy;
+    }
+
+    public String getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
     }
 
     public int getPriority() {

@@ -22,7 +22,7 @@ public class ActionComponentItem {
     private int priority;
     //List<TimingItem> timings;
     private Boolean buy;
-    private Parameters parameters;
+    private String parameters;
     private LocalDate record;
 
     public Long getDbid() {
@@ -97,11 +97,11 @@ public class ActionComponentItem {
         this.buy = buy;
     }
 
-    public Parameters getParameters() {
+    public String getParameters() {
         return parameters;
     }
 
-    public void setParameters(Parameters parameters) {
+    public void setParameters(String parameters) {
         this.parameters = parameters;
     }
 
@@ -120,6 +120,7 @@ public class ActionComponentItem {
         config.setComponent(getComponent());
         config.setMarket(getMarket());
         config.setRecord(getRecord());
+        config.setParameters(getParameters());
         config.setPriority(getPriority());
         config.setSubcomponent(getSubcomponent());
         config.save();
@@ -171,7 +172,7 @@ public class ActionComponentItem {
         item.setComponent(config.getComponent());
         item.setMarket(config.getMarket());
         item.setRecord(config.getRecord());
-        //configItem.setParameters(config.getParameters());
+        item.setParameters(config.getParameters());
         //configItem.setScore(config.getScore());
         item.setSubcomponent(config.getSubcomponent());
         item.setPriority(config.getPriority());

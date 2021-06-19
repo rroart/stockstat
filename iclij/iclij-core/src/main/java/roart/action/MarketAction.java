@@ -393,7 +393,7 @@ public abstract class MarketAction extends Action {
                             marketTime.setAction(this.getActionData().getName());
                             marketTime.setComponent(componentName);
                             marketTime.setSubcomponent(subComponent);
-                            marketTime.setParameters(parameters);
+                            marketTime.setParameters(JsonUtil.convert(parameters));
                             //marketTime.timings = timingToDo;
                             marketTime.setBuy(buy);
                             IclijConfig config = param.getInput().getConfig();
@@ -485,7 +485,7 @@ public abstract class MarketAction extends Action {
         mct.setTime(time);
         mct.setHaverun(haverun);
         mct.setBuy(buy);
-        mct.setParameters(parameters);
+        mct.setParameters(JsonUtil.convert(parameters));
         return mct;
     }
     
@@ -527,7 +527,8 @@ public abstract class MarketAction extends Action {
         LocalDate prevdate = getPrevDate(param, market);
         LocalDate olddate = prevdate.minusDays(((int) AVERAGE_SIZE) * getActionData().getTime(market));
         ProfitInputData inputdata = new ProfitInputData();
-        getListComponents(myData, param, config, marketTime.getParameters(), evolve, market, dataMap, listComponentMap, olddate, prevdate);
+        Parameters parameters = JsonUtil.convert(marketTime.getParameters(), Parameters.class);
+        getListComponents(myData, param, config, parameters, evolve, market, dataMap, listComponentMap, olddate, prevdate);
         profitdata.setInputdata(inputdata);
         
         Map<String, Component> componentMap = new HashMap<>();
@@ -559,7 +560,8 @@ public abstract class MarketAction extends Action {
         if (true || config.getFindProfitMemoryFilter()) {
         mlTests = getMLMetrics(timings, mltests, market.getFilter().getConfidence());
         }
-        handleComponent(this, market, profitdata, param, listComponentMap, componentMap, dataMap, marketTime.getBuy(), marketTime.getSubcomponent(), myData, config, marketTime.getParameters(), wantThree, mlTests);
+        Parameters parameters2 = JsonUtil.convert(marketTime.getParameters(), Parameters.class);
+        handleComponent(this, market, profitdata, param, listComponentMap, componentMap, dataMap, marketTime.getBuy(), marketTime.getSubcomponent(), myData, config, parameters2, wantThree, mlTests);
         
         if (!getActionData().isDataset()) {
         filterIncDecs(param, market, profitdata, maps, true, null);
