@@ -83,6 +83,8 @@ public class ImproveAutoSimulateInvestComponent extends ComponentML {
                     startDate = endDate;
                 }
                 scoreMap.put(SimConstants.SCORE, Collections.min(scores));
+                config.getConfigValueMap().put(IclijConfigConstants.AUTOSIMULATEINVESTSTARTDATE, startDateOrig);
+                config.getConfigValueMap().put(IclijConfigConstants.AUTOSIMULATEINVESTENDDATE, endDateOrig);
             }
             return ret;
         }
