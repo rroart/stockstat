@@ -512,6 +512,7 @@ public class SimulateInvestComponent extends ComponentML {
                         Map<String, Object> map = new HashMap<>();
                         map.put(SimConstants.HISTORY, aResult.history);
                         map.put(SimConstants.STOCKHISTORY, aResult.stockhistory);
+                        map.put(SimConstants.PLOTCAPITAL, aResult.plotCapital);
                         map.put(SimConstants.SCORE, score);
                         map.put(SimConstants.STARTDATE, TimeUtil.convertDate2(investStart));
                         map.put(SimConstants.ENDDATE, TimeUtil.convertDate2(investEnd));

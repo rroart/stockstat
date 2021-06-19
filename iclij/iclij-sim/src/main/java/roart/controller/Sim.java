@@ -691,7 +691,7 @@ public class Sim {
                     List alist = (List) map4.get(SimConstants.HISTORY);
                     List<StockHistory> history = mapper.convertValue(alist, new TypeReference<List<StockHistory>>(){});
                     List alist2 = (List) map4.get(SimConstants.STOCKHISTORY);
-
+                    List plotCapital = (List) map4.get(SimConstants.PLOTCAPITAL);
                     List<SimulateStock> stockhistory = mapper.convertValue(alist2, new TypeReference<List<SimulateStock>>(){});
                     int jj = 0;
                     Double ascore = (Double) map4.get(SimConstants.SCORE);
@@ -701,6 +701,7 @@ public class Sim {
                     Map<String, Object> newMap = new HashMap<>();
                     newMap.put(SimConstants.HISTORY, history);
                     newMap.put(SimConstants.STOCKHISTORY, stockhistory);
+                    newMap.put(SimConstants.PLOTCAPITAL, plotCapital);
                     newMap.put(SimConstants.SCORE, ascore);
                     newMap.put(SimConstants.STARTDATE, startdate);
                     newMap.put(SimConstants.ENDDATE, enddate);
