@@ -81,12 +81,15 @@ public class MathUtil {
         return objs;
     }
 
-    public static double[] getGeoSeq(double[] cap) {
-        double[] geom = new double[cap.length];
-        Double first = cap[0];
-        Double last = cap[cap.length - 1];        
-        for (int i = 0; i < cap.length - 1; i++) {
-            geom[i] = first * Math.pow((double)last/first, (double) i/(cap.length - 1));
+    public static double[] getGeoSeq(double[] array) {
+        if (array == null || array.length == 1) {
+            return array;
+        }
+        double[] geom = new double[array.length];
+        Double first = array[0];
+        Double last = array[array.length - 1];        
+        for (int i = 0; i < array.length - 1; i++) {
+            geom[i] = first * Math.pow((double)last/first, (double) i/(array.length - 1));
         }
         return geom;
     }
