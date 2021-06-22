@@ -31,4 +31,5 @@ module aggregate {
     requires pipeline.common;
     requires stockutil;
     requires stocketl;
+    requires ml.pytorch;
 }

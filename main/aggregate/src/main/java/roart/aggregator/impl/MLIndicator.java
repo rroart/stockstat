@@ -39,6 +39,7 @@ import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.ResultMetaConstants;
 import roart.common.ml.NeuralNetCommand;
+import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
@@ -482,6 +483,14 @@ public class MLIndicator extends Aggregator {
                     if (neuralnetcommand.isMlcross()) {
                         classifyMap = learnMap;
                     }
+                    if (nnconfigs == null) {
+                        String key = model.getKey();
+                        nnconfigs = new NeuralNetConfigs();
+                        String configValue = (String) conf.getValueOrDefault(key);
+                        if (configValue != null) {
+                            NeuralNetConfig nnconfig = nnconfigs.getAndSetConfig(key, configValue);
+                        }
+                    }
                     LearnTestClassifyResult result = mldao.learntestclassify(nnconfigs, this, learnMap, model, arrayLength, cats, mapTime, classifyMap, labelMapShort, path, filename, neuralnetcommand, mlmeta, true);  
                     if (result == null) {
                         continue;
@@ -611,6 +620,14 @@ public class MLIndicator extends Aggregator {
                     String filename = getFilename(mldao, model, "" + arrayLength, "" + cats, conf.getMarket(), indicators, threshold);
                     String path = model.getPath();
                     boolean mldynamic = conf.wantMLDynamic();
+                    if (nnconfigs == null) {
+                        String key = model.getKey();
+                        nnconfigs = new NeuralNetConfigs();
+                        String configValue = (String) conf.getValueOrDefault(key);                                
+                        if (configValue != null) {
+                            NeuralNetConfig nnconfig = nnconfigs.getAndSetConfig(key, configValue);
+                        }
+                    }
                     Callable callable = new MLClassifyLearnTestPredictCallable(nnconfigs, mldao, this, learnMap, model, arrayLength, cats, mapTime, classifyMap, labelMapShort, path, filename, neuralnetcommand, mlmeta);  
                     Future<LearnTestClassifyResult> future = MyExecutors.run(callable, 1);
                     futureList.add(future);
