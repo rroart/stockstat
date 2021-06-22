@@ -302,6 +302,7 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.SIMULATEINVESTDAY, Integer.class);
         map.put(IclijConfigConstants.SIMULATEINVESTFUTURECOUNT, Integer.class);
         map.put(IclijConfigConstants.SIMULATEINVESTFUTURETIME, Integer.class);
+        map.put(IclijConfigConstants.SIMULATEINVESTIMPROVEFILTERS, Boolean.class);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL, Integer.class);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTINTERVALWHOLE, Boolean.class);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTPERIOD, Integer.class);
@@ -312,6 +313,7 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTVOLUMELIMITS, String.class);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTFUTURECOUNT, Integer.class);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTFUTURETIME, Integer.class);
+        map.put(IclijConfigConstants.AUTOSIMULATEINVESTIMPROVEFILTERS, Boolean.class);
         map.put(IclijConfigConstants.IMPROVESIMULATEINVESTEVOLUTIONCONFIG, String.class);
         map.put(IclijConfigConstants.IMPROVEAUTOSIMULATEINVESTEVOLUTIONCONFIG, String.class);
         map.put(IclijConfigConstants.IMPROVESIMULATEINVESTAUTORUN, Boolean.class);
@@ -558,6 +560,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.SIMULATEINVESTVOLUMELIMITS, null);
         deflt.put(IclijConfigConstants.SIMULATEINVESTFUTURECOUNT, 0);
         deflt.put(IclijConfigConstants.SIMULATEINVESTFUTURETIME, 0);
+        deflt.put(IclijConfigConstants.SIMULATEINVESTIMPROVEFILTERS, Boolean.FALSE);
         deflt.put(IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL, 0);
         deflt.put(IclijConfigConstants.AUTOSIMULATEINVESTINTERVALWHOLE, Boolean.FALSE);
         deflt.put(IclijConfigConstants.AUTOSIMULATEINVESTPERIOD, 0);
@@ -568,6 +571,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.AUTOSIMULATEINVESTVOLUMELIMITS, null);
         deflt.put(IclijConfigConstants.AUTOSIMULATEINVESTFUTURECOUNT, 0);
         deflt.put(IclijConfigConstants.AUTOSIMULATEINVESTFUTURETIME, 0);
+        deflt.put(IclijConfigConstants.AUTOSIMULATEINVESTIMPROVEFILTERS, Boolean.FALSE);
         deflt.put(IclijConfigConstants.IMPROVESIMULATEINVESTEVOLUTIONCONFIG, OTHEREVOLUTIONCONFIG);
         deflt.put(IclijConfigConstants.IMPROVEAUTOSIMULATEINVESTEVOLUTIONCONFIG, OTHEREVOLUTIONCONFIG);
         deflt.put(IclijConfigConstants.IMPROVESIMULATEINVESTAUTORUN, Boolean.FALSE);
@@ -859,6 +863,7 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.SIMULATEINVESTFUTURECOUNT, "Simulate invest future cunt");
         text.put(IclijConfigConstants.SIMULATEINVESTFUTURETIME, "Simulate invest future time");
         text.put(IclijConfigConstants.SIMULATEINVESTVOLUMELIMITS, "Simulate invest volume limits");
+        text.put(IclijConfigConstants.SIMULATEINVESTIMPROVEFILTERS, "Simulate invest improve filters");
         text.put(IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL, "Auto Simulate invest interval");
         text.put(IclijConfigConstants.AUTOSIMULATEINVESTINTERVALWHOLE, "Auto Simulate invest interval whole");
         text.put(IclijConfigConstants.AUTOSIMULATEINVESTPERIOD, "Auto Simulate invest period");
@@ -869,6 +874,7 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.AUTOSIMULATEINVESTVOLUMELIMITS, "Auto Simulate invest volume limits");
         text.put(IclijConfigConstants.AUTOSIMULATEINVESTFUTURECOUNT, "Auto Simulate invest future count");
         text.put(IclijConfigConstants.AUTOSIMULATEINVESTFUTURETIME, "Auto Simulate invest future time");
+        text.put(IclijConfigConstants.AUTOSIMULATEINVESTIMPROVEFILTERS, "Auto Simulate invest improve filters");
         text.put(IclijConfigConstants.IMPROVESIMULATEINVESTEVOLUTIONCONFIG, "Improve simulate invest evolution config");
         text.put(IclijConfigConstants.IMPROVEAUTOSIMULATEINVESTEVOLUTIONCONFIG, "Improve auto simulate invest evolution config");
         text.put(IclijConfigConstants.IMPROVESIMULATEINVESTAUTORUN, "Enable improve simulate invest autorun");
@@ -1191,6 +1197,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.SIMULATEINVESTFUTURECOUNT, new IclijXMLType(Integer.class, 0, "Simulate invest future count"));
         mymap.put(IclijConfigConstants.SIMULATEINVESTFUTURETIME, new IclijXMLType(Integer.class, 0, "Simulate invest future time"));
         mymap.put(IclijConfigConstants.SIMULATEINVESTVOLUMELIMITS, new IclijXMLType(String.class, null, "Simulate invest volume limits"));
+        mymap.put(IclijConfigConstants.SIMULATEINVESTIMPROVEFILTERS, new IclijXMLType(Boolean.class, Boolean.FALSE, "Simulate invest improve filters"));
         mymap.put(IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL, new IclijXMLType(Integer.class, 0, "Auto Simulate invest interval"));
         mymap.put(IclijConfigConstants.AUTOSIMULATEINVESTINTERVALWHOLE, new IclijXMLType(Boolean.class, 0, "Auto Simulate invest interval whole"));
         mymap.put(IclijConfigConstants.AUTOSIMULATEINVESTPERIOD, new IclijXMLType(Integer.class, 0, "Auto Simulate invest period"));
@@ -1201,6 +1208,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.AUTOSIMULATEINVESTVOLUMELIMITS, new IclijXMLType(String.class, null, "Auto Simulate invest volume limits"));
         mymap.put(IclijConfigConstants.AUTOSIMULATEINVESTFUTURECOUNT, new IclijXMLType(Integer.class, 0, "Auto Simulate invest future count"));
         mymap.put(IclijConfigConstants.AUTOSIMULATEINVESTFUTURETIME, new IclijXMLType(Integer.class, 0, "Auto Simulate invest future time"));
+        mymap.put(IclijConfigConstants.AUTOSIMULATEINVESTIMPROVEFILTERS, new IclijXMLType(Boolean.class, Boolean.FALSE, "Auto Simulate invest improve filters"));
         mymap.put(IclijConfigConstants.IMPROVESIMULATEINVESTEVOLUTIONCONFIG, new IclijXMLType(String.class, OTHEREVOLUTIONCONFIG, "Improve simulate invest evolution config"));
         mymap.put(IclijConfigConstants.IMPROVEAUTOSIMULATEINVESTEVOLUTIONCONFIG, new IclijXMLType(String.class, OTHEREVOLUTIONCONFIG, "Improve auto simulate invest evolution config"));
         mymap.put(IclijConfigConstants.IMPROVESIMULATEINVESTAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve simulate invest autorun"));

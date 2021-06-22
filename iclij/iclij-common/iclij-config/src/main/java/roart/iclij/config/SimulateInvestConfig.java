@@ -91,6 +91,8 @@ public class SimulateInvestConfig {
     
     private List<SimulateFilter> filters;
     
+    private Boolean improveFilters;
+    
     public SimulateInvestConfig() {
         super();
     }
@@ -391,6 +393,14 @@ public class SimulateInvestConfig {
         this.filters = filters;
     }
 
+    public Boolean getImproveFilters() {
+        return improveFilters;
+    }
+
+    public void setImproveFilters(Boolean improveFilters) {
+        this.improveFilters = improveFilters;
+    }
+
     public void merge(SimulateInvestConfig other) {
         if (other == null) {
             return;
@@ -506,6 +516,9 @@ public class SimulateInvestConfig {
         if (other.filters != null) {
             this.filters = other.filters;
         }
+        if (other.improveFilters != null) {
+            this.improveFilters = other.improveFilters;
+        }
     }
     
     public Map<String, Object> asMap() {
@@ -552,6 +565,7 @@ public class SimulateInvestConfig {
             simfilterString = convert(filters);
         }
         map.put(IclijConfigConstants.SIMULATEINVESTFILTERS, simfilterString);
+        map.put(IclijConfigConstants.SIMULATEINVESTIMPROVEFILTERS, improveFilters);
         return map;
     }
     
@@ -629,6 +643,7 @@ public class SimulateInvestConfig {
                 && Objects.equals(noconfidencetrenddecreaseTimes, s.noconfidencetrenddecreaseTimes)
                 && Objects.equals(indicatorDirection, s.indicatorDirection)
                 && Objects.equals(indicatorDirectionUp, s.indicatorDirectionUp)
+                && Objects.equals(improveFilters, s.improveFilters)
                 && Objects.equals(filters, s.filters);
     }
 }

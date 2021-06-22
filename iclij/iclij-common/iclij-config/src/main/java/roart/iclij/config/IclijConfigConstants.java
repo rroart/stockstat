@@ -285,6 +285,8 @@ public class IclijConfigConstants {
     // special
     public static final String SIMULATEINVESTFILTERS = "simulateinvest.filters";
     // special
+    public static final String SIMULATEINVESTIMPROVEFILTERS = "simulateinvest.improvefilters";
+    // special
     public static final String SIMULATEINVESTSTARTDATE = "simulateinvest.startdate";
     public static final String SIMULATEINVESTENDDATE = "simulateinvest.enddate";
     public static final String IMPROVESIMULATEINVEST = "improvesimulateinvest";
@@ -308,6 +310,8 @@ public class IclijConfigConstants {
     public static final String AUTOSIMULATEINVESTVOLUMELIMITS = "autosimulateinvest.volumelimits";
     // special
     public static final String AUTOSIMULATEINVESTFILTERS = "autosimulateinvest.filters";
+    // special
+    public static final String AUTOSIMULATEINVESTIMPROVEFILTERS = "autosimulateinvest.improvefilters";
     public static final String SINGLEMARKETEVOLVEFIRSTONLY = "singlemarket.evolvefirstonly";
     public static final String SINGLEMARKETLOOPS = "singlemarket.loops";
     public static final String SINGLEMARKETLOOPINTERVAL = "singlemarket.loopinterval";

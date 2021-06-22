@@ -763,6 +763,10 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTFILTERS);
     }
 
+    public boolean getSimulateInvestImproveFilters() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTIMPROVEFILTERS);
+    }
+
     public String getSimulateInvestStartdate() {
         return (String) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTSTARTDATE);
     }
@@ -825,6 +829,10 @@ public class IclijConfig {
 
     public String getAutoSimulateInvestFilters() {
         return (String) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
+    }
+
+    public boolean getAutoSimulateInvestImproveFilters() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTIMPROVEFILTERS);
     }
 
     public int getAutoSimulateInvestFutureCount() {

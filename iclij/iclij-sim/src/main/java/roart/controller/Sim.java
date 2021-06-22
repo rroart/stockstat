@@ -160,7 +160,7 @@ public class Sim {
                 } else {
                     summary.add(new Summary(true, "Correlation"));                
                 }
-               if (filter.getLucky() > 0) {
+                if (filter.getLucky() > 0) {
                     getLucky(resultMap, filter, output, summary);
                 } else {
                     summary.add(new Summary(true, "Lucky"));                
@@ -483,27 +483,10 @@ public class Sim {
             if (history.isEmpty()) {
                 continue;
             }
-            StockHistory last = history.get(history.size() - 1);
-            double lasttotal = last.getCapital().amount + last.getSum().amount;
-            List<Double> values = new ArrayList<>();
-            StockHistory firstHistory = history.get(0);
-            double prevtotal = firstHistory.getCapital().amount + firstHistory.getSum().amount;
-            for (StockHistory aHistory : history) {
-                double total = aHistory.getCapital().amount + aHistory.getSum().amount;
-                values.add(total - prevtotal);
-                prevtotal = total;
-            }
-            Collections.sort(values);
-            Collections.reverse(values);
-            double total = 0;
-            int count = 1 + values.size() / 10;
-            for (int i = 0; i < count; i++) {
-                total += values.get(i);
-            }
-            if (total / lasttotal > filter.getStable()) {
-                stable = false;
-                //break;
-            }
+            List<Double> list = new ArrayList<>();
+            stable |= SimUtil.isStable(filter, history, list);
+            double total = list.get(0);
+            double lasttotal = list.get(1);
             output.add("Stable " + MathUtil.round(total, 2) + " " + MathUtil.round(lasttotal, 2) + " " + MathUtil.round(total / lasttotal, 2));
         }
         summary.add(new Summary(stable, "Stable"));
@@ -514,25 +497,13 @@ public class Sim {
         for (Entry<String, Object> entry : resultMap.entrySet()) {
             Map<String, Object> aMap = (Map<String, Object>) entry.getValue();
             List<Double> capitalList = (List<Double>) aMap.get(SimConstants.PLOTCAPITAL);
-            if (capitalList.isEmpty()) {
+            if (capitalList.size() < 2) {
                 continue;
             }
-            Double[] capArray = capitalList.toArray(new Double[0]);
-            double[] cap = ArraysUtil.convert(capArray);
-            double[] geom = MathUtil.getGeoSeq(cap);
-            SpearmansCorrelation sc = new SpearmansCorrelation();
-            double sp = sc.correlation(cap, geom);
-            KendallsCorrelation kc = new KendallsCorrelation();
-            double ke = kc.correlation(cap, geom);
-            PearsonsCorrelation pc = new PearsonsCorrelation();
-            double pe = pc.correlation(cap, geom);
-            
-            double average = (sp + ke + pe) / 3;
-            if (average > filter.getStable()) {
-                correlation = false;
-                //break;
-            }
-            output.add("Correlation " + MathUtil.round(sp, 2) + " " + MathUtil.round(ke, 2) + " " + MathUtil.round(pe, 2) + " " + MathUtil.round(average, 2));
+            List<Double> correlations = new ArrayList<>();
+            correlation |= SimUtil.isCorrelating(filter, capitalList, correlations);
+            double average = correlations.stream().mapToDouble(e -> e).average().getAsDouble();
+            output.add("Correlation " + MathUtil.round(correlations.get(0), 2) + " " + MathUtil.round(correlations.get(1), 2) + " " + MathUtil.round(correlations.get(2), 2) + " " + MathUtil.round(average, 2));
         }
         summary.add(new Summary(correlation, "Correlation"));
     }

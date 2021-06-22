@@ -270,12 +270,21 @@ public class SimulateInvestComponent extends ComponentML {
                 Mydate mydate = new Mydate();
                 getAdjustedDate(data, investStart, offset, mydate);
                 Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> simConfigs;
+                List<SimulateFilter[]> filters = new ArrayList<>();
                 if (autoSimConfig == null) {
                     simConfigs = new HashMap<>();
+                    List<SimulateFilter> listoverride = filter; //simConfig.getFilters();
+                    List<SimulateFilter[]> list = getDefaultList();
+                    if (list != null) {
+                        filters.addAll(list);
+                    }
+                    if (listoverride != null) {
+                        mergeFilterList(list, listoverride);
+                    }
                     //simConfigs = new ArrayList<>();
                     //simConfigs.add(getSimConfig(config));
                 } else {
-                    simConfigs = getSimConfigs(market.getConfig().getMarket(), autoSimConfig, filter);
+                    simConfigs = getSimConfigs(market.getConfig().getMarket(), autoSimConfig, filter, filters);
                     simConfigs = new HashMap<>(simConfigs);
                 }
                 List<SimulateInvestConfig> simsConfigs = new ArrayList<>();
@@ -508,7 +517,50 @@ public class SimulateInvestComponent extends ComponentML {
                             stock.setStatus("END");
                         }
                         aResult.stockhistory.addAll(aOneRun.mystocks);
+                        boolean doFilter = (autoSimConfig != null && autoSimConfig.getImproveFilters()) || (autoSimConfig == null && simConfig.getImproveFilters());
+                        if (doFilter) {
+                            SimulateFilter afilter;
+                            if (autoSimConfig != null) {
+                                afilter = filters.get(0)[0];
+                            } else {
+                                afilter = filters.get(0)[currentSimConfig.getAdviser()];
+                            }
+                            if (afilter.getStable() > 0) {
+                                List<StockHistory> history = aResult.history;
+                                if (!history.isEmpty()) {
+                                    if (!SimUtil.isStable(afilter, history, null)) {
+                                        score = 0.0;
+                                    }
+                                }
+                            }
+                            if (afilter.getCorrelation() > 0) {
+                                if (!(aResult.plotCapital.size() < 2) && !SimUtil.isCorrelating(afilter, aResult.plotCapital, null)) {
+                                    score = 0.0;
+                                }
+                            }                        
+                            if (afilter.getLucky() > 0) {
+                                List<StockHistory> history = aResult.history;
+                                StockHistory last = history.get(history.size() - 1);
+                                double total = last.getCapital().amount + last.getSum().amount - 1;
+                                if (total > 0.0) {
+                                    List<Pair<String, Double>> list = SimUtil.getTradeStocks(aMap);
+                                    double max = 0;
+                                    if (!list.isEmpty()) {
+                                        max = list.get(0).getValue();
+                                    }
+                                    if (max / total > afilter.getLucky()) {
+                                        score = 0.0;
+                                    }
 
+                                }
+                            }
+                            if (afilter.getShortrun() > 0) {
+                                List<StockHistory> history = aResult.history;
+                                if (history.size() < afilter.getShortrun()) {
+                                    score = 0.0;
+                                }
+                            }
+                        }
                         Map<String, Object> map = new HashMap<>();
                         map.put(SimConstants.HISTORY, aResult.history);
                         map.put(SimConstants.STOCKHISTORY, aResult.stockhistory);
@@ -652,7 +704,7 @@ public class SimulateInvestComponent extends ComponentML {
         data.filteredCategoryValueFillMap.keySet().removeAll(configExcludeSet);
     }
 
-    private Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> getSimConfigs(String market, AutoSimulateInvestConfig autoSimConf, List<SimulateFilter> filter) {
+    private Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> getSimConfigs(String market, AutoSimulateInvestConfig autoSimConf, List<SimulateFilter> filter, List<SimulateFilter[]> filters) {
         List<SimDataItem> all = new ArrayList<>();
         try {
             String simkey = CacheConstants.SIMDATA + market + autoSimConf.getStartdate() + autoSimConf.getEnddate();
@@ -683,19 +735,13 @@ public class SimulateInvestComponent extends ComponentML {
         }
         List<SimulateFilter[]> list = null;
         if (autoSimConf != null) {
-            IclijConfig instance = IclijXMLConfig.getConfigInstance();
-            try {
-                list = IclijXMLConfig.getSimulate(instance);
-            } catch (Exception e) {
-                log.error(Constants.EXCEPTION, e);
-            }
             List<SimulateFilter> listoverride = autoSimConf.getFilters();
+            list = getDefaultList();
+            if (list != null) {
+                filters.addAll(list);
+            }
             if (listoverride != null) {
-                for (int i = 0; i < listoverride.size(); i++) {
-                    SimulateFilter afilter = list.get(0)[i];
-                    SimulateFilter otherfilter = listoverride.get(i);
-                    afilter.merge(otherfilter);
-                }
+                mergeFilterList(list, listoverride);
             }
         }
         String listString = JsonUtil.convert(list);
@@ -788,6 +834,25 @@ public class SimulateInvestComponent extends ComponentML {
         retMap = newRetMap;
         MyCache.getInstance().put(key, retMap);
         return retMap;
+    }
+
+    private void mergeFilterList(List<SimulateFilter[]> list, List<SimulateFilter> listoverride) {
+        for (int i = 0; i < listoverride.size(); i++) {
+            SimulateFilter afilter = list.get(0)[i];
+            SimulateFilter otherfilter = listoverride.get(i);
+            afilter.merge(otherfilter);
+        }
+    }
+
+    private List<SimulateFilter[]> getDefaultList() {
+        List<SimulateFilter[]> list = null;
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+        try {
+            list = IclijXMLConfig.getSimulate(instance);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return list;
     }
 
     private void getAdjustedDate(Data data, LocalDate investStart, int offset, Mydate mydate) {
@@ -1620,6 +1685,11 @@ public class SimulateInvestComponent extends ComponentML {
         simConfig.setConfidencetrendincreaseTimes(config.wantsSimulateInvestConfidenceTrendIncreaseTimes());
         simConfig.setNoconfidencetrenddecrease(config.wantsSimulateInvestNoConfidenceTrendDecrease());
         simConfig.setNoconfidencetrenddecreaseTimes(config.wantsSimulateInvestNoConfidenceTrendDecreaseTimes());
+        try {
+        simConfig.setImproveFilters(config.getSimulateInvestImproveFilters());
+        } catch (Exception e) {
+            int jj = 0;
+        }
         simConfig.setInterval(config.getSimulateInvestInterval());
         simConfig.setIndicatorPure(config.wantsSimulateInvestIndicatorPure());
         simConfig.setIndicatorRebase(config.wantsSimulateInvestIndicatorRebase());
@@ -1630,7 +1700,7 @@ public class SimulateInvestComponent extends ComponentML {
         try {
             simConfig.setPeriod(config.getSimulateInvestPeriod());
         } catch (Exception e) {
-
+            int jj = 0;
         }
         simConfig.setStoploss(config.wantsSimulateInvestStoploss());
         simConfig.setStoplossValue(config.getSimulateInvestStoplossValue());
@@ -1649,6 +1719,12 @@ public class SimulateInvestComponent extends ComponentML {
         Map<String, Double> map = JsonUtil.convert(config.getSimulateInvestVolumelimits(), Map.class);
         simConfig.setVolumelimits(map);
 
+        SimulateFilter[] array = JsonUtil.convert(config.getSimulateInvestFilters(), SimulateFilter[].class);
+        List<SimulateFilter> list = null;
+        if (array != null) {
+            list = Arrays.asList(array);
+        }
+        simConfig.setFilters(list);
         try {
             simConfig.setEnddate(config.getSimulateInvestEnddate());
         } catch (Exception e) {
@@ -1669,6 +1745,7 @@ public class SimulateInvestComponent extends ComponentML {
         AutoSimulateInvestConfig simConfig = new AutoSimulateInvestConfig();
         simConfig.setInterval(config.getAutoSimulateInvestInterval());
         simConfig.setIntervalwhole(config.getAutoSimulateInvestIntervalwhole());
+        simConfig.setImproveFilters(config.getAutoSimulateInvestImproveFilters());
         simConfig.setPeriod(config.getAutoSimulateInvestPeriod());
         simConfig.setLastcount(config.getAutoSimulateInvestLastCount());
         simConfig.setDellimit(config.getAutoSimulateInvestDelLimit());

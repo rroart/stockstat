@@ -41,6 +41,8 @@ public class AutoSimulateInvestConfig {
     
     private List<SimulateFilter> filters;
     
+    private Boolean improveFilters;
+    
     private Integer ga;
     
     public String getStartdate() {
@@ -147,6 +149,14 @@ public class AutoSimulateInvestConfig {
         this.filters = filters;
     }
 
+    public Boolean getImproveFilters() {
+        return improveFilters;
+    }
+
+    public void setImproveFilters(Boolean improveFilters) {
+        this.improveFilters = improveFilters;
+    }
+
     public Integer getGa() {
         return ga;
     }
@@ -182,6 +192,7 @@ public class AutoSimulateInvestConfig {
             simfilterString = convert(filters);
         }
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS, simfilterString);
+        map.put(IclijConfigConstants.AUTOSIMULATEINVESTIMPROVEFILTERS, improveFilters);
         return map;
     }
     

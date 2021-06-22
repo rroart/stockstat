@@ -58,7 +58,7 @@ public class ImproveSimulateInvestComponent extends ComponentML {
             List<Double> scores = new ArrayList<>();
             scores.add(scoreMap.get(SimConstants.SCORE));
             if (param.getInput().getConfig().getSimulateInvestFutureCount() > 0) {
-                ComponentData newComponentData = new ComponentData(param);
+                ComponentData newComponentData = new SimulateInvestData(param);
                 IclijConfig config = newComponentData.getInput().getConfig();
                 int count = config.getSimulateInvestFutureCount();
                 int time = config.getSimulateInvestFutureTime();
@@ -126,7 +126,7 @@ public class ImproveSimulateInvestComponent extends ComponentML {
         //evolutionConfig.setSelect(6);
 
         Object filters = param.getConfigValueMap().remove(IclijConfigConstants.SIMULATEINVESTFILTERS);
-        filters = param.getInput().getValuemap().remove(IclijConfigConstants.SIMULATEINVESTFILTERS);
+        filters = param.getInput().getValuemap().get(IclijConfigConstants.SIMULATEINVESTFILTERS);
         Map<String, Object> confMap = new HashMap<>();
         // confmap
         ComponentData e = evolve.evolve(action, param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap , evolutionConfig, getPipeline(), this, confList);
