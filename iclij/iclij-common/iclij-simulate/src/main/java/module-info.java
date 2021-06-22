@@ -13,4 +13,6 @@ module iclij.common.simulate {
     requires iclij.common.util;
     requires common.util;
     requires org.apache.commons.lang3;
+    requires commons.math3;
+    requires iclij.common.config;
 }
