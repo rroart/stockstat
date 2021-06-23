@@ -489,6 +489,8 @@ public class MLIndicator extends Aggregator {
                         String configValue = (String) conf.getValueOrDefault(key);
                         if (configValue != null) {
                             NeuralNetConfig nnconfig = nnconfigs.getAndSetConfig(key, configValue);
+                        } else {
+                            nnconfigs = null;
                         }
                     }
                     LearnTestClassifyResult result = mldao.learntestclassify(nnconfigs, this, learnMap, model, arrayLength, cats, mapTime, classifyMap, labelMapShort, path, filename, neuralnetcommand, mlmeta, true);  
@@ -626,6 +628,8 @@ public class MLIndicator extends Aggregator {
                         String configValue = (String) conf.getValueOrDefault(key);                                
                         if (configValue != null) {
                             NeuralNetConfig nnconfig = nnconfigs.getAndSetConfig(key, configValue);
+                        } else {
+                            nnconfigs = null;
                         }
                     }
                     Callable callable = new MLClassifyLearnTestPredictCallable(nnconfigs, mldao, this, learnMap, model, arrayLength, cats, mapTime, classifyMap, labelMapShort, path, filename, neuralnetcommand, mlmeta);  
