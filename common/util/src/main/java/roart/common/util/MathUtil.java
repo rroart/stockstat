@@ -88,7 +88,7 @@ public class MathUtil {
         double[] geom = new double[array.length];
         Double first = array[0];
         Double last = array[array.length - 1];        
-        for (int i = 0; i < array.length - 1; i++) {
+        for (int i = 0; i < array.length; i++) {
             geom[i] = first * Math.pow((double)last/first, (double) i/(array.length - 1));
         }
         return geom;
