@@ -51,6 +51,9 @@ public class SimUtil {
     }
 
     public static boolean isCorrelating(SimulateFilter filter, List<Double> capitalList, List<Double> correlations) {
+        if (capitalList.get(0).equals(capitalList.get(capitalList.size() - 1))) {
+            return true;
+        }
         Double[] capArray = capitalList.toArray(new Double[0]);
         double[] cap = ArraysUtil.convert(capArray);
         double[] geom = MathUtil.getGeoSeq(cap);
