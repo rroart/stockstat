@@ -121,8 +121,19 @@ public class SimulateInvestComponent extends ComponentML {
         // extradelay: buy and sell is on the same date, just an approx
         // delay: days after buy/sell decision.
         
+        String conffilters = (String) param.getConfigValueMap().remove(IclijConfigConstants.SIMULATEINVESTFILTERS);
+        String confautofilters = (String) param.getConfigValueMap().remove(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
         AutoSimulateInvestConfig autoSimConfig = getAutoSimConfig(config);
         SimulateInvestConfig simConfig = getSimConfig(config);
+        // coming from improvesim
+        List<SimulateFilter> filter = get(conffilters);
+        List<SimulateFilter> autofilter = get(confautofilters);
+        if (simConfig != null) {
+            filter = simConfig.getFilters();
+        }
+        if (autoSimConfig != null) {
+            autofilter = autoSimConfig.getFilters();
+        }
         //Integer overrideAdviser = null;
         boolean evolving = param instanceof SimulateInvestData;
         if (!(param instanceof SimulateInvestData)) {
@@ -176,8 +187,8 @@ public class SimulateInvestComponent extends ComponentML {
             extradelay = simConfig.getExtradelay();
         }
         // coming from improvesim
-        List<SimulateFilter> filter = simConfig.getFilters();
-        simConfig.setFilters(null);
+        //List<SimulateFilter> filter = simConfig.getFilters();
+        //simConfig.setFilters(null);
         Data data = new Data();
         if (simulateParam.getStockDates() != null) {
             data.stockDates = simulateParam.getStockDates();
@@ -284,7 +295,7 @@ public class SimulateInvestComponent extends ComponentML {
                     //simConfigs = new ArrayList<>();
                     //simConfigs.add(getSimConfig(config));
                 } else {
-                    simConfigs = getSimConfigs(market.getConfig().getMarket(), autoSimConfig, filter, filters);
+                    simConfigs = getSimConfigs(market.getConfig().getMarket(), autoSimConfig, autofilter, filters);
                     simConfigs = new HashMap<>(simConfigs);
                 }
                 List<SimulateInvestConfig> simsConfigs = new ArrayList<>();
@@ -474,7 +485,6 @@ public class SimulateInvestComponent extends ComponentML {
                     if (score > 100) {
                         int jj = 0;
                     }
-                    scores.add(score);
                     if (score.isNaN()) {
                         int jj = 0;
                     }
@@ -496,7 +506,7 @@ public class SimulateInvestComponent extends ComponentML {
                             map.put(SimConstants.STARTDATE, investStart);
                             map.put(SimConstants.ENDDATE, investEnd);
                             map.put(SimConstants.FILTER, JsonUtil.convert(filter));
-                            List<Pair<String, Double>> tradeStocks = SimUtil.getTradeStocks(map);
+                            List<Pair<String, Double>> tradeStocks = SimUtil.getTradeStocks(aResult.stockhistory);
                             map.put(SimConstants.TRADESTOCKS, tradeStocks);
                             param.getUpdateMap().putAll(map);
                             param.getUpdateMap().putIfAbsent("lastbuysell", "Not buying or selling today");
@@ -540,18 +550,19 @@ public class SimulateInvestComponent extends ComponentML {
                             }                        
                             if (afilter.getLucky() > 0) {
                                 List<StockHistory> history = aResult.history;
-                                StockHistory last = history.get(history.size() - 1);
-                                double total = last.getCapital().amount + last.getSum().amount - 1;
-                                if (total > 0.0) {
-                                    List<Pair<String, Double>> list = SimUtil.getTradeStocks(aMap);
-                                    double max = 0;
-                                    if (!list.isEmpty()) {
-                                        max = list.get(0).getValue();
+                                if (!history.isEmpty()) {
+                                    StockHistory last = history.get(history.size() - 1);
+                                    double total = last.getCapital().amount + last.getSum().amount - 1;
+                                    if (total > 0.0) {
+                                        List<Pair<String, Double>> list = SimUtil.getTradeStocks(aResult.stockhistory);
+                                        double max = 0;
+                                        if (!list.isEmpty()) {
+                                            max = list.get(0).getValue();
+                                        }
+                                        if (max / total > afilter.getLucky()) {
+                                            score = 0.0;
+                                        }
                                     }
-                                    if (max / total > afilter.getLucky()) {
-                                        score = 0.0;
-                                    }
-
                                 }
                             }
                             if (afilter.getShortrun() > 0) {
@@ -577,6 +588,7 @@ public class SimulateInvestComponent extends ComponentML {
                         //map.put("market", market.getConfig().getMarket());
                         resultMap.put("" + offset, map);
                     }
+                    scores.add(score);
                 }
             }
             if (evolving) {
@@ -735,7 +747,7 @@ public class SimulateInvestComponent extends ComponentML {
         }
         List<SimulateFilter[]> list = null;
         if (autoSimConf != null) {
-            List<SimulateFilter> listoverride = autoSimConf.getFilters();
+            List<SimulateFilter> listoverride = filter; //autoSimConf.getFilters();
             list = getDefaultList();
             if (list != null) {
                 filters.addAll(list);
@@ -1738,6 +1750,15 @@ public class SimulateInvestComponent extends ComponentML {
         return simConfig;
     }
 
+    private List<SimulateFilter> get(String json) {
+        SimulateFilter[] array = JsonUtil.convert(json, SimulateFilter[].class);
+        List<SimulateFilter> list = null;
+        if (array != null) {
+            list = Arrays.asList(array);
+        }
+        return list;
+    }
+    
     private AutoSimulateInvestConfig getAutoSimConfig(IclijConfig config) {
         if (config.getConfigValueMap().get(IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL) == null || (int) config.getConfigValueMap().get(IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL) == 0) {
             return null;

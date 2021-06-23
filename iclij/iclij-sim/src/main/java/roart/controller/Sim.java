@@ -73,6 +73,12 @@ public class Sim {
         List<Pair<Double, AbstractChromosome>> myList = (List<Pair<Double, AbstractChromosome>>) myMap.get(id);
         if (myList.size() > 0) {
             //for ()
+            for (Pair<Double, AbstractChromosome> aPair : myList) {
+                IclijConfigMapChromosome aChromosome = (IclijConfigMapChromosome) aPair.getValue();
+                Map<String, Object> aMap = aChromosome.getMap();
+                aMap.remove(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
+                aMap.remove(IclijConfigConstants.SIMULATEINVESTFILTERS);
+            }
             Map<String, String> shortMap;
             if (!b) {
                 shortMap = getAutoShortMap();
@@ -454,7 +460,8 @@ public class Sim {
             if (total == 0.0) {
                 continue;
             }
-            List<Pair<String, Double>> list = SimUtil.getTradeStocks(aMap);
+            List<SimulateStock> stockhistory = (List<SimulateStock>) aMap.get(SimConstants.STOCKHISTORY);
+            List<Pair<String, Double>> list = SimUtil.getTradeStocks(stockhistory);
             int cnt = 3;
             for (Pair<String, Double> anEntry : list) {
                 output.add(anEntry.getKey() + " " + MathUtil.round(anEntry.getValue(), 2) + " " + MathUtil.round(anEntry.getValue() / total, 2));
