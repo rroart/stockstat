@@ -23,9 +23,8 @@ import roart.simulate.model.SimulateStock;
 import roart.simulate.model.StockHistory;
 
 public class SimUtil {
-    public static List<Pair<String, Double>> getTradeStocks(Map<String, Object> aMap) {
+    public static List<Pair<String, Double>> getTradeStocks(List<SimulateStock> stockhistory) {
         List<Pair<String, Double>> list = new ArrayList<>();
-        List<SimulateStock> stockhistory = (List<SimulateStock>) aMap.get(SimConstants.STOCKHISTORY);
         Map<String, List<SimulateStock>> stockMap = new HashMap<>();
         for (SimulateStock aStock : stockhistory) {
             new MiscUtil().listGetterAdder(stockMap, aStock.getId(), aStock);
