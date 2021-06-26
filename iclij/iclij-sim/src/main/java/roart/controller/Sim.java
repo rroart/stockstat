@@ -509,8 +509,14 @@ public class Sim {
             }
             List<Double> correlations = new ArrayList<>();
             correlation |= SimUtil.isCorrelating(filter, capitalList, correlations);
-            double average = correlations.stream().mapToDouble(e -> e).average().getAsDouble();
-            output.add("Correlation " + MathUtil.round(correlations.get(0), 2) + " " + MathUtil.round(correlations.get(1), 2) + " " + MathUtil.round(correlations.get(2), 2) + " " + MathUtil.round(average, 2));
+            if (!correlations.isEmpty()) {
+                OptionalDouble averageOpt = correlations.stream().mapToDouble(e -> e).average();
+                double average = averageOpt.orElse(0);
+                output.add("Correlation " + MathUtil.round(correlations.get(0), 2) + " " + MathUtil.round(correlations.get(1), 2) + " " + MathUtil.round(correlations.get(2), 2) + " " + MathUtil.round(average, 2));
+            } else {
+                double average = 1.0;
+                output.add("Correlation " + MathUtil.round(average, 2));                
+            }
         }
         summary.add(new Summary(correlation, "Correlation"));
     }
