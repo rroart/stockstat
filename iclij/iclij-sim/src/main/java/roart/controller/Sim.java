@@ -491,7 +491,7 @@ public class Sim {
                 continue;
             }
             List<Double> list = new ArrayList<>();
-            stable |= SimUtil.isStable(filter, history, list);
+            stable &= SimUtil.isStable(filter, history, list);
             double total = list.get(0);
             double lasttotal = list.get(1);
             output.add("Stable " + MathUtil.round(total, 2) + " " + MathUtil.round(lasttotal, 2) + " " + MathUtil.round(total / lasttotal, 2));
@@ -508,7 +508,7 @@ public class Sim {
                 continue;
             }
             List<Double> correlations = new ArrayList<>();
-            correlation |= SimUtil.isCorrelating(filter, capitalList, correlations);
+            correlation &= SimUtil.isCorrelating(filter, capitalList, correlations);
             if (!correlations.isEmpty()) {
                 OptionalDouble averageOpt = correlations.stream().mapToDouble(e -> e).average();
                 double average = averageOpt.orElse(0);
