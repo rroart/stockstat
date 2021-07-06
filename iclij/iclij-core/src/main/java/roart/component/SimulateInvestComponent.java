@@ -86,6 +86,8 @@ public class SimulateInvestComponent extends ComponentML {
 
     private static final boolean VERIFYCACHE = false;
     
+    private static final int MAXARR = 0;
+    
     @Override
     public void enable(Map<String, Object> valueMap) {
     }
@@ -345,6 +347,9 @@ public class SimulateInvestComponent extends ComponentML {
                                 data, lastInvest, mydate, autoSimConfig != null, stockDatesBiMap);
                     }
                     if (autoSimConfig != null) {
+                        if (MAXARR > 0 && !simTriplets.isEmpty() && simTriplets.get(0).getMiddle().autoscore != null && simTriplets.get(0).getMiddle().autoscore > 0) {
+                            Collections.shuffle(simTriplets);
+                        }
                         for (Triple<SimulateInvestConfig, OneRun, Results> aPair : simTriplets) {
                             SimulateInvestConfig aSimConfig = aPair.getLeft();
                             OneRun aOneRun = aPair.getMiddle();
@@ -387,6 +392,33 @@ public class SimulateInvestComponent extends ComponentML {
                         // no. hits etc may be reset if changed
                         // winnerAdviser
                         Collections.sort(simTriplets, (o1, o2) -> Double.compare(o2.getMiddle().autoscore, o1.getMiddle().autoscore));
+                        if (MAXARR > 0) {
+                            if (MAXARR < 11) {
+                                if (!simTriplets.isEmpty() && simTriplets.get(0).getMiddle().autoscore > 0) {
+                                    Integer[] advs = new Integer[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+                                    List<Triple<SimulateInvestConfig, OneRun, Results>> new2 = new ArrayList<>();
+                                    int i = 0;
+                                    for (int j = 0; i < MAXARR && j < simTriplets.size(); j++) {
+                                        int adv = simTriplets.get(j).getLeft().getAdviser();
+                                        if (advs[adv] == null) {
+                                            continue;
+                                        }
+                                        advs[adv] = null;
+                                        new2.add(simTriplets.get(j));
+                                        i++;
+                                    }
+                                    if (simTriplets.size() != new2.size()) {
+                                        for (Triple<SimulateInvestConfig, OneRun, Results> anew : new2) {
+                                            SimulateInvestConfig aconf = anew.getLeft();
+                                            log.info("" + aconf.asValuedMap());
+                                        }
+                                    }
+                                    simTriplets = new2;
+                                }
+                            } else {
+                                simTriplets = simTriplets.subList(0, Math.min(MAXARR, simTriplets.size()));
+                            }
+                        }
                         // overwrite/merge currentOnerun etc
                         // and get new date range
                         // and remove old or bad
@@ -396,6 +428,9 @@ public class SimulateInvestComponent extends ComponentML {
                         List<Triple<SimulateInvestConfig, OneRun, Results>> newSimTriplets = getTriples(market, param, data,
                                 investStart, investEnd, mydate, simsConfigs);
                         if (newSimTriplets.size() > 0) {
+                            if (MAXARR > 0) {
+                                //newSimTriplets = newSimTriplets.subList(0, Math.min(MAXARR, simTriplets.size()));
+                            }
                             List<Double> alist = simTriplets.stream().map(o -> (o.getMiddle().capital.amount + getSum(o.getMiddle().mystocks).amount)).collect(Collectors.toList());
                             log.info("alist {}", alist);
                             double autolimit = autoSimConfig.getDellimit();
@@ -407,7 +442,7 @@ public class SimulateInvestComponent extends ComponentML {
                         List<Double> alist = simTriplets.stream().map(o -> (o.getMiddle().autoscore)).collect(Collectors.toList());
                         log.info("alist {}", alist);
                         OneRun oneRun = simTriplets.get(0).getMiddle();
-                        if (oneRun.autoscore != null && oneRun.autoscore > autoSimConfig.getAutoscorelimit()) {
+                        if (oneRun.runs > 1 && oneRun.autoscore != null && oneRun.autoscore > autoSimConfig.getAutoscorelimit()) {
                             currentOneRun.adviser = oneRun.adviser;
                             currentOneRun.hits = SerializationUtils.clone(oneRun.hits);
                             currentOneRun.trendDec = SerializationUtils.clone(oneRun.trendDec);
