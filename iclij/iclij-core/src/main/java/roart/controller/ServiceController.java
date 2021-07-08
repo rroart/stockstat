@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import roart.common.cache.MyCache;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.iclij.config.AutoSimulateInvestConfig;
@@ -251,4 +252,10 @@ public class ServiceController {
         return ServiceUtil.getImproveAboveBelow(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()));
     }
 
+    @RequestMapping(value = "cache/invalidate",
+            method = RequestMethod.POST)
+    public void cacheinvalidate()
+            throws Exception {
+        MyCache.getInstance().invalidate();          
+    }
 }

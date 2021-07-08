@@ -325,4 +325,10 @@ public class ServiceController implements CommandLineRunner {
         MyCache.setCacheTTL(instance.getCacheTTL());
     }
     
+    @RequestMapping(value = "cache/invalidate",
+            method = RequestMethod.POST)
+    public void cacheinvalidate()
+            throws Exception {
+        MyCache.getInstance().invalidate();
+    }
 }

@@ -94,4 +94,10 @@ public class MyCache {
         return object;
     }
     
+    public void invalidate() {
+        if (!cacheme) {
+            return;
+        }
+        cache.invalidateAll();
+    }
 }
