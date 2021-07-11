@@ -45,6 +45,8 @@ public class AutoSimulateInvestConfig {
     
     private Integer ga;
     
+    private Boolean vote;
+    
     public String getStartdate() {
         return startdate;
     }
@@ -165,6 +167,14 @@ public class AutoSimulateInvestConfig {
         this.ga = ga;
     }
 
+    public Boolean getVote() {
+        return vote;
+    }
+
+    public void setVote(Boolean vote) {
+        this.vote = vote;
+    }
+
     public AutoSimulateInvestConfig() {
         super();
     }
@@ -180,6 +190,7 @@ public class AutoSimulateInvestConfig {
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTLASTCOUNT, lastcount);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTSTARTDATE, startdate);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTENDDATE, enddate);
+        map.put(IclijConfigConstants.AUTOSIMULATEINVESTVOTE, vote);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTFUTURECOUNT, futurecount);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTFUTURETIME, futuretime);
         String volumelimitString = null;

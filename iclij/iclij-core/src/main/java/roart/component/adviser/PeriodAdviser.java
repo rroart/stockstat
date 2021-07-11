@@ -54,6 +54,9 @@ public class PeriodAdviser extends Adviser {
             Integer cat = period; //new MetaUtil().getCategory(meta, period);
             //Map<String, Object> resultMaps = param.getResultMap(""+ cat, aMap);
             Map<String, Map<String, Object>> resultMaps = param.getResultMaps();
+            if (resultMaps == null) {
+                int jj = 0;
+            }
             Map<String, Object> objectMaps = resultMaps.get("" + cat);
             if (objectMaps == null) {
                 categoryValueMap = new HashMap<>();

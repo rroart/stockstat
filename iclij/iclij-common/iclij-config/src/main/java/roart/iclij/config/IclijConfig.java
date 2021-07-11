@@ -823,6 +823,10 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTENDDATE);
     }
 
+    public boolean getAutoSimulateInvestVote() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTVOTE);
+    }
+
     public String getAutoSimulateInvestVolumelimits() {
         return (String) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTVOLUMELIMITS);
     }

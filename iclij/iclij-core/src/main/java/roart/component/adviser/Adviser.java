@@ -29,6 +29,8 @@ public abstract class Adviser {
 
     protected Map<Integer, List<Pair<String, Double>>> valueMap;
     
+    protected Object object;
+    
     public Adviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param, SimulateInvestConfig simulateConfig) {
         this.market = market;
         this.investStart = investStart;
@@ -44,4 +46,8 @@ public abstract class Adviser {
 
     public abstract void getValueMap(List<String> stockDates, int firstidx2, int lastidx2,
             Map<String, List<List<Double>>> categoryValueMap);
+
+    public void setExtra(Object object) {
+        this.object = object;
+    }
 }

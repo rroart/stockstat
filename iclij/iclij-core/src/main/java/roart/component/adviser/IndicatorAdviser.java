@@ -73,7 +73,7 @@ public abstract class IndicatorAdviser extends Adviser {
                 resultMaps = simulateParam.getResultMaps();
             }
             if (resultMaps == null || resultMaps.isEmpty()) {
-                int jj = 0;
+                int  jj = 0;
             }
             Integer cat = (Integer) resultMaps.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
             String catName = new MetaUtil().getCategory(meta, cat);
