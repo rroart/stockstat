@@ -372,7 +372,7 @@ public class SimulateInvestComponent extends ComponentML {
                         }
                     }
                     if (currentSimConfig != null) {
-                        if (!simTriplets.isEmpty() && simTriplets.get(0).getMiddle().autoscore != 0 && autoSimConfig.getVote() != null && autoSimConfig.getVote()) {
+                        if (!simTriplets.isEmpty() && simTriplets.get(0).getMiddle().autoscore != null && simTriplets.get(0).getMiddle().autoscore != 0 && autoSimConfig.getVote() != null && autoSimConfig.getVote()) {
                             List<String> buys = new ArrayList<>();
                             //Collections.sort(simTriplets, (o1, o2) -> Double.compare(o2.getMiddle().autoscore, o1.getMiddle().autoscore));
                             List<Triple<SimulateInvestConfig, OneRun, Results>> new2 = getAdviserTriplets(simTriplets);
