@@ -1,5 +1,5 @@
 output "projectid" {
-  value = resource.gitlab_project.stockstatproject.id
+  value = resource.gitlab_project.stockstat.id
 }
 
 output "userid" {

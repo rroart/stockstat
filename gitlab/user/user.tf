@@ -18,7 +18,7 @@ resource "gitlab_user" "stockstat" {
   name             = "Stockstat Gitlab"
   username         = "stockstat"
   password         = "stockstat"
-  email            = "gitlab@user.create"
+  email            = "gitlab@localhost"
   is_admin         = true
   projects_limit   = 4
   can_create_group = false
@@ -26,14 +26,14 @@ resource "gitlab_user" "stockstat" {
   reset_password   = false
 }
 
-resource "gitlab_project" "stockstatproject" {
-  name        = "stockstat project"
+resource "gitlab_project" "stockstat" {
+  name        = "stockstat"
   description = "Stockstat project"
   visibility_level = "public"
 }
 
 resource "gitlab_project_membership" "stockstatprojectmember" {
-  project_id   = resource.gitlab_project.stockstatproject.id
+  project_id   = resource.gitlab_project.stockstat.id
   user_id      = resource.gitlab_user.stockstat.id
   access_level = "maintainer"
 }
