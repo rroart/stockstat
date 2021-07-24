@@ -6,7 +6,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import edu.stanford.nlp.pipeline.Annotation;
-import roart.model.parse.ParseData;
+import roart.iclij.model.parse.ParseData;
 import roart.parse.MyParse;
 
 public class MyParseTest {

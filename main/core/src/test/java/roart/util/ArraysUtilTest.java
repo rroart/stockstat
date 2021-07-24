@@ -7,13 +7,14 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import roart.common.constants.Constants;
 import roart.common.util.ArraysUtil;
 
 import static org.junit.Assert.*;
 
 public class ArraysUtilTest {
+    private String interpolationmethod = Constants.FFILL;
     private static double[] array = { 1,1,1,1,1,1,1,1,-1,-1,-1,-1,-1,1,1,1,1};
-    
     @Test
     public void testSearchForward() throws Exception {
         Map<Integer, Integer>[] map = ArraysUtil.searchForward(array, 0);
@@ -24,8 +25,8 @@ public class ArraysUtilTest {
         assertEquals(pos.get(0), new Integer(7));
         assertEquals(pos.get(13), new Integer(16));
         assertEquals(neg.get(8), new Integer(12));  
-        Map<Integer, Integer> newPos = ArraysUtil.getAcceptedRanges(pos, 5, 5, array.length);
-        Map<Integer, Integer> newNeg = ArraysUtil.getAcceptedRanges(neg, 5, 5, array.length);
+        Map<Integer, Integer> newPos = ArraysUtil.getAcceptedRanges(pos, 5, 5, array.length, true);
+        Map<Integer, Integer> newNeg = ArraysUtil.getAcceptedRanges(neg, 5, 5, array.length, true);
         System.out.println("newpos " + newPos);
         System.out.println("newneg " + newNeg);
         assertEquals(newPos.size(), 1);
@@ -52,7 +53,7 @@ public class ArraysUtilTest {
     public void testGetArrayNonNullReverse2() {
         Double[] list = new Double[]{2.0, null, 1.0};
         double[] values = new double[list.length];
-        int num = ArraysUtil.getArrayNonNullReverse(list, values);
+        int num = ArraysUtil.getArrayNonNullReverse(Arrays.asList(list), values);
         assertEquals(num, 2);
         assertEquals(values[0], 1, 0.1);
     }  
@@ -79,12 +80,12 @@ public class ArraysUtilTest {
         Double[] nullist = new Double[]{null, null, null, null};
         //ArraysUtil.getPercentizedPriceIndex(null, null);
         //ArraysUtil.getPercentizedPriceIndex(null, "Price");
-        ArraysUtil.getPercentizedPriceIndex(nullist, "Price");
+        //ArraysUtil.getPercentizedPriceIndex(nullist, "Price");
         Double[] list = new Double[]{null, 200.0, 50.0, 125.0};
-        ArraysUtil.getPercentizedPriceIndex(list, null);
-        ArraysUtil.getPercentizedPriceIndex(list, "");
+        ArraysUtil.getPercentizedPriceIndex(null, list);
+        //ArraysUtil.getPercentizedPriceIndex(list, "");
         assertEquals(list[1], 200.0, 0.1);
-        ArraysUtil.getPercentizedPriceIndex(list, "Price");
+        list = ArraysUtil.getPercentizedPriceIndex(list, list);
         assertEquals(list[2], 25.0, 0.1);
       
     }
