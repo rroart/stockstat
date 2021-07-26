@@ -30,6 +30,7 @@ resource "gitlab_project" "stockstat" {
   name        = "stockstat"
   description = "Stockstat project"
   visibility_level = "public"
+  shared_runners_enabled = true
 }
 
 resource "gitlab_project_membership" "stockstatprojectmember" {

@@ -10,11 +10,11 @@ terraform {
 provider "gitlab" {
     #GITLAB_TOKEN
     #GITLAB_BASE_URL 
-    insecure = true
 }
 
 resource "gitlab_project" "stockstat" {
   name        = "stockstat"
   description = "Stockstat project"
   visibility_level = "public"
+  shared_runners_enabled = true
 }
