@@ -26,6 +26,7 @@ variables:
 image: maven:3.3.9-jdk-8
 
 before_script:
+  - apt update
   - apt install npm
 
 # Cache downloaded dependencies and plugins between builds.
