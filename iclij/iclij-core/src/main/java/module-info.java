@@ -18,9 +18,7 @@ module iclij.core {
     requires common.service;
     requires common.util;
     requires common.cache;
-    requires commons;
     requires commons.math3;
-    requires deductive;
     //requires guava;
     requires iclij.common.componentdata;
     requires iclij.common.config;
@@ -33,8 +31,6 @@ module iclij.core {
     requires iclij.common.simulate;
     requires java.xml;
     requires javax.servlet.api;
-    requires math;
-    requires pl;
     requires slf4j.api;
     requires spring.beans;
     requires spring.boot;
@@ -62,4 +58,9 @@ module iclij.core {
     //requires springfox.spi;
     //requires springfox.spring.web;
     //requires springfox.swagger2;
+    //tweety:
+    //requires commons;
+    //requires deductive;
+    //requires math;
+    //?requires pl;
 }
