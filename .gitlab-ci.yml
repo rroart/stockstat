@@ -23,7 +23,7 @@ variables:
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
 
 # This template uses jdk8 for verifying and deploying images
-image: maven:3.3.9-jdk-8
+image: maven:3.6.3-openjdk-15
 
 before_script:
   - apt update
