@@ -26,6 +26,7 @@ variables:
 image: maven:3.6.3-openjdk-15
 
 before_script:
+  - ls /etc /bin /usr/bin
   - yum update
   - yum install npm
 
