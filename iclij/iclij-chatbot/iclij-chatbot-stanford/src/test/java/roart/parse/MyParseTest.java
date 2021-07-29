@@ -11,7 +11,8 @@ import roart.parse.MyParse;
 
 public class MyParseTest {
 
-    @Test
+    //Gitlab and heap space
+    //@Test
     public void method2() {
         String question = "Which is the best performing commodity stock?";
         System.out.println("q2 " + question);
