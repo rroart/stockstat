@@ -50,7 +50,9 @@ cache:
       fi
     - echo "OTHERBRANCH" $OTHERBRANCH
     - git config --list
-    - git checkout origin $OTHERBRANCH
+    - git checkout origin/$OTHERBRANCH
+    - git fetch
+    - git checkout origin/$OTHERBRANCH
     - git branch -a
     - echo git merge $OTHERBRANCH $CI_COMMIT_BRANCH
     #- git merge $OTHERBRANCH $CI_COMMIT_BRANCH
