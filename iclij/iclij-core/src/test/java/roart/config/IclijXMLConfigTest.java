@@ -33,9 +33,10 @@ public void test() throws JsonParseException, JsonMappingException, IOException 
     List<MarketConfig> l = new ArrayList<>();
     l.add(m);
     ObjectMapper mapper = new ObjectMapper();
+    
     System.out.println(mapper.writeValueAsString(l));
-    IclijConfig conf = IclijXMLConfig.getConfigInstance();
-    List<Market> ret = IclijXMLConfig.getMarkets(conf);
+    //IclijConfig conf = IclijXMLConfig.getConfigInstance();
+    //List<Market> ret = IclijXMLConfig.getMarkets(conf);
     //List<MarketFilter> ret2 = IclijXMLConfig.getFilterMarkets(conf);
 }
 }
