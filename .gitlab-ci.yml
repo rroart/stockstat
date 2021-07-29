@@ -49,6 +49,7 @@ cache:
         OTHERBRANCH=develop
       fi
     - echo "OTHERBRANCH" $OTHERBRANCH
+    - git checkout $OTHERBRANCH
     - git branch -a
     - echo git merge $OTHERBRANCH $CI_COMMIT_BRANCH
     #- git merge $OTHERBRANCH $CI_COMMIT_BRANCH
