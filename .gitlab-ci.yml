@@ -50,7 +50,7 @@ cache:
       fi
     - echo "OTHERBRANCH" $OTHERBRANCH
     - git config --list
-    - git checkout origin/$OTHERBRANCH
+    #- git checkout origin/$OTHERBRANCH
     - git fetch
     - git checkout origin/$OTHERBRANCH
     - git branch -a
