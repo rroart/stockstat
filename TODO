@@ -8,76 +8,269 @@ R: Reject
 
 B:
 
-Caused by: org.hibernate.HibernateException: Mismatched flush handling
-afree tf with oom full stop
-new cuda error
-B: tf cuda oom
+0801
+block market when db update
+stockdates
+day/evening
+use abovebelow for more skips
+mvn test
+D param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Buy interference
+D autoscore != 0 (was > 0)
+redo omxs 2021-01-01
+     tradcurr 2018-12-01
+high score in sim table
+Db input send msg about invalidate cache (I261)
+Autosimulate vote adviser with most buys of other advisers (I260)
+morning evening
+autosim 2 diff
+ose this week
+sweden trend
+-> miss filters
+-> resultmaps == null?
+use default winner for ml evolve
+plot / plotdef?
+manual look
+dont retry too long ml evolve
+x pri order check
+x autoscorelimit tuning
+x ab.bel.save
+x improves overlaps
+R pycli auto record
+save evolve state and continue
+afree verify
+markettime deps... (I258)
+R rabbit destroptmp
+nordfund startoffset ok
+x extradelay=2
+... and other weird
+@config table feedback...
+@current feedback, more feedback, with event trigg new ml
+WC: ML reconfig default configs based on evolution (I25)
+@config table with score
+@config save whole updatemap
+Python validate order (I254)
+open, last/close (I253)
+Java new datasource (I252)
+x add negative selloff
+x skip sim now and del
+?profile...
+x use filter config in getSimsconfigs
+0319 lucky value
+0618 lucky 0
+?simconfig
+opt more loop
+impprof score & save?
+lucky check
+deltas off?
+gzip
+kjør nordetf u excl
+check buy/sell prices with real
+grep big error
+x extradelay check days
+x extradelay
+x nordfund last
+#check verificationdays use, missing day
+#check startoffset use
+#nordetf startoffset
+R num rabbitprocs
+score calc...
+reserve sourcer
+R cboe
+lastbuysell only if last
+Evening run vs morning run
+evolution algorithm trading
+kafka dwh pipeline
+x sonar android
+mlindicator 2d construction simplify (I219)
+harmonize ind.aggr/mlind wrt mls
 
+Config, common, fixed and non-fixed
+input invalidate cache
+jcasc
+Jenk
+Gitlab
+jenkinstxt
+jenk+mergemaster
+findprofit / populate speedup
+drop buyweight
+mlmissing
+
+optimize timeutil convert
+Memory leaks (I236)
+lost ref allIncDecs
+lost ref componentData
+lost ref hashMap ups
+populate swallows all
+
+????:
+grep not found
+update delay
+cancel stoploss if up?
+check nordf extradelay
+no excludes?
+only use one catvalmap
+other param and imp ab bel
+? simulateinvestsG('ose', '2018-01-01', '2020-01-01', nch=t, i=3, d=3, cv=1.0, stv=0.58, a=4, ip=f, m=f, st=t, istv=0.99, s=5, ist=t, b=f, ir=t, f=f, ch=t, c=f, ct=6, w=1, iw=t, ib=t, p=1)
+ i=1, nctd=f, cv=0.55, stv=0.61, ctit=1, s=3, ist=f, ir=f, f=t, idu=f, ch=f, id=f, nctdt=7, p=2, nch=t, d=18, a=4, ip=t, m=t, st=f, istv=0.97, b=f, c=t, ct=4, w=1, cti=f, iw=t, ib=t)
+ i=1, nctd=t, cv=0.82, stv=0.74, ctit=1, s=4, ist=t, ir=t, f=f, idu=f, ch=t, id=f, nctdt=6, p=9, nch=f, d=5, a=4, ip=f, m=t, st=t, istv=0.53, b=f, c=f, ct=1, w=1, cti=t, iw=t, ib=t 
+
+golden x
+
+kongsberg auto
+?isin diffs (contextvision)
+graph cxense interpol both pyt and java graph
+ select distinct(date) from stock where marketid='ose' and date not in (select date from stock where id='1300289' and marketid='ose');
+select * from stock where date = '2019-06-25 00:00:00.649';
+$tradstoc xu100 indexval
+$ose nordfund annualized period
+$getvalues("nordfund", "CL00013636", "2020-01-13", None, ["Price"])
+
+^getandsetcatvalmap w/ indicators false?
+
+
+stochrsi using two limits
+incdec too few?
+indagg/mlind w/ empty checks
+mlmulti w single component?
+
+tf predictor evolve in out
+
+cnn2 more use (I222)
 tf cnn
-AttributeError: 'GRU' object has no attribute '_flat_weights_names'
 classifyprobarray w/ NaN MLClassifyPytorchAccess.java:324
-x AttributeError: 'Net' object has no attribute 'b1'
-
-meta lhc nordetf ose
-!grant lhc
-!(cause owner = postgres)
-!Caused by: org.postgresql.util.PSQLException: ERROR: must be owner of relation meta
-timing description too long?
-
-empty stock -> loop, very short dates, error
 
 ********
 
 C/F:
 
+findprofit t/f loop check if needed
+
+Check usages of componentinput getenddate if to use param.futuredate?
+
+
 !findprofit disable low ml scores
 !findprofit filter by ml score thresh 1.0, save all
-!F: Use ML testaccuracy in Iclij for Incdec confidence (I26)
 !try 1.10 0.9, without pre-filter, check output with thresh future
 !verify rerun records findprofit, should not, comp 202 servutil 739, dosave?
-C: Change default for rerun, memory filter (I179)
-Web with manual runs (I179)
+!rerun get different results on the same
+!empty values, description trunc
 
 F: Automation, Terraform, Skaffold, Docker (I155)
 
-WC: Round to digits (I152)
+WC: Improvefilter to be used the same way as improveabovebelow (I215)
+WC: Improveprofit use only testaccuracy (I214)
 Remove noise (I169)
 T: Optimize (I131)
+Use LinkedHashSet due to removeAll, optimize (I131)
 B: Relations (I133)
 !?: configmapchromosome some parts are not chromosome?
 !C: Configmapchromosome with gene (I159)
 !WC: Evolution refactor, chromosome to contain gene, containing config, move fitness (I111)
-!WF: Jenetics (I160)
+WF: Jenetics (I160)
+F: Choose evolution genetic algorithm (I225)
+abstract chromosome copy and keep ascending
 Sonar (I182)
 C: Use above below not inc dec buy sell (I120)
-ml capabilities (I151)
+F: ml capabilities (I151)
+
+%C: Change default for rerun, memory filter (I179)
+%Web with manual runs (I179)
+WF: Apache Commons genetic algorithm (I191)
+!extra with cy?
+WC: Don't use reversed date lists for Python etc (I209)
+WF: evolve predictor (I198)
+??!findprofit predictor and also empty list
+WB: ML enable/disable and predictor fix (I199)
+threshold predictors pureevolve
+T: Evolve add incdecthreshold
+predictor w/ threshold
+F: client dynamic react graph (I205)
+WC: Pipeline structure, fill, interpol, base100, remove weekend, merge cy (I210)
+WC: Move period to list with market and id (I221)
+WC: Move intervaldays (I217)
+
+T: python ml
+mlclasstens and send exception
+pred ml tens error
+pt 1.4 tf 2.1
+WF: Add datasets (I142)
+Angular crash
+benchmark!
+pulsar split
+aggregatorrecommenderindicator
 
 controlservice remove empty dates
-nordetf, check startoffset use
-check verificationdays use
 return if no ml servers
-relation w/ isin
+!relation w/ isin
+!nordetf relation
 rerun? has memory, should not
 !improvefilter, with loadconfig
 !nextbool for null
-ose nordfund annualized period
 findprofit also use latest stored memory?
-evolve predictor
-findprofit predictor empty list
-stockdates minusdays
-daystocks...
+feedback from evolve
+avg score
+simulate: above below sell adviser
+IndicatorUtils.findMinMax null key
+$mldate format and restart ml
+$abovebeladv w/ mldate
+empty stock -> loop, very short dates, error
+spark upgrade
+T: incompleted change for ind.agg. learntestclassifyfuture
+nordetf otherml
+WC: web async, fargate timeout (I189)
+WC: For R Python Scala merge cy years (I201)
+Merge web servers (I242)
 
-T: python ml
-pt 1.4 tf 2.1
-WF: Add datasets (I142)
-Angular env, Angular crash
-web async, fargate timeout
-benchmark!
+Exception in thread "Thread-45" java.lang.NullPointerException: Cannot invoke "String.split(String)" because "title" is null
+        at roart.controller.Evolve.method4(Evolve.java:259)
 
-(I183)
+(I262)
+
 !unused I numbers
 !git log|grep "(I"|cut -f2 -d\( |cut -f1 -d\)|cut -c2- |sort -n|uniq > /tmp/fi2
 !for X in `seq 0 180`; do echo $X >> /tmp/fi; done
+
+D excludes too big
+D many max
+D day/period getvaluepairs
+D nordetf high timing
+D last... too many st
+D scores? volume...
+D db volume fix
+D use volume minimum
+D hold if up?
+D sells overlaps hold
+D iclij sent to core
+D config cy/price
+D check period1/cy incdec
+D don't fix cy
+D pyt missing/hole handling
+D try without base100
+D improve timing
+D imp nordetf 2018
+D confidence 1 -> some
+D fit w/ whole interval
+D hist 0 adviser
+D - startdate enddate in output
+D simconfig fixed values
+D nordfund delay
+D weird
+D 6 missing
+D 2 x getco
+D simulateinvest.period=3
+R sell picker
+D? mom / value resize
+D ose 1 day off
+D macd/cur*first
+D getincs split
+D bad perform?
+D alos ind agg
+D len objmap
+D indic source rsi
+D ose end sum
+D ind sour also signal
+D use stockdates?
+W extend df + sort
 
 ********
 
@@ -198,7 +391,6 @@ T: Exception handling
 T: Narrow down number of categories contstructed
 T: Make stock value to return a new class instead of double[]
 T: Dataimport zero/content check
-T: Change result map keys, due to overlap
 
 Database
 B: Getdates null
@@ -277,9 +469,9 @@ C: miscmydays, tabledays?
 Data
 B: my box import does not work
 B: nasdaq verify loop
-F: Use volume
 F: Add interest
 B: 0.0 as ose value cboeval index, set null in db
+C: metadata with period type
 
 All
 WF: change date system to from to
@@ -319,7 +511,6 @@ F: Iclij verif show new ml config
 B: future verifydays 8 not 10 (I51)
 ?: improve evolvefirst?
 F: Iclij mltimes
-WC: ML reconfig default configs based on evolution (I25)
 F: ML use test result (I28)
 WB: findprofit loop if empty market incdec result
 T: Refactor iclij (I70)
@@ -351,20 +542,17 @@ C: For evolution don't mutate disabled dependencies (I108)
 RC: Predictor LSTM normalize at 100
 C: Evolve individual print out diffs (I113)
 WF: More ML hyperparameters, dropout, activate function, weight init, opt, loss (I116)
-B: Future parallell problem (I122)
-WT: Hibernate transactions (I123)
+%B: Future parallell problem (I122)
+%Gpu shared resource, for parallel
 RC: Mlclassifymodel with config and steps for filename
 C: Change classes to 2 when only 2 (I127)
 C: IBM MER (I128)
 t: configitem getall market
 
-threshold predictors pureevolve
-T: Evolve add incdecthreshold
 crosstestaction predictor loss none?
 config filter/marketfilter
 indicatorrec npe
 improve w/ filter
-Mlindicator improve w/ importants
 mlindicator cnn2 skip training if empty
 incdec check saving only on findp
 incdec with comp sub etc
@@ -379,7 +567,7 @@ Caused by: com.fasterxml.jackson.databind.JsonMappingException: Null key for a M
 
 ml pri
 deprecate dopredict etc
-recommender/predictor w/ threshold
+recommender w/ threshold
 multi v suff/result meta with mix index
 RC: Merge LSTM with others
 tradstoc etc nov 22 23
@@ -550,6 +738,62 @@ fitAction.java:214)
 
 --
 
+Improve simulate with early filter (I259)
+Improve simulate invest to use future results (I257)
+Identify and use events (I256)
+Refactor Component (I255)
+Python new datasource (I251)
+Paralell adviser algorithm using sim feedback (I250)
+Market disable (I249)
+Parameterize sim filter (I248)
+Display with ohlc (I247)
+WB: Merge current years value check (I246)
+WC: Mlindicator improve w/ importants/extras (I245)
+WC: Communication with small msg and data in memory (I243)
+WB: Null check when element missing (I241)
+WF: Processing other evolution results (I240)
+WF: Extend evolution chromosome with result data (I239)
+WC: Change result map keys, due to overlap (I238)
+Immutability (I237)
+WF: Cache (I235)
+WF: Version bump 0.6 for communication (I234)
+WF: Refactor into communication (I233)
+WF: Communication layer with many backends (I232)
+WF: REST communication (I231)
+WF: Stream communication (I230)
+WF: Message communication (I229)
+WF: Integration communication (I228)
+WC: Config for merge current years (I227)
+WF: Market config with interpolate, generic interpolate (I226)
+WB: Chromosome did not set with crossover gene (I224)
+WB: Evolution mutate count bug (I223)
+WF: Simulate invest action (I220)
+WC: Drop resttemplate, use WebFlux (I244)
+WB: MLIndicator 2d construction fix for offset and key (I218)
+WB: Handle Tensorflow abort (I216)
+WB: Flask exception handling (I213)
+WB: ML server exception handling (I212)
+WC: Full crosstest from learning data (I211)
+WB: ML limits and offsets (I208)
+WC: Machinelearning set last date (I207)
+WB: Missing offset, and make code similar (I206)
+Display with moving average (I204)
+WB: Fix for date inclusive/exclusive (I203)
+WC: Skip (sub)components if mlmetrics says so (I202)
+WF: Populate findprofit history (I200)
+WC: Stockdates (I197)
+!F: Calculate expression, for gold/copper ratio etc (I196)
+F: Advance decline line (I195)
+F: OBV indicator (I194)
+F: Use volume (I193) 
+WC: Loop forward, change date and loopoffset use (I192)
+WC: Base memory and filter on incdec (I190)
+WF: Train accuracy (I188)
+WF: New improve above below action (I187)
+WB: Trend date fix (I186)
+WC: Find profit rerun and save (I185)
+WB: ResultMeta array and result array positioning (I184)
+WB: Description got too long (I183)
 WC: FindProfit memory filter disable (I181)
 WC: Split out pure iclij web from iclij-core (I180)
 WF: Meta for three values low, high, close (I178)
@@ -574,6 +818,7 @@ WC: Delete empty gui columns (I157)
 WF: ML server list (I156)
 WC: ResultMeta use change, with numbered array (I154)
 WC: MLIndicator with configurable number of output classes and ranges (I153)
+WC: Round to digits (I152)
 WC: Actions and UI to handle multiple thresholds and futuredays with separate above below (I150)
 WC: Action/component priorities (I149)
 WF: MLmarket menu (I148)
@@ -596,6 +841,7 @@ WC: Change ComponentMLAggregator handling of classification and offsetmap (I129)
 WC: Mlindicator also with 2D timeseries (I126)
 WC: Upgrade to Tensorflow 2 (I125)
 WC: GPU (I124)
+WT: HibernateUtil and transactions (I123)
 WC: React/Angular frontend (I121)
 WF: CNN 2D (I119)
 WC: Refactor predictor (I118)
@@ -691,13 +937,14 @@ DF: Evolve improvements for all 4 improvers (I4)
 DF: Improve MLMACD (I5)
 DF: Improve Predictor (I6)
 DC: run memories after evolution (I30)
+WF: Use ML testaccuracy in Iclij for Incdec confidence (I26)
 DC: lstm market config, override wantpred etc (I24)
 WF: restart interrupted find profit (I23)
 DF: Start with no recent data, then most time spenders (I27)
 DF: Shutdown, last run clock 22 (I22)
 DF: GUI with added timing data (I34)
 DB: Jackson can not find _class (I33)
-DC: Move Predictor out of Category (I17).
+DC: Move Predictor out of Category (I17)
 DC: JSON market/finder/improver evolve ml config (I9)
 DB: Iclij Predictor implement (I12)
 DB: When index/price is 0 change to null (I20)
@@ -752,3 +999,13 @@ DF: Implement clientqueue
 DF: Microservice sendme exception handling
 DF: GUI choice for do improveprofitaction
 DF: Drop classifier eval and get percentage when doing model learntest
+
+2021-01-01 10:50:28,493 ERROR [qtp98351968-9006] r.i.u.IndicatorUtils [IndicatorUtils.java:334] Exception
+java.util.NoSuchElementException: null
+        at java.base/java.util.ArrayList$Itr.next(ArrayList.java:894)
+        at java.base/java.util.Collections.min(Collections.java:598)
+        at roart.indicator.util.IndicatorUtils.findMinMax(IndicatorUtils.java:329)
+        at roart.indicator.util.IndicatorUtils.getDayIndicatorMap(IndicatorUtils.java:311)
+        at roart.aggregator.impl.MLIndicator.calculateMomentums(MLIndicator.java:323)
+        at roart.aggregator.impl.MLIndicator.<init>(MLIndicator.java:141)
+
