@@ -45,6 +45,7 @@ cache:
     - echo "COMMITBRANCH" $CI_COMMIT_BRANCH
     - echo "COMMITBRANCH" $CI_COMMIT_BRANCH
     - echo "COMMITBRANCH" $CI_COMMIT_BRANCH
+    - echo "COMMITBRANCH" $CI_COMMIT_BRANCH
     #- >
     #  if [ "$CI_COMMIT_BRANCH" == "develop" ]; then
     #    OTHERBRANCH=main
