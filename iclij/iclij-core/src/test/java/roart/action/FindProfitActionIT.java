@@ -4,12 +4,12 @@ import org.junit.Test;
 
 import roart.iclij.config.IclijXMLConfig;
 
-public class FindProfitActionTest {
+public class FindProfitActionIT {
     
     @Test
     public void test() {
         IclijXMLConfig.getConfigInstance();
-        new FindProfitAction().goal(null);
+        new FindProfitAction().goal(null, null, null);
     }
     
 }
