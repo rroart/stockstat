@@ -57,8 +57,9 @@ cache:
     - mkdir /tmp/s
     - cd /tmp/s
     - echo $CI_JOB_TOKEN
+    - git config --global http.sslVerify false
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${URL}
-    - git clone git@$URL
+    #- git clone git@$URL
     #- git fetch
     #- git checkout origin/$OTHERBRANCH
     #- git branch -a
