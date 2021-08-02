@@ -54,6 +54,9 @@ cache:
     - git checkout develop && echo ok
     - git remote add gitlab git@$URL
     - git checkout gitlab/$OTHERBRANCH && echo ok
+    - mkdir /tmp/s
+    - cd /tmp/s
+    - git clone $URL
     #- git fetch
     #- git checkout origin/$OTHERBRANCH
     #- git branch -a
