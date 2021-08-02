@@ -18,7 +18,7 @@ D param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Buy interference
 D autoscore != 0 (was > 0)
 redo omxs 2021-01-01
      tradcurr 2018-12-01
-     more...
+     more
 high score in sim table
 Db input send msg about invalidate cache (I261)
 Autosimulate vote adviser with most buys of other advisers (I260)
