@@ -56,6 +56,8 @@ cache:
     - git checkout gitlab/$OTHERBRANCH && echo ok
     - mkdir /tmp/s
     - cd /tmp/s
+    - echo $CI_JOB_TOKEN
+    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${URL}
     - git clone git@$URL
     #- git fetch
     #- git checkout origin/$OTHERBRANCH
