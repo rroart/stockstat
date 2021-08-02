@@ -42,21 +42,17 @@ cache:
   script:
     #- 'mvn $MAVEN_CLI_OPTS verify -pl !web'
     - echo "COMMITBRANCH" $CI_COMMIT_BRANCH
-    - echo "COMMITBRANCH" $CI_COMMIT_BRANCH
-    - echo "COMMITBRANCH" $CI_COMMIT_BRANCH
-    - echo "COMMITBRANCH" $CI_COMMIT_BRANCH
-    - echo "COMMITBRANCH" $CI_COMMIT_BRANCH
-    - echo "COMMITBRANCH" $CI_COMMIT_BRANCH
-    #- >
-    #  if [ "$CI_COMMIT_BRANCH" == "develop" ]; then
-    #    OTHERBRANCH=main
-    #  else
-    #    OTHERBRANCH=develop
-    #  fi
-    #- echo "OTHERBRANCH" $OTHERBRANCH
-    #- git config --list
-    #- URL=`git config remote.origin.url|cut -f2 -d@|cut -f1 -d/`
-    #- git checkout origin/$OTHERBRANCH
+    - >
+      if [ "$CI_COMMIT_BRANCH" == "develop" ]; then
+        OTHERBRANCH=master
+      else
+        OTHERBRANCH=develop
+      fi
+    - echo "OTHERBRANCH" $OTHERBRANCH
+    - git config --list
+    - URL=`git config remote.origin.url|cut -f2 -d@|cut -f1 -d/`
+    - git remote add gitlab git@url:root/stockstat.git
+    - git checkout gitlab/$OTHERBRANCH
     #- git fetch
     #- git checkout origin/$OTHERBRANCH
     #- git branch -a
