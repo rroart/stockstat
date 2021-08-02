@@ -50,9 +50,10 @@ cache:
       fi
     - echo "OTHERBRANCH" $OTHERBRANCH
     - git config --list
-    - URL=`git config remote.origin.url|cut -f2 -d@|cut -f1 -d/`
-    - git remote add gitlab git@url:root/stockstat.git
-    - git checkout gitlab/$OTHERBRANCH
+    - URL=`git config remote.origin.url|cut -f2 -d@`
+    - git checkout develop && echo ok
+    - git remote add gitlab git@$URL
+    - git checkout gitlab/$OTHERBRANCH && echo ok
     #- git fetch
     #- git checkout origin/$OTHERBRANCH
     #- git branch -a
