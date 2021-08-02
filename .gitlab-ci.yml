@@ -56,7 +56,7 @@ cache:
     - git checkout gitlab/$OTHERBRANCH && echo ok
     - mkdir /tmp/s
     - cd /tmp/s
-    - git clone $URL
+    - git clone git@$URL
     #- git fetch
     #- git checkout origin/$OTHERBRANCH
     #- git branch -a
