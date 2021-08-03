@@ -53,8 +53,8 @@ cache:
     - mkdir ../stockstatmerge
     - cd ../stockstatmerge
     - env | sort
-    - echo $MYDEPLOYTOKEN
-    - git clone https://root:${MYDEPLOYTOKEN}@${URL}
+    - echo $MYWRITETOKEN
+    - git clone https://root:${MYWRITETOKEN}@${URL}
     - cd stockstat
     - git checkout $OTHERBRANCH
     - git merge origin/$CI_COMMIT_BRANCH
