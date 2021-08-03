@@ -52,7 +52,7 @@ cache:
     - git config --global http.sslVerify false
     - mkdir ../stockstatmerge
     - cd ../stockstatmerge
-    - env
+    - env | sort
     - echo $MYDEPLOYTOKEN
     - git clone https://root:${MYDEPLOYTOKEN}@${URL}
     - cd stockstat
