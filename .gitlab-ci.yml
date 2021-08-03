@@ -52,7 +52,9 @@ cache:
     - git config --global http.sslVerify false
     - mkdir ../stockstatmerge
     - cd ../stockstatmerge
-    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${URL}
+    - env
+    - echo $MYDEPLOYTOKEN
+    - git clone https://root:${MYDEPLOYTOKEN}@${URL}
     - cd stockstat
     - git checkout $OTHERBRANCH
     - git merge origin/$CI_COMMIT_BRANCH
