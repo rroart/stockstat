@@ -40,7 +40,7 @@ cache:
 .verify: &verify
   stage: test
   script:
-    #- 'mvn $MAVEN_CLI_OPTS verify -pl !web'
+    - 'mvn $MAVEN_CLI_OPTS verify -pl !web'
     - >
       if [ "$CI_COMMIT_BRANCH" == "develop" ]; then
         OTHERBRANCH=master
@@ -52,14 +52,12 @@ cache:
     - git config --global http.sslVerify false
     - mkdir ../stockstatmerge
     - cd ../stockstatmerge
-    - env | sort
-    - echo $MYWRITETOKEN
     - git clone https://root:${MYWRITETOKEN}@${URL}
     - cd stockstat
     - git checkout $OTHERBRANCH
     - git merge origin/$CI_COMMIT_BRANCH
-    # - 'mvn $MAVEN_CLI_OPTS verify -pl !web'
-    - git push -o ci-skip
+    - 'mvn $MAVEN_CLI_OPTS verify -pl !web'
+    - git push
   except:
     variables:
       - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
