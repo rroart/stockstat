@@ -54,11 +54,16 @@ cache:
     - git checkout develop && echo ok
     - git remote add gitlab git@$URL
     - git checkout gitlab/$OTHERBRANCH && echo ok
+    - pwd
     - mkdir /tmp/s
     - cd /tmp/s
     - echo $CI_JOB_TOKEN
     - git config --global http.sslVerify false
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${URL}
+    - git checkout $OTHERBRANCH
+    - git merge $CI_COMMIT_BRANCH
+    # - 'mvn $MAVEN_CLI_OPTS verify -pl !web'
+    - git push
     #- git clone git@$URL
     #- git fetch
     #- git checkout origin/$OTHERBRANCH
