@@ -41,39 +41,23 @@ cache:
   stage: test
   script:
     #- 'mvn $MAVEN_CLI_OPTS verify -pl !web'
-    - echo "COMMITBRANCH" $CI_COMMIT_BRANCH
     - >
       if [ "$CI_COMMIT_BRANCH" == "develop" ]; then
         OTHERBRANCH=master
       else
         OTHERBRANCH=develop
       fi
-    - echo "OTHERBRANCH" $OTHERBRANCH
     - git config --list
     - URL=`git config remote.origin.url|cut -f2 -d@`
-    #- git checkout develop && echo ok
-    #- git remote add gitlab git@$URL
-    #- git checkout gitlab/$OTHERBRANCH && echo ok
-    #- pwd
-    #- mkdir /tmp/s
-    #- cd /tmp/s
-    #- echo $CI_JOB_TOKEN
     - git config --global http.sslVerify false
     - mkdir ../stockstatmerge
     - cd ../stockstatmerge
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${URL}
     - cd stockstat
     - git checkout $OTHERBRANCH
-    - git merge $CI_COMMIT_BRANCH
+    - git merge origin/$CI_COMMIT_BRANCH
     # - 'mvn $MAVEN_CLI_OPTS verify -pl !web'
     - git push
-    #- git clone git@$URL
-    #- git fetch
-    #- git checkout origin/$OTHERBRANCH
-    #- git branch -a
-    #- echo git merge $OTHERBRANCH $CI_COMMIT_BRANCH
-    #- git merge $OTHERBRANCH $CI_COMMIT_BRANCH
-    #- git push origin $OTHERBRANCH
   except:
     variables:
       - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
