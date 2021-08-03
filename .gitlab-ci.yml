@@ -57,7 +57,7 @@ cache:
     - git checkout $OTHERBRANCH
     - git merge origin/$CI_COMMIT_BRANCH
     # - 'mvn $MAVEN_CLI_OPTS verify -pl !web'
-    - git push
+    - git push -o ci-skip
   except:
     variables:
       - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
