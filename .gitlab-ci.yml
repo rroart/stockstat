@@ -62,6 +62,7 @@ cache:
     - mkdir ../stockstatmerge
     - cd ../stockstatmerge
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${URL}
+    - cd stockstat
     - git checkout $OTHERBRANCH
     - git merge $CI_COMMIT_BRANCH
     # - 'mvn $MAVEN_CLI_OPTS verify -pl !web'
