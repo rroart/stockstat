@@ -31,7 +31,6 @@ resource "gitlab_project" "stockstat" {
   description = "Stockstat project"
   visibility_level = "public"
   shared_runners_enabled = true
-  merge_method = "ff"
 }
 
 resource "gitlab_project_membership" "stockstatprojectmember" {
