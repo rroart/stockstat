@@ -2,7 +2,7 @@ pipeline {
     agent any
     tools {
         maven 'Maven 3.6.0'
-        dockerTool 'Docker latest'
+        DockerTool 'Docker latest'
     }
     stages {
         stage ('Initialize') {
