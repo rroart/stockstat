@@ -1,9 +1,5 @@
 pipeline {
     agent any
-    tools {
-        maven 'Maven 3.6.0'
-        DockerTool
-    }
     stages {
         stage ('Initialize') {
             steps {
