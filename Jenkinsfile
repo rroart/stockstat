@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        dockerfile {
+            filename 'Dockerfile.build'
+            dir 'docker/jenkins'
+        }
+    }
     tools {
         maven 'Maven 3.6.0'
         //jdk 'jdk8'

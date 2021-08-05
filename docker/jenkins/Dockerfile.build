@@ -1,0 +1,4 @@
+FROM maven:3.6.3-openjdk-15
+MAINTAINER <roart@nvg.ntnu.no>
+
+RUN microdnf install npm python3 make autoconf automake libtool diffutils file libpng-devel
