@@ -1,13 +1,8 @@
 pipeline {
-    agent {
-        dockerfile {
-            filename 'Dockerfile.build'
-            dir 'docker/jenkins'
-        }
-    }
+    agent any
     tools {
         maven 'Maven 3.6.0'
-        //jdk 'jdk8'
+        dockerTool 'Docker latest'
     }
     stages {
         stage ('Initialize') {
@@ -22,6 +17,12 @@ pipeline {
         }
 
         stage ('Build') {
+            agent {
+                dockerfile {
+                    filename 'Dockerfile.build'
+                    dir 'docker/jenkins'
+                }
+            }
             steps {
                 sh 'mvn -Dmaven.test.failure.ignore=true install' 
             }
