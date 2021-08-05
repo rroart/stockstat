@@ -3,9 +3,11 @@ pipeline {
     stages {
         stage ('Initialize') {
             steps {
+                script {
+                    def dockerHome = tool 'Docker latest'
+                    env.PATH = "${dockerHome}/bin:${env.PATH}"
+                }
                 sh '''
-                    dockerHome = tool 'Docker latest'
-                    PATH = "${dockerHome}/bin:${PATH}"
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
                 '''
