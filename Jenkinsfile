@@ -12,9 +12,9 @@ pipeline {
     stages {
         stage ('Initialize') {
             steps {
-                dockerHome = tool 'Docker latest'
-                PATH = "${dockerHome}/bin:${PATH}"
                 sh '''
+                    dockerHome = tool 'Docker latest'
+                    PATH = "${dockerHome}/bin:${PATH}"
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
                 '''
