@@ -19,6 +19,7 @@ pipeline {
                     filename 'Dockerfile.build'
                     dir 'docker/jenkins'
                     reuseNode true
+		    args '-H tcp://192.168.39.74:2376'
                 }
             }
             steps {
