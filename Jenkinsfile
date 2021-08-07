@@ -1,3 +1,20 @@
+podTemplate(label: 'dind', containers: [
+  containerTemplate(name: 'docker', image: 'docker:dind', ttyEnabled: true, privileged: true,
+    command: 'dockerd --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 --storage-driver=overlay')
+  ],
+  volumes: [emptyDirVolume(memory: false, mountPath: '/var/lib/docker')]) {
+    node {
+     checkout scm
+     def dockerHome = tool 'Docker latest'
+     env.PATH = "${dockerHome}/bin:${env.PATH}"
+     def buildImage = docker.build("buildimage", "-f docker/jenkins/Dockerfile.build docker/jenkins") 
+        buildImage.inside {
+         sh 'mvn -Dmaven.test.failure.ignore=true install'
+       }	
+     }
+  }
+
+/*
 node {
   checkout scm
   def dockerHome = tool 'Docker latest'
@@ -9,7 +26,8 @@ node {
         sh 'mvn -Dmaven.test.failure.ignore=true install'
       }	
     }
-  }  
+  }
+  */
 /*
 pipeline {
     agent any
