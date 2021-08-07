@@ -1,5 +1,7 @@
 node {
   checkout scm
+  def dockerHome = tool 'Docker latest'
+  env.PATH = "${dockerHome}/bin:${env.PATH}"
   env.DOCKER_HOST = "tcp://192.168.39.74:2376"
   docker.withServer('tcp://192.168.39.74:2376') {
     def buildImage = docker.build("buildimage", "-f docker/jenkins/Dockerfile.build docker/jenkins") 
