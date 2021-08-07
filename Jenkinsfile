@@ -4,6 +4,7 @@ podTemplate(label: 'dind', containers: [
   ],
   volumes: [emptyDirVolume(memory: false, mountPath: '/var/lib/docker')]) {
     container('docker') {
+     node {
      checkout scm
      def dockerHome = tool 'Docker latest'
      env.PATH = "${dockerHome}/bin:${env.PATH}"
@@ -11,6 +12,7 @@ podTemplate(label: 'dind', containers: [
         buildImage.inside {
          sh 'mvn -Dmaven.test.failure.ignore=true install'
        }	
+     }
      }
   }
 
