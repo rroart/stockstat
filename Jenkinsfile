@@ -3,8 +3,8 @@ podTemplate(label: 'dind', containers: [
     command: 'dockerd --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 --storage-driver=overlay')
   ],
   volumes: [emptyDirVolume(memory: false, mountPath: '/var/lib/docker')]) {
-    container('docker') {
      node {
+    container('docker') {
      checkout scm
      def dockerHome = tool 'Docker latest'
      env.PATH = "${dockerHome}/bin:${env.PATH}"
