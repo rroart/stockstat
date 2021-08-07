@@ -10,6 +10,7 @@ pipeline {
                 sh '''
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
+                    ls -R ${dockerHome}
                 '''
             }
         }
@@ -19,7 +20,7 @@ pipeline {
                     filename 'Dockerfile.build'
                     dir 'docker/jenkins'
                     reuseNode true
-		    args '-H tcp://192.168.39.74:2376'
+                    additionalBuildArgs '-H tcp://192.168.39.74:2376'
                 }
             }
             steps {
