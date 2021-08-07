@@ -1,9 +1,10 @@
+def label = "mypod-${UUID.randomUUID().toString()}"    // ugly necessary workaround
 podTemplate(label: 'dind', containers: [
   containerTemplate(name: 'docker', image: 'docker:dind', ttyEnabled: true, privileged: true,
     command: 'dockerd --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 --storage-driver=overlay')
   ],
   volumes: [emptyDirVolume(memory: false, mountPath: '/var/lib/docker')]) {
-     node {
+     node(label) {
     container('docker') {
      checkout scm
      def dockerHome = tool 'Docker latest'
