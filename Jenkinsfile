@@ -1,3 +1,13 @@
+node {
+  checkout scm
+  docker.withServer('tcp://192.168.39.74:2376') {
+    def buildImage = docker.build("buildimage", "./docker/jenkins") 
+      buildImage.inside {
+        sh 'mvn -Dmaven.test.failure.ignore=true install'
+      }	
+    }
+  }  
+/*
 pipeline {
     agent any
     stages {
@@ -28,3 +38,4 @@ pipeline {
         }
     }
 }
+*/
