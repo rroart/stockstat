@@ -12,27 +12,21 @@ podTemplate(label: label, containers: [
      def buildImage = docker.build("buildimage", "-f docker/jenkins/Dockerfile.build docker/jenkins") 
         buildImage.inside {
          //sh 'mvn verify -pl !web'
-	 sh 'env'
-	 sh '''
-	   if [ "$MYBRANCH" == "develop" ]; then
-             OTHERBRANCH=master
-           else
-             OTHERBRANCH=develop
-           fi
-	   export OTHERBRANCH
-	 '''
-	 sh 'env'
-	 sh 'git config --list'
+         sh 'env'
+         if (env.MYBRANCH" == 'develop') {
+             env.OTHERBRANCH='master'
+          } else {
+             env.OTHERBRANCH='develop'
+          }
+         sh 'git config --list'
          sh 'git checkout $OTHERBRANCH'
          sh 'git merge origin/$CI_COMMIT_BRANCH'
          //sh 'mvn verify -pl !web'
          sh 'git push'
-	 sh '''
-	   if [ "$MYBRANCH" == "develop" ]; then
+         if (env.MYBRANCH" == 'develop') {
              build 'stockstat'
-	   fi
-	 '''
-       }	
+         }
+       }        
      }
      }
   }
@@ -46,7 +40,7 @@ node {
     def buildImage = docker.build("buildimage", "-f docker/jenkins/Dockerfile.build docker/jenkins") 
       buildImage.inside {
         sh 'mvn -Dmaven.test.failure.ignore=true install'
-      }	
+      }        
     }
   }
   */
