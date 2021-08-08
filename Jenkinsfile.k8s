@@ -13,7 +13,7 @@ podTemplate(label: label, containers: [
         buildImage.inside {
          //sh 'mvn verify -pl !web'
          sh 'env'
-         if (env.MYBRANCH" == 'develop') {
+         if (env.MYBRANCH == 'develop') {
              env.OTHERBRANCH='master'
           } else {
              env.OTHERBRANCH='develop'
@@ -23,7 +23,7 @@ podTemplate(label: label, containers: [
          sh 'git merge origin/$CI_COMMIT_BRANCH'
          //sh 'mvn verify -pl !web'
          sh 'git push'
-         if (env.MYBRANCH" == 'develop') {
+         if (env.MYBRANCH == 'develop') {
              build 'stockstat'
          }
        }        
