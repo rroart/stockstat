@@ -11,12 +11,22 @@ podTemplate(label: label, containers: [
      env.PATH = "${dockerHome}/bin:${env.PATH}"
      def buildImage = docker.build("buildimage", "-f docker/jenkins/Dockerfile.build docker/jenkins") 
         buildImage.inside {
-         //sh 'mvn -Dmaven.test.failure.ignore=true install'
+         //sh 'mvn verify -pl !web'
 	 sh 'env'
-	 sh 'git branch'
+	 sh '''
+	   if [ "$MYBRANCH" == "develop" ]; then
+             OTHERBRANCH=master
+           else
+             OTHERBRANCH=develop
+           fi
+	 '''
+	 sh 'env'
 	 sh 'git config --list'
-	 sh 'git checkout develop'
-	 sh 'echo here'
+         sh 'echo git checkout $OTHERBRANCH
+         sh 'echo git merge origin/$CI_COMMIT_BRANCH
+         //sh 'mvn verify -pl !web'
+         sh 'echo git push'
+	 build 'stockstat'
        }	
      }
      }
