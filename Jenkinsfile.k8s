@@ -21,7 +21,10 @@ podTemplate(label: label, containers: [
          sh 'git checkout $OTHERBRANCH'
          sh 'git merge origin/$MYBRANCH'
          //sh 'mvn verify -pl !web'
-         sh 'git push'
+         env.MYPUSH = sh 'git config remote.origin.url | cut -c9-'
+         withCredentials([string(credentialsId: 'githubtoken', variable: 'TOKEN')]) {
+           sh 'git push https://$TOKEN@$MYPUSH'
+         }
          if (env.MYBRANCH != 'develop') {
              build 'stockstat'
          }
