@@ -13,12 +13,9 @@ podTemplate(label: label, containers: [
         buildImage.inside {
          //sh 'mvn -Dmaven.test.failure.ignore=true install'
 	 sh 'env'
-	 sh '''
-	 echo here 1
-	 bla
-	 echo here 2
-	 '''
-	 sh 'bla'
+	 sh 'git branch'
+	 sh 'git config --list'
+	 sh 'git checkout develop'
 	 sh 'echo here'
        }	
      }
