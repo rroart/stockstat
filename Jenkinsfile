@@ -1,25 +1,5 @@
 def label = "mypod-${UUID.randomUUID().toString()}"    // ugly necessary workaround
 podTemplate(label: label, containers: [
-  // You can have as many containers as you want...
-  containerTemplate(name: 'maven', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
-  containerTemplate(name: 'golang', image: 'golang:1.8.0', ttyEnabled: true, command: 'cat')
-]) {
-
-  node(label) {
-    container('maven') {
-      // do something with Maven
-      sh "echo PATH"
-
-    }
-    container('golang') {
-      // do something with go
-      sh "echo PATH"
-    }
-  }
-}
-/*
-def label = "mypod-${UUID.randomUUID().toString()}"    // ugly necessary workaround
-podTemplate(label: 'dind', containers: [
   containerTemplate(name: 'docker', image: 'docker:dind', ttyEnabled: true, privileged: true,
     command: 'dockerd --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 --storage-driver=overlay')
   ],
@@ -36,7 +16,6 @@ podTemplate(label: 'dind', containers: [
      }
      }
   }
-*/
 /*
 node {
   checkout scm
