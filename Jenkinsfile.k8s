@@ -22,8 +22,8 @@ podTemplate(label: label, containers: [
 	 '''
 	 sh 'env'
 	 sh 'git config --list'
-         sh 'echo git checkout $OTHERBRANCH
-         sh 'echo git merge origin/$CI_COMMIT_BRANCH
+         sh 'echo git checkout $OTHERBRANCH'
+         sh 'echo git merge origin/$CI_COMMIT_BRANCH'
          //sh 'mvn verify -pl !web'
          sh 'echo git push'
 	 build 'stockstat'
