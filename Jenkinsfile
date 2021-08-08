@@ -8,12 +8,12 @@ podTemplate(label: label, containers: [
   node(label) {
     container('maven') {
       // do something with Maven
-      sh "echo "PATH"
+      sh "echo PATH"
 
     }
     container('golang') {
       // do something with go
-      sh "echo "PATH"
+      sh "echo PATH"
     }
   }
 }
