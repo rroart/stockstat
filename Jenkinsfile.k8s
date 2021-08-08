@@ -12,16 +12,14 @@ podTemplate(label: label, containers: [
      def buildImage = docker.build("buildimage", "-f docker/jenkins/Dockerfile.build docker/jenkins") 
         buildImage.inside {
          //sh 'mvn verify -pl !web'
-         sh 'env | sort'
          if (env.MYBRANCH == 'develop') {
              env.OTHERBRANCH = 'master'
          } else {
              env.OTHERBRANCH = 'develop'
          }
-         sh 'env | sort'
          sh 'git config --list'
          sh 'git checkout $OTHERBRANCH'
-         sh 'git merge $MYBRANCH'
+         sh 'git merge origin/$MYBRANCH'
          //sh 'mvn verify -pl !web'
          sh 'git push'
          if (env.MYBRANCH != 'develop') {
