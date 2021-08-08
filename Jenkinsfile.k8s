@@ -19,14 +19,19 @@ podTemplate(label: label, containers: [
            else
              OTHERBRANCH=develop
            fi
+	   export OTHERBRANCH
 	 '''
 	 sh 'env'
 	 sh 'git config --list'
-         sh 'echo git checkout $OTHERBRANCH'
-         sh 'echo git merge origin/$CI_COMMIT_BRANCH'
+         sh 'git checkout $OTHERBRANCH'
+         sh 'git merge origin/$CI_COMMIT_BRANCH'
          //sh 'mvn verify -pl !web'
-         sh 'echo git push'
-	 build 'stockstat'
+         sh 'git push'
+	 sh '''
+	   if [ "$MYBRANCH" == "develop" ]; then
+             build 'stockstat'
+	   fi
+	 '''
        }	
      }
      }
