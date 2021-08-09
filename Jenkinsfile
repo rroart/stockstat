@@ -4,9 +4,7 @@ node {
       env.PATH = "${dockerHome}/bin:${env.PATH}"
       def buildImage = docker.build("buildimage", "-f docker/jenkins/Dockerfile.build docker/jenkins") 
       buildImage.inside {
-        sh 'ls -al /'
-	sh 'id'
-        sh 'sudo ls'
+        env.npm_config_cache=/tmp/.npm
         sh 'mvn verify -pl !web'
         if (env.MYBRANCH == 'develop') {
           env.OTHERBRANCH = 'master'
