@@ -5,6 +5,8 @@ node {
       def buildImage = docker.build("buildimage", "-f docker/jenkins/Dockerfile.build docker/jenkins") 
       buildImage.inside {
         sh 'ls -al / /.npm'
+	sh 'id'
+	sh 'touch /xyz'
         sh 'sudo ls'
         sh 'mvn verify -pl !web'
         if (env.MYBRANCH == 'develop') {
