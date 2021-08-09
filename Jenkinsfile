@@ -6,7 +6,6 @@ node {
       buildImage.inside {
         sh 'ls -al /'
 	sh 'id'
-	sh 'touch /xyz'
         sh 'sudo ls'
         sh 'mvn verify -pl !web'
         if (env.MYBRANCH == 'develop') {
