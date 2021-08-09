@@ -4,7 +4,7 @@ node {
       env.PATH = "${dockerHome}/bin:${env.PATH}"
       def buildImage = docker.build("buildimage", "-f docker/jenkins/Dockerfile.build docker/jenkins") 
       buildImage.inside {
-        sh 'ls -al / /.npm'
+        sh 'ls -al /'
 	sh 'id'
 	sh 'touch /xyz'
         sh 'sudo ls'
