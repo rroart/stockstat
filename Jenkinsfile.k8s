@@ -4,77 +4,30 @@ podTemplate(label: label, containers: [
     command: 'dockerd --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 --storage-driver=overlay')
   ],
   volumes: [emptyDirVolume(memory: false, mountPath: '/var/lib/docker')]) {
-     node(label) {
+  node(label) {
     container('docker') {
-     checkout scm
-     def dockerHome = tool 'Docker latest'
-     env.PATH = "${dockerHome}/bin:${env.PATH}"
-     def buildImage = docker.build("buildimage", "-f docker/jenkins/Dockerfile.build docker/jenkins") 
-        buildImage.inside {
-         //sh 'mvn verify -pl !web'
-         if (env.MYBRANCH == 'develop') {
-             env.OTHERBRANCH = 'master'
-         } else {
-             env.OTHERBRANCH = 'develop'
-         }
-         sh 'git config --list'
-         sh 'git checkout $OTHERBRANCH'
-         sh 'git merge origin/$MYBRANCH'
-         //sh 'mvn verify -pl !web'
-         env.MYPUSH = sh 'git config remote.origin.url | cut -c9-'
-         withCredentials([string(credentialsId: 'githubtoken', variable: 'TOKEN')]) {
-           sh 'git push https://$TOKEN@$MYPUSH'
-         }
-         if (env.MYBRANCH != 'develop') {
-             build 'stockstat'
-         }
-       }        
-     }
-     }
-  }
-/*
-node {
-  checkout scm
-  def dockerHome = tool 'Docker latest'
-  env.PATH = "${dockerHome}/bin:${env.PATH}"
-  env.DOCKER_HOST = "tcp://192.168.39.74:2376"
-  docker.withServer('tcp://192.168.39.74:2376') {
-    def buildImage = docker.build("buildimage", "-f docker/jenkins/Dockerfile.build docker/jenkins") 
+      checkout scm
+      def dockerHome = tool 'Docker latest'
+      env.PATH = "${dockerHome}/bin:${env.PATH}"
+      def buildImage = docker.build("buildimage", "-f docker/jenkins/Dockerfile.build docker/jenkins") 
       buildImage.inside {
-        sh 'mvn -Dmaven.test.failure.ignore=true install'
+        sh 'mvn verify -pl !web'
+        if (env.MYBRANCH == 'develop') {
+          env.OTHERBRANCH = 'master'
+        } else {
+          env.OTHERBRANCH = 'develop'
+        }
+        sh 'git checkout $OTHERBRANCH'
+        sh 'git merge origin/$MYBRANCH'
+        sh 'mvn verify -pl !web'
+        env.MYPUSH = sh(script: 'git config remote.origin.url | cut -c9-', returnStdout: true)
+        withCredentials([usernameColonPassword(credentialsId: 'githubtoken', variable: 'TOKEN')]) {
+          sh 'git push https://$TOKEN@$MYPUSH'
+        }
+        if (env.MYBRANCH != 'develop') {
+          build 'stockstatdev'
+        }
       }        
     }
   }
-  */
-/*
-pipeline {
-    agent any
-    stages {
-        stage ('Initialize') {
-            steps {
-                script {
-                    def dockerHome = tool 'Docker latest'
-                    env.PATH = "${dockerHome}/bin:${env.PATH}"
-                }
-                sh '''
-                    echo "PATH = ${PATH}"
-                    echo "M2_HOME = ${M2_HOME}"
-                '''
-            }
-        }
-        stage ('Build') {
-            agent {
-                dockerfile {
-                    filename 'Dockerfile.build'
-                    dir 'docker/jenkins'
-                    reuseNode true
-                    args '-H tcp://192.168.39.74:2376'
-                }
-            }
-            steps {
-                sh 'mvn -Dmaven.test.failure.ignore=true install' 
-            }
-        }
-    }
 }
-*/
