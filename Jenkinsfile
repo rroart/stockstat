@@ -1,8 +1,4 @@
 node {
-  def dockerHome = tool 'Docker latest'
-  env.PATH = "${dockerHome}/bin:${env.PATH}"
-  def buildImage = docker.build("buildimage", "-f docker/jenkins/Dockerfile.build docker/jenkins") 
-    buildImage.inside {
       checkout scm
       def dockerHome = tool 'Docker latest'
       env.PATH = "${dockerHome}/bin:${env.PATH}"
@@ -25,7 +21,6 @@ node {
           build 'stockstatdev'
         }
       }
-    }
   }
 /*
 pipeline {
