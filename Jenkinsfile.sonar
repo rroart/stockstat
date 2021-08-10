@@ -1,0 +1,7 @@
+  node {
+      checkout scm
+      def scannerHome = tool 'sonarqube-scanner'
+      env.PATH = "${scannerHome}/bin:${env.PATH}"
+      env.GIT_DEPTH = 0
+      sh 'sonar-scanner'
+  }
