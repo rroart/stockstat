@@ -20,9 +20,9 @@ node {
           sh 'git push https://$TOKEN@$MYPUSH'
         }
         if (env.MYBRANCH != 'develop') {
-          build('stockstatdev', wait: false, propagate: false)
+          build(job: 'stockstatdev', wait: false, propagate: false)
         } else {
-          build('stockstatsonarscanner', wait: false, propagate: false)
+          build(job: 'stockstatsonarscanner', wait: false, propagate: false)
         }
       }
   }
