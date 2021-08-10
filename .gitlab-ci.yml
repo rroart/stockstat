@@ -86,6 +86,8 @@ sonarqube-check:
   image:
     name: sonarsource/sonar-scanner-cli:4.2.0.1873-linux
     entrypoint: [""]
+  services:
+    - docker:dind  
   variables:
     # Defines the location of the analysis task cache
     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
