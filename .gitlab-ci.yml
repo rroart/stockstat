@@ -82,8 +82,8 @@ verify:openjdk15:
 #      - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 sonarqube-check:
-  stage: test
-    image:
+ stage: test
+  image:
     name: sonarsource/sonar-scanner-cli:4.2.0.1873-linux
     entrypoint: [""]
   variables:
