@@ -13,7 +13,7 @@ node {
         }
         sh 'git checkout $OTHERBRANCH'
 	sh 'git config --list'
-        sh 'git merge origin/$MYBRANCH'
+        sh 'git merge -v origin/$MYBRANCH'
         //sh 'mvn verify -pl !web'
         env.MYPUSH = sh(script: 'git config remote.origin.url | cut -c9-', returnStdout: true)
         withCredentials([usernameColonPassword(credentialsId: 'githubtoken', variable: 'TOKEN')]) {
