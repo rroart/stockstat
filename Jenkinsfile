@@ -14,6 +14,8 @@ node {
         sh 'git checkout $OTHERBRANCH'
 	sh 'git config --list'
 	sh 'env | sort'
+	env.GIT_AUTHOR_EMAIL = 'roart@nvg.org'
+	env.GIT_COMMITTER_EMAIL = 'roart@nvg.org'
         sh 'git merge origin/$MYBRANCH'
         //sh 'mvn verify -pl !web'
         env.MYPUSH = sh(script: 'git config remote.origin.url | cut -c9-', returnStdout: true)
