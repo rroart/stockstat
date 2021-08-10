@@ -84,7 +84,7 @@ verify:openjdk15:
 sonarqube-check:
  stage: test
   image:
-    name: sonarsource/sonar-scanner-cli:4.2.0.1873-linux
+    name: 'sonarsource/sonar-scanner-cli:4.2.0.1873-linux'
     entrypoint: [""]
   services:
     - docker:dind  
