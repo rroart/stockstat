@@ -9,11 +9,11 @@ podTemplate(label: label, containers: [
       checkout scm
       def dockerHome = tool 'Docker latest'
       env.PATH = "${dockerHome}/bin:${env.PATH}"
-      docker.image(sonarsource/sonar-scanner-cli:4.2).inside {
+      docker.image('sonarsource/sonar-scanner-cli:4.2').inside {
         def scannerHome = tool 'sonarqube-scanner'
         env.PATH = "${scannerHome}/bin:${env.PATH}"
         env.GIT_DEPTH = 0
-            env.SONAR_HOST_URL = 192.168.0.100:9000
+        env.SONAR_HOST_URL = 192.168.0.100:9000
         sh 'sonar-scanner'
       }
     }
