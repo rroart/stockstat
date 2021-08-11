@@ -13,7 +13,7 @@ podTemplate(label: label, containers: [
         def scannerHome = tool 'sonarqube-scanner'
         env.PATH = "${scannerHome}/bin:${env.PATH}"
         env.GIT_DEPTH = 0
-        env.SONAR_HOST_URL = 192.168.0.100:9000
+        env.SONAR_HOST_URL = '192.168.0.100:9000'
         sh 'sonar-scanner'
       }
     }
