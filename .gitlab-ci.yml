@@ -25,10 +25,6 @@ variables:
 # This template uses jdk8 for verifying and deploying images
 image: maven:3.6.3-openjdk-15
 
-before_script:
-  #- yum update
-  - microdnf install npm python3 make autoconf automake libtool diffutils file libpng-devel
-
 # Cache downloaded dependencies and plugins between builds.
 # To keep cache across branches add 'key: "$CI_JOB_NAME"'
 cache:
@@ -39,6 +35,9 @@ cache:
 # See https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html
 .verify: &verify
   stage: test
+  before_script:
+    #- yum update
+    - microdnf install npm python3 make autoconf automake libtool diffutils file libpng-devel
   script:
     - 'mvn $MAVEN_CLI_OPTS verify -pl !web'
     - >
