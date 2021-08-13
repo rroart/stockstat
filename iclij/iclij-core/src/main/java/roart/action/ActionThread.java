@@ -31,7 +31,9 @@ public class ActionThread extends Thread {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public static volatile List<ActionComponentItem> queue = Collections.synchronizedList(new ArrayList<>());
-
+    
+    public static volatile boolean updateDb = false;
+    
     public void run() {
         try {
             TimeUnit.SECONDS.sleep(30);
@@ -40,6 +42,14 @@ public class ActionThread extends Thread {
         }
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
         while (true) {
+            if (updateDb) {
+                try {
+                    TimeUnit.SECONDS.sleep(60);
+                } catch (InterruptedException e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+                continue;
+            }
             ActionComponentItem ac = null;
             List<ActionComponentItem> list = new ArrayList<>();
             try {

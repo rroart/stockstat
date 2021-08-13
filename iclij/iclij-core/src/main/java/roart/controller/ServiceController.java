@@ -13,11 +13,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import roart.action.ActionThread;
 import roart.common.cache.MyCache;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
@@ -257,5 +259,17 @@ public class ServiceController {
     public void cacheinvalidate()
             throws Exception {
         MyCache.getInstance().invalidate();          
+    }
+
+    @PostMapping(value = "db/update/start")
+    public void dbupdatestart()
+            throws Exception {
+        ActionThread.updateDb = true;
+    }
+
+    @PostMapping(value = "db/update/end")
+    public void dbupdateend()
+            throws Exception {
+        ActionThread.updateDb = false;
     }
 }
