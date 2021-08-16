@@ -18,7 +18,6 @@ import roart.db.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.Market;
-import roart.iclij.model.IncDecItem;
 import roart.iclij.model.TimingItem;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.util.MarketUtil;
@@ -28,11 +27,13 @@ public class PopulateThread extends Thread {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
+    @Override
     public void run() {
         try {
             TimeUnit.SECONDS.sleep(30);
         } catch (InterruptedException e) {
             log.error(Constants.EXCEPTION, e);
+            Thread.currentThread().interrupt();
         }
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
         if (instance.populate()) {
@@ -93,7 +94,11 @@ public class PopulateThread extends Thread {
                             LocalDate aCurrentDate = lastStockdate; //TimeUtil.getForwardEqualAfter2(currentDate, verificationdays, dates);
                             config.setDate(aCurrentDate);
                             ComponentInput componentInput3 = new ComponentInput(config, null, null, aCurrentDate, null, true, false, new ArrayList<>(), new HashMap<>());
-                            ServiceUtil.getImproveAboveBelow(componentInput3);
+                            try {
+                                ServiceUtil.getImproveAboveBelow(componentInput3);
+                            } catch (Exception e) {
+                                log.error(Constants.EXCEPTION, e);
+                            }
                         }
                     }
                     if (config.getFindProfitMemoryFilter()) {
@@ -107,7 +112,11 @@ public class PopulateThread extends Thread {
                             LocalDate aCurrentDate = lastStockdate; //TimeUtil.getForwardEqualAfter2(currentDate, verificationdays, dates);
                             config.setDate(aCurrentDate);
                             ComponentInput componentInput3 = new ComponentInput(config, null, null, aCurrentDate, null, true, false, new ArrayList<>(), new HashMap<>());
-                            ServiceUtil.getImproveFilter(componentInput3);
+                            try {
+                                ServiceUtil.getImproveFilter(componentInput3);
+                            } catch (Exception e) {
+                                log.error(Constants.EXCEPTION, e);
+                            }
                         }
                     }
                     currentDate = currentDate.plusDays(findTime);

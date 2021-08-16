@@ -3,6 +3,7 @@ package roart.iclij.model.action;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -24,7 +25,8 @@ public class ActionComponentItem {
     private Boolean buy;
     private String parameters;
     private LocalDate record;
-
+    private BlockingQueue result;
+    
     public Long getDbid() {
         return dbid;
     }
@@ -111,6 +113,14 @@ public class ActionComponentItem {
 
     public void setRecord(LocalDate record) {
         this.record = record;
+    }
+
+    public BlockingQueue getResult() {
+        return result;
+    }
+
+    public void setResult(BlockingQueue result) {
+        this.result = result;
     }
 
     public void save() throws Exception {

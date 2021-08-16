@@ -264,12 +264,12 @@ public class ServiceController {
     @PostMapping(value = "db/update/start")
     public void dbupdatestart()
             throws Exception {
-        ActionThread.updateDb = true;
+        ActionThread.setUpdateDb(true);
     }
 
     @PostMapping(value = "db/update/end")
     public void dbupdateend()
             throws Exception {
-        ActionThread.updateDb = false;
+        ActionThread.setUpdateDb(false);
     }
 }
