@@ -64,6 +64,7 @@ public class DatabaseThread extends Thread {
                 TimeUnit.SECONDS.sleep(sleepsec);
             } catch (InterruptedException e) {
                 log.error(Constants.EXCEPTION, e);
+                Thread.currentThread().interrupt();
             }
         }
         

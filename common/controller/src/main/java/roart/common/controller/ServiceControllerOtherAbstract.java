@@ -48,6 +48,7 @@ public abstract class ServiceControllerOtherAbstract {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         log.error(Constants.EXCEPTION, e);
+                        Thread.currentThread().interrupt();
                     }
                 }
             }});
