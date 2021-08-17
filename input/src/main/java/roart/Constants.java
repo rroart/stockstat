@@ -11,10 +11,12 @@ public class Constants {
     public static final String INDEXVALUE = "indexvalue";
     public static final String INDEXVALUELOW = "indexvaluelow";
     public static final String INDEXVALUEHIGH = "indexvaluehigh";
+    public static final String INDEXVALUEOPEN = "indexvalueopen";
     public static final String CURRENCY = "currency";
     public static final String PRICE = "price";
     public static final String PRICELOW = "pricelow";
     public static final String PRICEHIGH = "pricehigh";
+    public static final String PRICEOPEN = "priceopen";
     public static final String VOLUME = "volume";
     public static final String OTHERALTID = "otheraltid";
     public static final String OTHERID = "otherid";

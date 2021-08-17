@@ -112,9 +112,9 @@ def getonedfperiodarr(df, period):
     if period == 8:
         return [ df.period9 ]
     if period == 9:
-        return [ df.price, df.pricelow, df.pricehigh ]
+        return [ df.price, df.pricelow, df.pricehigh, df.priceopen ]
     if period == 10:
-        return [ df.indexvalue, df.indexvaluelow, df.indexvaluehigh ]
+        return [ df.indexvalue, df.indexvaluelow, df.indexvaluehigh, df.indexvalueopen ]
     #print("should not be here")
     return None
 

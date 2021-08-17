@@ -42,11 +42,15 @@ public class Stock implements Serializable /*,Comparable<Stock>*/ {
     @Column
     private Double indexvaluehigh;
     @Column
+    private Double indexvalueopen;
+    @Column
     private Double price;
     @Column
     private Double pricelow;
     @Column
     private Double pricehigh;
+    @Column
+    private Double priceopen;
     @Column
     private Long volume;
     @Column
@@ -157,6 +161,14 @@ public class Stock implements Serializable /*,Comparable<Stock>*/ {
         this.indexvaluehigh = indexvaluehigh;
     }
 
+    public Double getIndexvalueopen() {
+        return indexvalueopen;
+    }
+
+    public void setIndexvalueopen(Double indexvalueopen) {
+        this.indexvalueopen = indexvalueopen;
+    }
+
     public Double getPrice() {
         return price;
     }
@@ -179,6 +191,14 @@ public class Stock implements Serializable /*,Comparable<Stock>*/ {
 
     public void setPricehigh(Double pricehigh) {
         this.pricehigh = pricehigh;
+    }
+
+    public Double getPriceopen() {
+        return priceopen;
+    }
+
+    public void setPriceopen(Double priceopen) {
+        this.priceopen = priceopen;
     }
 
     public Long getVolume() {

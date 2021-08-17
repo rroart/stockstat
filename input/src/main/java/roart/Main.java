@@ -201,9 +201,11 @@ public class Main {
             Element indexvalueElem = (Element) elem.getElementsByTagName(Constants.INDEXVALUE).item(0);
             Element indexvaluelowElem = (Element) elem.getElementsByTagName(Constants.INDEXVALUELOW).item(0);
             Element indexvaluehighElem = (Element) elem.getElementsByTagName(Constants.INDEXVALUEHIGH).item(0);
+            Element indexvalueopenElem = (Element) elem.getElementsByTagName(Constants.INDEXVALUEOPEN).item(0);
             Element priceElem = (Element) elem.getElementsByTagName(Constants.PRICE).item(0);
             Element pricelowElem = (Element) elem.getElementsByTagName(Constants.PRICELOW).item(0);
             Element pricehighElem = (Element) elem.getElementsByTagName(Constants.PRICEHIGH).item(0);
+            Element priceopenElem = (Element) elem.getElementsByTagName(Constants.PRICEOPEN).item(0);
             Element currElem = (Element) elem.getElementsByTagName(Constants.CURRENCY).item(0);
             Element volumeElem = (Element) elem.getElementsByTagName(Constants.VOLUME).item(0);
             Element period1Elem = (Element) elem.getElementsByTagName(Constants.PERIOD1).item(0);
@@ -238,6 +240,10 @@ public class Main {
             if (indexvaluehighElem != null) {
                 indexvaluehigh = reformat(indexvaluehighElem.getTextContent());
             }
+            String indexvalueopen = null;
+            if (indexvalueopenElem != null) {
+                indexvalueopen = reformat(indexvalueopenElem.getTextContent());
+            }
             String price = null;
             if (priceElem != null) {
                 price = reformat(priceElem.getTextContent());
@@ -249,6 +255,10 @@ public class Main {
             String pricehigh = null;
             if (pricehighElem != null) {
                 pricehigh = reformat(pricehighElem.getTextContent());
+            }
+            String priceopen = null;
+            if (priceopenElem != null) {
+                priceopen = reformat(priceopenElem.getTextContent());
             }
             String currency = null;
             if (currElem != null) {
@@ -330,6 +340,11 @@ public class Main {
             } else {
                 stock.setIndexvaluehigh(Double.valueOf(indexvaluehigh));
             }
+            if (indexvalueopen == null || indexvalueopen.equals("-")) {
+                stock.setIndexvalueopen(null);
+            } else {
+                stock.setIndexvalueopen(Double.valueOf(indexvalueopen));
+            }
             if (volume == null || volume.equals("-")) {
                 stock.setVolume(null);
             } else {
@@ -350,6 +365,11 @@ public class Main {
                 stock.setPricehigh(null);
             } else {
                 stock.setPricehigh(Double.valueOf(pricehigh));
+            }
+            if (priceopen == null || priceopen.equals("-")) {
+                stock.setPriceopen(null);
+            } else {
+                stock.setPriceopen(Double.valueOf(priceopen));
             }
             if (period1 == null || period1.equals("-")) {
                 stock.setPeriod1(null);

@@ -91,9 +91,11 @@ public class DbSpark {
             Double indexvalue = row.getAs("indexvalue");
             Double indexvaluelow = row.getAs("indexvaluelow");
             Double indexvaluehigh = row.getAs("indexvaluehigh");
+            Double indexvalueopen = row.getAs("indexvalueopen");
             Double price = row.getAs("price");
             Double pricelow = row.getAs("pricelow");
             Double pricehigh = row.getAs("pricehigh");
+            Double priceopen = row.getAs("priceopen");
             Long volume = row.getAs("volume");
             String currency = row.getAs("currency");
             Double period1 = row.getAs("period1");
@@ -105,7 +107,7 @@ public class DbSpark {
             Double period7 = row.getAs("period7");
             Double period8 = row.getAs("period8");
             Double period9 = row.getAs("period9");
-            retList.add(new StockItem(dbid, marketid, id, isin, name, date, indexvalue, indexvaluelow, indexvaluehigh, price, pricelow, pricehigh, volume, currency, period1, period2, period3, period4, period5, period6, period7, period8, period9));			
+            retList.add(new StockItem(dbid, marketid, id, isin, name, date, indexvalue, indexvaluelow, indexvaluehigh, indexvalueopen, price, pricelow, pricehigh, priceopen, volume, currency, period1, period2, period3, period4, period5, period6, period7, period8, period9));			
         }
         log.info("spark size {}", retList.size());
         log.info("time0 " + (System.currentTimeMillis() - time0));

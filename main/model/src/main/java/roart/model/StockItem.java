@@ -13,14 +13,16 @@ public class StockItem {
     private Double indexvalue;
     private Double indexvaluelow;
     private Double indexvaluehigh;
+    private Double indexvalueopen;
     private Double price;
     private Double pricelow;
     private Double pricehigh;
+    private Double priceopen;
     private Long volume;
     private String currency;
     private Double[] period = new Double[9];
 
-    public StockItem(String dbid, String marketid, String id, String isin, String name, Date date, Double indexvalue, Double indexvaluelow, Double indexvaluehigh, Double price, Double pricelow, Double pricehigh, Long volume, String currency, Double period1, Double period2, Double period3, Double period4, Double period5, Double period6, Double period7, Double period8, Double period9) throws Exception {
+    public StockItem(String dbid, String marketid, String id, String isin, String name, Date date, Double indexvalue, Double indexvaluelow, Double indexvaluehigh, Double indexvalueopen, Double price, Double pricelow, Double pricehigh, Double priceopen, Long volume, String currency, Double period1, Double period2, Double period3, Double period4, Double period5, Double period6, Double period7, Double period8, Double period9) throws Exception {
         this.dbid = dbid;
         this.marketid = marketid;
         this.id = id;
@@ -30,10 +32,12 @@ public class StockItem {
         this.indexvalue = indexvalue;
         this.indexvaluelow = indexvaluelow;
         this.indexvaluehigh = indexvaluehigh;
+        this.indexvalueopen = indexvalueopen;
         this.currency = currency;
         this.price = price;
         this.pricelow = pricelow;
         this.pricehigh = pricehigh;
+        this.priceopen = priceopen;
         this.volume = volume;
         this.period[0] = period1;
         this.period[1] = period2;
@@ -118,12 +122,20 @@ public class StockItem {
         this.indexvaluehigh = indexvaluehigh;
     }
 
+    public Double getIndexvalueopen() {
+        return indexvalueopen;
+    }
+
+    public void setIndexvalueopen(Double indexvalueopen) {
+        this.indexvalueopen = indexvalueopen;
+    }
+
     public Double[] getIndexvalues() {
-        Double[] indexvalues = new Double[3];
-        indexvalues[0] = indexvalue;
-        indexvalues[1] = indexvaluelow;
-        indexvalues[2] = indexvaluehigh;
-        return indexvalues;
+        return new Double[] { indexvalue, indexvaluelow, indexvaluehigh, indexvalueopen };
+    }
+
+    public OHLC getIndexvalueOHLC() {
+        return new OHLC(indexvalueopen, indexvaluehigh, indexvaluelow, indexvalue);
     }
 
     public Double getPrice() {
@@ -150,12 +162,20 @@ public class StockItem {
         this.pricehigh = pricehigh;
     }
 
+    public Double getPriceopen() {
+        return priceopen;
+    }
+
+    public void setPriceopen(Double priceopen) {
+        this.priceopen = priceopen;
+    }
+
     public Double[] getPrices() {
-        Double[] prices = new Double[3];
-        prices[0] = price;
-        prices[1] = pricelow;
-        prices[2] = pricehigh;
-        return prices;
+        return new Double[] { price, pricelow, pricehigh, priceopen };
+    }
+
+    public OHLC getPriceOHLC() {
+        return new OHLC(priceopen, pricehigh, pricelow, price);
     }
 
     public Long getVolume() {

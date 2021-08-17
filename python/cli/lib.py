@@ -186,7 +186,7 @@ class StockData:
             #df = df.rename(columns={'GDP' , 'indexvalue'})
             df = df.reset_index()
             df['id'] = ids[0]
-            periodtexts = [ "period1", "period2", "period3", "period4", "period5", "period6", "period7", "period8", "period9", "price", "indexvalue", "pricelow", "pricehigh", "indexvaluelow", "indexvaluehigh", "volume", "name" ]
+            periodtexts = [ "period1", "period2", "period3", "period4", "period5", "period6", "period7", "period8", "period9", "price", "indexvalue", "pricelow", "pricehigh", "priceopen", "indexvaluelow", "indexvaluehigh", "indexvalueopen", "volume", "name" ]
             periodtexts.remove(periods[0])
             for periodtext in periodtexts:
                 df[periodtext] = None
@@ -1230,7 +1230,7 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
         volumelist = None
         if anid in datareader.volumelistmap:
             volumelist = datareader.volumelistmap[anid]
-        values = [[], [], []]
+        values = [[], [], [], []]
         volume = []
         #print("cds", commondates, datelist)
         #print("cmd",len(datelist),len(filllist[0]),len(smalldates),len(volumelist[0]))
@@ -1249,6 +1249,7 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
             values[0].append(value)
             values[1].append(filllist[1][dateindex])
             values[2].append(filllist[2][dateindex])
+            values[3].append(filllist[3][dateindex])
             if volumelist is not None:
                 volume.append(volumelist[0][dateindex])
         print("vals", values)
@@ -1335,9 +1336,12 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
             frame['Date']=daynames
             frame['Close']=values[0]
             print(type(values[0]),type(values[0][:-1]))
-            frame['Open']=pd.Series([ values[0][0] ] + values[0][:-1])
+            if None in values[3]:
+                frame['Open']=pd.Series([ values[0][0] ] + values[0][:-1])
+            else:
+                frame['Open']=pd.Series(values[3])
             frame['Low']=pd.Series(values[1])
-            frame['High']=values[2]
+            frame['High']=pd.Series(values[2])
             frame['Volume'] = pd.Series(volume)
             df = pd.DataFrame(frame)
             df = df.set_index('Date')

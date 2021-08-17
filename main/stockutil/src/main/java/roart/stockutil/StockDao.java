@@ -17,6 +17,7 @@ import roart.common.constants.Constants;
 import roart.common.util.ArraysUtil;
 import roart.common.util.MapUtil;
 import roart.common.util.TimeUtil;
+import roart.model.OHLC;
 import roart.model.StockItem;
 import roart.model.data.MarketData;
 
@@ -63,6 +64,16 @@ public class StockDao {
         }
         if (i == Constants.PRICECOLUMN) {
             return stock.getPrice();
+        }
+        throw new Exception("Out of range " + i);
+    }
+
+    public static OHLC getSpecialOHLC(StockItem stock, int i) throws Exception {
+        if (i == Constants.INDEXVALUECOLUMN) {
+            return stock.getIndexvalueOHLC();
+        }
+        if (i == Constants.PRICECOLUMN) {
+            return stock.getPriceOHLC();
         }
         throw new Exception("Out of range " + i);
     }
