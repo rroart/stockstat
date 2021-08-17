@@ -46,6 +46,8 @@ topbottom = 15
 
 filterweekend = True
 
+dovalidate = False
+
 def getmetas(conn):
     return pd.read_sql_query('select * from meta', con=conn)
 
@@ -1208,6 +1210,7 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
             datareader = pipelinemap[stockdata.cat]
             datelist = datareader.datelist
             datelist.sort()
+            validate(datelist)
             df = stockdata.stocks[(stockdata.stocks.id == anid)]
             if df.empty:
                 name = anid
@@ -1385,6 +1388,13 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
                                         #    displaymacd(lses, mynames[1], 1, periodtext, maindate, olddate, days)
 
 
+def validate(datelist):
+    if not dovalidate:
+        return
+    for i in range(len(datelist) - 1):
+        if datelist[i] > datelist[i + 1]:
+            print("error")
+            
 def getOverlapIndicatorData(datelist, filllist, overlapIndicators, mydata, mynames, smalldates):
     numindicators = len(overlapIndicators)
     for i in range(numindicators):
