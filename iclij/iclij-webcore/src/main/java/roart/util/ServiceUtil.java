@@ -1036,7 +1036,7 @@ public class ServiceUtil {
 
     private static boolean anythingHere3(Map<String, List<List<Double>>> listMap2, int size) {
         for (List<List<Double>> array : listMap2.values()) {
-            if (size != 3 || size != array.size()) {
+            if (size != Constants.OHLC || size != array.size()) {
                 return false;
             }
             out:
@@ -1055,7 +1055,7 @@ public class ServiceUtil {
     private static boolean wantThree(String market) {
         try {
             Map<String, List<List<Double>>> listMap = getSimpleContent(market);
-            return anythingHere3(listMap, 3);
+            return anythingHere3(listMap, Constants.OHLC);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return false;

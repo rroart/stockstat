@@ -70,7 +70,7 @@ public class TaUtil {
         double[] values = arrarr[0];
         double[] low = null;
         double[] high = null;
-        if (arrarr.length == 3) {
+        if (arrarr.length == Constants.OHLC) {
             low = arrarr[1];
             high = arrarr[2];
         }

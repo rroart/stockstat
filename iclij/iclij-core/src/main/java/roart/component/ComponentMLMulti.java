@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.component.model.ComponentData;
 import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
@@ -85,7 +86,7 @@ public class ComponentMLMulti extends ComponentMLAggregator {
 
     private boolean anythingHere(Map<String, List<List<Double>>> listMap2, int size) {
         for (List<List<Double>> array : listMap2.values()) {
-            if (size == 3 && size != array.get(0).size()) {
+            if (size == Constants.OHLC && size != array.get(0).size()) {
                 return false;
             }
             for (int i = 0; i < array.get(0).size(); i++) {

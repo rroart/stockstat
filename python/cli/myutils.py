@@ -24,16 +24,19 @@ def fixnaarr(myma, interpolation):
     l = myma[0]
     llow = myma[1]
     lhigh = myma[2]
+    lopen = myma[3]
     l = fixna(l, interpolation)
     llow = fixna(llow, interpolation)
     lhigh = fixna(lhigh, interpolation)
-    return [ l, llow, lhigh ]
+    lopen = fixna(lopen, interpolation)
+    return [ l, llow, lhigh, lopen ]
 
 def base100(myma, periodtext):
     percentize = True
     l = myma[0]
     llow = myma[1]
     lhigh = myma[2]
+    lopen = myma[3]
     #print("per", percentize, periodtext)
     if percentize:
       if periodtext == "Price" or periodtext == "Index":
@@ -50,7 +53,10 @@ def base100(myma, periodtext):
         if not None in lhigh.tolist():
             lhigh = np.asarray(lhigh) * (100 / first)
             lhigh = pd.Series(data = lhigh)
+        if not None in lopen.tolist():
+            lopen = np.asarray(lopen) * (100 / first)
+            lopen = pd.Series(data = lopen)
         #print("t2 ", type(myma))
     #print("tmyma3 ", type(myma))
     #print(myma)
-    return [ l, llow, lhigh ]
+    return [ l, llow, lhigh, lopen ]

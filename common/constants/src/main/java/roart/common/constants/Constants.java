@@ -4,7 +4,8 @@ public class Constants {
 
     public static final int PERIODS = 9;
     public static final int ALLPERIODS = 11;
-
+    public static final int OHLC = 4;
+    
     public static final String EXCEPTION = "Exception";
     public static final String ERROR = "Error";
     public static final String NOTFOUND = "Not found {}";

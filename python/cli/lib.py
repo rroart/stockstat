@@ -1336,9 +1336,11 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
             frame['Date']=daynames
             frame['Close']=values[0]
             print(type(values[0]),type(values[0][:-1]))
-            if None in values[3]:
+            if None in values[3] or np.isnan(values[3]).any():
+                print("not ready")
                 frame['Open']=pd.Series([ values[0][0] ] + values[0][:-1])
             else:
+                print("ready")
                 frame['Open']=pd.Series(values[3])
             frame['Low']=pd.Series(values[1])
             frame['High']=pd.Series(values[2])
@@ -1648,7 +1650,7 @@ def addDatareaderComplex(allmarketstocks, commondates, datareadermap, interpolat
     for anid in newmap.keys():
         alist = newmap[anid]
         listmap = {}
-        listmap[anid] = [alist, [], []]
+        listmap[anid] = [alist, [], [], []]
         newdatareader = DataReader(-3)
         newdatareader.listmap = getseries(listmap)
         newdatareader.calculateotherlistmaps(interpolate, interpolation, scalebeginning100)
@@ -1731,7 +1733,7 @@ def getarrsparse(market, periodint, count, mytableintervaldays, marketdatamap, c
                         #print(len(dfarr))
                         #print(len(dfarr[0]))
                         #print(len(dfarr[0].values), len(dfarr[1].values), len(dfarr[2].values))
-                        values = [ dfarr[0].values[0], dfarr[1].values[0], dfarr[2].values[0] ]
+                        values = [ dfarr[0].values[0], dfarr[1].values[0], dfarr[2].values[0], dfarr[3].values[0] ]
                         #print("vs ", values)
                         mapadd(retmap, anid, i, values , len(datedstocklists))
                         #len(datedstocklists) - 1 - 

@@ -305,7 +305,7 @@ public class ComponentRecommender extends ComponentNoML {
     
     private boolean anythingHere(Map<String, List<List<Double>>> listMap2, int size) {
         for (List<List<Double>> array : listMap2.values()) {
-            if (size == 3 && size != array.get(0).size()) {
+            if (size == Constants.OHLC && size != array.get(0).size()) {
                 return false;
             }
             for (int i = 0; i < array.get(0).size(); i++) {

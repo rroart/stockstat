@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.MathUtil;
 import roart.model.StockItem;
@@ -161,7 +162,7 @@ public abstract class AbstractIndicator extends Calculatable {
 
     protected boolean anythingHere3(Map<String, Double[][]> listMap2) {
         for (Double[][] array : listMap2.values()) {
-            if (array.length != 3) {
+            if (array.length != Constants.OHLC) {
                 return false;
             }
             out:

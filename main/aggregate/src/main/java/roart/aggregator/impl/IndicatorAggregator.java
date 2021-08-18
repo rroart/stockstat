@@ -265,7 +265,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     protected boolean anythingHere3(Map<String, Double[][]> listMap2) {
         for (Double[][] array : listMap2.values()) {
-            if (array.length != 3) {
+            if (array.length != Constants.OHLC) {
                 return false;
             }
             out:
@@ -1798,6 +1798,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         List<SubType> subTypes = usedSubTypes();
         if (subTypes == null || subTypes.isEmpty()) {
             //subTypes = wantedSubTypes();
+            int jj = 0;
         }
         for (SubType subType : subTypes) {
             if (!subType.useDirectly) {
