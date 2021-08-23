@@ -301,6 +301,8 @@ public class IclijConfigConstants {
     public static final String AUTOSIMULATEINVESTDELLIMIT = "autosimulateinvest.dellimit";
     public static final String AUTOSIMULATEINVESTSCORELIMIT = "autosimulateinvest.scorelimit";
     public static final String AUTOSIMULATEINVESTAUTOSCORELIMIT = "autosimulateinvest.autoscorelimit";
+    public static final String AUTOSIMULATEINVESTKEEPADVISER = "autosimulateinvest.keepadviser";
+    public static final String AUTOSIMULATEINVESTKEEPADVISERLIMIT = "autosimulateinvest.keepadviserlimit";
     public static final String AUTOSIMULATEINVESTVOTE = "autosimulateinvest.vote";
     public static final String AUTOSIMULATEINVESTFUTURECOUNT = "autosimulateinvest.futurecount";
     public static final String AUTOSIMULATEINVESTFUTURETIME = "autosimulateinvest.futuretime";

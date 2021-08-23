@@ -35,6 +35,10 @@ public class AutoSimulateInvestConfig {
     
     private Double autoscorelimit;
     
+    private Boolean keepAdviser;
+    
+    private Double keepAdviserLimit;
+    
     private Boolean intervalwhole;
     
     private Map<String, Double> volumelimits;
@@ -127,6 +131,22 @@ public class AutoSimulateInvestConfig {
         this.autoscorelimit = autoscorelimit;
     }
 
+    public Boolean getKeepAdviser() {
+        return keepAdviser;
+    }
+
+    public void setKeepAdviser(Boolean keepAdviser) {
+        this.keepAdviser = keepAdviser;
+    }
+
+    public Double getKeepAdviserLimit() {
+        return keepAdviserLimit;
+    }
+
+    public void setKeepAdviserLimit(Double keepAdviserLimit) {
+        this.keepAdviserLimit = keepAdviserLimit;
+    }
+
     public Boolean getIntervalwhole() {
         return intervalwhole;
     }
@@ -187,6 +207,8 @@ public class AutoSimulateInvestConfig {
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTDELLIMIT, dellimit);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTSCORELIMIT, scorelimit);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTAUTOSCORELIMIT, autoscorelimit);
+        map.put(IclijConfigConstants.AUTOSIMULATEINVESTKEEPADVISER, keepAdviser);
+        map.put(IclijConfigConstants.AUTOSIMULATEINVESTKEEPADVISERLIMIT, keepAdviserLimit);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTLASTCOUNT, lastcount);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTSTARTDATE, startdate);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTENDDATE, enddate);

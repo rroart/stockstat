@@ -310,6 +310,8 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTDELLIMIT, Double.class);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTSCORELIMIT, Double.class);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTAUTOSCORELIMIT, Double.class);
+        map.put(IclijConfigConstants.AUTOSIMULATEINVESTKEEPADVISER, Boolean.class);
+        map.put(IclijConfigConstants.AUTOSIMULATEINVESTKEEPADVISERLIMIT, Double.class);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTVOLUMELIMITS, String.class);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTVOTE, Boolean.class);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTFUTURECOUNT, Integer.class);
@@ -569,6 +571,8 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.AUTOSIMULATEINVESTDELLIMIT, 0.5);
         deflt.put(IclijConfigConstants.AUTOSIMULATEINVESTSCORELIMIT, 1.0);
         deflt.put(IclijConfigConstants.AUTOSIMULATEINVESTAUTOSCORELIMIT, 0.0);
+        deflt.put(IclijConfigConstants.AUTOSIMULATEINVESTKEEPADVISER, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.AUTOSIMULATEINVESTKEEPADVISERLIMIT, 0.0);
         deflt.put(IclijConfigConstants.AUTOSIMULATEINVESTVOLUMELIMITS, null);
         deflt.put(IclijConfigConstants.AUTOSIMULATEINVESTVOTE, Boolean.FALSE);
         deflt.put(IclijConfigConstants.AUTOSIMULATEINVESTFUTURECOUNT, 0);
@@ -873,6 +877,8 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.AUTOSIMULATEINVESTDELLIMIT, "Auto simulate invest list delete limit");
         text.put(IclijConfigConstants.AUTOSIMULATEINVESTSCORELIMIT, "Auto simulate invest list delete limit");
         text.put(IclijConfigConstants.AUTOSIMULATEINVESTAUTOSCORELIMIT, "Auto simulate invest auto score limit");
+        text.put(IclijConfigConstants.AUTOSIMULATEINVESTKEEPADVISER, "Auto simulate invest keep adviser");
+        text.put(IclijConfigConstants.AUTOSIMULATEINVESTKEEPADVISERLIMIT, "Auto simulate invest keep adviser limit");
         text.put(IclijConfigConstants.AUTOSIMULATEINVESTVOLUMELIMITS, "Auto Simulate invest volume limits");
         text.put(IclijConfigConstants.AUTOSIMULATEINVESTVOTE, "Auto Simulate invest vote");
         text.put(IclijConfigConstants.AUTOSIMULATEINVESTFUTURECOUNT, "Auto Simulate invest future count");
@@ -921,6 +927,7 @@ public class IclijConfigConstantMaps {
         range.put(IclijConfigConstants.AUTOSIMULATEINVESTDELLIMIT, new Double[] { 0.0, 1.0 } );
         range.put(IclijConfigConstants.AUTOSIMULATEINVESTSCORELIMIT, new Double[] { 1.0, 5.0 } );
         range.put(IclijConfigConstants.AUTOSIMULATEINVESTAUTOSCORELIMIT, new Double[] { -0.2, 0.0 } );
+        range.put(IclijConfigConstants.AUTOSIMULATEINVESTKEEPADVISERLIMIT, new Double[] { 0.0, 1.0 } );
     }
     
     public static Map<String, String> conv = new HashMap<>();
@@ -1208,6 +1215,8 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.AUTOSIMULATEINVESTDELLIMIT, new IclijXMLType(Double.class, 0.5, "Auto Simulate invest list delete limit"));
         mymap.put(IclijConfigConstants.AUTOSIMULATEINVESTSCORELIMIT, new IclijXMLType(Double.class, 1.0, "Auto Simulate invest list score limit"));
         mymap.put(IclijConfigConstants.AUTOSIMULATEINVESTAUTOSCORELIMIT, new IclijXMLType(Double.class, 0.0, "Auto Simulate invest list auto score limit"));
+        mymap.put(IclijConfigConstants.AUTOSIMULATEINVESTKEEPADVISER, new IclijXMLType(Boolean.class, Boolean.FALSE, "Auto Simulate invest list keep adviser"));
+        mymap.put(IclijConfigConstants.AUTOSIMULATEINVESTKEEPADVISERLIMIT, new IclijXMLType(Double.class, 0.0, "Auto Simulate invest list keep adviser limit"));
         mymap.put(IclijConfigConstants.AUTOSIMULATEINVESTVOLUMELIMITS, new IclijXMLType(String.class, null, "Auto Simulate invest volume limits"));
         mymap.put(IclijConfigConstants.AUTOSIMULATEINVESTVOTE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Auto Simulate invest vote"));
         mymap.put(IclijConfigConstants.AUTOSIMULATEINVESTFUTURECOUNT, new IclijXMLType(Integer.class, 0, "Auto Simulate invest future count"));

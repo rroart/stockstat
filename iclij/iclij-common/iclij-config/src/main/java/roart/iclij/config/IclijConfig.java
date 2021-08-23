@@ -815,6 +815,14 @@ public class IclijConfig {
         return (Double) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTAUTOSCORELIMIT);
     }
 
+    public boolean getAutoSimulateInvestKeepAdviser() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTKEEPADVISER);
+    }
+
+    public double getAutoSimulateInvestKeepAdviserLimit() {
+        return (Double) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTKEEPADVISERLIMIT);
+    }
+
     public String getAutoSimulateInvestStartdate() {
         return (String) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTSTARTDATE);
     }
