@@ -12,4 +12,7 @@ public class EvolveConstants {
     public static final String ID = "id";
     
     public static final String DEFAULT = "default";
+
+    public static final String DATE = "date";
+
 }

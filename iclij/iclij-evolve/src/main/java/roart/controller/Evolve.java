@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -40,12 +41,14 @@ import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.util.JsonUtil;
 import roart.common.util.MathUtil;
+import roart.common.util.TimeUtil;
 import roart.db.IclijDbDao;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.NeuralNetChromosome2;
 import roart.gene.NeuralNetConfigGene;
 import roart.iclij.evolution.marketfilter.chromosome.impl.AboveBelowChromosome;
 import roart.iclij.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
+import roart.iclij.model.AboveBelowItem;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.Parameters;
@@ -116,7 +119,7 @@ public class Evolve {
         }
         output.add("");
         output.add("Summary: " + better + " " + MathUtil.round(avg, 2) + " vs " + newer);
-        print(ServiceConstants.EVOLVEFILTEREVOLVE + " " + title, null, output);
+        print(ServiceConstants.EVOLVEFILTEREVOLVE + " " + title, "File " + id, output);
         if (better) {
             saveBetter(myList, market, component, subcomponent, IclijConfigConstants.MACHINELEARNING);
         }
@@ -292,7 +295,7 @@ public class Evolve {
         }
         output.add("");
         output.add("Summary: " + better + " " + MathUtil.round(avg, 2) + " vs " + newer);
-        print(ServiceConstants.EVOLVEFILTERPROFIT + " " + title, null, output);
+        print(ServiceConstants.EVOLVEFILTERPROFIT + " " + title, "File " + id, output);
         if (better) {
             saveBetter(myList, market, component, subComponent, IclijConfigConstants.MACHINELEARNING);
         }
@@ -328,8 +331,63 @@ public class Evolve {
         getCommon(chromosomeMap, allcomponents, output);
         //output.add("");
         //output.add("Summary: " + better + " " + MathUtil.round(avg, 2) + " vs " + newer);
-        print(ServiceConstants.EVOLVEFILTERABOVEBELOW + " " + title, null, output);
-     }
+        print(ServiceConstants.EVOLVEFILTERABOVEBELOW + " " + title, "File " + id, output);
+        double newer = myList.get(0).getLeft();
+        Double dflt = (Double) myMap.get(EvolveConstants.DEFAULT);
+        boolean better = dflt < newer;
+        // for all better, find entry with minimal trues
+        List<AbstractChromosome> alist = chromosomeMap.get(newer);
+        List<Long> counts = new ArrayList<>();
+        for (AbstractChromosome aChromosome : alist) {
+            AboveBelowChromosome ab = (AboveBelowChromosome) aChromosome;
+            List<Boolean> genes = ab.getGenes();
+            long count = genes.stream().filter(g -> g).count();
+            counts.add(count);
+        }
+        int minIndex = counts.indexOf(Collections.min(counts));
+        List<Boolean> genes = ((AboveBelowChromosome) myList.get(minIndex).getRight()).getGenes();
+        if (better) {
+            // duplicated
+            List<String> mycomponents = new ArrayList<>();
+            List<String> mysubcomponents = new ArrayList<>();
+            int size1 = components.size();
+            int size2 = subcomponents.size();
+            for (int i2 = 0; i2 < size1; i2++) {
+                Boolean b = genes.get(i2);
+                if (b) {
+                String component = components.get(i2);
+                mycomponents.add(component);
+                }
+            }
+            for (int i1 = 0; i1 < size2; i1++) {
+                Boolean b = genes.get(size1 + i1);
+                if (b) {
+                String subcomponent = subcomponents.get(i1);
+                mysubcomponents.add(subcomponent);
+                }
+            }
+            AboveBelowItem abovebelow = new AboveBelowItem();
+            abovebelow.setComponents(JsonUtil.convert(mycomponents));
+            String date = (String) myMap.get(EvolveConstants.DATE);
+            LocalDate date2 = null;;
+            try {
+                date2 = TimeUtil.convertDate(date);
+            } catch (ParseException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+            abovebelow.setDate(date2);
+            abovebelow.setMarket(market);
+            abovebelow.setRecord(LocalDate.now());
+            abovebelow.setScore(newer);
+            abovebelow.setSubcomponents(JsonUtil.convert(mysubcomponents));
+            try {
+                abovebelow.save();
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
+    }
 
     private Map<String, Object> convert(String param, TypeReference typeref) {
         Map<String, Object> map = new HashMap<>();
@@ -365,7 +423,7 @@ public class Evolve {
             if (value == null) {
                 continue;
             }
-            if (value.getClass() == String.class) {
+            if (value.getClass() == String.class || value.getClass() == Double.class) {
                 //map.put(key, value);
                 //System.out.println("kv"+key+value);
             } else if (value.getClass() == LinkedHashMap.class) {

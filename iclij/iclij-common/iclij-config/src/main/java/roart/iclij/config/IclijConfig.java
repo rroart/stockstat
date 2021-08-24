@@ -659,6 +659,10 @@ public class IclijConfig {
         return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES);
     }
 
+    public boolean getSimulateInvestAboveBelow() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTABOVEBELOW);
+    }
+
     public boolean wantsSimulateInvestConfidenceHoldIncrease() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTCONFIDENCEHOLDINCREASE);
     }

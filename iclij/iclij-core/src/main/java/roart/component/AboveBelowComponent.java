@@ -18,6 +18,7 @@ import org.apache.commons.lang3.tuple.Triple;
 
 import roart.action.MarketAction;
 import roart.common.constants.Constants;
+import roart.common.constants.EvolveConstants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -187,6 +188,7 @@ public class AboveBelowComponent extends ComponentML {
                 Boolean buy = null;
                 List<MLMetricsItem> mlTests = null;
                 componentData = evolve2.evolve(action, param, market, profitdata, buy, subcomponent, parameters, mlTests , confMap , evolutionConfig, this.getPipeline(), this, confList );
+                componentData.getResultMap().put(EvolveConstants.DEFAULT, score);
                 Map<String, Object> updateMap = componentData.getUpdateMap();
                 if (updateMap != null) {
                     param.getUpdateMap().putAll(updateMap);
@@ -194,6 +196,8 @@ public class AboveBelowComponent extends ComponentML {
                 memory.setDescription((String) updateMap.get(aParameter));
                 List<Double> list = new ArrayList<>(param.getScoreMap().values());
                 memory.setLearnConfidence(list.get(0));
+                componentData.getResultMap().put("learned", list.get(0));
+                componentData.getResultMap().put(EvolveConstants.DATE, TimeUtil.convertDate2(param.getFutureDate()));
             }
             memory.setAction(action.getName());
             memory.setMarket(market.getConfig().getMarket());

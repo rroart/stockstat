@@ -253,6 +253,7 @@ public class IclijConfigConstants {
     public static final String SIMULATEINVESTCONFIDENCETRENDINCREASE = "simulateinvest.confidence.trend.increase";
     public static final String SIMULATEINVESTCONFIDENCETRENDINCREASETIMES = "simulateinvest.confidence.trend.increase.times";
     public static final String SIMULATEINVESTCONFIDENCEFINDTIMES = "simulateinvest.confidence.findtimes";
+    public static final String SIMULATEINVESTABOVEBELOW = "simulateinvest.abovebelow";
     public static final String SIMULATEINVESTCONFIDENCEHOLDINCREASE = "simulateinvest.confidence.hold.increase";
     public static final String SIMULATEINVESTNOCONFIDENCEHOLDINCREASE = "simulateinvest.noconfidence.hold.increase";
     public static final String SIMULATEINVESTNOCONFIDENCETRENDDECREASE = "simulateinvest.noconfidence.trend.decrease";

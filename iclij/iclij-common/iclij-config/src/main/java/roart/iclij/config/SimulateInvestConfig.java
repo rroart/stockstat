@@ -23,6 +23,8 @@ public class SimulateInvestConfig {
     
     private Integer confidenceFindTimes;
     
+    private Boolean abovebelow;
+
     private Boolean stoploss;
     
     private Double stoplossValue;
@@ -119,6 +121,14 @@ public class SimulateInvestConfig {
 
     public void setConfidenceFindTimes(Integer confidenceFindTimes) {
         this.confidenceFindTimes = confidenceFindTimes;
+    }
+
+    public Boolean getAbovebelow() {
+        return abovebelow;
+    }
+
+    public void setAbovebelow(Boolean abovebelow) {
+        this.abovebelow = abovebelow;
     }
 
     public Boolean getStoploss() {
@@ -411,6 +421,9 @@ public class SimulateInvestConfig {
         if (other.confidenceFindTimes != null) {
             this.confidenceFindTimes = other.confidenceFindTimes;
         }
+        if (other.abovebelow != null) {
+            this.abovebelow = other.abovebelow;
+        }
         if (other.confidenceValue != null) {
             this.confidenceValue = other.confidenceValue;
         }
@@ -526,6 +539,7 @@ public class SimulateInvestConfig {
         map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCE, confidence);
         map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEVALUE, confidenceValue);
         map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES, confidenceFindTimes);
+        map.put(IclijConfigConstants.SIMULATEINVESTABOVEBELOW, abovebelow);
         map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEHOLDINCREASE, confidenceholdincrease);
         map.put(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCEHOLDINCREASE, noconfidenceholdincrease);
         map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASE, confidencetrendincrease);
@@ -610,6 +624,7 @@ public class SimulateInvestConfig {
         return Objects.equals(confidence, s.confidence)
                 && Objects.equals(confidenceValue, s.confidenceValue)
                 && Objects.equals(confidenceFindTimes, s.confidenceFindTimes)
+                && Objects.equals(abovebelow, s.abovebelow)
                 && Objects.equals(stoploss, s.stoploss)
                 && Objects.equals(stoplossValue, s.stoplossValue)
                 && Objects.equals(indicatorPure, s.indicatorPure)

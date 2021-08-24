@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,10 +14,13 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
@@ -24,6 +28,7 @@ import roart.constants.IclijConstants;
 import roart.db.IclijDbDao;
 import roart.iclij.config.Market;
 import roart.iclij.config.SimulateInvestConfig;
+import roart.iclij.model.AboveBelowItem;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.util.MiscUtil;
@@ -101,7 +106,7 @@ public class AboveBelowAdviser extends Adviser {
             try {
                 date = new TimeUtil().convertDate(dateString);
             } catch (ParseException e) {
-                log.info(Constants.EXCEPTION, e);
+                log.error(Constants.EXCEPTION, e);
             }
             List<IncDecItem> incdecs = new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
             incdecs = incdecs.stream().filter(e -> !excludes.contains(e.getId())).collect(Collectors.toList());
@@ -111,7 +116,22 @@ public class AboveBelowAdviser extends Adviser {
             Set<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toSet());
             Set<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toSet());
             List<IncDecItem> mylocals = new MiscUtil().getIncDecLocals(myincdecs);
-
+            if (simulateConfig.getAbovebelow()) {
+                Set<IncDecItem> mys = new HashSet<>();
+                LocalDate mydate = date.minusDays(market.getConfig().getFindtime());
+                LocalDate olddate = mydate.minusDays(market.getConfig().getFindtime());
+                List<String>[] list = p(market.getConfig().getMarket(), olddate, mydate);
+                List<String> components = list[0];
+                List<String> subcomponents = list[1];
+                if (!components.isEmpty() || !subcomponents.isEmpty()) {                    
+                    for (IncDecItem item : myincs) {
+                        if (components.contains(item.getComponent()) || subcomponents.contains(item.getSubcomponent())) {
+                            mys.add(item);
+                        }
+                    }
+                    myincs = mys;
+                }
+            }
             myincs = new MiscUtil().mergeList(myincs, true);
             mydecs = new MiscUtil().mergeList(mydecs, true);
             Set<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
@@ -157,4 +177,25 @@ public class AboveBelowAdviser extends Adviser {
         valueMap = newValueMap;
         MyCache.getInstance().put(key, valueMap);
     }
+    
+    public List<String>[] p(String market, LocalDate startdate, LocalDate enddate) {
+        List<AboveBelowItem> list = null;
+        try {
+            list = AboveBelowItem.getAll(market, startdate, enddate);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        List<String> retComponents = new ArrayList<>(); 
+        List<String> retSubcomponents = new ArrayList<>(); 
+        for (AboveBelowItem item : list) {
+            String components = item.getComponents();
+            List<String> componentList = JsonUtil.convert(components, new TypeReference<List<String>>() { });
+            String subcomponents = item.getSubcomponents();
+            List<String> subcomponentList = JsonUtil.convert(subcomponents, new TypeReference<List<String>>() { });            
+            retComponents.addAll(retComponents);
+            retSubcomponents.addAll(retSubcomponents);
+        }
+        return new List[] { retComponents, retSubcomponents }; 
+    }
+    
 }
