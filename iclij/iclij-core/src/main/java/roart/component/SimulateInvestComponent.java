@@ -393,25 +393,7 @@ public class SimulateInvestComponent extends ComponentML {
                             OneRun aOneRun = aTriple.getMiddle();
                             Results aResult = aTriple.getRight();
                             // best or best last
-                            int numlast = autoSimConfig.getLastcount();
-                            double score;
-                            if (numlast == 0 || aOneRun.runs == 1) {
-                                Capital sum = getSum(aOneRun.mystocks);
-                                sum.amount += aOneRun.capital.amount;
-                                score = (sum.amount - 1) / aOneRun.runs;
-                            } else {
-                                int firstidx = aResult.plotCapital.size() - 1 - numlast;
-                                if (firstidx < 0) {
-                                    firstidx = 0;
-                                }
-                                score = 0;
-                                if (aResult.plotCapital.size() > 0) {
-                                    score = aResult.plotCapital.get(aResult.plotCapital.size() - 1) - aResult.plotCapital.get(firstidx);
-                                    score = score / (aResult.plotCapital.size() - firstidx);
-                                } else {
-                                    int jj = 0;
-                                }
-                            }
+                            double score = getScore(autoSimConfig, aOneRun, aResult);
                             aOneRun.autoscore = score;
                             if (score < 0) {
                                 int jj = 0;
@@ -460,7 +442,7 @@ public class SimulateInvestComponent extends ComponentML {
                         List<Double> alist = simTriplets.stream().map(o -> (o.getMiddle().autoscore)).collect(Collectors.toList());
                         log.info("alist {}", alist);
                         OneRun oneRun = simTriplets.get(0).getMiddle();
-                        if (oneRun.runs > 1 && oneRun.autoscore != null && oneRun.autoscore > autoSimConfig.getAutoscorelimit()) {
+                        if (oneRun.runs > 1 && ((oneRun.autoscore != null && oneRun.autoscore > autoSimConfig.getAutoscorelimit()) || (autoSimConfig.getKeepAdviser() && currentOneRun.autoscore > autoSimConfig.getKeepAdviserLimit()))) {
                             if (autoSimConfig.getVote() != null && autoSimConfig.getVote()) {
                                 currentOneRun.adviser = voteadviser;
                                 //currentOneRun.hits = SerializationUtils.clone(oneRun.hits);
@@ -468,12 +450,16 @@ public class SimulateInvestComponent extends ComponentML {
                                 //currentOneRun.trendInc = SerializationUtils.clone(oneRun.trendInc);
                                 currentSimConfig = vote;                
                             } else {
+                                // calc autoscore
+                                Double score = getScore(autoSimConfig, currentOneRun, mainResult);
+                                if (!(autoSimConfig.getKeepAdviser() && score != null && score > autoSimConfig.getKeepAdviserLimit())) {                                    
                                 currentOneRun.adviser = oneRun.adviser;
                                 currentOneRun.hits = SerializationUtils.clone(oneRun.hits);
                                 currentOneRun.trendDec = SerializationUtils.clone(oneRun.trendDec);
                                 currentOneRun.trendInc = SerializationUtils.clone(oneRun.trendInc);
                                 //oneRun.
                                 currentSimConfig = simTriplets.get(0).getLeft();
+                                }
                             }
                         } else {
                             currentOneRun.adviser = selladviser;
@@ -692,6 +678,46 @@ public class SimulateInvestComponent extends ComponentML {
 
         handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
         return componentData;
+    }
+
+    private Double getScore(AutoSimulateInvestConfig autoSimConfig, OneRun aOneRun, Results aResult) {
+        int numlast = autoSimConfig.getLastcount();
+        Double score;
+        if (numlast == 0 || aOneRun.runs == 1) {
+            Capital sum = getSum(aOneRun.mystocks);
+            sum.amount += aOneRun.capital.amount;
+            score = (sum.amount - 1) / aOneRun.runs;
+            if (aResult.plotCapital.size() > 0) {
+                if (numlast == 0) {
+                   if (score != ((aResult.plotCapital.get(aResult.plotCapital.size() - 1) - 1)/ aResult.plotCapital.size())) {
+                       System.out.println("sc " + score + " " + aOneRun.runs);
+                       System.out.println("" + aResult.plotCapital.get(aResult.plotCapital.size() - 1));
+                       System.out.println("" + aResult.plotCapital.size());
+                       System.out.println("" + (((aResult.plotCapital.get(aResult.plotCapital.size() - 1) - 1)/ aResult.plotCapital.size())));
+                 System.out.println("ERRERR");
+                }
+                }
+                int firstidx = aResult.plotCapital.size() - 1 - numlast;
+                if (firstidx < 0) {
+                    firstidx = 0;
+                }
+                score = aResult.plotCapital.get(aResult.plotCapital.size() - 1) - aResult.plotCapital.get(firstidx);
+                score = score / (aResult.plotCapital.size() - firstidx);
+            }             
+        } else {
+            int firstidx = aResult.plotCapital.size() - 1 - numlast;
+            if (firstidx < 0) {
+                firstidx = 0;
+            }
+            score = null;
+            if (aResult.plotCapital.size() > 0) {
+                score = aResult.plotCapital.get(aResult.plotCapital.size() - 1) - aResult.plotCapital.get(firstidx);
+                score = score / (aResult.plotCapital.size() - firstidx);
+            } else {
+                int jj = 0;
+            }
+        }
+        return score;
     }
 
     private List<Triple<SimulateInvestConfig, OneRun, Results>> getAdviserTriplets(
@@ -1854,6 +1880,8 @@ public class SimulateInvestComponent extends ComponentML {
         simConfig.setDellimit(config.getAutoSimulateInvestDelLimit());
         simConfig.setScorelimit(config.getAutoSimulateInvestScoreLimit());
         simConfig.setAutoscorelimit(config.getAutoSimulateInvestAutoScoreLimit());
+        simConfig.setKeepAdviser(config.getAutoSimulateInvestKeepAdviser());
+        simConfig.setKeepAdviserLimit(config.getAutoSimulateInvestKeepAdviserLimit());
         simConfig.setVote(config.getAutoSimulateInvestVote());
         simConfig.setFuturecount(config.getAutoSimulateInvestFutureCount());
         simConfig.setFuturetime(config.getAutoSimulateInvestFutureTime());
