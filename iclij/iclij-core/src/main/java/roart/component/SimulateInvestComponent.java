@@ -1799,6 +1799,7 @@ public class SimulateInvestComponent extends ComponentML {
         simConfig.setConfidence(config.wantsSimulateInvestConfidence());
         simConfig.setConfidenceValue(config.getSimulateInvestConfidenceValue());
         simConfig.setConfidenceFindTimes(config.getSimulateInvestConfidenceFindtimes());
+        simConfig.setAbovebelow(config.getSimulateInvestAboveBelow());
         simConfig.setConfidenceholdincrease(config.wantsSimulateInvestConfidenceHoldIncrease());
         simConfig.setNoconfidenceholdincrease(config.wantsSimulateInvestNoConfidenceHoldIncrease());
         simConfig.setConfidencetrendincrease(config.wantsSimulateInvestConfidenceTrendIncrease());
