@@ -442,7 +442,7 @@ public class SimulateInvestComponent extends ComponentML {
                         List<Double> alist = simTriplets.stream().map(o -> (o.getMiddle().autoscore)).collect(Collectors.toList());
                         log.info("alist {}", alist);
                         OneRun oneRun = simTriplets.get(0).getMiddle();
-                        if (oneRun.runs > 1 && ((oneRun.autoscore != null && oneRun.autoscore > autoSimConfig.getAutoscorelimit()) || (autoSimConfig.getKeepAdviser() && currentOneRun.autoscore > autoSimConfig.getKeepAdviserLimit()))) {
+                        if (oneRun.runs > 1 && ((oneRun.autoscore != null && oneRun.autoscore > autoSimConfig.getAutoscorelimit()) || (autoSimConfig.getKeepAdviser() && currentOneRun.autoscore != null && currentOneRun.autoscore > autoSimConfig.getKeepAdviserLimit()))) {
                             if (autoSimConfig.getVote() != null && autoSimConfig.getVote()) {
                                 currentOneRun.adviser = voteadviser;
                                 //currentOneRun.hits = SerializationUtils.clone(oneRun.hits);
