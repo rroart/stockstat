@@ -297,7 +297,7 @@ public class SimulateInvestComponent extends ComponentML {
                     //simConfigs = new ArrayList<>();
                     //simConfigs.add(getSimConfig(config));
                 } else {
-                    simConfigs = getSimConfigs(market.getConfig().getMarket(), autoSimConfig, autofilter, filters);
+                    simConfigs = getSimConfigs(market.getConfig().getMarket(), autoSimConfig, autofilter, filters, config);
                     simConfigs = new HashMap<>(simConfigs);
                 }
                 List<SimulateInvestConfig> simsConfigs = new ArrayList<>();
@@ -689,20 +689,23 @@ public class SimulateInvestComponent extends ComponentML {
             score = (sum.amount - 1) / aOneRun.runs;
             if (aResult.plotCapital.size() > 0) {
                 if (numlast == 0) {
-                   if (score != ((aResult.plotCapital.get(aResult.plotCapital.size() - 1) - 1)/ aResult.plotCapital.size())) {
-                       System.out.println("sc " + score + " " + aOneRun.runs);
-                       System.out.println("" + aResult.plotCapital.get(aResult.plotCapital.size() - 1));
-                       System.out.println("" + aResult.plotCapital.size());
-                       System.out.println("" + (((aResult.plotCapital.get(aResult.plotCapital.size() - 1) - 1)/ aResult.plotCapital.size())));
-                 System.out.println("ERRERR");
-                }
+                    if (score != ((aResult.plotCapital.get(aResult.plotCapital.size() - 1) - 1)/ aResult.plotCapital.size())) {
+                        System.out.println("sc " + score + " " + aOneRun.runs);
+                        System.out.println("" + aResult.plotCapital.get(aResult.plotCapital.size() - 1));
+                        System.out.println("" + aResult.plotCapital.size());
+                        System.out.println("" + (((aResult.plotCapital.get(aResult.plotCapital.size() - 1) - 1)/ aResult.plotCapital.size())));
+                        System.out.println("ERRERR");
+                    }
                 }
                 int firstidx = aResult.plotCapital.size() - 1 - numlast;
-                if (firstidx < 0) {
+                if (firstidx < 0 || numlast == 0) {
                     firstidx = 0;
                 }
-                score = aResult.plotCapital.get(aResult.plotCapital.size() - 1) - aResult.plotCapital.get(firstidx);
-                score = score / (aResult.plotCapital.size() - firstidx);
+                double newscore = aResult.plotCapital.get(aResult.plotCapital.size() - 1) - aResult.plotCapital.get(firstidx);
+                newscore = newscore / (aResult.plotCapital.size() - firstidx);
+                if (Math.abs(newscore - score) > 0.00000000001 ) {
+                    System.out.println("ERRERR");                    
+                }
             }             
         } else {
             int firstidx = aResult.plotCapital.size() - 1 - numlast;
@@ -822,7 +825,7 @@ public class SimulateInvestComponent extends ComponentML {
         data.filteredCategoryValueFillMap.keySet().removeAll(configExcludeSet);
     }
 
-    private Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> getSimConfigs(String market, AutoSimulateInvestConfig autoSimConf, List<SimulateFilter> filter, List<SimulateFilter[]> filters) {
+    private Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> getSimConfigs(String market, AutoSimulateInvestConfig autoSimConf, List<SimulateFilter> filter, List<SimulateFilter[]> filters, IclijConfig config) {
         List<SimDataItem> all = new ArrayList<>();
         try {
             String simkey = CacheConstants.SIMDATA + market + autoSimConf.getStartdate() + autoSimConf.getEnddate();
@@ -892,9 +895,13 @@ public class SimulateInvestComponent extends ComponentML {
                     if (market.equals(amarket)) {
                         String configStr = data.getConfig();
                         //SimulateInvestConfig s = JsonUtil.convert(configStr, SimulateInvestConfig.class);
+                        Map defaultMap = config.getDeflt();
                         Map map = JsonUtil.convert(configStr, Map.class);
+                        Map newMap = new HashMap<>();
+                        newMap.putAll(defaultMap);
+                        newMap.putAll(map);
                         IclijConfig dummy = new IclijConfig();
-                        dummy.setConfigValueMap(map);
+                        dummy.setConfigValueMap(newMap);
                         SimulateInvestConfig simConf = getSimConfig(dummy);
                         if (simConf.getInterval().intValue() != autoSimConf.getInterval().intValue()) {
                             continue;
@@ -1176,6 +1183,14 @@ public class SimulateInvestComponent extends ComponentML {
         List<SimulateStock> buys = new ArrayList<>();
         onerun.buys = buys;
         
+        if (simConfig.getStoploss()) {
+            // TODO delay DELAY
+            // todo getdelay?
+            if (mydate.indexOffset - extradelay - simConfig.getDelay() >= 0) {
+                stoploss(onerun.mystocks, data.stockDates, mydate.indexOffset - extradelay, data.getCatValMap(simConfig.getInterpolate()), mydate.indexOffset - 1 - extradelay, sells, simConfig.getStoplossValue(), "STOP", stockDatesBiMap);                       
+                //sell(data.stockDates, data.getCatValMap(simConfig.getInterpolate()), onerun.capital, sells, results.stockhistory, mydate.indexOffset - extradelay, mydate.date, onerun.mystocks, stockDatesBiMap);
+            }
+        }
         if (simConfig.getIntervalStoploss()) {
             // TODO delay
             if (mydate.indexOffset - extradelay - simConfig.getDelay() >= 0) {
@@ -1268,10 +1283,12 @@ public class SimulateInvestComponent extends ComponentML {
             }
 
             if (simConfig.getStoploss()) {
-                for (int j = 0; j < simConfig.getInterval(); j++) {
+                // in last too?
+                // 1
+                for (int j = 1; j < simConfig.getInterval(); j++) {
                     sells = new ArrayList<>();
                     //System.out.println(interval + " " +  j);
-                    if (mydate.indexOffset - j - 1 - extradelay < 0) {
+                    if (mydate.indexOffset - j - extradelay - simConfig.getDelay()< 0) {
                         break;
                     }
                     // TODO delay DELAY
