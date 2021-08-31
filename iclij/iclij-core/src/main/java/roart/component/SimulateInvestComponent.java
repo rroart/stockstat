@@ -502,8 +502,8 @@ public class SimulateInvestComponent extends ComponentML {
                     if (aOneRun.saveLastInvest) {
                         aOneRun.mystocks = aOneRun.savedStocks;
                     }
-                    if (mydate.prevIndexOffset - extradelay - simConfig.getDelay() >= 0) {
-                        update(data.getCatValMap(simConfig.getInterpolate()), aOneRun.mystocks, mydate.indexOffset - extradelay - simConfig.getDelay(), new ArrayList<>(), mydate.prevIndexOffset - extradelay - simConfig.getDelay());
+                    if (mydate.prevIndexOffset + extradelay - 0*simConfig.getDelay() >= 0) {
+                        update(data.getCatValMap(simConfig.getInterpolate()), aOneRun.mystocks, mydate.indexOffset + extradelay - 0*simConfig.getDelay(), new ArrayList<>(), mydate.prevIndexOffset + extradelay - 0*simConfig.getDelay());
                     }
                     Capital sum = getSum(aOneRun.mystocks);
                     sum.amount += aOneRun.capital.amount;
@@ -1169,12 +1169,12 @@ public class SimulateInvestComponent extends ComponentML {
         List<String> myExcludes = getExclusions(simConfig, extradelay, data.stockDates, simConfig.getInterval(), data.getCatValMap(simConfig.getInterpolate()),
                 data.volumeMap, data.configExcludeList, simConfig.getDelay(), mydate.indexOffset, data.getVolumeExcludeMap(simConfig.getInterpolate()));
 
-        double myavg = increase(onerun.mystocks, mydate.indexOffset - extradelay, data.getCatValMap(simConfig.getInterpolate()), mydate.prevIndexOffset);
+        double myavg = increase(onerun.mystocks, mydate.indexOffset + extradelay, data.getCatValMap(simConfig.getInterpolate()), mydate.prevIndexOffset + extradelay);
 
         List<SimulateStock> holdIncrease = new ArrayList<>();
         int up;
         if (mydate.indexOffset - extradelay >= 0) {
-            up = update(data.getCatValMap(simConfig.getInterpolate()), onerun.mystocks, mydate.indexOffset - extradelay, holdIncrease, mydate.prevIndexOffset - extradelay);
+            up = update(data.getCatValMap(simConfig.getInterpolate()), onerun.mystocks, mydate.indexOffset + extradelay, holdIncrease, mydate.prevIndexOffset + extradelay);
         } else {
             up = onerun.mystocks.size();
         }
@@ -1183,22 +1183,23 @@ public class SimulateInvestComponent extends ComponentML {
         List<SimulateStock> buys = new ArrayList<>();
         onerun.buys = buys;
         
+        double myreliability = getReliability(onerun.mystocks, onerun.hits, simConfig.getConfidenceFindTimes(), up);
+        
         if (simConfig.getStoploss()) {
             // TODO delay DELAY
             // todo getdelay?
-            if (mydate.indexOffset - extradelay - 0*simConfig.getDelay() >= 0) {
-                stoploss(onerun.mystocks, data.stockDates, mydate.indexOffset - extradelay, data.getCatValMap(simConfig.getInterpolate()), mydate.indexOffset - 1 - extradelay, sells, simConfig.getStoplossValue(), "STOP", stockDatesBiMap);                       
+            if (mydate.indexOffset + extradelay >= 0) {
+                stoploss(onerun.mystocks, data.stockDates, mydate.indexOffset + extradelay, data.getCatValMap(simConfig.getInterpolate()), mydate.indexOffset - 1 + extradelay, sells, simConfig.getStoplossValue(), "STOP", stockDatesBiMap);
                 //sell(data.stockDates, data.getCatValMap(simConfig.getInterpolate()), onerun.capital, sells, results.stockhistory, mydate.indexOffset - extradelay, mydate.date, onerun.mystocks, stockDatesBiMap);
             }
         }
         if (simConfig.getIntervalStoploss()) {
             // TODO delay
-            if (mydate.indexOffset - extradelay - 0*simConfig.getDelay() >= 0) {
-                stoploss(onerun.mystocks, data.stockDates, mydate.indexOffset - extradelay, data.getCatValMap(simConfig.getInterpolate()), mydate.prevIndexOffset - extradelay, sells, simConfig.getIntervalStoplossValue(), "ISTOP", stockDatesBiMap);
+            if (mydate.indexOffset + extradelay >= 0) {
+                stoploss(onerun.mystocks, data.stockDates, mydate.indexOffset + extradelay, data.getCatValMap(simConfig.getInterpolate()), mydate.indexOffset - simConfig.getInterval() + extradelay, sells, simConfig.getIntervalStoplossValue(), "ISTOP", stockDatesBiMap);
             }
         }
-
-        double myreliability = getReliability(onerun.mystocks, onerun.hits, simConfig.getConfidenceFindTimes(), up);
+        holdIncrease.removeAll(sells);
 
         boolean confidence = !simConfig.getConfidence() || myreliability >= simConfig.getConfidenceValue();
         boolean confidence1 = !simConfig.getConfidencetrendincrease() || onerun.trendInc[0] >= simConfig.getConfidencetrendincreaseTimes();
@@ -1237,7 +1238,7 @@ public class SimulateInvestComponent extends ComponentML {
                 }
 
                 // to delay?
-                update(data.getCatValMap(simConfig.getInterpolate()), onerun.mystocks, mydate.indexOffset - extradelay - simConfig.getDelay(), new ArrayList<>(), mydate.prevIndexOffset - extradelay - simConfig.getDelay());
+                update(data.getCatValMap(simConfig.getInterpolate()), onerun.mystocks, mydate.indexOffset + extradelay - simConfig.getDelay(), new ArrayList<>(), mydate.prevIndexOffset + extradelay - simConfig.getDelay());
 
                 if (trend != null && trend.incAverage != 0) {
                     onerun.resultavg *= trend.incAverage;
@@ -1288,11 +1289,11 @@ public class SimulateInvestComponent extends ComponentML {
                 for (int j = 1; j < simConfig.getInterval(); j++) {
                     sells = new ArrayList<>();
                     //System.out.println(interval + " " +  j);
-                    if (mydate.indexOffset - j - extradelay - simConfig.getDelay()< 0) {
+                    if (mydate.indexOffset - j + extradelay < 0) {
                         break;
                     }
                     // TODO delay DELAY
-                    stoploss(onerun.mystocks, data.stockDates, mydate.indexOffset - j - extradelay, data.getCatValMap(simConfig.getInterpolate()), mydate.indexOffset - j - 1 - extradelay, sells, simConfig.getStoplossValue(), "STOP", stockDatesBiMap);                       
+                    stoploss(onerun.mystocks, data.stockDates, mydate.indexOffset - j + extradelay, data.getCatValMap(simConfig.getInterpolate()), mydate.indexOffset - j - 1 + extradelay, sells, simConfig.getStoplossValue(), "STOP", stockDatesBiMap);
                     sell(data.stockDates, data.getCatValMap(simConfig.getInterpolate()), onerun.capital, sells, results.stockhistory, mydate.indexOffset - j - extradelay, mydate.date, onerun.mystocks, stockDatesBiMap);
                 }                    
             }
