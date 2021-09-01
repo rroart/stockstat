@@ -1105,7 +1105,7 @@ public class SimulateInvestComponent extends ComponentML {
         if (investEnd != null) {
             String aDate = TimeUtil.convertDate2(investEnd);
             if (aDate != null) {
-                int idx = data.stockDates.indexOf(aDate) - extradelay;
+                int idx = data.stockDates.indexOf(aDate);
                 if (idx >=0 ) {
                     aDate = data.stockDates.get(idx);
                     try {
@@ -1296,7 +1296,7 @@ public class SimulateInvestComponent extends ComponentML {
                     }
                     // TODO delay DELAY
                     stoploss(onerun.mystocks, data.stockDates, mydate.indexOffset - j + extradelay, data.getCatValMap(simConfig.getInterpolate()), mydate.indexOffset - j - 1 + extradelay, sells, simConfig.getStoplossValue(), "STOP", stockDatesBiMap);
-                    sell(data.stockDates, data.getCatValMap(simConfig.getInterpolate()), onerun.capital, sells, results.stockhistory, mydate.indexOffset - j - extradelay, mydate.date, onerun.mystocks, stockDatesBiMap);
+                    sell(data.stockDates, data.getCatValMap(simConfig.getInterpolate()), onerun.capital, sells, results.stockhistory, mydate.indexOffset - j + extradelay, mydate.date, onerun.mystocks, stockDatesBiMap);
                 }                    
             }
         } else {
