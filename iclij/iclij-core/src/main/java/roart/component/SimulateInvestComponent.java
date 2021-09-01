@@ -502,8 +502,10 @@ public class SimulateInvestComponent extends ComponentML {
                     if (aOneRun.saveLastInvest) {
                         aOneRun.mystocks = aOneRun.savedStocks;
                     }
-                    if (mydate.prevIndexOffset + extradelay - 0*simConfig.getDelay() >= 0) {
-                        update(data.getCatValMap(simConfig.getInterpolate()), aOneRun.mystocks, mydate.indexOffset + extradelay - 0*simConfig.getDelay(), new ArrayList<>(), mydate.prevIndexOffset + extradelay - 0*simConfig.getDelay());
+                    if (mydate.prevIndexOffset + simConfig.getInterval() + extradelay >= 0) {
+                        update(data.getCatValMap(simConfig.getInterpolate()), aOneRun.mystocks, mydate.indexOffset + simConfig.getInterval() + extradelay, new ArrayList<>(), mydate.prevIndexOffset + simConfig.getInterval() + extradelay);
+                    } else {
+                        int jj = 0;
                     }
                     Capital sum = getSum(aOneRun.mystocks);
                     sum.amount += aOneRun.capital.amount;
