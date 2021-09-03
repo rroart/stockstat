@@ -34,7 +34,6 @@ module core {
     requires org.apache.commons.lang3;
     requires scala.library;
     //requires scala.reflect;
-    requires slf4j.api;
     requires spring.beans;
     requires spring.boot.autoconfigure;
     requires spring.cloud.commons;
@@ -72,5 +71,5 @@ module core {
     requires stocketl;
     requires common.communication.model;
     requires common.communication.factory;
-    requires javax.servlet.api;
+    requires org.slf4j;
 }

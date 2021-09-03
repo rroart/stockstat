@@ -70,6 +70,13 @@ public class WebFluxUtil {
         }
         WebClient webClient = WebClient.create();
         T result = webClient
+                .mutate()
+                .exchangeStrategies(ExchangeStrategies.builder()
+                        .codecs(configurer -> configurer
+                                .defaultCodecs()
+                                .maxInMemorySize(-1))
+                        .build())
+                .build()
                 .post()
                 .uri(url)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)

@@ -30,10 +30,8 @@ module iclij.webcore {
     requires iclij.common.verifyprofit;
     requires iclij.evolutionmarketfilter;
     requires java.xml;
-    requires javax.servlet.api;
     requires math;
     requires pl;
-    requires slf4j.api;
     requires spring.beans;
     requires spring.boot;
     requires spring.boot.autoconfigure;
@@ -49,6 +47,7 @@ module iclij.webcore {
     requires evolution.config;
     requires org.apache.commons.lang3;
     requires io.jenetics.base;
+    requires org.slf4j;
     //requires springfox.core;
     //requires springfox.spi;
     //requires springfox.spring.web;

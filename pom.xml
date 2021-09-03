@@ -81,13 +81,13 @@
     <maveninstall.version>2.5.2</maveninstall.version>
     <mavenshade.version>3.2.1</mavenshade.version>
     <jetty.version>9.4.12.v20180830</jetty.version>
-    <springboot.version>2.1.1.RELEASE</springboot.version>
-    <springcloud.version>2.0.2.RELEASE</springcloud.version>
-    <springcloudstarter.version>Finchley.SR2</springcloudstarter.version>
-    <springcore.version>5.1.3.RELEASE</springcore.version>
+    <springboot.version>2.5.4</springboot.version>
+    <springcloud.version>3.0.3</springcloud.version>
+    <springcloudstarter.version>2020.0.3</springcloudstarter.version>
+    <springcore.version>5.3.9</springcore.version>
     <eurekaclient.version>1.9.8</eurekaclient.version>
-    <jackson.version>2.9.7</jackson.version>
-    <hibernate.version>5.4.0.Final</hibernate.version>
+    <jackson.version>2.12.5</jackson.version>
+    <hibernate.version>5.5.7.Final</hibernate.version>
     <hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
     <hibernate.hbm2ddl.auto>create</hibernate.hbm2ddl.auto>
     <ehcache.version>2.6.11</ehcache.version>
@@ -98,7 +98,8 @@
     <commons.version>2.1.1</commons.version>
     <commons.math3.version>3.6.1</commons.math3.version>
     <commons.lang3.version>3.8.1</commons.lang3.version>
-    <commons.codec>1.13</commons.codec>
+    <commons.codec.version>1.15</commons.codec.version>
+    <commons.beanutils.version>1.9.4</commons.beanutils.version>
     <httpclient.version>4.5.6</httpclient.version>
     <jaxb.version>2.3.0</jaxb.version>
     <stanfordcorenlp.version>3.9.1</stanfordcorenlp.version>

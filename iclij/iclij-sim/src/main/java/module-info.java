@@ -6,7 +6,6 @@
  *
  */
 module iclij.sim {
-    requires slf4j.api;
     requires iclij.common.service;
     requires common.communication.model;
     requires iclij.common.config;
@@ -28,15 +27,16 @@ module iclij.sim {
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.datatype.jsr310;
     requires com.fasterxml.jackson.core;
-    requires scala.library;
     requires evolution.model;
     requires iclij.evolutioniclijconfigmap;
     requires iclij.common.util;
-    requires guava;
+    //requires guava;
     requires iclij.common.constants;
     requires common.inmemory.factory;
     requires common.inmemory.model;
     requires iclij.common.model;
     requires db;
     requires commons.math3;
+    //requires com.google.common;
+    requires org.slf4j;
 }

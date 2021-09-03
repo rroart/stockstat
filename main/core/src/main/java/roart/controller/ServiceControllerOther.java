@@ -26,6 +26,8 @@ import roart.common.controller.ServiceControllerOtherAbstract;
 
 public class ServiceControllerOther extends ServiceControllerOtherAbstract {
 
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
+
     public ServiceControllerOther(String myservices, String services, String communications, Class replyclass) {
         super(myservices, services, communications, replyclass);
     }

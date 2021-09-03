@@ -30,8 +30,8 @@ module iclij.core {
     requires iclij.common.verifyprofit;
     requires iclij.common.simulate;
     requires java.xml;
-    requires javax.servlet.api;
-    requires slf4j.api;
+    //requires javax.servlet.api;
+    //requires slf4j.api;
     requires spring.beans;
     requires spring.boot;
     requires spring.boot.autoconfigure;
@@ -53,7 +53,9 @@ module iclij.core {
     requires db;
     requires common.communication.model;
     requires common.communication.factory;
-    requires guava;
+    //requires com.google.common;
+    requires org.slf4j;
+    requires spring.core;
     //requires springfox.core;
     //requires springfox.spi;
     //requires springfox.spring.web;

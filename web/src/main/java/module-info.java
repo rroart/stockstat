@@ -18,7 +18,6 @@ module web {
     requires jcommon;
     requires jfreechart;
     requires jsoup;
-    requires slf4j.api;
     requires spring.boot.autoconfigure;
     requires spring.cloud.commons;
     requires vaadin.server;
@@ -28,4 +27,5 @@ module web {
     requires vaadin.spring;
     requires myexecutor;
     requires spring.beans;
+    requires org.slf4j;
 }

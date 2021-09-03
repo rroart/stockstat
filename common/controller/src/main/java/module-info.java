@@ -14,4 +14,5 @@ module common.controller {
     requires common.util;
     requires slf4j.api;
     requires guava;
+    requires com.fasterxml.jackson.databind;
 }

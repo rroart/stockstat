@@ -6,7 +6,7 @@
  *
  */
 module iclij.evolve {
-    requires slf4j.api;
+
     requires iclij.common.service;
     requires common.communication.model;
     requires iclij.common.config;
@@ -34,9 +34,10 @@ module iclij.evolve {
     requires common.config;
     requires iclij.common.model;
     requires iclij.common.util;
-    requires guava;
     requires common.inmemory.factory;
     requires common.inmemory.model;
     requires evolution.gene;
     requires db;
+    //requires com.google.common;
+    requires org.slf4j;
 }

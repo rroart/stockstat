@@ -20,5 +20,4 @@ module iclij.evolutioniclijconfigmap {
     requires common.constants;
     requires iclij.common.model;
     requires common.config;
-    requires jackson.annotations;
 }

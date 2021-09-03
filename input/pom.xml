@@ -73,6 +73,12 @@
       <groupId>com.fasterxml.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-xml</artifactId>
       <version>${jackson.version}</version>
+      <exclusions>
+        <exclusion>
+	  <groupId>jakarta.activation</groupId>
+	  <artifactId>jakarta.activation-api</artifactId>
+	</exclusion>
+      </exclusions>
     </dependency>
     <!--dependency>
       <groupId>org.postgresql</groupId>

@@ -10,7 +10,6 @@ module iclij.common.config {
 
     requires common.config;
     requires commons.configuration2;
-    requires jackson.annotations;
     requires com.fasterxml.jackson.core;
     requires java.xml;
     requires slf4j.api;

@@ -24,5 +24,4 @@ module iclij.evolutionchromosome {
     requires iclij.common.model;
     requires common.config;
     requires org.apache.commons.lang3;
-    requires jackson.annotations;
 }
