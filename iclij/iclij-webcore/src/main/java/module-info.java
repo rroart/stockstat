@@ -16,10 +16,8 @@ module iclij.webcore {
     requires common.model;
     requires common.service;
     requires common.util;
-    requires commons;
     requires commons.configuration2;
     requires commons.math3;
-    requires deductive;
     requires iclij.common.componentdata;
     requires iclij.common.config;
     requires iclij.common.constants;
@@ -30,8 +28,6 @@ module iclij.webcore {
     requires iclij.common.verifyprofit;
     requires iclij.evolutionmarketfilter;
     requires java.xml;
-    requires math;
-    requires pl;
     requires spring.beans;
     requires spring.boot;
     requires spring.boot.autoconfigure;

@@ -97,6 +97,7 @@ public class ControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setWebpath(EurekaConstants.GETCONTENT);
+        param.setWantMaps(true);
         MyMyConfig aConf = new MyMyConfig(conf);
         NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
         neuralnetcommand.setMllearn(false);
