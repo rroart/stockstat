@@ -76,7 +76,8 @@
   </dependencies>
   <properties>
     <stockstat.version>0.6-SNAPSHOT</stockstat.version>
-    <jdk.version>11</jdk.version>
+    <jdk.version>16</jdk.version>
+    <jdk.spark.version>11</jdk.spark.version>
     <mavencompiler.version>3.8.1</mavencompiler.version>
     <maveninstall.version>2.5.2</maveninstall.version>
     <mavenshade.version>3.2.1</mavenshade.version>
@@ -111,7 +112,7 @@
     <vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
     <servlet.version>3.1.0</servlet.version>
     <xmlapis.version>1.4.01</xmlapis.version>
-    <spark.version>2.4.0</spark.version>
+    <spark.version>3.1.2</spark.version>
     <talib.version>0.4.0</talib.version>
     <jenetics.version>5.2.0</jenetics.version>
     <guava.version>16.0.1</guava.version>

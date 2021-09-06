@@ -35,8 +35,5 @@
       </plugin>
     </plugins>
   </build>
-  <properties>
-    <jdk.version>10</jdk.version>
-  </properties>
 </project>
 

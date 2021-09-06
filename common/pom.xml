@@ -36,8 +36,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${mavencompiler.version}</version>
         <configuration>
-          <source>${jdk.version}</source>
-          <target>${jdk.version}</target>
+          <source>${jdk.spark.version}</source>
+          <target>${jdk.spark.version}</target>
           <encoding>UTF-8</encoding>
         </configuration>
 		<executions>
@@ -48,8 +48,8 @@
 				<goal>testCompile</goal>
 			</goals>
 			<configuration>
-				<source>1.8</source>
-				<target>1.8</target>
+				<source>${jdk.spark.version}</source>
+				<target>${jdk.spark.version}</target>
 			</configuration>
 		</execution>
         </executions>
@@ -57,7 +57,7 @@
     </plugins>
   </build>
   <properties>
-    <jdk.version>10</jdk.version>
+    <jdk.version>${jdk.spark.version}</jdk.version>
   </properties>
 </project>
 

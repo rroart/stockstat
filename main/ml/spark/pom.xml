@@ -68,7 +68,4 @@
       <version>${log4j.version}</version>
     </dependency>
   </dependencies>
-  <properties>
-    <sparkjdk.version>1.8</sparkjdk.version>
-  </properties>
 </project>

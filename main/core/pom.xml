@@ -20,8 +20,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
 	<version>${mavencompiler.version}</version>
         <configuration>
-          <source>${jdk.version}</source>
-          <target>${jdk.version}</target>
+          <source>${jdk.spark.version}</source>
+          <target>${jdk.spark.version}</target>
 	  <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
@@ -377,8 +377,5 @@
       <version>0.7.15.RELEASE</version>
     </dependency>
   </dependencies>
-  <properties>
-    <jdk.version>10</jdk.version>
-  </properties>
 </project>
 
