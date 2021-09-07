@@ -1,4 +1,4 @@
-SUBDIRS = 2.4.0
+SUBDIRS = 3.1.2
 
 all files: $(SUBDIRS)
 $(SUBDIRS):
