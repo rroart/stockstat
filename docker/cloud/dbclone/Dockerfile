@@ -1,4 +1,4 @@
-FROM openjdk:11-jdk
+FROM openjdk:16-jdk
 MAINTAINER <roart@nvg.ntnu.no>
 
 ARG mydump

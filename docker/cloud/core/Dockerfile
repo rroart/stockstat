@@ -32,7 +32,7 @@ COPY ${myconfig} .
 COPY ${myenv} env.sh
 RUN . env.sh; envsubst < stockstat.xml.tmpl > stockstat.xml
 
-FROM openjdk:10-jdk
+FROM openjdk:11-jdk
 MAINTAINER <roart@nvg.ntnu.no>
 ARG mywebport
 ARG myconfig

@@ -9,7 +9,7 @@ spec:
       name: stockstat-eureka:latest
   source:
     dockerfile : |-
-      FROM openjdk:11-jdk
+      FROM openjdk:16-jdk
       MAINTAINER <roart@nvg.ntnu.no>
       ADD files/stockstat-eureka-0.6-SNAPSHOT.jar /usr/local/bin
       WORKDIR /usr/local/bin
@@ -27,7 +27,7 @@ spec:
     dockerStrategy:
       from: 
         kind: DockerImage
-        name: openjdk:11-jdk
+        name: openjdk:16-jdk
   triggers:
   - imageChange: {}
     type: ImageChange

@@ -23,7 +23,7 @@ RUN mvn -pl input -am install -Dmaven.test.skip=true
 RUN cp -p input/target/stockstat-input-0.6-SNAPSHOT-jar-with-dependencies.jar /usr/local/bin
 
 #FROM debian:stretch
-FROM openjdk:11-jdk
+FROM openjdk:16-jdk
 MAINTAINER <roart@nvg.ntnu.no>
 
 ARG mydbserver

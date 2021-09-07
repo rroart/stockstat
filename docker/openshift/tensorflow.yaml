@@ -38,7 +38,7 @@ spec:
     dockerStrategy:
       from: 
         kind: DockerImage
-        name: openjdk:11-jdk
+        name: openjdk:16-jdk
   triggers:
   - imageChange: {}
     type: ImageChange

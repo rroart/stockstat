@@ -12,7 +12,7 @@ spec:
       FROM debian:stretch
       MAINTAINER <roart@nvg.ntnu.no>
       RUN apt-get update && apt-get upgrade -y
-      RUN apt-get install -y openjdk-11-jdk curl procps
+      RUN apt-get install -y openjdk-16-jdk curl procps
       RUN curl -s https://archive.apache.org/dist/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz | tar -xz -C /tmp
       RUN ln -s /tmp /tmp/spark-2.4.0-bin-hadoop2.7/logs
       WORKDIR /tmp/spark-2.4.0-bin-hadoop2.7
@@ -26,7 +26,7 @@ spec:
     dockerStrategy:
       from: 
         kind: DockerImage
-        name: openjdk:11-jdk
+        name: openjdk:16-jdk
   triggers:
   - imageChange: {}
     type: ImageChange

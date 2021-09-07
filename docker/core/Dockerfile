@@ -1,4 +1,4 @@
-FROM openjdk:10-jdk
+FROM openjdk:11-jdk
 MAINTAINER <roart@nvg.ntnu.no>
 ENV EUREKA_SERVER_URI http://stockstat-eureka:8761/eureka
 ENV EUREKA_PREFER_IPADDRESS true

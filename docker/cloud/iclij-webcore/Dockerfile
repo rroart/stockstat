@@ -33,7 +33,7 @@ COPY ${myconfig} .
 COPY ${myenv} env.sh
 RUN . env.sh; envsubst < iclij.xml.tmpl > iclij.xml
 
-FROM openjdk:11-jdk
+FROM openjdk:16-jdk
 MAINTAINER <roart@nvg.ntnu.no>
 ARG myaserver
 ARG myiserver
