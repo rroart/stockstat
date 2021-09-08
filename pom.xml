@@ -125,5 +125,7 @@
     <hazelcast.version>3.12.12</hazelcast.version>
     <hazelcastclient.version>3.2.12</hazelcastclient.version>
     <redisclient.version>3.5.1</redisclient.version>
+    <!-- need old version -->
+    <janino.version>3.0.16</janino.version>
  </properties>
 </project>
