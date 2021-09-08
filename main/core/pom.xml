@@ -327,6 +327,11 @@
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.codehaus.janino</groupId>
+      <artifactId>janino</artifactId>
+      <version>${janino.version}</version>
+    </dependency>
+    <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-ml-tensorflow</artifactId>
       <version>${stockstat.version}</version>

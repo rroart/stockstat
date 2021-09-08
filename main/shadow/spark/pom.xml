@@ -33,6 +33,7 @@
 		  <include>org.apache.spark:spark-mllib_2.12</include>
 		  <include>org.apache.spark:spark-mllib-local_2.12</include>
 		  <include>org.apache.spark:spark-sql_2.12</include>
+		  <include>org.apache.spark:spark-network-common_2.12</include>
 		  <include>org.eclipse.jetty:jetty-http</include>
 		</includes>
               </artifactSet>
