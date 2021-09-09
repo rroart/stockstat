@@ -45,6 +45,7 @@ public class CategoryPrice extends Category {
                 if (dataArraySize > 1) {
                     r.add(getTitle() + " l");
                     r.add(getTitle() + " h");
+                    r.add(getTitle() + " o");
                 }
                 r.add("Currency");
                 for (AbstractIndicator indicator : indicators) {

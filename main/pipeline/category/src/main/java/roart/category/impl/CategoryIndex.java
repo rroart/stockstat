@@ -46,6 +46,7 @@ public class CategoryIndex extends Category {
                 if (dataArraySize > 1) {
                     r.add(getTitle() + " l");
                     r.add(getTitle() + " h");
+                    r.add(getTitle() + " o");
                 }
                 for (AbstractIndicator indicator : indicators) {
                     if (indicator.isEnabled() && indicator.fieldSize > 0) {
