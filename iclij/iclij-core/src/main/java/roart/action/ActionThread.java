@@ -129,7 +129,11 @@ public class ActionThread extends Thread {
         boolean evolve = action.getEvolve(component, param);
         WebData myData = action.getWebData();
         if (item.getDbid() == null || action.getActionData().wantsUpdate(config)) {
-            action.getPicksFiltered(myData, param, config, item, evolve, wantThree);                
+            try {
+                action.getPicksFiltered(myData, param, config, item, evolve, wantThree);                
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
         }
         return myData;
     }
