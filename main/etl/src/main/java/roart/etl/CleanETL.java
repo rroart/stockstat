@@ -9,6 +9,9 @@ import roart.common.pipeline.PipelineConstants;
 public class CleanETL {
 
     public void fixmap(Object o) {
+        if (o == null) {
+            return;
+        }
         //System.out.println("" + i + " " + o.hashCode());
         Map<String, Object> m = (Map<String, Object>) o;
         Set<String> k = m.keySet();
