@@ -238,7 +238,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     private Double[] getThresholds() {
         boolean gui = conf.getConfigValueMap().get(ConfigConstants.MISCTHRESHOLD) != null;
-        log.info("GUI thresholds {}", gui);
+        log.debug("GUI thresholds {}", gui);
         String thresholdString = getAggregatorsThreshold();
         if (gui) {
             thresholdString = conf.getThreshold();

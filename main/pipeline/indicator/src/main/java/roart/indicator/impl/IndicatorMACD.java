@@ -61,9 +61,6 @@ public class IndicatorMACD extends Indicator {
     
     @Override
     public Object calculate(double[][] array) {
-        if (array.length != 180 && array.length > 0) {
-            log.info("180");
-        }
         Ta tu = new TalibMACD();
         return tu.calculate(array);
     }

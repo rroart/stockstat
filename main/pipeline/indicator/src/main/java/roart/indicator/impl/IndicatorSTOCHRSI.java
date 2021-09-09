@@ -52,9 +52,6 @@ public class IndicatorSTOCHRSI extends Indicator {
     
     @Override
     public Object calculate(double[][] array) {
-        if (array.length != 180 && array.length > 0) {
-            log.info("180");
-        }
         Ta tu = new Ta4jSTOCHRSI();
         return tu.calculate(array);
     }
