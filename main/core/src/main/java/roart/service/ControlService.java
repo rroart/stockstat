@@ -211,6 +211,9 @@ public class ControlService {
     }
     
     public void printmap(Object o, int i) {
+        if (o == null) {
+            return;
+        }
         //System.out.println("" + i + " " + o.hashCode());
         Map<String, Object> m = (Map<String, Object>) o;
         for (Entry<String, Object> e : m.entrySet()) {
