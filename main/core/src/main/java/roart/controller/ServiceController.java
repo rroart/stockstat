@@ -193,7 +193,9 @@ public class ServiceController implements CommandLineRunner {
             NeuralNetCommand neuralnetcommand = param.getNeuralnetcommand();
             result.setList(getInstance().getContent( new MyMyConfig(param.getConfig()), maps, disableList, neuralnetcommand));
             result.setMaps(maps);
+            if (maps != null) {
             log.info("blblbl" + JsonUtil.convert(maps).length());
+            }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
