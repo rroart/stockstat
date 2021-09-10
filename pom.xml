@@ -127,5 +127,6 @@
     <redisclient.version>3.5.1</redisclient.version>
     <!-- need old version -->
     <janino.version>3.0.16</janino.version>
+    <tweety.version>1.20</tweety.version>
  </properties>
 </project>

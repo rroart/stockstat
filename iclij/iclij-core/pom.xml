@@ -283,15 +283,15 @@
       <version>${commons.beanutils.version}</version>
     </dependency>
     <dependency>
-      <groupId>net.sf.tweety</groupId>
+      <groupId>org.tweetyproject</groupId>
       <artifactId>tweety-full</artifactId>
-      <version>1.9</version>
+      <version>${tweety.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>net.sf.tweety</groupId>
+      <groupId>org.tweetyproject</groupId>
       <artifactId>commons</artifactId>
-      <version>1.9</version>
+      <version>${tweety.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

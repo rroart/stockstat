@@ -194,9 +194,9 @@
       <version>1.9.3</version>
     </dependency>
     <dependency>
-      <groupId>net.sf.tweety</groupId>
+      <groupId>org.tweetyproject</groupId>
       <artifactId>beliefdynamics</artifactId>
-      <version>1.9</version>
+      <version>${tweety.version}</version>
     </dependency>
     <dependency>
       <groupId>io.springfox</groupId>
