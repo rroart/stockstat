@@ -12,7 +12,7 @@ module model {
     requires common.constants;
     requires commons.math3;
     requires common.model;
-    requires slf4j.api;
+    requires org.slf4j;
     requires common.config;
     requires org.apache.commons.lang3;
     requires db;

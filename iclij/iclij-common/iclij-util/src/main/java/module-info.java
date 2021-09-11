@@ -19,7 +19,7 @@ module iclij.common.util {
     requires db;
     requires common.config;
     requires org.apache.commons.lang3;
-    requires slf4j.api;
+    requires org.slf4j;
     requires common.constants;
     requires iclij.common.constants;
 }

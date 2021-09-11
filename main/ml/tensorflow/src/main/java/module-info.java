@@ -11,7 +11,7 @@ module ml.tensorflow {
     requires common.config;
     requires common.webflux;
     requires ehcache;
-    requires slf4j.api;
+    requires org.slf4j;
     requires ml.common;
     requires pipeline.model;
     requires org.apache.commons.lang3;

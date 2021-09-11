@@ -20,7 +20,7 @@ module aggregate {
     requires common.util;
     requires ta.lib;
     requires com.fasterxml.jackson.databind;
-    requires slf4j.api;
+    requires org.slf4j;
     requires myexecutor;
     requires mldao;
     requires dbdao;

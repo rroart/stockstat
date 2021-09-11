@@ -14,7 +14,7 @@ module pipeline.predictor {
     requires mldao;
     requires org.apache.commons.lang3;
     requires pipeline.model;
-    requires slf4j.api;
+    requires org.slf4j;
     requires stockutil;
     requires common.config;
     requires common.util;

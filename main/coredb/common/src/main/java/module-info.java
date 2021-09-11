@@ -11,6 +11,6 @@ module coredb {
     requires common.config;
     requires common.model;
     requires model;
-    requires slf4j.api;
+    requires org.slf4j;
     requires pipeline.model;
 }

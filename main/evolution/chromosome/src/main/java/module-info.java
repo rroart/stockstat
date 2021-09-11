@@ -13,7 +13,7 @@ module evolution.chromosome {
     requires common.config;
     requires common.constants;
     requires evolution.model;
-    requires slf4j.api;
+    requires org.slf4j;
     requires evolution.gene;
     requires model;
     requires aggregate;

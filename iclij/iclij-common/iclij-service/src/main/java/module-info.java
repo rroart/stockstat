@@ -13,7 +13,7 @@ module iclij.common.service {
     requires common.config;
     requires common.service;
     requires common.util;
-    requires slf4j.api;
+    requires org.slf4j;
     requires common.model;
     requires common.constants;
     requires common.communication.factory;

@@ -9,5 +9,5 @@ module spark {
     exports roart.spark;
 
     requires stockstat.shadow.spark;
-    requires slf4j.api;
+    requires org.slf4j;
 }

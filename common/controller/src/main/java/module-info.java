@@ -12,7 +12,7 @@ module common.controller {
     requires common.communication.model;
     requires common.constants;
     requires common.util;
-    requires slf4j.api;
+    requires org.slf4j;
     requires guava;
     requires com.fasterxml.jackson.databind;
 }

@@ -13,7 +13,8 @@ module db {
     requires common.util;
     requires java.persistence;
     requires org.hibernate.orm.core;
-    requires slf4j.api;
+    //requires org.slf4j;
+    requires org.slf4j;
     requires java.naming;
     requires java.transaction;
 }

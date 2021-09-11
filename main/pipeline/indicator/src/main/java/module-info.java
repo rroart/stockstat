@@ -17,7 +17,7 @@ module pipeline.indicator {
     requires model;
     requires pipeline.model;
     requires org.apache.commons.lang3;
-    requires slf4j.api;
+    requires org.slf4j;
     requires talib;
     requires coredb;
     requires stockutil;

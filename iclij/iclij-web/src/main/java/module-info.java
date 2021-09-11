@@ -19,7 +19,7 @@ module iclij.web {
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.datatype.jsr310;
     requires jsoup;
-    requires slf4j.api;
+    requires org.slf4j;
     requires spring.beans;
     requires spring.boot.autoconfigure;
     requires spring.cloud.commons;

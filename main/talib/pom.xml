@@ -12,7 +12,7 @@
   <artifactId>stockstat-talib</artifactId>
   <version>0.6-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <name>Stock Statistics Main CoreDB</name>
+  <name>Stock Statistics Main TaLIB</name>
   <dependencies>
     <!-- https://mvnrepository.com/artifact/com.tictactec/ta-lib -->
     <dependency>
@@ -35,6 +35,11 @@
       <artifactId>stockstat-common-util</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>	   
     <dependency>
       <groupId>com.tictactec</groupId>
       <artifactId>ta-lib</artifactId>
@@ -60,11 +65,6 @@
       <artifactId>jfreechart</artifactId>
       <version>${jfreechart.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>	   
   </dependencies>
 </project>
 

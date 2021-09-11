@@ -16,5 +16,5 @@ module evolution.algorithm {
     requires evolution.model;
     requires myexecutor;
     requires org.apache.commons.lang3;
-    requires slf4j.api;
+    requires org.slf4j;
 }

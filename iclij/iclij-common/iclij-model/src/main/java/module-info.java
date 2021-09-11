@@ -19,6 +19,6 @@ module iclij.common.model {
     requires iclij.common.config;
     requires iclij.common.constants;
     requires org.apache.commons.lang3;
-    requires slf4j.api;
+    requires org.slf4j;
     requires common.constants;
 }

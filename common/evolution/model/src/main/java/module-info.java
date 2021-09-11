@@ -13,5 +13,5 @@ module evolution.model {
     requires evolution.config;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
-    requires slf4j.api;
+    requires org.slf4j;
 }

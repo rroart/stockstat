@@ -8,5 +8,5 @@
 module myexecutor {
     exports roart.executor;
 
-    requires slf4j.api;
+    requires org.slf4j;
 }

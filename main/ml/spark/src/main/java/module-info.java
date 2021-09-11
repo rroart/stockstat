@@ -13,7 +13,7 @@ module ml.spark {
     requires common.constants;
     requires pipeline.common;
     requires scala.library;
-    requires slf4j.api;
+    requires org.slf4j;
     requires stockstat.shadow.spark;
     requires ml.common;
     requires pipeline.model;

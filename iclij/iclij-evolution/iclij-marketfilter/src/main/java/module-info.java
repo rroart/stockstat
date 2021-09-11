@@ -15,7 +15,7 @@ module iclij.evolutionmarketfilter {
     requires io.jenetics.base;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
-    requires slf4j.api;
+    requires org.slf4j;
     requires common.constants;
     requires iclij.common.model;
     requires common.config;

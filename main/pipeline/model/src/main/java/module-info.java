@@ -22,6 +22,6 @@ module pipeline.model {
     requires commons.math3;
     requires model;
     requires scala.library;
-    requires slf4j.api;
+    requires org.slf4j;
     requires org.apache.commons.lang3;
 }

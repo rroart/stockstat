@@ -18,7 +18,7 @@ module pipeline.common {
     requires model;
     requires org.apache.commons.lang3;
     requires pipeline.model;
-    requires slf4j.api;
+    requires org.slf4j;
     requires stockutil;
     requires talib;
     requires pipeline.indicator;

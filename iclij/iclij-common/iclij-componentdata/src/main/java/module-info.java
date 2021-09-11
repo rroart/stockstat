@@ -17,7 +17,7 @@ module iclij.common.componentdata {
     requires iclij.common.model;
     requires iclij.common.service;
     requires org.apache.commons.lang3;
-    requires slf4j.api;
+    requires org.slf4j;
     requires common.constants;
 }
 

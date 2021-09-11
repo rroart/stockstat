@@ -12,7 +12,7 @@ module pipeline.category {
     requires pipeline.indicator;
     requires pipeline.model;
     requires pipeline.predictor;
-    requires slf4j.api;
+    requires org.slf4j;
     requires stockutil;
     requires model;
     requires common.model;
