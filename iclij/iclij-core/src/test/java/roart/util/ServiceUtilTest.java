@@ -2,7 +2,7 @@ package roart.util;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import roart.iclij.model.IncDecItem;
 

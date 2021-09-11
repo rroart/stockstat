@@ -1,12 +1,10 @@
 package roart.util;
 
-import static org.junit.Assert.*;
-
 import java.io.FileNotFoundException;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SvgUtilTest {
 

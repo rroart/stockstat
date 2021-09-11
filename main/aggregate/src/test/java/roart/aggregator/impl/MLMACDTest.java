@@ -3,12 +3,12 @@ package roart.aggregator.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import roart.aggregator.impl.IndicatorAggregator;
 import roart.aggregator.impl.MLMACD;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MLMACDTest {
 	@Test

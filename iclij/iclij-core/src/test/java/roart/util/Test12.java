@@ -11,7 +11,7 @@ import org.tweetyproject.logics.pl.parser.PlParser;
 import org.tweetyproject.logics.pl.syntax.PlFormula;
 import org.tweetyproject.logics.pl.syntax.Proposition;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class Test12 {
     @Test

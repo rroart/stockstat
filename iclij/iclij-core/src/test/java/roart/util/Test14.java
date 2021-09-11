@@ -2,7 +2,7 @@ package roart.util;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.tweetyproject.commons.ParserException;
 import org.tweetyproject.logics.commons.analysis.BeliefSetInconsistencyMeasure;
