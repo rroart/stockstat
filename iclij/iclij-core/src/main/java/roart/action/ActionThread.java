@@ -5,7 +5,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,6 +35,8 @@ public class ActionThread extends Thread {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public static volatile List<ActionComponentItem> queue = Collections.synchronizedList(new ArrayList<>());
+    
+    public static volatile Set<String> queued = Collections.synchronizedSet(new HashSet<>());
     
     private static volatile boolean updateDb = false;
     

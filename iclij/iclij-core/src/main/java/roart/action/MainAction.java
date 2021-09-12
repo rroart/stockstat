@@ -63,6 +63,10 @@ public class MainAction extends Action {
                     }
                 }
             }
+            try {
+                Thread.sleep(3600 * 1000);
+            } catch (Exception e) {
+            }
         }
     }
 

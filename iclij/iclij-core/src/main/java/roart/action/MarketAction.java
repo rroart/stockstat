@@ -223,7 +223,19 @@ public abstract class MarketAction extends Action {
             }
         }
         if (auto) {
-            ActionThread.queue.addAll(marketTimes);
+            List<ActionComponentItem> marketTimesFiltered = new ArrayList<>();;
+            Set<String> marketTimesIds = new HashSet<>();
+            for (ActionComponentItem marketTime : marketTimes) {
+                String id = marketTime.toStringId();
+                if (!ActionThread.queued.contains(id)) {
+                    marketTimesIds.add(id);
+                    marketTimesFiltered.add(marketTime);
+                } else {
+                    log.info("Skipping already queued {}", id);
+                }
+            }
+            ActionThread.queued.addAll(marketTimesIds);
+            ActionThread.queue.addAll(marketTimesFiltered);
             return null;
         }
         

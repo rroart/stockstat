@@ -139,7 +139,12 @@ public class ActionComponentItem {
     @Override
     public String toString() {
         String paramString = JsonUtil.convert(parameters);
-        return record != null ? record.toString() : "" + " " + " " + action + " " + component + " " + subcomponent + " " + paramString + " " + buy + " " + priority + " " + time + " " + haverun;
+        return record != null ? record.toString() : "" + " " + " " + market + " " + action + " " + component + " " + subcomponent + " " + paramString + " " + buy + " " + priority + " " + time + " " + haverun;
+    }
+
+    public String toStringId() {
+        String paramString = JsonUtil.convert(parameters);
+        return market + " " + action + " " + component + " " + subcomponent + " " + paramString + " " + buy + " " + priority;
     }
 
     public static List<ActionComponentItem> getAll() throws Exception {
