@@ -25,6 +25,7 @@ import roart.component.model.ComponentData;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.Market;
+import roart.iclij.model.TimingBLItem;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.ActionComponentItem;
 import roart.iclij.model.component.ComponentInput;
@@ -56,6 +57,12 @@ public class ActionThread extends Thread {
             Thread.currentThread().interrupt();
         }
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
+        List<TimingBLItem> blacklist = null;
+        try {
+            blacklist = TimingBLItem.getAll();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
         while (true) {
             if (updateDb) {
                 try {
@@ -91,7 +98,26 @@ public class ActionThread extends Thread {
                     }
                     continue;
                 }
+                String id = item.toStringId();
+                TimingBLItem blItem = blacklist.stream().filter(anitem -> id.equals(anitem.getId())).findAny().orElse(null);
+                if (blItem != null && blItem.getCount() >= 3) {
+                    continue;
+                } else {
+                    blItem = new TimingBLItem();
+                    blItem.setId(id);
+                }
+                blItem.setCount(1 + blItem.getCount());
+                try {
+                    blItem.save();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
                 runAction(instance, item);
+                try {
+                    blItem.delete(id);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
                 try {
                     if (item.getDbid() != null) {
                         item.delete();

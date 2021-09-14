@@ -33,6 +33,7 @@
 	<mapping class="roart.db.model.IncDec"/>
 	<mapping class="roart.db.model.Config"/>
 	<mapping class="roart.db.model.Timing"/>
+	<mapping class="roart.db.model.TimingBL"/>
 	<mapping class="roart.db.model.Relation"/>
 	<mapping class="roart.db.model.Cont"/>
 	<mapping class="roart.db.model.MLMetrics"/>
