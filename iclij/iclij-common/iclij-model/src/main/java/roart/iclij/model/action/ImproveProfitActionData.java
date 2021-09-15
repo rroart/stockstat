@@ -107,6 +107,6 @@ public class ImproveProfitActionData extends MarketActionData {
     
     @Override
     public boolean wantsUpdate(IclijConfig config) {
-        return true;
+        return config.wantsImproveProfitUpdate();
     }
 }
