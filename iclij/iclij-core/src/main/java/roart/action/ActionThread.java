@@ -1,5 +1,6 @@
 package roart.action;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,17 +20,24 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
+import roart.common.util.JsonUtil;
 import roart.common.util.MetaUtil;
 import roart.component.Component;
 import roart.component.model.ComponentData;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.Market;
+import roart.iclij.model.AboveBelowItem;
+import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MemoryItem;
+import roart.iclij.model.Parameters;
 import roart.iclij.model.TimingBLItem;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.ActionComponentItem;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.util.MarketUtil;
+import roart.populate.PopulateThread;
+import roart.constants.IclijConstants;
 
 public class ActionThread extends Thread {
 
@@ -161,6 +169,26 @@ public class ActionThread extends Thread {
         if (item.getDbid() == null || action.getActionData().wantsUpdate(config)) {
             try {
                 action.getPicksFiltered(myData, param, config, item, evolve, wantThree);                
+                if (item.getDbid() != null) {
+                    if (action.getActionData().wantsUpdate(config)) {
+                        if (IclijConstants.MACHINELEARNING.equals(item.getAction()) || IclijConstants.IMPROVEPROFIT.equals(item.getAction())) {
+                            if (IclijConstants.MACHINELEARNING.equals(item.getAction())) {
+                                mct(item.getMarket(), IclijConstants.IMPROVEPROFIT, item.getComponent(), item.getSubcomponent());                            
+                            }
+                            //mct(item.getMarket(), IclijConstants.MACHINELEARNING, item.getComponent(), item.getSubcomponent());
+                            // delete timing findprofit improveprofit
+                            try {
+                                new IncDecItem().delete(item.getMarket(), item.getComponent(), item.getSubcomponent(), null, null);
+                                new MemoryItem().delete(item.getMarket(), item.getComponent(), item.getSubcomponent(), null, null);
+                                new AboveBelowItem().delete(item.getMarket(), null, null);
+                            } catch (Exception e) {
+                                log.error(Constants.EXCEPTION, e);
+                            }                        
+                            PopulateThread.queue.add(item.getMarket());
+                        }
+                    }
+                    
+                }
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
@@ -171,6 +199,25 @@ public class ActionThread extends Thread {
     private int getScore(ActionComponentItem i) {
         int run = i.isHaverun() ? 1 : 0;
         return (int) (100000 * (i.getPriority() + run) + i.getTime());
+    }
+    
+    private void mct(String action, String market, String component, String subcomponent) {
+        Parameters p = new Parameters();
+        p.setFuturedays(10);
+        p.setThreshold(1.0);
+        ActionComponentItem mct = new ActionComponentItem();
+        mct.setAction(action);
+        mct.setMarket(market);
+        mct.setComponent(component);
+        mct.setSubcomponent(subcomponent);
+        mct.setRecord(LocalDate.now());
+        mct.setPriority(-10);
+        mct.setParameters(JsonUtil.convert(p));
+        try {
+            mct.save();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
     }
     
     /*

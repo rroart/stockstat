@@ -237,4 +237,8 @@ public class IncDecItem {
         return this.toString().hashCode();
     }
     
+    public void delete(String market, String component, String subcomponent, Date startDate, Date endDate) throws Exception {
+        IncDec.delete(market, component, subcomponent, startDate, endDate);
+    }
+
 }

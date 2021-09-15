@@ -3,6 +3,7 @@ package roart.populate;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +28,8 @@ public class PopulateThread extends Thread {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
+    public static volatile List<String> queue = Collections.synchronizedList(new ArrayList<>());
+
     @Override
     public void run() {
         try {
@@ -36,8 +39,19 @@ public class PopulateThread extends Thread {
             Thread.currentThread().interrupt();
         }
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
+        List<Market> markets = new ArrayList<>();
         if (instance.populate()) {
-            List<Market> markets = new MarketUtil().getMarkets(false);
+            markets = new MarketUtil().getMarkets(false);
+        }
+        while (true) {
+            List<String> copy = new ArrayList<>(queue);
+            queue.removeAll(copy);
+            if (markets.isEmpty()) {
+                for (String market : copy) {
+                    Market aMarket = new MarketUtil().findMarket(market);
+                    markets.add(aMarket);               
+                }
+            }
             for (Market market : markets) {
                 if (market.getConfig().getEnable() != null && !market.getConfig().getEnable()) {
                     continue;
@@ -124,7 +138,12 @@ public class PopulateThread extends Thread {
                     index = TimeUtil.getIndexEqualAfter(dates, date);                    
                 }
             }
+            try {
+                TimeUnit.SECONDS.sleep(300);
+            } catch (InterruptedException e) {
+                log.error(Constants.EXCEPTION, e);
+                Thread.currentThread().interrupt();
+            }
         }
-        log.info("Populate end");
     }
 }

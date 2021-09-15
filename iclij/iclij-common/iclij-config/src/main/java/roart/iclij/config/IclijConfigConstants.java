@@ -158,6 +158,7 @@ public class IclijConfigConstants {
     public static final String FINDPROFITUPDATE = "findprofit.update";
     public static final String IMPROVEPROFIT = "improveprofit";
     public static final String IMPROVEPROFITAUTORUN = "improveprofit.autorun";
+    public static final String IMPROVEPROFITUPDATE = "improveprofit.update";
     public static final String IMPROVEPROFITFITNESSMINIMUM = "improveprofit.fitnessminimum";
     public static final String IMPROVEPROFITRECOMMENDER = "improveprofit.recommender";
     public static final String IMPROVEPROFITMLMACD = "improveprofit.mlmacd";

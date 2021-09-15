@@ -2,6 +2,7 @@ package roart.iclij.model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import roart.db.model.AboveBelow;
@@ -103,6 +104,10 @@ public class AboveBelowItem {
         item.setScore(data.getScore());
         item.setSubcomponents(data.getSubcomponents());
         return item;
+    }
+
+    public void delete(String market, Date startDate, Date endDate) throws Exception {
+        AboveBelow.delete(market, startDate, endDate);
     }
 
 }

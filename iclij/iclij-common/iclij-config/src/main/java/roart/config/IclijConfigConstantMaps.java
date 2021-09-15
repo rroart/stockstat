@@ -186,6 +186,7 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.FINDPROFITRERUNSAVE, Boolean.class);
         map.put(IclijConfigConstants.FINDPROFITUPDATE, Boolean.class);
         map.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, Boolean.class);
+        map.put(IclijConfigConstants.IMPROVEPROFITUPDATE, Boolean.class);
         map.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, Integer.class);
         map.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, Boolean.class);
         map.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOREVOLUTIONCONFIG, String.class);
@@ -473,6 +474,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.FINDPROFITRERUNSAVE, Boolean.FALSE);
         deflt.put(IclijConfigConstants.FINDPROFITUPDATE, Boolean.FALSE);
         deflt.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.IMPROVEPROFITUPDATE, Boolean.FALSE);
         deflt.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, 10);
         deflt.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, Boolean.TRUE);
 	deflt.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOREVOLUTIONCONFIG, null);
@@ -756,6 +758,7 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.FINDPROFITRERUNSAVE, "Find profit rerun save");
         text.put(IclijConfigConstants.FINDPROFITUPDATE, "Enable find profit update");
         text.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, "Enable improve profit autorun");
+        text.put(IclijConfigConstants.IMPROVEPROFITUPDATE, "Enable improve profit update");
         text.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, "Enable improve profit fitness minimum");
         text.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, "Enable improve profit mlindicator");
         text.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOREVOLUTIONCONFIG, "Improve profit mlindicator evolution config");
@@ -1099,6 +1102,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.FINDPROFITRERUNSAVE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Find profit rerun save"));
         mymap.put(IclijConfigConstants.FINDPROFITUPDATE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable find profit update"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve profit autorun"));
+        mymap.put(IclijConfigConstants.IMPROVEPROFITUPDATE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve profit update"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, new IclijXMLType(Integer.class, 10, "Enable improve profit fitness minimum"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable improve profit mlindicator"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOREVOLUTIONCONFIG, new IclijXMLType(String.class, null, "Improve profit mlindicator evolution config"));

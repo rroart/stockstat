@@ -297,7 +297,7 @@ public class Evolve {
         output.add("Summary: " + better + " " + MathUtil.round(avg, 2) + " vs " + newer);
         print(ServiceConstants.EVOLVEFILTERPROFIT + " " + title, "File " + id, output);
         if (better) {
-            saveBetter(myList, market, component, subComponent, IclijConfigConstants.MACHINELEARNING);
+            saveBetter(myList, market, component, subComponent, IclijConfigConstants.IMPROVEPROFIT);
         }
     }
 

@@ -310,6 +310,10 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITAUTORUN);
     }
 
+    public boolean wantsImproveProfitUpdate() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITUPDATE);
+    }
+
     public int getImproveProfitFitnessMinimum() {
         return (Integer) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM);
     }

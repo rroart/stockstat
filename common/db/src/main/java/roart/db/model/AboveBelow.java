@@ -2,6 +2,7 @@ package roart.db.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -132,4 +133,26 @@ public class AboveBelow implements Serializable {
         Queues.queue.add(this);
     }
 
+    @Transient
+    @Transactional
+    public static void delete(String market, Date startDate, Date endDate) throws Exception {
+        String queryString = "delete AboveBelow where market = :market";
+        if (startDate != null) {
+            queryString += " and date > :startdate";
+        }
+        if (endDate != null) {
+            queryString += " and date <= :enddate";
+        }
+        HibernateUtil hu = new HibernateUtil(false);
+        Query<IncDec> query = hu.createQuery(queryString);
+        query.setParameter("market", market);
+        //query.setParameter("action", action);
+        if (startDate != null) {
+            query.setParameter("startdate", startDate, TemporalType.DATE);
+        }
+        if (endDate != null) {
+            query.setParameter("enddate", endDate, TemporalType.DATE);
+        }
+        Queues.queuedelete.add(query.toString());
+    }
 }

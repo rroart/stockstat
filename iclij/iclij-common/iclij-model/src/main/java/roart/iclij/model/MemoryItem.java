@@ -689,4 +689,8 @@ public class MemoryItem {
         return configItems;
     }
 
+    public void delete(String market, String component, String subcomponent, Date startDate, Date endDate) throws Exception {
+        Memory.delete(market, component, subcomponent, startDate, endDate);
+    }
+
 }

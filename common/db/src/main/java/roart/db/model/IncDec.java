@@ -222,4 +222,38 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
         Queues.queue.add(this);
     }
 
+    @Transient
+    @Transactional
+    public static void delete(String market, String component, String subcomponent, Date startDate, Date endDate) throws Exception {
+        String queryString = "delete IncDec where market = :market";
+        if (component != null) {
+            queryString += " and component = :component";
+        }
+        if (subcomponent != null) {
+            queryString += " and subcomponent = :subcomponent";
+        }
+        if (startDate != null) {
+            queryString += " and date > :startdate";
+        }
+        if (endDate != null) {
+            queryString += " and date <= :enddate";
+        }
+        HibernateUtil hu = new HibernateUtil(false);
+        Query<IncDec> query = hu.createQuery(queryString);
+        query.setParameter("market", market);
+        //query.setParameter("action", action);
+        if (component != null) {
+            query.setParameter("component", component);
+        }
+        if (subcomponent != null) {
+            query.setParameter("subcomponent", subcomponent);
+        }
+        if (startDate != null) {
+            query.setParameter("startdate", startDate, TemporalType.DATE);
+        }
+        if (endDate != null) {
+            query.setParameter("enddate", endDate, TemporalType.DATE);
+        }
+        Queues.queuedelete.add(query.toString());
+    }
 }
