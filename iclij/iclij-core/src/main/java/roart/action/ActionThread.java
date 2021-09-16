@@ -173,11 +173,12 @@ public class ActionThread extends Thread {
                     if (action.getActionData().wantsUpdate(config)) {
                         if (IclijConstants.MACHINELEARNING.equals(item.getAction()) || IclijConstants.IMPROVEPROFIT.equals(item.getAction())) {
                             if (IclijConstants.MACHINELEARNING.equals(item.getAction())) {
-                                mct(item.getMarket(), IclijConstants.IMPROVEPROFIT, item.getComponent(), item.getSubcomponent());                            
+                                mct(IclijConstants.IMPROVEPROFIT, item.getMarket(), item.getComponent(), item.getSubcomponent());                            
                             }
                             //mct(item.getMarket(), IclijConstants.MACHINELEARNING, item.getComponent(), item.getSubcomponent());
                             // delete timing findprofit improveprofit
                             try {
+				log.info("Deleting AboveBelow etc");
                                 new IncDecItem().delete(item.getMarket(), item.getComponent(), item.getSubcomponent(), null, null);
                                 new MemoryItem().delete(item.getMarket(), item.getComponent(), item.getSubcomponent(), null, null);
                                 new AboveBelowItem().delete(item.getMarket(), null, null);
