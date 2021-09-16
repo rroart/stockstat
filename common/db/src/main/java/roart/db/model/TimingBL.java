@@ -126,7 +126,7 @@ public class TimingBL implements Serializable {
     @Transient
     @Transactional
     public static void delete(String id) {
-        Queues.queuedelete.add("delete TimingBL where id = \"" + id + "\"");        
+        Queues.queuedelete.add("delete TimingBL where id = '" + id + "'");
     }
 
 }

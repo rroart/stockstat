@@ -153,6 +153,6 @@ public class AboveBelow implements Serializable {
         if (endDate != null) {
             query.setParameter("enddate", endDate, TemporalType.DATE);
         }
-        Queues.queuedelete.add(query.toString());
+        Queues.queuedelete.add(query.getQueryString());
     }
 }
