@@ -239,7 +239,7 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
             queryString += " and date <= :enddate";
         }
         HibernateUtil hu = new HibernateUtil(false);
-        Query<IncDec> query = hu.createQuery(queryString);
+        Query<IncDec> query = hu.createWriteQuery(queryString);
         query.setParameter("market", market);
         //query.setParameter("action", action);
         if (component != null) {
@@ -254,6 +254,6 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
         if (endDate != null) {
             query.setParameter("enddate", endDate, TemporalType.DATE);
         }
-        Queues.queuedelete.add(query.getQueryString());
+        Queues.queuedeleteq.add(query);
     }
 }

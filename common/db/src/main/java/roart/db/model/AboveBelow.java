@@ -144,7 +144,7 @@ public class AboveBelow implements Serializable {
             queryString += " and date <= :enddate";
         }
         HibernateUtil hu = new HibernateUtil(false);
-        Query<IncDec> query = hu.createQuery(queryString);
+        Query<IncDec> query = hu.createWriteQuery(queryString);
         query.setParameter("market", market);
         //query.setParameter("action", action);
         if (startDate != null) {
@@ -153,6 +153,6 @@ public class AboveBelow implements Serializable {
         if (endDate != null) {
             query.setParameter("enddate", endDate, TemporalType.DATE);
         }
-        Queues.queuedelete.add(query.getQueryString());
+        Queues.queuedeleteq.add(query);
     }
 }

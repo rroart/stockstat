@@ -104,6 +104,10 @@ public class HibernateUtil {
         return sessionRead.createQuery(query);
     }
 
+    public Query createWriteQuery(String query) {
+        return sessionWrite.createQuery(query);
+    }
+
     private static SessionFactory buildSessionFactory() {
         SessionFactory aFactory = null;
         if (factory == null) {
@@ -167,6 +171,10 @@ public class HibernateUtil {
 
     public void delete(String string) {
         Query query = sessionWrite.createQuery(string);
+        query.executeUpdate();
+    }
+
+    public void delete(Query query) {
         query.executeUpdate();
     }
 }
