@@ -633,7 +633,7 @@ public class Memory implements Serializable {
         if (endDate != null) {
             queryString += " and date <= :enddate";
         }
-        HibernateUtil hu = new HibernateUtil(false);
+        HibernateUtil hu = new HibernateUtil(true);
         Query<IncDec> query = hu.createWriteQuery(queryString);
         query.setParameter("market", market);
         //query.setParameter("action", action);
