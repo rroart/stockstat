@@ -125,6 +125,7 @@ class Classify:
             probabilities = sm(predictions)
             probability, _ = torch.max(probabilities, 1)
             problist = probability.detach().to(torch.device("cpu")).numpy().tolist()
+            problist = np.where(np.isnan(problist), None, problist).tolist()
         del predictions
         del model
         if classify and not self.zero(myobj):
@@ -579,6 +580,8 @@ class Classify:
             train_accuracy_score = float(train_accuracy_score)
         if not loss is None:
             loss = float(loss)
+        if np.isnan(loss):
+            loss = None
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         return(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "gpu" : self.hasgpu()}), mimetype='application/json'))
@@ -613,6 +616,8 @@ class Classify:
             train_accuracy_score = float(train_accuracy_score)
         if not loss is None:
             loss = float(loss)
+        if np.isnan(loss):
+            loss = None
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         return(Response(json.dumps({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify" : classify, "gpu" : self.hasgpu() }), mimetype='application/json'))
