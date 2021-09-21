@@ -2,12 +2,14 @@ package roart.db.thread;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
 import roart.db.model.HibernateUtil;
+import org.hibernate.query.Query;
 
 public class DatabaseThread extends Thread {
 
@@ -49,6 +51,17 @@ public class DatabaseThread extends Thread {
                     log.error(Constants.EXCEPTION, e);
                 }
                 string = Queues.queuedelete.poll();
+            }
+            Pair<HibernateUtil, Query> queryPair = Queues.queuedeleteq.poll();
+            while (queryPair != null) {
+                try {
+                	HibernateUtil aHibernateUtil = queryPair.getLeft();
+                    aHibernateUtil.delete(queryPair.getRight());
+                    aHibernateUtil.commit();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+                queryPair = Queues.queuedeleteq.poll();
             }
             try {
                 hu.commit();
