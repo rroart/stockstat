@@ -401,7 +401,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                                 nnConfigs = new NeuralNetConfigs();
                                 String configValue = (String) conf.getValueOrDefault(key);                                
                                 if (configValue != null) {
-                                    NeuralNetConfig nnconfig = nnConfigs.getAndSetConfig(key, configValue);
+                                    Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev();
+                                    String config = configMap.get(model.getKey());
+                                    NeuralNetConfig nnconfig = nnConfigs.getAndSetConfig(config, configValue);
                                 } else {
                                     nnConfigs = null;
                                 }
