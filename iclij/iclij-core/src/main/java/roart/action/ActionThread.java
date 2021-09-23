@@ -173,12 +173,16 @@ public class ActionThread extends Thread {
                     if (action.getActionData().wantsUpdate(config)) {
                         if (IclijConstants.MACHINELEARNING.equals(item.getAction()) || IclijConstants.IMPROVEPROFIT.equals(item.getAction())) {
                             if (IclijConstants.MACHINELEARNING.equals(item.getAction())) {
-                                mct(IclijConstants.IMPROVEPROFIT, item.getMarket(), item.getComponent(), item.getSubcomponent());                            
+                                MarketAction anAction = ActionFactory.get(IclijConstants.IMPROVEPROFIT);
+                                String mypriorityKey = anAction.getActionData().getPriority();
+                                int aPriority = action.getPriority(config, mypriorityKey);
+                                mct(IclijConstants.IMPROVEPROFIT, item.getMarket(), item.getComponent(), item.getSubcomponent(), aPriority);                            
                             }
                             //mct(item.getMarket(), IclijConstants.MACHINELEARNING, item.getComponent(), item.getSubcomponent());
                             // delete timing findprofit improveprofit
+			    // only after improveprofit?
                             try {
-				log.info("Deleting AboveBelow etc");
+                            	log.info("Deleting AboveBelow etc {}", item.getMarket());
                                 new IncDecItem().delete(item.getMarket(), item.getComponent(), item.getSubcomponent(), null, null);
                                 new MemoryItem().delete(item.getMarket(), item.getComponent(), item.getSubcomponent(), null, null);
                                 new AboveBelowItem().delete(item.getMarket(), null, null);
@@ -202,7 +206,7 @@ public class ActionThread extends Thread {
         return (int) (100000 * (i.getPriority() + run) + i.getTime());
     }
     
-    private void mct(String action, String market, String component, String subcomponent) {
+    private void mct(String action, String market, String component, String subcomponent, int priority) {
         Parameters p = new Parameters();
         p.setFuturedays(10);
         p.setThreshold(1.0);
@@ -212,7 +216,7 @@ public class ActionThread extends Thread {
         mct.setComponent(component);
         mct.setSubcomponent(subcomponent);
         mct.setRecord(LocalDate.now());
-        mct.setPriority(-10);
+        mct.setPriority(priority);
         mct.setParameters(JsonUtil.convert(p));
         try {
             mct.save();
