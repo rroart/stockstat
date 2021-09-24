@@ -12,4 +12,5 @@ public class IclijConstants {
     public static final String SIMULATEINVEST = "simulateinvest";
     public static final String IMPROVESIMULATEINVEST = "improvesimulateinvest";
     public static final String IMPROVEAUTOSIMULATEINVEST = "improveautosimulateinvest";
+	public static final String ALL = "all";
 }

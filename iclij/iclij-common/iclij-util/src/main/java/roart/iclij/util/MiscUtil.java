@@ -291,20 +291,23 @@ public class MiscUtil {
     }
 
     public Map<String, Object> loadConfig(ControlService srv, ComponentInput componentInput, Market market, String marketName, String action, String component, boolean evolve, Boolean buy, String subcomponent, MarketActionData marketaction, Parameters parameters) throws Exception {
-        LocalDate date = componentInput.getEnddate();
-        LocalDate olddate = date.minusDays(2 * marketaction.getTime(market));
+        //LocalDate date = componentInput.getEnddate();
+        //LocalDate olddate = date.minusDays(2 * marketaction.getTime(market));
         List<ConfigItem> filterConfigs = new ArrayList<>();
-        List<ConfigItem> configs = IclijDbDao.getAllConfigs(market.getConfig().getMarket(), action, component, subcomponent, JsonUtil.convert(parameters), olddate, date);
+        List<ConfigItem> configs = IclijDbDao.getAllConfigs(market.getConfig().getMarket(), action, component, subcomponent, JsonUtil.convert(parameters), null, null);
         for (ConfigItem config : configs) {
             if (buy != null && config.getBuy() != null && buy != config.getBuy()) {
                 continue;
             }
             filterConfigs.add(config);
         }
-        Collections.sort(filterConfigs, (o1, o2) -> (o2.getDate().compareTo(o1.getDate())));
+        Collections.sort(filterConfigs, (o1, o2) -> (o2.getRecord().compareTo(o1.getRecord())));
         Map<String, Class> type = srv.conf.getType();
         Map<String, Object> updateMap = new HashMap<>();
-        for (ConfigItem config : filterConfigs) {
+        if (filterConfigs.isEmpty()) {
+        	return updateMap;
+        }
+        ConfigItem config = filterConfigs.get(0);
             Object value = config.getValue();
             String string = config.getValue();
             Class myclass = type.get(config.getId());
@@ -330,7 +333,6 @@ public class MiscUtil {
             }
 
             updateMap.put(config.getId(), value);
-        }
         return updateMap;
     }
 

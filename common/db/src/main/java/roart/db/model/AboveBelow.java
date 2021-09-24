@@ -15,6 +15,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.query.Query;
@@ -153,6 +154,6 @@ public class AboveBelow implements Serializable {
         if (endDate != null) {
             query.setParameter("enddate", endDate, TemporalType.DATE);
         }
-        Queues.queuedeleteq.add(query);
+        Queues.queuedeleteq.add(new ImmutablePair(hu, query));
     }
 }

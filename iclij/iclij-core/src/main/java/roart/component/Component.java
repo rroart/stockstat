@@ -127,12 +127,19 @@ public abstract class Component {
             this.subenable(valueMap, subcomponent);
         }
         if (action.getActionData().wantsUpdate(param.getInput().getConfig())) {
-        try {
-            Map<String, Object> loadValues = mlLoads(param, null, market, null, subcomponent, mlmarket, action, parameters);
-            valueMap.putAll(loadValues);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
+        	try {
+        		Map<String, Object> loadValues = mlLoads(param, null, market, null, subcomponent, mlmarket, action, parameters);
+        		if (!loadValues.keySet().contains(IclijConstants.ALL)) {
+        			valueMap.putAll(loadValues);
+        		} else {
+        			String val = (String) loadValues.get(IclijConstants.ALL);
+        			Map<String, Object> map = JsonUtil.convert(val, Map.class);
+        			valueMap.putAll(map);
+        		}
+        		log.info("Loaded values {}", loadValues);
+        	} catch (Exception e) {
+        		log.error(Constants.EXCEPTION, e);
+        	}
         }
         String pipeline = getPipeline();
         param.getService().conf.getConfigValueMap().putAll(valueMap);
@@ -286,12 +293,12 @@ public abstract class Component {
     
     protected void configSaves(ComponentData param, Map<String, Object> anUpdateMap, String subcomponent) {
         // TODO save whole?
-        for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
-            String key = entry.getKey();
-            Object object = entry.getValue();
+        //for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
+            String key = IclijConstants.ALL;
+            Object object = JsonUtil.convert(anUpdateMap);
             if (object == null) {
                 log.error("Config value null");
-                continue;
+                return;
             }
             ConfigItem configItem = new ConfigItem();
             configItem.setAction(param.getAction());
@@ -308,7 +315,7 @@ public abstract class Component {
             } catch (Exception e) {
                 log.info(Constants.EXCEPTION, e);
             }
-        }
+        //}
     }
 
     protected void loadme(ComponentData param, ConfigMapChromosome2 chromosome, Market market, List<String> confList, Boolean buy, String subcomponent, MarketAction action, Parameters parameters) {

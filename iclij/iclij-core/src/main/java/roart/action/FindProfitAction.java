@@ -281,8 +281,9 @@ public class FindProfitAction extends MarketAction {
 
     @Override
     protected boolean getSkipComponent(List<MLMetricsItem> mltests, Double confidence, String componentName) {
-        Map<String, List<MLMetricsItem>> metricsMap = getMLMetrics2(mltests, null);
-        List<MLMetricsItem> metricsList = metricsMap.get(componentName);
+        mltests = filterMetrics(mltests, componentName, null);
+        Map<Pair<String, String>, List<MLMetricsItem>> metricsMap = getMLMetrics2(mltests, null);
+        List<MLMetricsItem> metricsList = metricsMap.get(new ImmutablePair(componentName, null));
         if (metricsList == null) {
             return true;
         }
@@ -293,6 +294,7 @@ public class FindProfitAction extends MarketAction {
     @Override
     protected boolean getSkipSubComponent(List<MLMetricsItem> mltests, Double confidence, String componentName,
             String subComponent) {
+        mltests = filterMetrics(mltests, componentName, subComponent);
         Map<Pair<String, String>, List<MLMetricsItem>> metricsMap2 = getMLMetrics(mltests, null);
         List<MLMetricsItem> metricsList2 = metricsMap2.get(new ImmutablePair(componentName, subComponent));
         if (metricsList2 == null) {
@@ -302,6 +304,13 @@ public class FindProfitAction extends MarketAction {
         return skipSubcomponent;
     }
 
+    private List<MLMetricsItem> filterMetrics(List<MLMetricsItem> items, String component, String subcomponent) {
+        List<MLMetricsItem> retList = new ArrayList<>();
+        return items.stream()
+                .filter(e -> (component.equals(e.getComponent()) && (subcomponent == null || subcomponent.equals(e.getSubcomponent()))))
+                .collect(Collectors.toList());
+    }
+    
     @Override
     public void handleMLMeta(Component component, ComponentData param, Map<String, Object> valueMap, String pipeline) {
         handleMLMetaCommon(component, param, valueMap, pipeline);

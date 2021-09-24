@@ -16,6 +16,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Cache;
@@ -649,6 +650,6 @@ public class Memory implements Serializable {
         if (endDate != null) {
             query.setParameter("enddate", endDate, TemporalType.DATE);
         }
-        Queues.queuedeleteq.add(query);
+        Queues.queuedeleteq.add(new ImmutablePair(hu, query));
     }
 }

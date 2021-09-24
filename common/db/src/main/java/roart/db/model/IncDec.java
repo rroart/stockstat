@@ -1,5 +1,6 @@
 package roart.db.model;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Cache;
@@ -254,6 +255,6 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
         if (endDate != null) {
             query.setParameter("enddate", endDate, TemporalType.DATE);
         }
-        Queues.queuedeleteq.add(query);
+        Queues.queuedeleteq.add(new ImmutablePair(hu, query));
     }
 }

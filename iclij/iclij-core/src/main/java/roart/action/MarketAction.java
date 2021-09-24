@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -599,6 +600,15 @@ public abstract class MarketAction extends Action {
     }
 
     private List<MLMetricsItem> getMLMetrics(List<TimingItem> timings, List<MLMetricsItem> mltests, Double confidence) {
+        mltests = filterMetrics(mltests, confidence);
+        if (true) {
+            List<MLMetricsItem> list = new ArrayList<>();
+            Map<Pair<String, String>, List<MLMetricsItem>> map = getMLMetricsNew(mltests, confidence, false);
+            for (Entry<Pair<String, String>, List<MLMetricsItem>> entry : map.entrySet()) {
+                list.add(entry.getValue().get(0));
+            }
+            return list;
+        }
         List<MLMetricsItem> returnedMLMetrics = new ArrayList<>();
         // don't need timings anymore
         timings = new ArrayList<>();
@@ -621,7 +631,56 @@ public abstract class MarketAction extends Action {
         return returnedMLMetrics;
     }
 
+    protected Map<Pair<String, String>, List<MLMetricsItem>> getMLMetricsNew(List<MLMetricsItem> mltests, Double confidence, boolean component) {
+        if (confidence != null) {
+            mltests = filterMetrics(mltests, confidence);
+        } else {
+            confidence = 0.0;
+        }
+        Map<Triple<String, String, String>, List<MLMetricsItem>> moreReturnedMLMetrics = new HashMap<>();
+        for (MLMetricsItem metric : mltests) {
+            if (metric.getTestAccuracy() == null || metric.getTestAccuracy() < confidence) {
+                continue;
+            }
+            if (metric.getThreshold() == null || metric.getThreshold() != 1.0) {
+                continue;
+            }
+            Triple key = new ImmutableTriple(metric.getComponent(), metric.getSubcomponent(), metric.getLocalcomponent());
+            new MiscUtil().listGetterAdder(moreReturnedMLMetrics, key, metric);  
+        }
+        Comparator<MLMetricsItem> compareById = new Comparator<>() {
+            @Override
+            public int compare(MLMetricsItem o1, MLMetricsItem o2) {
+                return o1.getRecord().compareTo(o2.getRecord());
+            }
+        };
+        Map<Pair<String, String>, List<MLMetricsItem>> moreReturnedMLMetrics2 = new HashMap<>();
+        for (Entry<Triple<String, String, String>, List<MLMetricsItem>> entry : moreReturnedMLMetrics.entrySet()) {
+            Triple<String, String, String> key = entry.getKey();
+            List<MLMetricsItem> value = entry.getValue();
+            Collections.sort(value, compareById);
+            Collections.reverse(value);
+            Pair<String, String> newkey = new ImmutablePair(key.getLeft(), key.getMiddle());
+            new MiscUtil().listGetterAdder(moreReturnedMLMetrics2, newkey, value.get(0));              
+        }
+        if (component) {
+            Map<Pair<String, String>, List<MLMetricsItem>> moreReturnedMLMetrics3 = new HashMap<>();
+            for (Entry<Pair<String, String>, List<MLMetricsItem>> entry : moreReturnedMLMetrics2.entrySet()) {
+                Pair<String, String> key = entry.getKey();
+                List<MLMetricsItem> value = entry.getValue();
+                Pair<String, String> newkey = new ImmutablePair(key.getLeft(), null);
+                new MiscUtil().listGetterAdder(moreReturnedMLMetrics3, newkey, value.get(0));              
+            }
+
+            moreReturnedMLMetrics2.putAll(moreReturnedMLMetrics3);
+        }
+        return moreReturnedMLMetrics2;
+    }
+
     protected Map<Pair<String, String>, List<MLMetricsItem>> getMLMetrics(List<MLMetricsItem> mltests, Double confidence) {
+        if (true) {
+            return getMLMetricsNew(mltests, confidence, false);
+        }
         List<MLMetricsItem> returnedMLMetrics = new ArrayList<>();
         for (MLMetricsItem test : mltests) {
             addNewest(returnedMLMetrics, test, 0.0);
@@ -634,14 +693,17 @@ public abstract class MarketAction extends Action {
         return moreReturnedMLMetrics;
     }
 
-    protected Map<String, List<MLMetricsItem>> getMLMetrics2(List<MLMetricsItem> mltests, Double confidence) {
+    protected Map<Pair<String, String>, List<MLMetricsItem>> getMLMetrics2(List<MLMetricsItem> mltests, Double confidence) {
+        if (true) {
+            return getMLMetricsNew(mltests, confidence, true);
+        }
         List<MLMetricsItem> returnedMLMetrics = new ArrayList<>();
         for (MLMetricsItem test : mltests) {
             addNewest(returnedMLMetrics, test, 0.0);
         }
-        Map<String, List<MLMetricsItem>> moreReturnedMLMetrics = new HashMap<>();
+        Map<Pair<String, String>, List<MLMetricsItem>> moreReturnedMLMetrics = new HashMap<>();
         for (MLMetricsItem metric : returnedMLMetrics) {
-            String key = metric.getComponent();
+            Pair<String, String> key = new ImmutablePair(metric.getComponent(), null);
             new MiscUtil().listGetterAdder(moreReturnedMLMetrics, key, metric);  
         }
         return moreReturnedMLMetrics;
@@ -676,6 +738,13 @@ public abstract class MarketAction extends Action {
         mlTests.add(test);
     }
 
+    private List<MLMetricsItem> filterMetrics(List<MLMetricsItem> items, double confidence) {
+        List<MLMetricsItem> retList = new ArrayList<>();
+        return items.stream()
+                .filter(e -> (e.getTestAccuracy() != null && e.getTestAccuracy() >= confidence))
+                .collect(Collectors.toList());
+    }
+    
     public void getListComponents(WebData myData, ComponentData param, IclijConfig config,
             Parameters parameters, Boolean evolve, Market market, Map<String, ComponentData> dataMap,
             Memories memories, LocalDate olddate, LocalDate prevdate) {

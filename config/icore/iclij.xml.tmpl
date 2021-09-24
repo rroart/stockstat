@@ -28,11 +28,13 @@
     <predictor enable='false'>
     </predictor>
     <autorun enable="$EVOLVE"/>
+    <update enable='$EVOLVEUPDATE'/>
   </evolve>
   <findprofit priority="10">
     <threshold>$THRESHOLD</threshold>
     <futuredays>$FUTUREDAYS</futuredays>
     <autorun enable="$FINDPROFIT"/>
+    <update enable='$FINDPROFITUPDATE'/>
     <mldynamic enable='false'/>
     <recommender enable='false'/>
     <mlmacd enable='true'>
@@ -55,6 +57,7 @@
   </findprofit>
   <improveprofit priority="60">
     <autorun enable="$IMPROVEPROFIT"/>
+    <update enable='$IMPROVEPROFITUPDATE'/>
     <recommender enable='true'/>
     <mlmacd enable='true'>
     </mlmacd>
@@ -100,6 +103,7 @@
   </improveabovebelow>
   <machinelearning priority="0">
     <autorun enable="$ML"/>
+    <update enable='$MLUPDATE'/>
     <threshold>$THRESHOLD</threshold>
     <futuredays>$FUTUREDAYS</futuredays>
     <mlmacd enable='true'>
@@ -121,6 +125,7 @@
   </machinelearning>
   <dataset priority="70">
     <autorun enable="$DATASET"/>
+    <update enable='$DATASETUPDATE'/>
     <predictor enable='false'>
     </predictor>
   </dataset>

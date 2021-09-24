@@ -17,4 +17,5 @@ module db {
     requires org.slf4j;
     requires java.naming;
     requires java.transaction;
+	requires org.apache.commons.lang3;
 }
