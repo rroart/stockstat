@@ -146,6 +146,8 @@ class Classify:
         (train, traincat, test, testcat, size) = self.gettraintest(myobj, config, classify)
         myobj.size = size
         model = Model.Net(myobj, config, classify)
+        if torch.cuda.is_available():
+            model.cuda()
         #testcat = torch.LongTensor(testcat)
         (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, model, config, train, traincat, test, testcat, classify)
         global dictclass

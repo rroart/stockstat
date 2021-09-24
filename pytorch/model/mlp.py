@@ -14,7 +14,7 @@ class Net(nn.Module):
             sizearr = [myobj.size] + [config.hidden] * config.layers + [myobj.classes]
         else:
             sizearr = [myobj.size] + [config.hidden] * config.layers + [1]
-        mylayers = []
+        mylayers = nn.ModuleList()
         for i in range(0, len(sizearr) - 1):
             #print("sizearr", sizearr[i], sizearr[i+1])
             mylayers.append(nn.Linear(sizearr[i], sizearr[i + 1]))
