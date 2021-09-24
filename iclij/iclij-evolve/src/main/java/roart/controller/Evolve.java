@@ -58,6 +58,8 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
+import roart.constants.IclijConstants;
+import roart.gene.impl.ConfigMapGene;
 
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
@@ -121,12 +123,17 @@ public class Evolve {
         output.add("Summary: " + better + " " + MathUtil.round(avg, 2) + " vs " + newer);
         print(ServiceConstants.EVOLVEFILTEREVOLVE + " " + title, "File " + id, output);
         if (better) {
-            saveBetter(myList, market, component, subcomponent, IclijConfigConstants.MACHINELEARNING);
+            NeuralNetChromosome2 c = (NeuralNetChromosome2) myList.get(0).getRight();
+            NeuralNetConfigGene conf2 = c.getNnConfig();
+            String ml = new MLMapsML().getMap().get(subcomponent);
+            String key = new NeuralNetConfigs().getConfigMap().get(ml);
+            saveBetter(market, component, subcomponent, IclijConfigConstants.MACHINELEARNING, myList.get(0).getLeft(), key, conf2.getConfig(), true);
+            saveBetter(market, component, subcomponent, IclijConfigConstants.DATASET, myList.get(0).getLeft(), key, conf2.getConfig(), false);
         }
     }
 
-    private void saveBetter(List<Pair<Double, AbstractChromosome>> myList, String market, String component,
-            Pair<String, String> subcomponent, String action) {
+    private void saveBetter(String market, String component,
+            Pair<String, String> subcomponent, String action, Double score, String key, Object object, boolean domct) {
         Parameters p = new Parameters();
         p.setFuturedays(10);
         p.setThreshold(1.0);
@@ -134,22 +141,21 @@ public class Evolve {
         i.setMarket(market);
         i.setComponent(component);
         i.setSubcomponent(subcomponent.getLeft() + " " + subcomponent.getRight());
-        String ml = new MLMapsML().getMap().get(subcomponent);
-        String key = new NeuralNetConfigs().getConfigMap().get(ml);
         i.setId(key);
         i.setAction(action);
         i.setParameters(JsonUtil.convert(p));
         i.setRecord(LocalDate.now());
         i.setDate(LocalDate.now());
-        i.setScore(myList.get(0).getLeft());
-        NeuralNetChromosome2 c = (NeuralNetChromosome2) myList.get(0).getRight();
-        NeuralNetConfigGene conf2 = c.getNnConfig();
-        String value = JsonUtil.convert(conf2.getConfig());
+        i.setScore(score);
+        String value = JsonUtil.convert(object);
         i.setValue(value);            
         try {
             i.save();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
+        }
+        if (!domct) {
+        	return;
         }
         // save to markettime
         ActionComponentItem mct = new ActionComponentItem();
@@ -297,7 +303,9 @@ public class Evolve {
         output.add("Summary: " + better + " " + MathUtil.round(avg, 2) + " vs " + newer);
         print(ServiceConstants.EVOLVEFILTERPROFIT + " " + title, "File " + id, output);
         if (better) {
-            saveBetter(myList, market, component, subComponent, IclijConfigConstants.IMPROVEPROFIT);
+            ConfigMapChromosome2 c = (ConfigMapChromosome2) myList.get(0).getRight();
+            ConfigMapGene conf2 = c.getGene();
+            saveBetter(market, component, subComponent, IclijConfigConstants.FINDPROFIT, myList.get(0).getLeft(), IclijConstants.ALL, conf2.getMap(), false);
         }
     }
 

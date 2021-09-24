@@ -14,6 +14,7 @@ import roart.common.constants.Constants;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.RecommenderData;
+import roart.constants.IclijConstants;
 import roart.evolution.config.EvolutionConfig;
 import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
@@ -59,9 +60,9 @@ public abstract class ComponentNoML extends Component {
     }
     
     private void nomlSaves(ComponentData param, Map<String, Object> anUpdateMap) {
-        for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
-            String key = entry.getKey();
-            Object object = entry.getValue();
+        //for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
+            String key = IclijConstants.ALL;
+            Object object = JsonUtil.convert(anUpdateMap);
             ConfigItem configItem = new ConfigItem();
             configItem.setAction(param.getAction());
             configItem.setComponent(getPipeline());
@@ -73,14 +74,14 @@ public abstract class ComponentNoML extends Component {
             configItem.setValue(value);
             if (value == null) {
                 log.error("Config value null");
-                continue;
+                return;
             }
             try {
                 configItem.save();
             } catch (Exception e) {
                 log.info(Constants.EXCEPTION, e);
             }
-        }
+        //}
     }
 
     @Override

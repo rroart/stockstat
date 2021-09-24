@@ -59,8 +59,11 @@ public class PopulateThread extends Thread {
                 IclijConfig config = new IclijConfig(instance);
                 config.setMarket(market.getConfig().getMarket());
                 Short populate = market.getConfig().getPopulate();
-                if (populate == null) {
+                if (populate == null && !copy.contains(market.getConfig().getMarket())) {
                     continue;
+                }
+                if (populate == null) {
+                	populate = 60;
                 }
                 ComponentData param = null;
                 try {
@@ -138,6 +141,7 @@ public class PopulateThread extends Thread {
                     index = TimeUtil.getIndexEqualAfter(dates, date);                    
                 }
             }
+            markets.clear();
             try {
                 TimeUnit.SECONDS.sleep(300);
             } catch (InterruptedException e) {

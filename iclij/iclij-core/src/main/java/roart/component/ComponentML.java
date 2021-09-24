@@ -28,6 +28,7 @@ import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
 import roart.component.model.MLMACDData;
+import roart.constants.IclijConstants;
 import roart.evolution.config.EvolutionConfig;
 import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
@@ -81,10 +82,9 @@ public abstract class ComponentML extends Component {
     }
 
     private void mlSaves(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, String subcomponent, Parameters parameters) {
-        for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
-            String key = entry.getKey();
-            String nnconfigString = (String) entry.getValue();
-            //Map<String, String> mapToConfig = MLConfigs.getMapToConfig();
+        //for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
+            String key = IclijConstants.ALL;
+            String nnconfigString = JsonUtil.convert(anUpdateMap);          //Map<String, String> mapToConfig = MLConfigs.getMapToConfig();
             /*
             NeuralNetConfigs nnConfigs = null;
             try {
@@ -127,7 +127,7 @@ public abstract class ComponentML extends Component {
             */
             if (value == null) {
                 log.error("Config value null");
-                continue;
+                return;
             }
             ConfigItem configItem = new ConfigItem();
             configItem.setAction(param.getAction());
@@ -144,7 +144,7 @@ public abstract class ComponentML extends Component {
             } catch (Exception e) {
                 log.info(Constants.EXCEPTION, e);
             }
-        }
+        //}
     }
 
     @Override
