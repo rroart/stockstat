@@ -582,7 +582,7 @@ class Classify:
             train_accuracy_score = float(train_accuracy_score)
         if not loss is None:
             loss = float(loss)
-        if np.isnan(loss):
+        if not loss is None and np.isnan(loss):
             loss = None
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
@@ -618,7 +618,7 @@ class Classify:
             train_accuracy_score = float(train_accuracy_score)
         if not loss is None:
             loss = float(loss)
-        if np.isnan(loss):
+        if not loss is None and np.isnan(loss):
             loss = None
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
