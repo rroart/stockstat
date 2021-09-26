@@ -33,6 +33,7 @@ public class ComponentMLMulti extends ComponentMLAggregator {
         valueMap.put(ConfigConstants.AGGREGATORS, Boolean.TRUE);        
         valueMap.put(ConfigConstants.AGGREGATORSMLMULTI, Boolean.TRUE);        
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);        
+        valueMap.put(ConfigConstants.INDICATORS, Boolean.TRUE);                
         valueMap.put(ConfigConstants.INDICATORSATR, Boolean.TRUE);                
         valueMap.put(ConfigConstants.INDICATORSCCI, Boolean.TRUE);                
         valueMap.put(ConfigConstants.INDICATORSMACD, Boolean.TRUE);                
@@ -45,6 +46,7 @@ public class ComponentMLMulti extends ComponentMLAggregator {
     public void disable(Map<String, Object> valueMap) {
         valueMap.put(ConfigConstants.AGGREGATORSMLMULTI, Boolean.FALSE);        
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);        
+        valueMap.put(ConfigConstants.INDICATORS, Boolean.FALSE);                
         valueMap.put(ConfigConstants.INDICATORSATR, Boolean.FALSE);                
         valueMap.put(ConfigConstants.INDICATORSCCI, Boolean.FALSE);                
         valueMap.put(ConfigConstants.INDICATORSMACD, Boolean.FALSE);                

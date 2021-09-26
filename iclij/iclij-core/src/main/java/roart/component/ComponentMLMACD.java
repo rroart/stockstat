@@ -30,6 +30,7 @@ public class ComponentMLMACD extends ComponentMLAggregator {
         valueMap.put(ConfigConstants.AGGREGATORS, Boolean.TRUE);        
         valueMap.put(ConfigConstants.AGGREGATORSMLMACD, Boolean.TRUE);        
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);        
+        valueMap.put(ConfigConstants.INDICATORS, Boolean.TRUE);                
         valueMap.put(ConfigConstants.INDICATORSMACD, Boolean.TRUE);                
     }
 
@@ -37,6 +38,7 @@ public class ComponentMLMACD extends ComponentMLAggregator {
     public void disable(Map<String, Object> valueMap) {
         valueMap.put(ConfigConstants.AGGREGATORSMLMACD, Boolean.FALSE);        
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);        
+        valueMap.put(ConfigConstants.INDICATORS, Boolean.FALSE);                
         valueMap.put(ConfigConstants.INDICATORSMACD, Boolean.FALSE);                
     }
 

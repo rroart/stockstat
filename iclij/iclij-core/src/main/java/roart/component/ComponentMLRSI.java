@@ -30,6 +30,7 @@ public class ComponentMLRSI extends ComponentMLAggregator {
         valueMap.put(ConfigConstants.AGGREGATORS, Boolean.TRUE);        
         valueMap.put(ConfigConstants.AGGREGATORSMLRSI, Boolean.TRUE);        
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);        
+        valueMap.put(ConfigConstants.INDICATORS, Boolean.TRUE);                
         valueMap.put(ConfigConstants.INDICATORSRSI, Boolean.TRUE);                
         valueMap.put(ConfigConstants.INDICATORSSTOCHRSI, Boolean.TRUE);                
     }
@@ -38,6 +39,7 @@ public class ComponentMLRSI extends ComponentMLAggregator {
     public void disable(Map<String, Object> valueMap) {
         valueMap.put(ConfigConstants.AGGREGATORSMLRSI, Boolean.FALSE);        
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);        
+        valueMap.put(ConfigConstants.INDICATORS, Boolean.FALSE);                
         valueMap.put(ConfigConstants.INDICATORSRSI, Boolean.FALSE);                
         valueMap.put(ConfigConstants.INDICATORSSTOCHRSI, Boolean.FALSE);                
     }

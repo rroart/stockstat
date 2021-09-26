@@ -30,6 +30,7 @@ public class ComponentMLATR extends ComponentMLAggregator {
         valueMap.put(ConfigConstants.AGGREGATORS, Boolean.TRUE);        
         valueMap.put(ConfigConstants.AGGREGATORSMLATR, Boolean.TRUE);        
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);        
+        valueMap.put(ConfigConstants.INDICATORS, Boolean.TRUE);                
         valueMap.put(ConfigConstants.INDICATORSATR, Boolean.TRUE);                
  }
 
@@ -37,6 +38,7 @@ public class ComponentMLATR extends ComponentMLAggregator {
     public void disable(Map<String, Object> valueMap) {
         valueMap.put(ConfigConstants.AGGREGATORSMLATR, Boolean.FALSE);        
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);        
+        valueMap.put(ConfigConstants.INDICATORS, Boolean.FALSE);                
         valueMap.put(ConfigConstants.INDICATORSATR, Boolean.FALSE);                
     }
 
