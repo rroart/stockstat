@@ -84,7 +84,12 @@ public abstract class ComponentML extends Component {
     private void mlSaves(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, String subcomponent, Parameters parameters) {
         //for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
             String key = IclijConstants.ALL;
-            String nnconfigString = JsonUtil.convert(anUpdateMap);          //Map<String, String> mapToConfig = MLConfigs.getMapToConfig();
+            String nnconfigString = JsonUtil.convert(anUpdateMap);
+            if (anUpdateMap.size() == 1) {
+            	key = anUpdateMap.keySet().iterator().next();
+            	nnconfigString = (String) anUpdateMap.get(key);
+            }
+            //Map<String, String> mapToConfig = MLConfigs.getMapToConfig();
             /*
             NeuralNetConfigs nnConfigs = null;
             try {
