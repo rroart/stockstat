@@ -167,7 +167,7 @@ public abstract class AbstractIndicator extends Calculatable {
             }
             out:
             for (int i = 0; i < array[0].length; i++) {
-                for (int j = 0; j < array.length; j++) {
+                for (int j = 0; j < array.length - 1; j++) {
                     if (array[j].length == 0 || array[j][i] == null) {
                         continue out;
                     }

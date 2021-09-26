@@ -270,7 +270,7 @@ public abstract class IndicatorAggregator extends Aggregator {
             }
             out:
             for (int i = 0; i < array[0].length; i++) {
-                for (int j = 0; j < array.length; j++) {
+                for (int j = 0; j < array.length - 1; j++) {
                     if (array[j][i] == null) {
                         continue out;
                     }
@@ -1798,6 +1798,9 @@ public abstract class IndicatorAggregator extends Aggregator {
     private int getTitles(int retindex, Object[] objs, Double threshold) {
         // make OO of this
         List<SubType> subTypes = usedSubTypes();
+        if (subTypes == null) {
+        	int jj = 0;
+        }
         if (subTypes == null || subTypes.isEmpty()) {
             //subTypes = wantedSubTypes();
             int jj = 0;

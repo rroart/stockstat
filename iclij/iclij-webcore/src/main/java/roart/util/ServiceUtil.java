@@ -1034,6 +1034,7 @@ public class ServiceUtil {
         return listMap;
     }
 
+    @Deprecated
     private static boolean anythingHere3(Map<String, List<List<Double>>> listMap2, int size) {
         for (List<List<Double>> array : listMap2.values()) {
             if (size != Constants.OHLC || size != array.size()) {
@@ -1041,7 +1042,7 @@ public class ServiceUtil {
             }
             out:
                 for (int i = 0; i < array.get(0).size(); i++) {
-                    for (int j = 0; j < array.size(); j++) {
+                    for (int j = 0; j < array.size() - 1; j++) {
                         if (array.get(j).get(i) == null) {
                             continue out;
                         }
@@ -1052,6 +1053,7 @@ public class ServiceUtil {
         return false;
     }
 
+    @Deprecated
     private static boolean wantThree(String market) {
         try {
             Map<String, List<List<Double>>> listMap = getSimpleContent(market);
