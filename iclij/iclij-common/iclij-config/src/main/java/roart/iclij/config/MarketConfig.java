@@ -94,7 +94,11 @@ public class MarketConfig {
     }
 
     public String getMldate() {
-        return mldate;
+        String adate = mldate;
+        if (adate != null) {
+            adate = adate.replace('-', '.');
+        }
+        return adate;
     }
 
     public void setMldate(String mldate) {
