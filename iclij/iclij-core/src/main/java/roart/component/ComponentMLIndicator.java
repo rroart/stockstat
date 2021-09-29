@@ -53,6 +53,7 @@ public class ComponentMLIndicator extends ComponentML {
         valueMap.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.TRUE);        
         valueMap.put(PipelineConstants.MLINDICATOR, Boolean.TRUE);                
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);        
+        valueMap.put(ConfigConstants.INDICATORS, Boolean.TRUE);                
         valueMap.put(ConfigConstants.INDICATORSATR, Boolean.TRUE);                
         valueMap.put(ConfigConstants.INDICATORSCCI, Boolean.TRUE);                
         valueMap.put(ConfigConstants.INDICATORSMACD, Boolean.TRUE);                
@@ -74,6 +75,7 @@ public class ComponentMLIndicator extends ComponentML {
         valueMap.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);        
         //valueMap.put(PipelineConstants.MLINDICATOR, Boolean.FALSE);        
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);        
+        valueMap.put(ConfigConstants.INDICATORS, Boolean.FALSE);                
         valueMap.put(ConfigConstants.INDICATORSATR, Boolean.FALSE);                
         valueMap.put(ConfigConstants.INDICATORSCCI, Boolean.FALSE);                
         valueMap.put(ConfigConstants.INDICATORSMACD, Boolean.FALSE);                
