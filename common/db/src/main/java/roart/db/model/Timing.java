@@ -14,6 +14,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Cache;
@@ -224,4 +225,38 @@ public class Timing implements Serializable {
        Queues.queue.add(this);
     }
 
+    @Transient
+    @Transactional
+    public static void delete(String market, String component, String subcomponent, Date startDate, Date endDate) throws Exception {
+        String queryString = "delete Timing where market = :market";
+        if (component != null) {
+            queryString += " and component = :component";
+        }
+        if (subcomponent != null) {
+            queryString += " and subcomponent = :subcomponent";
+        }
+        if (startDate != null) {
+            queryString += " and date > :startdate";
+        }
+        if (endDate != null) {
+            queryString += " and date <= :enddate";
+        }
+        HibernateUtil hu = new HibernateUtil(true);
+        Query<IncDec> query = hu.createWriteQuery(queryString);
+        query.setParameter("market", market);
+        //query.setParameter("action", action);
+        if (component != null) {
+            query.setParameter("component", component);
+        }
+        if (subcomponent != null) {
+            query.setParameter("subcomponent", subcomponent);
+        }
+        if (startDate != null) {
+            query.setParameter("startdate", startDate, TemporalType.DATE);
+        }
+        if (endDate != null) {
+            query.setParameter("enddate", endDate, TemporalType.DATE);
+        }
+        Queues.queuedeleteq.add(new ImmutablePair(hu, query));
+    }
 }

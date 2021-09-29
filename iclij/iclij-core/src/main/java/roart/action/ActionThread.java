@@ -32,6 +32,7 @@ import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.TimingBLItem;
+import roart.iclij.model.TimingItem;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.ActionComponentItem;
 import roart.iclij.model.component.ComponentInput;
@@ -183,6 +184,7 @@ public class ActionThread extends Thread {
 			    // only after improveprofit?
                             try {
                             	log.info("Deleting AboveBelow etc {}", item.getMarket());
+                                new TimingItem().delete(item.getMarket(), item.getComponent(), item.getSubcomponent(), null, null);
                                 new IncDecItem().delete(item.getMarket(), item.getComponent(), item.getSubcomponent(), null, null);
                                 new MemoryItem().delete(item.getMarket(), item.getComponent(), item.getSubcomponent(), null, null);
                                 new AboveBelowItem().delete(item.getMarket(), null, null);

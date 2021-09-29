@@ -214,4 +214,8 @@ public class TimingItem {
         return timingItem;
     }
 
+   public void delete(String market, String component, String subcomponent, Date startDate, Date endDate) throws Exception {
+       Timing.delete(market, component, subcomponent, startDate, endDate);
+   }
+
 }
