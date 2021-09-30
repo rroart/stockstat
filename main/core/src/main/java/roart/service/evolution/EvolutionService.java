@@ -249,6 +249,10 @@ public class EvolutionService {
     public List<ResultItem> getEvolveML(MyMyConfig conf, List<String> disableList, Map<String, Object> updateMap, String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws JsonParseException, JsonMappingException, IOException {
         log.info("mydate {}", conf.getdate());
         log.info("mydate {}", conf.getDays());
+        StockData stockData = new Extract().getStockData(conf);
+        if (stockData == null) {
+            return new ArrayList<>();
+        }
         String market = conf.getMarket();
         if (conf.isDataset()) {
             ObjectMapper mapper = new ObjectMapper();
@@ -268,7 +272,7 @@ public class EvolutionService {
             table.add(headrow);
         
             try {
-                findMLSettings(conf, evolutionConfig, table, updateMap, ml, neuralnetcommand, scoreMap, resultMap);
+                findMLSettings(conf, evolutionConfig, table, updateMap, ml, neuralnetcommand, scoreMap, resultMap, stockData.marketdatamap);
         
                 List<ResultItem> retlist = new ArrayList<>();
                 retlist.add(table);
@@ -281,10 +285,6 @@ public class EvolutionService {
         ObjectMapper mapper = new ObjectMapper();
         EvolutionConfig evolutionConfig = mapper.readValue(conf.getTestMLEvolutionConfig(), EvolutionConfig.class);
         //createOtherTables();
-        StockData stockData = new Extract().getStockData(conf);
-        if (stockData == null) {
-            return new ArrayList<>();
-        }
     
         List<ResultItemTable> otherTables = new ArrayList<>();
         otherTables.add(mlTimesTable);
@@ -316,7 +316,7 @@ public class EvolutionService {
             //new ServiceUtil().createPredictors(categories);
             new ServiceUtil().calculatePredictors(predictors);
 
-            findMLSettings(conf, evolutionConfig, disableList, table, updateMap, ml, datareaders, categories, stockData.catName, stockData.cat, neuralnetcommand, scoreMap, resultMap);
+            findMLSettings(conf, evolutionConfig, disableList, table, updateMap, ml, datareaders, categories, stockData.catName, stockData.cat, neuralnetcommand, scoreMap, resultMap, stockData.marketdatamap);
     
             List<ResultItem> retlist = new ArrayList<>();
             retlist.add(table);
@@ -328,7 +328,7 @@ public class EvolutionService {
     }
 
     private void findMLSettings(MyMyConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
-            Map<String, Object> updateMap, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws Exception {
+            Map<String, Object> updateMap, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap, Map<String, MarketData> marketdatamap) throws Exception {
         TaUtil tu = new TaUtil();
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
         NeuralNetConfigs nnConfigs = null;
@@ -428,7 +428,7 @@ public class EvolutionService {
                 //chromosome.setAscending(false);
             }
 
-            FitnessNeuralNet fitness = new FitnessNeuralNet(conf, ml, dataReaders, categories, key, catName, cat, neuralnetcommand);
+            FitnessNeuralNet fitness = new FitnessNeuralNet(conf, ml, dataReaders, categories, key, catName, cat, neuralnetcommand, marketdatamap);
     
             OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
             evolution.setParallel(false);
@@ -489,7 +489,7 @@ public class EvolutionService {
     }
 
     private void findMLSettings(MyMyConfig conf, EvolutionConfig evolutionConfig, ResultItemTable table, Map<String, Object> updateMap,
-            String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws Exception {
+            String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap, Map<String, MarketData> marketdatamap) throws Exception {
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
         NeuralNetConfigs nnConfigs = null;
         String nnconfigString = null;
@@ -508,7 +508,7 @@ public class EvolutionService {
                 chromosome.setAscending(false);
             }
     
-            FitnessNeuralNet fitness = new FitnessNeuralNet(conf, ml, null, null, key, null, 0, neuralnetcommand);
+            FitnessNeuralNet fitness = new FitnessNeuralNet(conf, ml, null, null, key, null, 0, neuralnetcommand, marketdatamap);
 
             OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
             evolution.setParallel(false);

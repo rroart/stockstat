@@ -38,6 +38,7 @@ import roart.common.pipeline.model.PipelineResultData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
 import roart.gene.NeuralNetConfigGene;
+import roart.model.data.MarketData;
 import roart.pipeline.Pipeline;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.predictor.impl.PredictorPytorchGRU;
@@ -71,7 +72,9 @@ public class NeuralNetChromosome extends AbstractChromosome {
 
     private NeuralNetCommand neuralnetcommand;
     
-    public NeuralNetChromosome(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String key, NeuralNetConfigGene nnConfigGene, String catName, Integer cat, NeuralNetCommand neuralnetcommand) {
+    private Map<String, MarketData> marketdatamap;
+    
+    public NeuralNetChromosome(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String key, NeuralNetConfigGene nnConfigGene, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, MarketData> marketdatamap) {
         this.conf = conf.copy();
         this.ml = ml;
         this.dataReaders = dataReaders;
@@ -81,10 +84,11 @@ public class NeuralNetChromosome extends AbstractChromosome {
         this.catName = catName;
         this.cat = cat;
         this.neuralnetcommand = neuralnetcommand;
+        this.marketdatamap = marketdatamap;
     }
 
     public NeuralNetChromosome(NeuralNetChromosome chromosome) {
-        this(chromosome.conf, chromosome.ml, chromosome.dataReaders, chromosome.categories, chromosome.key, chromosome.nnConfigGene.copy(), chromosome.catName, chromosome.cat, chromosome.neuralnetcommand);
+        this(chromosome.conf, chromosome.ml, chromosome.dataReaders, chromosome.categories, chromosome.key, chromosome.nnConfigGene.copy(), chromosome.catName, chromosome.cat, chromosome.neuralnetcommand, chromosome.marketdatamap);
     }
 
     public MyMyConfig getConf() {
@@ -143,7 +147,7 @@ public class NeuralNetChromosome extends AbstractChromosome {
         aggregate = future.get();
         */
         try {
-        pipelineData = new MyFactory().myfactory(conf, ml, dataReaders, categories, catName, cat, neuralnetcommand);
+        pipelineData = new MyFactory().myfactory(conf, ml, dataReaders, categories, catName, cat, neuralnetcommand, marketdatamap);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -170,7 +174,7 @@ public class NeuralNetChromosome extends AbstractChromosome {
     }
 
     class MyFactory {
-        public PipelineResultData myfactory(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
+        public PipelineResultData myfactory(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, MarketData> marketdatamap) throws Exception {
             NeuralNetConfigs nnConfigs = new NeuralNetConfigs();
             nnConfigs.set(key, nnConfigGene.getConfig());
             ObjectMapper mapper = new ObjectMapper();
@@ -202,7 +206,7 @@ public class NeuralNetChromosome extends AbstractChromosome {
             } 
             if (ml.equals(PipelineConstants.MLINDICATOR)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, value);
-                pipelineData = new MLIndicator(conf, catName, null, catName, cat, categories, dataReaders, neuralnetcommand);
+                pipelineData = new MLIndicator(conf, catName, marketdatamap, catName, cat, categories, dataReaders, neuralnetcommand);
             }
             if (ml.equals(PipelineConstants.DATASET)) {
                 conf.getConfigValueMap().put(ConfigConstants.DATASETMLCONFIG, value);
@@ -281,14 +285,14 @@ public class NeuralNetChromosome extends AbstractChromosome {
 
         @Override
         public PipelineResultData call() throws Exception {
-            return new MyFactory().myfactory(conf, ml, dataReaders, categories, catName, cat, neuralnetcommand);
+            return new MyFactory().myfactory(conf, ml, dataReaders, categories, catName, cat, neuralnetcommand, marketdatamap);
         }
     }
 
     @Override
     public Individual crossover(AbstractChromosome evaluation) {
         NeuralNetConfigGene newNNConfig =  (NeuralNetConfigGene) nnConfigGene.crossover(((NeuralNetChromosome) evaluation).nnConfigGene);
-        NeuralNetChromosome eval = new NeuralNetChromosome(conf, ml, dataReaders, categories, key, newNNConfig, catName, cat, neuralnetcommand);
+        NeuralNetChromosome eval = new NeuralNetChromosome(conf, ml, dataReaders, categories, key, newNNConfig, catName, cat, neuralnetcommand, marketdatamap);
         return new Individual(eval);
     }
 

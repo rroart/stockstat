@@ -2,6 +2,7 @@ package roart.service.evolution;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -22,6 +23,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.model.PipelineResultData;
 import roart.evolution.chromosome.impl.NeuralNetChromosome2;
 import roart.gene.NeuralNetConfigGene;
+import roart.model.data.MarketData;
 import roart.pipeline.Pipeline;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.predictor.impl.PredictorPytorchGRU;
@@ -35,7 +37,7 @@ import roart.predictor.impl.PredictorTensorflowMLP;
 import roart.predictor.impl.PredictorTensorflowRNN;
 
 public class PipelineFactory {
-    public PipelineResultData myfactory(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, NeuralNetChromosome2 chromosome, String key) throws Exception {
+    public PipelineResultData myfactory(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, NeuralNetChromosome2 chromosome, String key, Map<String, MarketData> marketdatamap) throws Exception {
         NeuralNetConfigGene nnConfigGene = ((NeuralNetChromosome2) chromosome).getNnConfig();
         NeuralNetConfigs nnConfigs = new NeuralNetConfigs();
         nnConfigs.set(key, nnConfigGene.getConfig());
@@ -68,7 +70,7 @@ public class PipelineFactory {
         } 
         if (ml.equals(PipelineConstants.MLINDICATOR)) {
             conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, value);
-            pipelineData = new MLIndicator(conf, catName, null, catName, cat, categories, dataReaders, neuralnetcommand);
+            pipelineData = new MLIndicator(conf, catName, marketdatamap, catName, cat, categories, dataReaders, neuralnetcommand);
         }
         if (ml.equals(PipelineConstants.DATASET)) {
             conf.getConfigValueMap().put(ConfigConstants.DATASETMLCONFIG, value);

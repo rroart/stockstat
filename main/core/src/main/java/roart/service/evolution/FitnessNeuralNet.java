@@ -37,6 +37,7 @@ import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.NeuralNetChromosome2;
 import roart.evolution.fitness.Fitness;
 import roart.gene.NeuralNetConfigGene;
+import roart.model.data.MarketData;
 import roart.pipeline.Pipeline;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.predictor.impl.PredictorPytorchGRU;
@@ -69,9 +70,11 @@ public class FitnessNeuralNet extends Fitness {
 
     private NeuralNetCommand neuralnetcommand;
     
+    private Map<String, MarketData> marketdatamap;
+    
     protected String titletext;
     
-    public FitnessNeuralNet(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String key, String catName, Integer cat, NeuralNetCommand neuralnetcommand) {
+    public FitnessNeuralNet(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String key, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, MarketData> marketdatama) {
         this.conf = conf.copy();
         this.ml = ml;
         this.dataReaders = dataReaders;
@@ -80,6 +83,7 @@ public class FitnessNeuralNet extends Fitness {
         this.catName = catName;
         this.cat = cat;
         this.neuralnetcommand = neuralnetcommand;
+        this.marketdatamap = marketdatamap;
     }
 
     @Override
@@ -91,7 +95,7 @@ public class FitnessNeuralNet extends Fitness {
         aggregate = future.get();
         */
         try {
-        pipelineData = new PipelineFactory().myfactory(conf, ml, dataReaders, categories, catName, cat, neuralnetcommand, ((NeuralNetChromosome2) chromosome), key);
+        pipelineData = new PipelineFactory().myfactory(conf, ml, dataReaders, categories, catName, cat, neuralnetcommand, ((NeuralNetChromosome2) chromosome), key, marketdatamap);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -140,7 +144,7 @@ public class FitnessNeuralNet extends Fitness {
 
         @Override
         public PipelineResultData call() throws Exception {
-            return new PipelineFactory().myfactory(conf, ml, dataReaders, categories, catName, cat, neuralnetcommand, chromosome, key);
+            return new PipelineFactory().myfactory(conf, ml, dataReaders, categories, catName, cat, neuralnetcommand, chromosome, key, marketdatamap);
         }
     }
 
