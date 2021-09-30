@@ -83,12 +83,14 @@ public class ActionThread extends Thread {
                 continue;
             }
             ActionComponentItem ac = null;
-            List<ActionComponentItem> list = new ArrayList<>();
+            List<ActionComponentItem> dblist = new ArrayList<>();
             try {
-                 list = ac.getAll();
+                 dblist = ac.getAll();
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
+            List<ActionComponentItem> list = new ArrayList<>();
+            list.addAll(dblist);
             List<ActionComponentItem> copy = new ArrayList<>(queue);
             queue.removeAll(copy);
             list.addAll(copy);
@@ -121,7 +123,7 @@ public class ActionThread extends Thread {
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
-                runAction(instance, item);
+                runAction(instance, item, dblist);
                 try {
                     blItem.delete(id);
                 } catch (Exception e) {
@@ -144,7 +146,7 @@ public class ActionThread extends Thread {
         }
     }
 
-    private WebData runAction(IclijConfig instance, ActionComponentItem item) {
+    private WebData runAction(IclijConfig instance, ActionComponentItem item, List<ActionComponentItem> dblist) {
         IclijConfig config = new IclijConfig(instance);
         config.setMarket(item.getMarket());
         MarketAction action = ActionFactory.get(item.getAction());
@@ -177,7 +179,10 @@ public class ActionThread extends Thread {
                                 MarketAction anAction = ActionFactory.get(IclijConstants.IMPROVEPROFIT);
                                 String mypriorityKey = anAction.getActionData().getPriority();
                                 int aPriority = action.getPriority(config, mypriorityKey);
-                                mct(IclijConstants.IMPROVEPROFIT, item.getMarket(), item.getComponent(), item.getSubcomponent(), aPriority);                            
+                                ActionComponentItem it = dblist.stream().filter(dbitem -> (IclijConstants.IMPROVEPROFIT.equals(dbitem.getAction()) && item.getMarket().equals(dbitem.getMarket()) && item.getComponent().equals(dbitem.getComponent()) && item.getSubcomponent().equals(item.getSubcomponent()))).findAny().orElse(null); 
+                                if (it == null) {
+                                	mct(IclijConstants.IMPROVEPROFIT, item.getMarket(), item.getComponent(), item.getSubcomponent(), aPriority);
+                                }
                             }
                             //mct(item.getMarket(), IclijConstants.MACHINELEARNING, item.getComponent(), item.getSubcomponent());
                             // delete timing findprofit improveprofit
