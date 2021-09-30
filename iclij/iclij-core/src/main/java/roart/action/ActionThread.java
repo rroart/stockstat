@@ -113,9 +113,16 @@ public class ActionThread extends Thread {
                 TimingBLItem blItem = blacklist.stream().filter(anitem -> id.equals(anitem.getId())).findAny().orElse(null);
                 if (blItem != null && blItem.getCount() >= 3) {
                     continue;
-                } else {
+                } 
+                if (blItem == null) {
                     blItem = new TimingBLItem();
                     blItem.setId(id);
+                } else {
+                    try {
+                        blItem.delete(id);
+                    } catch (Exception e) {
+                        log.error(Constants.EXCEPTION, e);
+                    }                	
                 }
                 blItem.setCount(1 + blItem.getCount());
                 try {
