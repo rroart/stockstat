@@ -74,7 +74,7 @@ public class FitnessNeuralNet extends Fitness {
     
     protected String titletext;
     
-    public FitnessNeuralNet(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String key, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, MarketData> marketdatama) {
+    public FitnessNeuralNet(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String key, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, MarketData> marketdatamap) {
         this.conf = conf.copy();
         this.ml = ml;
         this.dataReaders = dataReaders;

@@ -289,12 +289,12 @@ public class IndicatorUtils {
         if (tableDays < deltas) {
             deltas = 0;
         }
+        List<String> dateList = StockDao.getDateList(conf.getMarket(), marketdatamap);
         for (int j = futureDays; j < tableDays - deltas; j += intervalDays) {
             String commonDate = commonDates.get(commonDates.size() - 1 - j);
             Map<String, Double[]> indicatorMap = new HashMap<>();
             for (String id : listList.get(0).keySet()) {
                 Double[] result = new Double[0];
-                List<String> dateList = StockDao.getDateList(conf.getMarket(), marketdatamap);
                 int aJ = dateList.size() - 1 - dateList.indexOf(commonDate);
                 result = getCommonResult(indicators, objectMapsList, aJ, id, result, commonDate, datareaders);
                 if (extraData != null) {
@@ -492,7 +492,30 @@ public class IndicatorUtils {
             if (!extraData.dateList.isEmpty()) {
                 int jj = 0;
             }
-            arraySize += 2 * ((Set) extraData.extrareader.getLocalResultMap().get(PipelineConstants.MARKETSTOCKS)).size();
+            Map<String, Pipeline[]> dataReaderMap = (Map<String, Pipeline[]>) extraData.extrareader.getLocalResultMap().get(PipelineConstants.DATAREADER);
+            Map<String, StockData>  stockDataMap = (Map<String, StockData>) extraData.extrareader.getLocalResultMap().get(PipelineConstants.STOCKDATA);
+            Set<MarketStock> marketStocks = (Set<MarketStock>) extraData.extrareader.getLocalResultMap().get(PipelineConstants.MARKETSTOCKS);
+            for (MarketStock entry : marketStocks) {
+                String market = entry.getMarket();
+                Pipeline[] datareaders = dataReaderMap.get(market);
+                Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
+                int category = extraData.category;
+                String cat = entry.getCategory();
+                StockData stockData = stockDataMap.get(market);
+                if (cat == null) {
+                    cat = stockData.catName;
+                }
+                int mycat = stockData.cat;
+                Pipeline datareader = pipelineMap.get("" + mycat);
+                Map<String, Double[][]> fillListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.FILLLIST);
+                Double[][] fillList = fillListMap.get(entry.getId());
+                if (Arrays.stream(fillList[0]).anyMatch(Objects::nonNull)) {
+                    arraySize += 2;
+                } else {
+                	int jj = 0;
+                }
+            }
+            //arraySize += 2 * ((Set) extraData.extrareader.getLocalResultMap().get(PipelineConstants.MARKETSTOCKS)).size();
             System.out.println("sizes " + arraySize);
         }
         // for extrareader data end
