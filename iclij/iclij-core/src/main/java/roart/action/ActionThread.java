@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -203,7 +204,7 @@ public class ActionThread extends Thread {
                             } catch (Exception e) {
                                 log.error(Constants.EXCEPTION, e);
                             }                        
-                            PopulateThread.queue.add(item.getMarket());
+                            PopulateThread.queue.add(new ImmutableTriple(item.getMarket(), item.getComponent(), item.getSubcomponent()));
                         }
                     }
                     

@@ -7,7 +7,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +32,7 @@ public class PopulateThread extends Thread {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public static volatile List<String> queue = Collections.synchronizedList(new ArrayList<>());
+    public static volatile List<Triple<String, String, String>> queue = Collections.synchronizedList(new ArrayList<>());
 
     @Override
     public void run() {
@@ -39,20 +43,21 @@ public class PopulateThread extends Thread {
             Thread.currentThread().interrupt();
         }
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
-        List<Market> markets = new ArrayList<>();
+        List<Triple<Market, String, String>> markets = new ArrayList<>();
         if (instance.populate()) {
-            markets = new MarketUtil().getMarkets(false);
+        	markets = new MarketUtil().getMarkets(false).stream().map(e -> new ImmutableTriple<Market, String, String>(e, null, null)).collect(Collectors.toList());
         }
         while (true) {
-            List<String> copy = new ArrayList<>(queue);
+            List<Triple<String, String, String>> copy = new ArrayList<>(queue);
             queue.removeAll(copy);
             if (markets.isEmpty()) {
-                for (String market : copy) {
-                    Market aMarket = new MarketUtil().findMarket(market);
-                    markets.add(aMarket);               
+                for (Triple<String, String, String> market : copy) {
+                    Market aMarket = new MarketUtil().findMarket(market.getLeft());
+                    markets.add(new ImmutableTriple<Market, String, String>(aMarket, market.getMiddle(), market.getRight()));               
                 }
             }
-            for (Market market : markets) {
+            for (Triple<Market, String, String> triplet : markets) {
+            	Market market = triplet.getLeft();
                 if (market.getConfig().getEnable() != null && !market.getConfig().getEnable()) {
                     continue;
                 }                
@@ -90,6 +95,14 @@ public class PopulateThread extends Thread {
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
                     }
+                    /*
+                    if (triplet.getMiddle() != null) {
+                    	timingitems = timingitems.stream().filter(e -> triplet.getMiddle().equals(e.getComponent())).collect(Collectors.toList());
+                    }
+                    if (triplet.getRight() != null) {
+                    	timingitems = timingitems.stream().filter(e -> triplet.getRight().equals(e.getSubcomponent())).collect(Collectors.toList());
+                    }
+                    */
                     LocalDate lastStockdate = TimeUtil.getBackEqualBefore2(currentDate, 0, dates);
                     config.setDate(lastStockdate);
                     if (!lastStockdate.isAfter(oldDate)) {
