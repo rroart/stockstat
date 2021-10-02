@@ -38,6 +38,7 @@ import roart.iclij.filter.Memories;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.Parameters;
+import roart.iclij.model.action.MarketActionData;
 import roart.iclij.util.MLUtil;
 import roart.iclij.util.MiscUtil;
 import roart.result.model.ResultItem;
@@ -153,12 +154,12 @@ public abstract class ComponentML extends Component {
     }
 
     @Override
-    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket, MarketAction action, Parameters parameters) throws Exception {
+    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, String action, Boolean buy, String subcomponent, String mlmarket, MarketActionData actionData, Parameters parameters) throws Exception {
         Map<String, EvolveMLConfig> mlConfigMap = getConfig().getMLConfig(market, param.getInput().getConfig(), mlmarket);
-        return mlLoads(mlConfigMap, param, anUpdateMap, market, buy, subcomponent, mlmarket, action, parameters);
+        return mlLoads(mlConfigMap, param, anUpdateMap, market, action, buy, subcomponent, mlmarket, actionData, parameters);
     }
 
-    protected Map<String, Object> mlLoads(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket, MarketAction action, Parameters parameters) throws Exception {
+    protected Map<String, Object> mlLoads(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, Market market, String action, Boolean buy, String subcomponent, String mlmarket, MarketActionData actionData, Parameters parameters) throws Exception {
         Map<String, Object> map = new HashMap<>();
         if (mlConfigMap == null) {
             return map;
@@ -172,7 +173,7 @@ public abstract class ComponentML extends Component {
                 if (mlmarket != null) {
                     marketName = mlmarket;
                 }
-                Map<String, Object> configMap  = new MiscUtil().loadConfig(param.getService(), param.getInput(), market, marketName, param.getAction(), component, false, buy, subcomponent, action.getActionData(), parameters);
+                Map<String, Object> configMap  = new MiscUtil().loadConfig(param.getService(), param.getInput(), market, marketName, action, component, false, buy, subcomponent, actionData, parameters);
                 map.putAll(configMap);
             }
         }

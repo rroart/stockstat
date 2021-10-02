@@ -38,6 +38,7 @@ import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.TimingItem;
+import roart.iclij.model.action.MarketActionData;
 import roart.iclij.model.config.ActionComponentConfig;
 import roart.iclij.util.MLUtil;
 import roart.iclij.util.MiscUtil;
@@ -127,19 +128,10 @@ public abstract class Component {
             this.subenable(valueMap, subcomponent);
         }
         if (action.getActionData().wantsUpdate(param.getInput().getConfig())) {
-        	try {
-        		Map<String, Object> loadValues = mlLoads(param, null, market, null, subcomponent, mlmarket, action, parameters);
-        		if (!loadValues.keySet().contains(IclijConstants.ALL)) {
-        			valueMap.putAll(loadValues);
-        		} else {
-        			String val = (String) loadValues.get(IclijConstants.ALL);
-        			Map<String, Object> map = JsonUtil.convert(val, Map.class);
-        			valueMap.putAll(map);
-        		}
-        		log.info("Loaded values {}", loadValues);
-        	} catch (Exception e) {
-        		log.error(Constants.EXCEPTION, e);
+        	if (IclijConstants.FINDPROFIT.equals(action.getActionData().getName())) {
+            	valueMap.putAll(getValueMap(action, IclijConstants.MACHINELEARNING, market, param, subcomponent, mlmarket, parameters));        		
         	}
+        	valueMap.putAll(getValueMap(action, param.getAction(), market, param, subcomponent, mlmarket, parameters));
         }
         String pipeline = getPipeline();
         param.getService().conf.getConfigValueMap().putAll(valueMap);
@@ -157,6 +149,25 @@ public abstract class Component {
         action.handleMLMeta(this, param, valueMap, pipeline);
         action.saveTiming(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, false);
     }
+
+	private Map<String, Object> getValueMap(MarketAction action, String actionName, Market market, ComponentData param,
+			String subcomponent, String mlmarket, Parameters parameters) {
+        Map<String, Object> valueMap = new HashMap<>();
+		try {
+			Map<String, Object> loadValues = mlLoads(param, null, market, actionName, null, subcomponent, mlmarket, action.getActionData(), parameters);
+			if (!loadValues.keySet().contains(IclijConstants.ALL)) {
+				valueMap.putAll(loadValues);
+			} else {
+				String val = (String) loadValues.get(IclijConstants.ALL);
+				Map<String, Object> map = JsonUtil.convert(val, Map.class);
+				valueMap.putAll(map);
+			}
+			log.info("Loaded values {}", loadValues);
+		} catch (Exception e) {
+			log.error(Constants.EXCEPTION, e);
+		}
+		return valueMap;
+	}
 
     protected void subenable(Map<String, Object> valueMap, String subcomponent) {
     }
@@ -223,7 +234,7 @@ public abstract class Component {
 
     public abstract String getPipeline();
     
-    protected abstract Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket, MarketAction action, Parameters parameters) throws Exception;
+    protected abstract Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, String action, Boolean buy, String subcomponent, String mlmarket, MarketActionData actionData, Parameters parameters) throws Exception;
 
     protected abstract EvolutionConfig getImproveEvolutionConfig(IclijConfig config);
     

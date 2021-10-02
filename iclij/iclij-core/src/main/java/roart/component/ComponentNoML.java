@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
@@ -24,6 +23,7 @@ import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.Parameters;
+import roart.iclij.model.action.MarketActionData;
 import roart.iclij.util.MiscUtil;
 import roart.result.model.ResultItem;
 import roart.service.model.ProfitData;
@@ -50,11 +50,11 @@ public abstract class ComponentNoML extends Component {
     }
 
     @Override
-    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket, MarketAction action, Parameters parameters) throws Exception {
+    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, String action, Boolean buy, String subcomponent, String mlmarket, MarketActionData actionData, Parameters parameters) throws Exception {
         Map<String, Object> map = new HashMap<>();
         String marketName = market.getConfig().getMarket();
         String component = getPipeline();
-        Map<String, Object> configMap  = new MiscUtil().loadConfig(param.getService(), param.getInput(), market, marketName, param.getAction(), component, false, buy, subcomponent, action.getActionData(), parameters);
+        Map<String, Object> configMap  = new MiscUtil().loadConfig(param.getService(), param.getInput(), market, marketName, param.getAction(), component, false, buy, subcomponent, actionData, parameters);
         map.putAll(configMap);
         return map;
     }
