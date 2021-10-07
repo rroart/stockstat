@@ -412,7 +412,8 @@ public abstract class MarketAction extends Action {
                             IclijConfig config = param.getInput().getConfig();
                             String mypriorityKey = actionData.getPriority();
                             int aPriority = getPriority(config, mypriorityKey);
-                            marketTime.setPriority(aPriority);
+                            int mypriority = aPriority + entry.getValue().getConfig().getPriority(config);
+                            marketTime.setPriority(mypriority);
                             List<TimingItem> filterTimingsEvolution = getMyTimings(timings, marketName, action, componentName, true, buy, subComponent, parameters);
                             if (evolve) {
                                 handleFilterTimings(action, market, marketTime, componentName, filterTimingsEvolution, evolve, param.getInput().getEnddate(), buy, timings, subComponent, parameters);               
