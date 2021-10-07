@@ -97,6 +97,7 @@ public class ActionThread extends Thread {
             list.addAll(copy);
             Comparator<ActionComponentItem> comparator = (ActionComponentItem i1, ActionComponentItem i2) -> getScore(i1) - getScore(i2);
             Collections.sort(list, comparator);
+            Collections.sort(copy, comparator);
             if (!list.isEmpty()) {
                 ActionComponentItem item = list.get(0);
                 // ???
