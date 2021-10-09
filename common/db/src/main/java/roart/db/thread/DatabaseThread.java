@@ -52,6 +52,11 @@ public class DatabaseThread extends Thread {
                 }
                 string = Queues.queuedelete.poll();
             }
+            try {
+                hu.commit();
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
             Pair<HibernateUtil, Query> queryPair = Queues.queuedeleteq.poll();
             while (queryPair != null) {
                 try {
@@ -62,11 +67,6 @@ public class DatabaseThread extends Thread {
                     log.error(Constants.EXCEPTION, e);
                 }
                 queryPair = Queues.queuedeleteq.poll();
-            }
-            try {
-                hu.commit();
-            } catch (Exception e) {
-                log.error(Constants.EXCEPTION, e);
             }
             try {
                 int sleepsec = update - (int) ((lastupdate - now)/1000);  

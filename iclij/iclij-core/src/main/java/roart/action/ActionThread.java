@@ -198,7 +198,7 @@ public class ActionThread extends Thread {
 			    // only after improveprofit?
                             try {
                             	log.info("Deleting AboveBelow etc {} {} {}", item.getMarket(), item.getComponent(), item.getSubcomponent());
-                                new TimingItem().delete(item.getMarket(), item.getComponent(), item.getSubcomponent(), null, null);
+                                new TimingItem().delete(item.getMarket(), IclijConstants.FINDPROFIT, item.getComponent(), item.getSubcomponent(), null, null);
                                 new IncDecItem().delete(item.getMarket(), item.getComponent(), item.getSubcomponent(), null, null);
                                 new MemoryItem().delete(item.getMarket(), item.getComponent(), item.getSubcomponent(), null, null);
                                 new AboveBelowItem().delete(item.getMarket(), null, null);

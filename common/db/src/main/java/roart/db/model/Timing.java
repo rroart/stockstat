@@ -227,8 +227,11 @@ public class Timing implements Serializable {
 
     @Transient
     @Transactional
-    public static void delete(String market, String component, String subcomponent, Date startDate, Date endDate) throws Exception {
+    public static void delete(String market, String action, String component, String subcomponent, Date startDate, Date endDate) throws Exception {
         String queryString = "delete Timing where market = :market";
+        if (action != null) {
+            queryString += " and action = :action";
+        }
         if (component != null) {
             queryString += " and component = :component";
         }
@@ -245,6 +248,9 @@ public class Timing implements Serializable {
         Query<IncDec> query = hu.createWriteQuery(queryString);
         query.setParameter("market", market);
         //query.setParameter("action", action);
+        if (action != null) {
+            query.setParameter("action", action);
+        }
         if (component != null) {
             query.setParameter("component", component);
         }
