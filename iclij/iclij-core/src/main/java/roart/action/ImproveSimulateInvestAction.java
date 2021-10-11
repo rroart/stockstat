@@ -125,7 +125,7 @@ public class ImproveSimulateInvestAction extends MarketAction {
     @Override
     public void saveTiming(Component component, ComponentData param, String subcomponent, String mlmarket,
             Parameters parameters, Map<String, Object> scoreMap, long time0, boolean evolve) {
-        saveTimingCommon(component, param, mlmarket, mlmarket, parameters, scoreMap, time0, evolve);
+        saveTimingCommon(component, param, subcomponent, mlmarket, parameters, scoreMap, time0, evolve);
     }
 
 }
