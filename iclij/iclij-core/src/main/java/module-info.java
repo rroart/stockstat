@@ -66,4 +66,6 @@ module iclij.core {
     //requires deductive;
     //requires math;
     //?requires pl;
+    requires common.inmemory.factory;
+    requires common.inmemory.model;
 }
