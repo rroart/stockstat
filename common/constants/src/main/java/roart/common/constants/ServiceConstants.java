@@ -7,4 +7,5 @@ public class ServiceConstants {
     public static final String EVOLVEFILTERPROFIT = "evolvefilterprofit";
     public static final String EVOLVEFILTERFILTER = "evolvefilterfilter";
     public static final String EVOLVEFILTERABOVEBELOW = "evolvefilterabovebelow";
+    public static final String POPULATE = "populate";
 }
