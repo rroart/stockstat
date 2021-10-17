@@ -41,8 +41,8 @@ public class IclijConfigConstants {
     public static final String DATASETINDICATORRECOMMENDER = "dataset.indicatorrecommender";
     public static final String DATASETINDICATORRECOMMENDEREVOLUTIONCONFIG = "dataset.indicatorrecommender.evolutionconfig";
     public static final String DATASETML = "dataset.ml";
-    public static final String DATASETMLMLCONFIG = "dataset.ml.mlconfig";
-    public static final String DATASETMLEVOLUTIONCONFIG = "dataset.ml.evolutionconfig";
+    public static final String DATASETMLCONFIG = "dataset.mlconfig";
+    public static final String DATASETEVOLUTIONCONFIG = "dataset.evolutionconfig";
     public static final String DATASETMLTENSORFLOWSERVER = "dataset.ml.tensorflowserver";
     public static final String DATASETAUTORUN = "dataset.autorun";
     public static final String DATASETFITNESSMINIMUM = "dataset.fitnessminimum";
@@ -159,6 +159,8 @@ public class IclijConfigConstants {
     public static final String IMPROVEPROFIT = "improveprofit";
     public static final String IMPROVEPROFITAUTORUN = "improveprofit.autorun";
     public static final String IMPROVEPROFITUPDATE = "improveprofit.update";
+    public static final String IMPROVEPROFITMLCONFIG = "improveprofit.mlconfig";
+    public static final String IMPROVEPROFITEVOLUTIONCONFIG = "improveprofit.evolutionconfig";
     public static final String IMPROVEPROFITFITNESSMINIMUM = "improveprofit.fitnessminimum";
     public static final String IMPROVEPROFITRECOMMENDER = "improveprofit.recommender";
     public static final String IMPROVEPROFITMLMACD = "improveprofit.mlmacd";
@@ -220,6 +222,8 @@ public class IclijConfigConstants {
     public static final String IMPROVEABOVEBELOWFITNESSMINIMUM = "improveabovebelow.fitnessminimum";
     public static final String MACHINELEARNING = "machinelearning";
     public static final String MACHINELEARNINGAUTORUN = "machinelearning.autorun";
+    public static final String MACHINELEARNINGMLCONFIG = "machinelearning.mlconfig";
+    public static final String MACHINELEARNINGEVOLUTIONCONFIG = "machinelearning.evolutionconfig";
     public static final String MACHINELEARNINGMLMACD = "machinelearning.mlmacd";
     public static final String MACHINELEARNINGMLMACDEVOLUTIONCONFIG = "machinelearning.mlmacd.evolutionconfig";
     public static final String MACHINELEARNINGMLMACDMLCONFIG = "machinelearning.mlmacd.mlconfig";

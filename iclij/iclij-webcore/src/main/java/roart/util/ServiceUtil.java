@@ -436,7 +436,7 @@ public class ServiceUtil {
                 updateMarketMap.put(market.getConfig().getMarket() + " " + booleanTexts.get(bool), new HashMap<>());
                 Map<String, ActionComponentConfig> componentMap = new ComponentMap().getComponentMap(componentList, actionData.getName());
                 for (ActionComponentConfig component : componentMap.values()) {
-                    List<String> subcomponents = component.getSubComponents(market, param.getInput().getConfig(), null);
+                    List<String> subcomponents = component.getSubComponents(market, param.getInput().getConfig(), null, actionData.getMLConfig(param.getInput().getConfig()));
                     for (String subcomponent : subcomponents) {
                         Map<String, Object> anUpdateMap = new MiscUtil().loadConfig(param.getService(), param.getInput(), market, market.getConfig().getMarket(), actionData.getName(), actionData.getName(), false, bool, subcomponent, actionData, null);
                         updateMarketMap.get(market.getConfig().getMarket() + " " + booleanTexts.get(bool)).putAll(anUpdateMap);

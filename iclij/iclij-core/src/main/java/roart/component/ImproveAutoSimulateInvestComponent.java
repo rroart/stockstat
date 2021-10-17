@@ -183,12 +183,6 @@ public class ImproveAutoSimulateInvestComponent extends ComponentML {
     }
 
     @Override
-    protected EvolutionConfig getImproveEvolutionConfig(IclijConfig config) {
-        String evolveString = config.getImproveAutoSimulateInvestEvolutionConfig();
-        return JsonUtil.convert(evolveString, EvolutionConfig.class);
-    }
-
-    @Override
     public Object[] calculateAccuracy(ComponentData componentparam) throws Exception {
         return new Object[] { componentparam.getScoreMap().get(SimConstants.SCORE) };
     }

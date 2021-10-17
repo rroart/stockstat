@@ -32,7 +32,7 @@ import roart.util.ServiceUtil;
 public abstract class ComponentNoML extends Component {
 
     @Override
-    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket, Parameters parameters) {
+    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket, Parameters parameters, EvolutionConfig actionEvolveConfig, String actionML) {
         if (evolve) {
             String confStr = param.getInput().getConfig().getEvolveIndicatorrecommenderEvolutionConfig();
             if (confStr != null) {
@@ -85,27 +85,10 @@ public abstract class ComponentNoML extends Component {
     }
 
     @Override
-    public EvolutionConfig getEvolutionConfig(ComponentData componentdata) {
+    public EvolutionConfig getEvolutionConfig(ComponentData componentdata, EvolutionConfig actionEvolutionConfig) {
         return null;
     }
 
-    @Override
-    protected EvolutionConfig getImproveEvolutionConfig(IclijConfig config) {
-        /*
-        ObjectMapper mapper = new ObjectMapper();
-        EvolutionConfig evolutionConfig = null;
-        try {
-            evolutionConfig = mapper.readValue(conf.getTestMLEvolutionConfig(), EvolutionConfig.class);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        */
-        // too heavy?
-        // String evolveString = config.getEvolveIndicatorrecommenderEvolutionConfig();
-        String evolveString = config.getEvolveMLEvolutionConfig();
-        return JsonUtil.convert(evolveString, EvolutionConfig.class);
-    }
-    
     @Override
     public boolean wantEvolve(IclijConfig config) {
         return config.wantEvolveRecommender();

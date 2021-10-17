@@ -369,7 +369,7 @@ public abstract class MarketAction extends Action {
 
             Double[] thresholds = getThresholds(param.getInput().getConfig());
             Integer[] futuredays = getFuturedays(param.getInput().getConfig());
-            List<String> subComponents = component.getConfig().getSubComponents(market, param.getInput().getConfig(), null);
+            List<String> subComponents = component.getConfig().getSubComponents(market, param.getInput().getConfig(), null, getActionData().getMLConfig(param.getInput().getConfig()));
             for(String subComponent : subComponents) {
                 if (!isDataset()) {
                     boolean skipSubcomponent = getSkipSubComponent(mltests, confidence, componentName, subComponent);

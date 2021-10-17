@@ -58,4 +58,14 @@ public class DatasetActionData extends MarketActionData {
     public boolean wantsUpdate(IclijConfig config) {
         return config.wantsDatasetUpdate();
     }
+
+    @Override
+	public String getEvolutionConfig(IclijConfig config) {
+		return config.getDatasetEvolutionConfig();
+	}
+
+    @Override
+	public String getMLConfig(IclijConfig config) {
+		return config.getDatasetMLConfig();
+	}
 }

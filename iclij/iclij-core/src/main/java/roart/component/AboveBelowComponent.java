@@ -286,12 +286,6 @@ public class AboveBelowComponent extends ComponentML {
         return null;
     }
 
-    @Override
-    protected EvolutionConfig getImproveEvolutionConfig(IclijConfig config) {
-        String evolveString = config.getImproveAbovebelowEvolutionConfig();
-        return JsonUtil.convert(evolveString, EvolutionConfig.class);
-    }
-
     private void getComponentLists(List<IncDecItem> incdecs, List<String> components, List<String> subcomponents) {
         Set<String> componentSet = new HashSet<>();
         Set<String> subcomponentSet = new HashSet<>();

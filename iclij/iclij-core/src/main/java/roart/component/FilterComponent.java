@@ -84,10 +84,4 @@ public class FilterComponent extends ComponentML {
     public String getFuturedays() {
         return null;
     }
-
-    @Override
-    protected EvolutionConfig getImproveEvolutionConfig(IclijConfig config) {
-        String evolveString = config.getImproveAbovebelowEvolutionConfig();
-        return JsonUtil.convert(evolveString, EvolutionConfig.class);
-    }
 }

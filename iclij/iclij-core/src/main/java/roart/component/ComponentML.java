@@ -49,14 +49,14 @@ import roart.util.ServiceUtil;
 public abstract class ComponentML extends Component {
 
     @Override
-    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket, Parameters parameters) {
+    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket, Parameters parameters, EvolutionConfig actionEvolveConfig, String actionML) {
         // special
         //String localMl = param.getInput().getConfig().getFindProfitMLIndicatorMLConfig();
-        Map<String, EvolveMLConfig> mlConfigMap = getConfig().getMLConfig(market, param.getInput().getConfig(), mlmarket);
+        Map<String, EvolveMLConfig> mlConfigMap = getConfig().getMLConfig(market, param.getInput().getConfig(), mlmarket, actionML);
         // part special
         // if (param.getInput().getConfig().wantEvolveML()) {
         if (evolve) {
-            EvolutionConfig evolveConfig = getEvolutionConfig(param);
+            EvolutionConfig evolveConfig = getEvolutionConfig(param, actionEvolveConfig);
             String newConfStr = JsonUtil.convert(evolveConfig);
             param.getService().conf.getConfigValueMap().put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, newConfStr);
 
@@ -155,7 +155,7 @@ public abstract class ComponentML extends Component {
 
     @Override
     protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, String action, Boolean buy, String subcomponent, String mlmarket, MarketActionData actionData, Parameters parameters) throws Exception {
-        Map<String, EvolveMLConfig> mlConfigMap = getConfig().getMLConfig(market, param.getInput().getConfig(), mlmarket);
+        Map<String, EvolveMLConfig> mlConfigMap = getConfig().getMLConfig(market, param.getInput().getConfig(), mlmarket, actionData.getMLConfig(param.getInput().getConfig()));
         return mlLoads(mlConfigMap, param, anUpdateMap, market, action, buy, subcomponent, mlmarket, actionData, parameters);
     }
 
@@ -181,10 +181,11 @@ public abstract class ComponentML extends Component {
     }
 
     @Override
-    public EvolutionConfig getEvolutionConfig(ComponentData param) {
+    public EvolutionConfig getEvolutionConfig(ComponentData param, EvolutionConfig actionEvolutionConfig) {
         String confStr = param.getInput().getConfig().getEvolveMLEvolutionConfig();
         EvolutionConfig evolveConfig = JsonUtil.convert(confStr, EvolutionConfig.class);
         EvolutionConfig localEvolveConfig = JsonUtil.convert(getConfig().getLocalEvolutionConfig(param.getInput().getConfig()), EvolutionConfig.class);
+        evolveConfig.merge(actionEvolutionConfig);
         evolveConfig.merge(localEvolveConfig);
         return evolveConfig;
     }
@@ -224,21 +225,6 @@ public abstract class ComponentML extends Component {
             }
         }
         return returnmap;
-    }
-
-    @Override
-    protected EvolutionConfig getImproveEvolutionConfig(IclijConfig config) {
-        /*
-        ObjectMapper mapper = new ObjectMapper();
-        EvolutionConfig evolutionConfig = null;
-        try {
-            evolutionConfig = mapper.readValue(conf.getTestMLEvolutionConfig(), EvolutionConfig.class);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-         */
-        String evolveString = config.getEvolveMLEvolutionConfig();
-        return JsonUtil.convert(evolveString, EvolutionConfig.class);
     }
 
     @Override

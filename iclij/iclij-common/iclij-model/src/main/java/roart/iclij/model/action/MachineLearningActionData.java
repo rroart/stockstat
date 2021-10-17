@@ -105,4 +105,14 @@ public class MachineLearningActionData extends MarketActionData {
     public boolean wantsUpdate(IclijConfig config) {
         return config.wantsMachineLearningUpdate();
     }
+
+    @Override
+	public String getEvolutionConfig(IclijConfig config) {
+		return config.getMachineLearningEvolutionConfig();
+	}
+
+    @Override
+	public String getMLConfig(IclijConfig config) {
+		return config.getMachineLearningMLConfig();
+	}
 }

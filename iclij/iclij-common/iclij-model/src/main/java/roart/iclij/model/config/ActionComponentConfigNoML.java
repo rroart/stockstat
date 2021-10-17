@@ -13,7 +13,7 @@ import roart.iclij.config.Market;
 public abstract class ActionComponentConfigNoML extends ActionComponentConfig {
 
     @Override
-    public List<String> getSubComponents(Market market, IclijConfig config, String mlmarket) {
+    public List<String> getSubComponents(Market market, IclijConfig config, String mlmarket, String actionML) {
         List<String> list = new ArrayList<>();
         list.add(null);
         //list.add("");
@@ -21,7 +21,7 @@ public abstract class ActionComponentConfigNoML extends ActionComponentConfig {
     }
 
     @Override
-    public Map<String, EvolveMLConfig> getMLConfig(Market market, IclijConfig config, String mlmarket) {
+    public Map<String, EvolveMLConfig> getMLConfig(Market market, IclijConfig config, String mlmarket, String actionML) {
         return null;
     }
 
