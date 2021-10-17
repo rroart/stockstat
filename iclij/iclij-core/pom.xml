@@ -229,6 +229,11 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
+      <artifactId>stockstat-iclij-common-component</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
       <artifactId>stockstat-iclij-common-model</artifactId>
       <version>${stockstat.version}</version>
     </dependency>

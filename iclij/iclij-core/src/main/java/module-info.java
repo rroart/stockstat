@@ -21,6 +21,7 @@ module iclij.core {
     requires commons.math3;
     //requires guava;
     requires iclij.common.componentdata;
+    requires iclij.common.component;
     requires iclij.common.config;
     requires iclij.common.constants;
     requires iclij.common.filter;
