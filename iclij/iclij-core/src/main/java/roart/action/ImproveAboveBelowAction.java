@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.ServiceConstants;
-import roart.component.Component;
+import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
@@ -104,7 +104,7 @@ public class ImproveAboveBelowAction extends MarketAction {
             // 0 ok?
             Map<String, Object> aMap = new HashMap<>();
             //component.handle(this, market, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null);
-            ComponentData componentData = component.handle(this, market, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null);
+            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null, getParent() != null);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
@@ -147,7 +147,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                         
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
             
-            ComponentData componentData = component.handle(this, market, param, profitdata, new Memories(market), evolve, aMap, subcomponent, null, parameters);
+            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, new Memories(market), evolve, aMap, subcomponent, null, parameters, getParent() != null);
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
             myData.getUpdateMap().putAll(componentData.getUpdateMap());
@@ -189,7 +189,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                         
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
             
-            ComponentData componentData = component.handle(this, market, param, profitdata, new Memories(market), evolve, aMap, subcomponent, null, parameters);
+            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, new Memories(market), evolve, aMap, subcomponent, null, parameters, getParent() != null);
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
             myData.getUpdateMap().putAll(componentData.getUpdateMap());

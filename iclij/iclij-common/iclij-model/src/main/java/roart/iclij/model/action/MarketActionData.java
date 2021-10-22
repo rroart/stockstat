@@ -5,12 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
 import roart.iclij.model.config.ActionComponentConfig;
 
 public abstract class MarketActionData {
 
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
+    
     public abstract String getName();
 
     public abstract String getThreshold(IclijConfig conf);
@@ -50,4 +55,21 @@ public abstract class MarketActionData {
 	public String getMLConfig(IclijConfig config) {
 		return config.getEvolveMLMLConfig();
 	}
+	
+	public boolean doHandleMLMeta() {
+		return false;
+	}
+	
+	public boolean isEvolving() {
+		return false;
+	}
+	
+	public boolean doSaveTiming() {
+		return true;
+	}
+	
+    public Object[] getScoreDescription(Object[] accuracy, Map<String, Object> scoreMap) {
+        return new Object[] { null, null };
+    }
+
 }

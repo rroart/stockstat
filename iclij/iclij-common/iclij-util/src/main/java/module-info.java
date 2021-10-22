@@ -22,4 +22,5 @@ module iclij.common.util {
     requires org.slf4j;
     requires common.constants;
     requires iclij.common.constants;
+	requires iclij.common.componentdata;
 }

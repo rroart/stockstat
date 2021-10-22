@@ -20,7 +20,7 @@ import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
-import roart.component.Component;
+import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
 import roart.constants.IclijConstants;
 import roart.db.IclijDbDao;
@@ -122,7 +122,7 @@ public class SimulateInvestAction extends MarketAction {
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
             
-            ComponentData componentData = component.handle(this, market, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null);
+            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null, getParent() != null);
             
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
@@ -134,29 +134,5 @@ public class SimulateInvestAction extends MarketAction {
             //System.out.println("Sells: " + market.getMarket() + sells);           
         }
 
-    }
-
-    @Override
-    public Object[] getScoreDescription(Component component, ComponentData param, Map<String, Object> scoreMap) {
-        Double score = null;
-        String description = null;
-        Map<String, Double> scoreMap2 = param.getScoreMap();
-        try {
-            score = scoreMap2
-                    .values()
-                    .stream()
-                    .mapToDouble(e -> (Double) e)
-                    .max()
-                    .orElse(-1);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        return new Object[] { score, description };
-    }
-    
-    @Override
-    public void saveTiming(Component component, ComponentData param, String subcomponent, String mlmarket,
-            Parameters parameters, Map<String, Object> scoreMap, long time0, boolean evolve) {
-        saveTimingCommon(component, param, subcomponent, mlmarket, parameters, scoreMap, time0, evolve);
     }
 }

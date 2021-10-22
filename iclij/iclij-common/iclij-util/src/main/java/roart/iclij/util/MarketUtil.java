@@ -2,18 +2,26 @@ package roart.iclij.util;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
+import roart.common.pipeline.PipelineConstants;
+import roart.component.model.ComponentData;
 import roart.db.IclijDbDao;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
+import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.config.ActionComponentConfig;
+import roart.service.model.ProfitData;
 
 public class MarketUtil {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -90,4 +98,146 @@ public class MarketUtil {
         return startoffset != null ? startoffset : 0;
     }
 
+    public void filterIncDecs(ComponentData param, Market market, ProfitData profitdata,
+            Map<String, Map<String, Object>> maps, boolean inc, List<String> mydates) {
+        List<String> dates;
+        if (mydates == null) {
+            dates = param.getService().getDates(param.getService().conf.getMarket());        
+        } else {
+            dates = mydates;
+        }
+        String category;
+        if (inc) {
+            category = market.getFilter().getInccategory();
+        } else {
+            category = market.getFilter().getDeccategory();
+        }
+        if (category != null) {
+            Map<String, Object> categoryMap = maps.get(category);
+            if (categoryMap != null) {
+                Integer offsetDays = null;
+                Integer days;
+                if (inc) {
+                    days = market.getFilter().getIncdays();
+                } else {
+                    days = market.getFilter().getDecdays();
+                }
+                if (days != null) {
+                    if (days == 0) {
+                        int year = param.getInput().getEnddate().getYear();
+                        year = param.getFutureDate().getYear();
+                        List<String> yearDates = new ArrayList<>();
+                        for (String date : dates) {
+                            int aYear = Integer.valueOf(date.substring(0, 4));
+                            if (year == aYear) {
+                                yearDates.add(date);
+                            }
+                        }
+                        Collections.sort(yearDates);
+                        String oldestDate = yearDates.get(0);
+                        int index = dates.indexOf(oldestDate);
+                        offsetDays = dates.size() - 1 - index;
+                    } else {
+                       offsetDays = days;
+                    }
+                }
+                Double threshold;
+                if (inc) {
+                    threshold = market.getFilter().getIncthreshold();
+                } else {
+                    threshold = market.getFilter().getDecthreshold();
+                }
+                Map<String, List<List>> listMap3 = getCategoryList(maps, category);
+                Map<String, IncDecItem> buysFilter = incdecFilterOnIncreaseValue(market, inc ? profitdata.getBuys() : profitdata.getSells(), maps, threshold, categoryMap,
+                        listMap3, offsetDays, inc);
+                if (inc) {
+                    profitdata.setBuys(buysFilter);
+                } else {
+                    profitdata.setSells(buysFilter);
+                }
+            }
+        }
+    }
+    
+    public Map<String, IncDecItem> incdecFilterOnIncreaseValue(Market market, Map<String, IncDecItem> incdecs,
+            Map<String, Map<String, Object>> maps, Double threshold, Map<String, Object> categoryMap,
+            Map<String, List<List>> listMap3, Integer offsetDays, boolean inc) {
+        Map<String, IncDecItem> incdecsFilter = new HashMap<>();
+        for(IncDecItem item : incdecs.values()) {
+            String key = item.getId();
+            if (listMap3 == null) {
+                if (categoryMap != null) {
+                    System.out.println(categoryMap.keySet());
+                }
+                if (maps != null) {
+                    System.out.println(maps.keySet());
+                }
+                System.out.println("market" + market.getConfig().getMarket() + "null map");
+                continue;
+            }
+            List<List> list = listMap3.get(key);
+            if (list == null) {
+                continue;
+            }
+            List<Double> list0 = list.get(0);
+            Double value = null;
+            if (offsetDays == null) {
+                value = list0.get(list0.size() - 1);
+                if (value != null) {
+                    value = 1 + (value / 100);
+                }
+            } else {
+                Double curValue = list0.get(list0.size() - 1);
+                Double oldValue = list0.get(list0.size() - 1 - offsetDays);
+                if (curValue != null && oldValue != null) {
+                    value = curValue / oldValue;
+                }
+            }
+            if (value == null || threshold == null) {
+                continue;
+            }
+            if (inc && value < threshold) {
+                continue;
+            }
+            if (!inc && value > threshold) {
+                continue;
+            }
+            incdecsFilter.put(key, item);
+        }
+        return incdecsFilter;
+    }
+
+    public Map<String, List<List>> getCategoryList(Map<String, Map<String, Object>> maps, String category) {
+        String newCategory = null;
+        if (Constants.PRICE.equals(category)) {
+            newCategory = "" + Constants.PRICECOLUMN;
+        }
+        if (Constants.INDEX.equals(category)) {
+            newCategory = "" + Constants.INDEXVALUECOLUMN;
+        }
+        if (newCategory != null) {
+            Map<String, Object> map = maps.get(newCategory);
+            return (Map<String, List<List>>) map.get(PipelineConstants.LIST);
+        }
+        Map<String, List<List>> listMap3 = null;
+        for (Entry<String, Map<String, Object>> entry : maps.entrySet()) {
+            Map<String, Object> map = entry.getValue();
+            if (category.equals(map.get(PipelineConstants.CATEGORYTITLE))) {
+                listMap3 = (Map<String, List<List>>) map.get(PipelineConstants.LIST);
+            }
+        }
+        return listMap3;
+    }
+
+    public void fillProfitdata(ProfitData profitdata, List<IncDecItem> incdecitems) {
+        for (IncDecItem item : incdecitems) {
+            String id = item.getId() + item.getDate().toString();
+            if (item.isIncrease()) {
+                profitdata.getBuys().put(id, item);
+            } else {
+                profitdata.getSells().put(id, item);
+            }
+        }
+    }
+    
 }

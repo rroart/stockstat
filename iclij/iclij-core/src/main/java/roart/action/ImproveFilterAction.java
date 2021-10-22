@@ -16,9 +16,7 @@ import roart.common.constants.Constants;
 import roart.common.constants.ServiceConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
-import roart.component.Component;
-import roart.component.Evolve;
-import roart.component.FilterEvolveFactory;
+import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
 import roart.db.IclijDbDao;
 import roart.evolution.config.EvolutionConfig;
@@ -26,6 +24,8 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.Market;
+import roart.iclij.evolve.Evolve;
+import roart.iclij.evolve.FilterEvolveFactory;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
@@ -113,7 +113,7 @@ public class ImproveFilterAction extends MarketAction {
 
             Map<String, Object> confMap = new HashMap<>();
             List<String> confList = new ArrayList<>();
-            ComponentData componentData = evolve.evolve(action, param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap , evolutionConfig, component.getPipeline(), component, confList );
+            ComponentData componentData = evolve.evolve(getActionData(), param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap , evolutionConfig, component.getPipeline(), component, confList );
        
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
@@ -186,11 +186,6 @@ public class ImproveFilterAction extends MarketAction {
             log.error(Constants.EXCEPTION, e);
         }
         return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
-    }
-
-    @Override
-    public void handleMLMeta(Component component, ComponentData param, Map<String, Object> valueMap, String pipeline) {
-        handleMLMetaCommon(component, param, valueMap, pipeline);
     }
 
 }

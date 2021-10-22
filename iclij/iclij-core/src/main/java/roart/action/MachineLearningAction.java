@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.util.TimeUtil;
-import roart.component.Component;
+import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
@@ -81,7 +81,7 @@ public class MachineLearningAction extends MarketAction {
             
             boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
             //component.set(market, param, profitdata, positions, evolve);
-            ComponentData componentData = component.handle(action, market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters);
+            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters, getParent() != null);
         }
     }
 
@@ -143,35 +143,6 @@ public class MachineLearningAction extends MarketAction {
             log.error(Constants.EXCEPTION, e);
         }
         return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
-    }
-
-    @Override
-    public Object[] getScoreDescription(Component component, ComponentData param, Map<String, Object> scoreMap) {
-        Double score = null;
-        String description = null;
-        try {
-            component.saveAccuracy(param);
-            Object[] result = component.calculateAccuracy(param);
-            score = (Double) result[0];
-            description = (String) result[1];
-            if (result[2] != null) {
-                description =  (String) result[2] + " " + description;
-            }
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        return new Object[] { score, description };
-    }
-
-    @Override
-    public void handleMLMeta(Component component, ComponentData param, Map<String, Object> valueMap, String pipeline) {
-        handleMLMetaCommon(component, param, valueMap, pipeline);
-    }
-    
-    @Override
-    public void saveTiming(Component component, ComponentData param, String subcomponent, String mlmarket,
-            Parameters parameters, Map<String, Object> scoreMap, long time0, boolean evolve) {
-        saveTimingCommon(component, param, subcomponent, mlmarket, parameters, scoreMap, time0, evolve);
     }
 
 }

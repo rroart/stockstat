@@ -119,4 +119,19 @@ public class ImproveProfitActionData extends MarketActionData {
 	public String getMLConfig(IclijConfig config) {
 		return config.getImproveProfitMLConfig();
 	}
+    
+    @Override
+	public boolean doHandleMLMeta() {
+		return true;
+	}
+	
+    @Override
+	public boolean isEvolving() {
+		return true;
+	}
+	
+    @Override
+	public boolean doSaveTiming() {
+		return false;
+	}
 }

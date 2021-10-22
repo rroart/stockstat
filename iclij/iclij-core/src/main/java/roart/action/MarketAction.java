@@ -33,8 +33,8 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.MetaUtil;
 import roart.common.util.TimeUtil;
-import roart.component.Component;
-import roart.component.ComponentFactory;
+import roart.iclij.component.Component;
+import roart.iclij.component.factory.ComponentFactory;
 import roart.component.model.ComponentData;
 import roart.constants.IclijConstants;
 import roart.db.IclijDbDao;
@@ -104,10 +104,6 @@ public abstract class MarketAction extends Action {
     protected abstract LocalDate getPrevDate(ComponentData param, Market market);
 
     public abstract void setValMap(ComponentData param);
-    
-    public ComponentFactory getComponentFactory() {
-        return new ComponentFactory();
-    }
     
     public int getPriority(IclijConfig conf, String key) {
         Integer value = (Integer) conf.getConfigValueMap().get(key + "[@priority]");
@@ -546,7 +542,7 @@ public abstract class MarketAction extends Action {
         profitdata.setInputdata(inputdata);
         
         Map<String, Component> componentMap = new HashMap<>();
-        Component acomponent = getComponentFactory().factory(marketTime.getComponent());
+        Component acomponent = new ComponentFactory().factory(marketTime.getComponent());
         ActionComponentConfig aconfig = ActionComponentConfigFactory.factoryfactory(getName()).factory(acomponent.getPipeline());
         acomponent.setConfig(aconfig);
         componentMap.put(marketTime.getComponent(), acomponent);
@@ -576,10 +572,12 @@ public abstract class MarketAction extends Action {
         }
         Parameters parameters2 = JsonUtil.convert(marketTime.getParameters(), Parameters.class);
         handleComponent(this, market, profitdata, param, listComponentMap, componentMap, dataMap, marketTime.getBuy(), marketTime.getSubcomponent(), myData, config, parameters2, wantThree, mlTests);
+        //handleMLMeta(this, param, valueMap, component.getPipeline());
+        //saveTiming(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, false);
         
         if (!getActionData().isDataset()) {
-        filterIncDecs(param, market, profitdata, maps, true, null);
-        filterIncDecs(param, market, profitdata, maps, false, null);
+        new MarketUtil().filterIncDecs(param, market, profitdata, maps, true, null);
+        new MarketUtil().filterIncDecs(param, market, profitdata, maps, false, null);
         }
         //filterDecs(param, market, profitdata, maps);
         //buys = buys.values().stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());        
@@ -768,67 +766,6 @@ public abstract class MarketAction extends Action {
         return s != null ? "" + s : "";
     }
 
-    public void filterIncDecs(ComponentData param, Market market, ProfitData profitdata,
-            Map<String, Map<String, Object>> maps, boolean inc, List<String> mydates) {
-        List<String> dates;
-        if (mydates == null) {
-            dates = param.getService().getDates(param.getService().conf.getMarket());        
-        } else {
-            dates = mydates;
-        }
-        String category;
-        if (inc) {
-            category = market.getFilter().getInccategory();
-        } else {
-            category = market.getFilter().getDeccategory();
-        }
-        if (category != null) {
-            Map<String, Object> categoryMap = maps.get(category);
-            if (categoryMap != null) {
-                Integer offsetDays = null;
-                Integer days;
-                if (inc) {
-                    days = market.getFilter().getIncdays();
-                } else {
-                    days = market.getFilter().getDecdays();
-                }
-                if (days != null) {
-                    if (days == 0) {
-                        int year = param.getInput().getEnddate().getYear();
-                        year = param.getFutureDate().getYear();
-                        List<String> yearDates = new ArrayList<>();
-                        for (String date : dates) {
-                            int aYear = Integer.valueOf(date.substring(0, 4));
-                            if (year == aYear) {
-                                yearDates.add(date);
-                            }
-                        }
-                        Collections.sort(yearDates);
-                        String oldestDate = yearDates.get(0);
-                        int index = dates.indexOf(oldestDate);
-                        offsetDays = dates.size() - 1 - index;
-                    } else {
-                       offsetDays = days;
-                    }
-                }
-                Double threshold;
-                if (inc) {
-                    threshold = market.getFilter().getIncthreshold();
-                } else {
-                    threshold = market.getFilter().getDecthreshold();
-                }
-                Map<String, List<List>> listMap3 = getCategoryList(maps, category);
-                Map<String, IncDecItem> buysFilter = incdecFilterOnIncreaseValue(market, inc ? profitdata.getBuys() : profitdata.getSells(), maps, threshold, categoryMap,
-                        listMap3, offsetDays, inc);
-                if (inc) {
-                    profitdata.setBuys(buysFilter);
-                } else {
-                    profitdata.setSells(buysFilter);
-                }
-            }
-        }
-    }
-    
     protected Map<String, String> getNameMap(Map<String, Map<String, Object>> maps) {
         Map<String, String> nameMap = null;
         for (Entry<String, Map<String, Object>> entry : maps.entrySet()) {
@@ -843,80 +780,10 @@ public abstract class MarketAction extends Action {
     
     protected abstract void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Memories listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests);
  
-    public Map<String, List<List>> getCategoryList(Map<String, Map<String, Object>> maps, String category) {
-        String newCategory = null;
-        if (Constants.PRICE.equals(category)) {
-            newCategory = "" + Constants.PRICECOLUMN;
-        }
-        if (Constants.INDEX.equals(category)) {
-            newCategory = "" + Constants.INDEXVALUECOLUMN;
-        }
-        if (newCategory != null) {
-            Map<String, Object> map = maps.get(newCategory);
-            return (Map<String, List<List>>) map.get(PipelineConstants.LIST);
-        }
-        Map<String, List<List>> listMap3 = null;
-        for (Entry<String, Map<String, Object>> entry : maps.entrySet()) {
-            Map<String, Object> map = entry.getValue();
-            if (category.equals(map.get(PipelineConstants.CATEGORYTITLE))) {
-                listMap3 = (Map<String, List<List>>) map.get(PipelineConstants.LIST);
-            }
-        }
-        return listMap3;
-    }
-
-    public Map<String, IncDecItem> incdecFilterOnIncreaseValue(Market market, Map<String, IncDecItem> incdecs,
-            Map<String, Map<String, Object>> maps, Double threshold, Map<String, Object> categoryMap,
-            Map<String, List<List>> listMap3, Integer offsetDays, boolean inc) {
-        Map<String, IncDecItem> incdecsFilter = new HashMap<>();
-        for(IncDecItem item : incdecs.values()) {
-            String key = item.getId();
-            if (listMap3 == null) {
-                if (categoryMap != null) {
-                    System.out.println(categoryMap.keySet());
-                }
-                if (maps != null) {
-                    System.out.println(maps.keySet());
-                }
-                System.out.println("market" + market.getConfig().getMarket() + "null map");
-                continue;
-            }
-            List<List> list = listMap3.get(key);
-            if (list == null) {
-                continue;
-            }
-            List<Double> list0 = list.get(0);
-            Double value = null;
-            if (offsetDays == null) {
-                value = list0.get(list0.size() - 1);
-                if (value != null) {
-                    value = 1 + (value / 100);
-                }
-            } else {
-                Double curValue = list0.get(list0.size() - 1);
-                Double oldValue = list0.get(list0.size() - 1 - offsetDays);
-                if (curValue != null && oldValue != null) {
-                    value = curValue / oldValue;
-                }
-            }
-            if (value == null || threshold == null) {
-                continue;
-            }
-            if (inc && value < threshold) {
-                continue;
-            }
-            if (!inc && value > threshold) {
-                continue;
-            }
-            incdecsFilter.put(key, item);
-        }
-        return incdecsFilter;
-    }
-
     public Map<String, Component> getComponentMap(Collection<String> listComponent, Market market) {
         Map<String, Component> componentMap = new HashMap<>();
         for (String componentName : listComponent) {
-            Component component = getComponentFactory().factory(componentName);
+            Component component = new ComponentFactory().factory(componentName);
             ActionComponentConfig config = ActionComponentConfigFactory.factoryfactory(getName()).factory(component.getPipeline());
             component.setConfig(config);
             componentMap.put(componentName, component);
@@ -983,46 +850,5 @@ public abstract class MarketAction extends Action {
         return moreReturnedTiming;
     }
 
-    public void fillProfitdata(ProfitData profitdata, List<IncDecItem> incdecitems) {
-        for (IncDecItem item : incdecitems) {
-            String id = item.getId() + item.getDate().toString();
-            if (item.isIncrease()) {
-                profitdata.getBuys().put(id, item);
-            } else {
-                profitdata.getSells().put(id, item);
-            }
-        }
-    }
-    
-    public Object[] getScoreDescription(Component component, ComponentData data, Map<String, Object> scoreMap) {
-        return new Object[] { null, null };
-    }
-
-    public void handleMLMeta(Component component, ComponentData param, Map<String, Object> valueMap, String pipeline) {
-        
-    }
-
-    protected void handleMLMetaCommon(Component component, ComponentData param, Map<String, Object> valueMap, String pipeline) {
-        Map<String, Object> resultMaps = param.getResultMap(pipeline, valueMap);
-        param.setCategory(resultMaps);
-        param.getAndSetCategoryValueMap();
-        Map resultMaps2 = param.getResultMap();
-        component.handleMLMeta(param, resultMaps2);        
-    }
-    
-    public void saveTiming(Component component, ComponentData param, String subcomponent, String mlmarket,
-            Parameters parameters, Map<String, Object> scoreMap, long time0, boolean evolve) {
-        
-    }
-    
-    public void saveTimingCommon(Component component, ComponentData param, String subcomponent, String mlmarket,
-            Parameters parameters, Map<String, Object> scoreMap, long time0, boolean evolve) {
-        Object[] scoreDescription;
-        scoreDescription = this.getScoreDescription(component, param, scoreMap);
-        Double score = (Double) scoreDescription[0];
-        String description = (String) scoreDescription[1];
-        TimingItem timing = component.saveTiming(param, evolve, time0, score, null, subcomponent, mlmarket, description, parameters, this.getParent() != null);
-        param.getTimings().add(timing);
-    }
 }
 

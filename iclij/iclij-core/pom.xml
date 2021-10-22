@@ -154,31 +154,6 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-common-evolution-algorithm</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-common-evolution-config</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-common-evolution-fitness</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-common-evolution-gene</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-common-evolution-model</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
       <artifactId>stockstat-common-util</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
@@ -200,16 +175,6 @@
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-inmemory-model</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-iclij-evolution-marketfilter</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-iclij-evolution-iclijconfigmap</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
@@ -249,17 +214,7 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-iclij-common-filter</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
       <artifactId>stockstat-iclij-common-service</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-iclij-common-simulate</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
@@ -267,14 +222,24 @@
       <artifactId>stockstat-iclij-common-util</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
- 	<dependency>
+    <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-iclij-common-verifyprofit</artifactId>
+      <artifactId>stockstat-iclij-evolution-evolve</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-iclij-evolution-chromosome</artifactId>
+      <artifactId>stockstat-iclij-evolution-iclijconfigmap</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-iclij-common-filter</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-iclij-common-verifyprofit</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>

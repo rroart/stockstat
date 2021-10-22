@@ -3,7 +3,9 @@ package roart.iclij.model.action;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.constants.IclijConstants;
@@ -70,5 +72,22 @@ public class SimulateInvestActionData extends MarketActionData {
     @Override
     public boolean wantsUpdate(IclijConfig config) {
         return false;
+    }
+    
+    @Override
+    public Object[] getScoreDescription(Object[] accuracy, Map<String, Object> scoreMap) {
+        Double score = null;
+        String description = null;
+        try {
+            score = scoreMap
+                    .values()
+                    .stream()
+                    .mapToDouble(e -> (Double) e)
+                    .max()
+                    .orElse(-1);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return new Object[] { score, description };
     }
 }

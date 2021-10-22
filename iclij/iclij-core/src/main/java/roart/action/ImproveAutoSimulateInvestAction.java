@@ -12,10 +12,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
-import roart.component.Component;
+import roart.common.constants.ServiceConstants;
+import roart.common.util.JsonUtil;
+import roart.iclij.component.Component;
+import roart.iclij.component.ImproveAutoSimulateInvestComponent;
 import roart.component.model.ComponentData;
+import roart.component.model.SimulateInvestData;
+import roart.constants.SimConstants;
+import roart.evolution.config.EvolutionConfig;
+import roart.evolution.fitness.Fitness;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
+import roart.iclij.evolve.Evolve;
+import roart.iclij.evolve.SimulateInvestEvolveFactory;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
@@ -72,19 +82,19 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
     }
 
     @Override
-    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param,
+    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData componentparam,
             Memories listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap,
             Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters,
             boolean wantThree, List<MLMetricsItem> mlTests) {
-        if (param.getUpdateMap() == null) {
-            param.setUpdateMap(new HashMap<>());
+        if (componentparam.getUpdateMap() == null) {
+        	componentparam.setUpdateMap(new HashMap<>());
         }
-        param.getInput().setDoSave(false);
+        componentparam.getInput().setDoSave(false);
 
         try {
-            param.setFuturedays(0);
-            param.setOffset(0);
-            param.setDates(null, null, action.getActionData(), market);
+        	componentparam.setFuturedays(0);
+        	componentparam.setOffset(0);
+        	componentparam.setDates(null, null, action.getActionData(), market);
         } catch (ParseException e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -95,14 +105,26 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
             if (component == null) {
                 continue;
             }
-            
-            boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
-            //component.set(market, param, profitdata, positions, evolve);
-            //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
-            // 0 ok?
+            SimulateInvestData param = new SimulateInvestData(componentparam);
+            param.setAllIncDecs(((ImproveAutoSimulateInvestComponent)component).getAllIncDecs(market, null, null));
+            param.setAllMetas(((ImproveAutoSimulateInvestComponent)component).getAllMetas(componentparam));
+            ((ImproveAutoSimulateInvestComponent)component).getResultMaps(param, market);
+            List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+            param.setStockDates(stockDates);
+            List<String> confList = component.getConflist();
 
-            ComponentData componentData = component.improve(action, param, market, profitdata, listComponent, evolve, subcomponent, parameters, false, mlTests);
-            Map<String, Object> updateMap = componentData.getUpdateMap();
+            int ga = param.getInput().getConfig().getEvolveGA();
+            Evolve evolve = SimulateInvestEvolveFactory.factory(ga);
+            String evolutionConfigString = param.getInput().getConfig().getImproveAutoSimulateInvestEvolutionConfig();
+            EvolutionConfig evolutionConfig = JsonUtil.convert(evolutionConfigString, EvolutionConfig.class);
+            Map<String, Object> confMap = new HashMap<>();
+            ComponentData e = evolve.evolve(action.getActionData(), param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap , evolutionConfig, component.getPipeline(), component, confList);
+            Map<String, Object> results = (Map<String, Object>) e.getResultMap();
+            Object filters = param.getConfigValueMap().remove(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
+            filters = param.getInput().getValuemap().get(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
+            results.put(SimConstants.FILTER, filters);
+            e.getService().send(ServiceConstants.SIMAUTO, results, param.getInput().getConfig());
+            Map<String, Object> updateMap = e.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
             }
@@ -111,9 +133,4 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
 
     }
     
-    @Override
-    public void saveTiming(Component component, ComponentData param, String subcomponent, String mlmarket,
-            Parameters parameters, Map<String, Object> scoreMap, long time0, boolean evolve) {
-        saveTimingCommon(component, param, subcomponent, mlmarket, parameters, scoreMap, time0, evolve);
-    }
 }

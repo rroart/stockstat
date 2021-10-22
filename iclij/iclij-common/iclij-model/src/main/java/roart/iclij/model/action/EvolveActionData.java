@@ -3,6 +3,7 @@ package roart.iclij.model.action;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
@@ -108,5 +109,31 @@ public class EvolveActionData extends MarketActionData {
     @Override
     public boolean wantsUpdate(IclijConfig config) {
         return true;
+    }
+	
+    @Override
+	public boolean isEvolving() {
+		return true;
+	}
+	
+    @Override
+	public boolean doSaveTiming() {
+		return false;
+	}
+    
+    @Override
+    public Object[] getScoreDescription(Object[] accuracy, Map<String, Object> scoreMap) {
+        Double score = null;
+        String description = null;
+        score = scoreMap
+                .values()
+                .stream()
+                .mapToDouble(e -> (Double) e)
+                .max()
+                .orElse(-1);
+        if (scoreMap.size() > 1) {
+            description = scoreMap.values().stream().mapToDouble(e -> (Double) e).summaryStatistics().toString();
+        }
+        return new Object[] { score, description };
     }
 }
