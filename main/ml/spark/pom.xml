@@ -11,20 +11,6 @@
   <packaging>jar</packaging>
   <version>0.6-SNAPSHOT</version>
   <name>Stock Statistics ML Spark</name>
-  <!--build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>${mavencompiler.version}</version>
-        <configuration>
-          <source>${sparkjdk.version}</source>
-          <target>${sparkjdk.version}</target>
-          <encoding>UTF-8</encoding>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build-->
   <dependencies>
     <dependency>
       <groupId>roart</groupId>

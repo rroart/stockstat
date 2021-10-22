@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,10 @@ public abstract class EvolutionAlgorithm {
 
     protected Random rand = new Random();
 
+    private int calc = 0;
+    
+    private double totalTime = 0;
+    
     public Function<AbstractChromosome, Double> fittest;
 
     public EvolutionAlgorithm(EvolutionConfig evolutionConfig) {
@@ -134,6 +139,16 @@ public abstract class EvolutionAlgorithm {
     
     private void calculateSeq(List<Individual> pop) throws InterruptedException, ExecutionException, JsonParseException, JsonMappingException, IOException {
         for (Individual individual : pop) {
+            int shutdown = 21;
+            LocalTime now = LocalTime.now();
+            int minutes = 60 * now.getHour() + now.getMinute();
+            if (calc > 0) {
+                minutes += (totalTime / calc) / 60;
+            }
+            if (minutes >= shutdown * 60) {
+                log.error("Interrupting evolution due to time");
+                break;
+            }
             if (individual.getFitness() == null) {
                 long start = System.currentTimeMillis();
                 if (fittest != null) {
@@ -142,6 +157,8 @@ public abstract class EvolutionAlgorithm {
                     individual.recalculateScore();
                 }
                 individual.setCalculateTime(System.currentTimeMillis() - start);
+                calc++;
+                totalTime += ((double) individual.getCalculateTime()) / 1000;                        
             }
         }
     }

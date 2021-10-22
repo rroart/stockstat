@@ -28,6 +28,23 @@
             <encoding>UTF-8</encoding>
           </configuration>
 	</plugin>
+	 <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M5</version>
+         </plugin>
+	 <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.0.0-M5</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
       </plugins>
     </pluginManagement>
   </build>
