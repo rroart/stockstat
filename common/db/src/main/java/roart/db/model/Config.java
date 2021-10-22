@@ -51,8 +51,8 @@ public class Config implements Serializable {
     @Column
     private String id;
 
-    @Column(length = 511)
-    private String value;
+    @Column
+    private byte[] value;
 
     @Column
     private Double score;
@@ -114,11 +114,11 @@ public class Config implements Serializable {
         this.id = id;
     }
 
-    public String getValue() {
+    public byte[] getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(byte[] value) {
         this.value = value;
     }
 
