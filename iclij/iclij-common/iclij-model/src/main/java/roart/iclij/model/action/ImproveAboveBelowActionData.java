@@ -62,4 +62,14 @@ public class ImproveAboveBelowActionData extends MarketActionData {
     public String getEvolutionConfig(IclijConfig config) {
         return config.getImproveAbovebelowEvolutionConfig();
     }
+	
+    @Override
+	public boolean isEvolving() {
+		return true;
+	}
+	
+    @Override
+	public boolean doSaveTiming() {
+		return false;
+	}
 }

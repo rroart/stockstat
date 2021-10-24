@@ -23,7 +23,8 @@ import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
 import roart.common.util.JsonUtil;
 import roart.common.util.MetaUtil;
-import roart.component.Component;
+import roart.iclij.component.Component;
+import roart.iclij.component.factory.ComponentFactory;
 import roart.component.model.ComponentData;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
@@ -185,7 +186,7 @@ public class ActionThread extends Thread {
         List<MetaItem> metas = param.getService().getMetas();
         MetaItem meta = new MetaUtil().findMeta(metas, item.getMarket());
         boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
-        Component component = action.getComponentFactory().factory(item.getComponent());
+        Component component = new ComponentFactory().factory(item.getComponent());
         boolean evolve = action.getEvolve(component, param);
         WebData myData = action.getWebData();
         if (item.getDbid() == null || action.getActionData().wantsUpdate(config)) {

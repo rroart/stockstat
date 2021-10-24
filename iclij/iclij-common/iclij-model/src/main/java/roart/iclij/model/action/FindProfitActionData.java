@@ -80,4 +80,9 @@ public class FindProfitActionData extends MarketActionData {
     public boolean wantsUpdate(IclijConfig config) {
         return config.wantsFindProfitUpdate();
     }
+    
+    @Override
+	public boolean doHandleMLMeta() {
+		return true;
+	}
 }

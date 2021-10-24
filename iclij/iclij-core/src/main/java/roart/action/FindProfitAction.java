@@ -21,7 +21,7 @@ import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
-import roart.component.Component;
+import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentTimeUtil;
 import roart.db.IclijDbDao;
@@ -100,7 +100,7 @@ public class FindProfitAction extends MarketAction {
             
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
             
-            ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters);
+            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters, getParent() != null);
             component.calculateIncDec(componentData, profitdata, positions, buy, mlTests, parameters);
             if (param.getInput().isDoSave()) {
                 IncDecItem myitem = null;
@@ -156,7 +156,7 @@ public class FindProfitAction extends MarketAction {
                         
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
             
-            ComponentData componentData = component.handle(this, market, param, profitdata, new Memories(market), evolve, aMap, marketTime.getSubcomponent(), null, parameters);
+            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, new Memories(market), evolve, aMap, marketTime.getSubcomponent(), null, parameters, getParent() != null);
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
             myData.getUpdateMap().putAll(componentData.getUpdateMap());
@@ -268,12 +268,12 @@ public class FindProfitAction extends MarketAction {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        fillProfitdata(profitdata, incdecitems);
+        new MarketUtil().fillProfitdata(profitdata, incdecitems);
         
         setValMap(param);
         Map<String, Map<String, Object>> maps = param.getResultMaps();
-        filterIncDecs(param, market, profitdata, maps, true, null);
-        filterIncDecs(param, market, profitdata, maps, false, null);
+        new MarketUtil().filterIncDecs(param, market, profitdata, maps, true, null);
+        new MarketUtil().filterIncDecs(param, market, profitdata, maps, false, null);
         myData.getIncs().addAll(profitdata.getBuys().values());
         myData.getDecs().addAll(profitdata.getSells().values());
         return myData;
@@ -309,16 +309,5 @@ public class FindProfitAction extends MarketAction {
         return items.stream()
                 .filter(e -> (component.equals(e.getComponent()) && (subcomponent == null || subcomponent.equals(e.getSubcomponent()))))
                 .collect(Collectors.toList());
-    }
-    
-    @Override
-    public void handleMLMeta(Component component, ComponentData param, Map<String, Object> valueMap, String pipeline) {
-        handleMLMetaCommon(component, param, valueMap, pipeline);
-    }
-    
-    @Override
-    public void saveTiming(Component component, ComponentData param, String subcomponent, String mlmarket,
-            Parameters parameters, Map<String, Object> scoreMap, long time0, boolean evolve) {
-        saveTimingCommon(component, param, subcomponent, mlmarket, parameters, scoreMap, time0, evolve);
     }
 }

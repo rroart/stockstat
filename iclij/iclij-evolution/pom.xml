@@ -17,6 +17,8 @@
   <!--module>iclij-evolution-configmap</module-->
   <!--module>iclij-evolvecommon</module-->
   <module>iclij-chromosome</module>
+  <module>iclij-evolve</module>
+  <module>iclij-fitness</module>
   <module>iclij-iclijconfigmap</module>
   <module>iclij-marketfilter</module>
 </modules>

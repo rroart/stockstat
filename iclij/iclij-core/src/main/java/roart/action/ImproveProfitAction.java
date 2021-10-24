@@ -20,13 +20,17 @@ import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.constants.ServiceConstants;
 import roart.common.util.TimeUtil;
-import roart.component.Component;
+import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
+import roart.evolution.fitness.Fitness;
+import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.Market;
+import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
+import roart.iclij.evolution.chromosome.winner.ConfigMapChromosomeWinner;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
@@ -40,6 +44,7 @@ import roart.iclij.model.action.ImproveProfitActionData;
 import roart.iclij.util.MiscUtil;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
+import roart.iclij.evolution.fitness.impl.FitnessConfigMap;
 
 public class ImproveProfitAction extends MarketAction {
 
@@ -84,7 +89,11 @@ public class ImproveProfitAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLCROSS, false);
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
-            ComponentData componentData = component.improve(action, param, market, profitdata, null, buy, subcomponent, parameters, wantThree, mlTests);
+
+            List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+            ConfigMapGene gene = new ConfigMapGene(component.getConflist(), param.getService().conf);
+            Fitness fitness = new FitnessConfigMap(action.getActionData(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, stockDates);
+            ComponentData componentData = component.improve(action.getActionData(), param, market, profitdata, null, buy, subcomponent, parameters, wantThree, mlTests, fitness, action.getParent() != null);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
@@ -170,10 +179,12 @@ public class ImproveProfitAction extends MarketAction {
         return new Integer[1];
     }
 
-    @Override
-    public void handleMLMeta(Component component, ComponentData param, Map<String, Object> valueMap, String pipeline) {
-        handleMLMetaCommon(component, param, valueMap, pipeline);
-    }
-
+    /*
+     * ComponentMLAggregator:
+        FitnessConfigMap fit = new FitnessConfigMap(action, param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, stockDates);
+        FitnessConfigMap fit = new FitnessConfigMap(action, param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, stockDates);
+        FitnessConfigMap fit = new FitnessConfigMap(action, param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, stockDates);
+        FitnessConfigMap fit = new FitnessConfigMap(action, param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, stockDates);
+*/        
 }
 

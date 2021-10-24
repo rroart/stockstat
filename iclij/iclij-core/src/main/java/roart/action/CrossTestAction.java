@@ -18,8 +18,7 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.util.TimeUtil;
-import roart.component.Component;
-import roart.component.ComponentFactory;
+import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
@@ -88,7 +87,7 @@ public class CrossTestAction extends MarketAction {
                 aMap.put(ConfigConstants.MISCMYDAYS, 0);
                 Memories positions = null;
                 param.getService().conf.setdate(TimeUtil.convertDate(param.getFutureDate()));
-                ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
+                ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, getParent() != null);
                 Map<String, Object> updateMap = componentData.getUpdateMap();
                 if (updateMap != null) {
                     param.getUpdateMap().putAll(updateMap);
@@ -156,33 +155,5 @@ public class CrossTestAction extends MarketAction {
             log.error(Constants.EXCEPTION, e);
         }
         return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
-    }
-
-    @Override
-    public Object[] getScoreDescription(Component component, ComponentData param, Map<String, Object> scoreMap) {
-        Double score = null;
-        String description = null;
-        try {
-            Object[] result = component.calculateAccuracy(param);
-            score = (Double) result[0];
-            description = (String) result[1];
-            if (result[2] != null) {
-                description =  (String) result[2] + " " + description;
-            }
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        return new Object[] { score, description };
-    }
-
-    @Override
-    public void handleMLMeta(Component component, ComponentData param, Map<String, Object> valueMap, String pipeline) {
-        handleMLMetaCommon(component, param, valueMap, pipeline);
-    }
-    
-    @Override
-    public void saveTiming(Component component, ComponentData param, String subcomponent, String mlmarket,
-            Parameters parameters, Map<String, Object> scoreMap, long time0, boolean evolve) {
-        saveTimingCommon(component, param, subcomponent, mlmarket, parameters, scoreMap, time0, evolve);
     }
 }

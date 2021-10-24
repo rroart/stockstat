@@ -21,14 +21,12 @@ module iclij.core {
     requires commons.math3;
     //requires guava;
     requires iclij.common.componentdata;
+    requires iclij.common.component;
     requires iclij.common.config;
     requires iclij.common.constants;
-    requires iclij.common.filter;
     requires iclij.common.model;
     requires iclij.common.service;
     requires iclij.common.util;
-    requires iclij.common.verifyprofit;
-    requires iclij.common.simulate;
     requires java.xml;
     //requires javax.servlet.api;
     //requires org.slf4j;
@@ -40,16 +38,8 @@ module iclij.core {
     requires spring.plugin.core;
     requires spring.web;
     requires myexecutor;
-    requires evolution.model;
-    requires evolution.fitness;
-    requires evolution.gene;
-    requires evolution.algorithm;
-    requires evolution.config;
     requires org.apache.commons.lang3;
     requires io.jenetics.base;
-    requires iclij.evolutionmarketfilter;
-    requires iclij.evolutioniclijconfigmap;
-    requires iclij.evolutionchromosome;
     requires db;
     requires common.communication.model;
     requires common.communication.factory;
@@ -67,4 +57,14 @@ module iclij.core {
     //?requires pl;
     requires common.inmemory.factory;
     requires common.inmemory.model;
+	requires iclij.evolutioniclijconfigmap;
+	requires iclij.evolutionfitness;
+		requires iclij.common.filter;
+	requires iclij.common.verifyprofit;
+	requires evolution.model;
+	requires evolution.gene;
+	requires evolution.config;
+	requires iclij.evolutionchromosome;
+	requires iclij.evolutionevolve;
+
 }

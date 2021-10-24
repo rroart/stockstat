@@ -3,7 +3,9 @@ package roart.iclij.model.action;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.constants.IclijConstants;
@@ -105,5 +107,27 @@ public class CrossTestActionData extends MarketActionData {
     @Override
     public boolean wantsUpdate(IclijConfig config) {
         return false;
+    }
+    
+    @Override
+	public boolean doHandleMLMeta() {
+		return true;
+	}
+    
+    @Override
+    public Object[] getScoreDescription(Object[] accuracy, Map<String, Object> scoreMap) {
+        Double score = null;
+        String description = null;
+        try {
+            Object[] result = accuracy;
+            score = (Double) result[0];
+            description = (String) result[1];
+            if (result[2] != null) {
+                description =  (String) result[2] + " " + description;
+            }
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return new Object[] { score, description };
     }
 }

@@ -19,7 +19,7 @@ import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.ServiceConstants;
 import roart.common.util.TimeUtil;
-import roart.component.Component;
+import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.iclij.config.IclijConfig;
@@ -83,7 +83,7 @@ public class EvolveAction extends MarketAction {
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
             
             Memories positions = null;
-            ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters);
+            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters, getParent() != null);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
@@ -156,21 +156,4 @@ public class EvolveAction extends MarketAction {
         }
         return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
     }
-
-    @Override
-    public Object[] getScoreDescription(Component component, ComponentData param, Map<String, Object> scoreMap) {
-        Double score = null;
-        String description = null;
-        score = scoreMap
-                .values()
-                .stream()
-                .mapToDouble(e -> (Double) e)
-                .max()
-                .orElse(-1);
-        if (scoreMap.size() > 1) {
-            description = scoreMap.values().stream().mapToDouble(e -> (Double) e).summaryStatistics().toString();
-        }
-        return new Object[] { score, description };
-    }
-
 }
