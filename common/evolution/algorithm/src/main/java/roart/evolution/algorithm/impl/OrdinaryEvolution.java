@@ -31,8 +31,8 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
         if (getEvolutionConfig().getUseoldelite() && !chromosome.isEmpty()) {
             population.getIndividuals().add(new Individual(chromosome).getNewWithValueCopyFactory());
         }
-        calculate(population.getIndividuals());
-        if (population.getIndividuals().get(0).getFitness() < 0) {
+        boolean interrupted = calculate(population.getIndividuals());
+        if (interrupted && population.getIndividuals().get(0).getFitness() < 0) {
         	throw new InterruptedException();
         }
         Collections.sort(population.getIndividuals());
@@ -70,13 +70,13 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
             
             List<Individual> created = created(getEvolutionConfig().getGenerationcreate(), chromosome);
             population.getIndividuals().addAll(created);
-            calculate(population.getIndividuals());
-            if (i == 0 && population.getIndividuals().get(0).getFitness() < 0) {
-            	throw new InterruptedException();
-            }
+            boolean interrupted = calculate(population.getIndividuals());
             Collections.sort(population.getIndividuals());
             if (!chromosome.isAscending()) {
                 Collections.reverse(population.getIndividuals());
+            }
+            if (interrupted) {
+            	break;
             }
         }
         printmap(population.getIndividuals(), individuals);

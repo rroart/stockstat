@@ -138,12 +138,14 @@ public abstract class Component {
         Map<String, Object> scoreMap = new HashMap<>();
         Object[] scoreDescription = new Object[] { null, null };
         long time0 = System.currentTimeMillis();
+        boolean interrupted = false;
         if (evolve) {   
             EvolutionConfig actionEvolveConfig = JsonUtil.convert(action.getEvolutionConfig(param.getInput().getConfig()), EvolutionConfig.class);
             evolveMap = handleEvolve(market, pipeline, evolve, param, subcomponent, scoreMap, null, parameters, actionEvolveConfig, action.getMLConfig(param.getInput().getConfig()));
             //if (IclijConstants.EVOLVE.equals(param.getAction())) {
             //    action.saveTimingCommon(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, evolve);
            //}
+            interrupted = "interrupted".equals(param.getResultMap().get(EvolveConstants.ID));
         }
         valueMap.putAll(evolveMap);
         valueMap.putAll(aMap);
@@ -151,10 +153,12 @@ public abstract class Component {
         handleMLMetaCommon(param, valueMap);
         }
         try {
-        if (IclijConstants.MACHINELEARNING.equals(action.getName())) {
-        	saveAccuracy(param);
-        }
-         saveTiming(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, false, hasParent, action);
+        	if (IclijConstants.MACHINELEARNING.equals(action.getName())) {
+        		saveAccuracy(param);
+        	}
+        	if (!interrupted) {
+        		saveTiming(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, false, hasParent, action);
+        	}
         } catch (Exception e) {
         	log.error(Constants.EXCEPTION, e);
         }

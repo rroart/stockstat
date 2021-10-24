@@ -129,16 +129,18 @@ public abstract class EvolutionAlgorithm {
         return list;
     }
 
-    protected void calculate(List<Individual> pop) throws InterruptedException, ExecutionException, JsonParseException, JsonMappingException, IOException {
+    protected boolean calculate(List<Individual> pop) throws InterruptedException, ExecutionException, JsonParseException, JsonMappingException, IOException {
         if (doParallel) {
             calculateParallel(pop);
+            return false;
         } else {
-            calculateSeq(pop);
+            return calculateSeq(pop);
         }
     }
     
-    private void calculateSeq(List<Individual> pop) throws InterruptedException, ExecutionException, JsonParseException, JsonMappingException, IOException {
-        for (Individual individual : pop) {
+    private boolean calculateSeq(List<Individual> pop) throws InterruptedException, ExecutionException, JsonParseException, JsonMappingException, IOException {
+        boolean interrupted = false;
+    	for (Individual individual : pop) {
             int shutdown = 21;
             LocalTime now = LocalTime.now();
             int minutes = 60 * now.getHour() + now.getMinute();
@@ -148,6 +150,8 @@ public abstract class EvolutionAlgorithm {
             if (minutes >= shutdown * 60) {
                 log.error("Interrupting evolution due to time");
                 individual.setFitness(-1.0);
+                interrupted = true;
+                continue;
             }
             if (individual.getFitness() == null) {
                 long start = System.currentTimeMillis();
@@ -161,6 +165,7 @@ public abstract class EvolutionAlgorithm {
                 totalTime += ((double) individual.getCalculateTime()) / 1000;                        
             }
         }
+    	return interrupted;
     }
     
     private void calculateParallel(List<Individual> pop) throws InterruptedException, ExecutionException {

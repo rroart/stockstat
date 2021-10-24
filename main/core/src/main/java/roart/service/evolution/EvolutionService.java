@@ -166,7 +166,12 @@ public class EvolutionService {
                 OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
     
                 List<String> individuals = new ArrayList<>();
-                Individual fittestIndividual = evolution.getFittest(evolutionConfig, indicatorEval0, individuals, null);
+                Individual fittestIndividual = null;
+                try {
+                	fittestIndividual = evolution.getFittest(evolutionConfig, indicatorEval0, individuals, null);
+                } catch (InterruptedException e) {
+                	// TODO, as with other recommend stuff
+                }
                 String filename = evolution.print(conf.getMarket() + " " + "recommend" + " " + i, "recommend", individuals);
     
                 for (String id : scoreList) {
@@ -436,7 +441,13 @@ public class EvolutionService {
             
             List<String> individuals = new ArrayList<>();
             List<Pair<Double, AbstractChromosome>> results = new ArrayList<>();
-            Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals, results);
+            Individual best = null;
+            try {
+            	best = evolution.getFittest(evolutionConfig, chromosome, individuals, results);
+            } catch (InterruptedException e) {
+                resultMap.put(EvolveConstants.ID, "interrupted");
+                return;
+            }
             String title = EvolveConstants.EVOLVE + " " + conf.getMarket() + " " + ml + " " + nnconfig.getClass().getSimpleName();
             String filename = evolution.print(title, null, individuals);
                         
@@ -516,7 +527,13 @@ public class EvolutionService {
             
             List<String> individuals = new ArrayList<>();
             List<Pair<Double, AbstractChromosome>> results = new ArrayList<>();
-            Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals, null);
+            Individual best = null;
+            try {
+            	best = evolution.getFittest(evolutionConfig, chromosome, individuals, null);
+            } catch (InterruptedException e) {
+                resultMap.put(EvolveConstants.ID, "interrupted");
+            	return;
+            }
             String title = EvolveConstants.EVOLVE + " " + conf.getMarket() + " " + ml + " " + nnconfig.getClass().getSimpleName();
             String filename = evolution.print(title, null, individuals);
     
