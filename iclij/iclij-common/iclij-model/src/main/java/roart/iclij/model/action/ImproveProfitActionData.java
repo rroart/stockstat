@@ -3,6 +3,8 @@ package roart.iclij.model.action;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
@@ -134,4 +136,24 @@ public class ImproveProfitActionData extends MarketActionData {
 	public boolean doSaveTiming() {
 		return false;
 	}
+    
+    @Override
+    public Object[] getScoreDescription(Object[] accuracy, Map<String, Object> scoreMap) {
+        Double score = null;
+        String description = null;
+        List<Object> scoreList = ((List<Object>) scoreMap.get("scores"));
+        score = scoreList
+                .stream()
+                .mapToDouble(e -> (Double) e)
+                .max()
+                .orElse(-2);
+        if (scoreMap.size() > 1) {
+            description = scoreList.stream().mapToDouble(e -> (Double) e).filter(e -> e >= 0).summaryStatistics().toString();
+        }
+        if (score == -1) {
+        	score = null;
+        	description = "Interrupted";
+        }
+        return new Object[] { score, description };
+    }
 }

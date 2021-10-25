@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -486,6 +487,7 @@ public class EvolutionService {
             }
             updateMap.put(configKey, newNNConfigstring);
             scoreMap.put(configKey, best.getFitness());
+            scoreMap.put("scores", results.stream().map(Pair::getLeft).collect(Collectors.toList()));            
             resultMap.put(filename, results);
             resultMap.put(EvolveConstants.ID, filename);
             resultMap.put(EvolveConstants.TITLETEXT, title);

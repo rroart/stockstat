@@ -149,7 +149,9 @@ public abstract class EvolutionAlgorithm {
             }
             if (minutes >= shutdown * 60) {
                 log.error("Interrupting evolution due to time");
-                individual.setFitness(-1.0);
+                if (individual.getFitness() == null) {
+                	individual.setFitness(-1.0);
+                }
                 interrupted = true;
                 continue;
             }

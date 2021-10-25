@@ -287,6 +287,9 @@ public abstract class Component {
             //confMap.put("score", "" + score);
             Map<String, Double> scoreMap = new HashMap<>();
             scoreMap.put("" + score, score);
+            Map<String, Object> scoreMap2 = new HashMap<>();
+            scoreMap2.put("score", score);
+            scoreMap2.put("scores", results.stream().map(Pair::getLeft).collect(Collectors.toList()));            
             param.setScoreMap(scoreMap);
             Map<String, Object> resultMap = new HashMap<>();
             resultMap.put(filename, results);
@@ -297,8 +300,7 @@ public abstract class Component {
             param.setResultMap(resultMap);
             //param.setFutureDate(Lo1610910447946.txtcalDate.now());
             // fix mlmarket;
-            TimingItem timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null, save);
-            param.getTimings().add(timing);
+            saveTimingCommon(this, param, subcomponent, null, null, scoreMap2, time0, true, save, action);
             //if (!(this instanceof ImproveSimulateInvestComponent) && !(this instanceof ImproveAutoSimulateInvestComponent)) {
             configSaves(param, confMap, subcomponent);
             //}
@@ -396,6 +398,9 @@ public abstract class Component {
     
     public Object[] calculateAccuracy(ComponentData componentparam) throws Exception {
         Object[] result = new Object[3];
+        if (!(componentparam instanceof ComponentMLData)) {
+        	return result;
+        }
         ComponentMLData param = (ComponentMLData) componentparam;
         List<Double> testAccuracies = new ArrayList<>();
         if (param.getResultMeta() == null) {
