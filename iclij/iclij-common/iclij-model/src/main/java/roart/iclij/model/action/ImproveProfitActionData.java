@@ -142,17 +142,22 @@ public class ImproveProfitActionData extends MarketActionData {
         Double score = null;
         String description = null;
         List<Object> scoreList = ((List<Object>) scoreMap.get("scores"));
-        score = scoreList
-                .stream()
-                .mapToDouble(e -> (Double) e)
-                .max()
-                .orElse(-2);
-        if (scoreMap.size() > 1) {
-            description = scoreList.stream().mapToDouble(e -> (Double) e).filter(e -> e >= 0).summaryStatistics().toString();
+        if (scoreList == null) {
+        	int jj = 0;
         }
-        if (score == -1) {
-        	score = null;
-        	description = "Interrupted";
+        if (scoreList != null) {
+        	score = scoreList
+        			.stream()
+        			.mapToDouble(e -> (Double) e)
+        			.max()
+        			.orElse(-2);
+        	if (scoreList.size() > 1) {
+        		description = scoreList.stream().mapToDouble(e -> (Double) e).filter(e -> e >= 0).summaryStatistics().toString();
+        	}
+        	if (score == -1) {
+        		score = null;
+        		description = "Interrupted";
+        	}
         }
         return new Object[] { score, description };
     }
