@@ -141,19 +141,21 @@ public abstract class EvolutionAlgorithm {
     private boolean calculateSeq(List<Individual> pop) throws InterruptedException, ExecutionException, JsonParseException, JsonMappingException, IOException {
         boolean interrupted = false;
     	for (Individual individual : pop) {
-            int shutdown = 21;
-            LocalTime now = LocalTime.now();
-            int minutes = 60 * now.getHour() + now.getMinute();
-            if (calc > 0) {
-                minutes += (totalTime / calc) / 60;
-            }
-            if (minutes >= shutdown * 60) {
-                log.error("Interrupting evolution due to time");
-                if (individual.getFitness() == null) {
-                	individual.setFitness(-1.0);
-                }
-                interrupted = true;
-                continue;
+            Integer shutdownhour = evolutionConfig.getShutdownhour();
+            if (shutdownhour != null) {
+            	LocalTime now = LocalTime.now();
+            	int minutes = 60 * now.getHour() + now.getMinute();
+            	if (calc > 0) {
+            		minutes += (totalTime / calc) / 60;
+            	}
+            	if (minutes >= shutdownhour * 60) {
+            		log.error("Interrupting evolution due to time");
+            		if (individual.getFitness() == null) {
+            			individual.setFitness(-1.0);
+            		}
+            		interrupted = true;
+            		continue;
+            	}
             }
             if (individual.getFitness() == null) {
                 long start = System.currentTimeMillis();

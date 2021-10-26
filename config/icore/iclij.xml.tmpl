@@ -1,6 +1,6 @@
 <config>
   <misc>
-    <shutdownhour>24</shutdownhour>
+    <shutdownhour>$SHUTDOWNHOUR</shutdownhour>
     <populate enable="$POPULATE"/>
     <cache enable='$CACHE'>
       <ttl>$CACHETTL</ttl>
@@ -19,10 +19,10 @@
   </mp>
   <evolve priority="50">
     <indicatorrecommender enable='true'>
-      <evolutionconfig>{ "generations" : 100, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 0, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
+      <evolutionconfig>{ "generations" : 100, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 0, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true, "shutdownhour" : $SHUTDOWNHOUR }</evolutionconfig>
     </indicatorrecommender>
     <ml enable='true'>
-      <evolutionconfig>{ "generations" : 1, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 0, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
+      <evolutionconfig>{ "generations" : 1, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 0, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true, "shutdownhour" : $SHUTDOWNHOUR }</evolutionconfig>
       <mlconfig>{ "spark" : { "mlpc" : { "load" : true, "save" : true, "enable" : $SPARK, "evolve" : true }, "lor" : { "load" : true, "save" : true, "enable" : $SPARK, "evolve" : true }, "ovr" : { "load" : true, "save" : true, "enable" : $SPARK, "evolve" : true }, "lsvc" : { "load" : true, "save" : true, "enable" : $SPARK, "evolve" : true } }, "tensorflow" : { "dnn" : { "load" : true, "save" : true, "enable" : $TENSORFLOW, "evolve" : true },  "lic" : { "load" : true, "save" : true, "enable" : $TENSORFLOW, "evolve" : true }, "lir" : { "load" : true, "save" : true, "enable" : $TENSORFLOW, "evolve" : true }, "mlp" : { "load" : true, "save" : true, "enable" : $TENSORFLOW, "evolve" : true }, "cnn" : { "load" : true, "save" : true, "enable" : $TENSORFLOW, "evolve" : true }, "cnn2" : { "load" : true, "save" : true, "enable" : $TENSORFLOW, "evolve" : true }, "rnn" : { "load" : true, "save" : true, "enable" : $TENSORFLOW, "evolve" : true }, "lstm" : { "load" : true, "save" : true, "enable" : $TENSORFLOW, "evolve" : true }, "gru" : { "load" : true, "save" : true, "enable" : $TENSORFLOW, "evolve" : true } }, "pytorch" : { "mlp" : { "load" : true, "save" : true, "enable" : $PYTORCH, "evolve" : true }, "cnn" : { "load" : true, "save" : true, "enable" : $PYTORCH, "evolve" : true }, "cnn2" : { "load" : true, "save" : true, "enable" : $PYTORCH, "evolve" : true }, "rnn" : { "load" : true, "save" : true, "enable" : $PYTORCH, "evolve" : true }, "lstm" : { "load" : true, "save" : true, "enable" : $PYTORCH, "evolve" : true }, "gru" : { "load" : true, "save" : true, "enable" : $PYTORCH, "evolve" : true } }, "gem" : { "ewc" : { "load" : true, "save" : true, "enable" : $GEM, "evolve" : true }, "gem" : { "load" : true, "save" : true, "enable" : $GEM, "evolve" : true }, "i" : { "load" : true, "save" : true, "enable" : $GEM, "evolve" : true }, "icarl" : { "load" : true, "save" : true, "enable" : false, "evolve" : true }, "mm" : { "load" : true, "save" : true, "enable" : $GEM, "evolve" : true }, "s" : { "load" : true, "save" : true, "enable" : $GEM, "evolve" : true } } }</mlconfig>
     </ml>
     <predictor enable='false'>

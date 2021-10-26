@@ -17,12 +17,14 @@ public class EvolutionConfig {
 
     private Boolean useoldelite;
     
+    private Integer shutdownhour;
+    
     public EvolutionConfig() {
         super();
     }
     
     public EvolutionConfig(Integer generations, Integer crossover, Integer elite,
-            Integer elitecloneandmutate, Integer select, Integer mutate, Integer generationcreate, Boolean useoldelite) {
+            Integer elitecloneandmutate, Integer select, Integer mutate, Integer generationcreate, Boolean useoldelite, Integer shutdownhour) {
         super();
         this.generations = generations;
         this.crossover = crossover;
@@ -32,6 +34,7 @@ public class EvolutionConfig {
         this.mutate = mutate;
         this.generationcreate = generationcreate;
         this.useoldelite = useoldelite;
+        this.shutdownhour = shutdownhour;
     }
 
     public Integer getGenerations() {
@@ -98,7 +101,15 @@ public class EvolutionConfig {
         this.useoldelite = useoldelite;
     }
 
-    public void merge(EvolutionConfig other) {
+    public Integer getShutdownhour() {
+		return shutdownhour;
+	}
+
+	public void setShutdownhour(Integer shutdownhour) {
+		this.shutdownhour = shutdownhour;
+	}
+
+	public void merge(EvolutionConfig other) {
         if (other == null) {
             return;
         }
@@ -125,6 +136,9 @@ public class EvolutionConfig {
         }
         if (other.useoldelite != null) {
             this.useoldelite = other.useoldelite;
+        }
+        if (other.shutdownhour != null) {
+        	this.shutdownhour = other.shutdownhour;
         }
     }    
 
