@@ -147,7 +147,8 @@ public class EvolveAction extends MarketAction {
             } catch (ParseException e) {
                 log.error(Constants.EXCEPTION, e);
             }
-            return new MiscUtil().getCurrentTimings(olddate, timings, market, getName());
+            return new MiscUtil().getCurrentTimingsRecord(olddate, timings, market, getName(), (int) time, false);
+            //return new MiscUtil().getCurrentTimings(olddate, timings, market, getName());
         }
         try {
             olddate = TimeUtil.convertDate(mldaysdate);

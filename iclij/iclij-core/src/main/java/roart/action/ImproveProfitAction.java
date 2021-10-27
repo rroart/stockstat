@@ -167,7 +167,8 @@ public class ImproveProfitAction extends MarketAction {
             } catch (ParseException e) {
                 log.error(Constants.EXCEPTION, e);
             }
-            return new MiscUtil().getCurrentTimings(olddate, timings, market, getName());
+            //return new MiscUtil().getCurrentTimings(olddate, timings, market, getName());
+            return new MiscUtil().getCurrentTimingsRecord(olddate, timings, market, getName(), (int) time, false);
         }
         try {
             olddate = TimeUtil.convertDate(mldaysdate);
