@@ -147,7 +147,7 @@ public class ActionThread extends Thread {
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
-                if (!finished) {
+                if (!finished && item.getDbid() != null) {
                 	try {
                 		item.setPriority(100 + item.getPriority());
                 		item.save();
