@@ -51,12 +51,22 @@ public class ActionThread extends Thread {
     
     private static volatile boolean updateDb = false;
     
+    private static volatile boolean pause = false;
+    
     public static boolean isUpdateDb() {
         return updateDb;
     }
 
     public static void setUpdateDb(boolean updateDb) {
         ActionThread.updateDb = updateDb;
+    }
+
+    public static boolean isPause() {
+        return pause;
+    }
+
+    public static void setPause(boolean pause) {
+        ActionThread.pause = pause;
     }
 
     public void run() {
@@ -74,7 +84,7 @@ public class ActionThread extends Thread {
             log.error(Constants.EXCEPTION, e);
         }
         while (true) {
-            if (updateDb) {
+            if (updateDb && !pause) {
                 try {
                     TimeUnit.SECONDS.sleep(60);
                 } catch (InterruptedException e) {

@@ -272,4 +272,16 @@ public class ServiceController {
             throws Exception {
         ActionThread.setUpdateDb(false);
     }
+    @PostMapping(value = "event/pause")
+
+    public void eventpause()
+            throws Exception {
+        ActionThread.setPause(true);
+    }
+
+    @PostMapping(value = "event/continue")
+    public void eventcontinue()
+            throws Exception {
+        ActionThread.setPause(false);
+    }
 }
