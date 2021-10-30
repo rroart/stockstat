@@ -139,7 +139,8 @@ public abstract class Component {
         Object[] scoreDescription = new Object[] { null, null };
         long time0 = System.currentTimeMillis();
         if (evolve) {   
-            evolveMap = handleEvolve(market, pipeline, evolve, param, subcomponent, scoreMap, null, parameters);
+            EvolutionConfig actionEvolveConfig = JsonUtil.convert(action.getActionData().getEvolutionConfig(param.getInput().getConfig()), EvolutionConfig.class);
+            evolveMap = handleEvolve(market, pipeline, evolve, param, subcomponent, scoreMap, null, parameters, actionEvolveConfig, action.getActionData().getMLConfig(param.getInput().getConfig()));
             if (IclijConstants.EVOLVE.equals(param.getAction())) {
                 action.saveTimingCommon(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, evolve);
            }
@@ -210,9 +211,9 @@ public abstract class Component {
         return null;
     }
     
-    protected abstract Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket, Parameters parameters);
+    protected abstract Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket, Parameters parameters, EvolutionConfig actionEvolveConfig, String actionML);
 
-    public abstract EvolutionConfig getEvolutionConfig(ComponentData componentdata);
+    public abstract EvolutionConfig getEvolutionConfig(ComponentData componentdata, EvolutionConfig actionEvolutionConfig);
     
     public abstract MLConfigs getOverrideMLConfig(ComponentData componentdata);
     
@@ -236,8 +237,6 @@ public abstract class Component {
     
     protected abstract Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, String action, Boolean buy, String subcomponent, String mlmarket, MarketActionData actionData, Parameters parameters) throws Exception;
 
-    protected abstract EvolutionConfig getImproveEvolutionConfig(IclijConfig config);
-    
     protected abstract List<String> getConfList();
     
     public List<String> getConflist() {
@@ -252,7 +251,9 @@ public abstract class Component {
     
     public ComponentData improve(MarketAction action, ComponentData param, AbstractChromosome chromosome, String subcomponent, ChromosomeWinner winner, Boolean buy, Fitness fitness) {
         long time0 = System.currentTimeMillis();
-        EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
+        EvolutionConfig evolutionConfig = JsonUtil.convert(action.getActionData().getEvolutionConfig(param.getInput().getConfig()), EvolutionConfig.class);
+        EvolutionConfig evolveConfig = getEvolutionConfig(param, evolutionConfig);
+        evolutionConfig = evolveConfig;
         OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
         evolution.setParallel(false);
         if (fitness != null) {
@@ -439,9 +440,10 @@ public abstract class Component {
             ProfitData profitdata, Object object, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, EvolveJ evolveJ) {
         long time0 = System.currentTimeMillis();
         Map<String, Object> confMap = new HashMap<>();
-        EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
+        EvolutionConfig evolutionConfig = JsonUtil.convert(action.getActionData().getEvolutionConfig(param.getInput().getConfig()), EvolutionConfig.class);
+        EvolutionConfig evolveConfig = getEvolutionConfig(param, evolutionConfig);
         param = evolveJ.evolve(action, param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap,
-                evolutionConfig, getPipeline(), null, null);
+                evolveConfig, getPipeline(), null, null);
         try {
             // fix mlmarket;
             double score = 0;

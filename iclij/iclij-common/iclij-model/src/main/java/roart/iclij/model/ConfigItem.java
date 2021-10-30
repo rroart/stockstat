@@ -102,9 +102,9 @@ public class ConfigItem {
     }
 
     public void setValue(String value) {
-        if (value != null && value.length() > 510) {
-            value = value.substring(0, 510);
-        }
+        //if (value != null && value.length() > 510) {
+        //    value = value.substring(0, 510);
+        //}
         this.value = value;
     }
 
@@ -141,7 +141,9 @@ public class ConfigItem {
         config.setRecord(TimeUtil.convertDate(getRecord()));
         config.setScore(getScore());
         config.setSubcomponent(getSubcomponent());
-        config.setValue(JsonUtil.strip(getValue()));
+        if (getValue() != null) {
+        	config.setValue(JsonUtil.strip(getValue()).getBytes());
+        }
         config.save();
     }
     
@@ -187,7 +189,9 @@ public class ConfigItem {
         configItem.setParameters(config.getParameters());
         configItem.setScore(config.getScore());
         configItem.setSubcomponent(config.getSubcomponent());
-        configItem.setValue(JsonUtil.strip(config.getValue()));
+        if (config.getValue() != null) {
+        	configItem.setValue(JsonUtil.strip(new String(config.getValue())));
+        }
         return configItem;
     }
 

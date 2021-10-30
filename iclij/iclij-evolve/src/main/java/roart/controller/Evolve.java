@@ -60,6 +60,16 @@ import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.constants.IclijConstants;
 import roart.gene.impl.ConfigMapGene;
+import roart.iclij.model.AboveBelowItem;
+import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MemoryItem;
+import roart.iclij.model.TimingItem;
+import roart.common.inmemory.factory.InmemoryFactory;
+import roart.common.inmemory.model.InmemoryMessage;
+import roart.common.inmemory.model.Inmemory;
+import roart.common.communication.factory.CommunicationFactory;
+import roart.common.communication.model.Communication;
+import roart.common.util.ServiceConnectionUtil;
 
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
@@ -306,6 +316,18 @@ public class Evolve {
             ConfigMapChromosome2 c = (ConfigMapChromosome2) myList.get(0).getRight();
             ConfigMapGene conf2 = c.getGene();
             saveBetter(market, component, subComponent, IclijConfigConstants.FINDPROFIT, myList.get(0).getLeft(), IclijConstants.ALL, conf2.getMap(), false);
+            try {
+            	String mysubcomponent = subComponent.getLeft() + " " + subComponent.getRight();
+            	log.info("Deleting AboveBelow etc {} {} {}", market, component, mysubcomponent);
+                new TimingItem().delete(market, IclijConstants.FINDPROFIT, component, mysubcomponent, null, null);
+                new IncDecItem().delete(market, component, mysubcomponent, null, null);
+                new MemoryItem().delete(market, component, mysubcomponent, null, null);
+                new AboveBelowItem().delete(market, null, null);
+                IclijConfig instance = IclijXMLConfig.getConfigInstance();
+                send(ServiceConstants.POPULATE, new String[] { market, component, mysubcomponent }, instance);            
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
         }
     }
 
@@ -560,6 +582,30 @@ public class Evolve {
         String newparam = inmemory.read(message);
         inmemory.delete(message);
         return newparam;
+    }
+
+    public void send(String service, Object object, ObjectMapper objectMapper) {
+        IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
+        Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight());
+        c.send(object);
+    }
+
+    public void send(String service, Object object, IclijConfig config) {
+        Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
+        String id = "" + System.currentTimeMillis();
+        InmemoryMessage message = inmemory.send(id, object);
+        send(service, message);
+    }
+
+    public void send(String service, Object object) {
+        if (object == null) {
+            log.error("Empty msg for {}", service);
+            return;
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        send(service, object, mapper);
     }
 
 }

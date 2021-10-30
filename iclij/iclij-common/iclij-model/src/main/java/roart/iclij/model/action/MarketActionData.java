@@ -43,4 +43,11 @@ public abstract class MarketActionData {
 
     public abstract boolean wantsUpdate(IclijConfig config);
     
+	public String getEvolutionConfig(IclijConfig config) {
+		return config.getEvolveMLEvolutionConfig();
+	}
+    
+	public String getMLConfig(IclijConfig config) {
+		return config.getEvolveMLMLConfig();
+	}
 }

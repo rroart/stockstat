@@ -71,8 +71,8 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.CROSSTESTTHRESHOLD, String.class);
         map.put(IclijConfigConstants.DATASETINDICATORRECOMMENDER, Boolean.class);
         map.put(IclijConfigConstants.DATASETML, Boolean.class);
-        map.put(IclijConfigConstants.DATASETMLEVOLUTIONCONFIG, String.class);
-        map.put(IclijConfigConstants.DATASETMLMLCONFIG, String.class);
+        map.put(IclijConfigConstants.DATASETEVOLUTIONCONFIG, String.class);
+        map.put(IclijConfigConstants.DATASETMLCONFIG, String.class);
         map.put(IclijConfigConstants.DATASETMLTENSORFLOWSERVER, String.class);
         map.put(IclijConfigConstants.DATASETINDICATORRECOMMENDEREVOLUTIONCONFIG, String.class);
         map.put(IclijConfigConstants.DATASETAUTORUN, Boolean.class);
@@ -186,6 +186,8 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.FINDPROFITRERUNSAVE, Boolean.class);
         map.put(IclijConfigConstants.FINDPROFITUPDATE, Boolean.class);
         map.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, Boolean.class);
+        map.put(IclijConfigConstants.IMPROVEPROFITEVOLUTIONCONFIG, String.class);
+        map.put(IclijConfigConstants.IMPROVEPROFITMLCONFIG, String.class);
         map.put(IclijConfigConstants.IMPROVEPROFITUPDATE, Boolean.class);
         map.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, Integer.class);
         map.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, Boolean.class);
@@ -387,7 +389,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.DATASETINDICATORRECOMMENDER, Boolean.TRUE);
         deflt.put(IclijConfigConstants.DATASETML, Boolean.FALSE);
         deflt.put(IclijConfigConstants.DATASETINDICATORRECOMMENDEREVOLUTIONCONFIG, RECOMMENDEVOLUTIONCONFIG);
-        deflt.put(IclijConfigConstants.DATASETMLEVOLUTIONCONFIG, MLEVOLUTIONCONFIG);
+        deflt.put(IclijConfigConstants.DATASETEVOLUTIONCONFIG, MLEVOLUTIONCONFIG);
         deflt.put(IclijConfigConstants.DATASETMLTENSORFLOWSERVER, "http://localhost:8000");
         deflt.put(IclijConfigConstants.DATASETAUTORUN, Boolean.FALSE);
         deflt.put(IclijConfigConstants.DATASETFITNESSMINIMUM, 10);
@@ -475,6 +477,8 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.FINDPROFITUPDATE, Boolean.FALSE);
         deflt.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, Boolean.FALSE);
         deflt.put(IclijConfigConstants.IMPROVEPROFITUPDATE, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.IMPROVEPROFITMLCONFIG, MLCONFIG);
+       deflt.put(IclijConfigConstants.IMPROVEPROFITEVOLUTIONCONFIG, MLEVOLUTIONCONFIG);
         deflt.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, 10);
         deflt.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, Boolean.TRUE);
 	deflt.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOREVOLUTIONCONFIG, null);
@@ -516,6 +520,8 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.IMPROVEABOVEBELOWEVOLUTIONCONFIG, null);
         deflt.put(IclijConfigConstants.IMPROVEABOVEBELOWFITNESSMINIMUM, 10);
         deflt.put(IclijConfigConstants.MACHINELEARNINGAUTORUN, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.MACHINELEARNINGMLCONFIG, MLCONFIG);
+       deflt.put(IclijConfigConstants.MACHINELEARNINGEVOLUTIONCONFIG, MLEVOLUTIONCONFIG);
         deflt.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOR, Boolean.TRUE);
         deflt.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOREVOLUTIONCONFIG, null);
         deflt.put(IclijConfigConstants.MACHINELEARNINGMLMACD, Boolean.TRUE);
@@ -644,8 +650,8 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.CROSSTESTTHRESHOLD, "Crosstest threshold");
         text.put(IclijConfigConstants.DATASETINDICATORRECOMMENDER, "Enable evolution generated recommender settings");
         text.put(IclijConfigConstants.DATASETML, "Enable evolution generated ml configs");
-        text.put(IclijConfigConstants.DATASETMLEVOLUTIONCONFIG, "ML GP config");
-        text.put(IclijConfigConstants.DATASETMLMLCONFIG, "Evolution default ml enabled");
+        text.put(IclijConfigConstants.DATASETEVOLUTIONCONFIG, "ML GP config");
+        text.put(IclijConfigConstants.DATASETMLCONFIG, "Evolution default ml enabled");
         text.put(IclijConfigConstants.DATASETMLTENSORFLOWSERVER, "Enable evolution generated ml server");
         text.put(IclijConfigConstants.DATASETINDICATORRECOMMENDEREVOLUTIONCONFIG, "Indicator recommender GP config");
         text.put(IclijConfigConstants.DATASETAUTORUN, "Enable dataset autorun");
@@ -759,6 +765,8 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.FINDPROFITUPDATE, "Enable find profit update");
         text.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, "Enable improve profit autorun");
         text.put(IclijConfigConstants.IMPROVEPROFITUPDATE, "Enable improve profit update");
+        text.put(IclijConfigConstants.IMPROVEPROFITEVOLUTIONCONFIG, "Improve profit ML GP config");
+        text.put(IclijConfigConstants.IMPROVEPROFITMLCONFIG, "Improve profit default ml enabled");
         text.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, "Enable improve profit fitness minimum");
         text.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, "Enable improve profit mlindicator");
         text.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOREVOLUTIONCONFIG, "Improve profit mlindicator evolution config");
@@ -816,6 +824,8 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.IMPROVEABOVEBELOWEVOLUTIONCONFIG, "Improve above below evolution config");
         text.put(IclijConfigConstants.IMPROVEABOVEBELOWFITNESSMINIMUM, "Improve above below fitness minimum");
         text.put(IclijConfigConstants.MACHINELEARNINGAUTORUN, "Enable machine learning autorun");
+        text.put(IclijConfigConstants.MACHINELEARNINGEVOLUTIONCONFIG, "Machine learning GP config");
+        text.put(IclijConfigConstants.MACHINELEARNINGMLCONFIG, "Machine learning default ml enabled");
         text.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOR, "Enable machine learning mlindicator");
         text.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOREVOLUTIONCONFIG, "machine learning mlindicator evolution config");
         text.put(IclijConfigConstants.MACHINELEARNINGMLINDICATORMLCONFIG, "machine learning mlindicator ml enabled");
@@ -987,8 +997,8 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.CROSSTESTFUTUREDAYS, new IclijXMLType(String.class, " [ 10 ] ", "Crosstest futuredays"));
         mymap.put(IclijConfigConstants.CROSSTESTTHRESHOLD, new IclijXMLType(String.class, " [ 1.0 ] ", "Crosstest threshold"));
         mymap.put(IclijConfigConstants.DATASETML, new IclijXMLType(Boolean.class, Boolean.FALSE, "Dataset ML enable"));
-        mymap.put(IclijConfigConstants.DATASETMLEVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 10, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config"));
-        mymap.put(IclijConfigConstants.DATASETMLMLCONFIG, new IclijXMLType(String.class, null, "Evolution default ml enabled"));
+        mymap.put(IclijConfigConstants.DATASETEVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 10, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config"));
+        mymap.put(IclijConfigConstants.DATASETMLCONFIG, new IclijXMLType(String.class, null, "Evolution default ml enabled"));
         mymap.put(IclijConfigConstants.DATASETMLTENSORFLOWSERVER, new IclijXMLType(String.class, "http://localhost:8000", "Enable evolution generated ml server", ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER));
         mymap.put(IclijConfigConstants.DATASETINDICATORRECOMMENDEREVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 100, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1 }", "Indicator recommender GP config"));
         mymap.put(IclijConfigConstants.DATASETAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable dataset autorun"));
@@ -1103,6 +1113,8 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.FINDPROFITUPDATE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable find profit update"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve profit autorun"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITUPDATE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve profit update"));
+        mymap.put(IclijConfigConstants.IMPROVEPROFITEVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 10, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "Improve profit GP config", ConfigConstants.EVOLVEMLEVOLUTIONCONFIG));
+        mymap.put(IclijConfigConstants.IMPROVEPROFITMLCONFIG, new IclijXMLType(String.class, null, "Improve profit default ml enabled"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, new IclijXMLType(Integer.class, 10, "Enable improve profit fitness minimum"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable improve profit mlindicator"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOREVOLUTIONCONFIG, new IclijXMLType(String.class, null, "Improve profit mlindicator evolution config"));
@@ -1160,6 +1172,8 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.IMPROVEABOVEBELOWEVOLUTIONCONFIG, new IclijXMLType(String.class, null, "Improve above below evolution config"));
         mymap.put(IclijConfigConstants.IMPROVEABOVEBELOWFITNESSMINIMUM, new IclijXMLType(Integer.class, 10, "Improve above below fitness minimum"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable machine learning autorun"));
+        mymap.put(IclijConfigConstants.MACHINELEARNINGEVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 10, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config", ConfigConstants.EVOLVEMLEVOLUTIONCONFIG));
+        mymap.put(IclijConfigConstants.MACHINELEARNINGMLCONFIG, new IclijXMLType(String.class, null, "Machine learning default ml enabled"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable machine learning mlindicator"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOREVOLUTIONCONFIG, new IclijXMLType(String.class, null, "machine learning mlindicator evolution config"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGMLINDICATORMLCONFIG, new IclijXMLType(String.class, MLCONFIG, "machine learning mlindicator ml enable"));

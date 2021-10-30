@@ -109,4 +109,14 @@ public class ImproveProfitActionData extends MarketActionData {
     public boolean wantsUpdate(IclijConfig config) {
         return config.wantsImproveProfitUpdate();
     }
+
+    @Override
+	public String getEvolutionConfig(IclijConfig config) {
+		return config.getImproveProfitEvolutionConfig();
+	}
+
+    @Override
+	public String getMLConfig(IclijConfig config) {
+		return config.getImproveProfitMLConfig();
+	}
 }

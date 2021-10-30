@@ -32,6 +32,9 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
             population.getIndividuals().add(new Individual(chromosome).getNewWithValueCopyFactory());
         }
         calculate(population.getIndividuals());
+        if (population.getIndividuals().get(0).getFitness() < 0) {
+        	throw new InterruptedException();
+        }
         Collections.sort(population.getIndividuals());
         if (!chromosome.isAscending()) {
             Collections.reverse(population.getIndividuals());
@@ -68,6 +71,9 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
             List<Individual> created = created(getEvolutionConfig().getGenerationcreate(), chromosome);
             population.getIndividuals().addAll(created);
             calculate(population.getIndividuals());
+            if (i == 0 && population.getIndividuals().get(0).getFitness() < 0) {
+            	throw new InterruptedException();
+            }
             Collections.sort(population.getIndividuals());
             if (!chromosome.isAscending()) {
                 Collections.reverse(population.getIndividuals());

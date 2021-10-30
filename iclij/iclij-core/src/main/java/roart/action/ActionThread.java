@@ -142,18 +142,27 @@ public class ActionThread extends Thread {
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
-                runAction(instance, item, dblist);
+                boolean finished = runAction(instance, item, dblist);
                 try {
                     blItem.delete(id);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
                 try {
+                	// TODO don't delete if failed
                     if (item.getDbid() != null) {
                         item.delete();
                     }
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
+                }
+                if (!finished) {
+                	try {
+                		item.setPriority(100 + item.getPriority());
+                		item.save();
+                	} catch (Exception e) {
+                		log.error(Constants.EXCEPTION, e);
+                	}
                 }
             }
             try {
@@ -165,8 +174,9 @@ public class ActionThread extends Thread {
         }
     }
 
-    private WebData runAction(IclijConfig instance, ActionComponentItem item, List<ActionComponentItem> dblist) {
-        IclijConfig config = new IclijConfig(instance);
+    private boolean runAction(IclijConfig instance, ActionComponentItem item, List<ActionComponentItem> dblist) {
+        boolean finished = false;
+    	IclijConfig config = new IclijConfig(instance);
         config.setMarket(item.getMarket());
         MarketAction action = ActionFactory.get(item.getAction());
         action.setParent(action);
@@ -191,6 +201,7 @@ public class ActionThread extends Thread {
         if (item.getDbid() == null || action.getActionData().wantsUpdate(config)) {
             try {
                 action.getPicksFiltered(myData, param, config, item, evolve, wantThree);                
+                finished = true;
                 if (item.getDbid() != null) {
                     if (action.getActionData().wantsUpdate(config)) {
                         if (IclijConstants.MACHINELEARNING.equals(item.getAction()) || IclijConstants.IMPROVEPROFIT.equals(item.getAction())) {
@@ -224,7 +235,7 @@ public class ActionThread extends Thread {
                 log.error(Constants.EXCEPTION, e);
             }
         }
-        return myData;
+        return finished;
     }
 
     private int getScore(ActionComponentItem i) {

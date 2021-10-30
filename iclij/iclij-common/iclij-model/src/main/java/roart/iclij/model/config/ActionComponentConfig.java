@@ -10,7 +10,7 @@ import roart.iclij.config.Market;
 
 public abstract class ActionComponentConfig {
     
-    public abstract List<String> getSubComponents(Market market, IclijConfig config, String mlmarket);
+    public abstract List<String> getSubComponents(Market market, IclijConfig config, String mlmarket, String actionML);
 
     public abstract String getLocalEvolutionConfig(IclijConfig config);
 
@@ -25,6 +25,6 @@ public abstract class ActionComponentConfig {
 
     public abstract MLMaps getMLMaps();
 
-    public abstract Map<String, EvolveMLConfig> getMLConfig(Market market, IclijConfig config, String mlmarket);
+    public abstract Map<String, EvolveMLConfig> getMLConfig(Market market, IclijConfig config, String mlmarket, String actionML);
 
 }

@@ -18,8 +18,9 @@ import roart.iclij.config.Market;
 public abstract class ActionComponentConfigML extends ActionComponentConfig {
 
     @Override
-    public Map<String, EvolveMLConfig> getMLConfig(Market market, IclijConfig config, String mlmarket) {
+    public Map<String, EvolveMLConfig> getMLConfig(Market market, IclijConfig config, String mlmarket, String actionML) {
         System.out.println(config.getEvolveMLMLConfig());
+        // more merge
         String localMl = getLocalMLConfig(config);
         String ml = config.getEvolveMLMLConfig();
         MLConfigs marketMlConfig = market.getMlconfig();
@@ -33,10 +34,10 @@ public abstract class ActionComponentConfigML extends ActionComponentConfig {
     }
     
     @Override
-    public List<String> getSubComponents(Market market, IclijConfig config, String mlmarket) {
+    public List<String> getSubComponents(Market market, IclijConfig config, String mlmarket, String actionML) {
         List<String> subComponents = new ArrayList<>();
         Map<String, Pair<String, String>> revMap = getMLMaps().getMapRev();
-        Map<String, EvolveMLConfig> mlConfigs = getMLConfig(market, config, mlmarket);
+        Map<String, EvolveMLConfig> mlConfigs = getMLConfig(market, config, mlmarket, actionML);
         for (Entry<String, EvolveMLConfig> entry : mlConfigs.entrySet()) {
             EvolveMLConfig mlConfig = entry.getValue();
             if (mlConfig.getEnable()) {

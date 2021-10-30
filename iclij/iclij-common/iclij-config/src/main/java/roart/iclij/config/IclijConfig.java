@@ -314,6 +314,14 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITUPDATE);
     }
 
+    public String getImproveProfitEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITEVOLUTIONCONFIG);
+    }
+
+    public String getImproveProfitMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLCONFIG);
+    }
+
     public int getImproveProfitFitnessMinimum() {
         return (Integer) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM);
     }
@@ -540,6 +548,14 @@ public class IclijConfig {
 
     public boolean wantsMachineLearningAutorun() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGAUTORUN);
+    }
+
+    public String getMachineLearningEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGEVOLUTIONCONFIG);
+    }
+
+    public String getMachineLearningMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLCONFIG);
     }
 
     public boolean wantsMachineLearningMLMACD() {
@@ -1073,16 +1089,16 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.DATASETML);
     }
 
-    public String getDatasetMLEvolutionConfig() {
-        return (String) getValueOrDefault(IclijConfigConstants.DATASETMLEVOLUTIONCONFIG);
+    public String getDatasetEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETEVOLUTIONCONFIG);
     }
 
     public String getDatasetIndicatorrecommenderEvolutionConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.DATASETINDICATORRECOMMENDEREVOLUTIONCONFIG);
     }
 
-    public String getDatasetMLMLConfig() {
-        return (String) getValueOrDefault(IclijConfigConstants.DATASETMLMLCONFIG);
+    public String getDatasetMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETMLCONFIG);
     }
 
     public boolean wantsDatasetAutorun() {

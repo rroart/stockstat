@@ -57,4 +57,9 @@ public class ImproveAboveBelowActionData extends MarketActionData {
     public boolean wantsUpdate(IclijConfig config) {
         return true;
     }
+    
+    @Override
+    public String getEvolutionConfig(IclijConfig config) {
+        return config.getImproveAbovebelowEvolutionConfig();
+    }
 }
