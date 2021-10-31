@@ -452,7 +452,7 @@ public abstract class MarketAction extends Action {
             LocalDate olddate = date.minusDays(((long) AVERAGE_SIZE) * getActionData().getTime(market));
             OptionalDouble average = getAverage(filterTimings);
 
-            if (olddate.isBefore(filterTimings.get(0).getDate())) {
+            if (true || olddate.isBefore(filterTimings.get(0).getDate())) {
                 // no recent enough is found
                 marketTime.setTime(marketTime.getTime() + average.orElse(0));
                 if (!evolve) {
@@ -503,10 +503,10 @@ public abstract class MarketAction extends Action {
         List<TimingItem> filterTimings = new ArrayList<>();
         String paramString = JsonUtil.convert(parameters);
         for (TimingItem timing : timings) {
-            if (buy != null && timing.getBuy() != null && buy != timing.getBuy()) {
+            if (!Objects.equals(buy,timing.getBuy())) {
                 continue;
             }
-            if (market.equals(timing.getMarket()) && action.equals(timing.getAction()) && component.equals(timing.getComponent()) && myequals(subcomponent, timing.getSubcomponent()) && evolve == timing.isEvolve() && paramString == timing.getParameters()) {
+            if (market.equals(timing.getMarket()) && action.equals(timing.getAction()) && component.equals(timing.getComponent()) && myequals(subcomponent, timing.getSubcomponent()) && evolve == timing.isEvolve() && Objects.equals(paramString, timing.getParameters())) {
                 filterTimings.add(timing);
             }
         }
@@ -517,10 +517,10 @@ public abstract class MarketAction extends Action {
         List<TimingItem> filterTimings = new ArrayList<>();
         String paramString = JsonUtil.convert(parameters);
         for (TimingItem timing : timings) {
-            if (timing.getBuy() != null && buy != timing.getBuy()) {
+            if (!Objects.equals(buy, timing.getBuy())) {
                 continue;
             }
-            if (action.equals(timing.getAction()) && component.equals(timing.getComponent()) && myequals(subcomponent, timing.getSubcomponent()) && evolve == timing.isEvolve() && paramString == timing.getParameters()) {
+            if (action.equals(timing.getAction()) && component.equals(timing.getComponent()) && myequals(subcomponent, timing.getSubcomponent()) && evolve == timing.isEvolve() && Objects.equals(paramString, timing.getParameters())) {
                 filterTimings.add(timing);
             }
         }
