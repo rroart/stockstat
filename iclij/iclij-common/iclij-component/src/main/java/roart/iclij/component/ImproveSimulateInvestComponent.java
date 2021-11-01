@@ -175,7 +175,7 @@ public class ImproveSimulateInvestComponent extends ComponentML {
     }
 
     // duplicated
-    private void getResultMaps(SimulateInvestData param, Market market) {
+    public void getResultMaps(SimulateInvestData param, Market market) {
         //Map<String, List<Object>> objectMap = new HashMap<>();
         IclijConfig config = param.getInput().getConfig();
 
@@ -225,11 +225,11 @@ public class ImproveSimulateInvestComponent extends ComponentML {
         //return resultMaps;
     }
 
-    private List<MetaItem> getAllMetas(ComponentData param) {
+    public List<MetaItem> getAllMetas(ComponentData param) {
         return param.getService().getMetas();
     }
 
-    private List<IncDecItem> getAllIncDecs(Market market, LocalDate investStart, LocalDate investEnd) {
+    public List<IncDecItem> getAllIncDecs(Market market, LocalDate investStart, LocalDate investEnd) {
         try {
             return IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), investStart, investEnd, null);
         } catch (Exception e) {

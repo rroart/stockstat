@@ -17,7 +17,7 @@ import roart.common.constants.ServiceConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
-import roart.iclij.component.ImproveAutoSimulateInvestComponent;
+import roart.iclij.component.ImproveSimulateInvestComponent;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.constants.SimConstants;
@@ -117,9 +117,9 @@ public class ImproveSimulateInvestAction extends MarketAction {
             }
             
             SimulateInvestData param = new SimulateInvestData(componentparam);
-            param.setAllIncDecs(((ImproveAutoSimulateInvestComponent)component).getAllIncDecs(market, null, null));
-            param.setAllMetas(((ImproveAutoSimulateInvestComponent)component).getAllMetas(componentparam));
-            ((ImproveAutoSimulateInvestComponent)component).getResultMaps(param, market);
+            param.setAllIncDecs(((ImproveSimulateInvestComponent)component).getAllIncDecs(market, null, null));
+            param.setAllMetas(((ImproveSimulateInvestComponent)component).getAllMetas(componentparam));
+            ((ImproveSimulateInvestComponent)component).getResultMaps(param, market);
             List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
             param.setStockDates(stockDates);
             List<String> confList = component.getConflist();
