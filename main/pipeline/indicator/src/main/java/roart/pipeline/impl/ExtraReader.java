@@ -456,7 +456,8 @@ public class ExtraReader extends Pipeline {
             Double[] array = entry.getValue();
             Double[] newArray = new Double[array.length];
             String interpolationmethod = conf.getInterpolationmethod();
-            retMap.put(entry.getKey(), ArraysUtil.fixMapHoles(array, newArray, maxHoleNumber(conf), interpolationmethod));
+            boolean acceptLastNull = conf.getInterpolateLastNull();
+            retMap.put(entry.getKey(), ArraysUtil.fixMapHoles(array, newArray, maxHoleNumber(conf), interpolationmethod, acceptLastNull));
         }      
         return retMap;
     }
@@ -475,7 +476,8 @@ public class ExtraReader extends Pipeline {
             for (int i = 0; i < array.length; i ++) {
                 newArray[i] = new Double[array[i].length];
                 String interpolationmethod = conf.getInterpolationmethod();
-                newArray[i] = ArraysUtil.fixMapHoles(array[i], newArray[i], maxHoleNumber(conf), interpolationmethod);
+                boolean acceptLastNull = conf.getInterpolateLastNull();
+                newArray[i] = ArraysUtil.fixMapHoles(array[i], newArray[i], maxHoleNumber(conf), interpolationmethod, acceptLastNull);
             }
             retMap.put(id, newArray);
         }      

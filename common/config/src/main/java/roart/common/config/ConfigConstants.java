@@ -205,6 +205,7 @@ public class ConfigConstants {
     public static final String MISCTHRESHOLD = "misc.threshold";
     public static final String MISCINTERPOLATE = "misc.interpolate";
     public static final String MISCINTERPOLATIONMETHOD = "misc.interpolatationmethod";
+    public static final String MISCINTERPOLATIONLASTNULL = "misc.interpolatationlastnull";
     public static final String MISCMERGECY = "misc.mergecy";
     public static final String MISCMYSERVICES = "misc.myservices";
     public static final String MISCSERVICES = "misc.services";

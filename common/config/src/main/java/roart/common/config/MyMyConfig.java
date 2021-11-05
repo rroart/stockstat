@@ -829,6 +829,10 @@ public class MyMyConfig extends MyConfig {
         return (String) getValueOrDefault(ConfigConstants.MISCINTERPOLATIONMETHOD);
     }
 
+    public boolean getInterpolateLastNull() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MISCINTERPOLATIONLASTNULL);
+    }
+
     public String getThreshold() {
         return (String) getValueOrDefault(ConfigConstants.MISCTHRESHOLD);
     }

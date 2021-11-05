@@ -585,12 +585,12 @@ public class ArraysUtil {
      * or nulls out, depending or whether a max number was passed
      * @param maxHoleNumber
      * @param interpolationmethod TODO
+     * @param acceptLastNull TODO
      * @param doubles
-     * 
      * @return Fixed array
      */
 
-    public static Double[] fixMapHoles(Double[] srcArray, Double[] dstArray, int maxHoleNumber, String interpolationmethod) {
+    public static Double[] fixMapHoles(Double[] srcArray, Double[] dstArray, int maxHoleNumber, String interpolationmethod, boolean acceptLastNull) {
         int length = srcArray.length;
         if (dstArray == null) {
             dstArray = srcArray;
@@ -601,7 +601,7 @@ public class ArraysUtil {
         }
         Double[] retDouble = new Double[dstArray.length];
         int start = searchBackwardNonNull(dstArray, length - 1);
-        if (start != length - 1) {
+        if (!acceptLastNull && start != length - 1) {
             for (int k = 0; k < length; k++) {
                 dstArray[k] = null;
             }                   

@@ -224,6 +224,7 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MISCFILTERWEEKEND, Boolean.class);
         map.put(ConfigConstants.MISCINTERPOLATE, Boolean.class);
         map.put(ConfigConstants.MISCINTERPOLATIONMETHOD, Integer.class);
+        map.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.class);
         map.put(ConfigConstants.MISCFILTERHOLIDAY, Boolean.class);
         map.put(ConfigConstants.MISCTHRESHOLD, String.class);
         map.put(ConfigConstants.MISCMERGECY, Boolean.class);
@@ -609,6 +610,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MISCFILTERHOLIDAY, Boolean.TRUE);
         deflt.put(ConfigConstants.MISCINTERPOLATE, Boolean.TRUE);
         deflt.put(ConfigConstants.MISCINTERPOLATIONMETHOD, Constants.LINEAR);
+        deflt.put(ConfigConstants.MISCINTERPOLATIONLASTNULL,Boolean.FALSE);
         deflt.put(ConfigConstants.MISCTHRESHOLD, "[ 1.0 ]");
         deflt.put(ConfigConstants.MISCMERGECY, Boolean.TRUE);
         deflt.put(ConfigConstants.MISCMYSERVICES, "{}");
@@ -988,6 +990,7 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.MISCFILTERWEEKEND, "Filter out weekend data");
         text.put(ConfigConstants.MISCINTERPOLATE, "Interpolate");
         text.put(ConfigConstants.MISCINTERPOLATIONMETHOD, "Interpolation method");
+        text.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, "Interpolation last null");
         text.put(ConfigConstants.MISCFILTERHOLIDAY, "Filter out holiday data");
         text.put(ConfigConstants.MISCTHRESHOLD, "Display thresholds");
         text.put(ConfigConstants.MISCMERGECY, "Merge current years");
@@ -1421,6 +1424,7 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MISCFILTERWEEKEND, new XMLType( Boolean.class, Boolean.TRUE, "Filter out weekend data"));
         mymap.put(ConfigConstants.MISCINTERPOLATE, new XMLType( Boolean.class, Boolean.TRUE, "Interpolate"));
         mymap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, new XMLType( Integer.class, Constants.LINEAR, "Interpolation method"));        
+        mymap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, new XMLType( Boolean.class,Boolean.FALSE, "Interpolation last null"));        
         mymap.put(ConfigConstants.MISCFILTERHOLIDAY, new XMLType( Boolean.class, Boolean.TRUE, "Filter out holiday data"));
         mymap.put(ConfigConstants.MISCTHRESHOLD, new XMLType( String.class, "[ 1.0 ]", "Display thresholds"));
         mymap.put(ConfigConstants.MISCMERGECY, new XMLType( Boolean.class, Boolean.TRUE, "Merge current years"));
