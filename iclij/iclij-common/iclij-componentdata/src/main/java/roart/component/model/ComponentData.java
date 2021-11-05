@@ -337,6 +337,7 @@ public class ComponentData {
         setValueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
         setValueMap.put(ConfigConstants.MISCTHRESHOLD, null);
         setValueMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
+        setValueMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
         service.conf.setConfigValueMap(new HashMap<>(configValueMap));
         service.conf.getConfigValueMap().putAll(setValueMap);
         Map<String, Map<String, Object>> result = getService().getContent();
@@ -365,6 +366,7 @@ public class ComponentData {
         setValueMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
         setValueMap.put(ConfigConstants.MISCMYDAYS, 0);
         setValueMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
+        setValueMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
         service.conf.setConfigValueMap(new HashMap<>(configValueMap));
         service.conf.getConfigValueMap().putAll(setValueMap);
         Map<String, Map<String, Object>> result = getService().getContent();
