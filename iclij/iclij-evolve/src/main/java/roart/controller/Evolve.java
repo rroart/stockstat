@@ -86,10 +86,9 @@ public class Evolve {
         Map<String, Object> myMap = convert(param, new TypeReference<List<LinkedHashMap<Double, NeuralNetChromosome2>>>(){});
         String id = (String) myMap.get(EvolveConstants.ID);
         List<Pair<Double, AbstractChromosome>> myList = (List<Pair<Double, AbstractChromosome>>) myMap.get(id);
-        for (Pair<Double, AbstractChromosome> my : myList) {
-            //System.out.println(my.getKey() + " " + my.getRight());
+        if (myList == null) {
+        	return;
         }
-        //if (true) return;
         Map<String, Object> aconf = (Map) myMap.get(EvolveConstants.DEFAULT);
         //System.out.println("aconf" + aconf);
         //if (true) return;
