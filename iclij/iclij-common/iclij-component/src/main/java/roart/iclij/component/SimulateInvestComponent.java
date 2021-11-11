@@ -2226,6 +2226,10 @@ public class SimulateInvestComponent extends ComponentML {
                 Double valNow = mainList.get(mainList.size() - 1 - indexOffset);
                 if (valNow != null) {
                     item.setPrice(valNow);
+                } else {
+                    if (item.getPrice() == 0.0) {
+                        item.setPrice(item.getBuyprice());
+                    }
                 }
                 if (prevIndexOffset <= -1) {
                     continue;
