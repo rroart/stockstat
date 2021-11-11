@@ -1165,7 +1165,8 @@ public class SimulateInvestComponent extends ComponentML {
             onerun.saveLastInvest = true;
         }
         //Trend trend = getTrendIncDec(market, param, stockDates, interval, filteredCategoryValueMap, trendInc, trendDec, indexOffset);
-        Trend trend = getTrendIncDec(data.stockDates, onerun.trendInc, onerun.trendDec, mydate.indexOffset, data.getTrendMap(simConfig.getInterpolate()));
+        // no interpolation for trend
+        Trend trend = getTrendIncDec(data.stockDates, onerun.trendInc, onerun.trendDec, mydate.indexOffset, data.getTrendMap(false /*simConfig.getInterpolate()*/));
         // get recommendations
 
         List<String> myExcludes = getExclusions(simConfig, extradelay, data.stockDates, simConfig.getInterval(), data.getCatValMap(simConfig.getInterpolate()),
@@ -1270,7 +1271,8 @@ public class SimulateInvestComponent extends ComponentML {
                     Integer adv = auto ? simConfig.getAdviser() : null;
                     Capital aCapital = new Capital();
                     aCapital.amount = onerun.capital.amount;
-                    String trendStr = getTrendIncDecStr(data.stockDates, onerun.trendInc, onerun.trendDec, mydate.indexOffset, data.getTrendStrMap(simConfig.getInterpolate()));
+                    // no interpolation for trend
+                    String trendStr = getTrendIncDecStr(data.stockDates, onerun.trendInc, onerun.trendDec, mydate.indexOffset, data.getTrendStrMap(false /*simConfig.getInterpolate()*/));
                     StockHistory aHistory = new StockHistory(historydatestring, aCapital, sum, onerun.resultavg, hasNoConf, ids, trendStr, adv);
                     results.history.add(aHistory);
                 }
