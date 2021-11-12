@@ -14,6 +14,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.config.ConfigConstants;
+import roart.common.config.Extra;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.util.JsonUtil;
@@ -173,8 +175,11 @@ public abstract class Component {
 				valueMap.putAll(loadValues);
 			} else {
 				String val = (String) loadValues.get(IclijConstants.ALL);
+				log.info("val {}", val);	
 				Map<String, Object> map = JsonUtil.convert(val, Map.class);
-				valueMap.putAll(map);
+				if (map != null) {
+					valueMap.putAll(map);
+				}
 			}
 			log.info("Loaded values {}", loadValues);
 		} catch (Exception e) {
@@ -302,6 +307,10 @@ public abstract class Component {
             // fix mlmarket;
             saveTimingCommon(this, param, subcomponent, null, null, scoreMap2, time0, true, save, action);
             //if (!(this instanceof ImproveSimulateInvestComponent) && !(this instanceof ImproveAutoSimulateInvestComponent)) {
+        	if (confMap.containsKey(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST)) {
+        		Extra[] extras = JsonUtil.convert((String)confMap.get(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST), Extra[].class);
+        		confMap.put(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST, extras);              	
+        	}
             configSaves(param, confMap, subcomponent);
             //}
         } catch (Exception e) {
