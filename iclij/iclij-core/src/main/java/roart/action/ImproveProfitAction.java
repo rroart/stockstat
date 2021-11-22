@@ -161,21 +161,7 @@ public class ImproveProfitAction extends MarketAction {
         if (mldate == null && mldaysdate == null) {
             return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
         }
-        if (mldate != null) {
-            try {
-                olddate = TimeUtil.convertDate(mldate);
-            } catch (ParseException e) {
-                log.error(Constants.EXCEPTION, e);
-            }
-            //return new MiscUtil().getCurrentTimings(olddate, timings, market, getName());
-            return new MiscUtil().getCurrentTimingsRecord(olddate, timings, market, getName(), (int) time, false);
-        }
-        try {
-            olddate = TimeUtil.convertDate(mldaysdate);
-        } catch (ParseException e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
+        return new MiscUtil().getCurrentTimingsRecord(olddate, timings, market, getName(), (int) time, false);
     }
     
     @Override
