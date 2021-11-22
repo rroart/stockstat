@@ -1448,10 +1448,6 @@ public abstract class IndicatorAggregator extends Aggregator {
     private Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> createPosNegMaps(MyMyConfig conf, Map<SubType, MLMeta> metaMap, Double threshold) {
         Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = new HashMap<>();
         for (String id : getListMap().keySet()) {
-            if (id.equals("16189")) {
-                int jj = 0;
-            }
-
             double[][] list = getListMap().get(id);
             log.debug("t {}", Arrays.toString(list[0]));
             log.debug("listsize {}", list.length);
@@ -1607,9 +1603,6 @@ public abstract class IndicatorAggregator extends Aggregator {
             }
            // map from h/m + posnegcom to map<model, results>
             for (String id : getListMap().keySet()) {
-                if (id.equals("16189")) {
-                    int jj = 0;
-                }
                 double[][] list = getListMap().get(id);
                 log.debug("t {}", Arrays.toString(list[0]));
                 log.debug("listsize {}", list.length);
@@ -1656,6 +1649,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 		}
                 //double[] array = new double[0];
                 double[][] arrays = new double[mlmeta.dim2][];
+                // not used here
                 SubType[] subs = new SubType[mlmeta.dim2];
                 int count = 0;
                 List<Pair<Integer, Integer>> begendList = new ArrayList<>();
@@ -1711,6 +1705,11 @@ public abstract class IndicatorAggregator extends Aggregator {
                     if (subType.afterbefore.before > endOfArray - newBeg) {
                         log.error("Subtype too small");
                         continue;
+                    }
+                    Map<String, Double[]> anOtherResultMap = subType.resultMap;
+                    Double[] curResult = anOtherResultMap.get(id);
+                    if (curResult == null || !Arrays.stream(curResult).allMatch(i -> i != null)) {
+                    	continue;
                     }
 		    anArray = ArrayUtils.subarray(anArray, newBeg, endOfArray);
                     arrays[count++] = anArray;

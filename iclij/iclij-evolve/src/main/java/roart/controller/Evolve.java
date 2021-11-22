@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.common.config.ConfigConstants;
+import roart.common.config.Extra;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.constants.ServiceConstants;
@@ -482,6 +483,15 @@ public class Evolve {
                 Double score = entry.getKey();
                 //System.out.println(entry.getValue());
                 AbstractChromosome chromosome = (AbstractChromosome) entry.getValue();
+                // do this or don't do strip in jsonutil
+                if (chromosome instanceof ConfigMapChromosome2) {
+                	ConfigMapChromosome2 chromo = (ConfigMapChromosome2) chromosome;
+                	Map<String, Object> map2 = chromo.getGene().getMap();
+                	if (map2.containsKey(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST)) {
+                		Extra[] extras = JsonUtil.convert((String)map2.get(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST), Extra[].class);
+                		map2.put(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST, extras);              	
+                	}
+                }
                 Pair<Double, AbstractChromosome> pair = new ImmutablePair<>(score, chromosome);
                 myList.add(pair);
             }
