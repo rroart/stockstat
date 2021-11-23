@@ -27,6 +27,7 @@ import roart.iclij.component.Component;
 import roart.iclij.component.factory.ComponentFactory;
 import roart.component.model.ComponentData;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.Market;
 import roart.iclij.model.AboveBelowItem;
@@ -192,7 +193,9 @@ public class ActionThread extends Thread {
         }
         param.setAction(action.getName());
         List<String> stockDates = param.getService().getDates(item.getMarket());
+        if (!IclijConfigConstants.DATASET.equals(action.getName())) {
         action.getParamDates(market, param, stockDates);
+        }
         List<MetaItem> metas = param.getService().getMetas();
         MetaItem meta = new MetaUtil().findMeta(metas, item.getMarket());
         boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());

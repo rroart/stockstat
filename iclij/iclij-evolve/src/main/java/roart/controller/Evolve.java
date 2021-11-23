@@ -115,6 +115,7 @@ public class Evolve {
         if (blbl != null) {
             avg = blbl.stream().map(MLMetricsItem::getTestAccuracy).mapToDouble(e -> e).average().orElse(0);
         }
+        // TODO
         double newer = myList.get(0).getLeft();
         boolean better = avg < newer;
         myList.add(new ImmutablePair(avg, conf + " (default)"));
@@ -137,8 +138,11 @@ public class Evolve {
             NeuralNetConfigGene conf2 = c.getNnConfig();
             String ml = new MLMapsML().getMap().get(subcomponent);
             String key = new NeuralNetConfigs().getConfigMap().get(ml);
+            if (!IclijConfigConstants.DATASET.equals(component)) {
             saveBetter(market, component, subcomponent, IclijConfigConstants.MACHINELEARNING, myList.get(0).getLeft(), key, conf2.getConfig(), true);
+            } else {
             saveBetter(market, component, subcomponent, IclijConfigConstants.DATASET, myList.get(0).getLeft(), key, conf2.getConfig(), false);
+            }
         }
     }
 

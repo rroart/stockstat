@@ -255,11 +255,6 @@ public class EvolutionService {
     public List<ResultItem> getEvolveML(MyMyConfig conf, List<String> disableList, Map<String, Object> updateMap, String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws JsonParseException, JsonMappingException, IOException {
         log.info("mydate {}", conf.getdate());
         log.info("mydate {}", conf.getDays());
-        StockData stockData = new Extract().getStockData(conf);
-        if (stockData == null) {
-            return new ArrayList<>();
-        }
-        String market = conf.getMarket();
         if (conf.isDataset()) {
             ObjectMapper mapper = new ObjectMapper();
             EvolutionConfig evolutionConfig = mapper.readValue(conf.getTestMLEvolutionConfig(), EvolutionConfig.class);
@@ -278,7 +273,7 @@ public class EvolutionService {
             table.add(headrow);
         
             try {
-                findMLSettings(conf, evolutionConfig, table, updateMap, ml, neuralnetcommand, scoreMap, resultMap, stockData.marketdatamap);
+                findMLSettings(conf, evolutionConfig, table, updateMap, ml, neuralnetcommand, scoreMap, resultMap, null);
         
                 List<ResultItem> retlist = new ArrayList<>();
                 retlist.add(table);
@@ -288,6 +283,11 @@ public class EvolutionService {
                 return new ArrayList<>();
             }
         }
+        StockData stockData = new Extract().getStockData(conf);
+        if (stockData == null) {
+            return new ArrayList<>();
+        }
+        String market = conf.getMarket();
         ObjectMapper mapper = new ObjectMapper();
         EvolutionConfig evolutionConfig = mapper.readValue(conf.getTestMLEvolutionConfig(), EvolutionConfig.class);
         //createOtherTables();
@@ -531,7 +531,7 @@ public class EvolutionService {
             List<Pair<Double, AbstractChromosome>> results = new ArrayList<>();
             Individual best = null;
             try {
-            	best = evolution.getFittest(evolutionConfig, chromosome, individuals, null);
+            	best = evolution.getFittest(evolutionConfig, chromosome, individuals, results);
             } catch (InterruptedException e) {
                 resultMap.put(EvolveConstants.ID, "interrupted");
             	return;

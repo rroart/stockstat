@@ -3,6 +3,7 @@ package roart.iclij.component;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -130,7 +131,16 @@ public abstract class Component {
             this.subenable(valueMap, subcomponent);
         }
         if (action.wantsUpdate(param.getInput().getConfig())) {
+        	if (IclijConstants.MACHINELEARNING.equals(action.getName())) {
+            	valueMap.putAll(getValueMap(action, IclijConstants.FINDPROFIT, market, param, subcomponent, mlmarket, parameters));        		
+        	}
         	if (IclijConstants.FINDPROFIT.equals(action.getName())) {
+            	valueMap.putAll(getValueMap(action, IclijConstants.MACHINELEARNING, market, param, subcomponent, mlmarket, parameters));        		
+        	}
+        	if (IclijConstants.EVOLVE.equals(action.getName())) {
+            	valueMap.putAll(getValueMap(action, IclijConstants.FINDPROFIT, market, param, subcomponent, mlmarket, parameters));        		
+        	}
+        	if (IclijConstants.IMPROVEPROFIT.equals(action.getName())) {
             	valueMap.putAll(getValueMap(action, IclijConstants.MACHINELEARNING, market, param, subcomponent, mlmarket, parameters));        		
         	}
         	valueMap.putAll(getValueMap(action, param.getAction(), market, param, subcomponent, mlmarket, parameters));
@@ -157,6 +167,9 @@ public abstract class Component {
         try {
         	if (IclijConstants.MACHINELEARNING.equals(action.getName())) {
         		saveAccuracy(param);
+        	}
+        	if (IclijConstants.DATASET.equals(action.getName())) {
+        		saveAccuracy2(param, subcomponent);
         	}
         	if (!interrupted) {
         		saveTiming(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, false, hasParent, action);
@@ -511,6 +524,32 @@ public abstract class Component {
             item.setThreshold(meta.getThreshold());
             item.save();
         }
+    }
+
+    public void saveAccuracy2(ComponentData componentparam, String subcomponent) throws Exception {
+        ComponentMLData param = (ComponentMLData) componentparam;
+        if (param.getResultMap() == null) {
+            return;
+        }
+        Map<String, Object> results = param.getResultMap();
+        String id = (String) results.get(EvolveConstants.ID);
+        List<LinkedHashMap> myList = (List<LinkedHashMap>) results.get(id);
+        if (myList == null) {
+        	return;
+        }
+        String scoreString = (String) myList.get(0).keySet().iterator().next();
+        double score = Double.valueOf(scoreString);
+        
+        MLMetricsItem item = new MLMetricsItem();
+        item.setRecord(LocalDate.now());
+        item.setDate(param.getFutureDate());
+        item.setComponent(getPipeline());
+        item.setMarket(param.getMarket());
+        item.setSubcomponent(subcomponent);
+        item.setTestAccuracy(score);
+        //item.setTrainAccuracy();
+        //item.setLoss();
+        item.save();
     }
 
     protected IncDecItem mapAdder(Map<String, IncDecItem> map, String key, Double add, Map<String, String> nameMap, LocalDate date, String market, String subcomponent, String localcomponent, String parameters) {
