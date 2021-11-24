@@ -119,7 +119,7 @@ public class ActionThread extends Thread {
                 queue.addAll(copy);
                 if (!MarketAction.enoughTime(instance, item)) {
                     if (item.getDbid() == null) {
-                        queue.add(item);
+                        //queue.add(item);
                     }
                     continue;
                 }
