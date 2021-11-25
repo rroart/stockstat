@@ -629,8 +629,8 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.TESTRECOMMENDPERIOD, CategoryConstants.PRICE);
         deflt.put(ConfigConstants.TESTRECOMMENDFACTOR, 10);
          */
-        deflt.put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, "{ \"generations\" : 100, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1, \"useoldelite\" : true }");
-        deflt.put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, "{ \"generations\" : 10, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1, \"useoldelite\" : true }");
+        deflt.put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, "{ \"generations\" : 100, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1, \"useoldelite\" : true }");
+        deflt.put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, "{ \"generations\" : 10, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1, \"useoldelite\" : true }");
         /*
         deflt.put(ConfigConstants.EVOLUTIONGENERATIONS, 2);
         deflt.put(ConfigConstants.EVOLUTIONCHILDREN, 4);
@@ -1433,13 +1433,13 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MISCCOMMUNICATIONS, new XMLType( String.class, "{}", "Communications and connections"));
         mymap.put(ConfigConstants.MISCCACHE, new XMLType( Boolean.class, Boolean.TRUE, "Cache enable"));
         mymap.put(ConfigConstants.MISCCACHETTL, new XMLType( Boolean.class, Boolean.TRUE, "Cache TTL"));
-        mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, new XMLType( String.class, "{ \"generations\" : 100, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config"));
+        mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, new XMLType( String.class, "{ \"generations\" : 100, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS, new XMLType( Integer.class, 10, "Test complex recommender future days"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXTHRESHOLD, new XMLType( String.class, " [ 1.0 ] ", "Test complex recommender threshold"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXINTERVALDAYS, new XMLType( Integer.class, 5, "Test complex recommender interval days"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEFUTUREDAYS, new XMLType( Integer.class, 10, "Test simple recommender future days"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEINTERVALDAYS, new XMLType( Integer.class, 5, "Test simple recommender interval days"));
-        mymap.put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, new XMLType( String.class, "{ \"generations\" : 10, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "Indicator recommender GP config"));
+        mymap.put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, new XMLType( String.class, "{ \"generations\" : 10, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "Indicator recommender GP config"));
         mymap.put(ConfigConstants.AGGREGATORS, new XMLType( Boolean.class, Boolean.TRUE, "Enable aggregators"));
         mymap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, new XMLType( Boolean.class, Boolean.TRUE, "Enable aggregated recommender"));
         mymap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLE, new XMLType( Boolean.class, Boolean.TRUE, "Enable aggregated recommender simple"));

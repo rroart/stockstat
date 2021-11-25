@@ -14,6 +14,7 @@ import org.apache.commons.lang3.tuple.Triple;
 
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
+import roart.common.constants.ServiceConstants;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
 import roart.iclij.config.IclijConfig;
@@ -69,6 +70,10 @@ public class DatasetAction extends MarketAction {
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
+            }
+            Map<String, Object> results = componentData.getResultMap();
+            if (results != null) {
+            	componentData.getService().send(ServiceConstants.EVOLVEFILTEREVOLVE, results, param.getInput().getConfig());
             }
             //component.calculateIncDec(componentData, profitdata, positions);
             //System.out.println("Buys: " + market.getMarket() + buys);

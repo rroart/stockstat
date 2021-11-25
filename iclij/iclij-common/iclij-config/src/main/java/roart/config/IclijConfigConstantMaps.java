@@ -21,11 +21,11 @@ public class IclijConfigConstantMaps {
 
     private static final String MLCONFIGPREDICTORLSTM = "{ \"tensorflow\" : { \"predictorlstm\" : " + ACONFIG + " } }";
 
-    private static final String RECOMMENDEVOLUTIONCONFIG = "{ \"generations\" : 100, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1, \"useoldelite\" : true }";
+    private static final String RECOMMENDEVOLUTIONCONFIG = "{ \"generations\" : 100, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1, \"useoldelite\" : true }";
 
     private static final String OTHEREVOLUTIONCONFIG = "{ \"generations\" : 100, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 0, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1, \"useoldelite\" : true }";
 
-    private static final String MLEVOLUTIONCONFIG = "{ \"generations\" : 10, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1, \"useoldelite\" : true }";
+    private static final String MLEVOLUTIONCONFIG = "{ \"generations\" : 10, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1, \"useoldelite\" : true }";
     
     public static Map<String, Class> map = new HashMap<>();
 
@@ -961,10 +961,10 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.CROSSTEST, new IclijXMLType(null, null, null));
         mymap.put(IclijConfigConstants.CROSSTESTINDICATORRECOMMENDER, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable evolution generated recommender settings"));
         mymap.put(IclijConfigConstants.CROSSTESTML, new IclijXMLType(Boolean.class, Boolean.FALSE, "Crosstest ML enable"));
-        mymap.put(IclijConfigConstants.CROSSTESTMLEVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 10, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config"));
+        mymap.put(IclijConfigConstants.CROSSTESTMLEVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 10, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config"));
         mymap.put(IclijConfigConstants.CROSSTESTMLMLCONFIG, new IclijXMLType(String.class, null, "Evolution default ml enabled"));
         mymap.put(IclijConfigConstants.CROSSTESTMLTENSORFLOWSERVER, new IclijXMLType(String.class, "http://localhost:8000", "Enable evolution generated ml server", ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER));
-        mymap.put(IclijConfigConstants.CROSSTESTINDICATORRECOMMENDEREVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 100, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1 }", "Indicator recommender GP config"));
+        mymap.put(IclijConfigConstants.CROSSTESTINDICATORRECOMMENDEREVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 100, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1 }", "Indicator recommender GP config"));
         mymap.put(IclijConfigConstants.CROSSTESTAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable crosstest autorun"));
         mymap.put(IclijConfigConstants.CROSSTESTFITNESSMINIMUM, new IclijXMLType(Integer.class, 10, "Enable crosstest fitness minimum"));
         mymap.put(IclijConfigConstants.CROSSTESTMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable crosstest mlindicator"));
@@ -997,10 +997,10 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.CROSSTESTFUTUREDAYS, new IclijXMLType(String.class, " [ 10 ] ", "Crosstest futuredays"));
         mymap.put(IclijConfigConstants.CROSSTESTTHRESHOLD, new IclijXMLType(String.class, " [ 1.0 ] ", "Crosstest threshold"));
         mymap.put(IclijConfigConstants.DATASETML, new IclijXMLType(Boolean.class, Boolean.FALSE, "Dataset ML enable"));
-        mymap.put(IclijConfigConstants.DATASETEVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 10, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config"));
+        mymap.put(IclijConfigConstants.DATASETEVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 10, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config"));
         mymap.put(IclijConfigConstants.DATASETMLCONFIG, new IclijXMLType(String.class, null, "Evolution default ml enabled"));
         mymap.put(IclijConfigConstants.DATASETMLTENSORFLOWSERVER, new IclijXMLType(String.class, "http://localhost:8000", "Enable evolution generated ml server", ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER));
-        mymap.put(IclijConfigConstants.DATASETINDICATORRECOMMENDEREVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 100, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1 }", "Indicator recommender GP config"));
+        mymap.put(IclijConfigConstants.DATASETINDICATORRECOMMENDEREVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 100, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1 }", "Indicator recommender GP config"));
         mymap.put(IclijConfigConstants.DATASETAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable dataset autorun"));
         mymap.put(IclijConfigConstants.DATASETFITNESSMINIMUM, new IclijXMLType(Integer.class, 10, "Enable dataset fitness minimum"));
         mymap.put(IclijConfigConstants.DATASETMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable dataset mlindicator"));
@@ -1033,10 +1033,10 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.EVOLVEGA, new IclijXMLType(Integer.class, 0, "Evolve GA"));
         mymap.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable evolution generated recommender settings"));
         mymap.put(IclijConfigConstants.EVOLVEML, new IclijXMLType(Boolean.class, Boolean.FALSE, "Evolve ML enable"));
-        mymap.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 10, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config", ConfigConstants.EVOLVEMLEVOLUTIONCONFIG));
+        mymap.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 10, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config", ConfigConstants.EVOLVEMLEVOLUTIONCONFIG));
         mymap.put(IclijConfigConstants.EVOLVEMLMLCONFIG, new IclijXMLType(String.class, null, "Evolution default ml enabled"));
         mymap.put(IclijConfigConstants.EVOLVEMLTENSORFLOWSERVER, new IclijXMLType(String.class, "http://localhost:8000", "Enable evolution generated ml server", ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER));
-        mymap.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 100, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1 }", "Indicator recommender GP config", ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG));
+        mymap.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 100, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1 }", "Indicator recommender GP config", ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG));
         mymap.put(IclijConfigConstants.EVOLVEAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable evolve autorun"));
         mymap.put(IclijConfigConstants.EVOLVEFITNESSMINIMUM, new IclijXMLType(Integer.class, 10, "Enable evolve fitness minimum"));
         mymap.put(IclijConfigConstants.EVOLVEMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable evolve mlindicator"));
@@ -1113,7 +1113,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.FINDPROFITUPDATE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable find profit update"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve profit autorun"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITUPDATE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve profit update"));
-        mymap.put(IclijConfigConstants.IMPROVEPROFITEVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 10, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "Improve profit GP config", ConfigConstants.EVOLVEMLEVOLUTIONCONFIG));
+        mymap.put(IclijConfigConstants.IMPROVEPROFITEVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 10, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "Improve profit GP config", ConfigConstants.EVOLVEMLEVOLUTIONCONFIG));
         mymap.put(IclijConfigConstants.IMPROVEPROFITMLCONFIG, new IclijXMLType(String.class, null, "Improve profit default ml enabled"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, new IclijXMLType(Integer.class, 10, "Enable improve profit fitness minimum"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable improve profit mlindicator"));
@@ -1172,7 +1172,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.IMPROVEABOVEBELOWEVOLUTIONCONFIG, new IclijXMLType(String.class, null, "Improve above below evolution config"));
         mymap.put(IclijConfigConstants.IMPROVEABOVEBELOWFITNESSMINIMUM, new IclijXMLType(Integer.class, 10, "Improve above below fitness minimum"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable machine learning autorun"));
-        mymap.put(IclijConfigConstants.MACHINELEARNINGEVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 10, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config", ConfigConstants.EVOLVEMLEVOLUTIONCONFIG));
+        mymap.put(IclijConfigConstants.MACHINELEARNINGEVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 10, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config", ConfigConstants.EVOLVEMLEVOLUTIONCONFIG));
         mymap.put(IclijConfigConstants.MACHINELEARNINGMLCONFIG, new IclijXMLType(String.class, null, "Machine learning default ml enabled"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable machine learning mlindicator"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOREVOLUTIONCONFIG, new IclijXMLType(String.class, null, "machine learning mlindicator evolution config"));
