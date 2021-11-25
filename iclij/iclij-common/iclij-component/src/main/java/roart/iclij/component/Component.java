@@ -560,6 +560,7 @@ public abstract class Component {
         item.setTestAccuracy(score);
         //item.setTrainAccuracy();
         //item.setLoss();
+        item.setThreshold(1.0);
         item.save();
     }
 
