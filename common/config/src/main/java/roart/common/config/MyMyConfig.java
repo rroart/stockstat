@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import roart.common.util.JsonUtil;
@@ -1375,6 +1376,7 @@ public class MyMyConfig extends MyConfig {
         return (String) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOREXTRAS);
     }
 
+    @JsonIgnore
     public String getAggregatorsIndicatorExtrasList() {
         return (String) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST);
     }
