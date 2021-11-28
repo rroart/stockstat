@@ -139,15 +139,15 @@ public class Evolve {
             String ml = new MLMapsML().getMap().get(subcomponent);
             String key = new NeuralNetConfigs().getConfigMap().get(ml);
             if (!IclijConfigConstants.DATASET.equals(component)) {
-            saveBetter(market, component, subcomponent, IclijConfigConstants.MACHINELEARNING, myList.get(0).getLeft(), key, conf2.getConfig(), true);
+            saveBetter(market, component, subcomponent, IclijConfigConstants.MACHINELEARNING, myList.get(0).getLeft(), key, conf2.getConfig(), true, null);
             } else {
-            saveBetter(market, component, subcomponent, IclijConfigConstants.DATASET, myList.get(0).getLeft(), key, conf2.getConfig(), false);
+            saveBetter(market, component, subcomponent, IclijConfigConstants.DATASET, myList.get(0).getLeft(), key, conf2.getConfig(), false, null);
             }
         }
     }
 
     private void saveBetter(String market, String component,
-            Pair<String, String> subcomponent, String action, Double score, String key, Object object, boolean domct) {
+            Pair<String, String> subcomponent, String action, Double score, String key, Object object, boolean domct, String otherAction) {
         Parameters p = new Parameters();
         p.setFuturedays(10);
         p.setThreshold(1.0);
@@ -173,12 +173,20 @@ public class Evolve {
         }
         // save to markettime
         ActionComponentItem mct = new ActionComponentItem();
+        if (otherAction != null) {
+        	mct.setAction(otherAction);
+        } else {
         mct.setAction(action);
+        }
         mct.setMarket(market);
         mct.setComponent(component);
         mct.setSubcomponent(subcomponent.getLeft() + " " + subcomponent.getRight());
         mct.setRecord(LocalDate.now());
+        if (otherAction != null) {
+            mct.setPriority(-20);
+        } else {
         mct.setPriority(-10);
+        }
         mct.setParameters(JsonUtil.convert(p));
         try {
             mct.save();
@@ -319,7 +327,8 @@ public class Evolve {
         if (better) {
             ConfigMapChromosome2 c = (ConfigMapChromosome2) myList.get(0).getRight();
             ConfigMapGene conf2 = c.getGene();
-            saveBetter(market, component, subComponent, IclijConfigConstants.FINDPROFIT, myList.get(0).getLeft(), IclijConstants.ALL, conf2.getMap(), false);
+            saveBetter(market, component, subComponent, IclijConfigConstants.FINDPROFIT, myList.get(0).getLeft(), IclijConstants.ALL, conf2.getMap(), true, IclijConfigConstants.MACHINELEARNING);
+            /*
             try {
             	String mysubcomponent = subComponent.getLeft() + " " + subComponent.getRight();
             	log.info("Deleting AboveBelow etc {} {} {}", market, component, mysubcomponent);
@@ -332,6 +341,7 @@ public class Evolve {
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
+            */
         }
     }
 

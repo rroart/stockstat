@@ -207,36 +207,44 @@ public class ActionThread extends Thread {
                 action.getPicksFiltered(myData, param, config, item, evolve, wantThree);                
                 finished = true;
                 if (item.getDbid() != null) {
-                    if (action.getActionData().wantsUpdate(config)) {
-                        if (IclijConstants.MACHINELEARNING.equals(item.getAction()) || IclijConstants.IMPROVEPROFIT.equals(item.getAction())) {
-                            if (IclijConstants.MACHINELEARNING.equals(item.getAction())) {
-                                MarketAction anAction = ActionFactory.get(IclijConstants.IMPROVEPROFIT);
-                                String mypriorityKey = anAction.getActionData().getPriority();
-                                int aPriority = action.getPriority(config, mypriorityKey);
-                                ActionComponentItem it = dblist.stream().filter(dbitem -> (IclijConstants.IMPROVEPROFIT.equals(dbitem.getAction()) && item.getMarket().equals(dbitem.getMarket()) && item.getComponent().equals(dbitem.getComponent()) && item.getSubcomponent().equals(item.getSubcomponent()))).findAny().orElse(null); 
-                                if (it == null) {
-                                	mct(IclijConstants.IMPROVEPROFIT, item.getMarket(), item.getComponent(), item.getSubcomponent(), aPriority);
-                                }
-                            }
-                            //mct(item.getMarket(), IclijConstants.MACHINELEARNING, item.getComponent(), item.getSubcomponent());
-                            // delete timing findprofit improveprofit
-			    // only after improveprofit?
-                            try {
-                            	log.info("Deleting AboveBelow etc {} {} {}", item.getMarket(), item.getComponent(), item.getSubcomponent());
-                                new TimingItem().delete(item.getMarket(), IclijConstants.FINDPROFIT, item.getComponent(), item.getSubcomponent(), null, null);
-                                new IncDecItem().delete(item.getMarket(), item.getComponent(), item.getSubcomponent(), null, null);
-                                new MemoryItem().delete(item.getMarket(), item.getComponent(), item.getSubcomponent(), null, null);
-                                new AboveBelowItem().delete(item.getMarket(), null, null);
-                            } catch (Exception e) {
-                                log.error(Constants.EXCEPTION, e);
-                            }                        
-                            PopulateThread.queue.add(new ImmutableTriple(item.getMarket(), item.getComponent(), item.getSubcomponent()));
-                        }
-                    }
-                    
+                	// flow
+                	// better evolve triggers config save for ml, and new generated ml action
+                	// better improveprofit triggers config save for findprofit, and new generated ml action (-db deletes and repopulation)
+                	// if generated ml or improveprofit action
+                	//    if generated ml action, then generate improveprofit action if none already
+                	//	  db delete and repopulate
+                	if (action.getActionData().wantsUpdate(config)) {
+                		if (IclijConstants.MACHINELEARNING.equals(item.getAction()) || IclijConstants.IMPROVEPROFIT.equals(item.getAction())) {
+                			if (IclijConstants.MACHINELEARNING.equals(item.getAction())) {
+                				//                            	otherAction = IclijConstants.IMPROVEPROFIT;
+                				//                        	} else {
+                				//                        		otherAction = IclijConstants.MACHINELEARNING;
+                				MarketAction anAction = ActionFactory.get(IclijConstants.IMPROVEPROFIT);
+                				String mypriorityKey = anAction.getActionData().getPriority();
+                				int aPriority = action.getPriority(config, mypriorityKey);
+                				ActionComponentItem it = dblist.stream().filter(dbitem -> (IclijConstants.IMPROVEPROFIT.equals(dbitem.getAction()) && item.getMarket().equals(dbitem.getMarket()) && item.getComponent().equals(dbitem.getComponent()) && item.getSubcomponent().equals(item.getSubcomponent()))).findAny().orElse(null); 
+                				if (it == null && item.getPriority() == -10) {
+                					mct(IclijConstants.IMPROVEPROFIT, item.getMarket(), item.getComponent(), item.getSubcomponent(), aPriority);
+                				}
+                			}
+                			//mct(item.getMarket(), IclijConstants.MACHINELEARNING, item.getComponent(), item.getSubcomponent());
+                			// delete timing findprofit improveprofit
+                			// only after improveprofit?
+                			try {
+                				log.info("Deleting AboveBelow etc {} {} {}", item.getMarket(), item.getComponent(), item.getSubcomponent());
+                				new TimingItem().delete(item.getMarket(), IclijConstants.FINDPROFIT, item.getComponent(), item.getSubcomponent(), null, null);
+                				new IncDecItem().delete(item.getMarket(), item.getComponent(), item.getSubcomponent(), null, null);
+                				new MemoryItem().delete(item.getMarket(), item.getComponent(), item.getSubcomponent(), null, null);
+                				new AboveBelowItem().delete(item.getMarket(), null, null);
+                			} catch (Exception e) {
+                				log.error(Constants.EXCEPTION, e);
+                			}                        
+                			PopulateThread.queue.add(new ImmutableTriple(item.getMarket(), item.getComponent(), item.getSubcomponent()));
+                		}
+                	}
                 }
             } catch (Exception e) {
-                log.error(Constants.EXCEPTION, e);
+            	log.error(Constants.EXCEPTION, e);
             }
         }
         return finished;
