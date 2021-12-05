@@ -250,9 +250,9 @@ public class ActionThread extends Thread {
         return finished;
     }
 
-    private int getScore(ActionComponentItem i) {
+    int getScore(ActionComponentItem i) {
         int run = i.isHaverun() ? 1 : 0;
-        return (int) (100000 * (i.getPriority() + run) + i.getTime());
+        return (int) (100000 * (i.getPriority() + run) - i.getTime());
     }
     
     private void mct(String action, String market, String component, String subcomponent, int priority) {
