@@ -37,12 +37,21 @@ public abstract class ComponentNoML extends Component {
             if (confStr != null) {
                 param.getService().conf.getConfigValueMap().put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, confStr);
             }
+            param.getService().conf.getConfigValueMap().put(ConfigConstants.MISCMYTABLEDAYS, 100);
+            param.getService().conf.getConfigValueMap().put(ConfigConstants.MISCMYDAYS, 100);
+
             Map<String, Object> anUpdateMap = new HashMap<>();
-            List<ResultItem> retlist = param.getService().getEvolveRecommender(true, param.getDisableList(), anUpdateMap);
+            Map<String, Object> aScoreMap = new HashMap<>();
+            Map<String, Object> resultMap = new HashMap<>();
+            List<ResultItem> retlist = param.getService().getEvolveRecommender(true, param.getDisableList(), anUpdateMap, scoreMap, resultMap);
             nomlSaves(param, anUpdateMap);
             if (param.getUpdateMap() != null) {
                 param.getUpdateMap().putAll(anUpdateMap); 
             }
+            if (scoreMap != null) {
+                scoreMap.putAll(aScoreMap);
+            }
+            param.setResultMap(resultMap);
             return anUpdateMap;
         }
         return new HashMap<>();

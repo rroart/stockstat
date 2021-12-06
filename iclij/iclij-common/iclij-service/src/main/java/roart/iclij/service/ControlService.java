@@ -324,7 +324,7 @@ public class ControlService {
         getConfig();
     }
 
-    public List<ResultItem> getEvolveRecommender(boolean doSet, List<String> disableList, Map<String, Object> updateMap) {
+    public List<ResultItem> getEvolveRecommender(boolean doSet, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, Map<String, Object> resultMap) {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setConfList(disableList);
@@ -332,6 +332,8 @@ public class ControlService {
         if (doSet) {
             //conf = new MyMyConfig(result.getConfig());
             updateMap.putAll(result.getMaps().get("update"));
+            scoreMap.putAll(result.getMaps().get("score"));
+            resultMap.putAll(result.getMaps().get("result"));
         }
         return result.getList();
         //return result.getMaps().get("update");

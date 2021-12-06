@@ -126,7 +126,7 @@ public class IndicatorChromosome extends AbstractChromosome {
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
         Map<String, Double[]> indicatorMap = dayIndicatorMap.get(j);
         // find recommendations
-        if (indicatorMap == null) {
+        if (indicatorMap == null || indicatorMap.isEmpty()) {
             return 0;
         }
         Map<String, List<Double>> resultMap = new HashMap<>();
@@ -166,6 +166,9 @@ public class IndicatorChromosome extends AbstractChromosome {
             resultList.add(recommend);
             resultList.add(change);
             resultMap.put(id, resultList);
+        }
+        if (resultMap.isEmpty()) {
+            return 0;
         }
         double finalRecommend = evalUtil.calculateResult(resultMap, threshold);
         //finalRecommend *= 0.1;
@@ -268,6 +271,7 @@ public class IndicatorChromosome extends AbstractChromosome {
         double testRecommendQualBuySell = 0;
         for (int j = conf.getTestIndicatorRecommenderComplexFutureDays(); j < listlen; j += conf.getTestIndicatorRecommenderComplexIntervalDays()) {
             // scale down wrt max?
+            // check if 0?
             testRecommendQualBuySell += getEvaluations(j);
         }
         return testRecommendQualBuySell;

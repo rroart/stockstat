@@ -264,8 +264,12 @@ public class ServiceController implements CommandLineRunner {
             }
             Map<String, Map<String, Object>> maps = new HashMap<>();
             Map<String, Object> updateMap = new HashMap<>();
+            Map<String, Object> scoreMap = new HashMap<>();
+            Map<String, Object> resultMap = new HashMap<>();
             maps.put("update", updateMap);
-            result.setList(new EvolutionService().getEvolveRecommender( aConfig, disableList, updateMap));
+            maps.put("score", scoreMap);
+            maps.put("result", resultMap);
+            result.setList(new EvolutionService().getEvolveRecommender( aConfig, disableList, updateMap, scoreMap, resultMap));
             result.setMaps(maps);
             result.setConfig(aConfig);
         } catch (Exception e) {

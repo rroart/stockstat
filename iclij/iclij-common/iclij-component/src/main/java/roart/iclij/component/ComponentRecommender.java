@@ -58,6 +58,7 @@ public class ComponentRecommender extends ComponentNoML {
         valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXCCI, Boolean.TRUE);                
         valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCH, Boolean.TRUE);                
         valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSI, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORS, Boolean.TRUE);                
         valueMap.put(ConfigConstants.INDICATORSATR, Boolean.TRUE);                
         valueMap.put(ConfigConstants.INDICATORSCCI, Boolean.TRUE);                
         valueMap.put(ConfigConstants.INDICATORSMACD, Boolean.TRUE);                
@@ -87,6 +88,7 @@ public class ComponentRecommender extends ComponentNoML {
         valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXCCI, Boolean.FALSE);                
         valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCH, Boolean.FALSE);                
         valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSI, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORS, Boolean.FALSE);                
         valueMap.put(ConfigConstants.INDICATORSATR, Boolean.FALSE);                
         valueMap.put(ConfigConstants.INDICATORSCCI, Boolean.FALSE);                
         valueMap.put(ConfigConstants.INDICATORSMACD, Boolean.FALSE);                

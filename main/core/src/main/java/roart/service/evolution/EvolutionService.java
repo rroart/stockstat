@@ -78,7 +78,7 @@ public class EvolutionService {
     ResultItemTable mlTimesTable = ServiceUtil.createMLTimesTable(otherTableMap);
     ResultItemTable eventTable = ServiceUtil.createEventTable(otherTableMap);
 
-    public List<ResultItem> getEvolveRecommender(MyMyConfig conf, List<String> disableList, Map<String, Object> updateMap) throws JsonParseException, JsonMappingException, IOException {
+    public List<ResultItem> getEvolveRecommender(MyMyConfig conf, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws JsonParseException, JsonMappingException, IOException {
         log.info("mydate {}", conf.getdate());
         log.info("mydate {}", conf.getDays());
         String market = conf.getMarket();
@@ -120,7 +120,7 @@ public class EvolutionService {
                     newIndicatorMap);
             Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders, indicatorMap, conf);
     
-            findRecommendSettings(conf, evolutionConfig, disableList, table, usedRecommenders, recommendKeyMap, indicatorMap, updateMap, stockData.days, datareaders);
+            findRecommendSettings(conf, evolutionConfig, disableList, table, usedRecommenders, recommendKeyMap, indicatorMap, updateMap, stockData.days, datareaders, scoreMap, resultMap);
             List<ResultItem> retlist = new ArrayList<>();
             retlist.add(table);
             return retlist;
@@ -143,7 +143,7 @@ public class EvolutionService {
 
     private void findRecommendSettings(MyMyConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
             Map<String, List<Recommend>> usedRecommenders, Map<String, List<String>[]> recommendKeyMap,
-            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, int days, Pipeline[] datareaders) throws Exception {
+            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, int days, Pipeline[] datareaders, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws Exception {
         TaUtil tu = new TaUtil();
         String thresholdString = conf.getTestIndicatorRecommenderComplexThreshold();
         Double[] thresholds = getThresholds(conf, thresholdString);
@@ -165,13 +165,15 @@ public class EvolutionService {
                 indicatorEval0.setAscending(i == 0);
                 
                 OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
+                evolution.setParallel(false);
     
                 List<String> individuals = new ArrayList<>();
                 Individual fittestIndividual = null;
                 try {
                 	fittestIndividual = evolution.getFittest(evolutionConfig, indicatorEval0, individuals, null);
                 } catch (InterruptedException e) {
-                	// TODO, as with other recommend stuff
+                    resultMap.put(EvolveConstants.ID, "interrupted");
+                    return;
                 }
                 String filename = evolution.print(conf.getMarket() + " " + "recommend" + " " + i, "recommend", individuals);
     
@@ -189,6 +191,12 @@ public class EvolutionService {
                 for (String id : scoreList) {
                     IndicatorChromosome newEval = (IndicatorChromosome) fittestIndividual.getEvaluation();
                     updateMap.put(id, newEval.getConf().getConfigValueMap().get(id));
+                }
+                if (i == 0) {
+                    List<Double> scorelist2 = new ArrayList<>();
+                    scorelist2.add(fittestIndividual.getFitness());
+                    scoreMap.put("score", fittestIndividual.getFitness());
+                    scoreMap.put("scores", scorelist2);            
                 }
             }
         }
