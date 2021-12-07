@@ -146,6 +146,9 @@ public abstract class AbstractCategory {
                 }
             }
         }
+        if (dataArraySize == 3) {
+            dataArraySize = 4;
+        }
     }
 
     /*
