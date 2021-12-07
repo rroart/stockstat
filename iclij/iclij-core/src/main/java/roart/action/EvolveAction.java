@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.ServiceConstants;
+import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
@@ -89,6 +90,9 @@ public class EvolveAction extends MarketAction {
                 param.getUpdateMap().putAll(updateMap);
             }
             Map<String, Object> results = componentData.getResultMap();
+            if (PipelineConstants.AGGREGATORRECOMMENDERINDICATOR.equals(component.getPipeline()) ) {
+                return;
+            }
             if (results != null) {
             	componentData.getService().send(ServiceConstants.EVOLVEFILTEREVOLVE, results, param.getInput().getConfig());
             }

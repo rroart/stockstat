@@ -53,6 +53,8 @@ public class CalcGeneFactory {
         List<Double> minmax = macdrsiMinMax[index];
         if (minmax == null || minmax.isEmpty()) {
             int jj = 0;
+            minmax.add(0.0);
+            minmax.add(0.0);
         }
         double minMutateThresholdRange =  minmax.get(0);
         double maxMutateThresholdRange = minmax.get(1);
