@@ -2,6 +2,7 @@ package roart.iclij.model.action;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import roart.common.pipeline.PipelineConstants;
 import roart.constants.IclijConstants;
@@ -72,4 +73,29 @@ public class ImproveAboveBelowActionData extends MarketActionData {
 	public boolean doSaveTiming() {
 		return false;
 	}
+
+    @Override
+    public Object[] getScoreDescription(Object[] accuracy, Map<String, Object> scoreMap) {
+        Double score = null;
+        String description = null;
+        List<Object> scoreList = ((List<Object>) scoreMap.get("scores"));
+        if (scoreList == null) {
+                int jj = 0;
+        }
+        if (scoreList != null) {
+                score = scoreList
+                                .stream()
+                                .mapToDouble(e -> (Double) e)
+                                .max()
+                                .orElse(-2);
+                if (scoreList.size() > 1) {
+                        description = scoreList.stream().mapToDouble(e -> (Double) e).filter(e -> e >= 0).summaryStatistics().toString();
+                }
+                if (score == -1) {
+                        score = null;
+                        description = "Interrupted";
+                }
+        }
+        return new Object[] { score, description };
+    }
 }
