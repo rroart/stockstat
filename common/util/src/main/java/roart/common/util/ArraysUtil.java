@@ -607,6 +607,12 @@ public class ArraysUtil {
             }                   
             return retDouble;            
         }
+        int mymaxholenumber = maxHoleNumber == 0 ? 1 : maxHoleNumber;
+        if (acceptLastNull && start != length - 1 && length - 1 - start <= mymaxholenumber) {
+            for (int k = start + 1; k < length; k++) {
+                dstArray[k] = dstArray[start];
+            }                   
+        }
         for (int i = start; i >= 0; i--) {
             i = searchBackwardNull(dstArray, i);
             int j = searchBackwardNonNull(dstArray, i);

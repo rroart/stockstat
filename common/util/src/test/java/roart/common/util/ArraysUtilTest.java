@@ -120,19 +120,52 @@ public class ArraysUtilTest {
         ArraysUtil.fixMapHoles(array, null, 2, interpolationmethod, false);
         System.out.println(Arrays.asList(array));
         assertArrayEquals(new Double[] {null, null, null, null, null, null, 4.0, 5.0, 5.0, 5.0, 10.0, 11.0 }, array);
+        
+        Double[] array15 = { 1.0, 2.0, 3.0, 3.1, null, null, 4.0, 5.0, null, null, 10.0, 11.0 };
+        ArraysUtil.fixMapHoles(array15, null, 2, interpolationmethod, false);
+        System.out.println(Arrays.asList(array15));
+        assertArrayEquals(new Double[] {1.0, 2.0, 3.0, 3.1, 3.1, 3.1, 4.0, 5.0, 5.0, 5.0, 10.0, 11.0 }, array15);
+        
         Double[] array2 = { null, 1.0, 2.0, 3.0 };
         ArraysUtil.fixMapHoles(array2, null, 2, interpolationmethod, false);
         System.out.println(Arrays.asList(array2));
+        assertArrayEquals(new Double[] {null, 1.0, 2.0, 3.0}, array2);
+        
         Double[] array3 = { 1.0, 2.0, 3.0, null };
         ArraysUtil.fixMapHoles(array3, null, 2, interpolationmethod, false);
         System.out.println(Arrays.asList(array3));
+        assertArrayEquals(new Double[] {null, null, null, null}, array3);
+        
+        Double[] array35 = { 1.0, null, 3.0, null, null, null, null, null , null };
+        ArraysUtil.fixMapHoles(array35, null, 2, interpolationmethod, true);
+        System.out.println("t " + Arrays.asList(array35));
+        assertArrayEquals(new Double[] {1.0, 1.0, 3.0, null, null, null, null, null, null }, array35);
+        
+        Double[] array37 = { 1.0, null, 3.0, null, null, null};
+        ArraysUtil.fixMapHoles(array37, null, 2, interpolationmethod, true);
+        System.out.println("t " + Arrays.asList(array37));
+        assertArrayEquals(new Double[] {1.0, 1.0, 3.0, null, null, null }, array37);
+        
+        Double[] array38 = { 1.0, null, 3.0, null, null};
+        ArraysUtil.fixMapHoles(array38, null, 2, interpolationmethod, true);
+        System.out.println("t " + Arrays.asList(array38));
+        assertArrayEquals(new Double[] {1.0, 1.0, 3.0, 3.0, 3.0 }, array38);
+        
         Double[] array4 = { null, null, null, 1.0, 2.0, 3.0, null };
         System.out.println("n4");
         ArraysUtil.fixMapHoles(array4, null, 2, interpolationmethod, false);
         System.out.println("nr4 " + Arrays.asList(array4));
+        assertArrayEquals(new Double[] {null, null, null, null, null, null, null}, array4);
+        
         Double[] array5 = { 1.0, 2.0, 3.0, null, null, null, 4.0, 5.0, null, null, 10.0, 11.0 };
         ArraysUtil.fixMapHoles(array5, null, 5, interpolationmethod, false);
         System.out.println(Arrays.asList(array5));
+        assertArrayEquals(new Double[] {1.0, 2.0, 3.0, 3.0, 3.0, 3.0, 4.0, 5.0, 5.0, 5.0, 10.0, 11.0}, array5);
+        
+        Double[] array6 = { 1.0, 2.0, 3.0, null, null, null, 4.0, 5.0, 10.0, 11.0 };
+        ArraysUtil.fixMapHoles(array6, null, 5, Constants.LINEAR, false);
+        System.out.println(Arrays.asList(array6));
+        assertArrayEquals(new Double[] {1.0, 2.0, 3.0, 3.25, 3.5, 3.75, 4.0, 5.0, 10.0, 11.0}, array6);
     }
     
     @Test

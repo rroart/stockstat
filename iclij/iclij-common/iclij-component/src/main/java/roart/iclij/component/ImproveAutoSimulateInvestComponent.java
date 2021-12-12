@@ -174,6 +174,7 @@ public class ImproveAutoSimulateInvestComponent extends ComponentML {
         aMap.put(ConfigConstants.MISCMYDAYS, 0);
         aMap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, true);
         aMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
+        aMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
         aMap.put(ConfigConstants.MISCMERGECY, false);
         // different line
         param.getResultMap(null, aMap);

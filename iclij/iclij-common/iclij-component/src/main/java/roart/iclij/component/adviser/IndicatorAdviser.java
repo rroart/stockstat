@@ -103,6 +103,8 @@ public abstract class IndicatorAdviser extends Adviser {
         aMap.put(ConfigConstants.MISCMYDAYS, 0);
         aMap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, simulateConfig.getIndicatorRebase());
         aMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
+        aMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
+        aMap.put(ConfigConstants.MISCMERGECY, false);
         param.getResultMap(null, aMap);
         Map<String, Map<String, Object>> maps = param.getResultMaps();
         /*
@@ -171,9 +173,6 @@ public abstract class IndicatorAdviser extends Adviser {
         for(Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
             if (excludes.contains(entry.getKey())) {
                 continue;
-            }
-            if ("1302814".equals(entry.getKey())) {
-                int jj = 0;
             }
             List<List<Double>> resultList = entry.getValue();
             if (resultList == null || resultList.isEmpty()) {
