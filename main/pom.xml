@@ -41,6 +41,6 @@
     </dependency>
   </dependencies>
   <properties>
-    <jdk.version>${jdk.spark.version}</jdk.version>
+    <!--jdk.version>${jdk.spark.version}</jdk.version-->
   </properties>
 </project>

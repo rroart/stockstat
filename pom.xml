@@ -93,8 +93,8 @@
   </dependencies>
   <properties>
     <stockstat.version>0.6-SNAPSHOT</stockstat.version>
-    <jdk.version>16</jdk.version>
-    <jdk.spark.version>11</jdk.spark.version>
+    <jdk.version>17</jdk.version>
+    <jdk.spark.version>17</jdk.spark.version>
     <mavencompiler.version>3.8.1</mavencompiler.version>
     <maveninstall.version>2.5.2</maveninstall.version>
     <mavenshade.version>3.2.1</mavenshade.version>
