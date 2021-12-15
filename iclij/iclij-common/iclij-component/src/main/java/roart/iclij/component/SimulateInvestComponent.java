@@ -1192,14 +1192,14 @@ public class SimulateInvestComponent extends ComponentML {
             // TODO delay DELAY
             // todo getdelay?
             if (mydate.indexOffset + extradelay >= 0) {
-                stoploss(onerun.mystocks, data.stockDates, mydate.indexOffset + extradelay, data.getCatValMap(simConfig.getInterpolate()), mydate.indexOffset - 1 + extradelay, sells, simConfig.getStoplossValue(), "STOP", stockDatesBiMap);
+                stoploss(onerun.mystocks, data.stockDates, mydate.indexOffset + extradelay, data.getCatValMap(simConfig.getInterpolate()), mydate.indexOffset + 1 + extradelay, sells, simConfig.getStoplossValue(), "STOP", stockDatesBiMap);
                 //sell(data.stockDates, data.getCatValMap(simConfig.getInterpolate()), onerun.capital, sells, results.stockhistory, mydate.indexOffset - extradelay, mydate.date, onerun.mystocks, stockDatesBiMap);
             }
         }
         if (simConfig.getIntervalStoploss()) {
             // TODO delay
             if (mydate.indexOffset + extradelay >= 0) {
-                stoploss(onerun.mystocks, data.stockDates, mydate.indexOffset + extradelay, data.getCatValMap(simConfig.getInterpolate()), mydate.indexOffset - simConfig.getInterval() + extradelay, sells, simConfig.getIntervalStoplossValue(), "ISTOP", stockDatesBiMap);
+                stoploss(onerun.mystocks, data.stockDates, mydate.indexOffset + extradelay, data.getCatValMap(simConfig.getInterpolate()), mydate.indexOffset + simConfig.getInterval() + extradelay, sells, simConfig.getIntervalStoplossValue(), "ISTOP", stockDatesBiMap);
             }
         }
         holdIncrease.removeAll(sells);
@@ -2142,12 +2142,12 @@ public class SimulateInvestComponent extends ComponentML {
                 if (!dateNow.isAfter(item.getBuydate())) {
                     continue;
                 }
-                Double valWas = mainList.get(mainList.size() - 1 - indexOffset - 1);
+                Double valNow = mainList.get(mainList.size() - 1 - indexOffset - 1);
                 if (prevIndexOffset <= -2) {
                     int jj = 0;
                     continue;
                 }
-                Double valNow = mainList.get(mainList.size() - 1 - prevIndexOffset - 1);
+                Double valWas = mainList.get(mainList.size() - 1 - prevIndexOffset - 1);
                 if (valWas != null && valNow != null && valNow != 0 && valWas != 0 && valNow / valWas < stoploss) {
                     item.setStatus(stop);
                     newSells.add(item);
