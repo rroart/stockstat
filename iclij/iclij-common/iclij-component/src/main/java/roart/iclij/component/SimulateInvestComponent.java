@@ -1297,7 +1297,7 @@ public class SimulateInvestComponent extends ComponentML {
                         break;
                     }
                     // TODO delay DELAY
-                    stoploss(onerun.mystocks, data.stockDates, mydate.indexOffset - j + extradelay, data.getCatValMap(simConfig.getInterpolate()), mydate.indexOffset - j - 1 + extradelay, sells, simConfig.getStoplossValue(), "STOP", stockDatesBiMap);
+                    stoploss(onerun.mystocks, data.stockDates, mydate.indexOffset - j + extradelay, data.getCatValMap(simConfig.getInterpolate()), mydate.indexOffset - j + 1 + extradelay, sells, simConfig.getStoplossValue(), "STOP", stockDatesBiMap);
                     sell(data.stockDates, data.getCatValMap(simConfig.getInterpolate()), onerun.capital, sells, results.stockhistory, mydate.indexOffset - j + extradelay, mydate.date, onerun.mystocks, stockDatesBiMap);
                 }                    
             }
@@ -2142,13 +2142,14 @@ public class SimulateInvestComponent extends ComponentML {
                 if (!dateNow.isAfter(item.getBuydate())) {
                     continue;
                 }
-                Double valNow = mainList.get(mainList.size() - 1 - indexOffset - 1);
-                if (prevIndexOffset <= -2) {
+                Double valNow = mainList.get(mainList.size() - 1 - indexOffset);
+                if (prevIndexOffset <= -1) {
                     int jj = 0;
                     continue;
                 }
-                Double valWas = mainList.get(mainList.size() - 1 - prevIndexOffset - 1);
+                Double valWas = mainList.get(mainList.size() - 1 - prevIndexOffset);
                 if (valWas != null && valNow != null && valNow != 0 && valWas != 0 && valNow / valWas < stoploss) {
+                    log.info("Id etc {} {} {} {} {} {} {}", stop, id, valWas, valNow, dateNowStr, prevIndexOffset, indexOffset);
                     item.setStatus(stop);
                     newSells.add(item);
                 }
