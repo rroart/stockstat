@@ -3,6 +3,7 @@ package roart.iclij.component.adviser;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -189,11 +190,11 @@ public class AboveBelowAdviser extends Adviser {
         List<String> retSubcomponents = new ArrayList<>(); 
         for (AboveBelowItem item : list) {
             String components = item.getComponents();
-            List<String> componentList = JsonUtil.convert(components, new TypeReference<List<String>>() { });
+            String[] componentList = JsonUtil.convert(components, String[].class);
             String subcomponents = item.getSubcomponents();
-            List<String> subcomponentList = JsonUtil.convert(subcomponents, new TypeReference<List<String>>() { });            
-            retComponents.addAll(retComponents);
-            retSubcomponents.addAll(retSubcomponents);
+            String[] subcomponentList = JsonUtil.convert(subcomponents, String[].class);            
+            retComponents.addAll(Arrays.asList(componentList));
+            retSubcomponents.addAll(Arrays.asList(subcomponentList));
         }
         return new List[] { retComponents, retSubcomponents }; 
     }
