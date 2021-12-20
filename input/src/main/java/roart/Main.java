@@ -146,6 +146,7 @@ public class Main {
                 json = json.replaceAll("<a href=[^<]*>", "");
                 json = json.replaceAll(".humanynotifications.:\\[[^\\[]*\\],", "");
                 json = json.replaceAll(".\\{searchQuery\\}.", "");
+                json = json.replaceAll("\\\\\\\\,\"", "blbl\",\"");
                 try {
                 jsonNode = mapper.readTree(json);
                 } catch (Exception e) {
