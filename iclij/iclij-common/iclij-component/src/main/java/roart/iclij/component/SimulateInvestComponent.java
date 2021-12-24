@@ -1298,7 +1298,23 @@ public class SimulateInvestComponent extends ComponentML {
                     }
                     // TODO delay DELAY
                     stoploss(onerun.mystocks, data.stockDates, mydate.indexOffset - j + extradelay, data.getCatValMap(simConfig.getInterpolate()), mydate.indexOffset - j + 1 + extradelay, sells, simConfig.getStoplossValue(), "STOP", stockDatesBiMap);
-                    sell(data.stockDates, data.getCatValMap(simConfig.getInterpolate()), onerun.capital, sells, results.stockhistory, mydate.indexOffset - j + extradelay, mydate.date, onerun.mystocks, stockDatesBiMap);
+                    // todo getdelay
+                    boolean lastsell = mydate.indexOffset - j - extradelay - simConfig.getDelay() < 0;
+                    if (!lastsell) {
+                        sell(data.stockDates, data.getCatValMap(simConfig.getInterpolate()), onerun.capital, sells, results.stockhistory, mydate.indexOffset - j - extradelay - simConfig.getDelay(), mydate.date, onerun.mystocks, stockDatesBiMap);
+                    } else {
+                        int jj = 0;
+                    }
+                    if (!sells.isEmpty()) {
+                        boolean last = mydate.indexOffset - j - extradelay == 0;
+                        boolean aLastInvest = offset == 0 && last /*date.isAfter(lastInvestEnd) && j == simConfig.getInterval() - 1*/;
+                        if (aLastInvest && isMain) {
+                            List<String> sellids = sells.stream().map(SimulateStock::getId).collect(Collectors.toList());
+                            param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Stoploss sell: " + sellids);
+                        } else {
+                            int jj = 0;
+                       }
+                    }
                 }                    
             }
         } else {
