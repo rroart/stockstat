@@ -1309,8 +1309,10 @@ public class SimulateInvestComponent extends ComponentML {
                         boolean last = mydate.indexOffset - j - extradelay == 0;
                         boolean aLastInvest = offset == 0 && last /*date.isAfter(lastInvestEnd) && j == simConfig.getInterval() - 1*/;
                         if (aLastInvest && isMain) {
+                            List<String> ids = onerun.mystocks.stream().map(SimulateStock::getId).collect(Collectors.toList());
                             List<String> sellids = sells.stream().map(SimulateStock::getId).collect(Collectors.toList());
-                            param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Stoploss sell: " + sellids);
+                            ids.removeAll(sellids);
+                            param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Stoploss sell: " + sellids + " Stocks: " + ids);
                         } else {
                             int jj = 0;
                        }
@@ -1333,7 +1335,7 @@ public class SimulateInvestComponent extends ComponentML {
                 }
                 ids.removeAll(sellids);
                 if (isMain) {
-                    param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Buy: " + buyids + " Sell: " + sellids + " Stocks: " +ids);
+                    param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Buy: " + buyids + " Sell: " + sellids + " Stocks: " + ids);
                 }
             }
         }
