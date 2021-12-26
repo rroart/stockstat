@@ -1305,7 +1305,7 @@ public class SimulateInvestComponent extends ComponentML {
                     } else {
                         int jj = 0;
                     }
-                    if (!sells.isEmpty()) {
+                    if (offset == 0 && !sells.isEmpty()) {
                         boolean last = mydate.indexOffset - j - extradelay == 0;
                         boolean aLastInvest = offset == 0 && last /*date.isAfter(lastInvestEnd) && j == simConfig.getInterval() - 1*/;
                         if (aLastInvest && isMain) {
