@@ -3,6 +3,7 @@ package roart.common.communication.integration.spring;
 import java.util.Arrays;
 import java.util.Random;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.AmqpTemplate;
@@ -71,17 +72,22 @@ public class Spring extends IntegrationCommunication {
     }
 
     public String[] receiveString() {
+        String[] strings = new String[0];
         String string = null;
-        while (string == null) {
+        while (true) {
             Object object = template.receiveAndConvert(getReceiveService(), 1000);
+            if (object == null) {
+                break;
+            }
             //System.out.println("boj" + Arrays.asList(object));
             if (object == null || object instanceof String) {
                 string = (String) object;
             } else {
                 string = new String((byte[]) object);
             }
+            strings = ArrayUtils.addAll(strings, string);
         }
-        return new String[] { string };
+        return strings;
     }
     
     public void simpleRequest() {
