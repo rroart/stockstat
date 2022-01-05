@@ -2227,13 +2227,22 @@ def simulateinvest(market, startdate = None, enddate = None, confidence = False,
     #print(type(dates))
     default = updatemap['plotdefault']
     capital = updatemap['plotcapital']
+    if len(capital) == 0:
+        return
+    else:
+        print("Capital: ", capital[-1])
     geom = np.geomspace(capital[0], capital[-1],num=len(capital),endpoint=True, dtype=None, axis=0)
-    pearson = scipy.stats.pearsonr(capital, geom)
-    spearman = scipy.stats.spearmanr(capital, geom)
-    kendalltau = scipy.stats.kendalltau(capital, geom)
-    pearson = round(pearson[0], 2)
-    spearman = round(spearman[0], 2)
-    kendalltau = round(kendalltau[0], 2)
+    if len(capital) >= 2:
+        pearson = scipy.stats.pearsonr(capital, geom)
+        spearman = scipy.stats.spearmanr(capital, geom)
+        kendalltau = scipy.stats.kendalltau(capital, geom)
+        pearson = round(pearson[0], 2)
+        spearman = round(spearman[0], 2)
+        kendalltau = round(kendalltau[0], 2)
+    else:
+        pearson = 0
+        spearman = 0
+        kendalltau = 0
     commonls = [ default, capital, geom ]
     mynames = [ "default", "capital", "geom" ]
     plt.rc('axes', grid=True)
