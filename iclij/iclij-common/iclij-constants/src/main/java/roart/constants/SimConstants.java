@@ -6,6 +6,7 @@ public class SimConstants {
     public static final String STATS = "stats";
     public static final String MINMAX = "minmax";
     public static final String LASTBUYSELL = "lastbuysell";
+    public static final String LASTSTOCKS = "laststocks";
     public static final String HISTORY = "history";
     public static final String SUMHISTORY = "sumhistory";
     public static final String STOCKHISTORY = "stockhistory";

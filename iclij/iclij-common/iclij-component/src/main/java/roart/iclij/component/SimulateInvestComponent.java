@@ -351,12 +351,12 @@ public class SimulateInvestComponent extends ComponentML {
                 }
                 Results mainResult = new Results();
 
+                mydate.date = TimeUtil.getForwardEqualAfter2(mydate.date, 0 /* findTime */, data.stockDates);
+                String datestring2 = TimeUtil.convertDate2(mydate.date);
+                mydate.indexOffset = data.stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(data.stockDates, datestring2);
                 
-                while (mydate.date != null && investEnd != null && !mydate.date.isAfter(investEnd)) {
-                    boolean lastInvest = offset == 0 && mydate.date.isAfter(lastInvestEnd);
-                    mydate.date = TimeUtil.getForwardEqualAfter2(mydate.date, 0 /* findTime */, data.stockDates);
-                    String datestring = TimeUtil.convertDate2(mydate.date);
-                    mydate.indexOffset = data.stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(data.stockDates, datestring);
+                while (mydate.date != null && investEnd != null && mydate.indexOffset >= endIndexOffset) {
+                    boolean lastInvest = offset == 0 && mydate.indexOffset == endIndexOffset;
                     /*
                     if (currentSimConfig != null) {
                         doOneRun(param, currentSimConfig, extradelay, evolving, aParameter, offset, currentOneRun, mainResult,
@@ -487,6 +487,9 @@ public class SimulateInvestComponent extends ComponentML {
                     } catch (ParseException e) {
                         log.error(Constants.EXCEPTION, e);
                     }
+                    mydate.date = TimeUtil.getForwardEqualAfter2(mydate.date, 0 /* findTime */, data.stockDates);
+                    String datestring = TimeUtil.convertDate2(mydate.date);
+                    mydate.indexOffset = data.stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(data.stockDates, datestring);
                 }
                 /*
             if (offset == 0) {
@@ -503,10 +506,13 @@ public class SimulateInvestComponent extends ComponentML {
                     SimulateInvestConfig aSimConfig = aPair.getLeft();
                     OneRun aOneRun = aPair.getMiddle();
                     Results aResult = aPair.getRight();
-                    boolean lastInvest = offset == 0 && mydate.date != null && lastInvestEnd != null && mydate.date.isAfter(lastInvestEnd);
+                    //boolean lastInvest = offset == 0 && mydate.date != null && lastInvestEnd != null && mydate.date.isAfter(lastInvestEnd);
+                    // check
+                    /*
                     if (aOneRun.saveLastInvest) {
                         aOneRun.mystocks = aOneRun.savedStocks;
                     }
+                    */
 		    // index == prev
                     update(data.getCatValMap(simConfig.getInterpolate()), aOneRun.mystocks, endIndexOffset + extradelay, new ArrayList<>(), endIndexOffset + extradelay, endIndexOffset);
                     Capital sum = getSum(aOneRun.mystocks);
@@ -560,6 +566,7 @@ public class SimulateInvestComponent extends ComponentML {
                             map.put(SimConstants.STARTDATE, investStart);
                             map.put(SimConstants.ENDDATE, investEnd);
                             map.put(SimConstants.FILTER, JsonUtil.convert(filter));
+			    map.put(SimConstants.LASTSTOCKS, aOneRun.mystocks.stream().map(SimulateStock::getId).toList());
                             List<Pair<String, Double>> tradeStocks = SimUtil.getTradeStocks(aResult.stockhistory);
                             map.put(SimConstants.TRADESTOCKS, tradeStocks);
                             param.getUpdateMap().putAll(map);
@@ -1162,12 +1169,16 @@ public class SimulateInvestComponent extends ComponentML {
             String aParameter, int offset, OneRun onerun,
             Results results, Data data, boolean lastInvest,
             Mydate mydate, boolean auto, BiMap<String, LocalDate> stockDatesBiMap, boolean isMain, int endIndexOffset) {
-        doBuySell(simConfig, onerun, results, data, mydate.indexOffset, stockDatesBiMap);
+        if (getBSIndexOffset(mydate, simConfig) >= endIndexOffset) {
+            doBuySell(simConfig, onerun, results, data, mydate.indexOffset, stockDatesBiMap);
+        }
+        /*
         if (lastInvest) {
             // not with evolving?
             onerun.savedStocks = copy(onerun.mystocks);
             onerun.saveLastInvest = true;
         }
+        */
         //Trend trend = getTrendIncDec(market, param, stockDates, interval, filteredCategoryValueMap, trendInc, trendDec, indexOffset);
         // no interpolation for trend
         Trend trend = getTrendIncDec(data.stockDates, onerun.trendInc, onerun.trendDec, getValueIndexOffset(mydate, simConfig), data.getTrendMap(false /*simConfig.getInterpolate()*/));
@@ -1178,12 +1189,7 @@ public class SimulateInvestComponent extends ComponentML {
         double myavg = increase(onerun.mystocks, getValueIndexOffset(mydate, simConfig), data.getCatValMap(simConfig.getInterpolate()), mydate.prevIndexOffset + extradelay, endIndexOffset);
 
         List<SimulateStock> holdIncrease = new ArrayList<>();
-        int up;
-        if (getValueIndexOffset(mydate, simConfig) >= endIndexOffset) {
-            up = update(data.getCatValMap(simConfig.getInterpolate()), onerun.mystocks, getValueIndexOffset(mydate, simConfig), holdIncrease, mydate.prevIndexOffset + extradelay, endIndexOffset);
-        } else {
-            up = onerun.mystocks.size();
-        }
+        int up = update(data.getCatValMap(simConfig.getInterpolate()), onerun.mystocks, getValueIndexOffset(mydate, simConfig), holdIncrease, mydate.prevIndexOffset + extradelay, endIndexOffset);
         
         List<SimulateStock> sells = new ArrayList<>();
         List<SimulateStock> buys = new ArrayList<>();
@@ -1192,18 +1198,10 @@ public class SimulateInvestComponent extends ComponentML {
         double myreliability = getReliability(onerun.mystocks, onerun.hits, simConfig.getConfidenceFindTimes(), up);
         
         if (simConfig.getStoploss()) {
-            // TODO delay DELAY
-            // todo getdelay?
-            if (getValueIndexOffset(mydate, simConfig) >= endIndexOffset) {
-                stoploss(onerun.mystocks, data.stockDates, getValueIndexOffset(mydate, simConfig), data.getCatValMap(simConfig.getInterpolate()), getValueIndexOffset(mydate, simConfig) + 1, sells, simConfig.getStoplossValue(), "STOP", stockDatesBiMap, endIndexOffset);
-                //sell(data.stockDates, data.getCatValMap(simConfig.getInterpolate()), onerun.capital, sells, results.stockhistory, mydate.indexOffset - extradelay, mydate.date, onerun.mystocks, stockDatesBiMap);
-            }
+            stoploss(onerun.mystocks, data.stockDates, getValueIndexOffset(mydate, simConfig), data.getCatValMap(simConfig.getInterpolate()), getValueIndexOffset(mydate, simConfig) + 1, sells, simConfig.getStoplossValue(), "STOP", stockDatesBiMap, endIndexOffset);
         }
         if (simConfig.getIntervalStoploss()) {
-            // TODO delay
-            if (getValueIndexOffset(mydate, simConfig) >= endIndexOffset) {
-                stoploss(onerun.mystocks, data.stockDates, getValueIndexOffset(mydate, simConfig), data.getCatValMap(simConfig.getInterpolate()), getValueIndexOffset(mydate, simConfig) + simConfig.getInterval(), sells, simConfig.getIntervalStoplossValue(), "ISTOP", stockDatesBiMap, endIndexOffset);
-            }
+            stoploss(onerun.mystocks, data.stockDates, getValueIndexOffset(mydate, simConfig), data.getCatValMap(simConfig.getInterpolate()), getValueIndexOffset(mydate, simConfig) + simConfig.getInterval(), sells, simConfig.getIntervalStoplossValue(), "ISTOP", stockDatesBiMap, endIndexOffset);
         }
         holdIncrease.removeAll(sells);
 
@@ -1211,23 +1209,22 @@ public class SimulateInvestComponent extends ComponentML {
         boolean confidence1 = !simConfig.getConfidencetrendincrease() || onerun.trendInc[0] >= simConfig.getConfidencetrendincreaseTimes();
         boolean noconfidence2 = simConfig.getNoconfidencetrenddecrease() && onerun.trendDec[0] >= simConfig.getNoconfidencetrenddecreaseTimes();
         boolean noconfidence = !confidence || !confidence1 || noconfidence2;
+        List<SimulateStock> nextstocks = new ArrayList<>();
         if (!noconfidence) {
-            if (getValueIndexOffset(mydate, simConfig) >= endIndexOffset) {
-                confidenceBuyHoldSell(simConfig, data.stockDates, data.getCatValMap(simConfig.getInterpolate()), onerun.adviser, myExcludes,
-                        aParameter, onerun.mystocks, sells, buys, holdIncrease, mydate);
-            }
+            nextstocks = confidenceBuyHoldSell(simConfig, data.stockDates, data.getCatValMap(simConfig.getInterpolate()), onerun.adviser, myExcludes,
+                    aParameter, onerun.mystocks, sells, buys, holdIncrease, mydate);
         } else {
-            if (getValueIndexOffset(mydate, simConfig) >= endIndexOffset) {
-                noConfidenceHoldSell(onerun.mystocks, holdIncrease, sells, simConfig);
-            }
+            nextstocks = noConfidenceHoldSell(onerun.mystocks, holdIncrease, sells, simConfig);
         }
 
-        addEvent(onerun, sells, "SELL", getBSIndexOffset(mydate, simConfig));
-        addEvent(onerun, buys, "BUY", getBSIndexOffset(mydate, simConfig));
+        sells = addEvent(onerun, sells, "SELL", getBSIndexOffset(mydate, simConfig));
+        buys = addEvent(onerun, buys, "BUY", getBSIndexOffset(mydate, simConfig));
 
-        if (!lastInvest) {
-            doBuySell(simConfig, onerun, results, data, mydate.indexOffset, stockDatesBiMap);
-            if (getValueIndexOffset(mydate, simConfig) >= endIndexOffset) {
+        if (true) {
+            if (getBSIndexOffset(mydate, simConfig) >= endIndexOffset) {
+                doBuySell(simConfig, onerun, results, data, mydate.indexOffset, stockDatesBiMap);
+            }
+            if (true) {
                 List<String> myids = onerun.mystocks.stream().map(SimulateStock::getId).collect(Collectors.toList());            
                 if (myids.size() != onerun.mystocks.size()) {
                     log.error("Sizes");
@@ -1280,57 +1277,60 @@ public class SimulateInvestComponent extends ComponentML {
                 }
             }
 
+        }
+        if (!lastInvest) {
+         
             // in last too?
             // 1
             for (int j = 1; j < simConfig.getInterval(); j++) {
-                doBuySell(simConfig, onerun, results, data, mydate.indexOffset - j, stockDatesBiMap);
-                sells = new ArrayList<>();
-                //System.out.println(interval + " " +  j);
-                if (getValueIndexOffset(mydate, simConfig) - j < endIndexOffset) {
+                if (mydate.indexOffset - j < endIndexOffset) {
                     break;
                 }
+                if (getBSIndexOffset(mydate, simConfig) - j >= endIndexOffset) {
+                    doBuySell(simConfig, onerun, results, data, mydate.indexOffset - j, stockDatesBiMap);
+                }
+                sells = new ArrayList<>();
+                //System.out.println(interval + " " +  j);
                 if (simConfig.getStoploss()) {
                     // TODO delay DELAY
                     stoploss(onerun.mystocks, data.stockDates, getValueIndexOffset(mydate, simConfig) - j, data.getCatValMap(simConfig.getInterpolate()), getValueIndexOffset(mydate, simConfig) - j + 1, sells, simConfig.getStoplossValue(), "STOP", stockDatesBiMap, endIndexOffset);
                 }
-                // todo getdelay
-                boolean lastsell = getBSIndexOffset(mydate, simConfig) - j < endIndexOffset;
-                if (!lastsell) {
-                    addEvent(onerun, sells, "SELL", getBSIndexOffset(mydate, simConfig) - j - extradelay);
-                    //addEvent(onerun, buys, "BUY", mydate.indexOffset - j - simConfig.getDelay() - extradelay);
+
+                sells = addEvent(onerun, sells, "SELL", getBSIndexOffset(mydate, simConfig) - j);
+
+		//addEvent(onerun, buys, "BUY", mydate.indexOffset - j - simConfig.getDelay() - extradelay);
+                if (getBSIndexOffset(mydate, simConfig) - j >= endIndexOffset) {
                     doBuySell(simConfig, onerun, results, data, mydate.indexOffset - j, stockDatesBiMap);
-                    //sell(data.stockDates, data.getCatValMap(simConfig.getInterpolate()), onerun.capital, sells, results.stockhistory, mydate.indexOffset - j - extradelay - simConfig.getDelay(), mydate.date, onerun.mystocks, stockDatesBiMap);
-                } else {
-                    int jj = 0;
                 }
+		//sell(data.stockDates, data.getCatValMap(simConfig.getInterpolate()), onerun.capital, sells, results.stockhistory, mydate.indexOffset - j - extradelay - simConfig.getDelay(), mydate.date, onerun.mystocks, stockDatesBiMap);
                 if (offset == 0 && !sells.isEmpty()) {
-                    boolean last = mydate.indexOffset - j - extradelay == endIndexOffset;
+                    boolean last = mydate.indexOffset - j == endIndexOffset;
                     boolean aLastInvest = offset == 0 && last /*date.isAfter(lastInvestEnd) && j == simConfig.getInterval() - 1*/;
                     if (aLastInvest && isMain) {
                         List<String> ids = onerun.mystocks.stream().map(SimulateStock::getId).collect(Collectors.toList());
                         List<String> sellids = sells.stream().map(SimulateStock::getId).collect(Collectors.toList());
-                        ids.removeAll(sellids);
+                        //ids.removeAll(sellids);
                         param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Stoploss sell: " + sellids + " Stocks: " + ids);
                     } else {
                         int jj = 0;
                     }
                 }
-            }                    
+            }
         } else {
-            if (offset == 0) {
+            if (!evolving && offset == 0) {
                 List<String> ids = onerun.mystocks.stream().map(SimulateStock::getId).collect(Collectors.toList());
                 List<String> buyids = buys.stream().map(SimulateStock::getId).collect(Collectors.toList());
                 List<String> sellids = sells.stream().map(SimulateStock::getId).collect(Collectors.toList());
 
                 if (!noconfidence) {
-                    int buyCnt = simConfig.getStocks() - onerun.mystocks.size();
+                    int buyCnt = simConfig.getStocks() - nextstocks.size();
                     buyCnt = Math.min(buyCnt, buys.size());
-                    ids.addAll(buyids.subList(0, buyCnt));
+                    //ids.addAll(buyids.subList(0, buyCnt));
                     buyids = buyids.subList(0, buyCnt);
                 } else {
                     buyids.clear();
                 }
-                ids.removeAll(sellids);
+                //ids.removeAll(sellids);
                 if (isMain) {
                     param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Buy: " + buyids + " Sell: " + sellids + " Stocks: " + ids);
                 }
@@ -1338,10 +1338,22 @@ public class SimulateInvestComponent extends ComponentML {
         }
     }
 
-    private void addEvent(OneRun onerun, List<SimulateStock> stocks, String bs, int myIndexoffset) {
+    private List<SimulateStock> addEvent(OneRun onerun, List<SimulateStock> stocks, String bs, int myIndexoffset) {
         if (stocks == null || stocks.isEmpty()) {
-            return;
+            return stocks;
         }
+        List<SimulateStock> filterStocks = getFilterStocks(onerun, stocks);
+        if (filterStocks == null || filterStocks.isEmpty()) {
+            return filterStocks;
+        }
+        Map<String, List<SimulateStock>> aBSMap = new HashMap<>();
+        aBSMap.put(bs, filterStocks);
+        Map<String, List<SimulateStock>> bsMap = onerun.eventMap.computeIfAbsent(myIndexoffset, k -> new HashMap<>());
+        bsMap.putAll(aBSMap);
+        return filterStocks;
+    }
+
+    private List<SimulateStock> getFilterStocks(OneRun onerun, List<SimulateStock> stocks) {
         List<SimulateStock> filterStocks = new ArrayList<>();
         for (SimulateStock stock : stocks) {
             boolean found = false;
@@ -1357,13 +1369,7 @@ public class SimulateInvestComponent extends ComponentML {
                 filterStocks.add(stock);
             }
         }
-        if (filterStocks == null || filterStocks.isEmpty()) {
-            return;
-        }
-        Map<String, List<SimulateStock>> aBSMap = new HashMap<>();
-        aBSMap.put(bs, filterStocks);
-        Map<String, List<SimulateStock>> bsMap = onerun.eventMap.computeIfAbsent(myIndexoffset, k -> new HashMap<>());
-        bsMap.putAll(aBSMap);
+        return filterStocks;
     }
 
     private void doBuySell(SimulateInvestConfig simConfig, OneRun onerun, Results results, Data data, int indexOffset,
