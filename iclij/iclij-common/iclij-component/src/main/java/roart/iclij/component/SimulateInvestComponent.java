@@ -1169,7 +1169,7 @@ public class SimulateInvestComponent extends ComponentML {
             String aParameter, int offset, OneRun onerun,
             Results results, Data data, boolean lastInvest,
             Mydate mydate, boolean auto, BiMap<String, LocalDate> stockDatesBiMap, boolean isMain, int endIndexOffset) {
-        if (getBSIndexOffset(mydate, simConfig) >= endIndexOffset) {
+        if (getBSValueIndexOffset(mydate, simConfig) >= endIndexOffset) {
             doBuySell(simConfig, onerun, results, data, mydate.indexOffset, stockDatesBiMap);
         }
         /*
@@ -1221,7 +1221,7 @@ public class SimulateInvestComponent extends ComponentML {
         buys = addEvent(onerun, buys, "BUY", getBSIndexOffset(mydate, simConfig));
 
         if (true) {
-            if (getBSIndexOffset(mydate, simConfig) >= endIndexOffset) {
+            if (getBSValueIndexOffset(mydate, simConfig) >= endIndexOffset) {
                 doBuySell(simConfig, onerun, results, data, mydate.indexOffset, stockDatesBiMap);
             }
             if (true) {
@@ -1286,7 +1286,7 @@ public class SimulateInvestComponent extends ComponentML {
                 if (mydate.indexOffset - j < endIndexOffset) {
                     break;
                 }
-                if (getBSIndexOffset(mydate, simConfig) - j >= endIndexOffset) {
+                if (getBSValueIndexOffset(mydate, simConfig) - j >= endIndexOffset) {
                     doBuySell(simConfig, onerun, results, data, mydate.indexOffset - j, stockDatesBiMap);
                 }
                 sells = new ArrayList<>();
@@ -1299,7 +1299,7 @@ public class SimulateInvestComponent extends ComponentML {
                 sells = addEvent(onerun, sells, "SELL", getBSIndexOffset(mydate, simConfig) - j);
 
 		//addEvent(onerun, buys, "BUY", mydate.indexOffset - j - simConfig.getDelay() - extradelay);
-                if (getBSIndexOffset(mydate, simConfig) - j >= endIndexOffset) {
+                if (getBSValueIndexOffset(mydate, simConfig) - j >= endIndexOffset) {
                     doBuySell(simConfig, onerun, results, data, mydate.indexOffset - j, stockDatesBiMap);
                 }
 		//sell(data.stockDates, data.getCatValMap(simConfig.getInterpolate()), onerun.capital, sells, results.stockhistory, mydate.indexOffset - j - extradelay - simConfig.getDelay(), mydate.date, onerun.mystocks, stockDatesBiMap);
@@ -2323,6 +2323,14 @@ public class SimulateInvestComponent extends ComponentML {
             extradelay = simConfig.getExtradelay();
         }
         return mydate.indexOffset - extradelay - simConfig.getDelay();
+    }
+    
+    private int getBSValueIndexOffset(Mydate mydate, SimulateInvestConfig simConfig) {
+        int extradelay = 0;
+        if (simConfig.getExtradelay() != null) {
+            extradelay = simConfig.getExtradelay();
+        }
+        return mydate.indexOffset - extradelay;
     }
     
     class OneRun {
