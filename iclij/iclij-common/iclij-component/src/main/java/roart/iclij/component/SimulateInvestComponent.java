@@ -655,7 +655,7 @@ public class SimulateInvestComponent extends ComponentML {
             if (evolving) {
                 componentData.setResultMap(resultMap);
             }
-            log.info("time0 {}", System.currentTimeMillis() - time0);
+            log.debug("time0 {}", System.currentTimeMillis() - time0);
         }
 
         Double score = 0.0;
@@ -1043,9 +1043,6 @@ public class SimulateInvestComponent extends ComponentML {
         data.volumeExcludeMap = getVolumeExcludeMap(market, simConfig, data, investStart, investEnd, firstidx, lastidx, false);
         data.volumeExcludeFillMap = getVolumeExcludeMap(market, simConfig, data, investStart, investEnd, firstidx, lastidx, true);
 
-        long time00 = System.currentTimeMillis();
-        log.info("timeee0 {}", System.currentTimeMillis() - time00);
-        
         data.trendMap = getTrendIncDec(market, param, data.stockDates, simConfig.getInterval(), firstidx, lastidx, simConfig, data, false);
         data.trendFillMap = getTrendIncDec(market, param, data.stockDates, simConfig.getInterval(), firstidx, lastidx, simConfig, data, true);
         if (evolving) {
@@ -1053,9 +1050,9 @@ public class SimulateInvestComponent extends ComponentML {
             data.trendStrFillMap = getTrendIncDecStr(market, param, data.stockDates, simConfig.getInterval(), firstidx, lastidx, simConfig, data, true, data.trendFillMap);
         }
         Set<Integer> keys = data.trendMap.keySet();
-        List<Integer> keyl = new ArrayList<>(keys);
-        Collections.sort(keyl);
-        log.info("keyl {}", keyl);
+        List<Integer> keylist = new ArrayList<>(keys);
+        Collections.sort(keylist);
+        log.debug("keylist {}", keylist);
     }
 
     private Map<Integer, List<String>> getVolumeExcludeMap(Market market, SimulateInvestConfig simConfig, Data data, LocalDate investStart,
@@ -1067,7 +1064,7 @@ public class SimulateInvestComponent extends ComponentML {
         if (volumeExcludeMap == null || VERIFYCACHE) {
             long time00 = System.currentTimeMillis();
             newVolumeExcludeMap = getVolumeExcludesFull(simConfig, simConfig.getInterval(), data.getCatValMap(interpolate), data.volumeMap, firstidx, lastidx);
-            log.info("timee0 {}", System.currentTimeMillis() - time00);
+            log.debug("time0 {}", System.currentTimeMillis() - time00);
         }
         verifyVolumeExcludeMap(newVolumeExcludeMap, verifyVolumeExcludeMap);
         if (volumeExcludeMap == null) {
@@ -1481,7 +1478,7 @@ public class SimulateInvestComponent extends ComponentML {
             } catch (Exception e) {
                 log.error(Constants.ERROR, e);
             }
-            log.info("time millis {}", System.currentTimeMillis() - time0);
+            log.debug("time millis {}", System.currentTimeMillis() - time0);
         }
         if (VERIFYCACHE && trendMap != null) {
             for (Entry<Integer, Trend> entry : newTrendMap.entrySet()) {
@@ -1749,11 +1746,11 @@ public class SimulateInvestComponent extends ComponentML {
             }
         }
         Set<Integer> keys = listlist.keySet();
-        List<Integer> keyl = new ArrayList<>(keys);
-        Collections.sort(keyl);
-        log.info("kkkk {}", keyl);
-        for (int key : keyl) {
-            log.info("kkksize {} {}", key, listlist.get(key).size());
+        List<Integer> keylist = new ArrayList<>(keys);
+        Collections.sort(keylist);
+        log.debug("keylist {}", keylist);
+        for (int key : keylist) {
+            log.debug("keylist size {} {}", key, listlist.get(key).size());
         }
         return listlist;
     }
@@ -2120,7 +2117,7 @@ public class SimulateInvestComponent extends ComponentML {
                 }
                 Double valWas = mainList.get(mainList.size() - 1 - prevIndexOffset);
                 if (valWas != null && valNow != null && valNow != 0 && valWas != 0 && valNow / valWas < stoploss) {
-                    log.info("Id etc {} {} {} {} {} {} {}", stop, id, valWas, valNow, dateNowStr, prevIndexOffset, indexOffset);
+                    log.debug("Id etc {} {} {} {} {} {} {}", stop, id, valWas, valNow, dateNowStr, prevIndexOffset, indexOffset);
                     item.setStatus(stop);
                     newSells.add(item);
                 }

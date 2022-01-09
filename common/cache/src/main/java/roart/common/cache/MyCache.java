@@ -90,7 +90,7 @@ public class MyCache {
         }
         log.debug("CacheStats {}", cache.stats());
         String keyHead = key.substring(0, Math.min(80, key.length()));
-        log.info("Cache key {} {}", keyHead, object != null);
+        log.debug("Cache key {} {}", keyHead, object != null);
         return object;
     }
     
