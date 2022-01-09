@@ -817,7 +817,11 @@ public class SimulateInvestComponent extends ComponentML {
         if (simulate == null) {
             return new SimulateInvestConfig();
         }
-        return JsonUtil.copy(simulate);
+        SimulateInvestConfig newSimConfig = new SimulateInvestConfig(simulate);
+        if (!newSimConfig.equals(simulate)) {
+            log.error("Unequal clone");
+        }
+        return newSimConfig;
     }
 
     private void setExclusions(Market market, Data data, SimulateInvestConfig simConfig) {

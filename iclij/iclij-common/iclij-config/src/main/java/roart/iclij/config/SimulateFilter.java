@@ -1,5 +1,6 @@
 package roart.iclij.config;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -31,6 +32,18 @@ public class SimulateFilter {
         this.populationabove = populationabove;
         this.useclusters = useclusters;
         this.printconfig = printconfig;
+    }
+
+    public SimulateFilter(SimulateFilter filter) {
+        super();
+        this.shortrun = filter.shortrun;
+        this.correlation = filter.correlation;
+        this.lucky = filter.lucky;
+        this.stable = filter.stable;
+        this.allabove = filter.allabove;
+        this.populationabove = filter.populationabove;
+        this.useclusters = filter.useclusters;
+        this.printconfig = new HashSet<>(filter.printconfig);
     }
 
     public SimulateFilter() {

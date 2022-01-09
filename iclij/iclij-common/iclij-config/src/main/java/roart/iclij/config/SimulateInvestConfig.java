@@ -1,5 +1,6 @@
 package roart.iclij.config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -97,6 +98,58 @@ public class SimulateInvestConfig {
     
     public SimulateInvestConfig() {
         super();
+    }
+
+    public SimulateInvestConfig(SimulateInvestConfig simulate) {
+        super();
+        this.confidence = simulate.confidence;
+        this.confidenceValue = simulate.confidenceValue;
+        this.confidenceFindTimes = simulate.confidenceFindTimes;
+        this.abovebelow = simulate.abovebelow;
+        this.stoploss = simulate.stoploss;
+        this.stoplossValue = simulate.stoplossValue;
+        this.indicatorPure = simulate.indicatorPure;
+        this.indicatorRebase = simulate.indicatorRebase;
+        this.indicatorReverse = simulate.indicatorReverse;
+        this.mldate = simulate.mldate;
+        this.stocks = simulate.stocks;
+        this.buyweight = simulate.buyweight;
+        this.interval = simulate.interval;
+        this.adviser = simulate.adviser;
+        this.period = simulate.period;
+        if (simulate.excludes != null) {
+            this.excludes = simulate.excludes.clone();
+        }
+        this.startdate = simulate.startdate;
+        this.enddate = simulate.enddate;
+        this.futurecount = simulate.futurecount;
+        this.futuretime = simulate.futuretime;
+        this.intervalStoploss = simulate.intervalStoploss;
+        this.intervalStoplossValue = simulate.intervalStoplossValue;
+        this.interpolate = simulate.interpolate;
+        this.day = simulate.day;
+        this.ga = simulate.ga;
+        this.delay = simulate.delay;
+        this.extradelay = simulate.extradelay;
+        this.intervalwhole = simulate.intervalwhole;
+        this.confidenceholdincrease = simulate.confidenceholdincrease;
+        this.noconfidenceholdincrease = simulate.noconfidenceholdincrease;
+        if (simulate.volumelimits != null) {
+            this.volumelimits = new HashMap<>(simulate.volumelimits);
+        }
+        this.confidencetrendincrease = simulate.confidencetrendincrease;
+        this.confidencetrendincreaseTimes = simulate.confidencetrendincreaseTimes;
+        this.noconfidencetrenddecrease = simulate.noconfidencetrenddecrease;
+        this.noconfidencetrenddecreaseTimes = simulate.noconfidencetrenddecreaseTimes;
+        this.indicatorDirection = simulate.indicatorDirection;
+        this.indicatorDirectionUp = simulate.indicatorDirectionUp;
+        if (simulate.filters != null) {
+            this.filters = new ArrayList<>();
+            for (SimulateFilter filter : simulate.filters) {
+                this.filters.add(new SimulateFilter(filter));
+            }
+        }
+        this.improveFilters = simulate.improveFilters;
     }
 
     public Boolean getConfidence() {
