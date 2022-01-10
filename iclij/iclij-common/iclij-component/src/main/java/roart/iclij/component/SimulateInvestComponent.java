@@ -351,10 +351,11 @@ public class SimulateInvestComponent extends ComponentML {
                 }
                 Results mainResult = new Results();
 
-                mydate.date = TimeUtil.getForwardEqualAfter2(mydate.date, 0 /* findTime */, data.stockDates);
-                String datestring2 = TimeUtil.convertDate2(mydate.date);
-                mydate.indexOffset = data.stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(data.stockDates, datestring2);
-                
+                if (mydate.date != null) {
+                    mydate.date = TimeUtil.getForwardEqualAfter2(mydate.date, 0 /* findTime */, data.stockDates);
+                    String datestring2 = TimeUtil.convertDate2(mydate.date);
+                    mydate.indexOffset = data.stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(data.stockDates, datestring2);
+                }
                 while (mydate.date != null && investEnd != null && mydate.indexOffset >= endIndexOffset) {
                     boolean lastInvest = offset == 0 && mydate.indexOffset == endIndexOffset;
                     /*
