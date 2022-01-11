@@ -166,6 +166,10 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.MISCINMEMORYREDIS);
     }
 
+    public Double getAbnormalChange() {
+        return (Double) getValueOrDefault(IclijConfigConstants.MISCABNORMALCHANGE);
+    }
+
     public double mpServerCpu() {
         return (Double) getValueOrDefault(IclijConfigConstants.MPSERVERCPU);
     }

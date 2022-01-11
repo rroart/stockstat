@@ -150,6 +150,7 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.MISCINMEMORYSERVER, String.class);
         map.put(IclijConfigConstants.MISCINMEMORYHAZELCAST, String.class);
         map.put(IclijConfigConstants.MISCINMEMORYREDIS, String.class);
+        map.put(IclijConfigConstants.MISCABNORMALCHANGE, Double.class);
         map.put(IclijConfigConstants.MPSERVERCPU, Double.class);
         map.put(IclijConfigConstants.MPCLIENTCPU, Double.class);
         map.put(IclijConfigConstants.FINDPROFITAUTORUN, Boolean.class);
@@ -450,6 +451,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.MISCINMEMORYSERVER, Constants.REDIS);
         deflt.put(IclijConfigConstants.MISCINMEMORYHAZELCAST, null);
         deflt.put(IclijConfigConstants.MISCINMEMORYREDIS, "localhost");
+        deflt.put(IclijConfigConstants.MISCABNORMALCHANGE, null);
         deflt.put(IclijConfigConstants.FINDPROFITAUTORUN, Boolean.FALSE);
         deflt.put(IclijConfigConstants.FINDPROFITMLDYNAMIC, Boolean.FALSE);
         deflt.put(IclijConfigConstants.FINDPROFITMLINDICATOR, Boolean.TRUE);
@@ -729,6 +731,7 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.MISCINMEMORYSERVER, "In memory server");
         text.put(IclijConfigConstants.MISCINMEMORYHAZELCAST, "In memory Hazelcast connection");
         text.put(IclijConfigConstants.MISCINMEMORYREDIS, "In memory Redis connection");
+        text.put(IclijConfigConstants.MISCABNORMALCHANGE, "Abnormal change ignore");
         text.put(IclijConfigConstants.MPCLIENTCPU, "Client cpu usage");
         text.put(IclijConfigConstants.FINDPROFITAUTORUN, "Enable find profit autorun");
         text.put(IclijConfigConstants.FINDPROFITMLDYNAMIC, "Do machine learning dynamically if no persistent present");
@@ -1078,6 +1081,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.MISCCACHETTL, new IclijXMLType( Boolean.class, Boolean.TRUE, "Cache TTL"));
         mymap.put(IclijConfigConstants.MPSERVERCPU, new IclijXMLType(Double.class, 0.5, "Server cpu usage"));
         mymap.put(IclijConfigConstants.MPCLIENTCPU, new IclijXMLType(Double.class, 0.5, "Client cpu usage"));
+        mymap.put(IclijConfigConstants.MISCABNORMALCHANGE, new IclijXMLType( Double.class, null, "Abnormal change ignore"));
         mymap.put(IclijConfigConstants.FINDPROFITAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable find profit autorun"));
         mymap.put(IclijConfigConstants.FINDPROFITMLDYNAMIC, new IclijXMLType(Boolean.class, Boolean.FALSE, "Do machine learning dynamically if no persistent present"));
         mymap.put(IclijConfigConstants.FINDPROFITMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable find profit mlindicator"));

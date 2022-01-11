@@ -862,6 +862,10 @@ public class MyMyConfig extends MyConfig {
         return (Integer) getValueOrDefault(ConfigConstants.MISCCACHETTL);
     }
 
+    public Double getAbnormalChange() {
+        return (Double) getValueOrDefault(ConfigConstants.MISCABNORMALCHANGE);
+    }
+
     public String getDbSparkMaster() {
         return (String) getConfigValueMap().get(ConfigConstants.DATABASESPARKSPARKMASTER);
     }

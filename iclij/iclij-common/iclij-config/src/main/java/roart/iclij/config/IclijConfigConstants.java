@@ -120,6 +120,7 @@ public class IclijConfigConstants {
     public static final String MISCINMEMORYSERVER = "misc.inmemory.server";
     public static final String MISCINMEMORYHAZELCAST = "misc.inmemory.hazelcast";
     public static final String MISCINMEMORYREDIS = "misc.inmemory.redis";
+    public static final String MISCABNORMALCHANGE = "misc.abnormalchange";
     public static final String MPSERVERCPU = "mp.server.cpu";
     public static final String MPCLIENTCPU = "mp.client.cpu";
     public static final String FINDPROFIT = "findprofit";

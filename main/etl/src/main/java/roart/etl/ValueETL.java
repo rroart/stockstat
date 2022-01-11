@@ -1,7 +1,9 @@
 package roart.etl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -99,4 +101,38 @@ public class ValueETL {
         return conf.getMaxHoles();
     }
 
+    public static Map<String, Double[][]> abnormalChange(Map<String, Double[][]> listMap, MyMyConfig conf) {
+        Double margin = conf.getAbnormalChange();
+        if (margin == null) {
+            return listMap;
+        }
+        List<String> excluded = new ArrayList<>();
+        Map<String, Double[][]> map = new HashMap<>();
+        for (Entry<String, Double[][]> entry : listMap.entrySet()) {
+            Double[][] resultList = entry.getValue();
+            boolean exclude = false;
+            if (resultList != null && resultList.length > 0) {
+                Double[] mainList = resultList[0];
+                if (mainList != null) {
+                    for (int i = 0; i < mainList.length - 1; i++) {
+                        Double valFuture = mainList[i + 1];
+                        Double valNow = mainList[i];
+                        if (valFuture != null && valNow != null && valFuture != 0.0 && valNow != 0.0) {
+                            if (valNow / valFuture > margin || valFuture / valNow > margin) {
+                                exclude = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!exclude) {
+                map.put(entry.getKey(), entry.getValue());
+            } else {
+                excluded.add(entry.getKey());                
+            }
+        }
+        log.info("Excluded {}", excluded);
+        return Collections.unmodifiableMap(map);
+    }
 }

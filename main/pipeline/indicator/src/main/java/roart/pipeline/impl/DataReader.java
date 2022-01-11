@@ -120,6 +120,7 @@ public class DataReader extends Pipeline {
 
     void calculateOtherListMaps(MyMyConfig conf, int category, MarketData marketData) {
         ValueETL.zeroPrice(this.listMap, category);
+        this.listMap = ValueETL.abnormalChange(this.listMap, conf);
         this.fillListMap = ValueETL.getReverseArrSparseFillHolesArr(conf, listMap);
         this.truncListMap = ArraysUtil.getTruncListArr(this.listMap);
         this.truncFillListMap = ArraysUtil.getTruncListArr(this.fillListMap);

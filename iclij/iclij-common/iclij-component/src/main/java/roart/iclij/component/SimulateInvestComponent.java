@@ -857,14 +857,19 @@ public class SimulateInvestComponent extends ComponentML {
     }
 
     private Set<String> getTrendExclude(Data data, Market market) {
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+        Double margin = instance.getAbnormalChange();
+        if (margin == null) {
+            return new HashSet<>();
+        }
         Set<String> abnormExcludes = null;
-        String key = CacheConstants.SIMULATEINVESTTRENDEXCLUDE + market.getConfig().getMarket() + "_" + data.firstidx + "_" + data.lastidx + "_" + 9.0;
+        String key = CacheConstants.SIMULATEINVESTTRENDEXCLUDE + market.getConfig().getMarket() + "_" + data.firstidx + "_" + data.lastidx + "_" + margin;
         abnormExcludes = (Set<String>) MyCache.getInstance().get(key);
         Set<String> newAbnormExcludes = null;
         if (abnormExcludes == null || VERIFYCACHE) {
             long time0 = System.currentTimeMillis();
             try {
-                newAbnormExcludes = new TrendUtil().getTrend(null, data.stockDates, null, null, data.getCatValMap(false), data.firstidx, data.lastidx, 9.0);
+                newAbnormExcludes = new TrendUtil().getTrend(null, data.stockDates, null, null, data.getCatValMap(false), data.firstidx, data.lastidx, margin);
                 log.info("Abnormal excludes {}", newAbnormExcludes);
             } catch (Exception e) {
                 log.error(Constants.ERROR, e);

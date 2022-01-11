@@ -216,6 +216,7 @@ public class ConfigConstants {
     public static final String MISCINMEMORYSERVER = "misc.inmemory.server";
     public static final String MISCINMEMORYHAZELCAST = "misc.inmemory.hazelcast";
     public static final String MISCINMEMORYREDIS = "misc.inmemory.redis";
+    public static final String MISCABNORMALCHANGE = "misc.abnormalchange";
     public static final String EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG = "evolve.indicatorrecommender.evolutionconfig";
     public static final String EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS = "evolve.indicatorrecommender.complex.futuredays";
     public static final String EVOLVEINDICATORRECOMMENDERCOMPLEXTHRESHOLD = "evolve.indicatorrecommender.complex.threshold";
