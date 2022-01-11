@@ -63,8 +63,8 @@ public class FitnessIclijConfigMap extends Fitness {
         Double score = fitness(profitdata, chromosome);
         IclijConfigMapGene gene = ((IclijConfigMapChromosome) chromosome).getGene();
         param.getUpdateMap().putAll(gene.getMap());
-        log.info("Fit {}", score);
-        log.info("Fit #{} {} {}", this.hashCode(), gene.getMap(), this.toString());
+        log.debug("Fit {}", score);
+        log.debug("Fit #{} {} {}", this.hashCode(), gene.getMap(), this.toString());
         return score != null ? score : 0.0;
     }
 
