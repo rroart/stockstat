@@ -255,8 +255,6 @@ public class SimulateInvestComponent extends ComponentML {
             endIndexOffset = data.stockDates.size() - 1 - data.stockDates.indexOf(investEndStr);
         }
 
-        setExclusions(market, data, simConfig);
-
         boolean intervalwhole;
         if (autoSimConfig != null) {
             intervalwhole = config.getAutoSimulateInvestIntervalwhole();
@@ -284,6 +282,10 @@ public class SimulateInvestComponent extends ComponentML {
 
             investEnd = getAdjustedInvestEnd(extradelay, data, investEnd);
             LocalDate lastInvestEnd = getAdjustedLastInvestEnd(data, investEnd, simConfig.getDelay());
+
+            setDataIdx(data, investStart, lastInvestEnd);
+            
+            setExclusions(market, data, simConfig);
 
             setDataVolumeAndTrend(market, param, simConfig, data, investStart, investEnd, lastInvestEnd, evolving);
 
@@ -844,10 +846,43 @@ public class SimulateInvestComponent extends ComponentML {
         data.configExcludeList = Arrays.asList(excludes);
         Set<String> configExcludeSet = new HashSet<>(data.configExcludeList);
 
+        Set<String> abnormExcludes = getTrendExclude(data, market);
+        
         data.filteredCategoryValueMap = new HashMap<>(data.getCatValMap(false));
         data.filteredCategoryValueMap.keySet().removeAll(configExcludeSet);
+        data.filteredCategoryValueMap.keySet().removeAll(abnormExcludes);
         data.filteredCategoryValueFillMap = new HashMap<>(data.getCatValMap(true));
         data.filteredCategoryValueFillMap.keySet().removeAll(configExcludeSet);
+        data.filteredCategoryValueFillMap.keySet().removeAll(abnormExcludes);
+    }
+
+    private Set<String> getTrendExclude(Data data, Market market) {
+        Set<String> abnormExcludes = null;
+        String key = CacheConstants.SIMULATEINVESTTRENDEXCLUDE + market.getConfig().getMarket() + "_" + data.firstidx + "_" + data.lastidx + "_" + 9.0;
+        abnormExcludes = (Set<String>) MyCache.getInstance().get(key);
+        Set<String> newAbnormExcludes = null;
+        if (abnormExcludes == null || VERIFYCACHE) {
+            long time0 = System.currentTimeMillis();
+            try {
+                newAbnormExcludes = new TrendUtil().getTrend(null, data.stockDates, null, null, data.getCatValMap(false), data.firstidx, data.lastidx, 9.0);
+                log.info("Abnormal excludes {}", newAbnormExcludes);
+            } catch (Exception e) {
+                log.error(Constants.ERROR, e);
+            }
+            log.debug("time millis {}", System.currentTimeMillis() - time0);
+        }
+        if (VERIFYCACHE && abnormExcludes != null) {
+            if (newAbnormExcludes != null && !newAbnormExcludes.equals(abnormExcludes)) {
+                log.error("Difference with cache");
+            }
+        }
+        if (abnormExcludes != null) {
+            return abnormExcludes;
+        }
+        abnormExcludes = newAbnormExcludes;
+        MyCache.getInstance().put(key, abnormExcludes);
+
+        return abnormExcludes;
     }
 
     private Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> getSimConfigs(String market, AutoSimulateInvestConfig autoSimConf, List<SimulateFilter> filter, List<SimulateFilter[]> filters, IclijConfig config) {
@@ -1038,8 +1073,25 @@ public class SimulateInvestComponent extends ComponentML {
     private void setDataVolumeAndTrend(Market market, ComponentData param, SimulateInvestConfig simConfig, Data data,
             LocalDate investStart, LocalDate investEnd, LocalDate lastInvestEnd, boolean evolving) {
         
+        // vol lim w/ adviser?
+        data.volumeExcludeMap = getVolumeExcludeMap(market, simConfig, data, investStart, investEnd, data.firstidx, data.lastidx, false);
+        data.volumeExcludeFillMap = getVolumeExcludeMap(market, simConfig, data, investStart, investEnd, data.firstidx, data.lastidx, true);
+
+        data.trendMap = getTrendIncDec(market, param, data.stockDates, simConfig.getInterval(), data.firstidx, data.lastidx, simConfig, data, false);
+        data.trendFillMap = getTrendIncDec(market, param, data.stockDates, simConfig.getInterval(), data.firstidx, data.lastidx, simConfig, data, true);
+        if (evolving) {
+            data.trendStrMap = getTrendIncDecStr(market, param, data.stockDates, simConfig.getInterval(), data.firstidx, data.lastidx, simConfig, data, false, data.trendMap);
+            data.trendStrFillMap = getTrendIncDecStr(market, param, data.stockDates, simConfig.getInterval(), data.firstidx, data.lastidx, simConfig, data, true, data.trendFillMap);
+        }
+        Set<Integer> keys = data.trendMap.keySet();
+        List<Integer> keylist = new ArrayList<>(keys);
+        Collections.sort(keylist);
+        log.debug("keylist {}", keylist);
+    }
+
+    private void setDataIdx(Data data, LocalDate investStart, LocalDate lastInvestEnd) {
         LocalDate date = investStart;
-        
+
         date = TimeUtil.getEqualBefore(data.stockDates, date);
         if (date == null) {
             try {
@@ -1067,21 +1119,6 @@ public class SimulateInvestComponent extends ComponentML {
         lastidx = data.stockDates.size() - 1 - lastidx;
         data.firstidx = firstidx;
         data.lastidx = lastidx;
-        
-        // vol lim w/ adviser?
-        data.volumeExcludeMap = getVolumeExcludeMap(market, simConfig, data, investStart, investEnd, firstidx, lastidx, false);
-        data.volumeExcludeFillMap = getVolumeExcludeMap(market, simConfig, data, investStart, investEnd, firstidx, lastidx, true);
-
-        data.trendMap = getTrendIncDec(market, param, data.stockDates, simConfig.getInterval(), firstidx, lastidx, simConfig, data, false);
-        data.trendFillMap = getTrendIncDec(market, param, data.stockDates, simConfig.getInterval(), firstidx, lastidx, simConfig, data, true);
-        if (evolving) {
-            data.trendStrMap = getTrendIncDecStr(market, param, data.stockDates, simConfig.getInterval(), firstidx, lastidx, simConfig, data, false, data.trendMap);
-            data.trendStrFillMap = getTrendIncDecStr(market, param, data.stockDates, simConfig.getInterval(), firstidx, lastidx, simConfig, data, true, data.trendFillMap);
-        }
-        Set<Integer> keys = data.trendMap.keySet();
-        List<Integer> keylist = new ArrayList<>(keys);
-        Collections.sort(keylist);
-        log.debug("keylist {}", keylist);
     }
 
     private Map<Integer, List<String>> getVolumeExcludeMap(Market market, SimulateInvestConfig simConfig, Data data, LocalDate investStart,

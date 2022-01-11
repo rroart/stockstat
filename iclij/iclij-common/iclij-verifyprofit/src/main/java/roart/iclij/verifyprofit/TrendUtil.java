@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +76,14 @@ public class TrendUtil {
  
         VerifyProfit verify = new VerifyProfit();
         return verify.getTrend(days, categoryValueMap, stockDates, firstidx, lastidx);
+    }
+
+    public Set<String> getTrend(String date, List<String> stockDates, ComponentData componentData, Market market, Map<String, List<List<Double>>> categoryValueMap, int firstidx, int lastidx, Double margin) {
+        //log.info("Verify compare date {} with {}", oldDate, date);
+        log.debug("Use date {}", date);
+ 
+        VerifyProfit verify = new VerifyProfit();
+        return verify.getTrend(categoryValueMap, stockDates, firstidx, lastidx, margin);
     }
 
 }

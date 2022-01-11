@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.OptionalDouble;
+import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -268,5 +270,42 @@ public class VerifyProfit {
             }
         }
         return trendMap;
+    }
+
+    public Set<String> getTrend(Map<String, List<List<Double>>> categoryValueMap, List<String> stockDates, int firstidx, int lastidx, Double margin) {
+        Set<String> excludes = new HashSet<>();
+        if (margin == null) {
+            return excludes;
+        }
+        int size = stockDates.size();
+        int start = size - 1 - firstidx;
+        int end = size - 1 - lastidx;
+        for (int i = start; i <= end; i++) {
+            int indexOffset = size - 1 - i;
+            for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
+                if (excludes.contains(entry.getKey())) {
+                    continue;
+                }
+                List<List<Double>> resultList = entry.getValue();
+                if (resultList == null || resultList.isEmpty()) {
+                    continue;
+                }
+                List<Double> mainList = resultList.get(0);
+                if (mainList != null) {
+                    ValidateUtil.validateSizes(mainList, stockDates);
+                    if (mainList.size() - 1 - indexOffset - 1 < 0) {
+                        continue;
+                    }
+                    Double valFuture = mainList.get(mainList.size() - 1 - indexOffset);
+                    Double valNow = mainList.get(mainList.size() - 1 - indexOffset - 1);
+                    if (valFuture != null && valNow != null) {
+                        if (valNow / valFuture > margin || valFuture / valNow > margin) {
+                            excludes.add(entry.getKey());
+                        }
+                    }
+                }
+            }
+        }
+        return excludes;
     }
 }
