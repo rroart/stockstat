@@ -2231,6 +2231,7 @@ def simulateinvest(market, startdate = None, enddate = None, confidence = False,
         return
     else:
         print("Capital: ", capital[-1])
+        print("Last stocks: ", updatemap['laststocks'])
     geom = np.geomspace(capital[0], capital[-1],num=len(capital),endpoint=True, dtype=None, axis=0)
     if len(capital) >= 2:
         pearson = scipy.stats.pearsonr(capital, geom)
