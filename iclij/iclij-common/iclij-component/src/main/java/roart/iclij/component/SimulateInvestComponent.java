@@ -224,12 +224,16 @@ public class SimulateInvestComponent extends ComponentML {
 
         //ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters, mlTests);
         String mldate = getMlDate(market, simConfig, data, autoSimConfig);
-        LocalDate investStart = null;
+        int investStartOffset = data.stockDates.size() - 1 - TimeUtil.getIndexEqualBefore(data.stockDates, mldate);
+        String adatestring = data.stockDates.get(data.stockDates.size() - 1 - investStartOffset);
+        LocalDate investStart = stockDatesBiMap.get(adatestring);
+        /*
         try {
             investStart = TimeUtil.convertDate(mldate);
         } catch (ParseException e1) {
             log.error(Constants.EXCEPTION, e1);
         }
+        */
         LocalDate investEnd = param.getFutureDate();
         try {
             String enddate;
@@ -271,6 +275,8 @@ public class SimulateInvestComponent extends ComponentML {
 
         List<Double> scores = new ArrayList<>();
 
+        //LocalDate date = TimeUtil.getEqualBefore(data.stockDates, investStart);
+        //int indexOffset = data.stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(data.stockDates, datestring2);
         // TODO investend and other reset of more params
         Parameters realParameters = parameters;
         if (realParameters == null || realParameters.getThreshold() == 1.0) {
@@ -286,7 +292,13 @@ public class SimulateInvestComponent extends ComponentML {
             for (int offset = 0; offset < end; offset++) {
                 Integer origAdviserId = (Integer) param.getInput().getValuemap().get(IclijConfigConstants.SIMULATEINVESTADVISER);
                 Mydate mydate = new Mydate();
-                getAdjustedDate(data, investStart, offset, mydate);
+                mydate.indexOffset = investStartOffset - offset;
+                if (mydate.indexOffset < 0) {
+                    continue;
+                }
+                String adatestring2 = data.stockDates.get(data.stockDates.size() - 1 - mydate.indexOffset);
+                mydate.date = stockDatesBiMap.get(adatestring2);
+                //getAdjustedDate(data, investStart, offset, mydate);
                 Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> simConfigs;
                 List<SimulateFilter[]> filters = new ArrayList<>();
                 if (autoSimConfig == null) {
@@ -351,12 +363,14 @@ public class SimulateInvestComponent extends ComponentML {
                 }
                 Results mainResult = new Results();
 
+                /*
                 if (mydate.date != null) {
-                    mydate.date = TimeUtil.getForwardEqualAfter2(mydate.date, 0 /* findTime */, data.stockDates);
+                    mydate.date = TimeUtil.getForwardEqualAfter2(mydate.date, 0 , data.stockDates);
                     String datestring2 = TimeUtil.convertDate2(mydate.date);
                     mydate.indexOffset = data.stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(data.stockDates, datestring2);
                 }
-                while (mydate.date != null && investEnd != null && mydate.indexOffset >= endIndexOffset) {
+            */
+                while (mydate.indexOffset >= endIndexOffset) {
                     boolean lastInvest = offset == 0 && mydate.indexOffset == endIndexOffset;
                     /*
                     if (currentSimConfig != null) {
@@ -482,15 +496,9 @@ public class SimulateInvestComponent extends ComponentML {
                     if (mydate.indexOffset - simConfig.getInterval() < 0 * endIndexOffset) {
                         break;
                     }
-                    String adatestring = data.stockDates.get(data.stockDates.size() - 1 - (mydate.indexOffset - simConfig.getInterval()));
-                    try {
-                        mydate.date = TimeUtil.convertDate(adatestring);
-                    } catch (ParseException e) {
-                        log.error(Constants.EXCEPTION, e);
-                    }
-                    mydate.date = TimeUtil.getForwardEqualAfter2(mydate.date, 0 /* findTime */, data.stockDates);
-                    String datestring = TimeUtil.convertDate2(mydate.date);
-                    mydate.indexOffset = data.stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(data.stockDates, datestring);
+                    mydate.indexOffset -= simConfig.getInterval();
+                    String adatestring3 = data.stockDates.get(data.stockDates.size() - 1 - mydate.indexOffset);
+                    mydate.date = stockDatesBiMap.get(adatestring3);
                 }
                 /*
             if (offset == 0) {
@@ -1012,10 +1020,26 @@ public class SimulateInvestComponent extends ComponentML {
         mydate.prevIndexOffset = 0;
     }
 
+    private void getAdjustedDate(Data data, LocalDate investStart, int offset, LocalDate date) {
+        date = investStart;
+
+        date = TimeUtil.getEqualBefore(data.stockDates, date);
+        if (date == null) {
+            try {
+                date = TimeUtil.convertDate(data.stockDates.get(0));
+            } catch (ParseException e) {
+                log.error(Constants.ERROR, e);
+            }
+        }
+        date = TimeUtil.getForwardEqualAfter2(date, offset, data.stockDates);
+        //return data.stockDates.size() - 1 - data.stockDates.indexOf(date)
+    }
+
     private void setDataVolumeAndTrend(Market market, ComponentData param, SimulateInvestConfig simConfig, Data data,
             LocalDate investStart, LocalDate investEnd, LocalDate lastInvestEnd, boolean evolving) {
+        
         LocalDate date = investStart;
-
+        
         date = TimeUtil.getEqualBefore(data.stockDates, date);
         if (date == null) {
             try {
