@@ -188,7 +188,7 @@ public abstract class AbstractIndicator extends Calculatable {
                 result.put(id, calculated);
                 // and continue?
             } else {
-                log.info("nothing for id {}", id);
+                log.debug("nothing for id {}", id);
             }
         }
         return result;
@@ -204,7 +204,7 @@ public abstract class AbstractIndicator extends Calculatable {
             Object[] fields = new Object[fieldSize];
             result.put(id, fields);
             if (momentum == null) {
-                log.info("zero mom for id {}", id);
+                log.debug("zero mom for id {}", id);
             }
             getFieldResult(momentum, fields);
         }
