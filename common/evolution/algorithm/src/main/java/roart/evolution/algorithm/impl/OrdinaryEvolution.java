@@ -56,7 +56,7 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
         //printmap(population.getIndividuals().get(population.size() - 1).getConf().getConfigValueMap());
         
         for (int i = 0; i < getEvolutionConfig().getGenerations(); i++){
-            log.info("Iteration {} of {}", i, getEvolutionConfig().getGenerations());
+            log.debug("Iteration {} of {}", i, getEvolutionConfig().getGenerations());
             population.truncate(Math.min(population.size(), getEvolutionConfig().getSelect()));
            
             List<Individual> children = crossover(getEvolutionConfig().getCrossover(), population.getIndividuals(), useMax, chromosome);
