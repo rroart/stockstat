@@ -220,7 +220,7 @@ public class SimulateInvestComponent extends ComponentML {
         data.categoryValueFillMap = param.getFillCategoryValueMap();
         data.categoryValueMap = param.getCategoryValueMap();
         data.volumeMap = param.getVolumeMap();
-        BiMap<String, LocalDate> stockDatesBiMap = getStockDatesBiMap(config, data.stockDates);
+        BiMap<String, LocalDate> stockDatesBiMap = getStockDatesBiMap(market.getConfig().getMarket(), data.stockDates);
 
         //ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters, mlTests);
         String mldate = getMlDate(market, simConfig, data, autoSimConfig);
@@ -1455,8 +1455,8 @@ public class SimulateInvestComponent extends ComponentML {
         }
     }
 
-    private BiMap<String, LocalDate> getStockDatesBiMap(IclijConfig config, List<String> stockDates) {
-        String key = CacheConstants.DATESMAP + config.getMarket(); // + config.getDate();
+    private BiMap<String, LocalDate> getStockDatesBiMap(String market, List<String> stockDates) {
+        String key = CacheConstants.DATESMAP + market; // + config.getDate();
         BiMap<String, LocalDate> list =  (BiMap<String, LocalDate>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
