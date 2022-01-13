@@ -327,7 +327,7 @@ public abstract class IndicatorAdviser extends Adviser {
         if (valueMap == null || VERIFYCACHE) {
             long time0 = System.currentTimeMillis();
             newValueMap = getValuePairs(categoryValueMap, stockDates, new ArrayList<>(), firstidx, lastidx);
-            log.info("time millis {}", System.currentTimeMillis() - time0);
+            log.debug("time millis {}", System.currentTimeMillis() - time0);
         }
         if (VERIFYCACHE && valueMap != null) {
             for (Entry<Integer, List<Pair<String, Double>>> entry : newValueMap.entrySet()) {
