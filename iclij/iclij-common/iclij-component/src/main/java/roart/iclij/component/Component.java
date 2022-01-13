@@ -139,16 +139,7 @@ public abstract class Component {
         	}
         	if (IclijConstants.EVOLVE.equals(action.getName())) {
         		Map<String, Object> confMap = getValueMap(action, IclijConstants.FINDPROFIT, market, param, subcomponent, mlmarket, parameters);
-            	if (confMap.containsKey(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST)) {
-            		//Extra[] extras = JsonUtil.convert((String)confMap.get(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST), Extra[].class);
-            		//confMap.put(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST, extras);
-            		if (!(confMap.get(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST) instanceof String)) {
-            			String extras = JsonUtil.convert(confMap.get(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST));
-            			confMap.put(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST, extras);
-            		} else {
-            			int jj = 0;
-            		}
-            	}
+            	fixJsonList(confMap);
             	valueMap.putAll(confMap);        		
         	}
         	if (IclijConstants.IMPROVEPROFIT.equals(action.getName())) {
@@ -173,7 +164,8 @@ public abstract class Component {
         valueMap.putAll(evolveMap);
         valueMap.putAll(aMap);
         if (action.doHandleMLMeta()) {
-        handleMLMetaCommon(param, valueMap);
+        	fixJsonList(valueMap);
+        	handleMLMetaCommon(param, valueMap);
         }
         try {
         	if (IclijConstants.MACHINELEARNING.equals(action.getName())) {
@@ -189,6 +181,19 @@ public abstract class Component {
         	log.error(Constants.EXCEPTION, e);
         }
     }
+
+	private void fixJsonList(Map<String, Object> confMap) {
+		if (confMap.containsKey(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST)) {
+			//Extra[] extras = JsonUtil.convert((String)confMap.get(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST), Extra[].class);
+			//confMap.put(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST, extras);
+			if (!(confMap.get(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST) instanceof String)) {
+				String extras = JsonUtil.convert(confMap.get(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST));
+				confMap.put(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST, extras);
+			} else {
+				int jj = 0;
+			}
+		}
+	}
 
 	private Map<String, Object> getValueMap(MarketActionData action, String actionName, Market market, ComponentData param,
 			String subcomponent, String mlmarket, Parameters parameters) {
