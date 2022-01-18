@@ -252,7 +252,8 @@ public class SimulateInvestComponent extends ComponentML {
         int endIndexOffset = 0;
         if (investEnd != null) {
             String investEndStr = TimeUtil.convertDate2(investEnd);
-            endIndexOffset = data.stockDates.size() - 1 - data.stockDates.indexOf(investEndStr);
+            int investEndIndex = TimeUtil.getIndexEqualBefore(data.stockDates, investEndStr);
+            endIndexOffset = data.stockDates.size() - 1 - investEndIndex;
         }
 
         boolean intervalwhole;
@@ -2241,7 +2242,7 @@ public class SimulateInvestComponent extends ComponentML {
                     mystocks.add(astock);
                     totalamount += amount;
                 } else {
-                    log.error("Not found");
+                    log.error("Not found {}", id);
                 }
             }
         }
