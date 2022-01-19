@@ -58,6 +58,10 @@ public class VerifyProfit {
             return;
         }
         int indexoffsetLast = stockDates.indexOf(TimeUtil.convertDate2(date));
+        // not found
+        if (indexoffsetLast < 0) {
+            return;
+        }
         for (IncDecItem item : list) {
             String id = item.getId();
             List<List<Double>> resultList = categoryValueMap.get(id);
@@ -66,6 +70,10 @@ public class VerifyProfit {
             }
             String aDate = TimeUtil.convertDate2(item.getDate());
             int itemdateoffset = stockDates.indexOf(aDate);
+            // not found
+            if (itemdateoffset < 0) {
+                continue;
+            }
             int indexoffset = indexoffsetLast - itemdateoffset;
             startoffset = 0;
             List<Double> mainList = resultList.get(0);
