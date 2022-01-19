@@ -94,7 +94,12 @@ public abstract class ComponentNoML extends Component {
 
     @Override
     public EvolutionConfig getEvolutionConfig(ComponentData componentdata, EvolutionConfig actionEvolutionConfig) {
-        return null;
+        String confStr = componentdata.getInput().getConfig().getEvolveIndicatorrecommenderEvolutionConfig();
+        EvolutionConfig evolveConfig = JsonUtil.convert(confStr, EvolutionConfig.class);
+        EvolutionConfig localEvolveConfig = JsonUtil.convert(getConfig().getLocalEvolutionConfig(componentdata.getInput().getConfig()), EvolutionConfig.class);
+        evolveConfig.merge(actionEvolutionConfig);
+        evolveConfig.merge(localEvolveConfig);
+        return evolveConfig;
     }
 
     @Override
