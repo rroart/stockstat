@@ -736,7 +736,7 @@ public class SimulateInvestComponent extends ComponentML {
             if (firstidx < 0) {
                 firstidx = 0;
             }
-            score = null;
+            score = 0.0;
             if (aResult.plotCapital.size() > 0) {
                 score = aResult.plotCapital.get(aResult.plotCapital.size() - 1) - aResult.plotCapital.get(firstidx);
                 score = score / (aResult.plotCapital.size() - firstidx);
@@ -1323,6 +1323,7 @@ public class SimulateInvestComponent extends ComponentML {
                         results.plotCapital.add(sum.amount + onerun.capital.amount);
                     } else {
                         results.plotDates.add(historydatestring);                        
+                        results.plotCapital.add(sum.amount + onerun.capital.amount);
                     }
                 } else {
                     results.plotDates.add(historydatestring);
