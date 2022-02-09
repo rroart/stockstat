@@ -2053,7 +2053,12 @@ public class SimulateInvestComponent extends ComponentML {
     private Capital getSum(List<SimulateStock> mystocks) {
         Capital sum = new Capital();
         for (SimulateStock astock : mystocks) {
-            sum.amount += astock.getCount() * astock.getPrice();
+            double price = astock.getPrice();
+            if (price == 0.0) {
+                // TODO maybe run more update, after each doBuySell
+                price = astock.getBuyprice();
+            }
+            sum.amount += astock.getCount() * price;
         }
         return sum;
     }
