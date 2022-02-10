@@ -848,6 +848,7 @@ public class SimulateInvestComponent extends ComponentML {
         Set<String> configExcludeSet = new HashSet<>(data.configExcludeList);
 
         Set<String> abnormExcludes = getTrendExclude(data, market);
+        data.abnormExcludes = abnormExcludes;
         
         data.filteredCategoryValueMap = new HashMap<>(data.getCatValMap(false));
         data.filteredCategoryValueMap.keySet().removeAll(configExcludeSet);
@@ -1253,7 +1254,7 @@ public class SimulateInvestComponent extends ComponentML {
         Trend trend = getTrendIncDec(data.stockDates, onerun.trendInc, onerun.trendDec, getValueIndexOffset(mydate, simConfig), data.getTrendMap(false /*simConfig.getInterpolate()*/));
         // get recommendations
 
-        List<String> myExcludes = getExclusions(simConfig, data.stockDates, data.configExcludeList, getValueIndexOffset(mydate, simConfig), data.getVolumeExcludeMap(simConfig.getInterpolate()));
+        List<String> myExcludes = getExclusions(simConfig, data.stockDates, data.configExcludeList, data.abnormExcludes, getValueIndexOffset(mydate, simConfig), data.getVolumeExcludeMap(simConfig.getInterpolate()));
 
         double myavg = increase(onerun.mystocks, getValueIndexOffset(mydate, simConfig), data.getCatValMap(simConfig.getInterpolate()), mydate.prevIndexOffset + extradelay, endIndexOffset);
 
@@ -1491,7 +1492,7 @@ public class SimulateInvestComponent extends ComponentML {
     }
 
     private List<String> getExclusions(SimulateInvestConfig simConfig, List<String> stockDates, List<String> configExcludeList,
-            int indexOffset, Map<Integer, List<String>> newVolumeMap) {
+            Set<String> abnormExcludes, int indexOffset, Map<Integer, List<String>> newVolumeMap) {
         List<String> myExcludes = new ArrayList<>();
         List<String> volumeExcludes = new ArrayList<>();
         /*
@@ -1503,6 +1504,7 @@ public class SimulateInvestComponent extends ComponentML {
         //log.info("timed0 {}", System.currentTimeMillis() - time0);        
         
         myExcludes.addAll(configExcludeList);
+        myExcludes.addAll(abnormExcludes);
         myExcludes.addAll(volumeExcludes);
         return myExcludes;
     }
@@ -2445,6 +2447,7 @@ public class SimulateInvestComponent extends ComponentML {
         Map<Integer, List<String>> volumeExcludeMap;
         Map<Integer, List<String>> volumeExcludeFillMap;
         List<String> configExcludeList;
+        Set<String> abnormExcludes;
         Map<String, List<List<Object>>> volumeMap;
         Map<Integer, Trend> trendMap;
         Map<Integer, Trend> trendFillMap;
