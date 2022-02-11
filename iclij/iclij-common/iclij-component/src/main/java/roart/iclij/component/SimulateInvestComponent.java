@@ -455,7 +455,7 @@ public class SimulateInvestComponent extends ComponentML {
                                 //newSimTriplets = newSimTriplets.subList(0, Math.min(MAXARR, simTriplets.size()));
                             }
                             List<Double> alist = simTriplets.stream().map(o -> (o.getMiddle().capital.amount + getSum(o.getMiddle().mystocks).amount)).collect(Collectors.toList());
-                            log.info("alist {}", alist);
+                            log.debug("alist {}", alist);
                             double autolimit = autoSimConfig.getDellimit();
                             simTriplets = simTriplets.stream().filter(o -> (o.getMiddle().capital.amount + getSum(o.getMiddle().mystocks).amount) > autolimit).collect(Collectors.toList());
                         }
@@ -463,7 +463,7 @@ public class SimulateInvestComponent extends ComponentML {
                     }
                     if (autoSimConfig != null && !simTriplets.isEmpty()) {
                         List<Double> alist = simTriplets.stream().map(o -> (o.getMiddle().autoscore)).collect(Collectors.toList());
-                        log.info("alist {}", alist);
+                        log.debug("alist {}", alist);
                         OneRun oneRun = simTriplets.get(0).getMiddle();
                         if (oneRun.runs > 1 && ((oneRun.autoscore != null && oneRun.autoscore > autoSimConfig.getAutoscorelimit()) || (autoSimConfig.getKeepAdviser() && currentOneRun.autoscore != null && currentOneRun.autoscore > autoSimConfig.getKeepAdviserLimit()))) {
                             if (autoSimConfig.getVote() != null && autoSimConfig.getVote()) {
