@@ -2253,7 +2253,7 @@ public class SimulateInvestComponent extends ComponentML {
                     mystocks.add(astock);
                     totalamount += amount;
                 } else {
-                    log.error("Not found {}", id);
+                    log.debug("Not found {}", id);
                 }
             }
         }
