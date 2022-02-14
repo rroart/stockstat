@@ -179,4 +179,10 @@ public class ArraysUtilTest {
         double[] res3 = ArraysUtil.makeFixed(array1, 0, 0, 7);
         System.out.println(Arrays.asList(res3));
     }
+    
+    @Test
+    public void nonnull() {
+        List<Double> list = Arrays.asList(new Double[] { 2.0, null, 3.0 });
+        assertEquals(2, new ArraysUtil().getNonNullListNew(list).size());
+    }
 }
