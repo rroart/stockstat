@@ -8,6 +8,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -233,6 +234,13 @@ public class TimeUtil {
             return false;
         }
         return true;
+    }
+
+    public static boolean isWeekday(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return (!(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ||
+                calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY));
     }
 
 }
