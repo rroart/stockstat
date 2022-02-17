@@ -26,4 +26,19 @@ public class VerifyProfitTest {
         excluded = new VerifyProfit().getTrend(categoryValueMap, stockDates, firstidx, lastidx, margin);
         assertEquals(1, excluded.size());
     }
+    
+    @Test
+    public void testWithHoles() {
+        TestData testData = new TestData();
+        Map<String, List<List<Double>>> categoryValueMap = testData.getAbnormWithHolesCatValMap();
+        List<String> stockDates = testData.getStockDates(LocalDate.now(), 4, false);
+        int firstidx = 3; 
+        int lastidx = 0; 
+        Double margin = 9.0;
+        Set<String> excluded = new VerifyProfit().getTrend(categoryValueMap, stockDates, firstidx, lastidx, margin);
+        assertEquals(1, excluded.size());
+        margin = 0.0;
+        excluded = new VerifyProfit().getTrend(categoryValueMap, stockDates, firstidx, lastidx, margin);
+        assertEquals(1, excluded.size());
+    }
 }
