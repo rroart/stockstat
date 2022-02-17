@@ -16,7 +16,16 @@ public class TestData {
         List<Double> l = Arrays.asList(new Double[] { 1.0, 10.0, 1.0 } );
         List<List<Double>> l2 = new ArrayList<>();
         l2.add(l);
-        map.put("", l2);
+        map.put("1", l2);
+        return map;
+    }
+    
+    public Map<String, List<List<Double>>> getAbnormWithHolesCatValMap() {
+        Map<String, List<List<Double>>> map = new HashMap<>();
+        List<Double> l = Arrays.asList(new Double[] { 1.0, null, 10.0, 1.0 } );
+        List<List<Double>> l2 = new ArrayList<>();
+        l2.add(l);
+        map.put("1", l2);
         return map;
     }
     
