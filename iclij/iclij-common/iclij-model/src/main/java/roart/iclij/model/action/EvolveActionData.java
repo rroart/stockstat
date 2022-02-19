@@ -127,7 +127,7 @@ public class EvolveActionData extends MarketActionData {
         Double score = null;
         String description = null;
         List<Object> scoreList = ((List<Object>) scoreMap.get("scores"));
-        log.info("scorelist" + scoreList);
+        log.info("scorelist {}", scoreList);
         if (scoreList != null) {
         	score = scoreList
         			.stream()
