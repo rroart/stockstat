@@ -2431,6 +2431,8 @@ conn = psycopg2.connect("host=localhost dbname=stockstat user=stockread password
 
 LUCKY=[ { 'lucky' : 0.0, 'stable' : 0.0, 'correlation' : 0.0 } ] * 10
 ZERO=[ { 'lucky' : 0.0, 'stable' : 0.0 } ] * 10
+CORR07=[ { 'lucky' : 0.0, 'stable' : 0.0, 'correlation' : 0.7 } ] * 10
+CORR08=[ { 'lucky' : 0.0, 'stable' : 0.0, 'correlation' : 0.8 } ] * 10
 
 def autosimulateinvestsG(market, startdate = None, enddate = None, i = 1, p = 0, l = 5, d = 0.5, s = 1.0, a = 0, iw = False, f = None, vl = None, v = False, ka = False, kal = 0.0):
     mp.Process(target=autosimulateinvest2Gwrap, args=(market, startdate, enddate, i, p, l, d, s, a, iw, f, vl, v, ka, kal)).start()
