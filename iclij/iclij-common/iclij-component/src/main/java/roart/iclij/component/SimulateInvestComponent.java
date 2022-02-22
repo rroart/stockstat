@@ -1320,7 +1320,7 @@ public class SimulateInvestComponent extends ComponentML {
                 List<String> ids = onerun.mystocks.stream().map(SimulateStock::getId).collect(Collectors.toList());
                 if (!evolving) {
                     if (offset == 0) {
-                        String adv = auto ? " Adv" + simConfig.getAdviser() : "";
+                        String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() : "";
                         results.sumHistory.add(historydatestring + " " + onerun.capital.toString() + " " + sum.toString() + " " + new MathUtil().round(onerun.resultavg, 2) + " " + hasNoConf + " " + ids + " " + trend + adv);
                         results.plotDates.add(historydatestring);
                         results.plotDefault.add(onerun.resultavg);
@@ -1384,7 +1384,9 @@ public class SimulateInvestComponent extends ComponentML {
                         List<String> ids = onerun.mystocks.stream().map(SimulateStock::getId).collect(Collectors.toList());
                         List<String> sellids = sells.stream().map(SimulateStock::getId).collect(Collectors.toList());
                         //ids.removeAll(sellids);
-                        param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Stoploss sell: " + sellids + " Stocks: " + ids);
+                        // TODO new portofolio?
+                        String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() : "";
+                        param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Stoploss sell: " + sellids + " Stocks: " + ids + adv);
                     } else {
                         int jj = 0;
                     }
@@ -1406,7 +1408,8 @@ public class SimulateInvestComponent extends ComponentML {
                 }
                 //ids.removeAll(sellids);
                 if (isMain) {
-                    param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Buy: " + buyids + " Sell: " + sellids + " Stocks: " + ids);
+                    String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() : "";
+                    param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Buy: " + buyids + " Sell: " + sellids + " Stocks: " + ids + adv);
                 }
             }
         }
