@@ -1745,7 +1745,7 @@ public class SimulateInvestComponent extends ComponentML {
         return currency;
     }
 
-    private Map<Integer, List<String>> getVolumeExcludesFull(SimulateInvestConfig simConfig, int interval, Map<String, List<List<Double>>> categoryValueMap,
+    Map<Integer, List<String>> getVolumeExcludesFull(SimulateInvestConfig simConfig, int interval, Map<String, List<List<Double>>> categoryValueMap,
             Map<String, List<List<Object>>> volumeMap, int firstidx, int lastidx) {
         Map<Integer, List<String>> listlist = new HashMap<>(); 
         if (simConfig.getVolumelimits() != null) {
