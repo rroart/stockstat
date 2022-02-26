@@ -182,7 +182,11 @@ public class SimulateInvestComponent extends ComponentML {
             simConfig.setStartdate(autoSimConfig.getStartdate());
             simConfig.setEnddate(autoSimConfig.getEnddate());
             simConfig.setInterval(autoSimConfig.getInterval());
-            simConfig.setVolumelimits(autoSimConfig.getVolumelimits());
+            if (autoSimConfig.getVolumelimits() != null) {
+                simConfig.setVolumelimits(autoSimConfig.getVolumelimits());
+            } else {
+                autoSimConfig.setVolumelimits(simConfig.getVolumelimits());                
+            }
         }
         int extradelay = 0;
         if (simConfig.getExtradelay() != null) {
