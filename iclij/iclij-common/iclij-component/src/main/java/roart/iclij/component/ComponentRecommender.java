@@ -119,9 +119,11 @@ public class ComponentRecommender extends ComponentNoML {
 
         if (!evolve) {
         Map<String, Object> resultMap = param.getResultMap();
+        if (resultMap != null) {
         Map<String, Object> resultMap2 = (Map<String, Object>) resultMap.get(PipelineConstants.RESULT);
         Map<String, List<Double>> recommendBuySell = (Map<String, List<Double>>) resultMap2.get(RecommendConstants.COMPLEX);
         param.setRecommendBuySell(recommendBuySell);
+        }
         }
         
         //handleEvolve(null, null, null, null, instance.wantEvolveRecommender(), param);

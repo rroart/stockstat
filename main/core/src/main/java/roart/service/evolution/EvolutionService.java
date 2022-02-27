@@ -194,9 +194,12 @@ public class EvolutionService {
                 }
                 if (i == 0) {
                     List<Double> scorelist2 = new ArrayList<>();
-                    scorelist2.add(fittestIndividual.getFitness());
-                    scoreMap.put("score", fittestIndividual.getFitness());
-                    scoreMap.put("scores", scorelist2);            
+                    Double fitness = fittestIndividual.getFitness();
+                    if (!fitness.isNaN()) {
+                        scorelist2.add(fitness);                    
+                        scoreMap.put("score", fitness);
+                        scoreMap.put("scores", scorelist2);            
+                    }
                 }
             }
         }

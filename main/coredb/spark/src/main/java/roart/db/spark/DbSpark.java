@@ -7,9 +7,7 @@ import roart.common.util.ArraysUtil;
 import roart.model.StockItem;
 import roart.pipeline.common.Calculatable;
 import roart.spark.SparkSessionUtil;
-import scala.Tuple2;
-import scala.collection.JavaConversions;
-import scala.collection.mutable.WrappedArray;
+import scala.collection.mutable.ArraySeq;
 
 import java.util.Map;
 import java.util.Properties;
@@ -166,7 +164,7 @@ public class DbSpark {
 
         Dataset<Row> df = spark.createDataFrame(rowList, schema);
         //df.show();
-        Map<String, Object[]> m = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate((Double[][])((WrappedArray)x.getAs("values")).array())));
+        Map<String, Object[]> m = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate((Double[][])((ArraySeq)x.getAs("values")).array())));
         //System.out.println("m size " + m.size());
         log.info("time calc " + (System.currentTimeMillis() - time0));
         return m;
@@ -196,7 +194,7 @@ public class DbSpark {
 
         Dataset<Row> df = spark.createDataFrame(rowList, schema);
         //df.show();
-        Map<String, Object[]> objMap = null; //df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate((Double[])((WrappedArray)x.getAs("values")).array())));
+        Map<String, Object[]> objMap = null; //df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate((Double[])((ArraySeq)x.getAs("values")).array())));
         //System.out.println("m size " + m.size());
         log.info("time calc " + (System.currentTimeMillis() - time0));
         return objMap;
@@ -238,7 +236,7 @@ public class DbSpark {
 
         Dataset<Row> df = spark.createDataFrame(rowList, schema);
         //df.show();
-        Map<String, Object[]> objMap = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate((scala.collection.Seq[])((WrappedArray)x.getAs("values")).array())));
+        Map<String, Object[]> objMap = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate((scala.collection.Seq[])((ArraySeq)x.getAs("values")).array())));
         //System.out.println("m size " + m.size());
         log.info("time calc " + (System.currentTimeMillis() - time0));
         return objMap;

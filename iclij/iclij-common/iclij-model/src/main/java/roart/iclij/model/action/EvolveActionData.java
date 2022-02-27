@@ -127,6 +127,7 @@ public class EvolveActionData extends MarketActionData {
         Double score = null;
         String description = null;
         List<Object> scoreList = ((List<Object>) scoreMap.get("scores"));
+        log.info("scorelist {}", scoreList);
         if (scoreList != null) {
         	score = scoreList
         			.stream()
@@ -143,4 +144,8 @@ public class EvolveActionData extends MarketActionData {
         }
         return new Object[] { score, description };
     }
+    /*
+     * java.lang.ClassCastException: class java.lang.String cannot be cast to class java.lang.Double (java.lang.String and java.lang.Double are in module java.base of loader 'bootstrap')
+
+     */
 }

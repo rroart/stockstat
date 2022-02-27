@@ -182,7 +182,11 @@ public class SimulateInvestComponent extends ComponentML {
             simConfig.setStartdate(autoSimConfig.getStartdate());
             simConfig.setEnddate(autoSimConfig.getEnddate());
             simConfig.setInterval(autoSimConfig.getInterval());
-            simConfig.setVolumelimits(autoSimConfig.getVolumelimits());
+            if (autoSimConfig.getVolumelimits() != null) {
+                simConfig.setVolumelimits(autoSimConfig.getVolumelimits());
+            } else {
+                autoSimConfig.setVolumelimits(simConfig.getVolumelimits());                
+            }
         }
         int extradelay = 0;
         if (simConfig.getExtradelay() != null) {
@@ -455,7 +459,7 @@ public class SimulateInvestComponent extends ComponentML {
                                 //newSimTriplets = newSimTriplets.subList(0, Math.min(MAXARR, simTriplets.size()));
                             }
                             List<Double> alist = simTriplets.stream().map(o -> (o.getMiddle().capital.amount + getSum(o.getMiddle().mystocks).amount)).collect(Collectors.toList());
-                            log.info("alist {}", alist);
+                            log.debug("alist {}", alist);
                             double autolimit = autoSimConfig.getDellimit();
                             simTriplets = simTriplets.stream().filter(o -> (o.getMiddle().capital.amount + getSum(o.getMiddle().mystocks).amount) > autolimit).collect(Collectors.toList());
                         }
@@ -463,7 +467,7 @@ public class SimulateInvestComponent extends ComponentML {
                     }
                     if (autoSimConfig != null && !simTriplets.isEmpty()) {
                         List<Double> alist = simTriplets.stream().map(o -> (o.getMiddle().autoscore)).collect(Collectors.toList());
-                        log.info("alist {}", alist);
+                        log.debug("alist {}", alist);
                         OneRun oneRun = simTriplets.get(0).getMiddle();
                         if (oneRun.runs > 1 && ((oneRun.autoscore != null && oneRun.autoscore > autoSimConfig.getAutoscorelimit()) || (autoSimConfig.getKeepAdviser() && currentOneRun.autoscore != null && currentOneRun.autoscore > autoSimConfig.getKeepAdviserLimit()))) {
                             if (autoSimConfig.getVote() != null && autoSimConfig.getVote()) {
@@ -713,7 +717,8 @@ public class SimulateInvestComponent extends ComponentML {
             score = (sum.amount - 1) / aOneRun.runs;
             if (aResult.plotCapital.size() > 0) {
                 if (numlast == 0) {
-                    if (score != ((aResult.plotCapital.get(aResult.plotCapital.size() - 1) - 1)/ aResult.plotCapital.size())) {
+                    score = (aResult.plotCapital.get(aResult.plotCapital.size() - 1) - 1)/ aResult.plotCapital.size();
+                    if (autoSimConfig.getInterval() == 1 && score != ((aResult.plotCapital.get(aResult.plotCapital.size() - 1) - 1)/ aResult.plotCapital.size())) {
                         System.out.println("sc " + score + " " + aOneRun.runs);
                         System.out.println("" + aResult.plotCapital.get(aResult.plotCapital.size() - 1));
                         System.out.println("" + aResult.plotCapital.size());
@@ -727,16 +732,18 @@ public class SimulateInvestComponent extends ComponentML {
                 }
                 double newscore = aResult.plotCapital.get(aResult.plotCapital.size() - 1) - aResult.plotCapital.get(firstidx);
                 newscore = newscore / (aResult.plotCapital.size() - firstidx);
-                if (Math.abs(newscore - score) > 0.00000000001 ) {
+                if (autoSimConfig.getInterval() == 1 && Math.abs(newscore - score) > 0.00000000001 ) {
                     System.out.println("ERRERR");                    
                 }
-            }             
+            } else {
+                int jj = 0;
+            }
         } else {
             int firstidx = aResult.plotCapital.size() - 1 - numlast;
             if (firstidx < 0) {
                 firstidx = 0;
             }
-            score = null;
+            score = 0.0;
             if (aResult.plotCapital.size() > 0) {
                 score = aResult.plotCapital.get(aResult.plotCapital.size() - 1) - aResult.plotCapital.get(firstidx);
                 score = score / (aResult.plotCapital.size() - firstidx);
@@ -848,6 +855,7 @@ public class SimulateInvestComponent extends ComponentML {
         Set<String> configExcludeSet = new HashSet<>(data.configExcludeList);
 
         Set<String> abnormExcludes = getTrendExclude(data, market);
+        data.abnormExcludes = abnormExcludes;
         
         data.filteredCategoryValueMap = new HashMap<>(data.getCatValMap(false));
         data.filteredCategoryValueMap.keySet().removeAll(configExcludeSet);
@@ -1253,7 +1261,7 @@ public class SimulateInvestComponent extends ComponentML {
         Trend trend = getTrendIncDec(data.stockDates, onerun.trendInc, onerun.trendDec, getValueIndexOffset(mydate, simConfig), data.getTrendMap(false /*simConfig.getInterpolate()*/));
         // get recommendations
 
-        List<String> myExcludes = getExclusions(simConfig, data.stockDates, data.configExcludeList, getValueIndexOffset(mydate, simConfig), data.getVolumeExcludeMap(simConfig.getInterpolate()));
+        List<String> myExcludes = getExclusions(simConfig, data.stockDates, data.configExcludeList, data.abnormExcludes, getValueIndexOffset(mydate, simConfig), data.getVolumeExcludeMap(simConfig.getInterpolate()));
 
         double myavg = increase(onerun.mystocks, getValueIndexOffset(mydate, simConfig), data.getCatValMap(simConfig.getInterpolate()), mydate.prevIndexOffset + extradelay, endIndexOffset);
 
@@ -1316,13 +1324,14 @@ public class SimulateInvestComponent extends ComponentML {
                 List<String> ids = onerun.mystocks.stream().map(SimulateStock::getId).collect(Collectors.toList());
                 if (!evolving) {
                     if (offset == 0) {
-                        String adv = auto ? " Adv" + simConfig.getAdviser() : "";
+                        String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() : "";
                         results.sumHistory.add(historydatestring + " " + onerun.capital.toString() + " " + sum.toString() + " " + new MathUtil().round(onerun.resultavg, 2) + " " + hasNoConf + " " + ids + " " + trend + adv);
                         results.plotDates.add(historydatestring);
                         results.plotDefault.add(onerun.resultavg);
                         results.plotCapital.add(sum.amount + onerun.capital.amount);
                     } else {
                         results.plotDates.add(historydatestring);                        
+                        results.plotCapital.add(sum.amount + onerun.capital.amount);
                     }
                 } else {
                     results.plotDates.add(historydatestring);
@@ -1379,7 +1388,9 @@ public class SimulateInvestComponent extends ComponentML {
                         List<String> ids = onerun.mystocks.stream().map(SimulateStock::getId).collect(Collectors.toList());
                         List<String> sellids = sells.stream().map(SimulateStock::getId).collect(Collectors.toList());
                         //ids.removeAll(sellids);
-                        param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Stoploss sell: " + sellids + " Stocks: " + ids);
+                        // TODO new portofolio?
+                        String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() : "";
+                        param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Stoploss sell: " + sellids + " Stocks: " + ids + adv);
                     } else {
                         int jj = 0;
                     }
@@ -1401,7 +1412,8 @@ public class SimulateInvestComponent extends ComponentML {
                 }
                 //ids.removeAll(sellids);
                 if (isMain) {
-                    param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Buy: " + buyids + " Sell: " + sellids + " Stocks: " + ids);
+                    String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() : "";
+                    param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Buy: " + buyids + " Sell: " + sellids + " Stocks: " + ids + adv);
                 }
             }
         }
@@ -1490,7 +1502,7 @@ public class SimulateInvestComponent extends ComponentML {
     }
 
     private List<String> getExclusions(SimulateInvestConfig simConfig, List<String> stockDates, List<String> configExcludeList,
-            int indexOffset, Map<Integer, List<String>> newVolumeMap) {
+            Set<String> abnormExcludes, int indexOffset, Map<Integer, List<String>> newVolumeMap) {
         List<String> myExcludes = new ArrayList<>();
         List<String> volumeExcludes = new ArrayList<>();
         /*
@@ -1502,6 +1514,7 @@ public class SimulateInvestComponent extends ComponentML {
         //log.info("timed0 {}", System.currentTimeMillis() - time0);        
         
         myExcludes.addAll(configExcludeList);
+        myExcludes.addAll(abnormExcludes);
         myExcludes.addAll(volumeExcludes);
         return myExcludes;
     }
@@ -2053,7 +2066,12 @@ public class SimulateInvestComponent extends ComponentML {
     private Capital getSum(List<SimulateStock> mystocks) {
         Capital sum = new Capital();
         for (SimulateStock astock : mystocks) {
-            sum.amount += astock.getCount() * astock.getPrice();
+            double price = astock.getPrice();
+            if (price == 0.0) {
+                // TODO maybe run more update, after each doBuySell
+                price = astock.getBuyprice();
+            }
+            sum.amount += astock.getCount() * price;
         }
         return sum;
     }
@@ -2242,7 +2260,7 @@ public class SimulateInvestComponent extends ComponentML {
                     mystocks.add(astock);
                     totalamount += amount;
                 } else {
-                    log.error("Not found {}", id);
+                    log.debug("Not found {}", id);
                 }
             }
         }
@@ -2439,6 +2457,7 @@ public class SimulateInvestComponent extends ComponentML {
         Map<Integer, List<String>> volumeExcludeMap;
         Map<Integer, List<String>> volumeExcludeFillMap;
         List<String> configExcludeList;
+        Set<String> abnormExcludes;
         Map<String, List<List<Object>>> volumeMap;
         Map<Integer, Trend> trendMap;
         Map<Integer, Trend> trendFillMap;

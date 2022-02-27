@@ -11,6 +11,7 @@
     <module>iclij</module>
     <module>input</module>
     <module>main</module>
+    <module>testdata</module>
     <module>web</module>
     <module>webr</module>
     <module>distribution</module>
@@ -129,7 +130,7 @@
     <vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
     <servlet.version>3.1.0</servlet.version>
     <xmlapis.version>1.4.01</xmlapis.version>
-    <spark.version>3.1.2</spark.version>
+    <spark.version>3.2.1</spark.version>
     <talib.version>0.4.0</talib.version>
     <jenetics.version>5.2.0</jenetics.version>
     <guava.version>16.0.1</guava.version>

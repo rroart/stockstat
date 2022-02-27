@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -412,6 +413,24 @@ public class ArraysUtil {
         return size;
     }
 
+    public List<Double> getNonNullList(List<Double> list) {
+        List<Double> nonNullList = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            Double val = list.get(i);
+            if (val != null) {
+                nonNullList.add(val);
+            }
+        }
+        return nonNullList;
+    }
+    
+    public List<Double> getNonNullListNew(List<Double> list) {
+        return list
+                .stream()
+                .filter(Objects::nonNull)
+                .toList();
+    }
+    
     /**
      * Get accepted ranges
      * where the range end should be have least a number of elements after it

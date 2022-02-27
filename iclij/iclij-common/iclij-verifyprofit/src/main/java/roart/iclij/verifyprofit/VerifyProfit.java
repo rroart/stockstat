@@ -17,6 +17,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.util.ArraysUtil;
 import roart.common.util.TimeUtil;
 import roart.common.util.ValidateUtil;
 import roart.iclij.config.IclijConfig;
@@ -280,7 +281,7 @@ public class VerifyProfit {
         return trendMap;
     }
 
-    public Set<String> getTrend(Map<String, List<List<Double>>> categoryValueMap, List<String> stockDates, int firstidx, int lastidx, Double margin) {
+    public Set<String> getTrendOld(Map<String, List<List<Double>>> categoryValueMap, List<String> stockDates, int firstidx, int lastidx, Double margin) {
         Set<String> excludes = new HashSet<>();
         if (margin == null) {
             return excludes;
@@ -316,4 +317,38 @@ public class VerifyProfit {
         }
         return excludes;
     }
+
+    public Set<String> getTrend(Map<String, List<List<Double>>> categoryValueMap, List<String> stockDates, int firstidx, int lastidx, Double margin) {
+        Set<String> excludes = new HashSet<>();
+        if (margin == null) {
+            return excludes;
+        }
+        int size = stockDates.size();
+        int start = size - 1 - firstidx;
+        int end = size - 1 - lastidx;
+        for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
+            if (excludes.contains(entry.getKey())) {
+                continue;
+            }
+            List<List<Double>> resultList = entry.getValue();
+            if (resultList == null || resultList.isEmpty()) {
+                continue;
+            }
+            List<Double> mainList = resultList.get(0);
+            if (mainList != null) {
+                ValidateUtil.validateSizes(mainList, stockDates);
+                List<Double> truncList = mainList.subList(start, end + 1);
+                List<Double> nonNullList = new ArraysUtil().getNonNullListNew(truncList);
+                for (int i = 0; i < nonNullList.size() - 1; i++) {
+                    Double valFuture = nonNullList.get(i + 1);
+                    Double valNow = nonNullList.get(i);
+                    if (valNow / valFuture > margin || valFuture / valNow > margin) {
+                        excludes.add(entry.getKey());
+                    }
+                }
+            }
+        }
+        return excludes;
+    }
+
 }

@@ -2429,26 +2429,31 @@ def improvesimulateinvestG(market, startdate = None, enddate = None, ga = 0, adv
 #engine = create_engine('postgresql://stockread@localhost:5432/stockstat')
 conn = psycopg2.connect("host=localhost dbname=stockstat user=stockread password=password")
 
-def autosimulateinvestsG(market, startdate = None, enddate = None, i = 1, p = 0, l = 5, d = 0.5, s = 1.0, a = 0, iw = False, f = None, vl = None, v = False):
-    mp.Process(target=autosimulateinvest2Gwrap, args=(market, startdate, enddate, i, p, l, d, s, a, iw, f, vl, v)).start()
+LUCKY=[ { 'lucky' : 0.0, 'stable' : 0.0, 'correlation' : 0.0 } ] * 10
+ZERO=[ { 'lucky' : 0.0, 'stable' : 0.0 } ] * 10
+CORR07=[ { 'lucky' : 0.0, 'stable' : 0.0, 'correlation' : 0.7 } ] * 10
+CORR08=[ { 'lucky' : 0.0, 'stable' : 0.0, 'correlation' : 0.8 } ] * 10
 
-def autosimulateinvest2Gwrap(market, startdate, enddate, interval = 1, period = 0, lastcount = 5, dellimit = 0.5, scorelimit = 1.0, autoscorelimit = 0.0, intervalwhole = False, filters = None, volumelimits = None, vote = False):
+def autosimulateinvestsG(market, startdate = None, enddate = None, i = 1, p = 0, l = 5, d = 0.5, s = 1.0, a = 0, iw = False, f = None, vl = None, v = False, ka = False, kal = 0.0):
+    mp.Process(target=autosimulateinvest2Gwrap, args=(market, startdate, enddate, i, p, l, d, s, a, iw, f, vl, v, ka, kal)).start()
+
+def autosimulateinvest2Gwrap(market, startdate, enddate, interval = 1, period = 0, lastcount = 5, dellimit = 0.5, scorelimit = 1.0, autoscorelimit = 0.0, intervalwhole = False, filters = None, volumelimits = None, vote = False, keepadviser = False, keepadviserlimit = 0.0):
     import io
     from contextlib import redirect_stdout
     file = io.StringIO()
     with redirect_stdout(file):
-        autosimulateinvest2(market, startdate, enddate, interval, period, lastcount, dellimit, scorelimit, autoscorelimit, intervalwhole, filters, volumelimits, vote)
+        autosimulateinvest2(market, startdate, enddate, interval, period, lastcount, dellimit, scorelimit, autoscorelimit, intervalwhole, filters, volumelimits, vote, keepadviser, keepadviserlimit)
     output = file.getvalue()
     myfile = open("/tmp/" + str(time.time()) + ".txt", "w")
     myfile.write(output)
     myfile.close()
     gui.view(output)
 
-def autosimulateinvest2(market, startdate = None, enddate = None, interval = 1, period = 0, lastcount = 5, dellimit = 0.5, scorelimit = 1.0, autoscorelimit = 0.0, intervalwhole = False, filters = None, volumelimits = None, vote = False):
-    autosimulateinvest(market, startdate, enddate, interval, period, lastcount, dellimit, scorelimit, autoscorelimit, intervalwhole, filters, volumelimits, vote)
+def autosimulateinvest2(market, startdate = None, enddate = None, interval = 1, period = 0, lastcount = 5, dellimit = 0.5, scorelimit = 1.0, autoscorelimit = 0.0, intervalwhole = False, filters = None, volumelimits = None, vote = False, keepadviser = False, keepadviserlimit = 0.0):
+    autosimulateinvest(market, startdate, enddate, interval, period, lastcount, dellimit, scorelimit, autoscorelimit, intervalwhole, filters, volumelimits, vote, keepadviser, keepadviserlimit)
     
-def autosimulateinvest(market, startdate = None, enddate = None, interval = 1, period = 0, lastcount = 5, dellimit = 0.5, scorelimit = 1.0, autoscorelimit = 0.0, intervalwhole = False, filters = None, volumelimits = None, vote = False):
-    data = { 'startdate' : startdate, 'enddate' : enddate, 'interval' : interval, 'intervalwhole' : intervalwhole, 'period' : period, 'lastcount' : lastcount, 'dellimit' : dellimit, 'scorelimit' : scorelimit, 'autoscorelimit' : autoscorelimit, 'volumelimits' : volumelimits, 'filters' : filters, 'vote' : vote }
+def autosimulateinvest(market, startdate = None, enddate = None, interval = 1, period = 0, lastcount = 5, dellimit = 0.5, scorelimit = 1.0, autoscorelimit = 0.0, intervalwhole = False, filters = None, volumelimits = None, vote = False, keepadviser = False, keepadviserlimit = 0.0):
+    data = { 'startdate' : startdate, 'enddate' : enddate, 'interval' : interval, 'intervalwhole' : intervalwhole, 'period' : period, 'lastcount' : lastcount, 'dellimit' : dellimit, 'scorelimit' : scorelimit, 'autoscorelimit' : autoscorelimit, 'volumelimits' : volumelimits, 'filters' : filters, 'vote' : vote, 'keepAdviser' : keepadviser, 'keepAdviserLimit' : keepadviserlimit }
     print(market, data)
     #if True:
     #    return
@@ -2462,13 +2467,20 @@ def autosimulateinvest(market, startdate = None, enddate = None, interval = 1, p
     commondays = dates
     default = updatemap['plotdefault']
     capital = updatemap['plotcapital']
+    if len(capital) == 0:
+        return
     geom = np.geomspace(capital[0], capital[-1],num=len(capital),endpoint=True, dtype=None, axis=0)
-    pearson = scipy.stats.pearsonr(capital, geom)
-    spearman = scipy.stats.spearmanr(capital, geom)
-    kendalltau = scipy.stats.kendalltau(capital, geom)
-    pearson = round(pearson[0], 2)
-    spearman = round(spearman[0], 2)
-    kendalltau = round(kendalltau[0], 2)
+    if len(capital) >= 2:
+        pearson = scipy.stats.pearsonr(capital, geom)
+        spearman = scipy.stats.spearmanr(capital, geom)
+        kendalltau = scipy.stats.kendalltau(capital, geom)
+        pearson = round(pearson[0], 2)
+        spearman = round(spearman[0], 2)
+        kendalltau = round(kendalltau[0], 2)
+    else:
+        pearson = 0
+        spearman = 0
+        kendalltau = 0
     commonls = [ default, capital, geom ]
     mynames = [ "default", "capital", "geom" ]
     plt.rc('axes', grid=True)

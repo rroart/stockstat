@@ -94,7 +94,7 @@ public abstract class AbstractIndicator extends Calculatable {
     public Object calculate(scala.collection.Seq[] objArray) {
         double[][] newArray = new double[objArray.length][];
         for (int i = 0; i < objArray.length; i++) {
-            List list = scala.collection.JavaConversions.seqAsJavaList(objArray[0]);
+            List list = scala.collection.JavaConverters.seqAsJavaList(objArray[0]);
             Double[] array = new Double[list.size()];
             array = (Double[]) list.toArray(array);
             newArray[i] = ArrayUtils.toPrimitive(array);
