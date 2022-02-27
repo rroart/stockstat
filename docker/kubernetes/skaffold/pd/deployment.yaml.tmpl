@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pd
+  labels:
+    app: pd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pd
+  template:
+    metadata:
+      labels:
+        app: pd
+    spec:
+      containers:
+      - name: pd
+        image: pd
+        #imagePullPolicy: Never
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pd
+  labels:
+    app: pd
+spec:
+  selector:
+    app: pd
+  sessionAffinity: None  
+status:
+  loadBalancer: {}    

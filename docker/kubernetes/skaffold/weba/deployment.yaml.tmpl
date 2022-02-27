@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weba
+  labels:
+    app: weba
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: weba
+  template:
+    metadata:
+      labels:
+        app: weba
+    spec:
+      containers:
+      - name: weba
+        image: weba
+        #imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: weba
+  labels:
+    app: weba
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: weba
+  sessionAffinity: None  
+status:
+  loadBalancer: {}    
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: name-virtual-host-ingress-weba
+spec:
+  rules:
+  - host: $MYWEB
+    http:
+      paths:
+      - backend:
+          serviceName: weba
+          servicePort: 80

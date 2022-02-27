@@ -25,10 +25,11 @@ phases:
       - echo Writing image definitions file...
       - printf '[{"name":"webr","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
       - echo upgrading webr task definitions
-      - "printf '\ncommitref: %s\n' ${DOCKER_TAG} >> deployspec.yml"
+      - export DOCKER_TAG=git-$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - "printf '\ncommitref: %s\n' $DOCKER_TAG >> deployspec.yml"
       - #echo aws ecs run-task --launch-type FARGATE --cluster ${cluster_name} --task-definition production_webr --network-configuration "awsvpcConfiguration={subnets=[${subnet_id}],securityGroups=[${security_group_ids}]}"
 artifacts:
-  files: #imagedefinitions.json
+  files: imagedefinitions.json
     - deployspec.yml
     #- deploy/*
   discard-paths: no
