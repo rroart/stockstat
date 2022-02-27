@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iweba
+  labels:
+    app: iweba
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iweba
+  template:
+    metadata:
+      labels:
+        app: iweba
+    spec:
+      containers:
+      - name: iweba
+        image: iweba
+        #imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iweba
+  labels:
+    app: iweba
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: iweba
+  sessionAffinity: None  
+status:
+  loadBalancer: {}    
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: name-virtual-host-ingress-iweba
+spec:
+  rules:
+  - host: $MYIWEB
+    http:
+      paths:
+      - backend:
+          serviceName: iweba
+          servicePort: 80
