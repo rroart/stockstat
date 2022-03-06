@@ -2317,6 +2317,12 @@ public class SimulateInvestComponent extends ComponentML {
             //ValidateUtil.validateSizes(mainList, stockDates);
             if (mainList != null) {
                 Double valNow = mainList.get(mainList.size() - 1 - indexOffset);
+                if (valNow == null) {
+                    // we have to sell if the stock should disappear from the list
+                    if (item.getPrice() > 0.0) {
+                        valNow = item.getPrice();
+                    }
+                }
                 if (valNow != null) {
                     item.setSellprice(valNow);
                     String dateNow = stockDates.get(stockDates.size() - 1 - indexOffset);
@@ -2326,10 +2332,12 @@ public class SimulateInvestComponent extends ComponentML {
                     capital.amount += item.getCount() * item.getSellprice();
                     mystocks.remove(item);
                 } else {
+                    log.debug("Not found {}", id);
                     // put back if unknown
                     //mystocks.add(item);
                 }
             } else {
+                log.debug("Not found {}", id);
                 // put back if unknown
                 //mystocks.add(item);
             }
