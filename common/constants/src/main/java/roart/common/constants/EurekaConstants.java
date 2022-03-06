@@ -36,4 +36,29 @@ public class EurekaConstants {
     public static final String GETCONTENTFILTER = "getcontentfilter";
     public static final String GETCONTENTABOVEBELOW = "getcontentabovebelow";
     public static final String ACTION = "action";
+
+    // app names
+    public static final String LOCAL = "LOCAL";
+    public static final String SWIFT = "SWIFT";
+    public static final String S3 = "S3";
+    public static final String HDFS = "HDFS";
+
+    // common ops
+    public static final String CONSTRUCTOR = "constructor";
+    public static final String DESTRUCTOR = "destructor";
+
+    // file system ops
+    public static final String LISTFILES = "listfiles";
+    public static final String LISTFILESFULL = "listfilesfull";
+    public static final String EXIST = "exist";
+    public static final String GETABSOLUTEPATH = "getabsolutepath";
+    public static final String ISDIRECTORY = "isdirectory";
+    public static final String GETINPUTSTREAM = "getinputstream";
+    public static final String GETWITHINPUTSTREAM = "getwithinputstream";
+    public static final String GETWITHOUTINPUTSTREAM = "getwithoutinputstream";
+    public static final String GETPARENT = "getparent";
+    public static final String GET = "get";
+    public static final String READFILE = "readfile";
+    public static final String GETMD5 = "getmd5";
+
 }

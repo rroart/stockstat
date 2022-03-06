@@ -73,4 +73,7 @@ public class Constants {
     public static final String REDIS = "redis";
     public static final String HAZELCAST = "hazelcast";
     public static final String HZ = "hz";
+
+    public static final String STOCKSTAT = "stockstat";
+    public static final String FS = "fs";
 }
