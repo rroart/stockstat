@@ -233,6 +233,9 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MISCCOMMUNICATIONS, String.class);
         map.put(ConfigConstants.MISCCACHE, Boolean.class);
         map.put(ConfigConstants.MISCCACHETTL, Integer.class);
+        map.put(ConfigConstants.MISCINMEMORYSERVER, String.class);
+        map.put(ConfigConstants.MISCINMEMORYHAZELCAST, String.class);
+        map.put(ConfigConstants.MISCINMEMORYREDIS, String.class);
         map.put(ConfigConstants.MISCABNORMALCHANGE, Double.class);
         map.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEFUTUREDAYS, Integer.class);
         map.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEINTERVALDAYS, Integer.class);
@@ -619,6 +622,9 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MISCCOMMUNICATIONS, "{}");
         deflt.put(ConfigConstants.MISCCACHE, Boolean.TRUE);
         deflt.put(ConfigConstants.MISCCACHETTL, 3600);
+        deflt.put(ConfigConstants.MISCINMEMORYSERVER, Constants.REDIS);
+        deflt.put(ConfigConstants.MISCINMEMORYHAZELCAST, null);
+        deflt.put(ConfigConstants.MISCINMEMORYREDIS, "localhost");
         deflt.put(ConfigConstants.MISCABNORMALCHANGE, null);
         deflt.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS, 10);
         deflt.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXTHRESHOLD, " [ 1.0 ] ");
@@ -1001,6 +1007,9 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.MISCCOMMUNICATIONS, "Communications and connections");
         text.put(ConfigConstants.MISCCACHE, "Cache enable");
         text.put(ConfigConstants.MISCCACHETTL, "Cache TTL");
+        text.put(ConfigConstants.MISCINMEMORYSERVER, "In memory server");
+        text.put(ConfigConstants.MISCINMEMORYHAZELCAST, "In memory Hazelcast connection");
+        text.put(ConfigConstants.MISCINMEMORYREDIS, "In memory Redis connection");
         text.put(ConfigConstants.MISCABNORMALCHANGE, "Abnormal change ignore");
         text.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEFUTUREDAYS, "Test simple recommender future days");
         text.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEINTERVALDAYS, "Test simple recommender interval days");
@@ -1436,6 +1445,9 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MISCCOMMUNICATIONS, new XMLType( String.class, "{}", "Communications and connections"));
         mymap.put(ConfigConstants.MISCCACHE, new XMLType( Boolean.class, Boolean.TRUE, "Cache enable"));
         mymap.put(ConfigConstants.MISCCACHETTL, new XMLType( Boolean.class, Boolean.TRUE, "Cache TTL"));
+        mymap.put(ConfigConstants.MISCINMEMORYSERVER, new XMLType( String.class, Constants.REDIS, "In memory server"));
+        mymap.put(ConfigConstants.MISCINMEMORYHAZELCAST, new XMLType( String.class, null, "In memory Hazelcast connection"));
+        mymap.put(ConfigConstants.MISCINMEMORYREDIS, new XMLType( String.class, "localhost", "In memory Redis connection"));
         mymap.put(ConfigConstants.MISCABNORMALCHANGE, new XMLType( Double.class, null, "Abnormal change ignore"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, new XMLType( String.class, "{ \"generations\" : 100, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS, new XMLType( Integer.class, 10, "Test complex recommender future days"));

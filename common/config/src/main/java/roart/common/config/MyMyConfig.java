@@ -862,6 +862,18 @@ public class MyMyConfig extends MyConfig {
         return (Integer) getValueOrDefault(ConfigConstants.MISCCACHETTL);
     }
 
+    public String getInmemoryServer() {
+        return (String) getValueOrDefault(ConfigConstants.MISCINMEMORYSERVER);
+    }
+
+    public String getInmemoryHazelcast() {
+        return (String) getValueOrDefault(ConfigConstants.MISCINMEMORYHAZELCAST);
+    }
+
+    public String getInmemoryRedis() {
+        return (String) getValueOrDefault(ConfigConstants.MISCINMEMORYREDIS);
+    }
+
     public Double getAbnormalChange() {
         return (Double) getValueOrDefault(ConfigConstants.MISCABNORMALCHANGE);
     }
