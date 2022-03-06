@@ -8,6 +8,8 @@ public class InmemoryMessage {
 
     private int count;
 
+    private String md5;
+    
     public InmemoryMessage() {
         super();
     }
@@ -17,6 +19,14 @@ public class InmemoryMessage {
         this.server = bus;
         this.id = id;
         this.count = count;
+    }
+
+    public InmemoryMessage(String bus, String id, int count, String md5) {
+        super();
+        this.server = bus;
+        this.id = id;
+        this.count = count;
+	this.md5 = md5;
     }
 
     public String getServer() {
@@ -43,5 +53,12 @@ public class InmemoryMessage {
         this.count = count;
     }
 
+    public String getMd5() {
+        return md5;
+    }
+
+    public void setMd5(String md5) {
+        this.md5 = md5;
+    }
     
 }
