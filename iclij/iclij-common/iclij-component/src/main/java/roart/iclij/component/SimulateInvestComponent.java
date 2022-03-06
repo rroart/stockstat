@@ -1412,8 +1412,15 @@ public class SimulateInvestComponent extends ComponentML {
                 }
                 //ids.removeAll(sellids);
                 if (isMain) {
+                    String newids = "";
                     String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() : "";
-                    param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Buy: " + buyids + " Sell: " + sellids + " Stocks: " + ids + adv);
+                    if (extradelay == 0) {
+                        List<String> idsnew = new ArrayList<>(ids);
+                        idsnew.addAll(buyids);
+                        idsnew.removeAll(sellids);
+                        newids = " -> " + idsnew;
+                    }
+                    param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Buy: " + buyids + " Sell: " + sellids + " Stocks: " + ids + newids + adv);
                 }
             }
         }
