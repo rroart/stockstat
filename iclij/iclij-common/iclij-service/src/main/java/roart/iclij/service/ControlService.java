@@ -35,6 +35,10 @@ import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.curator.RetryPolicy;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -50,6 +54,8 @@ public class ControlService {
     public MyMyConfig conf;
     ObjectMapper objectMapper;
     
+    public static CuratorFramework curatorClient;
+
     public ControlService() {
     	//conf = MyConfig.instance();
     	//getConfig();
@@ -419,5 +425,15 @@ public class ControlService {
                 .modules(new JavaTimeModule())
                 .build();
     }
-
+    
+    public static void configCurator(MyMyConfig conf) {
+        if (true) {
+            RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);        
+            String zookeeperConnectionString = conf.getZookeeper();
+            if (curatorClient != null) {
+                curatorClient = CuratorFrameworkFactory.newClient(zookeeperConnectionString, retryPolicy);
+                curatorClient.start();
+            }
+        }
+    }
 }

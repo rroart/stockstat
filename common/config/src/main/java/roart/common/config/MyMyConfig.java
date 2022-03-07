@@ -874,6 +874,10 @@ public class MyMyConfig extends MyConfig {
         return (String) getValueOrDefault(ConfigConstants.MISCINMEMORYREDIS);
     }
 
+    public String getZookeeper() {
+        return (String) getValueOrDefault(ConfigConstants.MISCZOOKEEPER);
+    }
+
     public Double getAbnormalChange() {
         return (Double) getValueOrDefault(ConfigConstants.MISCABNORMALCHANGE);
     }
@@ -1134,6 +1138,14 @@ public class MyMyConfig extends MyConfig {
 
     public String getTestMLEvolutionConfig() {
         return (String) getValueOrDefault(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG);
+    }
+
+    public String getEvolveSaveLocation() {
+        return (String) getValueOrDefault(ConfigConstants.EVOLVESAVELOCATION);
+    }
+
+    public String getEvolveSavePath() {
+        return (String) getValueOrDefault(ConfigConstants.EVOLVESAVEPATH);
     }
 
     public boolean wantAggregators() {

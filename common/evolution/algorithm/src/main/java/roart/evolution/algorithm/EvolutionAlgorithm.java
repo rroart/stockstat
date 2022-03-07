@@ -244,5 +244,18 @@ public abstract class EvolutionAlgorithm {
         }
         return path.getFileName().toString();
     }
+    
+    public String printtext(String title, String subtitle, List<String> individuals) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(title + "\n\n");
+        if (subtitle != null) {
+            stringBuilder.append(subtitle + "\n\n");
+        }
+        for (String individual : individuals) {
+            stringBuilder.append(individual + "\n");            
+        }
+        stringBuilder.append("\n");
+        return stringBuilder.toString();
+    }
 
 }

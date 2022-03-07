@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
@@ -381,4 +382,21 @@ public class S3 extends FileSystemOperations {
         result.map = map;
         return result;
     }
+    
+    @Override
+    public FileSystemMessageResult writeFile(FileSystemFileObjectParam param) throws Exception {
+        Map<String, InmemoryMessage> map = new HashMap<>();
+        Inmemory inmemory = InmemoryFactory.get(nodeConf.getInmemoryServer(), nodeConf.getInmemoryHazelcast(), nodeConf.getInmemoryRedis());
+        for (Entry<FileObject, InmemoryMessage> entry : param.map.entrySet()) {
+            FileObject filename = entry.getKey();
+            InmemoryMessage msg = entry.getValue();
+            String content = inmemory.read(msg);
+            conf.s3client.putObject(filename.location.extra, filename.object, content);
+            inmemory.delete(msg);
+        }
+        FileSystemMessageResult result = new FileSystemMessageResult();
+        result.message = map;
+        return result;
+    }
+
 }

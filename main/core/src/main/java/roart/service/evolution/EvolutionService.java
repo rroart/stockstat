@@ -34,6 +34,7 @@ import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.NeuralNetTensorflowConfig;
 import roart.common.ml.TensorflowPredictorLSTMConfig;
+import roart.common.model.FileObject;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.db.dao.DbDao;
@@ -49,6 +50,7 @@ import roart.evolution.chromosome.impl.NeuralNetChromosome2;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.impl.ProportionScore;
 import roart.evolution.species.Individual;
+import roart.filesystem.FileSystemDao;
 import roart.gene.NeuralNetConfigGene;
 import roart.gene.NeuralNetConfigGeneFactory;
 import roart.indicator.AbstractIndicator;
@@ -175,7 +177,11 @@ public class EvolutionService {
                     resultMap.put(EvolveConstants.ID, "interrupted");
                     return;
                 }
-                String filename = evolution.print(conf.getMarket() + " " + "recommend" + " " + i, "recommend", individuals);
+                String text = evolution.printtext(conf.getMarket() + " " + "recommend" + " " + i, "recommend", individuals);
+                String node = conf.getEvolveSaveLocation();
+                String mypath = conf.getEvolveSavePath();
+                ControlService.configCurator(conf);
+                String filename = new FileSystemDao(conf, ControlService.curatorClient).writeFile(node, mypath, null, text);
     
                 for (String id : scoreList) {
                     ResultItemTableRow row = new ResultItemTableRow();
@@ -461,8 +467,12 @@ public class EvolutionService {
                 return;
             }
             String title = EvolveConstants.EVOLVE + " " + conf.getMarket() + " " + ml + " " + nnconfig.getClass().getSimpleName();
-            String filename = evolution.print(title, null, individuals);
-                        
+            String text = evolution.printtext(title, null, individuals);
+            String node = conf.getEvolveSaveLocation();
+            String mypath = conf.getEvolveSavePath();
+            ControlService.configCurator(conf);
+            String filename = new FileSystemDao(conf, ControlService.curatorClient).writeFile(node, mypath, null, text);
+                     
             NeuralNetChromosome2 bestEval2 = (NeuralNetChromosome2) best.getEvaluation();
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();
             NeuralNetConfig newnnconf = newnnconfgene.getConfig();
@@ -548,8 +558,12 @@ public class EvolutionService {
             	return;
             }
             String title = EvolveConstants.EVOLVE + " " + conf.getMarket() + " " + ml + " " + nnconfig.getClass().getSimpleName();
-            String filename = evolution.print(title, null, individuals);
-    
+            String text = evolution.printtext(title, null, individuals);
+            String node = conf.getEvolveSaveLocation();
+            String mypath = conf.getEvolveSavePath();
+            ControlService.configCurator(conf);
+            String filename = new FileSystemDao(conf, ControlService.curatorClient).writeFile(node, mypath, null, text);
+            
             NeuralNetChromosome2 bestEval2 = (NeuralNetChromosome2) best.getEvaluation();
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();
             NeuralNetConfig newnnconf = newnnconfgene.getConfig();

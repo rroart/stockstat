@@ -47,5 +47,7 @@ public abstract class FileSystemOperations {
     public abstract FileSystemMessageResult readFile(FileSystemFileObjectParam param) throws Exception;
 
     public abstract FileSystemStringResult getMd5(FileSystemFileObjectParam param);
+
+    public abstract FileSystemMessageResult writeFile(FileSystemFileObjectParam param) throws Exception;
     
 }

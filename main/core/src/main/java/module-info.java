@@ -20,6 +20,7 @@ module core {
     requires common.model;
     requires common.service;
     requires common.cache;
+    requires common.filesystem.client;
     //requires common.util;
     requires commons.configuration2;
     requires commons.lang;
@@ -72,4 +73,6 @@ module core {
     requires common.communication.model;
     requires common.communication.factory;
     requires org.slf4j;
+    requires curator.client;
+    requires curator.framework;
 }

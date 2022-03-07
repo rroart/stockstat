@@ -59,6 +59,7 @@ public class EurekaConstants {
     public static final String GETPARENT = "getparent";
     public static final String GET = "get";
     public static final String READFILE = "readfile";
+    public static final String WRITEFILE = "writefile";
     public static final String GETMD5 = "getmd5";
 
 }

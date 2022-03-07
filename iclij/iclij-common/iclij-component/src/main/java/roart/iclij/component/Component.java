@@ -43,10 +43,12 @@ import roart.iclij.model.Parameters;
 import roart.iclij.model.TimingItem;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.model.config.ActionComponentConfig;
+import roart.iclij.service.ControlService;
 import roart.iclij.util.MLUtil;
 import roart.iclij.util.MiscUtil;
 import roart.result.model.ResultMeta;
 import roart.service.model.ProfitData;
+import roart.filesystem.FileSystemDao;
 
 public abstract class Component {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
@@ -315,7 +317,11 @@ public abstract class Component {
             String mysubcomponent = nullString(subcomponent);
             String title = action.getName() + " " + param.getMarket() + " " + getPipeline() + mysubcomponent;
             String subtitle = fitness.subTitleText();
-            String filename = evolution.print(title + nullString(fitness.titleText()), fitness.subTitleText(), individuals);
+            String text = evolution.printtext(title + nullString(fitness.titleText()), fitness.subTitleText(), individuals);
+            String node = param.getService().conf.getEvolveSaveLocation();
+            String mypath = param.getService().conf.getEvolveSavePath();
+            ControlService.configCurator(param.getService().conf);
+            String filename = new FileSystemDao(param.getService().conf, ControlService.curatorClient).writeFile(node, mypath, null, text);
             Map<String, Object> confMap = new HashMap<>();
             double score = winner.handleWinner(param, best, confMap);
             //confMap.put("score", "" + score);

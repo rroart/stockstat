@@ -236,6 +236,7 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MISCINMEMORYSERVER, String.class);
         map.put(ConfigConstants.MISCINMEMORYHAZELCAST, String.class);
         map.put(ConfigConstants.MISCINMEMORYREDIS, String.class);
+        map.put(ConfigConstants.MISCZOOKEEPER, String.class);
         map.put(ConfigConstants.MISCABNORMALCHANGE, Double.class);
         map.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEFUTUREDAYS, Integer.class);
         map.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEINTERVALDAYS, Integer.class);
@@ -250,7 +251,9 @@ public class ConfigConstantMaps {
          */
         map.put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, String.class);
         map.put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, String.class);
-        /*
+        map.put(ConfigConstants.EVOLVESAVELOCATION, String.class);
+        map.put(ConfigConstants.EVOLVESAVEPATH, String.class);
+           /*
         map.put(ConfigConstants.EVOLUTION, String.class);
         //map.put(ConfigConstants.EVOLUTION, Boolean.class);
         map.put(ConfigConstants.EVOLUTIONGENERATIONS, Integer.class);
@@ -639,6 +642,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MISCINMEMORYSERVER, Constants.REDIS);
         deflt.put(ConfigConstants.MISCINMEMORYHAZELCAST, null);
         deflt.put(ConfigConstants.MISCINMEMORYREDIS, "localhost");
+        deflt.put(ConfigConstants.MISCZOOKEEPER, "localhost:2181");
         deflt.put(ConfigConstants.MISCABNORMALCHANGE, null);
         deflt.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS, 10);
         deflt.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXTHRESHOLD, " [ 1.0 ] ");
@@ -653,6 +657,8 @@ public class ConfigConstantMaps {
          */
         deflt.put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, "{ \"generations\" : 100, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1, \"useoldelite\" : true }");
         deflt.put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, "{ \"generations\" : 10, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1, \"useoldelite\" : true }");
+        deflt.put(ConfigConstants.EVOLVESAVELOCATION, "::");
+        deflt.put(ConfigConstants.EVOLVESAVEPATH, "/tmp");
         /*
         deflt.put(ConfigConstants.EVOLUTIONGENERATIONS, 2);
         deflt.put(ConfigConstants.EVOLUTIONCHILDREN, 4);
@@ -1038,6 +1044,7 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.MISCINMEMORYSERVER, "In memory server");
         text.put(ConfigConstants.MISCINMEMORYHAZELCAST, "In memory Hazelcast connection");
         text.put(ConfigConstants.MISCINMEMORYREDIS, "In memory Redis connection");
+        text.put(ConfigConstants.MISCZOOKEEPER, "Zookeeper connection");
         text.put(ConfigConstants.MISCABNORMALCHANGE, "Abnormal change ignore");
         text.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEFUTUREDAYS, "Test simple recommender future days");
         text.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEINTERVALDAYS, "Test simple recommender interval days");
@@ -1046,6 +1053,8 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXINTERVALDAYS, "Test complex recommender interval days");
         text.put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, "ML GP config");
         text.put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, "Indicator recommender GP config");
+        text.put(ConfigConstants.EVOLVESAVELOCATION, "Evolve save location");
+        text.put(ConfigConstants.EVOLVESAVEPATH, "Evolve save path");
         /*
         text.put(ConfigConstants.TESTRECOMMENDINTERVALTIMES, "Deprecated Test recommender interval times");
         text.put(ConfigConstants.TESTRECOMMENDITERATIONS, "Deprecated Test recommender iterations");
@@ -1490,6 +1499,7 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MISCINMEMORYSERVER, new XMLType( String.class, Constants.REDIS, "In memory server"));
         mymap.put(ConfigConstants.MISCINMEMORYHAZELCAST, new XMLType( String.class, null, "In memory Hazelcast connection"));
         mymap.put(ConfigConstants.MISCINMEMORYREDIS, new XMLType( String.class, "localhost", "In memory Redis connection"));
+        mymap.put(ConfigConstants.MISCZOOKEEPER, new XMLType( String.class, "localhost:2181", "Zookeeper connection"));
         mymap.put(ConfigConstants.MISCABNORMALCHANGE, new XMLType( Double.class, null, "Abnormal change ignore"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, new XMLType( String.class, "{ \"generations\" : 100, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS, new XMLType( Integer.class, 10, "Test complex recommender future days"));
@@ -1498,6 +1508,8 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEFUTUREDAYS, new XMLType( Integer.class, 10, "Test simple recommender future days"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEINTERVALDAYS, new XMLType( Integer.class, 5, "Test simple recommender interval days"));
         mymap.put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, new XMLType( String.class, "{ \"generations\" : 10, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "Indicator recommender GP config"));
+        mymap.put(ConfigConstants.EVOLVESAVELOCATION, new XMLType( String.class, "::", "Evolve save location"));
+        mymap.put(ConfigConstants.EVOLVESAVEPATH, new XMLType( String.class, "/tmp", "Evolve save path"));
         mymap.put(ConfigConstants.AGGREGATORS, new XMLType( Boolean.class, Boolean.TRUE, "Enable aggregators"));
         mymap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, new XMLType( Boolean.class, Boolean.TRUE, "Enable aggregated recommender"));
         mymap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLE, new XMLType( Boolean.class, Boolean.TRUE, "Enable aggregated recommender simple"));

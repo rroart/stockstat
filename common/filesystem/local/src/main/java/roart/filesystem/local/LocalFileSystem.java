@@ -6,12 +6,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
@@ -288,4 +291,20 @@ public class LocalFileSystem extends FileSystemOperations {
         result.map = map;
         return result;
     }
+    
+    public FileSystemMessageResult writeFile(FileSystemFileObjectParam param) throws Exception {
+        Map<String, InmemoryMessage> map = new HashMap<>();
+        Inmemory inmemory = InmemoryFactory.get(nodeConf.getInmemoryServer(), nodeConf.getInmemoryHazelcast(), nodeConf.getInmemoryRedis());
+        for (Entry<FileObject, InmemoryMessage> entry : param.map.entrySet()) {
+            FileObject filename = entry.getKey();
+            InmemoryMessage msg = entry.getValue();
+            String content = inmemory.read(msg);
+            Files.write(Paths.get(filename.object), content.getBytes());
+            inmemory.delete(msg);
+        }
+        FileSystemMessageResult result = new FileSystemMessageResult();
+        result.message = map;
+        return result;
+    }
+
 }

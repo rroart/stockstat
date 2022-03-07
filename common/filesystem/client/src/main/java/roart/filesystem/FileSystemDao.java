@@ -1,6 +1,8 @@
 package roart.filesystem;
 
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,10 +18,13 @@ import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.FileSystemConstants;
 import roart.common.filesystem.MyFile;
+import roart.common.inmemory.factory.InmemoryFactory;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.FileObject;
 import roart.common.model.Location;
 import roart.common.util.FsUtil;
+
 import java.util.Map.Entry;
 
 public class FileSystemDao {
@@ -109,6 +114,25 @@ public class FileSystemDao {
             retMap.put(new FileObject(filenames.iterator().next().location, entry.getKey()), entry.getValue());
         }
         return retMap;
+    }
+
+    public static String writeFile(String node, String path, String filename, String content) {
+        if (filename == null) {
+            Path mypath = Paths.get("" + System.currentTimeMillis() + ".txt");
+            filename = mypath.getFileName().toString();
+        }
+        Inmemory inmemory = InmemoryFactory.get(conf.getInmemoryServer(), conf.getInmemoryHazelcast(), conf.getInmemoryRedis());
+        InmemoryMessage msg = inmemory.send("" + System.currentTimeMillis(), content);
+        FileObject f = new FileObject(FsUtil.getLocation(node), path + "/" + filename);
+        writeFile(f, msg);
+        return filename;
+    }
+    
+    public static boolean writeFile(FileObject f, InmemoryMessage content) {
+        Set<FileObject> filenames = new HashSet<>();
+        filenames.add(f);
+        boolean b = getFileSystemAccess(f).writeFile(f, content);
+        return b;
     }
 
     public static Map<FileObject, String> getMd5(Set<FileObject> filenames) {

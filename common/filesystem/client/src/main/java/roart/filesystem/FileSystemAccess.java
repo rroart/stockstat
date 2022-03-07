@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -178,6 +179,17 @@ public class FileSystemAccess {
         param.fos = f;
         FileSystemMessageResult result = WebFluxUtil.sendMe(FileSystemMessageResult.class, url, param, EurekaConstants.READFILE);
         return result.message;
+    }
+
+    public boolean writeFile(FileObject f, InmemoryMessage content) {
+        Map<FileObject, InmemoryMessage> map = new HashMap<>();
+        map.put(f, content);
+        FileSystemFileObjectParam param = new FileSystemFileObjectParam();
+        param.configid = "myid";
+        param.conf = conf;
+        param.map = map;
+        FileSystemMessageResult result = WebFluxUtil.sendMe(FileSystemMessageResult.class, url, param, EurekaConstants.WRITEFILE);
+        return true;
     }
 
     public Map<String, String> getMd5(Set<FileObject> f) {

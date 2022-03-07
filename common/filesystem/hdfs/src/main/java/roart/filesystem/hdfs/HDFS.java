@@ -10,9 +10,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
@@ -351,6 +353,25 @@ public class HDFS extends FileSystemOperations {
         }
         FileSystemStringResult result = new FileSystemStringResult();
         result.map = map;
+        return result;
+    }
+
+    @Override
+    public FileSystemMessageResult writeFile(FileSystemFileObjectParam param) throws Exception {
+        Map<String, InmemoryMessage> map = new HashMap<>();
+        Inmemory inmemory = InmemoryFactory.get(nodeConf.getInmemoryServer(), nodeConf.getInmemoryHazelcast(), nodeConf.getInmemoryRedis());
+        for (Entry<FileObject, InmemoryMessage> entry : param.map.entrySet()) {
+            FileObject filename = entry.getKey();
+            InmemoryMessage msg = entry.getValue();
+            String content = inmemory.read(msg);
+            FileSystem fs = FileSystem.get(conf.configuration);
+            FSDataOutputStream stream = fs.create(new Path(filename.object));
+            stream.write(content.getBytes());
+            stream.close();
+            inmemory.delete(msg);
+        }
+        FileSystemMessageResult result = new FileSystemMessageResult();
+        result.message = map;
         return result;
     }
 }

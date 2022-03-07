@@ -6,7 +6,7 @@
  *
  */
 module common.filesystem.client {
-    //exports roart.common.filesystem;
+    exports roart.filesystem;
 
     requires common.config;
     requires common.constants;
@@ -14,6 +14,7 @@ module common.filesystem.client {
     requires common.model;
     requires common.util;
     requires common.webflux;
+    requires common.inmemory.factory;
     requires common.inmemory.model;
     requires com.fasterxml.jackson.annotation;
     requires zookeeper;

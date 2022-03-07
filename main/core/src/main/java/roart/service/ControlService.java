@@ -14,6 +14,10 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.curator.RetryPolicy;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +71,8 @@ import roart.util.Math3Util;
 
 public class ControlService {
     private Logger log = LoggerFactory.getLogger(this.getClass());
+
+    public static CuratorFramework curatorClient;
 
     public List<String> getMarkets() {
         try {
@@ -612,4 +618,16 @@ public class ControlService {
             return;
         }
     }
+    
+    public static void configCurator(MyMyConfig conf) {
+        if (true) {
+            RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);        
+            String zookeeperConnectionString = conf.getZookeeper();
+            if (curatorClient != null) {
+                curatorClient = CuratorFrameworkFactory.newClient(zookeeperConnectionString, retryPolicy);
+                curatorClient.start();
+            }
+        }
+    }
+
 }

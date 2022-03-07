@@ -14,6 +14,7 @@ module iclij.common.component {
 	requires common.model;
 	requires common.util;
 	requires common.constants;
+	requires common.filesystem.client;
 	requires iclij.common.componentdata;
 	requires iclij.common.constants;
 	requires iclij.common.model;
@@ -37,4 +38,6 @@ module iclij.common.component {
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.datatype.jsr310;
 	requires evolution.fitness;
+    requires curator.client;
+    requires curator.framework;
 }

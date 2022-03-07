@@ -216,6 +216,7 @@ public class ConfigConstants {
     public static final String MISCINMEMORYSERVER = "misc.inmemory.server";
     public static final String MISCINMEMORYHAZELCAST = "misc.inmemory.hazelcast";
     public static final String MISCINMEMORYREDIS = "misc.inmemory.redis";
+    public static final String MISCZOOKEEPER = "misc.zookeeper";
     public static final String MISCABNORMALCHANGE = "misc.abnormalchange";
     public static final String EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG = "evolve.indicatorrecommender.evolutionconfig";
     public static final String EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS = "evolve.indicatorrecommender.complex.futuredays";
@@ -224,6 +225,8 @@ public class ConfigConstants {
     public static final String EVOLVEINDICATORRECOMMENDERSIMPLEFUTUREDAYS = "evolve.indicatorrecommender.simple.futuredays";
     public static final String EVOLVEINDICATORRECOMMENDERSIMPLEINTERVALDAYS = "evolve.indicatorrecommender.simple.intervaldays";
     public static final String EVOLVEMLEVOLUTIONCONFIG = "evolve.ml.evolutionconfig";
+    public static final String EVOLVESAVELOCATION = "evolve.save.location";
+    public static final String EVOLVESAVEPATH = "evolve.save.path";
     public static final String AGGREGATORS = "aggregators[@enable]";
     public static final String AGGREGATORSINDICATORRECOMMENDER = "aggregators.indicatorrecommender[@enable]";
     public static final String AGGREGATORSINDICATORRECOMMENDERSIMPLE = "aggregators.indicatorrecommender.simple[@enable]";
