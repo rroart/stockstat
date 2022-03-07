@@ -73,6 +73,8 @@ module core {
     requires common.communication.model;
     requires common.communication.factory;
     requires org.slf4j;
+    requires jol.core;
     requires curator.client;
     requires curator.framework;
+    requires jedis;
 }
