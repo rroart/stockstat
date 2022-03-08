@@ -10,7 +10,7 @@
   </parent>
   <artifactId>stockstat-common-filesystem</artifactId>
   <packaging>jar</packaging>
-  <name>Stock Statistics Disk Search Engine Common File System</name>
+  <name>Stock Statistics Common File System</name>
   <dependencies>
     <dependency>
       <groupId>roart</groupId>
