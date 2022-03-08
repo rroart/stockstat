@@ -875,7 +875,7 @@ public class MyMyConfig extends MyConfig {
     }
 
     public String getZookeeper() {
-        return (String) getValueOrDefault(ConfigConstants.MISCZOOKEEPER);
+        return (String) getNotEmptyValueOrDefault(ConfigConstants.MISCZOOKEEPER);
     }
 
     public Double getAbnormalChange() {
@@ -1141,11 +1141,11 @@ public class MyMyConfig extends MyConfig {
     }
 
     public String getEvolveSaveLocation() {
-        return (String) getValueOrDefault(ConfigConstants.EVOLVESAVELOCATION);
+        return (String) getNotEmptyValueOrDefault(ConfigConstants.EVOLVESAVELOCATION);
     }
 
     public String getEvolveSavePath() {
-        return (String) getValueOrDefault(ConfigConstants.EVOLVESAVEPATH);
+        return (String) getNotEmptyValueOrDefault(ConfigConstants.EVOLVESAVEPATH);
     }
 
     public boolean wantAggregators() {
@@ -1649,5 +1649,18 @@ public class MyMyConfig extends MyConfig {
         //System.out.println("r " + retVal + " " + deflt.get(key));
         return Optional.ofNullable(retVal).orElse(getDeflt().get(key));
     }
+     
+     @JsonIgnore
+     public Object getNotEmptyValueOrDefault(String key) {
+         Object retVal = getConfigValueMap().get(key);
+         //System.out.println("r " + retVal + " " + deflt.get(key));
+         if (retVal instanceof String) {
+             String str = (String) retVal;
+             if (str.isEmpty()) {
+                 retVal = null;
+             }
+         }
+         return Optional.ofNullable(retVal).orElse(getDeflt().get(key));
+     }
 
 }
