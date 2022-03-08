@@ -1,0 +1,24 @@
+apiVersion: skaffold/v2beta1
+kind: Config
+build:
+  artifacts:
+  - image: weba
+    context: ../../..
+    docker:
+      dockerfile: docker/cloud/weba/Dockerfile
+      buildArgs:
+        myserver: '{{.MYSERVER}}'
+        mywebport: "80"
+  - image: iweba
+    context: ../../..
+    docker:
+      dockerfile: docker/cloud/iclij-weba/Dockerfile
+      buildArgs:
+        myiserver: '{{.MYISERVER}}'
+        myserver: '{{.MYSERVER}}'
+        mywebport: "80"
+deploy:
+  kubectl:
+    manifests:
+    - weba/deployment.yaml
+    - iweba/deployment.yaml
