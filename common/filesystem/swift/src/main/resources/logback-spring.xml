@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+ <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+ <springProfile name="default">
+   <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}swift.log}"/>
+ </springProfile>
+ <springProfile name="dev">
+   <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}swiftdev.log}"/>
+ </springProfile>
+ <springProfile name="docker">
+ </springProfile>
+ <property name="LOG_FILE_MAX_SIZE" value="1024MB" />
+ <property name="FILE_LOG_PATTERN" value="%date %level [%thread] %logger{10} [%file:%line] %msg%n" />
+ <property name="CONSOLE_LOG_PATTERN" value="%date %level [%thread] %logger{10} [%file:%line] %msg%n" />
+ <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
+ <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+ <logger name="org.apache.spark" level="WARN"/>
+ <logger name="breeze.optimize" level="WARN"/>
+ <logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener" level="WARN"/>
+ 
+ <springProfile name="default">
+   <root level="INFO">
+     <appender-ref ref="FILE" />
+   </root>
+ </springProfile>
+ <springProfile name="dev">
+   <root level="INFO">
+     <appender-ref ref="FILE" />
+   </root>
+ </springProfile>
+ <springProfile name="docker">
+   <root level="INFO">
+     <appender-ref ref="CONSOLE" />
+   </root>
+ </springProfile>
+</configuration>

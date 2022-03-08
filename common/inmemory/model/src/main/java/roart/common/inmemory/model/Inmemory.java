@@ -20,6 +20,10 @@ public abstract class Inmemory {
     }
     
     public InmemoryMessage send(String id, Object data) {
+        return send(id, data, null);
+    }
+    
+    public InmemoryMessage send(String id, Object data, String md5) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         String string = JsonUtil.convert(data, mapper);
@@ -34,7 +38,7 @@ public abstract class Inmemory {
         }
         InmemoryMessage message = new InmemoryMessage(getServer(), id, count);
         for (int i = 0; i < count; i++) {
-            InmemoryMessage messageKey = new InmemoryMessage(getServer(), id, i);
+            InmemoryMessage messageKey = new InmemoryMessage(getServer(), id, i, md5);
             String messageKeyString = JsonUtil.convert(messageKey);
             int max = Math.min(string.length(), (i + 1) * limit);
             String value = string.substring(i * limit, max);

@@ -21,6 +21,7 @@
     <module>controller</module>
     <module>db</module>
     <module>eureka</module>
+    <module>filesystem</module>
     <module>inmemory</module>
     <module>myexecutor</module>
     <module>evolution</module>

@@ -1412,8 +1412,15 @@ public class SimulateInvestComponent extends ComponentML {
                 }
                 //ids.removeAll(sellids);
                 if (isMain) {
+                    String newids = "";
                     String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() : "";
-                    param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Buy: " + buyids + " Sell: " + sellids + " Stocks: " + ids + adv);
+                    if (extradelay == 0) {
+                        List<String> idsnew = new ArrayList<>(ids);
+                        idsnew.addAll(buyids);
+                        idsnew.removeAll(sellids);
+                        newids = " -> " + idsnew;
+                    }
+                    param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Buy: " + buyids + " Sell: " + sellids + " Stocks: " + ids + newids + adv);
                 }
             }
         }
@@ -1745,7 +1752,7 @@ public class SimulateInvestComponent extends ComponentML {
         return currency;
     }
 
-    private Map<Integer, List<String>> getVolumeExcludesFull(SimulateInvestConfig simConfig, int interval, Map<String, List<List<Double>>> categoryValueMap,
+    Map<Integer, List<String>> getVolumeExcludesFull(SimulateInvestConfig simConfig, int interval, Map<String, List<List<Double>>> categoryValueMap,
             Map<String, List<List<Object>>> volumeMap, int firstidx, int lastidx) {
         Map<Integer, List<String>> listlist = new HashMap<>(); 
         if (simConfig.getVolumelimits() != null) {
@@ -2317,6 +2324,12 @@ public class SimulateInvestComponent extends ComponentML {
             //ValidateUtil.validateSizes(mainList, stockDates);
             if (mainList != null) {
                 Double valNow = mainList.get(mainList.size() - 1 - indexOffset);
+                if (valNow == null) {
+                    // we have to sell if the stock should disappear from the list
+                    if (item.getPrice() > 0.0) {
+                        valNow = item.getPrice();
+                    }
+                }
                 if (valNow != null) {
                     item.setSellprice(valNow);
                     String dateNow = stockDates.get(stockDates.size() - 1 - indexOffset);
@@ -2326,10 +2339,12 @@ public class SimulateInvestComponent extends ComponentML {
                     capital.amount += item.getCount() * item.getSellprice();
                     mystocks.remove(item);
                 } else {
+                    log.debug("Not found {}", id);
                     // put back if unknown
                     //mystocks.add(item);
                 }
             } else {
+                log.debug("Not found {}", id);
                 // put back if unknown
                 //mystocks.add(item);
             }

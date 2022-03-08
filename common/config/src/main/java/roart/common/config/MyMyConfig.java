@@ -862,6 +862,18 @@ public class MyMyConfig extends MyConfig {
         return (Integer) getValueOrDefault(ConfigConstants.MISCCACHETTL);
     }
 
+    public String getInmemoryServer() {
+        return (String) getValueOrDefault(ConfigConstants.MISCINMEMORYSERVER);
+    }
+
+    public String getInmemoryHazelcast() {
+        return (String) getValueOrDefault(ConfigConstants.MISCINMEMORYHAZELCAST);
+    }
+
+    public String getInmemoryRedis() {
+        return (String) getValueOrDefault(ConfigConstants.MISCINMEMORYREDIS);
+    }
+
     public Double getAbnormalChange() {
         return (Double) getValueOrDefault(ConfigConstants.MISCABNORMALCHANGE);
     }
@@ -1517,6 +1529,72 @@ public class MyMyConfig extends MyConfig {
         return (String) getValueOrDefault(ConfigConstants.DATASETMLCONFIG);
     }
 
+    public Boolean wantSwift() {
+        return (Boolean) getValueOrDefault(ConfigConstants.FILESYSTEMSWIFT);
+    }
+    
+    public Boolean wantLocal() {
+        return (Boolean) getValueOrDefault(ConfigConstants.FILESYSTEMLOCAL);
+    }
+    
+    public Boolean wantHDFS() {
+        return (Boolean) getValueOrDefault(ConfigConstants.FILESYSTEMHDFS);
+    }
+    
+    public Boolean wantS3() {
+        return (Boolean) getValueOrDefault(ConfigConstants.FILESYSTEMS3);
+    }
+    
+    @JsonIgnore
+    public String getHDFSDefaultName() {
+        return (String) getValueOrDefault(ConfigConstants.FILESYSTEMHDFSHDFSCONFFS);
+    }
+    
+    @JsonIgnore
+    public String getSwiftUser() {
+        return (String) getValueOrDefault(ConfigConstants.FILESYSTEMSWIFTSWIFTCONFUSER);
+    }
+   
+    @JsonIgnore
+    public String getSwiftKey() {
+        return (String) getValueOrDefault(ConfigConstants.FILESYSTEMSWIFTSWIFTCONFKEY);
+    }
+   
+    @JsonIgnore
+    public String getSwiftUrl() {
+        return (String) getValueOrDefault(ConfigConstants.FILESYSTEMSWIFTSWIFTCONFURL);
+    }
+   
+    @JsonIgnore
+    public String getSwiftContainer() {
+        return (String) getValueOrDefault(ConfigConstants.FILESYSTEMSWIFTSWIFTCONFCONTAINER);
+    }
+   
+    @JsonIgnore
+    public String getS3Host() {
+        return (String) getValueOrDefault(ConfigConstants.FILESYSTEMS3HOST);
+    }
+   
+    @JsonIgnore
+    public String getS3Port() {
+        return (String) getValueOrDefault(ConfigConstants.FILESYSTEMS3PORT);
+    }
+   
+    @JsonIgnore
+    public String getS3Region() {
+        return (String) getValueOrDefault(ConfigConstants.FILESYSTEMS3REGION);
+    }
+   
+    @JsonIgnore
+    public String getS3AccessKey() {
+        return (String) getValueOrDefault(ConfigConstants.FILESYSTEMS3ACCESSKEY);
+    }
+   
+    @JsonIgnore
+    public String getS3SecretKey() {
+        return (String) getValueOrDefault(ConfigConstants.FILESYSTEMS3SECRETKEY);
+    }
+   
     public Double getThreshold(String key) {
         if (key == null) {
             return 1.0;

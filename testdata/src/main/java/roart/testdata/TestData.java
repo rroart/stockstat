@@ -59,4 +59,24 @@ public class TestData {
         Collections.sort(list);
         return list;
     }
+
+    public Map<String, List<List<Double>>> getVolumeCatValMap() {
+        Map<String, List<List<Double>>> map = new HashMap<>();
+        List<Double> l = Arrays.asList(new Double[] { 4320.0, null, null, null, null, null, null, null, null, null, null, null, null, 4200.0 } );
+        List<List<Double>> l2 = new ArrayList<>();
+        l2.add(l);
+        map.put("1", l2);
+        return map;
+    }
+    
+    public Map<String, List<List<Object>>> getVolumeMap() {
+        Map<String, List<List<Object>>> map = new HashMap<>();
+        List<Object> nulls = Arrays.asList(null, null);
+        List<Object> t = Arrays.asList(3, "DKK");
+        List<List<Object>> l = Arrays.asList(t, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, t);
+        //List<List<Object>> l2 = new ArrayList<>();
+        //l2.add(l);
+        map.put("1", l);
+        return map;
+    }
 }

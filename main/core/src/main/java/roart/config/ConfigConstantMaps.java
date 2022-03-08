@@ -233,6 +233,9 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MISCCOMMUNICATIONS, String.class);
         map.put(ConfigConstants.MISCCACHE, Boolean.class);
         map.put(ConfigConstants.MISCCACHETTL, Integer.class);
+        map.put(ConfigConstants.MISCINMEMORYSERVER, String.class);
+        map.put(ConfigConstants.MISCINMEMORYHAZELCAST, String.class);
+        map.put(ConfigConstants.MISCINMEMORYREDIS, String.class);
         map.put(ConfigConstants.MISCABNORMALCHANGE, Double.class);
         map.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEFUTUREDAYS, Integer.class);
         map.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEINTERVALDAYS, Integer.class);
@@ -403,6 +406,20 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.AGGREGATORSMLMULTISTOCHRSI, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSMLMULTITHRESHOLD, String.class);
         map.put(ConfigConstants.DATASETMLCONFIG, String.class);
+        map.put(ConfigConstants.FILESYSTEMLOCAL, Boolean.class);
+        map.put(ConfigConstants.FILESYSTEMHDFS, Boolean.class);
+        map.put(ConfigConstants.FILESYSTEMHDFSHDFSCONFFS, String.class);
+        map.put(ConfigConstants.FILESYSTEMSWIFT, Boolean.class);
+        map.put(ConfigConstants.FILESYSTEMSWIFTSWIFTCONFURL, String.class);
+        map.put(ConfigConstants.FILESYSTEMSWIFTSWIFTCONFUSER, String.class);
+        map.put(ConfigConstants.FILESYSTEMSWIFTSWIFTCONFKEY, String.class);
+        map.put(ConfigConstants.FILESYSTEMSWIFTSWIFTCONFCONTAINER, String.class);
+        map.put(ConfigConstants.FILESYSTEMS3, Boolean.class);
+        map.put(ConfigConstants.FILESYSTEMS3HOST, String.class);
+        map.put(ConfigConstants.FILESYSTEMS3PORT, String.class);
+        map.put(ConfigConstants.FILESYSTEMS3REGION, String.class);
+        map.put(ConfigConstants.FILESYSTEMS3ACCESSKEY, String.class);
+        map.put(ConfigConstants.FILESYSTEMS3SECRETKEY, String.class);
     }
 
     public static Map<String, Object> deflt = new HashMap();
@@ -619,6 +636,9 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MISCCOMMUNICATIONS, "{}");
         deflt.put(ConfigConstants.MISCCACHE, Boolean.TRUE);
         deflt.put(ConfigConstants.MISCCACHETTL, 3600);
+        deflt.put(ConfigConstants.MISCINMEMORYSERVER, Constants.REDIS);
+        deflt.put(ConfigConstants.MISCINMEMORYHAZELCAST, null);
+        deflt.put(ConfigConstants.MISCINMEMORYREDIS, "localhost");
         deflt.put(ConfigConstants.MISCABNORMALCHANGE, null);
         deflt.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS, 10);
         deflt.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXTHRESHOLD, " [ 1.0 ] ");
@@ -780,6 +800,20 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.AGGREGATORSMLMULTISTOCH, Boolean.FALSE);
         deflt.put(ConfigConstants.AGGREGATORSMLMULTISTOCHRSI, Boolean.FALSE);
         deflt.put(ConfigConstants.AGGREGATORSMLMULTITHRESHOLD, THRESHOLD);
+        deflt.put(ConfigConstants.FILESYSTEMLOCAL, Boolean.TRUE);
+        deflt.put(ConfigConstants.FILESYSTEMHDFS, Boolean.FALSE);
+        deflt.put(ConfigConstants.FILESYSTEMHDFSHDFSCONFFS, "");
+        deflt.put(ConfigConstants.FILESYSTEMSWIFT, Boolean.FALSE);
+        deflt.put(ConfigConstants.FILESYSTEMSWIFTSWIFTCONFURL, "");
+        deflt.put(ConfigConstants.FILESYSTEMSWIFTSWIFTCONFUSER, "");
+        deflt.put(ConfigConstants.FILESYSTEMSWIFTSWIFTCONFKEY, "");
+        deflt.put(ConfigConstants.FILESYSTEMSWIFTSWIFTCONFCONTAINER, "");
+        deflt.put(ConfigConstants.FILESYSTEMS3, Boolean.FALSE);
+        deflt.put(ConfigConstants.FILESYSTEMS3HOST, "localhost");
+        deflt.put(ConfigConstants.FILESYSTEMS3PORT, "9000");
+        deflt.put(ConfigConstants.FILESYSTEMS3REGION, "us-east-1");
+        deflt.put(ConfigConstants.FILESYSTEMS3ACCESSKEY, "minioadmin");
+        deflt.put(ConfigConstants.FILESYSTEMS3SECRETKEY, "minioadmin");
     }
 
     //private final static String json = "{\"_class\": \"roart.calculate.CalcMACDNode\", \"className\":\"CalcMacdNode\",\"minMutateThresholdRange\":-5.0,\"maxMutateThresholdRange\":5.0,\"threshold\":-2.476814906438654,\"useminmaxthreshold\":true,\"usethreshold\":false,\"divideminmaxthreshold\":true,\"weight\":31.0,\"changeSignWhole\":false,\"useMax\":false}";
@@ -1001,6 +1035,9 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.MISCCOMMUNICATIONS, "Communications and connections");
         text.put(ConfigConstants.MISCCACHE, "Cache enable");
         text.put(ConfigConstants.MISCCACHETTL, "Cache TTL");
+        text.put(ConfigConstants.MISCINMEMORYSERVER, "In memory server");
+        text.put(ConfigConstants.MISCINMEMORYHAZELCAST, "In memory Hazelcast connection");
+        text.put(ConfigConstants.MISCINMEMORYREDIS, "In memory Redis connection");
         text.put(ConfigConstants.MISCABNORMALCHANGE, "Abnormal change ignore");
         text.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEFUTUREDAYS, "Test simple recommender future days");
         text.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEINTERVALDAYS, "Test simple recommender interval days");
@@ -1165,6 +1202,20 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.AGGREGATORSMLMULTISTOCH, "ML mlmulti STOCH enable");
         text.put(ConfigConstants.AGGREGATORSMLMULTISTOCHRSI, "ML mlmulti STOCHRSI enable");
         text.put(ConfigConstants.AGGREGATORSMLMULTITHRESHOLD, "ML mlmulti threshold for classifier");
+        text.put(ConfigConstants.FILESYSTEMLOCAL, "Use Local fs");
+        text.put(ConfigConstants.FILESYSTEMHDFS, "Use HDFS");
+        text.put(ConfigConstants.FILESYSTEMHDFSHDFSCONFFS, "HDFS fs path");
+        text.put(ConfigConstants.FILESYSTEMSWIFT, "Use Swift");
+        text.put(ConfigConstants.FILESYSTEMSWIFTSWIFTCONFURL, "Swift url");
+        text.put(ConfigConstants.FILESYSTEMSWIFTSWIFTCONFUSER, "Swift user");
+        text.put(ConfigConstants.FILESYSTEMSWIFTSWIFTCONFKEY, "Swift key");
+        text.put(ConfigConstants.FILESYSTEMSWIFTSWIFTCONFCONTAINER, "Swift containter");
+        text.put(ConfigConstants.FILESYSTEMS3, "Use S3");
+        text.put(ConfigConstants.FILESYSTEMS3HOST, "S3 host");
+        text.put(ConfigConstants.FILESYSTEMS3PORT, "S3 port");
+        text.put(ConfigConstants.FILESYSTEMS3REGION, "S3 region");
+        text.put(ConfigConstants.FILESYSTEMS3ACCESSKEY, "S3 access key");
+        text.put(ConfigConstants.FILESYSTEMS3SECRETKEY, "S3 secret key");
     }
 
     private static final Double[] THRESHOLDRANGE = new Double[] { 0.8, 1.2, 2.0 }; 
@@ -1436,6 +1487,9 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MISCCOMMUNICATIONS, new XMLType( String.class, "{}", "Communications and connections"));
         mymap.put(ConfigConstants.MISCCACHE, new XMLType( Boolean.class, Boolean.TRUE, "Cache enable"));
         mymap.put(ConfigConstants.MISCCACHETTL, new XMLType( Boolean.class, Boolean.TRUE, "Cache TTL"));
+        mymap.put(ConfigConstants.MISCINMEMORYSERVER, new XMLType( String.class, Constants.REDIS, "In memory server"));
+        mymap.put(ConfigConstants.MISCINMEMORYHAZELCAST, new XMLType( String.class, null, "In memory Hazelcast connection"));
+        mymap.put(ConfigConstants.MISCINMEMORYREDIS, new XMLType( String.class, "localhost", "In memory Redis connection"));
         mymap.put(ConfigConstants.MISCABNORMALCHANGE, new XMLType( Double.class, null, "Abnormal change ignore"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, new XMLType( String.class, "{ \"generations\" : 100, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS, new XMLType( Integer.class, 10, "Test complex recommender future days"));
@@ -1561,6 +1615,20 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.AGGREGATORSMLMULTISTOCH, new XMLType( Boolean.class, Boolean.FALSE, "ML mlmulti STOCH enable"));
         mymap.put(ConfigConstants.AGGREGATORSMLMULTISTOCHRSI, new XMLType( Boolean.class, Boolean.FALSE, "ML mlmulti STOCHRSI enable"));
         mymap.put(ConfigConstants.DATASETMLCONFIG, new XMLType(String.class, null, "Dataset ml config"));
+        mymap.put(ConfigConstants.FILESYSTEMLOCAL, new XMLType( Boolean.class, Boolean.TRUE, "Use Local fs"));
+        mymap.put(ConfigConstants.FILESYSTEMHDFS, new XMLType( Boolean.class, Boolean.FALSE, "Use HDFS"));
+        mymap.put(ConfigConstants.FILESYSTEMHDFSHDFSCONFFS, new XMLType( String.class, "", "HDFS fs path"));
+        mymap.put(ConfigConstants.FILESYSTEMSWIFT, new XMLType( Boolean.class, Boolean.FALSE, "Use Swift"));
+        mymap.put(ConfigConstants.FILESYSTEMSWIFTSWIFTCONFURL, new XMLType( String.class, "", "Swift url"));
+        mymap.put(ConfigConstants.FILESYSTEMSWIFTSWIFTCONFUSER, new XMLType( String.class, "", "Swift user"));
+        mymap.put(ConfigConstants.FILESYSTEMSWIFTSWIFTCONFKEY, new XMLType( String.class, "", "Swift key"));
+        mymap.put(ConfigConstants.FILESYSTEMSWIFTSWIFTCONFCONTAINER, new XMLType( String.class, "", "Swift container"));
+        mymap.put(ConfigConstants.FILESYSTEMS3, new XMLType( Boolean.class, Boolean.FALSE, "USE S3"));
+        mymap.put(ConfigConstants.FILESYSTEMS3HOST, new XMLType( String.class, "localhost", "S3 host"));
+        mymap.put(ConfigConstants.FILESYSTEMS3PORT, new XMLType( String.class, "9000", "S3 port"));
+        mymap.put(ConfigConstants.FILESYSTEMS3REGION, new XMLType( String.class, "us-east-1", "S3 region"));
+        mymap.put(ConfigConstants.FILESYSTEMS3ACCESSKEY, new XMLType( String.class, "minioadmin", "S3 access key"));
+        mymap.put(ConfigConstants.FILESYSTEMS3SECRETKEY, new XMLType( String.class, "minioadmin", "S3 secret key"));
     }
 
 }

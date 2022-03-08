@@ -58,6 +58,10 @@ public class WebFluxUtil {
         return sendMeInner(myclass, param, url, null);
     }
     
+    public static <T> T sendMe(Class<T> myclass, String url, Object param, String path) {
+        return sendMeInner(myclass, param, url + path, null);
+    }
+    
     public static <T> T sendMeInner(Class<T> myclass, Object param, String url, ObjectMapper objectMapper) {
         long time = System.currentTimeMillis();
         if (objectMapper != null) {

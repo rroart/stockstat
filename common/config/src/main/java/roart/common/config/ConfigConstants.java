@@ -370,4 +370,18 @@ public class ConfigConstants {
     public static final String AGGREGATORSMLMULTISTOCHRSI = "aggregators.mlmulti.stochrsi[@enable]";
     public static final String AGGREGATORSMLMULTITHRESHOLD = "aggregators.mlmulti.threshold";
     public static final String DATASETMLCONFIG = "dataset.mlconfig";
+    public static final String FILESYSTEMLOCAL = "filesystem.local[@enable]";
+    public static final String FILESYSTEMHDFS = "filesystem.hdfs[@enable]";
+    public static final String FILESYSTEMHDFSHDFSCONFFS = "filesystem.hdfs.hdfsconffs";
+    public static final String FILESYSTEMSWIFT = "filesystem.swift[@enable]";
+    public static final String FILESYSTEMSWIFTSWIFTCONFURL = "filesystem.swift.swiftconfurl";
+    public static final String FILESYSTEMSWIFTSWIFTCONFUSER = "filesystem.swift.swiftconfuser";
+    public static final String FILESYSTEMSWIFTSWIFTCONFKEY = "filesystem.swift.swiftconfkey";
+    public static final String FILESYSTEMSWIFTSWIFTCONFCONTAINER = "filesystem.swift.swiftconfcontainer";
+    public static final String FILESYSTEMS3 = "filesystem.s3[@enable]";
+    public static final String FILESYSTEMS3HOST = "filesystem.s3.host";
+    public static final String FILESYSTEMS3PORT = "filesystem.s3.port";
+    public static final String FILESYSTEMS3REGION = "filesystem.s3.region";
+    public static final String FILESYSTEMS3ACCESSKEY = "filesystem.s3.accesskey";
+    public static final String FILESYSTEMS3SECRETKEY = "filesystem.s3.secretkey";
 }
