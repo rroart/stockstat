@@ -84,7 +84,7 @@ public class WebFluxUtil {
                 .post()
                 .uri(url)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .body(BodyInserters.fromObject(param))
+                .body(BodyInserters.fromValue(param))
                 .retrieve()
                 .bodyToMono(myclass)
                 .onErrorMap(Exception::new)
