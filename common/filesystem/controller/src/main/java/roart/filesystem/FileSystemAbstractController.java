@@ -31,6 +31,7 @@ import roart.common.util.FsUtil;
 
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,9 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RestController
-//@EnableAutoConfiguration
 @SpringBootApplication
-@EnableDiscoveryClient
 public abstract class FileSystemAbstractController implements CommandLineRunner {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -194,6 +193,16 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
             throws Exception {
         FileSystemOperations operations = getOperations(param.nodename, param.configid, param.conf);
         FileSystemMessageResult ret = operations.readFile(param);
+        return ret;
+    }
+
+    @RequestMapping(value = "/" + EurekaConstants.WRITEFILE,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            method = RequestMethod.POST)
+    public FileSystemMessageResult processWriteFile(@RequestBody FileSystemFileObjectParam param)
+            throws Exception {
+        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.conf);
+        FileSystemMessageResult ret = operations.writeFile(param);
         return ret;
     }
 

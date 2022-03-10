@@ -36,6 +36,7 @@ import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.inmemory.model.InmemoryUtil;
 import roart.common.model.FileObject;
 import roart.common.model.Location;
+import roart.common.util.FsUtil;
 import roart.common.util.IOUtil;
 import roart.filesystem.FileSystemOperations;
 
@@ -387,8 +388,8 @@ public class S3 extends FileSystemOperations {
     public FileSystemMessageResult writeFile(FileSystemFileObjectParam param) throws Exception {
         Map<String, InmemoryMessage> map = new HashMap<>();
         Inmemory inmemory = InmemoryFactory.get(nodeConf.getInmemoryServer(), nodeConf.getInmemoryHazelcast(), nodeConf.getInmemoryRedis());
-        for (Entry<FileObject, InmemoryMessage> entry : param.map.entrySet()) {
-            FileObject filename = entry.getKey();
+        for (Entry<String, InmemoryMessage> entry : param.map.entrySet()) {
+            FileObject filename = FsUtil.getFileObject(entry.getKey());
             InmemoryMessage msg = entry.getValue();
             String content = inmemory.read(msg);
             conf.s3client.putObject(filename.location.extra, filename.object, content);

@@ -11,5 +11,5 @@ public class FileSystemFileObjectParam extends FileSystemParam {
     
     public Set<FileObject> fos;
     
-    public Map<FileObject, InmemoryMessage> map;
+    public Map<String, InmemoryMessage> map;
 }

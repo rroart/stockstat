@@ -182,8 +182,8 @@ public class FileSystemAccess {
     }
 
     public boolean writeFile(FileObject f, InmemoryMessage content) {
-        Map<FileObject, InmemoryMessage> map = new HashMap<>();
-        map.put(f, content);
+        Map<String, InmemoryMessage> map = new HashMap<>();
+        map.put(f.toString(), content);
         FileSystemFileObjectParam param = new FileSystemFileObjectParam();
         param.configid = "myid";
         param.conf = conf;
