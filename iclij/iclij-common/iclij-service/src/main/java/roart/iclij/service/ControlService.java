@@ -430,7 +430,7 @@ public class ControlService {
         if (true) {
             RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);        
             String zookeeperConnectionString = conf.getZookeeper();
-            if (curatorClient != null) {
+            if (curatorClient == null) {
                 curatorClient = CuratorFrameworkFactory.newClient(zookeeperConnectionString, retryPolicy);
                 curatorClient.start();
             }

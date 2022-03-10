@@ -6,6 +6,7 @@ core=0
 icore=0
 isim=0
 ievolve=0
+local=0
 
 if [ "$1" == "" ]; then
     web=1
@@ -14,6 +15,7 @@ if [ "$1" == "" ]; then
     icore=1
     isim=1
     ievolve=1
+    local=1
 else
     while [ "$1" != "" ]; do
 	[ "$1" == "w" ] &&  web=1
@@ -22,11 +24,17 @@ else
 	[ "$1" == "i" ] &&  icore=1
 	[ "$1" == "s" ] &&  isim=1
 	[ "$1" == "e" ] &&  ievolve=1
+	[ "$1" == "l" ] &&  local=1
 	shift 1
     done
 fi
 
 JFR="-Xlog:gc*=debug:file=/tmp/gc.log:utctime,uptime,tid,level:filecount=10,filesize=128m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/heapdump.hprof -XX:StartFlightRecording=disk=true,dumponexit=true,filename=/tmp/recording.jfr,maxsize=1024m,maxage=1d,settings=profile,path-to-gc-roots=true"
+
+LOCAL="-DFS=local -DPATH=$SAVELOCATION:$SAVEPATH -DZOO=$ZOOKEEPER -DNODE="
+if [[ -v IP ]]; then
+    LOCAL="$LOCAL -DIP=$IP"
+fi
 
 cd ../lib
 
@@ -47,6 +55,9 @@ if [ $isim -eq 1 ]; then
 fi
 if [ $ievolve -eq 1 ]; then
     $COMMAND "java $DB -Dconfig=ievolve.xml $IEVOLVEDEBUG -jar stockstat-iclij-evolve-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/ievolve$OUTNAME.out $REDIRECT" &
+fi
+if [ $local -eq 1 ]; then
+    $COMMAND "java $LOCAL -Dconfig=stockstat.xml $LOCALDEBUG -jar stockstat-local-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/local$OUTNAME.out $REDIRECT" &
 fi
 if [ $ml -eq 1 ]; then
     cd ../tensorflow

@@ -172,6 +172,34 @@
       </excludes>
       <outputDirectory>iclij-webr</outputDirectory>
     </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/../common/filesystem/local/target</directory>
+      <includes>
+	<include>*.jar</include>
+      </includes>
+      <outputDirectory>lib</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/../common/filesystem/hdfs/target</directory>
+      <includes>
+	<include>*.jar</include>
+      </includes>
+      <outputDirectory>lib</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/../common/filesystem/s3/target</directory>
+      <includes>
+	<include>*.jar</include>
+      </includes>
+      <outputDirectory>lib</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/../common/filesystem/swift/target</directory>
+      <includes>
+	<include>*.jar</include>
+      </includes>
+      <outputDirectory>lib</outputDirectory>
+    </fileSet>
   </fileSets>
   <!--files>
     <file>

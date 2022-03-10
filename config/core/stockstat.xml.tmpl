@@ -141,6 +141,7 @@
     <cache enable='$CACHE'>
       <ttl>$CACHETTL</ttl>
     </cache>
+    <zookeeper>$ZOOKEEPER</zookeeper>
     <myservices>$MYSERVICESCORE</myservices>
     <services>$SERVICES</services>
     <communications>$COMMUNICATIONS</communications>
@@ -164,6 +165,10 @@
       <evolutionconfig>{ "generations" : 10, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
       <!--evolutionconfig>{ "generations" : 0, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 4, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig-->
     </ml>
+    <save>
+	<location>$SAVELOCATION</location>
+	<path>$SAVEPATH</path>
+    </save>
   </evolve>
   <aggregators enable='true'>
     <indicatorrecommender enable='true'>
@@ -334,4 +339,22 @@
       <daysafterlimit>10</daysafterlimit>
     </mlmulti>
   </aggregators>
+  <filesystem>
+    <hdfs enable="$HDFS">
+      <hdfsconffs>$HDFSCONFFS</hdfsconffs>
+    </hdfs>
+    <swift enable="$SWIFT">
+      <swiftconfurl>$SWIFTCONFURL</swiftconfurl>
+      <swiftconfuser>$SWIFTCONFUSER</swiftconfuser>
+      <swiftconfkey>$SWIFTCONFKEY</swiftconfkey>
+      <swiftconfcontainer>$SWIFTCONFCONTAINER</swiftconfcontainer>
+    </swift>
+    <s3 enable="$S3">
+	<host>$S3HOST</host>
+	<port>$S3PORT</port>
+	<region>$S3REGION</region>
+	<accesskey>$S3ACCESSKEY</accesskey>
+	<secretkey>$S3SECRETKEY</secretkey>
+    </s3>
+  </filesystem>
 </config>
