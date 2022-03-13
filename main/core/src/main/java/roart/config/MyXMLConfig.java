@@ -107,18 +107,19 @@ public class MyXMLConfig {
                     log.info("Unknown {}", text);
                     continue;
                 }
+                String str = configxml.getString(s);
                 switch (myclass.getName()) {
                 case "java.lang.String":
                     o = configxml.getString(s);
                     break;
                 case "java.lang.Integer":
-                    o = configxml.getInt(s);
+                    o = !str.isEmpty() ? configxml.getInt(s) : null;
                     break;
                 case "java.lang.Double":
-                    o = configxml.getDouble(s);
+                    o = !str.isEmpty() ? configxml.getDouble(s) : null;
                     break;
                 case "java.lang.Boolean":
-                    o = configxml.getBoolean(s);
+                    o = !str.isEmpty() ? configxml.getBoolean(s) : null;
                     break;
                 default:
                     log.info("unknown {}", myclass.getName());
