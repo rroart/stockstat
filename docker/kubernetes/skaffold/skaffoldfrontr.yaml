@@ -7,14 +7,18 @@ build:
     docker:
       dockerfile: docker/cloud/webr/Dockerfile
       buildArgs:
+        docroot: '{{.WEBRDOCROOT}}'
         myserver: '{{.MYSERVER}}'
+        myport: '{{.MYPORT}}'
         mywebport: "80"
   - image: iwebr
     context: ../../..
     docker:
-      dockerfile: docker/cloud/iclij-webr/Dockerfile
+      dockerfile: docker/cloud/webr/Dockerfile
       buildArgs:
+        docroot: '{{.IWEBRDOCROOT}}'
         myiserver: '{{.MYISERVER}}'
+        mypiort: '{{.MYIPORT}}'
         myserver: '{{.MYSERVER}}'
         mywebport: "80"
 deploy:

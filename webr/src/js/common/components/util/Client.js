@@ -1,18 +1,20 @@
 /* eslint-disable no-undef */
 
+import { env } from '../../../../env'
+
 function getPort() {
-    console.log(process.env.NODE_ENV);
-    if (typeof process.env.MYPORT !== 'undefined') {
-	return process.env.MYPORT;
+    console.log(env.NODE_ENV);
+    if (typeof env.REACT_APP_MYPORT !== 'undefined') {
+	return env.REACT_APP_MYPORT;
     }
     return 80;
 }
 
 function getHost() {
     console.log("pppp");
-    console.log(process.env);
-    if (typeof process.env.MYSERVER !== 'undefined') {
-	return process.env.MYSERVER;
+    console.log(env);
+    if (typeof env.REACT_APP_MYSERVER !== 'undefined') {
+	return env.REACT_APP_MYSERVER;
     }
     return "localhost";
 }

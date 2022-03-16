@@ -70,13 +70,20 @@ if [ $ml -eq 1 ]; then
     $COMMAND "./flaskgem.sh $GEMSERVERPORT 2>&1 | tee /tmp/flaskgem$OUTNAME.out" &
 fi
 if [ $web -eq 1 ]; then
-    cd ../webr/docroot
-    $COMMAND "http-server -p $WEBR" &
+    cd ../webr
+    export REACT_APP_MYSERVER=MYSERVER
+    export REACT_APP_MYPORT=MYPORT
+    npx react-inject-env set -d docroot
+    $COMMAND "npx http-server docroot -p $WEBR" &
 
-    cd ../../iclij-webr/docroot
-    $COMMAND "http-server -p $IWEBR" &
+    cd ../iclij-webr
+    export REACT_APP_MYISERVER=MYISERVER
+    export REACT_APP_MYIPORT=MYIPORT
+    npx react-inject-env set -d docroot
+    $COMMAND "npx http-server docroot -p $IWEBR" &
 
     cd ../weba/dist
+    #envsubst...
     $COMMAND "http-server -p $WEBA" &
 
     cd ../../iclij-weba/dist
