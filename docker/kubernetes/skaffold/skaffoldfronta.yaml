@@ -7,13 +7,15 @@ build:
     docker:
       dockerfile: docker/cloud/weba/Dockerfile
       buildArgs:
+        dist: '{{.WEBADIST}}'
         myserver: '{{.MYSERVER}}'
         mywebport: "80"
   - image: iweba
     context: ../../..
     docker:
-      dockerfile: docker/cloud/iclij-weba/Dockerfile
+      dockerfile: docker/cloud/weba/Dockerfile
       buildArgs:
+        dist: '{{.IWEBADIST}}'
         myiserver: '{{.MYISERVER}}'
         myserver: '{{.MYSERVER}}'
         mywebport: "80"

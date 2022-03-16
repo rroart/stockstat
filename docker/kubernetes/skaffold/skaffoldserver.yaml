@@ -9,35 +9,48 @@ build:
     docker:
       dockerfile: docker/cloud/core/Dockerfile
       buildArgs:
+        distlib: '{{.DISTLIB}}'
+        distjar: '{{.COREJAR}}'
         mywebport: "80"
         mydbserver: '{{.MYDBSERVER}}'
+        mydbserverport: '{{.MYDBSERVERPORT}}'
+        mydbserverdb: '{{.MYDBSERVERDB}}'
         myconfig: '{{.MYCONFIG}}'
-        myenv: '{{.MYENV}}'
+        mydebug: '{{.MYDEBUG}}'
   - image: icore
     context: ../../..
     docker:
-      dockerfile: docker/cloud/iclij-core/Dockerfile
+      dockerfile: docker/cloud/iclij/Dockerfile
       buildArgs:
+        distlib: '{{.DISTLIB}}'
+        distjar: '{{.ICOREJAR}}'
         myserver: '{{.CORESERVER}}'
         mywebport: "80"
         mydbserver: '{{.MYDBSERVER}}'
+        mydbserverport: '{{.MYDBSERVERPORT}}'
+        mydbserverdb: '{{.MYDBSERVERDB}}'
         myconfig: '{{.MYICONFIG}}'
-        myenv: '{{.MYIENV}}'
+        mydebug: '{{.MYDEBUG}}'
   - image: iwebcore
     context: ../../..
     docker:
-      dockerfile: docker/cloud/iclij-webcore/Dockerfile
+      dockerfile: docker/cloud/iclij/Dockerfile
       buildArgs:
+        distlib: '{{.DISTLIB}}'
+        distjar: '{{.IWEBCOREJAR}}'
         myaserver: '{{.ACORESERVER}}'
         myiserver: '{{.ICORESERVER}}'
         myserver: '{{.CORESERVER}}'
         mywebport: "80"
         mydbserver: '{{.MYDBSERVER}}'
+        mydbserverport: '{{.MYDBSERVERPORT}}'
+        mydbserverdb: '{{.MYDBSERVERDB}}'
         myconfig: '{{.MYICONFIG}}'
-        myenv: '{{.MYIENV}}'
+        mydebug: '{{.MYDEBUG}}'
 deploy:
   kubectl:
     manifests:
     - core/deployment.yaml
     - icore/deployment.yaml
     - iwebcore/deployment.yaml
+    - rabbitmq/deployment.yaml

@@ -8,6 +8,7 @@ build:
       dockerfile: docker/cloud/dbclone/Dockerfile
       buildArgs:
         mydump: '{{.MYDUMP}}'
+        mydumpextern: '{{.MYDUMPEXTERN}}'
         mydbserver: '{{.MYDBSERVER}}'
 deploy:
   kubectl:
