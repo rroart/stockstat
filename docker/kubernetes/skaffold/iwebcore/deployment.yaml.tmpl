@@ -18,6 +18,7 @@ spec:
       - name: iwebcore
         image: iwebcore
         ports:
+        - containerPort: 8000
         - containerPort: 80
 ---
 apiVersion: v1
@@ -27,8 +28,14 @@ metadata:
   labels:
     app: iwebcore
 spec:
+  type: NodePort
   ports:
+  - port: 8000
+    name: debug
+    protocol: TCP
+    targetPort: 8000
   - port: 80
+    name: web
     protocol: TCP
     targetPort: 80
   selector:
@@ -37,19 +44,35 @@ spec:
 status:
   loadBalancer: {}    
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  labels:
+    app.kubernetes.io/component: controller
+  name: stockstat-iwebcore
+  annotations:
+    ingressclass.kubernetes.io/is-default-class: "false"
+spec:
+  controller: k8s.io/ingress-nginx
+---
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: name-virtual-host-ingress-iwebcore
-  annotations:
-    kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
 spec:
+  ingressClassName: stockstat-iwebcore
   rules:
   - host: $MYISERVER
     http:
       paths:
-      - backend:
-          serviceName: iwebcore
-          servicePort: 80
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: iwebcore-debug
+            port:
+              number: 8000
+          service:
+            name: iwebcore
+            port:
+              number: 80

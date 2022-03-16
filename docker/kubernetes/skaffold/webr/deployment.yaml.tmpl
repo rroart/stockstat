@@ -28,6 +28,7 @@ metadata:
   labels:
     app: webr
 spec:
+  type: NodePort
   ports:
   - port: 80
     protocol: TCP
@@ -38,15 +39,31 @@ spec:
 status:
   loadBalancer: {}    
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  labels:
+    app.kubernetes.io/component: controller
+  name: stockstat-webr
+  annotations:
+    ingressclass.kubernetes.io/is-default-class: "false"
+spec:
+  controller: k8s.io/ingress-nginx
+---
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: name-virtual-host-ingress-webr
 spec:
+  ingressClassName: stockstat-webr
   rules:
   - host: $MYWEB
     http:
       paths:
-      - backend:
-          serviceName: webr
-          servicePort: 80
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: webr
+            port:
+              number: 80

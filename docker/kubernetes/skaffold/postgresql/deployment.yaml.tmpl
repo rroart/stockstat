@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgresql-12-centos7
+  name: postgres
   labels:
-    app: postgresql-12-centos7
+    app: postgres
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgresql-12-centos7
+      app: postgres
   template:
     metadata:
       labels:
-        app: postgresql-12-centos7
+        app: postgres
     spec:
       containers:
-      - name: postgresql-12-centos7
-        image: centos/postgresql-12-centos7
+      - name: postgres
+        image: postgres:14-bullseye
         #imagePullPolicy: Never
         env:
-        - name: POSTGRESQL_USER
+        - name: POSTGRES_USER
           value: stockstat
-        - name: POSTGRESQL_PASSWORD
+        - name: POSTGRES_PASSWORD
           value: password
-        - name: POSTGRESQL_DATABASE
+        - name: POSTGRES_DATABASE
           value: stockstat
         ports:
         - containerPort: 5432
@@ -31,29 +31,17 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgresql-12-centos7
+  name: postgres
   labels:
-    app: postgresql-12-centos7
+    app: postgres
 spec:
+  type: NodePort
   ports:
   - port: 5432
     protocol: TCP
     targetPort: 5432
   selector:
-    app: postgresql-12-centos7
+    app: postgres
   sessionAffinity: None  
 status:
   loadBalancer: {}    
----
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  name: name-virtual-host-ingress-psql
-spec:
-  rules:
-  - host: $MYDB
-    http:
-      paths:
-      - backend:
-          serviceName: postgresql-12-centos7
-          servicePort: 5432
