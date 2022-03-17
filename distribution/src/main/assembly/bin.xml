@@ -179,6 +179,7 @@
       </includes>
       <excludes>
 	<exclude>src/**</exclude>
+	<exclude>tmp/**</exclude>
 	<exclude>node_modules/**</exclude>
       </excludes>
       <outputDirectory>weba</outputDirectory>
@@ -190,6 +191,7 @@
       </includes>
       <excludes>
 	<exclude>src/**</exclude>
+	<exclude>tmp/**</exclude>
 	<exclude>node_modules/**</exclude>
       </excludes>
       <outputDirectory>iclij-weba</outputDirectory>
