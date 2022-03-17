@@ -4,10 +4,9 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "config": "ts-node ./scripts/createmyenv.ts",
-    "start": "npm run config && ng serve --port 18185",
-    "docker-start": "npm run config && ng serve  --host 0.0.0.0 --port 18185",
-    "build": "npm run config && ng build",
+    "start": "ng serve --port 18185",
+    "docker-start": "ng serve  --host 0.0.0.0 --port 18185",
+    "build": "ng build",
     "test": "npm run lint && ng test --configuration=test",
     "lint": "ng lint",
     "e2e": "ng e2e",

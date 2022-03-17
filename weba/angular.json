@@ -28,6 +28,11 @@
                 "glob": "**/*",
                 "input": "src/assets",
                 "output": "/assets"
+              },
+              {
+                "glob": "env.js.tmpl",
+                "input": "src",
+                "output": "/"
               }
             ],
             "styles": [

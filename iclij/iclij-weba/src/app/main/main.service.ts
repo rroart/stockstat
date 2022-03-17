@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import {Http, Response, Headers, RequestOptions} from '@angular/http';
+import { Http, Response, Headers, RequestOptions } from '@angular/http';
 
 import { isDevMode } from '@angular/core';
 
@@ -14,67 +14,72 @@ export class MainService {
 
   retrieve(url: string, config: any): Observable<any> {
     //let headers = new Headers({ 'Content-Type': 'application/json' });
-    //let options = new RequestOptions({ headers: headers }); 
+    //let options = new RequestOptions({ headers: headers });
     let param = config;
-    console.log("http://" + MainService.getIHost() + ":" + MainService.getIPort() + url);
-    return this.httpClient
-      .post("http://" + MainService.getIHost() + ":" + MainService.getIPort() + url, param);
-      //.pipe(
-      //map((res: Response) => { res.json() } ));
-      //.catch(MainService.handleError)
-      //;
-    }  
+    console.log(
+      'http://' + MainService.getIHost() + ':' + MainService.getIPort() + url
+    );
+    return this.httpClient.post(
+      'http://' + MainService.getIHost() + ':' + MainService.getIPort() + url,
+      param
+    );
+    //.pipe(
+    //map((res: Response) => { res.json() } ));
+    //.catch(MainService.handleError)
+    //;
+  }
 
   retrieve0(url: string, config: any): Observable<any> {
     //let headers = new Headers({ 'Content-Type': 'application/json' });
-    //let options = new RequestOptions({ headers: headers }); 
+    //let options = new RequestOptions({ headers: headers });
     let param = config;
-    console.log("http://" + MainService.getHost() + ":" + MainService.getPort() + url);
-    return this.httpClient
-      .post("http://" + MainService.getHost() + ":" + MainService.getPort() + url, param);
-      //.pipe(
-      //map((res: Response) => { res.json() } ));
-      //.catch(MainService.handleError)
-      //;
-    }  
+    console.log(
+      'http://' + MainService.getHost() + ':' + MainService.getPort() + url
+    );
+    return this.httpClient.post(
+      'http://' + MainService.getHost() + ':' + MainService.getPort() + url,
+      param
+    );
+    //.pipe(
+    //map((res: Response) => { res.json() } ));
+    //.catch(MainService.handleError)
+    //;
+  }
 
-    static handleError(error: Response) {
-        console.log("Error " + error);
-        return Observable.throw(error || 'Server error');
-    }
+  static handleError(error: Response) {
+    console.log('Error ' + error);
+    return Observable.throw(error || 'Server error');
+  }
 
-static getPort() {
-    console.log(myenv.NODE_ENV);
+  static getPort() {
     if (typeof myenv.MYPORT !== 'undefined' && myenv.MYPORT !== '') {
-        return myenv.MYPORT;
+      return myenv.MYPORT;
     }
     return 80;
-}
+  }
 
-static getHost() {
-    console.log("pppp");
+  static getHost() {
+    console.log('pppp');
     console.log(myenv);
     if (typeof myenv.MYSERVER !== 'undefined' && myenv.MYSERVER !== '') {
-        return myenv.MYSERVER;
+      return myenv.MYSERVER;
     }
-    return "localhost";
-}
+    return 'localhost';
+  }
 
-static getIPort() {
-    console.log(myenv.NODE_ENV);
+  static getIPort() {
     if (typeof myenv.MYIPORT !== 'undefined' && myenv.MYIPORT !== '') {
-        return myenv.MYIPORT;
+      return myenv.MYIPORT;
     }
     return 80;
-}
+  }
 
-static getIHost() {
-    console.log("pppp");
+  static getIHost() {
+    console.log('pppp');
     console.log(myenv);
     if (typeof myenv.MYISERVER !== 'undefined' && myenv.MYISERVER !== '') {
-        return myenv.MYISERVER;
+      return myenv.MYISERVER;
     }
-    return "localhost";
-}
-
+    return 'localhost';
+  }
 }

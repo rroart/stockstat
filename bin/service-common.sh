@@ -83,10 +83,11 @@ if [ $web -eq 1 ]; then
     $COMMAND "npx http-server docroot -p $IWEBR" &
 
     cd ../weba/dist
-    #envsubst...
+    envsubst < env.js.tmpl > env.js
     $COMMAND "http-server -p $WEBA" &
 
     cd ../../iclij-weba/dist
+    envsubst < env.js.tmpl > env.js
     $COMMAND "http-server -p $IWEBA" &
 fi
 

@@ -11,7 +11,8 @@ pdf: DOCUMENTATION.pdf
 %.pdf: %.fo
 	fop $< -pdf $@
 
-SUBDIRS = core iclij-core weba iclij-weba
+SUBDIRS = core iclij-core
+#weba iclij-weba
 
 core:
 	mkdir -p conf
