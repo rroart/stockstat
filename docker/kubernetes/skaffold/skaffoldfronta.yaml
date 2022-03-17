@@ -9,6 +9,7 @@ build:
       buildArgs:
         dist: '{{.WEBADIST}}'
         myserver: '{{.MYSERVER}}'
+        myport: '{{.MYPORT}}'
         mywebport: "80"
   - image: iweba
     context: ../../..
@@ -17,7 +18,9 @@ build:
       buildArgs:
         dist: '{{.IWEBADIST}}'
         myiserver: '{{.MYISERVER}}'
+        myiport: '{{.MYIPORT}}'
         myserver: '{{.MYSERVER}}'
+        myport: '{{.MYPORT}}'
         mywebport: "80"
 deploy:
   kubectl:
