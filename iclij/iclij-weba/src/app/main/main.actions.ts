@@ -163,7 +163,7 @@ export class ActionGetconfig implements Action {
 export class ActionRetrieve implements Action {
   readonly type = MainActionTypes.RETRIEVE;
 
-  constructor(readonly payload: { url: string} ) {}
+  constructor(readonly payload: { url: string }) {}
 }
 
 export class ActionError implements Action {
@@ -238,8 +238,8 @@ export class ActionGetcontentImprove implements Action {
   constructor(readonly payload: { config: any }) {}
 }
 
-export class ActionGetcontentImproveAboveBelow implements Action {
-  readonly type = MainActionTypes.GETCONTENTIMPROVEABOVEBELOW;
+export class ActionGetImproveAboveBelow implements Action {
+  readonly type = MainActionTypes.GETIMPROVEABOVEBELOW;
 
   constructor(readonly payload: { config: any }) {}
 }
