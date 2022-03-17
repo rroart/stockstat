@@ -13,6 +13,7 @@
     <module>main</module>
     <module>testdata</module>
     <module>web</module>
+    <module>weba</module>
     <module>webr</module>
     <module>distribution</module>
   </modules>

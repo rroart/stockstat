@@ -21,6 +21,7 @@
   <module>iclij-evolve</module>
   <!--module>iclij-web</module-->
   <module>iclij-webcore</module>
+  <module>iclij-weba</module>
   <module>iclij-webr</module>
   <module>iclij-sim</module>
 </modules>

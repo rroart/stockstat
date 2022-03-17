@@ -173,6 +173,28 @@
       <outputDirectory>iclij-webr</outputDirectory>
     </fileSet>
     <fileSet>
+      <directory>${project.basedir}/../weba</directory>
+      <includes>
+        <include>**</include>
+      </includes>
+      <excludes>
+	<exclude>src/**</exclude>
+	<exclude>node_modules/**</exclude>
+      </excludes>
+      <outputDirectory>weba</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/../iclij/iclij-weba</directory>
+      <includes>
+        <include>**</include>
+      </includes>
+      <excludes>
+	<exclude>src/**</exclude>
+	<exclude>node_modules/**</exclude>
+      </excludes>
+      <outputDirectory>iclij-weba</outputDirectory>
+    </fileSet>
+    <fileSet>
       <directory>${project.basedir}/../common/filesystem/local/target</directory>
       <includes>
 	<include>*.jar</include>
