@@ -11,5 +11,5 @@ export SWIFTJAR=stockstat-swift-0.6-SNAPSHOT.jar
 
 export WEBRDOCROOT=distribution/target/stockstat-distribution-0.6-SNAPSHOT-bin/stockstat-distribution-0.6-SNAPSHOT/webr/docroot/
 export IWEBRDOCROOT=distribution/target/stockstat-distribution-0.6-SNAPSHOT-bin/stockstat-distribution-0.6-SNAPSHOT/webr/docroot/
-export WEBADIST=weba/dist/
-export IWEBADIST=iclij/iclij-weba/dist/
+export WEBADIST=distribution/target/stockstat-distribution-0.6-SNAPSHOT-bin/stockstat-distribution-0.6-SNAPSHOT/weba/dist/
+export IWEBADIST=distribution/target/stockstat-distribution-0.6-SNAPSHOT-bin/stockstat-distribution-0.6-SNAPSHOT/iclij-weba/dist/

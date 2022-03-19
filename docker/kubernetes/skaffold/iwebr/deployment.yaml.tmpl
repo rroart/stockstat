@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: iwebr
+  name: iwebr$APPID
   labels:
-    app: iwebr
+    app: iwebr$APPID
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: iwebr
+      app: iwebr$APPID
   template:
     metadata:
       labels:
-        app: iwebr
+        app: iwebr$APPID
     spec:
       containers:
       - name: iwebr
@@ -24,9 +24,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: iwebr
+  name: iwebr$APPID
   labels:
-    app: iwebr
+    app: iwebr$APPID
 spec:
   type: NodePort
   ports:
@@ -34,7 +34,7 @@ spec:
     protocol: TCP
     targetPort: 80
   selector:
-    app: iwebr
+    app: iwebr$APPID
   sessionAffinity: None  
 status:
   loadBalancer: {}    
@@ -44,7 +44,7 @@ kind: IngressClass
 metadata:
   labels:
     app.kubernetes.io/component: controller
-  name: stockstat-iwebr
+  name: stockstat-iwebr$APPID
   annotations:
     ingressclass.kubernetes.io/is-default-class: "false"
 spec:
@@ -53,9 +53,9 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: name-virtual-host-ingress-iwebr
+  name: name-virtual-host-ingress-iwebr$APPID
 spec:
-  ingressClassName: stockstat-iwebr
+  ingressClassName: stockstat-iwebr$APPID
   rules:
   - host: $MYIWEB
     http:
@@ -64,6 +64,6 @@ spec:
         path: "/"
         backend:
           service:
-            name: iwebr
+            name: iwebr$APPID
             port:
               number: 80

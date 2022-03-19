@@ -84,6 +84,10 @@ public abstract class ServiceControllerOtherAbstract {
             if (reply) {
                 myclass = replyclass;
             }
+            String appid = System.getenv(Constants.APPID);
+            if (appid != null) {
+                myservice = myservice + appid; // can not handle domain, only eureka
+            }
             Communication comm = CommunicationFactory.get(communication, myclass, myservice, objectMapper, false, true, false, connection);
             get(comm);
         }        

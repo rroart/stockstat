@@ -4,7 +4,7 @@ metadata:
   name: core
 build:
   artifacts:
-  - image: core
+  - image: core$IMGID
     context: ../../..
     docker:
       dockerfile: docker/cloud/core/Dockerfile
@@ -17,7 +17,7 @@ build:
         mydbserverdb: '{{.MYDBSERVERDB}}'
         myconfig: '{{.MYCONFIG}}'
         mydebug: '{{.MYDEBUG}}'
-  - image: icore
+  - image: icore$IMGID
     context: ../../..
     docker:
       dockerfile: docker/cloud/iclij/Dockerfile
@@ -31,7 +31,7 @@ build:
         mydbserverdb: '{{.MYDBSERVERDB}}'
         myconfig: '{{.MYICONFIG}}'
         mydebug: '{{.MYDEBUG}}'
-  - image: iwebcore
+  - image: iwebcore$IMGID
     context: ../../..
     docker:
       dockerfile: docker/cloud/iclij/Dockerfile
@@ -53,4 +53,3 @@ deploy:
     - core/deployment.yaml
     - icore/deployment.yaml
     - iwebcore/deployment.yaml
-    - rabbitmq/deployment.yaml

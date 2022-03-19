@@ -113,6 +113,10 @@ public class ControlService {
     public void send(String service, Object object, ObjectMapper objectMapper) {
         IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
+        String appid = System.getenv(Constants.APPID);
+        if (appid != null) {
+            service = service + appid; // can not handle domain, only eureka
+        }
         Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight());
         c.send(object);
     }

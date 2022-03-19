@@ -1,0 +1,8 @@
+apiVersion: skaffold/v2beta1
+kind: Config
+metadata:
+  name: rabbitmq
+deploy:
+  kubectl:
+    manifests:
+    - rabbitmq/deployment.yaml

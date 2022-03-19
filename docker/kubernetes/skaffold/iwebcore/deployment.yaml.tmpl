@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: iwebcore
+  name: iwebcore$APPID
   labels:
-    app: iwebcore
+    app: iwebcore$APPID
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: iwebcore
+      app: iwebcore$APPID
   template:
     metadata:
       labels:
-        app: iwebcore
+        app: iwebcore$APPID
     spec:
       containers:
       - name: iwebcore
@@ -24,9 +24,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: iwebcore
+  name: iwebcore$APPID
   labels:
-    app: iwebcore
+    app: iwebcore$APPID
 spec:
   type: NodePort
   ports:
@@ -39,7 +39,7 @@ spec:
     protocol: TCP
     targetPort: 80
   selector:
-    app: iwebcore
+    app: iwebcore$APPID
   sessionAffinity: None  
 status:
   loadBalancer: {}    
@@ -49,7 +49,7 @@ kind: IngressClass
 metadata:
   labels:
     app.kubernetes.io/component: controller
-  name: stockstat-iwebcore
+  name: stockstat-iwebcore$APPID
   annotations:
     ingressclass.kubernetes.io/is-default-class: "false"
 spec:
@@ -58,9 +58,9 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: name-virtual-host-ingress-iwebcore
+  name: name-virtual-host-ingress-iwebcore$APPID
 spec:
-  ingressClassName: stockstat-iwebcore
+  ingressClassName: stockstat-iwebcore$APPID
   rules:
   - host: $MYISERVER
     http:
@@ -69,10 +69,10 @@ spec:
         path: "/"
         backend:
           service:
-            name: iwebcore-debug
+            name: iwebcore$APPID-debug
             port:
               number: 8000
           service:
-            name: iwebcore
+            name: iwebcore$APPID
             port:
               number: 80

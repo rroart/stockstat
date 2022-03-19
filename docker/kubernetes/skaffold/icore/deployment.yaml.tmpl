@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: icore
+  name: icore$APPID
   labels:
-    app: icore
+    app: icore$APPID
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: icore
+      app: icore$APPID
   template:
     metadata:
       labels:
-        app: icore
+        app: icore$APPID
     spec:
       containers:
       - name: icore
@@ -24,9 +24,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: icore
+  name: icore$APPID
   labels:
-    app: icore
+    app: icore$APPID
 spec:
   type: NodePort
   ports:
@@ -39,7 +39,7 @@ spec:
     protocol: TCP
     targetPort: 80
   selector:
-    app: icore
+    app: icore$APPID
   sessionAffinity: None  
 status:
   loadBalancer: {}    
@@ -49,7 +49,7 @@ kind: IngressClass
 metadata:
   labels:
     app.kubernetes.io/component: controller
-  name: stockstat-icore
+  name: stockstat-icore$APPID
   annotations:
     ingressclass.kubernetes.io/is-default-class: "false"
 spec:
@@ -58,9 +58,9 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: name-virtual-host-ingress-icore
+  name: name-virtual-host-ingress-icore$APPID
 spec:
-  ingressClassName: stockstat-icore
+  ingressClassName: stockstat-icore$APPID
   rules:
   - host: $MYASERVER
     http:
@@ -69,10 +69,10 @@ spec:
         path: "/"
         backend:
           service:
-            name: icore-debug
+            name: icore$APPID-debug
             port:
               number: 8000
           service:
-            name: icore
+            name: icore$APPID
             port:
               number: 80

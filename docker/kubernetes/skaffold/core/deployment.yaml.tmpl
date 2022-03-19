@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: core
+  name: core$APPID
   labels:
-    app: core
+    app: core$APPID
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: core
+      app: core$APPID
   template:
     metadata:
       labels:
-        app: core
+        app: core$APPID
     spec:
       containers:
       - name: core
@@ -24,9 +24,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: core
+  name: core$APPID
   labels:
-    app: core
+    app: core$APPID
 spec:
   type: NodePort
   ports:
@@ -39,7 +39,7 @@ spec:
     protocol: TCP
     targetPort: 80
   selector:
-    app: core
+    app: core$APPID
   sessionAffinity: None  
 status:
   loadBalancer: {}    
@@ -49,7 +49,7 @@ kind: IngressClass
 metadata:
   labels:
     app.kubernetes.io/component: controller
-  name: core
+  name: core$APPID
   annotations:
     ingressclass.kubernetes.io/is-default-class: "false"
 spec:
@@ -58,9 +58,9 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: name-virtual-host-ingress-core
+  name: name-virtual-host-ingress-core$APPID
 spec:
-  ingressClassName: core
+  ingressClassName: core$APPID
   rules:
   - host: $MYSERVER
     http:
@@ -69,10 +69,10 @@ spec:
         path: "/"
         backend:
           service:
-            name: core-debug
+            name: core$APPID-debug
             port:
               number: 8000
           service:
-            name: core
+            name: core$APPID
             port:
               number: 80
