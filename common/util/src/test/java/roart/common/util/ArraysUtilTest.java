@@ -139,17 +139,25 @@ public class ArraysUtilTest {
         Double[] array35 = { 1.0, null, 3.0, null, null, null, null, null , null };
         ArraysUtil.fixMapHoles(array35, null, 2, interpolationmethod, true);
         System.out.println("t " + Arrays.asList(array35));
-        assertArrayEquals(new Double[] {1.0, 1.0, 3.0, null, null, null, null, null, null }, array35);
+        assertArrayEquals(new Double[] {1.0, 1.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0 }, array35);
+        //assertArrayEquals(new Double[] {1.0, 1.0, 3.0, null, null, null, null, null, null }, array35);
         
         Double[] array37 = { 1.0, null, 3.0, null, null, null};
         ArraysUtil.fixMapHoles(array37, null, 2, interpolationmethod, true);
         System.out.println("t " + Arrays.asList(array37));
-        assertArrayEquals(new Double[] {1.0, 1.0, 3.0, null, null, null }, array37);
+        assertArrayEquals(new Double[] {1.0, 1.0, 3.0, 3.0, 3.0, 3.0 }, array37);
+        //assertArrayEquals(new Double[] {1.0, 1.0, 3.0, null, null, null }, array37);
         
         Double[] array38 = { 1.0, null, 3.0, null, null};
         ArraysUtil.fixMapHoles(array38, null, 2, interpolationmethod, true);
         System.out.println("t " + Arrays.asList(array38));
         assertArrayEquals(new Double[] {1.0, 1.0, 3.0, 3.0, 3.0 }, array38);
+        
+        Double[] array39 = { null, null, null, null};
+        ArraysUtil.fixMapHoles(array39, null, 0, interpolationmethod, true);
+        System.out.println("t " + Arrays.asList(array39));
+        assertArrayEquals(new Double[] { null, null, null, null }, array39);
+        //assertArrayEquals(new Double[] {1.0, 1.0, 3.0, null, null, null }, array37);
         
         Double[] array4 = { null, null, null, 1.0, 2.0, 3.0, null };
         System.out.println("n4");
@@ -166,6 +174,11 @@ public class ArraysUtilTest {
         ArraysUtil.fixMapHoles(array6, null, 5, Constants.LINEAR, false);
         System.out.println(Arrays.asList(array6));
         assertArrayEquals(new Double[] {1.0, 2.0, 3.0, 3.25, 3.5, 3.75, 4.0, 5.0, 10.0, 11.0}, array6);
+        
+        Double[] array7 = { 1.0, 2.0, 3.0, null, null, null, 4.0, 5.0, 10.0, 11.0 };
+        ArraysUtil.fixMapHoles(array7, null, 3, Constants.LINEAR, false);
+        System.out.println(Arrays.asList(array7));
+        assertArrayEquals(new Double[] { null, null, null, null, null, null, 4.0, 5.0, 10.0, 11.0}, array7);
     }
     
     @Test

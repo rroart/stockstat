@@ -626,8 +626,9 @@ public class ArraysUtil {
             }                   
             return retDouble;            
         }
+        boolean ffill = Constants.FFILL.equals(interpolationmethod);
         int mymaxholenumber = maxHoleNumber == 0 ? 1 : maxHoleNumber;
-        if (acceptLastNull && start != length - 1 && length - 1 - start <= mymaxholenumber) {
+        if (ffill && acceptLastNull && start != length - 1 && start >= 0 /*&& length - 1 - start <= mymaxholenumber*/) {
             for (int k = start + 1; k < length; k++) {
                 dstArray[k] = dstArray[start];
             }                   
