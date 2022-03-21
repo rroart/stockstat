@@ -17,6 +17,9 @@ import java.util.Optional;
 public class MyMyConfig extends MyConfig {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
+    public MyMyConfig() {
+    }
+    
     public MyMyConfig(MyConfig config) {
         setConfigTreeMap(config.getConfigTreeMap());
         setConfigValueMap(new HashMap<>(config.getConfigValueMap()));
@@ -1542,19 +1545,19 @@ public class MyMyConfig extends MyConfig {
     }
 
     public Boolean wantSwift() {
-        return (Boolean) getValueOrDefault(ConfigConstants.FILESYSTEMSWIFT);
+        return (Boolean) getNotEmptyValueOrDefault(ConfigConstants.FILESYSTEMSWIFT);
     }
     
     public Boolean wantLocal() {
-        return (Boolean) getValueOrDefault(ConfigConstants.FILESYSTEMLOCAL);
+        return (Boolean) getNotEmptyValueOrDefault(ConfigConstants.FILESYSTEMLOCAL);
     }
     
     public Boolean wantHDFS() {
-        return (Boolean) getValueOrDefault(ConfigConstants.FILESYSTEMHDFS);
+        return (Boolean) getNotEmptyValueOrDefault(ConfigConstants.FILESYSTEMHDFS);
     }
     
     public Boolean wantS3() {
-        return (Boolean) getValueOrDefault(ConfigConstants.FILESYSTEMS3);
+        return (Boolean) getNotEmptyValueOrDefault(ConfigConstants.FILESYSTEMS3);
     }
     
     @JsonIgnore
