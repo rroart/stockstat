@@ -176,7 +176,7 @@ public class ArraysUtilTest {
         assertArrayEquals(new Double[] {1.0, 2.0, 3.0, 3.25, 3.5, 3.75, 4.0, 5.0, 10.0, 11.0}, array6);
         
         Double[] array7 = { 1.0, 2.0, 3.0, null, null, null, 4.0, 5.0, 10.0, 11.0 };
-        ArraysUtil.fixMapHoles(array7, null, 3, Constants.LINEAR, false);
+        ArraysUtil.fixMapHoles(array7, null, 2, Constants.LINEAR, false);
         System.out.println(Arrays.asList(array7));
         assertArrayEquals(new Double[] { null, null, null, null, null, null, 4.0, 5.0, 10.0, 11.0}, array7);
     }
