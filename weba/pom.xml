@@ -20,6 +20,19 @@
 	<artifactId>exec-maven-plugin</artifactId>
 	<version>1.6.0</version>
 	<executions>
+	  <execution>
+	    <id>rm package-lock.json</id>
+	    <goals>
+	      <goal>exec</goal>
+	    </goals>
+	    <phase>initialize</phase>
+	    <configuration>
+	      <executable>rm</executable>
+	      <arguments>
+		<argument>package-lock.json</argument>
+	      </arguments>
+	    </configuration>
+	  </execution>
 	  <!-- Required: The following will ensure `npm install` is called
                before anything else during the 'Default Lifecycle' -->
 	  <execution>
