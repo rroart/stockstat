@@ -2,10 +2,10 @@
 <configuration>
  <include resource="org/springframework/boot/logging/logback/defaults.xml" />
  <springProfile name="default">
-   <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}hdfs.log}"/>
+   <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}stockstathdfs.log}"/>
  </springProfile>
  <springProfile name="dev">
-   <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}hdfsdev.log}"/>
+   <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}stockstathdfsdev.log}"/>
  </springProfile>
  <springProfile name="docker">
  </springProfile>

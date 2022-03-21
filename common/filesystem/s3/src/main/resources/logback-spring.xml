@@ -2,10 +2,10 @@
 <configuration>
  <include resource="org/springframework/boot/logging/logback/defaults.xml" />
  <springProfile name="default">
-   <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}s3.log}"/>
+   <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}stockstats3.log}"/>
  </springProfile>
  <springProfile name="dev">
-   <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}s3dev.log}"/>
+   <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}stockstats3dev.log}"/>
  </springProfile>
  <springProfile name="docker">
  </springProfile>
