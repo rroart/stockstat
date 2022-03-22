@@ -13,6 +13,10 @@ import java.util.Set;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.curator.RetryPolicy;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +35,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.Extra;
+import roart.common.config.MyMyConfig;
+import roart.common.config.MyXMLConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.constants.ServiceConstants;
@@ -46,6 +52,7 @@ import roart.common.util.TimeUtil;
 import roart.db.IclijDbDao;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.NeuralNetChromosome2;
+import roart.filesystem.FileSystemDao;
 import roart.gene.NeuralNetConfigGene;
 import roart.iclij.evolution.marketfilter.chromosome.impl.AboveBelowChromosome;
 import roart.iclij.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
@@ -78,6 +85,8 @@ import com.google.common.collect.Maps;
 public class Evolve {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
+
+    public static CuratorFramework curatorClient;
 
     public void method(String param) {
         
@@ -132,7 +141,8 @@ public class Evolve {
         }
         output.add("");
         output.add("Summary: " + better + " " + MathUtil.round(avg, 2) + " vs " + newer);
-        print(ServiceConstants.EVOLVEFILTEREVOLVE + " " + title, "File " + id, output);
+        String text = printtext(ServiceConstants.EVOLVEFILTEREVOLVE + " " + title, "File " + id, output);
+        print(text);
         if (better) {
             NeuralNetChromosome2 c = (NeuralNetChromosome2) myList.get(0).getRight();
             NeuralNetConfigGene conf2 = c.getNnConfig();
@@ -323,7 +333,8 @@ public class Evolve {
         }
         output.add("");
         output.add("Summary: " + better + " " + MathUtil.round(avg, 2) + " vs " + newer);
-        print(ServiceConstants.EVOLVEFILTERPROFIT + " " + title, "File " + id, output);
+        String text = printtext(ServiceConstants.EVOLVEFILTERPROFIT + " " + title, "File " + id, output);
+        print(text);
         if (better) {
             ConfigMapChromosome2 c = (ConfigMapChromosome2) myList.get(0).getRight();
             ConfigMapGene conf2 = c.getGene();
@@ -375,7 +386,8 @@ public class Evolve {
         getCommon(chromosomeMap, allcomponents, output);
         //output.add("");
         //output.add("Summary: " + better + " " + MathUtil.round(avg, 2) + " vs " + newer);
-        print(ServiceConstants.EVOLVEFILTERABOVEBELOW + " " + title, "File " + id, output);
+        String text = printtext(ServiceConstants.EVOLVEFILTERABOVEBELOW + " " + title, "File " + id, output);
+        print(text);
         double newer = myList.get(0).getLeft();
         Double dflt = (Double) myMap.get(EvolveConstants.DEFAULT);
         boolean better = dflt < newer;
@@ -548,6 +560,19 @@ public class Evolve {
         return path.getFileName().toString();
     }
     
+    public String printtext(String title, String subtitle, List<String> individuals) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(title + "\n\n");
+        if (subtitle != null) {
+            stringBuilder.append(subtitle + "\n\n");
+        }
+        for (String individual : individuals) {
+            stringBuilder.append(individual + "\n");            
+        }
+        stringBuilder.append("\n");
+        return stringBuilder.toString();
+    }
+    
     private Map<Double, List<AbstractChromosome>> groupCommon(List<Pair<Double, AbstractChromosome>> myList, List<String> output) {
         List<Pair<Double, List<AbstractChromosome>>> retlist = new ArrayList<>();
         Map<Double, List<AbstractChromosome>> chromosomeMap = new LinkedHashMap<>();
@@ -629,6 +654,25 @@ public class Evolve {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         send(service, object, mapper);
+    }
+
+    private void print(String text) {
+        MyMyConfig instance2 = new MyMyConfig(MyXMLConfig.getConfigInstance());
+        String node = instance2.getEvolveSaveLocation();
+        String mypath = instance2.getEvolveSavePath();
+        configCurator(instance2);
+        new FileSystemDao(instance2, curatorClient).writeFile(node, mypath, null, text);
+    }
+
+    public static void configCurator(MyMyConfig conf) {
+        if (true) {
+            RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);        
+            String zookeeperConnectionString = conf.getZookeeper();
+            if (curatorClient == null) {
+                curatorClient = CuratorFrameworkFactory.newClient(zookeeperConnectionString, retryPolicy);
+                curatorClient.start();
+            }
+        }
     }
 
 }

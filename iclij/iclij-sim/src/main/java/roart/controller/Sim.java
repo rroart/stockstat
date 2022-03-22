@@ -34,6 +34,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 
+import roart.common.config.MyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.config.MyXMLConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.util.ArraysUtil;
@@ -42,6 +45,7 @@ import roart.common.util.MathUtil;
 import roart.common.util.TimeUtil;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapChromosome;
+import roart.filesystem.FileSystemDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
@@ -58,10 +62,16 @@ import roart.common.inmemory.factory.InmemoryFactory;
 import org.apache.commons.math3.stat.correlation.KendallsCorrelation;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
+import org.apache.curator.RetryPolicy;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.retry.ExponentialBackoffRetry;
 
 public class Sim {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
+
+    public static CuratorFramework curatorClient;
 
     public void method(String param, String string, boolean b) {
         param = getParam(param);
@@ -209,7 +219,12 @@ public class Sim {
                 output.add("Max " + MathUtil.round(aSummary.getKey(), 2) + " " + aSummary.getValue());
             }
             String simtext = (String) myMap.get(EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
-            print(string + " " + simtext, "File " + id, output);
+            MyMyConfig instance2 = new MyMyConfig(MyXMLConfig.getConfigInstance());
+            String node = instance2.getEvolveSaveLocation();
+            String mypath = instance2.getEvolveSavePath();
+            configCurator(instance2);
+            String text = printtext(string + " " + simtext, "File " + id, output);
+            String filename = new FileSystemDao(instance2, curatorClient).writeFile(node, mypath, null, text);
             
             //Map<String, Object> resultMap = winnerChromosome.getResultMap();
             String[] parts = simtext.split(" ");
@@ -334,7 +349,12 @@ public class Sim {
                 output.add("Max " + MathUtil.round(aSummary.getKey(), 2) + " " + aSummary.getValue());
             }
             String simtext = (String) myMap.get(EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
-            print("simauto " + simtext, "File " + id, output);
+            MyMyConfig instance2 = new MyMyConfig(MyXMLConfig.getConfigInstance());
+            String node = instance2.getEvolveSaveLocation();
+            String mypath = instance2.getEvolveSavePath();
+            configCurator(instance2);
+            String text = printtext("simauto " + simtext, "File " + id, output);
+            String filename = new FileSystemDao(instance2, curatorClient).writeFile(node, mypath, null, text);
         }
     }
 
@@ -717,6 +737,30 @@ public class Sim {
         return path.getFileName().toString();
     }
     
+    public String printtext(String title, String subtitle, List<String> individuals) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(title + "\n\n");
+        if (subtitle != null) {
+            stringBuilder.append(subtitle + "\n\n");
+        }
+        for (String individual : individuals) {
+            stringBuilder.append(individual + "\n");            
+        }
+        stringBuilder.append("\n");
+        return stringBuilder.toString();
+    }
+    
+    public static void configCurator(MyMyConfig conf) {
+        if (true) {
+            RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);        
+            String zookeeperConnectionString = conf.getZookeeper();
+            if (curatorClient == null) {
+                curatorClient = CuratorFrameworkFactory.newClient(zookeeperConnectionString, retryPolicy);
+                curatorClient.start();
+            }
+        }
+    }
+
     class Summary {
         public boolean success;
         public String text;

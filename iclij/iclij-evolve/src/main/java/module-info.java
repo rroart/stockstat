@@ -37,8 +37,11 @@ module iclij.evolve {
     requires iclij.common.util;
     requires common.inmemory.factory;
     requires common.inmemory.model;
+    requires common.filesystem.client;
     requires evolution.gene;
     requires db;
     //requires com.google.common;
     requires org.slf4j;
+    requires curator.client;
+    requires curator.framework;
 }

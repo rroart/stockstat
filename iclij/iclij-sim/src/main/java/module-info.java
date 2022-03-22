@@ -34,9 +34,13 @@ module iclij.sim {
     requires iclij.common.constants;
     requires common.inmemory.factory;
     requires common.inmemory.model;
+    requires common.filesystem.client;
     requires iclij.common.model;
     requires db;
     requires commons.math3;
     //requires com.google.common;
     requires org.slf4j;
+    requires common.config;
+    requires curator.client;
+    requires curator.framework;
 }
