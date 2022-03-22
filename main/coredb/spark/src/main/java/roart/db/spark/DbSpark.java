@@ -20,7 +20,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.io.StringReader;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.SparkContext;
 import org.apache.spark.sql.SQLContext;

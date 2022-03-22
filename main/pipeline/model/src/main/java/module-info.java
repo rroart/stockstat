@@ -18,7 +18,6 @@ module pipeline.model {
     requires common.constants;
     requires common.model;
     requires common.util;
-    requires commons.lang;
     requires commons.math3;
     requires model;
     requires scala.library;

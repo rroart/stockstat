@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import roart.common.communication.factory.CommunicationFactory;
 import roart.common.communication.model.Communication;
 import roart.common.config.MyMyConfig;
+import roart.common.config.MyXMLConfig;
 import roart.common.constants.CommunicationConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
@@ -21,7 +22,6 @@ import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
 import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
-import roart.config.MyXMLConfig;
 import roart.common.controller.ServiceControllerOtherAbstract;
 
 public class ServiceControllerOther extends ServiceControllerOtherAbstract {

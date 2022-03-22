@@ -22,13 +22,11 @@ module core {
     requires common.cache;
     requires common.filesystem.client;
     //requires common.util;
-    requires commons.configuration2;
     requires commons.lang;
     requires commons.math3;
     requires db;
     //requires guava;
     requires java.desktop;
-    requires java.xml;
     requires jcommon;
     requires jfreechart;
     requires mockito.all;

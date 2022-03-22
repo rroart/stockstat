@@ -144,13 +144,45 @@ public abstract class Indicator extends AbstractIndicator {
             return;
         }
         this.listMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
+        {
+            Double[][] j = this.listMap.get("2647727");
+            Double[][] k = j;            
+        }
         this.fillListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.FILLLIST);
+        {
+            Double[][] j = this.listMap.get("2647727");
+            Double[][] k = j;            
+        }
         this.truncListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCLIST);       
+        {
+            Double[][] j = this.listMap.get("2647727");
+            Double[][] k = j;            
+        }
         this.truncFillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCFILLLIST);       
+        {
+            Double[][] j = this.listMap.get("2647727");
+            Double[][] k = j;            
+        }
         this.base100ListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.BASE100LIST);
+        {
+            Double[][] j = this.listMap.get("2647727");
+            Double[][] k = j;            
+        }
         this.base100FillListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.BASE100FILLLIST);
+        {
+            Double[][] j = this.listMap.get("2647727");
+            Double[][] k = j;            
+        }
         this.truncBase100ListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100LIST);       
-        this.truncBase100FillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100FILLLIST);       
+        {
+            Double[][] j = this.listMap.get("2647727");
+            Double[][] k = j;            
+        }
+       this.truncBase100FillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100FILLLIST);       
+       {
+           Double[][] j = this.listMap.get("2647727");
+           Double[][] k = j;            
+       }
         if (!anythingHere(listMap)) {
             log.info("empty {}", key);
             return;
