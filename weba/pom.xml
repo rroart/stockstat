@@ -29,6 +29,7 @@
 	    <configuration>
 	      <executable>rm</executable>
 	      <arguments>
+		<argument>-f</argument>
 		<argument>package-lock.json</argument>
 	      </arguments>
 	    </configuration>
