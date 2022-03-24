@@ -223,15 +223,15 @@ public class TimeUtil {
             return false;
         }
         int startindex = Collections.binarySearch(stockDates, startdate);
-        if (enddate != null) {
-            int endindex = Collections.binarySearch(stockDates, enddate);
-            return startindex != endindex;
-        }
         if (startindex == -1) {
             return false;
         }
         if (startindex == -1 - stockDates.size()) {
             return false;
+        }
+        if (enddate != null) {
+            int endindex = Collections.binarySearch(stockDates, enddate);
+            return startindex != endindex;
         }
         return true;
     }
