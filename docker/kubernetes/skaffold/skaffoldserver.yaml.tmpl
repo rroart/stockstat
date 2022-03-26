@@ -47,9 +47,31 @@ build:
         mydbserverdb: '{{.MYDBSERVERDB}}'
         myconfig: '{{.MYICONFIG}}'
         mydebug: '{{.MYDEBUG}}'
+  - image: sim$IMGID
+    context: ../../..
+    docker:
+      dockerfile: docker/cloud/iclij/Dockerfile
+      buildArgs:
+        distlib: '{{.DISTLIB}}'
+        distjar: '{{.SIMJAR}}'
+        mydbserverdb: '{{.MYDBSERVERDB}}'
+        myconfig: '{{.MYSCONFIG}}'
+        mydebug: '{{.MYDEBUG}}'
+  - image: evolve$IMGID
+    context: ../../..
+    docker:
+      dockerfile: docker/cloud/iclij/Dockerfile
+      buildArgs:
+        distlib: '{{.DISTLIB}}'
+        distjar: '{{.EVOLVEJAR}}'
+        mydbserverdb: '{{.MYDBSERVERDB}}'
+        myconfig: '{{.MYECONFIG}}'
+        mydebug: '{{.MYDEBUG}}'
 deploy:
   kubectl:
     manifests:
     - core/deployment.yaml
     - icore/deployment.yaml
     - iwebcore/deployment.yaml
+    - sim/deployment.yaml
+    - evolve/deployment.yaml

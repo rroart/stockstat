@@ -16,7 +16,7 @@ spec:
     spec:
       initContainers:
       - name: tensorflowinit
-        image: tensorflowdata
+        image: tensorflowdata$APPID
         command: ["/bin/sh", "-c", "cp -R /data/* /newdata/"]
         volumeMounts:
         - name: tensorflowdatavol

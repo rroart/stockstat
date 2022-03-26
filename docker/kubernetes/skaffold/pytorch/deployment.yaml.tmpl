@@ -16,7 +16,7 @@ spec:
     spec:
       initContainers:
       - name: pytorchinit
-        image: pytorchdata
+        image: pytorchdata$APPID
         command: ["/bin/sh", "-c", "cp -R /data/* /newdata/"]
         volumeMounts:
         - name: pytorchdatavol

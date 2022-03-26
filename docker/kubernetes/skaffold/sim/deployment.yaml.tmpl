@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sim$APPID
+  labels:
+    app: sim$APPID
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sim$APPID
+  template:
+    metadata:
+      labels:
+        app: sim$APPID
+    spec:
+      containers:
+      - name: sim
+        image: sim$IMGID
+        ports:
+        - containerPort: 8000
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sim$APPID
+  labels:
+    app: sim$APPID
+spec:
+  type: NodePort
+  ports:
+  - port: 8000
+    name: debug
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app: sim$APPID
+  sessionAffinity: None  
+status:
+  loadBalancer: {}    
