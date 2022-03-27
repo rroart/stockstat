@@ -2,6 +2,8 @@ package roart.common.controller;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -32,7 +34,8 @@ public abstract class ServiceControllerOtherAbstract {
         this.replyclass = replyclass;
     }
 
-    public void get(final Communication c) { 
+    public void get(final Communication c) {
+        Executor executor = Executors.newFixedThreadPool(4);
         Thread t = new Thread(new Runnable() {
             public void run() {
                 for (;;) {
@@ -42,7 +45,8 @@ public abstract class ServiceControllerOtherAbstract {
                             public void run() { 
                                 get(param, c);
                             }});
-                        t2.start();
+                        executor.execute(t2);
+                        //t2.start();
                     }
                     try {
                         Thread.sleep(1000);
