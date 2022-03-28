@@ -35,23 +35,21 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
     public void get(Object param, Communication c) { 
         IclijServiceResult r = null;
         System.out.println("Cserv"+c.getService());
-        switch (c.getService()) {
-        case ServiceConstants.EVOLVEFILTEREVOLVE:
+        if (serviceMatch(ServiceConstants.EVOLVEFILTEREVOLVE, c)) {
             r = new IclijServiceResult();
             new Evolve().method((String) param);
-            break;
-        case ServiceConstants.EVOLVEFILTERPROFIT:
+        }
+        if (serviceMatch(ServiceConstants.EVOLVEFILTERPROFIT, c)) {
             r = new IclijServiceResult();
             new Evolve().method2((String) param);
-            break;
-        case ServiceConstants.EVOLVEFILTERFILTER:
+        }
+        if (serviceMatch(ServiceConstants.EVOLVEFILTERFILTER, c)) {
             r = new IclijServiceResult();
             new Evolve().method3((String) param);
-            break;
-        case ServiceConstants.EVOLVEFILTERABOVEBELOW:
+        }
+        if (serviceMatch(ServiceConstants.EVOLVEFILTERABOVEBELOW, c)) {
             r = new IclijServiceResult();
             new Evolve().method4((String) param);
-            break;
         }
         if (param instanceof IclijServiceParam) {
             sendReply(((IclijServiceParam) param).getWebpath(), c, r);

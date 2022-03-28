@@ -35,13 +35,11 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
     public void get(Object param, Communication c) { 
         IclijServiceResult r = null;
         System.out.println("Cserv"+c.getService());
-        switch (c.getService()) {
-        case ServiceConstants.SIMFILTER:
+        if (serviceMatch(ServiceConstants.SIMFILTER, c)) {
             new Sim().method((String) param, "sim", true);
-            break;
-        case ServiceConstants.SIMAUTO:
+        }
+        if (serviceMatch(ServiceConstants.SIMAUTO, c)) {
             new Sim().method((String) param, "simauto", false);
-            break;
         }
         if (param instanceof IclijServiceParam) {
             sendReply(((IclijServiceParam) param).getWebpath(), c, r);

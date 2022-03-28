@@ -35,8 +35,7 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
     public void get(Object param, Communication c) { 
         ServiceResult r = null;
         System.out.println("Cserv"+c.getService());
-        switch (c.getService()) {
-        case EurekaConstants.GETCONFIG:
+        if (serviceMatch(EurekaConstants.GETCONFIG, c)) {
             r = new ServiceResult();
             try {
                 r.setConfig(MyXMLConfig.getConfigInstance());
@@ -45,7 +44,6 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
                 log.error(Constants.EXCEPTION, e);
                 r.setError(e.getMessage());
             }
-            break;
         }
         if (param instanceof ServiceParam) {
             sendReply(((ServiceParam) param).getWebpath(), c, r);

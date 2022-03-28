@@ -109,4 +109,12 @@ public abstract class ServiceControllerOtherAbstract {
             c2.destroy();
         }
     }
+    
+    protected boolean serviceMatch(String str, Communication c) {
+        String appid = System.getenv(Constants.APPID);
+        if (appid == null) {
+            appid = "";
+        }
+        return c.getService().equals(str + appid);
+    }
 }

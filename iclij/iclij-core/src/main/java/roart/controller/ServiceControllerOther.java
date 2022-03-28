@@ -50,7 +50,8 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
         case "TSTSR4":
             r = new IclijServiceResult();
             break;
-        case EurekaConstants.GETCONFIG:
+        }
+        if (serviceMatch(EurekaConstants.GETCONFIG, c)) {
             r = new IclijServiceResult();
             try {
                 r.setIclijConfig(IclijXMLConfig.getConfigInstance());
@@ -59,12 +60,11 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
                 log.error(Constants.EXCEPTION, e);
                 r.setError(e.getMessage());
             }
-            break;
-        case ServiceConstants.POPULATE:
+        }
+        if (serviceMatch(ServiceConstants.POPULATE, c)) {
         	String param2 = getParam((String) param);
         	String[] item = JsonUtil.convert(param2, String[].class);
             PopulateThread.queue.add(new ImmutableTriple(item[0], item[1], item[2]));
-        	break;
         }
         if (param instanceof IclijServiceParam) {
             sendReply(((IclijServiceParam) param).getWebpath(), c, r);
