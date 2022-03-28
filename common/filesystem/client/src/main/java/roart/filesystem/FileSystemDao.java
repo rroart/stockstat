@@ -215,7 +215,7 @@ public class FileSystemDao {
                 log.debug("Child {}", child);
                 String newPath = s + "/" + child;
                 log.debug("Compare {} {}", path, newPath);
-                if (path.startsWith(newPath)) {
+                if (path.startsWith(newPath + "/")) {
                     return getUrl(curatorClient, fs, path, newPath);
                 }
             }
