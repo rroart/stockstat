@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.http.codec.json.Jackson2JsonDecoder;
 import org.springframework.http.codec.json.Jackson2JsonEncoder;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -13,8 +14,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 import roart.common.constants.EurekaConstants;
 import roart.common.util.MathUtil;
 
@@ -72,15 +71,16 @@ public class WebFluxUtil {
                     }).build();
             WebClient.builder().exchangeStrategies(jacksonStrategy);
         }
-        WebClient webClient = WebClient.create();
-        T result = webClient
-                .mutate()
+        WebClient webClient = WebClient
+                .builder()
                 .exchangeStrategies(ExchangeStrategies.builder()
                         .codecs(configurer -> configurer
                                 .defaultCodecs()
                                 .maxInMemorySize(-1))
                         .build())
-                .build()
+                .clientConnector(new ReactorClientHttpConnector())
+                .build();
+        T result = webClient
                 .post()
                 .uri(url)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -90,7 +90,7 @@ public class WebFluxUtil {
                 .onErrorMap(Exception::new)
                 .block();
         
-        //Mono.just
+        webClient.delete();
         //log.info("resultme " + regr.getHeaders().size() + " " + regr.getHeaders().getContentLength() + " " + regr.toString());
         log.info("Rq time {}s for {} ", MathUtil.round((double) (System.currentTimeMillis() - time) / 1000, 1), url);
         return result;

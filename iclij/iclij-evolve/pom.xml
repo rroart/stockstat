@@ -113,6 +113,11 @@
       <version>${springboot.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+      <version>${springboot.version}</version>
+    </dependency>
+    <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-eureka</artifactId>
       <version>${stockstat.version}</version>
@@ -281,11 +286,6 @@
       <groupId>org.apache.kafka</groupId>
       <artifactId>kafka-clients</artifactId>
       <version>${kafka.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-reactive-httpclient</artifactId>
-      <version>1.1.11</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
