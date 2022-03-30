@@ -1367,6 +1367,7 @@ public class SimulateInvestComponent extends ComponentML {
                 if (getBSValueIndexOffset(mydate, simConfig) - j >= endIndexOffset) {
                     doBuySell(simConfig, onerun, results, data, mydate.indexOffset - j, stockDatesBiMap);
                 }
+                update(data.getCatValMap(simConfig.getInterpolate()), onerun.mystocks, getValueIndexOffset(mydate, simConfig) - j, new ArrayList<>(), mydate.prevIndexOffset + extradelay, endIndexOffset);
                 sells = new ArrayList<>();
                 //System.out.println(interval + " " +  j);
                 if (simConfig.getStoploss()) {
