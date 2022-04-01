@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.constants.EurekaConstants;
 import roart.common.constants.FileSystemConstants;
 import roart.common.filesystem.MyFile;
 import roart.common.inmemory.factory.InmemoryFactory;
@@ -122,7 +123,7 @@ public class FileSystemDao {
             filename = mypath.getFileName().toString();
         }
         Inmemory inmemory = InmemoryFactory.get(conf.getInmemoryServer(), conf.getInmemoryHazelcast(), conf.getInmemoryRedis());
-        InmemoryMessage msg = inmemory.send("" + System.currentTimeMillis(), content);
+        InmemoryMessage msg = inmemory.send(EurekaConstants.WRITEFILE + System.currentTimeMillis(), content);
         FileObject f = new FileObject(FsUtil.getLocation(node), path + "/" + filename);
         writeFile(f, msg);
         return filename;
