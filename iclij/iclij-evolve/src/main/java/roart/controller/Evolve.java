@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -641,7 +642,7 @@ public class Evolve {
 
     public void send(String service, Object object, IclijConfig config) {
         Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
-        String id = service + System.currentTimeMillis();
+        String id = service + System.currentTimeMillis() + UUID.randomUUID();
         InmemoryMessage message = inmemory.send(id, object);
         send(service, message);
     }

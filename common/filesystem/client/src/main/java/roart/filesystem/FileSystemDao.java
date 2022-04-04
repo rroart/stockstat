@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.data.Stat;
@@ -123,7 +124,7 @@ public class FileSystemDao {
             filename = mypath.getFileName().toString();
         }
         Inmemory inmemory = InmemoryFactory.get(conf.getInmemoryServer(), conf.getInmemoryHazelcast(), conf.getInmemoryRedis());
-        InmemoryMessage msg = inmemory.send(EurekaConstants.WRITEFILE + System.currentTimeMillis(), content);
+        InmemoryMessage msg = inmemory.send(EurekaConstants.WRITEFILE + System.currentTimeMillis() + UUID.randomUUID(), content);
         FileObject f = new FileObject(FsUtil.getLocation(node), path + "/" + filename);
         writeFile(f, msg);
         return filename;

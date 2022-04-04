@@ -29,6 +29,7 @@ import roart.common.webflux.WebFluxUtil;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
@@ -123,7 +124,7 @@ public class ControlService {
 
     public void send(String service, Object object, IclijConfig config) {
         Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
-        String id = service + System.currentTimeMillis();
+        String id = service + System.currentTimeMillis() + UUID.randomUUID();
         InmemoryMessage message = inmemory.send(id, object);
         send(service, message);
     }
