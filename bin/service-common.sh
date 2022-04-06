@@ -71,14 +71,14 @@ if [ $ml -eq 1 ]; then
 fi
 if [ $web -eq 1 ]; then
     cd ../webr
-    export REACT_APP_MYSERVER=MYSERVER
-    export REACT_APP_MYPORT=MYPORT
+    export REACT_APP_MYSERVER=$MYSERVER
+    export REACT_APP_MYPORT=$MYPORT
     npx react-inject-env set -d docroot
     $COMMAND "npx http-server docroot -p $WEBR" &
 
     cd ../iclij-webr
-    export REACT_APP_MYISERVER=MYISERVER
-    export REACT_APP_MYIPORT=MYIPORT
+    export REACT_APP_MYISERVER=$MYISERVER
+    export REACT_APP_MYIPORT=$MYIPORT
     npx react-inject-env set -d docroot
     $COMMAND "npx http-server docroot -p $IWEBR" &
 
