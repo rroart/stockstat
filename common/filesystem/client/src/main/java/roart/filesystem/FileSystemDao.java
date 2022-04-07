@@ -120,11 +120,11 @@ public class FileSystemDao {
 
     public static String writeFile(String node, String path, String filename, String content) {
         if (filename == null) {
-            Path mypath = Paths.get("" + System.currentTimeMillis() + ".txt");
+            Path mypath = Paths.get("" + System.currentTimeMillis() + "_" + UUID.randomUUID() + ".txt");
             filename = mypath.getFileName().toString();
         }
         Inmemory inmemory = InmemoryFactory.get(conf.getInmemoryServer(), conf.getInmemoryHazelcast(), conf.getInmemoryRedis());
-        InmemoryMessage msg = inmemory.send(EurekaConstants.WRITEFILE + System.currentTimeMillis() + UUID.randomUUID(), content);
+        InmemoryMessage msg = inmemory.send(EurekaConstants.WRITEFILE + "_" + System.currentTimeMillis() + "_" + UUID.randomUUID(), content);
         FileObject f = new FileObject(FsUtil.getLocation(node), path + "/" + filename);
         writeFile(f, msg);
         return filename;
