@@ -5,10 +5,14 @@ aport = os.environ.get('MYAPORT')
 if aport is None:
     aport = "80"
 
-url1 = 'http://localhost:' + aport + '/action/simulateinvest'
-url2 = 'http://localhost:' + aport + '/action/improvesimulateinvest'
-url3 = 'http://localhost:' + aport + '/action/autosimulateinvest'
-url4 = 'http://localhost:' + aport + '/action/improveautosimulateinvest'
+ahost = os.environ.get('MYAHOST')
+if ahost is None:
+    ahost = "localhost"
+    
+url1 = 'http://' + ahost + ':' + aport + '/action/simulateinvest'
+url2 = 'http://' + ahost + ':' + aport + '/action/improvesimulateinvest'
+url3 = 'http://' + ahost + ':' + aport + '/action/autosimulateinvest'
+url4 = 'http://' + ahost + ':' + aport + '/action/improveautosimulateinvest'
 
 #headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 #headers={'Content-type':'application/json', 'Accept':'application/json'}
