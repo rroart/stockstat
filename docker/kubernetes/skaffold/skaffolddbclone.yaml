@@ -2,7 +2,7 @@ apiVersion: skaffold/v2beta1
 kind: Config
 build:
   artifacts:
-  - image: dbclone
+  - image: stockstat-dbclonedev
     context: ../../..
     docker:
       dockerfile: docker/cloud/dbclone/Dockerfile

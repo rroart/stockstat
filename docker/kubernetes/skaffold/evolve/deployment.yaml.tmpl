@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: evolve$APPID
+  name: stockstat-evolve$APPID
   labels:
     app: evolve$APPID
 spec:
@@ -15,8 +15,8 @@ spec:
         app: evolve$APPID
     spec:
       containers:
-      - name: evolve
-        image: evolve$IMGID
+      - name: stockstat-evolve
+        image: stockstat-evolve$IMGID
         ports:
         - containerPort: 8000
         - containerPort: 80
@@ -24,14 +24,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: evolve$APPID
+  name: stockstat-evolve$APPID
   labels:
     app: evolve$APPID
 spec:
   type: NodePort
   ports:
   - port: 8000
-    name: debug
+    name: stockstat-debug
     protocol: TCP
     targetPort: 8000
   selector:

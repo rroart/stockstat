@@ -10,6 +10,6 @@ export S3JAR=stockstat-s3-0.6-SNAPSHOT.jar
 export SWIFTJAR=stockstat-swift-0.6-SNAPSHOT.jar
 
 export WEBRDOCROOT=distribution/target/stockstat-distribution-0.6-SNAPSHOT-bin/stockstat-distribution-0.6-SNAPSHOT/webr/docroot/
-export IWEBRDOCROOT=distribution/target/stockstat-distribution-0.6-SNAPSHOT-bin/stockstat-distribution-0.6-SNAPSHOT/webr/docroot/
+export IWEBRDOCROOT=distribution/target/stockstat-distribution-0.6-SNAPSHOT-bin/stockstat-distribution-0.6-SNAPSHOT/iclij-webr/docroot/
 export WEBADIST=distribution/target/stockstat-distribution-0.6-SNAPSHOT-bin/stockstat-distribution-0.6-SNAPSHOT/weba/dist/
 export IWEBADIST=distribution/target/stockstat-distribution-0.6-SNAPSHOT-bin/stockstat-distribution-0.6-SNAPSHOT/iclij-weba/dist/

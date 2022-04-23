@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: webr$APPID
+  name: stockstat-webr$APPID
   labels:
     app: webr$APPID
 spec:
@@ -15,8 +15,8 @@ spec:
         app: webr$APPID
     spec:
       containers:
-      - name: webr
-        image: webr$IMGID
+      - name: stockstat-webr
+        image: stockstat-webr$IMGID
         #imagePullPolicy: Never
         ports:
         - containerPort: 80
@@ -24,7 +24,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: webr$APPID
+  name: stockstat-webr$APPID
   labels:
     app: webr$APPID
 spec:
@@ -53,7 +53,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: name-virtual-host-ingress-webr$APPID
+  name: name-virtual-host-ingress-stockstat-webr$APPID
 spec:
   ingressClassName: stockstat-webr$APPID
   rules:
@@ -64,6 +64,6 @@ spec:
         path: "/"
         backend:
           service:
-            name: webr$APPID
+            name: stockstat-webr$APPID
             port:
               number: 80

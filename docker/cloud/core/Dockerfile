@@ -19,9 +19,9 @@ ENV MYDEBUG ${mydebug}
 RUN microdnf install hostname
 ADD $DISTLIB/$DISTJAR /usr/local/bin
 RUN mkdir /usr/local/conf
-ADD docker/cloud/core/stockstat.xml /usr/local/conf
+ADD docker/cloud/core/$MYCONFIG /usr/local/conf
 WORKDIR /usr/local/bin
 RUN ln -s /tmp /usr/local/logs
 USER root
-CMD SPARK_DRIVER_HOST=`hostname -i` java $MYDEBUG --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED -Dserver.port=${MYWEBPORT} -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:${MYDBSERVERPORT}/${MYDBSERVERDB} -jar /usr/local/bin/$DISTJAR --spring.profiles.active=docker
+CMD SPARK_DRIVER_HOST=`hostname -i` java -Dconfig=$MYCONFIG $MYDEBUG --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED -Dserver.port=${MYWEBPORT} -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:${MYDBSERVERPORT}/${MYDBSERVERDB} -jar /usr/local/bin/$DISTJAR --spring.profiles.active=docker
 

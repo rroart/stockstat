@@ -1,20 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dbclone
+  name: stockstat-dbclone$APPID
   labels:
-    app: dbclone
+    app: dbclone$APPID
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: dbclone
+      app: dbclone$APPID
   template:
     metadata:
       labels:
-        app: dbclone
+        app: dbclone$APPID
     spec:
       containers:
-      - name: dbclone
-        image: dbclone$IMGID
-        #imagePullPolicy: Never
+      - name: stockstat-dbclone
+        image: stockstat-dbclone$IMGID

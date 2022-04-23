@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: icore$APPID
+  name: stockstat-icore$APPID
   labels:
     app: icore$APPID
 spec:
@@ -15,8 +15,8 @@ spec:
         app: icore$APPID
     spec:
       containers:
-      - name: icore
-        image: icore$IMGID
+      - name: stockstat-icore
+        image: stockstat-icore$IMGID
         ports:
         - containerPort: 8000
         - containerPort: 80
@@ -24,18 +24,18 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: icore$APPID
+  name: stockstat-icore$APPID
   labels:
     app: icore$APPID
 spec:
   type: NodePort
   ports:
   - port: 8000
-    name: debug
+    name: stockstat-debug
     protocol: TCP
     targetPort: 8000
   - port: 80
-    name: web
+    name: stockstat-web
     protocol: TCP
     targetPort: 80
   selector:
@@ -58,7 +58,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: name-virtual-host-ingress-icore$APPID
+  name: name-virtual-host-ingress-stockstat-icore$APPID
 spec:
   ingressClassName: stockstat-icore$APPID
   rules:
@@ -69,10 +69,10 @@ spec:
         path: "/"
         backend:
           service:
-            name: icore$APPID-debug
+            name: stockstat-icore$APPID-debug
             port:
               number: 8000
           service:
-            name: icore$APPID
+            name: stockstat-icore$APPID
             port:
               number: 80

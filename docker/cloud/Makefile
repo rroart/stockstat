@@ -1,14 +1,14 @@
 VERSION = 0.6-SNAPSHOT
-SUBDIRS = tensorflow spark pdfred eureka web iclij-web iclij-webcore core iclij-core
+SUBDIRS = tensorflowdata pytorchdata spark pdfred eureka web iclij-web iclij-webcore core iclij-core
 #SUBDIRS = dbclone
 #pytorchdata tensorflowdata
-SUBDIRS = core iclij-core iclij-webcore dbclone
+SUBDIRS = core iclij-core iclij-webcore dbclone iclij tensorflowdata pytorchdata
 #webr iclij-webr
 
 all: $(SUBDIRS)
 #$(SUBDIRS2)
 
-dbclone:
+dbclone tensorflowdata pytorchdata:
 	$(MAKE) -C $@ 
 
 core:
@@ -36,6 +36,20 @@ webr iclij-webr:
 	mkdir -p $@/files
 	rsync -a ../../distribution/target/stockstat-distribution-0.6-SNAPSHOT-bin/stockstat-distribution-0.6-SNAPSHOT/$@/docroot/ $@/files/docroot
 
+iclij:
+ifneq ($(ICLIJTMPL),)
+	rsync -a $$ICLIJTMPL iclij-core/iclij.xml.tmpl
+endif
+	$(MAKE) -C $@ -f ../Makefile iclij.xml
+ifneq ($(ISIMTMPL),)
+	rsync -a $$ISIMTMPL iclij/isim.xml.tmpl
+endif
+	$(MAKE) -C $@ -f ../Makefile isim.xml
+ifneq ($(IEVOLVETMPL),)
+	rsync -a $$IEVOLVETMPL iclij/ievolve.xml.tmpl
+endif
+	$(MAKE) -C $@ -f ../Makefile ievolve.xml
+#	$(MAKE) -C $@ -f ../Makefile stockstat-$@-${VERSION}.jar
 
 %.xml: %.xml.tmpl
 	envsubst < $< > $@

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pdfred
+  name: stockstat-pdfred
   labels:
     app: pdfred
 spec:
@@ -15,6 +15,6 @@ spec:
         app: pdfred
     spec:
       containers:
-      - name: pdfred
-        image: pdfred$IMGID
+      - name: stockstat-pdfred
+        image: stockstat-pdfred$IMGID
         #imagePullPolicy: Never

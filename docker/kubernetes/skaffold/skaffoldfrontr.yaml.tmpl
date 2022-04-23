@@ -2,7 +2,7 @@ apiVersion: skaffold/v2beta1
 kind: Config
 build:
   artifacts:
-  - image: webr$IMGID
+  - image: stockstat-webr$IMGID
     context: ../../..
     docker:
       dockerfile: docker/cloud/webr/Dockerfile
@@ -11,15 +11,16 @@ build:
         myserver: '{{.MYSERVER}}'
         myport: '{{.MYPORT}}'
         mywebport: "80"
-  - image: iwebr$IMGID
+  - image: stockstat-iwebr$IMGID
     context: ../../..
     docker:
       dockerfile: docker/cloud/webr/Dockerfile
       buildArgs:
         docroot: '{{.IWEBRDOCROOT}}'
         myiserver: '{{.MYISERVER}}'
-        mypiort: '{{.MYIPORT}}'
+        myiport: '{{.MYIPORT}}'
         myserver: '{{.MYSERVER}}'
+        myport: '{{.MYPORT}}'
         mywebport: "80"
 deploy:
   kubectl:

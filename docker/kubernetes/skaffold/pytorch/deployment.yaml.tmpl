@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pytorch
+  name: stockstat-pytorch
   labels:
     app: pytorch
 spec:
@@ -15,29 +15,29 @@ spec:
         app: pytorch
     spec:
       initContainers:
-      - name: pytorchinit
-        image: pytorchdata$APPID
+      - name: stockstat-pytorchinit
+        image: stockstat-pytorchdata$APPID
         command: ["/bin/sh", "-c", "cp -R /data/* /newdata/"]
         volumeMounts:
-        - name: pytorchdatavol
+        - name: stockstat-pytorchdatavol
           mountPath: /newdata
       containers:
-      - name: pytorch
-        image: pytorch
+      - name: stockstat-pytorch
+        image: stockstat-pytorch$IMGID
         ports:
         - containerPort: 80
         volumeMounts:
-        - name: pytorchdatavol
+        - name: stockstat-pytorchdatavol
           mountPath: /data
       volumes:
-      - name: pytorchdatavol
+      - name: stockstat-pytorchdatavol
         persistentVolumeClaim:
-          claimName: pytorchdatapv
+          claimName: stockstat-pytorchdatapv
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: pytorch
+  name: stockstat-pytorch$APPID
   labels:
     app: pytorch
 spec:
@@ -52,15 +52,35 @@ spec:
 status:
   loadBalancer: {}    
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  labels:
+    app.kubernetes.io/component: controller
+  name: stockstat-pytorch$APPID
+  annotations:
+    ingressclass.kubernetes.io/is-default-class: "false"
+spec:
+  controller: k8s.io/ingress-nginx
+---
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: name-virtual-host-ingress-pt
+  name: name-virtual-host-ingress-stockstat-pytorch$APPID
 spec:
+  ingressClassName: stockstat-pytorch$APPID
   rules:
   - host: $MYPT
     http:
       paths:
-      - backend:
-          serviceName: pytorch
-          servicePort: 80
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: stockstat-pytorch$APPID-debug
+            port:
+              number: 8000
+          service:
+            name: stockstat-pytorch$APPID
+            port:
+              number: 80

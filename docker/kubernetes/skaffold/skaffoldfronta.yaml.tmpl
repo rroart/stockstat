@@ -2,7 +2,7 @@ apiVersion: skaffold/v2beta1
 kind: Config
 build:
   artifacts:
-  - image: weba$IMGID
+  - image: stockstat-weba$IMGID
     context: ../../..
     docker:
       dockerfile: docker/cloud/weba/Dockerfile
@@ -11,7 +11,7 @@ build:
         myserver: '{{.MYSERVER}}'
         myport: '{{.MYPORT}}'
         mywebport: "80"
-  - image: iweba$IMGID
+  - image: stockstat-iweba$IMGID
     context: ../../..
     docker:
       dockerfile: docker/cloud/weba/Dockerfile

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres
+  name: stockstat-postgres
   labels:
     app: postgres
 spec:
@@ -15,7 +15,7 @@ spec:
         app: postgres
     spec:
       containers:
-      - name: postgres
+      - name: stockstat-postgres
         image: postgres:14-bullseye
         #imagePullPolicy: Never
         env:
@@ -31,7 +31,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres
+  name: stockstat-postgres
   labels:
     app: postgres
 spec:

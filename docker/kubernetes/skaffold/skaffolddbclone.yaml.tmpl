@@ -2,14 +2,16 @@ apiVersion: skaffold/v2beta1
 kind: Config
 build:
   artifacts:
-  - image: stockstat-pdfred
+  - image: stockstat-dbclone$IMGID
     context: ../../..
     docker:
-      dockerfile: docker/cloud/pdfred/Dockerfile
+      dockerfile: docker/cloud/dbclone/Dockerfile
       buildArgs:
+        mydump: '{{.MYDUMP}}'
+        mydumpextern: '{{.MYDUMPEXTERN}}'
         mydbserver: '{{.MYDBSERVER}}'
 deploy:
   kubectl:
     manifests:
-    - pdfred/deployment.yaml
+    - dbclone/deployment.yaml
     - postgresql/deployment.yaml

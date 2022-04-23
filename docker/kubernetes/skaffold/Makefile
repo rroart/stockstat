@@ -1,7 +1,7 @@
 VERSION = 0.6-SNAPSHOT
 SUBDIRS = tensorflowdata pytorchdata tensorflow pytorch pdfred postgresql webr iwebr core icore iwebcore dbclone weba iweba rabbitmq sim evolve
 
-all: $(SUBDIRS) skaffoldserver.yaml skaffoldml.yaml skaffoldfrontr.yaml skaffoldfronta.yaml
+all: $(SUBDIRS) skaffoldserver.yaml skaffoldml.yaml skaffoldfrontr.yaml skaffoldfronta.yaml skaffolddbclone.yaml conf
 
 $(SUBDIRS):
 	$(MAKE) -C $@ -f ../Makefile deployment.yaml
@@ -25,4 +25,10 @@ skaffoldfrontr.yaml: skaffoldfrontr.yaml.tmpl
 skaffoldfronta.yaml: skaffoldfronta.yaml.tmpl
 	envsubst < skaffoldfronta.yaml.tmpl > skaffoldfronta.yaml
 
-.PHONY: all $(SUBDIRS)
+skaffolddbclone.yaml: skaffolddbclone.yaml.tmpl
+	envsubst < skaffolddbclone.yaml.tmpl > skaffolddbclone.yaml
+
+conf:
+	$(MAKE) -C ../../cloud -B
+
+.PHONY: all $(SUBDIRS) conf

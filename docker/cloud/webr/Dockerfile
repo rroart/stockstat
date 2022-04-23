@@ -3,8 +3,8 @@ MAINTAINER <rroart@gmail.com>
 ARG docroot
 ARG mywebport
 ARG myserver
-ARG myiport
-ARG myserver
+ARG myport
+ARG myiserver
 ARG myiport
 ENV DOCROOT ${docroot}
 ENV MYWEBPORT ${mywebport}

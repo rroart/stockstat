@@ -2,23 +2,23 @@ apiVersion: skaffold/v2beta1
 kind: Config
 build:
   artifacts:
-  - image: tensorflowdata$APPID
+  - image: stockstat-tensorflowdata$APPID
     context: ../../..
     docker:
       dockerfile: docker/cloud/tensorflowdata/Dockerfile
       buildArgs:
         mydata: '{{.MYTFDATA}}'
-  - image: tensorflow$IMGID
+  - image: stockstat-tensorflow$IMGID
     context: ../../..
     docker:
       dockerfile: docker/cloud/tensorflow/Dockerfile
-  - image: pytorchdata$APPID
+  - image: stockstat-pytorchdata$APPID
     context: ../../..
     docker:
       dockerfile: docker/cloud/pytorchdata/Dockerfile
       buildArgs:
         mydata: '{{.MYPTDATA}}'
-  - image: pytorch$IMGID
+  - image: stockstat-pytorch$IMGID
     context: ../../..
     docker:
       dockerfile: docker/cloud/pytorch/Dockerfile

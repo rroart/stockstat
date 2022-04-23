@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: tensorflowdatapv
+  name: stockstat-tensorflowdatapv
 spec:
   storageClassName: manual
   capacity:
@@ -10,14 +10,14 @@ spec:
     - ReadWriteMany
   claimRef:
     namespace: default
-    name: tensorflowdatapv
+    name: stockstat-tensorflowdatapv
   hostPath:
     path: "/data/tensorflowdata"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: tensorflowdatapv
+  name: stockstat-tensorflowdatapv
 spec:
   # Specify "" as the storageClassName so it matches the PersistentVolume's StorageClass.
   # A nil storageClassName value uses the default StorageClass. For details, see
