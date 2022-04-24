@@ -4,16 +4,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.http.codec.json.Jackson2JsonDecoder;
 import org.springframework.http.codec.json.Jackson2JsonEncoder;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import reactor.core.publisher.Mono;
 import roart.common.constants.EurekaConstants;
 import roart.common.util.MathUtil;
 
@@ -80,15 +83,17 @@ public class WebFluxUtil {
                         .build())
                 .clientConnector(new ReactorClientHttpConnector())
                 .build();
-        T result = webClient
+        ResponseSpec response = webClient
                 .post()
                 .uri(url)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .body(BodyInserters.fromValue(param))
-                .retrieve()
+                .retrieve();
+        T result = response
                 .bodyToMono(myclass)
                 .onErrorMap(Exception::new)
                 .block();
+        //int len = response.bodyToMono(String.class).onErrorMap(Exception::new).block().length();
         
         webClient.delete();
         //log.info("resultme " + regr.getHeaders().size() + " " + regr.getHeaders().getContentLength() + " " + regr.toString());
