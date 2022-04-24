@@ -14,12 +14,26 @@ spec:
       labels:
         app: core$APPID
     spec:
+      initContainers:
+      - name: stockstat-sparkinit
+        image: stockstat-sparkdata$APPID
+        command: ["/bin/sh", "-c", "cp -R /data/* /newdata/"]
+        volumeMounts:
+        - name: stockstat-sparkdatavol
+          mountPath: /newdata
       containers:
       - name: stockstat-core
         image: stockstat-core$IMGID
         ports:
         - containerPort: 8000
         - containerPort: 80
+        volumeMounts:
+        - name: stockstat-sparkdatavol
+          mountPath: /data
+      volumes:
+      - name: stockstat-sparkdatavol
+        persistentVolumeClaim:
+          claimName: stockstat-sparkdatapv
 ---
 apiVersion: v1
 kind: Service

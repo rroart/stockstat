@@ -2,13 +2,13 @@ VERSION = 0.6-SNAPSHOT
 SUBDIRS = tensorflowdata pytorchdata spark pdfred eureka web iclij-web iclij-webcore core iclij-core
 #SUBDIRS = dbclone
 #pytorchdata tensorflowdata
-SUBDIRS = core iclij-core iclij-webcore dbclone iclij tensorflowdata pytorchdata
+SUBDIRS = core iclij-core iclij-webcore dbclone iclij tensorflowdata pytorchdata sparkdata
 #webr iclij-webr
 
 all: $(SUBDIRS)
 #$(SUBDIRS2)
 
-dbclone tensorflowdata pytorchdata:
+dbclone tensorflowdata pytorchdata sparkdata:
 	$(MAKE) -C $@ 
 
 core:

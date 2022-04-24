@@ -4,6 +4,12 @@ metadata:
   name: stockstat-core
 build:
   artifacts:
+  - image: stockstat-sparkdata$APPID
+    context: ../../..
+    docker:
+      dockerfile: docker/cloud/sparkdata/Dockerfile
+      buildArgs:
+        mydata: '{{.MYSPARKDATA}}'
   - image: stockstat-core$IMGID
     context: ../../..
     docker:
@@ -80,6 +86,7 @@ build:
 deploy:
   kubectl:
     manifests:
+    - sparkdata/deployment.yaml
     - core/deployment.yaml
     - icore/deployment.yaml
     - iwebcore/deployment.yaml
