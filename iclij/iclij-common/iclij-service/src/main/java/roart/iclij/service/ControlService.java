@@ -20,6 +20,7 @@ import roart.iclij.model.component.ComponentInput;
 import roart.result.model.ResultItem;
 import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
+import roart.common.util.ImmutabilityUtil;
 import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
 import roart.common.communication.factory.CommunicationFactory;
@@ -235,6 +236,8 @@ public class ControlService {
         ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENT);
         //log.info("blblbl" + JsonUtil.convert(result).length());
         list = result.getMaps();
+        Map list2 = list;
+        list = ImmutabilityUtil.immute(list2);
         MyCache.getInstance().put(key, list);
         {
             long heapSize = Runtime.getRuntime().totalMemory(); 
