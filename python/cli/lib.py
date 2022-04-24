@@ -25,6 +25,7 @@ import stoch
 import stochrsi
 import obv
 import adl
+import bbands
 import etl
 
 import guiutils as gui
@@ -708,7 +709,7 @@ def getelem(id, days, stocklistperiod, period, size):
     #print("retl", retl)
     return(retl)
 
-def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True, expressions = [], interpolation = 'linear'):
+def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, wantbbands=False, interpolate = True, expressions = [], interpolation = 'linear'):
     periodtext = ids[0][2]
     scalebeginning100 = 0
     if len(ids) > 1:
@@ -862,6 +863,8 @@ def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=
         indicators.append(stoch.STOCH())
     if wantstochrsi:
         indicators.append(stochrsi.STOCHRSI())
+    if wantbbands:
+        indicators.append(bbands.BBANDS())
 
     rsi.doprint=True
     textsize = 9
@@ -1124,7 +1127,7 @@ def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True, inte
     #print(myma)
     plt.show()
 
-def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, wantobv=False, interpolate = True, expressions = [], interpolation = 'linear', wantohlc=False, wantma=False, matype = 0, matimeperiod = 30):
+def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, wantobv=False, wantbbands=False, interpolate = True, expressions = [], interpolation = 'linear', wantohlc=False, wantma=False, matype = 0, matimeperiod = 30):
     scalebeginning100 = 0
     if not end is None:
         mystart = None
@@ -1310,6 +1313,8 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
             indicators.append(stochrsi.STOCHRSI())
         if wantobv:
             indicators.append(obv.OBV(volumelist[0]))
+        if wantbbands:
+            indicators.append(bbands.BBANDS())
 
         rsi.doprint=True
         ax = getContentGraphAx(indicators)
@@ -1477,7 +1482,7 @@ def getdates(datelist, start, end):
         #print("d2", end, datelist)
     return datelist
 
-def getcomparegraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True, interpolation = 'linear'):
+def getcomparegraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, wantbbands=False, interpolate = True, interpolation = 'linear'):
     scalebeginning100 = 1
     markets = set()
     marketstocks = set()
