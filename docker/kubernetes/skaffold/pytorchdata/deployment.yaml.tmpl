@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: stockstat-pytorchdatapv
+  name: stockstat-pytorchdatapv$APPID
 spec:
   storageClassName: manual
   capacity:
@@ -10,14 +10,14 @@ spec:
     - ReadWriteMany
   claimRef:
     namespace: default
-    name: stockstat-pytorchdatapv
+    name: stockstat-pytorchdatapv$APPID
   hostPath:
     path: "/data/pytorchdata"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: stockstat-pytorchdatapv
+  name: stockstat-pytorchdatapv$APPID
 spec:
   # Specify "" as the storageClassName so it matches the PersistentVolume's StorageClass.
   # A nil storageClassName value uses the default StorageClass. For details, see

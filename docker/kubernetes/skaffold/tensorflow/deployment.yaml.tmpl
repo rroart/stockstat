@@ -32,7 +32,7 @@ spec:
       volumes:
       - name: stockstat-tensorflowdatavol
         persistentVolumeClaim:
-          claimName: stockstat-tensorflowdatapv
+          claimName: stockstat-tensorflowdatapv$APPID
 ---
 apiVersion: v1
 kind: Service

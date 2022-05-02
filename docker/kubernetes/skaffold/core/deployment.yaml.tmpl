@@ -33,7 +33,7 @@ spec:
       volumes:
       - name: stockstat-sparkdatavol
         persistentVolumeClaim:
-          claimName: stockstat-sparkdatapv
+          claimName: stockstat-sparkdatapv$APPID
 ---
 apiVersion: v1
 kind: Service

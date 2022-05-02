@@ -32,7 +32,7 @@ spec:
       volumes:
       - name: stockstat-pytorchdatavol
         persistentVolumeClaim:
-          claimName: stockstat-pytorchdatapv
+          claimName: stockstat-pytorchdatapv$APPID
 ---
 apiVersion: v1
 kind: Service
