@@ -942,7 +942,7 @@ public class IclijConfigConstantMaps {
         range.put(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASETIMES, new Double[] { 1.0, 10.0 } );
         range.put(IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL, new Double[] { 1.0, 21.0 } );
         range.put(IclijConfigConstants.AUTOSIMULATEINVESTPERIOD, new Double[] { 0.0, 3.0 } );
-        range.put(IclijConfigConstants.AUTOSIMULATEINVESTLASTCOUNT, new Double[] { 0.0, 10.0 } );
+        range.put(IclijConfigConstants.AUTOSIMULATEINVESTLASTCOUNT, new Double[] { 0.0, 40.0 } );
         range.put(IclijConfigConstants.AUTOSIMULATEINVESTDELLIMIT, new Double[] { 0.0, 1.0 } );
         range.put(IclijConfigConstants.AUTOSIMULATEINVESTSCORELIMIT, new Double[] { 1.0, 5.0 } );
         range.put(IclijConfigConstants.AUTOSIMULATEINVESTAUTOSCORELIMIT, new Double[] { -0.2, 0.0 } );
