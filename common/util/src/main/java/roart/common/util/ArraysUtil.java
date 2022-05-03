@@ -1,5 +1,6 @@
 package roart.common.util;
 
+import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -796,5 +797,8 @@ public class ArraysUtil {
         return new ImmutablePair<Integer, Integer>(range.lowerEndpoint(), range.upperEndpoint());
     }
 
+    public static <E> E getLast(List<E> list) {
+        return !list.isEmpty() ? list.get(list.size() -1 ) : null;
+    }
 }
 
