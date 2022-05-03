@@ -38,6 +38,7 @@ import roart.common.constants.EvolveConstants;
 import roart.common.constants.ServiceConstants;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
 import roart.common.util.MapUtil;
 import roart.common.util.MathUtil;
@@ -467,7 +468,12 @@ public class SimulateInvestComponent extends ComponentML {
                     }
                     if (autoSimConfig != null && !simTriplets.isEmpty()) {
                         List<Double> alist = simTriplets.stream().map(o -> (o.getMiddle().autoscore)).collect(Collectors.toList());
+                        List<Integer> alist2 = simTriplets.stream().map(o -> (o.getLeft() .hashCode())).collect(Collectors.toList());
+                        List<Double> alist3 = simTriplets.stream().map(o -> o.getRight().plotCapital.size() > 0 ? o.getRight().plotCapital.get(o.getRight().plotCapital.size()-1) : 0.0).toList();
                         log.debug("alist {}", alist);
+                        log.debug("alist {} {}", mydate.date, alist.subList(0, Math.min(5, alist.size())));
+                        log.debug("alist {} {} {}", mydate.date, alist.size(), alist2.subList(0, Math.min(5, alist2.size())));
+                        log.debug("alist {} {}", mydate.date, alist3.subList(0, Math.min(5, alist2.size())));
                         OneRun oneRun = simTriplets.get(0).getMiddle();
                         if (oneRun.runs > 1 && ((oneRun.autoscore != null && oneRun.autoscore > autoSimConfig.getAutoscorelimit()) || (autoSimConfig.getKeepAdviser() && currentOneRun.autoscore != null && currentOneRun.autoscore > autoSimConfig.getKeepAdviserLimit()))) {
                             if (autoSimConfig.getVote() != null && autoSimConfig.getVote()) {
@@ -516,8 +522,24 @@ public class SimulateInvestComponent extends ComponentML {
                 }
             }
                  */
+                //Collections.sort(simTriplets, (o1, o2) -> Double.compare(o2.getMiddle().autoscore, o1.getMiddle().autoscore));
+                simTriplets = simTriplets.stream().filter(e -> ArraysUtil.getLast(e.getRight().plotCapital) != null).collect(Collectors.toList());
+                Collections.sort(simTriplets, (o1, o2) -> Double.compare(ArraysUtil.getLast(o2.getRight().plotCapital), ArraysUtil.getLast(o1.getRight().plotCapital)));
+                List<Double> alist = simTriplets.stream().map(o -> ArraysUtil.getLast(o.getRight().plotCapital)).toList();
+                //log.debug("alist {}", alist);
+                //log.debug("alist {} {}", mydate.date, alist.subList(0, Math.min(5, alist.size())));
+                log.debug("alist {} {} {}", mydate.date, alist.size(), alist.subList(0, Math.min(5, alist.size())));
+                //List<Double> alist3 = simTriplets.stream().map(o -> o.getRight().plotCapital.size() > 0 ? o.getRight().plotCapital.get(o.getRight().plotCapital.size()-1) : 0.0).toList();
                 List<Triple<SimulateInvestConfig, OneRun, Results>> endSimTriplets = new ArrayList<>();
+                Double mlast = ArraysUtil.getLast(mainResult.plotCapital);
+                if (mlast == null) {
+                    int jj = 0;
+                }
+                if ((mlast == null || alist.isEmpty()) || mlast > alist.get(0)) {
                 endSimTriplets.add(new ImmutableTriple(currentSimConfig, currentOneRun, mainResult));
+                } else {
+                    endSimTriplets.add(simTriplets.get(0));                    
+                }
                 for (Triple<SimulateInvestConfig, OneRun, Results> aPair : endSimTriplets) {
                     SimulateInvestConfig aSimConfig = aPair.getLeft();
                     OneRun aOneRun = aPair.getMiddle();
@@ -666,6 +688,9 @@ public class SimulateInvestComponent extends ComponentML {
                         resultMap.put("" + offset, map);
                     }
                     scores.add(score);
+                    if (aOneRun.lastbuysell != null) {
+                        param.getUpdateMap().put(SimConstants.LASTBUYSELL, aOneRun.lastbuysell);
+                    }
                 }
             }
             if (evolving) {
@@ -1324,7 +1349,7 @@ public class SimulateInvestComponent extends ComponentML {
                 List<String> ids = onerun.mystocks.stream().map(SimulateStock::getId).collect(Collectors.toList());
                 if (!evolving) {
                     if (offset == 0) {
-                        String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() : "";
+                        String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() + " " + simConfig.hashCode() : "";
                         results.sumHistory.add(historydatestring + " " + onerun.capital.toString() + " " + sum.toString() + " " + new MathUtil().round(onerun.resultavg, 2) + " " + hasNoConf + " " + ids + " " + trend + adv);
                         results.plotDates.add(historydatestring);
                         results.plotDefault.add(onerun.resultavg);
@@ -1385,13 +1410,13 @@ public class SimulateInvestComponent extends ComponentML {
                 if (offset == 0 && !sells.isEmpty()) {
                     boolean last = mydate.indexOffset - j == endIndexOffset;
                     boolean aLastInvest = offset == 0 && last /*date.isAfter(lastInvestEnd) && j == simConfig.getInterval() - 1*/;
-                    if (aLastInvest && isMain) {
+                    if (aLastInvest /*&& isMain*/) {
                         List<String> ids = onerun.mystocks.stream().map(SimulateStock::getId).collect(Collectors.toList());
                         List<String> sellids = sells.stream().map(SimulateStock::getId).collect(Collectors.toList());
                         //ids.removeAll(sellids);
                         // TODO new portofolio?
-                        String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() : "";
-                        param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Stoploss sell: " + sellids + " Stocks: " + ids + adv);
+                        String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() + " " + simConfig.hashCode(): "";
+                        onerun.lastbuysell = "Stoploss sell: " + sellids + " Stocks: " + ids + adv;
                     } else {
                         int jj = 0;
                     }
@@ -1412,16 +1437,16 @@ public class SimulateInvestComponent extends ComponentML {
                     buyids.clear();
                 }
                 //ids.removeAll(sellids);
-                if (isMain) {
+                if (true /*isMain*/) {
                     String newids = "";
-                    String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() : "";
+                    String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() + " " + simConfig.hashCode(): "";
                     if (extradelay == 0) {
                         List<String> idsnew = new ArrayList<>(ids);
                         idsnew.addAll(buyids);
                         idsnew.removeAll(sellids);
                         newids = " -> " + idsnew;
                     }
-                    param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Buy: " + buyids + " Sell: " + sellids + " Stocks: " + ids + newids + adv);
+                    onerun.lastbuysell = "Buy: " + buyids + " Sell: " + sellids + " Stocks: " + ids + newids + adv;
                 }
             }
         }
@@ -2451,6 +2476,7 @@ public class SimulateInvestComponent extends ComponentML {
         Double autoscore;
         List<SimulateStock> buys;
         Map<Integer, Map<String, List<SimulateStock>>> eventMap = new HashMap<>();
+        String lastbuysell;
     }
     
     class Results {
