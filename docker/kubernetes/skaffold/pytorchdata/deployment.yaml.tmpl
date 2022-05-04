@@ -12,7 +12,7 @@ spec:
     namespace: default
     name: stockstat-pytorchdatapv$APPID
   hostPath:
-    path: "/data/pytorchdata"
+    path: "/data/pytorchdata$APPID"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

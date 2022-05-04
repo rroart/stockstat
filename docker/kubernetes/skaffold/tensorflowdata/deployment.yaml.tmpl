@@ -12,7 +12,7 @@ spec:
     namespace: default
     name: stockstat-tensorflowdatapv$APPID
   hostPath:
-    path: "/data/tensorflowdata"
+    path: "/data/tensorflowdata$APPID"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

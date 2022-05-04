@@ -34,5 +34,5 @@ RUN mkdir /usr/local/conf
 ADD docker/cloud/iclij/$myconfig /usr/local/conf
 WORKDIR /usr/local/bin
 RUN ln -s /tmp /usr/local/logs
-CMD java -Dconfig=$MYCONFIG $MYDEBUG -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:${MYDBSERVERPORT}/${MYDBSERVERDB} -jar /usr/local/bin/$DISTJAR --spring.profiles.active=docker
+CMD java -Dconfig=$MYCONFIG $MYDEBUG -Dserver.port=${MYWEBPORT} -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:${MYDBSERVERPORT}/${MYDBSERVERDB} -jar /usr/local/bin/$DISTJAR --spring.profiles.active=docker
 
