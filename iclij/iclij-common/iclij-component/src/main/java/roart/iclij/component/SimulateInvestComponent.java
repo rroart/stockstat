@@ -1480,7 +1480,7 @@ public class SimulateInvestComponent extends ComponentML {
             for (Entry<Integer, Map<String, List<SimulateStock>>> entry : onerun.eventMap.entrySet()) {
                 Map<String, List<SimulateStock>> aMap = entry.getValue();
                 for (Entry<String, List<SimulateStock>> anEntry : aMap.entrySet()) {
-                    if (anEntry.getValue().contains(stock)) {
+                    if (anEntry.getValue().stream().map(SimulateStock::getId).toList().contains(stock.getId())) {
                         found = true;
                     }
                 }
