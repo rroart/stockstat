@@ -535,10 +535,13 @@ public class SimulateInvestComponent extends ComponentML {
                 if (mlast == null) {
                     int jj = 0;
                 }
+                boolean autolost;
                 if ((mlast == null || alist.isEmpty()) || mlast > alist.get(0)) {
                 endSimTriplets.add(new ImmutableTriple(currentSimConfig, currentOneRun, mainResult));
+                autolost = false;
                 } else {
                     endSimTriplets.add(simTriplets.get(0));                    
+                    autolost = true;
                 }
                 for (Triple<SimulateInvestConfig, OneRun, Results> aPair : endSimTriplets) {
                     SimulateInvestConfig aSimConfig = aPair.getLeft();
@@ -607,6 +610,9 @@ public class SimulateInvestComponent extends ComponentML {
 			    map.put(SimConstants.LASTSTOCKS, aOneRun.mystocks.stream().map(SimulateStock::getId).toList());
                             List<Pair<String, Double>> tradeStocks = SimUtil.getTradeStocks(aResult.stockhistory);
                             map.put(SimConstants.TRADESTOCKS, tradeStocks);
+                            if (autolost) {
+                                map.put(SimConstants.AUTOMAX, "" + aSimConfig.asMap());
+                            }
                             param.getUpdateMap().putAll(map);
                             param.getUpdateMap().putIfAbsent(SimConstants.LASTBUYSELL, "Not buying or selling today");
                             componentData.getUpdateMap().putAll(map);

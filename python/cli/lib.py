@@ -2468,6 +2468,8 @@ def autosimulateinvest(market, startdate = None, enddate = None, interval = 1, p
     updatemap = webdata['updateMap']
     if 'empty' in updatemap:
         return
+    if 'automax' in updatemap:
+        print(updatemap['automax'])
     dates = updatemap['plotdates']
     commondays = dates
     default = updatemap['plotdefault']
