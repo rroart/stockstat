@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stockstat-s3$APPID
+  labels:
+    app: stockstat-s3$APPID
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: stockstat-s3$APPID
+  template:
+    metadata:
+      labels:
+        app: stockstat-s3$APPID
+    spec:
+      containers:
+      - name: stockstat-s3
+        image: stockstat-s3$IMGID
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stockstat-s3$APPID
+  labels:
+    app: stockstat-s3$APPID
+spec:
+  type: NodePort
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: stockstat-s3$APPID
+  sessionAffinity: None  
+status:
+  loadBalancer: {}    
+---
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  labels:
+    app.kubernetes.io/component: controller
+  name: stockstat-s3$APPID
+  annotations:
+    ingressclass.kubernetes.io/is-default-class: "false"
+spec:
+  controller: k8s.io/ingress-nginx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: name-virtual-host-ingress-stockstat-s3$APPID
+spec:
+  ingressClassName: stockstat-s3$APPID
+  rules:
+  - host: $S3IHOST
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: stockstat-s3$APPID
+            port:
+              number: 8080

@@ -1,0 +1,54 @@
+apiVersion: skaffold/v2beta1
+kind: Config
+metadata:
+  name: filesystem
+build:
+  artifacts:
+  #- image: stockstat-local$IMGID
+  #  context: ../../../docker/cloud/local
+  - image: stockstat-hdfs$IMGID
+    context: ../../..
+    docker:
+      dockerfile: docker/cloud/generic/Dockerfile
+      buildArgs:
+        distlib: '{{.DISTLIB}}'
+        distjar: '{{.HDFSJAR}}'
+        mywebport: "8080"
+        myconfig: '{{.MYCONFIG}}'
+        mydebug: '{{.MYDEBUG}}'
+        lang: "en_US.ISO8859-1"
+        appid: '{{.APPID}}'
+        extras: '{{.HDFSPATH}}'
+  - image: stockstat-s3$IMGID
+    context: ../../..
+    docker:
+      dockerfile: docker/cloud/generic/Dockerfile
+      buildArgs:
+        distlib: '{{.DISTLIB}}'
+        distjar: '{{.S3JAR}}'
+        mywebport: "8080"
+        myconfig: '{{.MYCONFIG}}'
+        mydebug: '{{.MYDEBUG}}'
+        lang: "en_US.ISO8859-1"
+        appid: '{{.APPID}}'
+        extras: '{{.S3PATH}}'
+  - image: stockstat-swift$IMGID
+    context: ../../..
+    docker:
+      dockerfile: docker/cloud/generic/Dockerfile
+      buildArgs:
+        distlib: '{{.DISTLIB}}'
+        distjar: '{{.SWIFTJAR}}'
+        mywebport: "8080"
+        myconfig: '{{.MYCONFIG}}'
+        mydebug: '{{.MYDEBUG}}'
+        lang: "en_US.ISO8859-1"
+        appid: '{{.APPID}}'
+        extras: '{{.SWIFTPATH}}'
+deploy:
+  kubectl:
+    manifests:
+    #- local/deployment.yaml
+    - hdfs/deployment.yaml
+    - s3/deployment.yaml
+    - swift/deployment.yaml
