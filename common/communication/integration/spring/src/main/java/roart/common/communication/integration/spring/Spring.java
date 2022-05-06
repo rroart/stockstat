@@ -42,6 +42,8 @@ public class Spring extends IntegrationCommunication {
     public ConnectionFactory connectionFactory() {
         CachingConnectionFactory connectionFactory =
             new CachingConnectionFactory(connection);
+        connectionFactory.setUsername("username");
+        connectionFactory.setPassword("password");
         if (sendreceive) {
             AmqpAdmin admin = new RabbitAdmin(connectionFactory);
             admin.declareQueue(new Queue(getSendService()));
