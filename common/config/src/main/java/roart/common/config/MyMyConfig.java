@@ -866,15 +866,15 @@ public class MyMyConfig extends MyConfig {
     }
 
     public String getInmemoryServer() {
-        return (String) getValueOrDefault(ConfigConstants.MISCINMEMORYSERVER);
+        return (String) getNotEmptyValueOrDefault(ConfigConstants.MISCINMEMORYSERVER);
     }
 
     public String getInmemoryHazelcast() {
-        return (String) getValueOrDefault(ConfigConstants.MISCINMEMORYHAZELCAST);
+        return (String) getNotEmptyValueOrDefault(ConfigConstants.MISCINMEMORYHAZELCAST);
     }
 
     public String getInmemoryRedis() {
-        return (String) getValueOrDefault(ConfigConstants.MISCINMEMORYREDIS);
+        return (String) getNotEmptyValueOrDefault(ConfigConstants.MISCINMEMORYREDIS);
     }
 
     public String getZookeeper() {
