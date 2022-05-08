@@ -447,6 +447,34 @@ def listperiod(list, period, index):
         return list.indexvalue.iloc[index]
     return None
 
+def filterperiod(list, period):
+    #print("ttt", type(list))
+    #print(list)
+    #print(len(list))
+    if period == 0:
+        return list[list.period1.notnull()]
+    if period == 1:
+        return list[list.period2.notnull()]
+    if period == 2:
+        return list[list.period3.notnull()]
+    if period == 3:
+        return list[list.period4.notnull()]
+    if period == 4:
+        return list[list.period5.notnull()]
+    if period == 5:
+        return list[list.period6.notnull()]
+    if period == 6:
+        return list[list.period7.notnull()]
+    if period == 7:
+        return list[list.period8.notnull()]
+    if period == 8:
+        return list[list.period9.notnull()]
+    if period == 9:
+        return list[list.price.notnull()]
+    if period == 10:
+        return list[list.indexvalue.notnull()]
+    return None
+
 def myperiodtextslist(myperiodtexts, periodtexts):
     retlist = myperiodtexts
     if myperiodtexts is None:
@@ -519,6 +547,7 @@ def mytopperiod2(indicators, dflist, period, max, days, reverse=False, wantgrid 
             print(title, end=" ")
         print();
         lists.append(titles)
+        df = filterperiod(df, period)
         for i in range(max):
             l = listperiod(df, period, i)
             name = df.name.iloc[i]
@@ -2161,9 +2190,25 @@ def getelem3tup(anid, days, datedstocklist, period, size):
         c = c + 1
     return(retl)
 
+def gettop10y(anid, numberdays = 5, tablemoveintervaldays = 5, toptop = 10):
+    start = (numberdays - 1) * tablemoveintervaldays
+    gettopgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "10y", wantchart=False)
+
+def gettop5y(anid, numberdays = 5, tablemoveintervaldays = 5, toptop = 10):
+    start = (numberdays - 1) * tablemoveintervaldays
+    gettopgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "5y", wantchart=False)
+
+def gettop3y(anid, numberdays = 5, tablemoveintervaldays = 5, toptop = 10):
+    start = (numberdays - 1) * tablemoveintervaldays
+    gettopgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "3y", wantchart=False)
+
 def gettopyear(anid, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
     start = (numberdays - 1) * tablemoveintervaldays
     gettopgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "1y", wantchart=False)
+
+def gettopcy(anid, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
+    start = (numberdays - 1) * tablemoveintervaldays
+    gettopgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "cy", wantchart=False)
 
 def gettop3m(anid, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
     start = (numberdays - 1) * tablemoveintervaldays
@@ -2173,10 +2218,6 @@ def gettopmonth(anid, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10
     start = (numberdays - 1) * tablemoveintervaldays
     gettopgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "1m", wantchart=False)
 
-def getbottommonth(anid, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
-    start = (numberdays - 1) * tablemoveintervaldays
-    getbottomgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "1m", wantchart=False)
-
 def gettopweek(anid, numberdays = 5, tablemoveintervaldays = 5, topbottom = 10):
     start = (numberdays - 1) * tablemoveintervaldays
     gettopgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "1w", wantchart=False)
@@ -2185,13 +2226,41 @@ def gettopday(anid, numberdays = 5, tablemoveintervaldays = 5, topbottom = 10):
     start = (numberdays - 1) * tablemoveintervaldays
     gettopgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "1d", wantchart=False)
 
+def getbottom10y(anid, numberdays = 5, tablemoveintervaldays = 5, topbottom = 10):
+    start = (numberdays - 1) * tablemoveintervaldays
+    getbottomgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "10y", wantchart=False)
+
+def getbottom5y(anid, numberdays = 5, tablemoveintervaldays = 5, topbottom = 10):
+    start = (numberdays - 1) * tablemoveintervaldays
+    getbottomgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "5y", wantchart=False)
+
+def getbottom3y(anid, numberdays = 5, tablemoveintervaldays = 5, topbottom = 10):
+    start = (numberdays - 1) * tablemoveintervaldays
+    getbottomgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "3y", wantchart=False)
+
+def getbottomyear(anid, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
+    start = (numberdays - 1) * tablemoveintervaldays
+    getbottomgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "1y", wantchart=False)
+
+def getbottomcy(anid, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
+    start = (numberdays - 1) * tablemoveintervaldays
+    getbottomgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "cy", wantchart=False)
+
+def getbottom3m(anid, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
+    start = (numberdays - 1) * tablemoveintervaldays
+    getbottomgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "3m", wantchart=False)
+
+def getbottommonth(anid, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
+    start = (numberdays - 1) * tablemoveintervaldays
+    getbottomgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "1m", wantchart=False)
+
 def getbottomweek(anid, numberdays = 5, tablemoveintervaldays = 5, topbottom = 10):
     start = (numberdays - 1) * tablemoveintervaldays
     getbottomgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "1w", wantchart=False)
 
-def gettopcy(anid, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
+def getbottomday(anid, numberdays = 5, tablemoveintervaldays = 5, topbottom = 10):
     start = (numberdays - 1) * tablemoveintervaldays
-    gettopgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "cy", wantchart=False)
+    getbottomgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "1d", wantchart=False)
 
 def prevNonNan(alist, pos):
   l = pos
