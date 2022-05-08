@@ -166,7 +166,7 @@ class MACD:
         #print(type(el))
         eldateset = set(el.date.values)
         aset = dateset - eldateset
-        emptydf = pd.DataFrame(data = None, columns = el.columns)
+        emptydf = pd.DataFrame(data = None, columns = [ 'date' ])
         #print("l", len(emptydf))
         #print("aset", aset)
         for x in aset:

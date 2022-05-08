@@ -79,7 +79,7 @@ class RSI:
         #print(type(el))
         eldateset = set(el.date.values)
         aset = dateset - eldateset
-        emptydf = pd.DataFrame(data = None, columns = el.columns)
+        emptydf = pd.DataFrame(data = None, columns = [ 'date' ])
         for x in aset:
             emptydf = emptydf.append({ 'date' : x }, ignore_index=True)
         el = el.append(emptydf)
