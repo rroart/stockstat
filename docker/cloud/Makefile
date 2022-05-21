@@ -38,7 +38,7 @@ webr iclij-webr:
 
 iclij:
 ifneq ($(ICLIJTMPL),)
-	rsync -a $$ICLIJTMPL iclij-core/iclij.xml.tmpl
+	rsync -a $$ICLIJTMPL iclij/iclij.xml.tmpl
 endif
 	$(MAKE) -C $@ -f ../Makefile iclij.xml
 ifneq ($(ISIMTMPL),)
