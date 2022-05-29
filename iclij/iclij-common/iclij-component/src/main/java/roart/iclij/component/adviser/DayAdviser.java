@@ -60,7 +60,7 @@ public class DayAdviser extends Adviser {
             }
             categoryValueMap = aCategoryValueMap;
         } else {
-            if (simulateConfig.getInterpolate()) {
+            if (getInterpolate(simulateConfig.getInterpolate())) {
                 categoryValueMap = param.getFillCategoryValueMap();
             } else {
                 categoryValueMap = param.getCategoryValueMap();
@@ -232,5 +232,10 @@ public class DayAdviser extends Adviser {
         }
         valueMap = newValueMap;
         MyCache.getInstance().put(key, valueMap);
+    }
+    
+    @Override
+    public boolean getInterpolate(boolean interpolate) {
+        return false;
     }
 }

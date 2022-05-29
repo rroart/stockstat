@@ -50,4 +50,8 @@ public abstract class Adviser {
     public void setExtra(Object object) {
         this.object = object;
     }
+    
+    public boolean getInterpolate(boolean interpolate) {
+        return interpolate;
+    }
 }

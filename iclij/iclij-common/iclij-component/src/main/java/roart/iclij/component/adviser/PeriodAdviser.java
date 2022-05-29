@@ -63,7 +63,7 @@ public class PeriodAdviser extends Adviser {
                 return;
             }
             Map<String, List<List<Double>>> aCategoryValueMap;
-            if (simulateConfig.getInterpolate()) {
+            if (getInterpolate(simulateConfig.getInterpolate())) {
                 aCategoryValueMap = (Map<String, List<List<Double>>>) objectMaps.get(PipelineConstants.FILLLIST);
             } else {
                 aCategoryValueMap = (Map<String, List<List<Double>>>) objectMaps.get(PipelineConstants.LIST);
@@ -230,5 +230,10 @@ public class PeriodAdviser extends Adviser {
         }
         valueMap = newValueMap;
         MyCache.getInstance().put(key, valueMap);
+    }
+    
+    @Override
+    public boolean getInterpolate(boolean interpolate) {
+        return false;
     }
 }
