@@ -1767,7 +1767,10 @@ def getarrsparse(market, periodint, count, mytableintervaldays, marketdatamap, c
                         #print(len(dfarr))
                         #print(len(dfarr[0]))
                         #print(len(dfarr[0].values), len(dfarr[1].values), len(dfarr[2].values))
-                        values = [ dfarr[0].values[0], dfarr[1].values[0], dfarr[2].values[0], dfarr[3].values[0] ]
+                        if len(dfarr) == 1:
+                            values = [ dfarr[0].values[0], None, None, None ]
+                        else:
+                            values = [ dfarr[0].values[0], dfarr[1].values[0], dfarr[2].values[0], dfarr[3].values[0] ]
                         #print("vs ", values)
                         mapadd(retmap, anid, i, values , len(datedstocklists))
                         #len(datedstocklists) - 1 - 
