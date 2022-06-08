@@ -139,8 +139,8 @@
     <camelactivemq.version>5.16.0</camelactivemq.version>
     <springintegration.version>5.4.0</springintegration.version>
     <springrabbit.version>2.3.1</springrabbit.version>
-    <kafka.version>2.6.0</kafka.version> 
-    <pulsar.version>2.6.1</pulsar.version>
+    <kafka.version>3.2.0</kafka.version> 
+    <pulsar.version>2.10.0</pulsar.version>
     <hazelcast.version>3.12.12</hazelcast.version>
     <hazelcastclient.version>3.2.12</hazelcastclient.version>
     <redisclient.version>3.5.1</redisclient.version>
