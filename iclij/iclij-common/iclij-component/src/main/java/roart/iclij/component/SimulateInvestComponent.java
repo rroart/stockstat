@@ -89,6 +89,10 @@ public class SimulateInvestComponent extends ComponentML {
     
     private static final int MAXARR = 0;
     
+    private String datebreak = null;
+    
+    private String idbreak = null;
+    
     @Override
     public void enable(Map<String, Object> valueMap) {
     }
@@ -379,6 +383,9 @@ public class SimulateInvestComponent extends ComponentML {
                 }
             */
                 while (mydate.indexOffset >= endIndexOffset) {
+                    if (datebreak != null && mydate.date.toString().equals(datebreak)) {
+                        int jj = 0;
+                    }
                     boolean lastInvest = offset == 0 && mydate.indexOffset == endIndexOffset;
                     /*
                     if (currentSimConfig != null) {
@@ -1475,6 +1482,9 @@ public class SimulateInvestComponent extends ComponentML {
     private List<SimulateStock> addEvent(OneRun onerun, List<SimulateStock> stocks, String bs, int myIndexoffset) {
         if (stocks == null || stocks.isEmpty()) {
             return stocks;
+        }
+        if (idbreak != null && !stocks.stream().filter(s -> s.getId().equals(idbreak)).toList().isEmpty()) {
+            int jj = 0;
         }
         List<SimulateStock> filterStocks = getFilterStocks(onerun, stocks);
         if (filterStocks == null || filterStocks.isEmpty()) {
