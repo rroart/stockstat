@@ -19,4 +19,5 @@ public class SimConstants {
     public static final String FILTER = "filter";
     public static final String EMPTY = "empty";
     public static final String AUTOMAX = "automax";
+    public static final String ADVISERS = "advisers";
 }

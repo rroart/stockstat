@@ -2606,6 +2606,8 @@ def autosimulateinvest(market, startdate = None, enddate = None, interval = 1, p
       print(updatemap['scores'])
       print(updatemap['stats'])
       print(updatemap['minmax'])
+    if 'advisers' in updatemap:
+        print(updatemap['advisers'])
     print(updatemap['lastbuysell'])
     return
 

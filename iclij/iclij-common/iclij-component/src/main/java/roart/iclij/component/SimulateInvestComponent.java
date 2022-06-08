@@ -525,6 +525,17 @@ public class SimulateInvestComponent extends ComponentML {
                 //Collections.sort(simTriplets, (o1, o2) -> Double.compare(o2.getMiddle().autoscore, o1.getMiddle().autoscore));
                 simTriplets = simTriplets.stream().filter(e -> ArraysUtil.getLast(e.getRight().plotCapital) != null).collect(Collectors.toList());
                 Collections.sort(simTriplets, (o1, o2) -> Double.compare(ArraysUtil.getLast(o2.getRight().plotCapital), ArraysUtil.getLast(o1.getRight().plotCapital)));
+                Map<Integer, Double> advMap = new HashMap<>();
+                if (autoSimConfig != null) {
+                    for (Triple<SimulateInvestConfig, OneRun, Results> triplet : simTriplets) {
+                        SimulateInvestConfig aConfig = triplet.getLeft();
+                        int adviser = aConfig.getAdviser();
+                        if (!advMap.containsKey(adviser)) {
+                            advMap.put(adviser, ArraysUtil.getLast(triplet.getRight().plotCapital));
+                        }
+                    }
+                    log.info("Adviser map {}", advMap);
+                }
                 List<Double> alist = simTriplets.stream().map(o -> ArraysUtil.getLast(o.getRight().plotCapital)).toList();
                 //log.debug("alist {}", alist);
                 //log.debug("alist {} {}", mydate.date, alist.subList(0, Math.min(5, alist.size())));
@@ -612,6 +623,9 @@ public class SimulateInvestComponent extends ComponentML {
                             map.put(SimConstants.TRADESTOCKS, tradeStocks);
                             if (autolost) {
                                 map.put(SimConstants.AUTOMAX, "" + aSimConfig.asMap());
+                            }
+                            if (autoSimConfig != null && !advMap.isEmpty()) {
+                                map.put(SimConstants.ADVISERS, advMap);
                             }
                             param.getUpdateMap().putAll(map);
                             param.getUpdateMap().putIfAbsent(SimConstants.LASTBUYSELL, "Not buying or selling today");
