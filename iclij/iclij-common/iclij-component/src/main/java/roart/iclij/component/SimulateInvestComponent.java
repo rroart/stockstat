@@ -1375,6 +1375,7 @@ public class SimulateInvestComponent extends ComponentML {
 
                 List<String> ids = onerun.mystocks.stream().map(SimulateStock::getId).collect(Collectors.toList());
                 if (!evolving) {
+                    if (getBSValueIndexOffset(mydate, simConfig) >= endIndexOffset) {
                     if (offset == 0) {
                         String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() + " " + simConfig.hashCode() : "";
                         results.sumHistory.add(historydatestring + " " + onerun.capital.toString() + " " + sum.toString() + " " + new MathUtil().round(onerun.resultavg, 2) + " " + hasNoConf + " " + ids + " " + trend + adv);
@@ -1384,6 +1385,7 @@ public class SimulateInvestComponent extends ComponentML {
                     } else {
                         results.plotDates.add(historydatestring);                        
                         results.plotCapital.add(sum.amount + onerun.capital.amount);
+                    }
                     }
                 } else {
                     results.plotDates.add(historydatestring);
