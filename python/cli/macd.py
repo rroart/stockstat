@@ -1,5 +1,6 @@
 import talib as ta
 import pandas as pd
+import numpy as np
 import pdutils as pdu
 import myutils as my
 import const
@@ -202,7 +203,10 @@ class MACD:
                 #print("myc")
                 #print(type(myc))
                 #print(myc.values[0])
-                first = myc.values[0]
+                #first = myc.values[0]
+                #print(first)
+                #print(type(myc))
+                first = myc.values[np.isfinite(myc.values)][0]
                 #print(first)
                 #print(100/first)
                 #print(myc.values)

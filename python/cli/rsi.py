@@ -1,5 +1,6 @@
 import talib as ta
 import pandas as pd
+import numpy as np
 import pdutils as pdu
 import myutils as my
 import const
@@ -96,7 +97,7 @@ class RSI:
         myc = myc.iloc[0 : self.stockdata.dates.startindex + 1 - mycoffset]
         if rebase:
             if periodtext == "Price" or periodtext == "Index":
-                first = myc.values[0]
+                first = myc.values[np.isfinite(myc.values)][0]
                 myc = myc * (100 / first)
         if periodtext == "Price" or periodtext == "Index":
             myc = my.fixzero2(myc)
