@@ -251,6 +251,7 @@ public class ExtraReader extends Pipeline {
         marketdata.periodtext = periodText;
         marketdata.meta = DbDao.getById(market, conf);
         Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocksId);
+        stockdatemap = StockUtil.filterFew(stockdatemap, conf.getFilterDate());
         if (days == 0) {
             days = stockdatemap.keySet().size();
         }

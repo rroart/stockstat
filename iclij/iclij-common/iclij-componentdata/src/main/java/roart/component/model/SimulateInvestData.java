@@ -17,8 +17,6 @@ public class SimulateInvestData extends ComponentData {
     
     private Map<String, Map<String, Object>> resultRebaseMaps;
     
-    private List<String> stockDates;
-    
     private SimulateInvestConfig config;
     
     public SimulateInvestData(ComponentData componentparam) {
@@ -63,14 +61,6 @@ public class SimulateInvestData extends ComponentData {
 
     public void setResultRebaseMaps(Map<String, Map<String, Object>> resultRebaseMaps) {
         this.resultRebaseMaps = resultRebaseMaps;
-    }
-
-    public List<String> getStockDates() {
-        return stockDates;
-    }
-
-    public void setStockDates(List<String> stockDates) {
-        this.stockDates = stockDates;
     }
 
     public SimulateInvestConfig getConfig() {

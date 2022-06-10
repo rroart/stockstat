@@ -7,7 +7,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +56,7 @@ public class Extract {
     
         Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
         Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
+        stockdatemap = StockUtil.filterFew(stockdatemap, conf.getFilterDate());
         if (conf.getdate() == null) {
             try {
                 getCurrentDate(conf, stockdatemap);
@@ -127,7 +130,7 @@ public class Extract {
         
         return stockData;
     }
-    
+
     private Map<String, String> getIdNameMap(Map<String, List<StockItem>> stockidmap) {
         Map<String, String> idNameMap = new HashMap<>();
         // sort based on date

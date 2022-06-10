@@ -219,6 +219,7 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MISCMYGRAPHEQUALIZE, Boolean.class);
         map.put(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY, Boolean.class);
         map.put(ConfigConstants.MISCFILTERWEEKEND, Boolean.class);
+        map.put(ConfigConstants.MISCFILTERDATE, Double.class);
         map.put(ConfigConstants.MISCINTERPOLATE, Boolean.class);
         map.put(ConfigConstants.MISCINTERPOLATIONMETHOD, Integer.class);
         map.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.class);
@@ -626,6 +627,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY, Boolean.TRUE);
         deflt.put(ConfigConstants.MISCFILTERWEEKEND, Boolean.TRUE);
         deflt.put(ConfigConstants.MISCFILTERHOLIDAY, Boolean.TRUE);
+        deflt.put(ConfigConstants.MISCFILTERDATE, 0.5);
         deflt.put(ConfigConstants.MISCINTERPOLATE, Boolean.TRUE);
         deflt.put(ConfigConstants.MISCINTERPOLATIONMETHOD, Constants.LINEAR);
         deflt.put(ConfigConstants.MISCINTERPOLATIONLASTNULL,Boolean.FALSE);
@@ -1027,6 +1029,7 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.MISCMYGRAPHEQUALIZE, "Enable graph equalizing");
         text.put(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY, "Enable unified graph equalizing");
         text.put(ConfigConstants.MISCFILTERWEEKEND, "Filter out weekend data");
+        text.put(ConfigConstants.MISCFILTERDATE, "Filter out low date data");
         text.put(ConfigConstants.MISCINTERPOLATE, "Interpolate");
         text.put(ConfigConstants.MISCINTERPOLATIONMETHOD, "Interpolation method");
         text.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, "Interpolation last null");
@@ -1482,6 +1485,7 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MISCMYGRAPHEQUALIZE, new XMLType( Boolean.class, Boolean.TRUE, "Enable graph equalizing"));
         mymap.put(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY, new XMLType( Boolean.class, Boolean.TRUE, "Enable unified graph equalizing"));
         mymap.put(ConfigConstants.MISCFILTERWEEKEND, new XMLType( Boolean.class, Boolean.TRUE, "Filter out weekend data"));
+        mymap.put(ConfigConstants.MISCFILTERDATE, new XMLType( Double.class, 0.5, "Filter out low date data"));
         mymap.put(ConfigConstants.MISCINTERPOLATE, new XMLType( Boolean.class, Boolean.TRUE, "Interpolate"));
         mymap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, new XMLType( Integer.class, Constants.LINEAR, "Interpolation method"));        
         mymap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, new XMLType( Boolean.class,Boolean.FALSE, "Interpolation last null"));        

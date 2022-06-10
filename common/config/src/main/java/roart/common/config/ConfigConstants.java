@@ -202,6 +202,7 @@ public class ConfigConstants {
     public static final String MISCMYGRAPHEQUALIZEUNIFY = "misc.mygraphequalizeunify[@enable]";
     public static final String MISCFILTERWEEKEND = "misc.weekend";
     public static final String MISCFILTERHOLIDAY = "misc.holiday";
+    public static final String MISCFILTERDATE = "misc.filter.date";
     public static final String MISCTHRESHOLD = "misc.threshold";
     public static final String MISCINTERPOLATE = "misc.interpolate";
     public static final String MISCINTERPOLATIONMETHOD = "misc.interpolatationmethod";

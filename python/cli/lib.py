@@ -196,7 +196,17 @@ class StockData:
             self.stocks = df
             self.meta = None
         self.listdate = split(self.stocks, self.stocks.date)
+        #print("ttt", type(self.listdate), type(self.listdate[0]), self.listdate[0])
+        mysum = 0
+        for frame in self.listdate:
+            mysum += len(frame)
+        avg = mysum / len(self.listdate)
+        limit = avg / 2
+        removed = [frame.date.unique() for frame in self.listdate if len(frame) < limit]
+        print("removed " + str(len(removed)))
+        self.listdate = [frame for frame in self.listdate if len(frame) >= limit];
         self.listdates = self.stocks.date.unique()
+        self.listdates = [date for date in self.listdates if date not in removed]
         self.listdates.sort()
         self.listid = split(self.stocks, self.stocks.id)
         self.periodtexts = getperiodtexts(market)

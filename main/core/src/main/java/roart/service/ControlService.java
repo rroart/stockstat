@@ -559,6 +559,7 @@ public class ControlService {
             log.info("stocks {}", stocks.size());
             Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
             Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
+            stockdatemap = StockUtil.filterFew(stockdatemap, conf.getFilterDate());
 
             // sort based on date
             for (Entry<String, List<StockItem>> entry : stockidmap.entrySet()) {

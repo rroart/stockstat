@@ -1250,4 +1250,14 @@ public class StockUtil {
         return min;
     }
     
+    public static Map<String, List<StockItem>> filterFew(Map<String, List<StockItem>> stockdatemap, double filter) {
+        double mysum = stockdatemap.values().stream().mapToInt(List::size).sum();
+        double avg = mysum / stockdatemap.size();
+        double limit = avg * filter;
+        List<String> removed = stockdatemap.entrySet().stream().filter(e -> e.getValue().size() < limit).map(Entry::getKey).toList();
+        log.info("Removed {}", removed.size());
+        stockdatemap = stockdatemap.entrySet().stream().filter(e -> e.getValue().size() >= limit).collect(Collectors.toMap(Entry::getKey,Entry::getValue));
+        return stockdatemap;
+    }
+    
 }

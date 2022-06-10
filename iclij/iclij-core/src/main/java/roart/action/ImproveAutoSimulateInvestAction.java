@@ -109,8 +109,6 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
             param.setAllIncDecs(((ImproveAutoSimulateInvestComponent)component).getAllIncDecs(market, null, null));
             param.setAllMetas(((ImproveAutoSimulateInvestComponent)component).getAllMetas(componentparam));
             ((ImproveAutoSimulateInvestComponent)component).getResultMaps(param, market);
-            List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
-            param.setStockDates(stockDates);
             List<String> confList = component.getConflist();
 
             int ga = param.getInput().getConfig().getEvolveGA();

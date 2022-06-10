@@ -825,6 +825,10 @@ public class MyMyConfig extends MyConfig {
         return (Boolean) getValueOrDefault(ConfigConstants.MISCFILTERWEEKEND);
     }
 
+    public double getFilterDate() {
+        return (Double) getValueOrDefault(ConfigConstants.MISCFILTERDATE);
+    }
+
     public boolean wantInterpolate() {
         return (Boolean) getValueOrDefault(ConfigConstants.MISCINTERPOLATE);
     }

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
+import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.constants.IclijConstants;
@@ -43,6 +44,8 @@ public class ComponentData {
 
     protected Map<String, Object> resultMap;
 
+    private List<String> stockDates;
+    
     private Map<String, List<List<Double>>> categoryValueMap;
     
     private Map<String, List<List<Double>>> fillCategoryValueMap;
@@ -79,6 +82,7 @@ public class ComponentData {
         this.setOffset(componentparam.getOffset());
         this.setFuturedays(componentparam.getFuturedays());
         this.resultMap = componentparam.resultMap;
+        this.stockDates = componentparam.stockDates;
         this.categoryValueMap = componentparam.categoryValueMap;
         this.fillCategoryValueMap = componentparam.fillCategoryValueMap;
         this.volumeMap = componentparam.volumeMap;
@@ -228,6 +232,14 @@ public class ComponentData {
         this.resultMap = resultMap;
     }
 
+    public List<String> getStockDates() {
+        return stockDates;
+    }
+
+    public void setStockDates(List<String> stockDates) {
+        this.stockDates = stockDates;
+    }
+
     public Map<String, List<List<Double>>> getCategoryValueMap() {
         return categoryValueMap;
     }
@@ -343,6 +355,8 @@ public class ComponentData {
         Map<String, Map<String, Object>> result = getService().getContent();
         this.resultMaps = result;
         try {
+            List<String> stockdates = (List<String>) result.get("" + this.getCategory()).get(PipelineConstants.DATELIST);
+            this.setStockDates(stockdates);
             Map<String, List<List<Double>>> aCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + this.getCategory()).get(PipelineConstants.LIST);
             this.setCategoryValueMap(aCategoryValueMap);
             Map<String, List<List<Double>>> aFillCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + this.getCategory()).get(PipelineConstants.FILLLIST);
@@ -351,7 +365,7 @@ public class ComponentData {
             this.setVolumeMap(aVolumeMap);
         } catch (Exception e) {
             int jj = 0;
-        }
+        }        
     }
 
     public void getAndSetWantedCategoryValueMap() {
@@ -375,6 +389,8 @@ public class ComponentData {
             log.info("" + result.keySet());
             log.info("" + result.get(PipelineConstants.META).keySet());
             Integer cat = (Integer) result.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
+            List<String> stockdates = (List<String>) result.get("" + cat).get(PipelineConstants.DATELIST);
+            this.setStockDates(stockdates);
             Map<String, List<List<Double>>> aCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + cat).get(PipelineConstants.LIST);
             this.setCategoryValueMap(aCategoryValueMap);
             Map<String, List<List<Double>>> aFillCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + cat).get(PipelineConstants.FILLLIST);

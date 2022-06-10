@@ -43,6 +43,7 @@ public class MarketDataETL {
         marketdata.periodtext = periodText;
         marketdata.meta = meta;
         Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
+        stockdatemap = StockUtil.filterFew(stockdatemap, conf.getFilterDate());
         System.out.println("grr " + stockdatemap.keySet());
         // the main list, based on freshest or specific date.
 
