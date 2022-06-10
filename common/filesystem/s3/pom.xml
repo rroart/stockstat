@@ -142,27 +142,7 @@
       <artifactId>stockstat-common-util</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
-    <!--dependency>
-      <groupId>com.amazonaws</groupId>
-      <artifactId>aws-java-sdk</artifactId>
-      <version>${aws.version}</version>
-    </dependency-->    
     <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat.shadow.s3</artifactId>
-      <version>${stockstat.version}</version>
-      <exclusions>
-    <exclusion>
-      <groupId>com.amazonaws</groupId>
-      <artifactId>aws-java-sdk-core</artifactId>
-    </exclusion>    
-    <exclusion>
-      <groupId>com.amazonaws</groupId>
-      <artifactId>aws-java-sdk-s3</artifactId>
-    </exclusion>
-      </exclusions>
-    </dependency>
-    <!--dependency>
       <groupId>software.amazon.awssdk</groupId>
       <artifactId>protocol-core</artifactId>
       <version>${awssdk.version}</version>
@@ -171,7 +151,7 @@
       <groupId>software.amazon.awssdk</groupId>
       <artifactId>s3</artifactId>
       <version>${awssdk.version}</version>
-    </dependency-->
+    </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>

@@ -22,10 +22,9 @@ module s3 {
     requires spring.web;
     requires spring.boot;
     requires org.apache.commons.codec;
-    //requires aws.java.sdk.core;
-    //requires aws.java.sdk.s3;
-    requires stockstat.shadow.s3;
     requires common.util;
-    //requires software.amazon.awssdk.protocols.core;
-    //requires software.amazon.awssdk.services.s3;
+    requires software.amazon.awssdk.services.s3;
+    requires software.amazon.awssdk.auth;
+    requires software.amazon.awssdk.regions;
+    requires software.amazon.awssdk.core;
 }

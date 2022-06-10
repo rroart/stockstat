@@ -1,8 +1,8 @@
 package roart.filesystem.s3;
 
-import com.amazonaws.services.s3.AmazonS3;
+import software.amazon.awssdk.services.s3.S3Client;
 
 public class S3Config {
 
-    public AmazonS3 s3client;
+    public S3Client s3client;
 }

@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,20 +45,13 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.ListObjectsV2Request;
-import com.amazonaws.services.s3.model.ListObjectsV2Result;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.amazonaws.util.IOUtils;
-//import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.model.*;
+import software.amazon.awssdk.core.sync.RequestBody;
 
 public class S3 extends FileSystemOperations {
 
@@ -71,17 +65,17 @@ public class S3 extends FileSystemOperations {
         super(nodename, configid, nodeConf);
         try {
             
-            AWSCredentials credentials = new BasicAWSCredentials(nodeConf.getS3AccessKey(), nodeConf.getS3SecretKey());
-            ClientConfiguration clientConfiguration = new ClientConfiguration();
-            clientConfiguration.setSignerOverride("AWSS3V4SignerType");
-            
+            AwsBasicCredentials credentials = AwsBasicCredentials.create(nodeConf.getS3AccessKey(), nodeConf.getS3SecretKey());
+            //ClientConfiguration clientConfiguration = new ClientConfiguration();
+            //clientConfiguration.setSignerOverride("AWSS3V4SignerType");
+
             //S3Client s3Client2 = null;
-            AmazonS3 s3Client = AmazonS3ClientBuilder
-                    .standard()
-                    .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://" + nodeConf.getS3Host() + ":" + nodeConf.getS3Port(), nodeConf.getS3Region()))
-                    .withPathStyleAccessEnabled(true)
-                    .withClientConfiguration(clientConfiguration)
-                    .withCredentials(new AWSStaticCredentialsProvider(credentials))
+            S3Client s3Client = S3Client.builder()
+                    .region(Region.of(nodeConf.getS3Region()))
+                    .endpointOverride(new URI("http://" + nodeConf.getS3Host() + ":" + nodeConf.getS3Port()))
+                    //.withPathStyleAccessEnabled(true)
+                    //.withClientConfiguration(clientConfiguration)
+                    .credentialsProvider(StaticCredentialsProvider.create(credentials))
                     .build();
             
             conf = new S3Config();
@@ -98,15 +92,15 @@ public class S3 extends FileSystemOperations {
         List<FileObject> foList = new ArrayList<FileObject>();
         String bucket = f.location.extra;
         String prefix = f.object;
-        ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(bucket).withPrefix(prefix).withDelimiter(DELIMITER);
-        ListObjectsV2Result listing = conf.s3client.listObjectsV2(req);
+        ListObjectsRequest req = ListObjectsRequest.builder().bucket(bucket).prefix(prefix).delimiter(DELIMITER).build();
+        ListObjectsResponse listing = conf.s3client.listObjects(req);
         try {
-            for (S3ObjectSummary summary: listing.getObjectSummaries()) {
-                System.out.println(summary.getKey());
-                FileObject fo = new FileObject(f.location, formatBack(summary.getKey()));
+            for (S3Object summary: listing.contents()) {
+                System.out.println(summary.key());
+                FileObject fo = new FileObject(f.location, formatBack(summary.key()));
                 foList.add(fo);
             }
-            for (String commonPrefix : listing.getCommonPrefixes()) {
+            for (CommonPrefix commonPrefix : listing.commonPrefixes()) {
                 System.out.println(commonPrefix);
             }
             FileSystemFileObjectResult result = new FileSystemFileObjectResult();
@@ -124,25 +118,25 @@ public class S3 extends FileSystemOperations {
         Map<String, MyFile> map = new HashMap<>();
         String bucket = f.location.extra;
         String prefix = f.object;
-        ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(bucket).withPrefix(prefix).withDelimiter(DELIMITER);
-        ListObjectsV2Result listing = conf.s3client.listObjectsV2(req);
+        ListObjectsRequest req = ListObjectsRequest.builder().bucket(bucket).prefix(prefix).delimiter(DELIMITER).build();
+        ListObjectsResponse listing = conf.s3client.listObjects(req);
         try {
-            for (S3ObjectSummary summary: listing.getObjectSummaries()) {
-                System.out.println(summary.getKey());
+            for (S3Object summary: listing.contents()) {
+                System.out.println(summary.key());
                 FileObject[] fo = new FileObject[1];
-                fo[0] = new FileObject(f.location, formatBack(summary.getKey()));
+                fo[0] = new FileObject(f.location, formatBack(summary.key()));
                 MyFile my = getMyFile(fo, false);
                 if (my.exists) {
-                    map.put(formatBack(summary.getKey()), my);
+                    map.put(formatBack(summary.key()), my);
                 }
             }
-            for (String commonPrefix : listing.getCommonPrefixes()) {
+            for (CommonPrefix commonPrefix : listing.commonPrefixes()) {
                 System.out.println(commonPrefix);
                 FileObject[] fo = new FileObject[1];
-                fo[0] = new FileObject(f.location, formatBack(commonPrefix));
+                fo[0] = new FileObject(f.location, formatBack(commonPrefix.prefix()));
                 MyFile my = getMyFile(fo, false);
                 if (my.exists) {
-                    map.put(formatBack(commonPrefix), my);
+                    map.put(formatBack(commonPrefix.prefix()), my);
                 }
             }
             FileSystemMyFileResult result = new FileSystemMyFileResult();
@@ -162,12 +156,15 @@ public class S3 extends FileSystemOperations {
     }
 
     private boolean getExistInner(FileObject f) {
-        boolean exist = false;
         if (f.object.endsWith("/")) {
             return true; //conf.s3client.doesBucketExist(f.location.extra + "/" + f.object);
         }
-        exist = conf.s3client.doesObjectExist(f.location.extra, f.object);
-        return exist;
+        try {
+            HeadObjectResponse headResponse = conf.s3client.headObject(HeadObjectRequest.builder().bucket(f.location.extra).key(f.object).build());
+            return true;
+        } catch (/*NoSuchKey*/Exception e) {
+            return false;
+        }
     }
 
     @Override
@@ -212,22 +209,24 @@ public class S3 extends FileSystemOperations {
     }
 
     private byte[] getBytesInner(FileObject f) {
-        byte[] bytes;
-        try {
-            S3Object s3object = conf.s3client.getObject(f.location.extra, f.object);
-            S3ObjectInputStream inputStream = s3object.getObjectContent();
-            bytes = IOUtil.toByteArrayMax(inputStream);
-            inputStream.close();
+        try (ResponseInputStream<GetObjectResponse> inputStream = conf.s3client.getObject(GetObjectRequest.builder().bucket(f.location.extra).key(f.object).build())) {
+            return IOUtil.toByteArrayMax(inputStream);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return null;
         }
-        return bytes;
     }
 
     private InputStream getInputStreamInner(FileObject f) throws IOException {
-        S3Object s3object = conf.s3client.getObject(f.location.extra, f.object);
-        return s3object.getObjectContent();
+        return conf.s3client.getObject(GetObjectRequest.builder().bucket(f.location.extra).key(f.object).build());
+        /*
+        try (ResponseInputStream<GetObjectResponse> inputStream = conf.s3client.getObject(GetObjectRequest.builder().bucket(f.location.extra).key(f.object).build())) {
+            return inputStream;
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+        */
     }
 
     @Override
@@ -268,8 +267,12 @@ public class S3 extends FileSystemOperations {
     }
 
     private long getMtime(FileObject f) {
-        S3Object s3object = conf.s3client.getObject(f.location.extra, f.object);
-        return s3object.getObjectMetadata().getLastModified().getTime();
+        try (ResponseInputStream<GetObjectResponse> inputStream = conf.s3client.getObject(GetObjectRequest.builder().bucket(f.location.extra).key(f.object).build())) {
+            return inputStream.response().lastModified().toEpochMilli();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return 0;
+        }
     }
 
     @Override
@@ -320,18 +323,15 @@ public class S3 extends FileSystemOperations {
     public FileSystemMessageResult readFile(FileSystemFileObjectParam param) throws Exception {
         Map<String, InmemoryMessage> map = new HashMap<>();
         for (FileObject filename : param.fos) {
-            InputStream inputStream;
-            String md5;
-            try {
-                inputStream  = getInputStreamInner(filename);
-                md5 = getMd5(filename);
+            String md5 = getMd5(filename);
+            try (InputStream inputStream  = getInputStreamInner(filename)) {
+                Inmemory inmemory = InmemoryFactory.get(nodeConf.getInmemoryServer(), nodeConf.getInmemoryHazelcast(), nodeConf.getInmemoryRedis());
+                InmemoryMessage msg = inmemory.send(EurekaConstants.READFILE + filename.toString(), inputStream, md5);
+                map.put(filename.object, msg);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
                 return null;
             }
-            Inmemory inmemory = InmemoryFactory.get(nodeConf.getInmemoryServer(), nodeConf.getInmemoryHazelcast(), nodeConf.getInmemoryRedis());
-            InmemoryMessage msg = inmemory.send(EurekaConstants.READFILE + filename.toString(), inputStream, md5);
-            map.put(filename.object, msg);
         }
         FileSystemMessageResult result = new FileSystemMessageResult();
         result.message = map;
@@ -355,16 +355,12 @@ public class S3 extends FileSystemOperations {
     }
     
     public String getMd5(FileObject fo) throws Exception {
-        String md5;
-        try {
-            InputStream is = getInputStreamInner(fo);
-            md5 = DigestUtils.md5Hex( is );
-            is.close();
+        try (InputStream is = getInputStreamInner(fo)) {
+            return DigestUtils.md5Hex( is );
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return null;
         }
-        return md5;
     }
 
     public FileSystemStringResult getMd5(FileSystemFileObjectParam param) {
@@ -383,7 +379,7 @@ public class S3 extends FileSystemOperations {
         result.map = map;
         return result;
     }
-    
+
     @Override
     public FileSystemMessageResult writeFile(FileSystemFileObjectParam param) throws Exception {
         Map<String, InmemoryMessage> map = new HashMap<>();
@@ -392,7 +388,7 @@ public class S3 extends FileSystemOperations {
             FileObject filename = FsUtil.getFileObject(entry.getKey());
             InmemoryMessage msg = entry.getValue();
             String content = inmemory.read(msg);
-            conf.s3client.putObject(filename.location.extra, filename.object, content);
+            conf.s3client.putObject(PutObjectRequest.builder().bucket(filename.location.extra).key(filename.object).build(), RequestBody.fromBytes(content.getBytes()));
             inmemory.delete(msg);
         }
         FileSystemMessageResult result = new FileSystemMessageResult();

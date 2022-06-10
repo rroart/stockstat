@@ -14,7 +14,7 @@
   <packaging>pom</packaging>
   <name>Stock Statistics Main Shadow</name>
   <modules>
-    <module>s3</module>
+    <!--module>s3</module-->
     <module>spark</module>
   </modules>
 </project>
