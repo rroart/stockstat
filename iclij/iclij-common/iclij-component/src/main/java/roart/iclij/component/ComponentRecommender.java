@@ -360,7 +360,6 @@ public class ComponentRecommender extends ComponentNoML {
 
         //chromosome.setConfList(confList);
 
-        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
         return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), chromosome.getBuy(), fitness, save);
         //return handleBuySell(param, market, profitdata, profitdata.getInputdata().getListMap(), list);
         //list = getSell();

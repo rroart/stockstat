@@ -180,7 +180,6 @@ public class ComponentPredictor extends ComponentML {
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
         ConfigMapChromosome2 chromosome = new PredictorChromosome(gene);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
-        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
         return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fitness, save);
     }
 

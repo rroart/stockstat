@@ -236,7 +236,6 @@ public class ComponentMLIndicator extends ComponentML {
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
         gene.getMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST, JsonUtil.convert(mses));
         gene.getMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRASBITS, "1".repeat(mses.size()));
-        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
         return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fitness, save);
     }
 
