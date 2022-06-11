@@ -532,8 +532,8 @@ def mytopperiod2(indicators, dflist, period, max, days, reverse=False, wantgrid 
     for j in range(days):
         print("j ", j)
         df = dflist[j]
-        #if reverse:
-        #    df = df.iloc[::-1]
+        if reverse:
+            df = df.iloc[::-1]
         #if df is None:
         #    continue
         #print(df.index)
