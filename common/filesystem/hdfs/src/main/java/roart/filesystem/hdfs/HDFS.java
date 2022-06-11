@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,9 +15,10 @@ import java.util.Map.Entry;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.CreateFlag;
 import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FileContext;
 import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 
@@ -79,11 +81,10 @@ public class HDFS extends FileSystemOperations {
         FileObject f = param.fo;
         FileSystemFileObjectResult result = new FileSystemFileObjectResult();
         List<FileObject> foList = new ArrayList<FileObject>();
-        FileSystem fs;
         try {
-            fs = FileSystem.get(conf.configuration);
+            FileContext fc = FileContext.getFileContext(conf.configuration);
             Path dir = new Path(f.object);
-            FileStatus[] status = fs.listStatus(dir);
+            FileStatus[] status = fc.util().listStatus(dir);
             Path[] listedPaths = FileUtil.stat2Paths(status);
             for (Path path : listedPaths) {
                 FileObject fo = new FileObject(f.location, path.toUri().getPath());
@@ -101,11 +102,10 @@ public class HDFS extends FileSystemOperations {
     public FileSystemMyFileResult listFilesFull(FileSystemFileObjectParam param) throws Exception {
         FileObject f = param.fo;
         Map<String, MyFile> map = new HashMap<>();
-        FileSystem fs;
         try {
-            fs = FileSystem.get(conf.configuration);
+            FileContext fc = FileContext.getFileContext(conf.configuration);
             Path dir = new Path(f.object);
-            FileStatus[] status = fs.listStatus(dir);
+            FileStatus[] status = fc.util().listStatus(dir);
             Path[] listedPaths = FileUtil.stat2Paths(status);
             for (Path path : listedPaths) {
                 FileObject[] fo = new FileObject[1];
@@ -135,8 +135,8 @@ public class HDFS extends FileSystemOperations {
         Path path = new Path(f.object);
         boolean exist;
         try {
-            FileSystem fs = FileSystem.get(conf.configuration);
-            exist = fs.exists(path);
+            FileContext fc = FileContext.getFileContext(conf.configuration);
+            exist = fc.util().exists(path);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             exist = false;
@@ -153,7 +153,7 @@ public class HDFS extends FileSystemOperations {
         return result;
         /*
 		try {
-			FileSystem fs = FileSystem.get(configuration);
+			FileContext fc = FileContext.getFileContext(configuration);
 			FileStatus fstat = fs.getFileStatus(path);
 
 		} catch (Exception e) {
@@ -189,8 +189,8 @@ public class HDFS extends FileSystemOperations {
         Path path = new Path(f.object);
         boolean isDirectory;
         try {
-            FileSystem fs = FileSystem.get(conf.configuration);
-            FileStatus status = fs.getFileStatus(path);
+            FileContext fc = FileContext.getFileContext(conf.configuration);
+            FileStatus status = fc.getFileStatus(path);
             isDirectory = status.isDirectory();
          } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -208,15 +208,16 @@ public class HDFS extends FileSystemOperations {
     }
 
     private byte[] getBytesInner(FileObject f) {
-        FileSystem fs;
         byte[] bytes;
         try {
-            fs = FileSystem.get(conf.configuration);
-            InputStream is = fs.open(new Path(f.object));
-            bytes = IOUtil.toByteArrayMax(is);
-            is.close();
+            FileContext fc = FileContext.getFileContext(conf.configuration);
+            try (InputStream is = fc.open(new Path(f.object));) {
+                bytes = IOUtil.toByteArrayMax(is);
+            } catch (IOException e) {
+                log.error(Constants.EXCEPTION, e);
+                return null;
+            }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             log.error(Constants.EXCEPTION, e);
             return null;
         }
@@ -224,8 +225,8 @@ public class HDFS extends FileSystemOperations {
     }
 
     private InputStream getInputStreamInner(FileObject f) throws IOException {
-        FileSystem fs = FileSystem.get(conf.configuration);
-        return fs.open(new Path(f.object));
+        FileContext fc = FileContext.getFileContext(conf.configuration);
+        return fc.open(new Path(f.object));
     }
 
     @Override
@@ -264,10 +265,9 @@ public class HDFS extends FileSystemOperations {
     }
 
     private long getMtime(FileObject f) {
-        FileSystem fs = null;
         try {
-            fs = FileSystem.get(conf.configuration);
-            return fs.getFileStatus(new Path(f.object)).getModificationTime();
+            FileContext fc = FileContext.getFileContext(conf.configuration);
+            return fc.getFileStatus(new Path(f.object)).getModificationTime();
         } catch (IOException e) {
             log.error(Constants.EXCEPTION, e);
             return 0;
@@ -309,18 +309,15 @@ public class HDFS extends FileSystemOperations {
     public FileSystemMessageResult readFile(FileSystemFileObjectParam param) throws Exception {
         Map<String, InmemoryMessage> map = new HashMap<>();
         for (FileObject filename : param.fos) {
-            InputStream inputStream;
-            String md5;
-            try {
-                inputStream = getInputStreamInner(filename);
-                md5 = getMd5(filename);
+            String md5 = getMd5(filename);
+            try (InputStream inputStream = getInputStreamInner(filename)) {
+                Inmemory inmemory = InmemoryFactory.get(nodeConf.getInmemoryServer(), nodeConf.getInmemoryHazelcast(), nodeConf.getInmemoryRedis());
+                InmemoryMessage msg = inmemory.send(EurekaConstants.READFILE + filename.toString(), inputStream, md5);
+                map.put(filename.object, msg);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
                 return null;
             }
-            Inmemory inmemory = InmemoryFactory.get(nodeConf.getInmemoryServer(), nodeConf.getInmemoryHazelcast(), nodeConf.getInmemoryRedis());
-            InmemoryMessage msg = inmemory.send(EurekaConstants.READFILE + filename.toString(), inputStream, md5);
-            map.put(filename.object, msg);
         }
         FileSystemMessageResult result = new FileSystemMessageResult();
         result.message = map;
@@ -329,10 +326,8 @@ public class HDFS extends FileSystemOperations {
 
     public String getMd5(FileObject fo) throws Exception {
         String md5;
-        try {
-            InputStream is = getInputStreamInner(fo);
+        try (InputStream is = getInputStreamInner(fo)) {
             md5 = DigestUtils.md5Hex( is );
-            is.close();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return null;
@@ -365,10 +360,12 @@ public class HDFS extends FileSystemOperations {
             FileObject filename = FsUtil.getFileObject(entry.getKey());
             InmemoryMessage msg = entry.getValue();
             String content = inmemory.read(msg);
-            FileSystem fs = FileSystem.get(conf.configuration);
-            FSDataOutputStream stream = fs.create(new Path(filename.object));
-            stream.write(content.getBytes());
-            stream.close();
+            FileContext fc = FileContext.getFileContext(conf.configuration);
+            try (FSDataOutputStream stream = fc.create(new Path(filename.object), EnumSet.of(CreateFlag.CREATE))) {
+                stream.write(content.getBytes());
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
             inmemory.delete(msg);
         }
         FileSystemMessageResult result = new FileSystemMessageResult();
