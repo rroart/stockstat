@@ -1255,8 +1255,8 @@ public class StockUtil {
         double mysum = stockdatemap.values().stream().mapToInt(List::size).sum();
         double avg = mysum / stockdatemap.size();
         double limit = avg * filter;
-        List<String> removed = stockdatemap.entrySet().stream().filter(e -> e.getValue().size() < limit).map(Entry::getKey).toList();
-        log.info("Removed {}", removed.size());
+        List<Integer> removedsizes = stockdatemap.entrySet().stream().filter(e -> e.getValue().size() < limit).map(e -> e.getValue().size()).toList();
+        log.info("Removed {} {} {} {}", removedsizes.size(), avg, limit, removedsizes);
         stockdatemap = stockdatemap.entrySet().stream().filter(e -> e.getValue().size() >= limit).collect(Collectors.toMap(Entry::getKey,Entry::getValue));
         return stockdatemap;
     }

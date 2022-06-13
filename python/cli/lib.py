@@ -203,7 +203,8 @@ class StockData:
         avg = mysum / len(self.listdate)
         limit = avg / 2
         removed = [frame.date.unique() for frame in self.listdate if len(frame) < limit]
-        print("removed " + str(len(removed)))
+        removedsizes = [len(frame) for frame in self.listdate if len(frame) < limit]
+        print("removed " + str(len(removed)) + " " + str(avg) + " " + str(limit) + " " + str(removedsizes))
         self.listdate = [frame for frame in self.listdate if len(frame) >= limit];
         self.listdates = self.stocks.date.unique()
         self.listdates = [date for date in self.listdates if date not in removed]
