@@ -194,7 +194,7 @@ public class FitnessAboveBelowCommon {
         
             short startoffset = new MarketUtil().getStartoffset(market);
             if (verificationdays > 0) {
-                new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, myincdec, startoffset, parameters.getThreshold(), stockDates, param.getCategoryValueMap());
+                new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, myincdec, startoffset, parameters.getThreshold(), param.getStockDates(), param.getCategoryValueMap());
             }
         } catch (Exception e3) {
             log.error(Constants.EXCEPTION, e3);

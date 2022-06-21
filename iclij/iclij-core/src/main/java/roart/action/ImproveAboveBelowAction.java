@@ -152,7 +152,6 @@ public class ImproveAboveBelowAction extends MarketAction {
                 Double threshold = realParameters.getThreshold();
 
                 param.getAndSetCategoryValueMap();
-                Map<String, List<List<Double>>> categoryValueMap = param.getCategoryValueMap();
 
                 //FitnessAboveBelow fit = new FitnessAboveBelow(action, new ArrayList<>(), param, profitdata, market, null, this.getPipeline(), null, subcomponent, realParameters, null, incdecsP, components, subcomponents, stockDates);
                 FitnessAboveBelowCommon fitCommon = new FitnessAboveBelowCommon();
@@ -184,7 +183,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                     Set<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
                     short startoffset = new MarketUtil().getStartoffset(market);
 
-                    new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), stockDates, categoryValueMap);
+                    new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), param.getStockDates(), param.getCategoryValueMap());
 
                     scoreFilter = fitCommon.fitness(myincs, mydecs, myincdec, 0, null);
 
@@ -210,7 +209,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                     mydecs = new MiscUtil().mergeList(mydecs, true);
                     Set<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
                     short startoffset = new MarketUtil().getStartoffset(market);
-                    new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), stockDates, param.getCategoryValueMap());
+                    new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), param.getStockDates(), param.getCategoryValueMap());
                     score = fitCommon.fitness(myincs, mydecs, myincdec, 0, null);
                     scoreSize = myincs.size() + mydecs.size() + myincdec.size();
                     scores = fitCommon.fitness2(myincs, mydecs, myincdec, 0, null);
@@ -235,7 +234,7 @@ public class ImproveAboveBelowAction extends MarketAction {
 
                 short startoffset = new MarketUtil().getStartoffset(market);
                 int findTime = market.getConfig().getFindtime();
-                Trend trend = new TrendUtil().getTrend(verificationdays, null , startoffset, stockDates, param, market, categoryValueMap);
+                Trend trend = new TrendUtil().getTrend(verificationdays, null , startoffset, param.getStockDates(), param, market, param.getCategoryValueMap());
                 log.info("Trend {}", trend);                
 
                 MemoryItem memory = new MemoryItem();
@@ -447,7 +446,7 @@ public class ImproveAboveBelowAction extends MarketAction {
         List<IncDecItem> myincs = mylocals.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
         List<IncDecItem> mydecs = mylocals.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toList());
         short startoffset = new MarketUtil().getStartoffset(market);
-        new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, new ArrayList<>(), startoffset, parameters.getThreshold(), stockDates, param.getCategoryValueMap());
+        new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, new ArrayList<>(), startoffset, parameters.getThreshold(), param.getStockDates(), param.getCategoryValueMap());
         
 
         //List<MemoryItem> currentList = new MiscUtil().filterKeepRecent(marketMemory, prevdate, ((int) AVERAGE_SIZE) *.getTime(market));
