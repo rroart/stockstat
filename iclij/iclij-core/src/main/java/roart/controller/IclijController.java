@@ -1,6 +1,7 @@
 package roart.controller;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -13,6 +14,8 @@ import roart.action.Action;
 import roart.action.ActionThread;
 import roart.action.MainAction;
 import roart.common.cache.MyCache;
+import roart.common.constants.Constants;
+import roart.common.util.MemUtil;
 import roart.db.thread.DatabaseThread;
 import roart.eureka.util.EurekaUtil;
 import roart.executor.MyExecutors;
@@ -22,6 +25,8 @@ import roart.iclij.service.ControlService;
 import roart.iclij.service.IclijServiceParam;
 import roart.populate.PopulateThread;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -57,6 +62,7 @@ public class IclijController implements CommandLineRunner {
             new PopulateThread().start();
             new DatabaseThread().start();
             new ActionThread().start();
+            new MemRunner().start();
             MyCache.setCache(instance.wantCache());
             MyCache.setCacheTTL(instance.getCacheTTL());
             if (MainAction.wantsGoals()) {        
@@ -78,4 +84,24 @@ public class IclijController implements CommandLineRunner {
 	            .build();
 	}
 
+	    class MemRunner extends Thread {
+
+	        private static Logger log = LoggerFactory.getLogger(MemRunner.class);
+
+	        public static volatile int timeout = 3600;
+
+	        public void run() {
+	            long[] mem0 = MemUtil.mem();
+	            log.info("MEM {}", MemUtil.print(mem0));
+
+	             while (true) {
+	                try {
+	                    TimeUnit.SECONDS.sleep(600);
+	                } catch (/*Interrupted*/Exception e) {
+	                    // TODO Auto-generated catch block
+	                    log.error(Constants.EXCEPTION, e);
+	                }
+	            }
+	        }
+	    }
 }

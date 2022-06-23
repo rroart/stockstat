@@ -22,6 +22,7 @@ import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
 import roart.common.util.ImmutabilityUtil;
 import roart.common.util.JsonUtil;
+import roart.common.util.MemUtil;
 import roart.common.util.ServiceConnectionUtil;
 import roart.common.communication.factory.CommunicationFactory;
 import roart.common.communication.model.Communication;
@@ -188,6 +189,7 @@ public class ControlService {
         if (list != null) {
             return list;
         }
+                
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setWantMaps(true);
@@ -208,16 +210,10 @@ public class ControlService {
     }
     
     public Map<String, Map<String, Object>> getContent(List<String> disableList) {
-        {
-            long heapSize = Runtime.getRuntime().totalMemory(); 
+        
+        long[] mem0 = MemUtil.mem();
+        log.info("MEM {}", MemUtil.print(mem0));
 
-         // Get maximum size of heap in bytes. The heap cannot grow beyond this size.// Any attempt will result in an OutOfMemoryException.
-         long heapMaxSize = Runtime.getRuntime().maxMemory();
-
-          // Get amount of free memory within the heap in bytes. This size will increase // after garbage collection and decrease as new objects are created.
-         long heapFreeSize = Runtime.getRuntime().freeMemory(); 
-         log.info("MEM0 " + heapSize + " " + heapMaxSize + " " + heapFreeSize);
-        }
         String key = CacheConstants.CONTENT + conf.getMarket() + conf.getMLmarket() + conf.getdate() + conf.getConfigValueMap();
         Map<String, Map<String, Object>> list = (Map<String, Map<String, Object>>) MyCache.getInstance().get(key);
         if (list != null) {
@@ -239,16 +235,10 @@ public class ControlService {
         Map list2 = list;
         list = ImmutabilityUtil.immute(list2);
         MyCache.getInstance().put(key, list);
-        {
-            long heapSize = Runtime.getRuntime().totalMemory(); 
 
-         // Get maximum size of heap in bytes. The heap cannot grow beyond this size.// Any attempt will result in an OutOfMemoryException.
-         long heapMaxSize = Runtime.getRuntime().maxMemory();
-
-          // Get amount of free memory within the heap in bytes. This size will increase // after garbage collection and decrease as new objects are created.
-         long heapFreeSize = Runtime.getRuntime().freeMemory(); 
-         log.info("MEM1 " + heapSize + " " + heapMaxSize + " " + heapFreeSize);
-        }
+        long[] mem1 = MemUtil.mem();
+        long[] memdiff = MemUtil.diff(mem1, mem0);
+        log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
         return list;
         //return result.getMaps();
         //ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONTENT);

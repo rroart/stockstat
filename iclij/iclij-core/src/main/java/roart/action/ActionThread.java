@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
 import roart.common.util.JsonUtil;
+import roart.common.util.MemUtil;
 import roart.common.util.MetaUtil;
 import roart.iclij.component.Component;
 import roart.iclij.component.factory.ComponentFactory;
@@ -204,7 +205,12 @@ public class ActionThread extends Thread {
         WebData myData = action.getWebData();
         if (item.getDbid() == null || action.getActionData().wantsUpdate(config)) {
             try {
+                long[] mem0 = MemUtil.mem();
+                log.info("Action item {} {}", item.toStringId(), MemUtil.print(mem0));
                 action.getPicksFiltered(myData, param, config, item, evolve, wantThree);                
+                long[] mem1 = MemUtil.mem();
+                long[] memdiff = MemUtil.diff(mem1, mem0);
+                log.info("Action mem {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
                 finished = true;
                 if (item.getDbid() != null) {
                 	// flow

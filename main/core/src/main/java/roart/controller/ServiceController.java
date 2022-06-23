@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyConfig;
@@ -36,6 +37,7 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
 import roart.common.util.JsonUtil;
+import roart.common.util.MemUtil;
 import roart.db.dao.DbDao;
 import roart.db.thread.DatabaseThread;
 import roart.eureka.util.EurekaUtil;
@@ -55,6 +57,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import org.openjdk.jol.vm.VM;
+import org.openjdk.jol.info.ClassLayout;
+import org.openjdk.jol.info.GraphLayout;
 
 @CrossOrigin
 @RestController
@@ -186,6 +191,8 @@ public class ServiceController implements CommandLineRunner {
             maps = new HashMap<>();
         }
         try {
+            long[] mem0 = MemUtil.mem();
+            log.info("MEM {}", MemUtil.print(mem0));
             List<String> disableList = param.getConfList();
             if (disableList == null) {
                 disableList = new ArrayList<>();
@@ -193,9 +200,14 @@ public class ServiceController implements CommandLineRunner {
             NeuralNetCommand neuralnetcommand = param.getNeuralnetcommand();
             result.setList(getInstance().getContent( new MyMyConfig(param.getConfig()), maps, disableList, neuralnetcommand));
             result.setMaps(maps);
+            long[] mem1 = MemUtil.mem();
+            long[] memdiff = MemUtil.diff(mem1, mem0);
+            log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
             if (maps != null) {
-            log.info("blblbl" + JsonUtil.convert(maps).length());
+            log.info("Length {}", JsonUtil.convert(maps).length());
             }
+            //System.out.println(VM.current().details());
+            //System.out.println(GraphLayout.parseInstance(maps).toFootprint());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -327,6 +339,7 @@ public class ServiceController implements CommandLineRunner {
         String communications = instance.getCommunications();
         new ServiceControllerOther(myservices, services, communications, ServiceParam.class).start();
         new DatabaseThread().start();
+        new MemRunner().run();
         MyCache.setCache(instance.wantCache());
         MyCache.setCacheTTL(instance.getCacheTTL());
     }
@@ -336,5 +349,25 @@ public class ServiceController implements CommandLineRunner {
     public void cacheinvalidate()
             throws Exception {
         MyCache.getInstance().invalidate();
+    }
+    class MemRunner implements Runnable {
+
+        private static Logger log = LoggerFactory.getLogger(MemRunner.class);
+
+        public static volatile int timeout = 3600;
+
+        public void run() {
+            long[] mem = MemUtil.mem();
+             log.info("MEM {}", MemUtil.print(mem));
+
+             while (true) {
+                try {
+                    TimeUnit.SECONDS.sleep(600);
+                } catch (/*Interrupted*/Exception e) {
+                    // TODO Auto-generated catch block
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        }
     }
 }
