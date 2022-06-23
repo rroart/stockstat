@@ -101,7 +101,7 @@ public class FitnessNeuralNet extends Fitness {
         }
         Map<String, Object> accuracyMap = (Map<String, Object>) pipelineData.getLocalResultMap().get(PipelineConstants.ACCURACY);
         if (accuracyMap == null) {
-            int jj = 0;
+            return 0;
         }
         double fitness = 0;
         for (Entry<String, Object> entry : accuracyMap.entrySet()) {
