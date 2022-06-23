@@ -23,6 +23,7 @@ build:
         mydbserverdb: '{{.MYDBSERVERDB}}'
         myconfig: '{{.MYCONFIG}}'
         mydebug: '{{.MYDEBUG}}'
+        jdk_java_options: '{{.JDK_JAVA_OPTIONS}}'
   - image: stockstat-icore$IMGID
     context: ../../..
     docker:
@@ -40,6 +41,7 @@ build:
         mydbserverdb: '{{.MYDBSERVERDB}}'
         myconfig: '{{.MYICONFIG}}'
         mydebug: '{{.MYDEBUG}}'
+        jdk_java_options: '{{.JDK_JAVA_OPTIONS}}'
   - image: stockstat-iwebcore$IMGID
     context: ../../..
     docker:
@@ -59,6 +61,7 @@ build:
         mydbserverdb: '{{.MYDBSERVERDB}}'
         myconfig: '{{.MYICONFIG}}'
         mydebug: '{{.MYDEBUG}}'
+        jdk_java_options: '{{.JDK_JAVA_OPTIONS}}'
   - image: stockstat-sim$IMGID
     context: ../../..
     docker:
@@ -71,6 +74,7 @@ build:
         mydbserverdb: '{{.MYDBSERVERDB}}'
         myconfig: '{{.MYSCONFIG}}'
         mydebug: '{{.MYDEBUG}}'
+        jdk_java_options: '{{.JDK_JAVA_OPTIONS}}'
   - image: stockstat-evolve$IMGID
     context: ../../..
     docker:
@@ -83,6 +87,7 @@ build:
         mydbserverdb: '{{.MYDBSERVERDB}}'
         myconfig: '{{.MYECONFIG}}'
         mydebug: '{{.MYDEBUG}}'
+        jdk_java_options: '{{.JDK_JAVA_OPTIONS}}'
 deploy:
   kubectl:
     manifests:

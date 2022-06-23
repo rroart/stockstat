@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk
+FROM debian:bullseye
 MAINTAINER <roart@nvg.ntnu.no>
 ARG distlib
 ARG distjar
@@ -14,6 +14,7 @@ ARG mydbserver
 ARG mydbserverport=5432
 ARG mydbserverdb=stockstat
 ARG mydebug
+ARG jdk_java_options=
 ENV DISTLIB ${distlib}
 ENV DISTJAR ${distjar}
 ENV MYASERVER ${myaserver}
@@ -28,7 +29,10 @@ ENV MYDBSERVER ${mydbserver}
 ENV MYDBSERVERPORT ${mydbserverport}
 ENV MYDBSERVERDB ${mydbserverdb}
 ENV MYDEBUG ${mydebug}
-RUN microdnf install hostname
+ENV JDK_JAVA_OPTIONS ${jdk_java_options}
+#RUN microdnf install hostname
+RUN apt update -y
+RUN apt install -y procps openjdk-17-jdk-headless
 ADD $DISTLIB/$DISTJAR /usr/local/bin
 RUN mkdir /usr/local/conf
 ADD docker/cloud/iclij/$myconfig /usr/local/conf

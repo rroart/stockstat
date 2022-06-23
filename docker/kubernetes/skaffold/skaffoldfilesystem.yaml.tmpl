@@ -19,6 +19,7 @@ build:
         lang: "en_US.ISO8859-1"
         appid: '{{.APPID}}'
         extras: '{{.HDFSPATH}}'
+        jdk_java_options: '{{.JDK_JAVA_OPTIONS}}'
   - image: stockstat-s3$IMGID
     context: ../../..
     docker:
@@ -32,6 +33,7 @@ build:
         lang: "en_US.ISO8859-1"
         appid: '{{.APPID}}'
         extras: '{{.S3PATH}}'
+        jdk_java_options: '{{.JDK_JAVA_OPTIONS}}'
   - image: stockstat-swift$IMGID
     context: ../../..
     docker:
@@ -45,6 +47,7 @@ build:
         lang: "en_US.ISO8859-1"
         appid: '{{.APPID}}'
         extras: '{{.SWIFTPATH}}'
+        jdk_java_options: '{{.JDK_JAVA_OPTIONS}}'
 deploy:
   kubectl:
     manifests:
