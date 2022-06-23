@@ -20,16 +20,28 @@ public class IclijDbDao {
     private static Logger log = LoggerFactory.getLogger(IclijDbDao.class);
 
     public static List<MemoryItem> getAll() throws Exception {
+        String key = CacheConstants.MEMORIES;
+        List<MemoryItem> list =  (List<MemoryItem>) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
         long time0 = System.currentTimeMillis();
-        List<MemoryItem> list = MemoryItem.getAll();
+        list = MemoryItem.getAll();
         log.info("MemoryItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        MyCache.getInstance().put(key, list);
         return list;
     }
 
     public static List<MemoryItem> getAll(String type) throws Exception {
+        String key = CacheConstants.MEMORIES + type;
+        List<MemoryItem> list =  (List<MemoryItem>) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
         long time0 = System.currentTimeMillis();
-        List<MemoryItem> list =  MemoryItem.getAll(type);
+        list =  MemoryItem.getAll(type);
         log.info("MemoryItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        MyCache.getInstance().put(key, list);
         return list;
     }
 
@@ -47,35 +59,59 @@ public class IclijDbDao {
     }
 
     public static List<TimingItem> getAllTiming() throws Exception {
+        String key = CacheConstants.TIMINGS;
+        List<TimingItem> list =  (List<TimingItem>) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
         long time0 = System.currentTimeMillis();
-        List<TimingItem> list = TimingItem.getAll();        
+        list = TimingItem.getAll();        
         log.info("TimingItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        MyCache.getInstance().put(key, list);
         return list;
     }
 
     public static List<TimingItem> getAllTiming(String market, String action, LocalDate startDate, LocalDate endDate) throws Exception {
+        String key = CacheConstants.TIMINGS + market + action + startDate + endDate;
+        List<TimingItem> list =  (List<TimingItem>) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
         long time0 = System.currentTimeMillis();
-        List<TimingItem> list = TimingItem.getAll(market, action, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));        
+        list = TimingItem.getAll(market, action, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));        
         log.info("TimingItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        MyCache.getInstance().put(key, list);
         return list;
     }
 
     public static List<RelationItem> getAllRelations() throws Exception {
+        String key = CacheConstants.RELATIONS;
+        List<RelationItem> list =  (List<RelationItem>) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
         long time0 = System.currentTimeMillis();
-        List<RelationItem> list = RelationItem.getAll();        
+        list = RelationItem.getAll();        
         log.info("RelationItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        MyCache.getInstance().put(key, list);
         return list;
     }
 
     public static List<IncDecItem> getAllIncDecs() throws Exception {
+        String key = CacheConstants.INCDECS;
+        List<IncDecItem> list =  (List<IncDecItem>) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
         long time0 = System.currentTimeMillis();
-        List<IncDecItem> list = IncDecItem.getAll();        
+        list = IncDecItem.getAll();        
         log.info("IncDecItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        MyCache.getInstance().put(key, list);
         return list;
     }
 
     public static List<IncDecItem> getAllIncDecs(String market, LocalDate startDate, LocalDate endDate, String parameters) throws Exception {
-        String key = CacheConstants.INCDEC + market + startDate + endDate + parameters;
+        String key = CacheConstants.INCDECS + market + startDate + endDate + parameters;
         List<IncDecItem> list = (List<IncDecItem>) MyCache.getInstance().get(key);
         if (list == null) {
             long time0 = System.currentTimeMillis();
@@ -87,30 +123,54 @@ public class IclijDbDao {
     }
 
     public static List<ConfigItem> getAllConfigs(String market, String action, String component, String subcomponent, String parameters, LocalDate startDate, LocalDate endDate) throws Exception {
+        String key = CacheConstants.CONFIGS + market + action + component + subcomponent + parameters + startDate + endDate;
+        List<ConfigItem> list =  (List<ConfigItem>) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
         long time0 = System.currentTimeMillis();
-        List<ConfigItem> list = ConfigItem.getAll(market, action, component, subcomponent, parameters, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));        
+        list = ConfigItem.getAll(market, action, component, subcomponent, parameters, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));        
         log.info("ConfigItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        MyCache.getInstance().put(key, list);
         return list;
     }
 
     public static List<ConfigItem> getAllConfigs(String market) throws Exception {
+        String key = CacheConstants.CONFIGS + market;
+        List<ConfigItem> list =  (List<ConfigItem>) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
         long time0 = System.currentTimeMillis();
-        List<ConfigItem> list = ConfigItem.getAll(market);        
+        list = ConfigItem.getAll(market);        
         log.info("ConfigItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        MyCache.getInstance().put(key, list);
         return list;
     }
 
     public static List<MLMetricsItem> getAllMLMetrics() throws Exception {
+        String key = CacheConstants.MLMETRICS ;
+        List<MLMetricsItem> list =  (List<MLMetricsItem>) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
         long time0 = System.currentTimeMillis();
-        List<MLMetricsItem> list = MLMetricsItem.getAll();        
+        list = MLMetricsItem.getAll();        
         log.info("MLMetricsItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        MyCache.getInstance().put(key, list);
         return list;
     }
 
     public static List<MLMetricsItem> getAllMLMetrics(String market, LocalDate startDate, LocalDate endDate) throws Exception {
+        String key = CacheConstants.MLMETRICS + market + startDate + endDate;
+        List<MLMetricsItem> list =  (List<MLMetricsItem>) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
         long time0 = System.currentTimeMillis();
-        List<MLMetricsItem> list = MLMetricsItem.getAll(market, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));        
+        list = MLMetricsItem.getAll(market, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));        
         log.info("MLMetricsItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        MyCache.getInstance().put(key, list);
         return list;
     }
 }
