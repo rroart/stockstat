@@ -593,6 +593,31 @@ public class ControlService {
     }
 
     public void getDates(MyMyConfig conf, Map<String, Map<String, Object>> maps) {
+        Map<String, Object> aMap = new HashMap<>();
+        /*
+        aMap.put(ConfigConstants.MACHINELEARNING, false);
+        aMap.put(ConfigConstants.AGGREGATORS, false);
+        aMap.put(ConfigConstants.INDICATORS, false);
+        aMap.put(ConfigConstants.MISCTHRESHOLD, null);
+        */        
+        aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
+        aMap.put(ConfigConstants.MISCMYDAYS, 0);
+        /*
+        aMap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, true);
+        aMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
+        aMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
+        aMap.put(ConfigConstants.MISCMERGECY, false);        
+        conf.setConfigValueMap(new HashMap<>(conf.getConfigValueMap()));
+        */
+        conf.getConfigValueMap().putAll(aMap);
+        StockData stockData = new Extract().getStockData(conf);
+        if (stockData != null) {
+            Map<String, Object> map = new HashMap<>();
+            map.put(PipelineConstants.DATELIST, stockData.stockdates);
+            maps.put(PipelineConstants.DATELIST, map);
+            return;
+        }
+        
         List<String> dates = null;
         try {
             if ("0".equals(conf.getMarket())) {
