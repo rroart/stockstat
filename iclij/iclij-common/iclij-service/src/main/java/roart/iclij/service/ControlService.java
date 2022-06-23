@@ -1,7 +1,9 @@
 package roart.iclij.service;
 
 import roart.common.config.CacheConstants;
+import roart.common.config.ConfigConstants;
 import roart.common.config.ConfigTreeMap;
+import roart.common.config.MyConfig;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
@@ -33,6 +35,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -66,9 +69,15 @@ public class ControlService {
     }
   
     public void getConfig() {
+        String key = CacheConstants.CONFIG;
+        MyConfig list = (MyConfig) MyCache.getInstance().get(key);
+        if (list == null) {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         ServiceResult result = sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG);
+        list = result.getConfig();
+        MyCache.getInstance().put(key, list);
+        }
         /*
         IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(EurekaConstants.GETCONFIG, iclijConfig.getServices(), iclijConfig.getCommunications());
@@ -78,10 +87,10 @@ public class ControlService {
         result = (ServiceResult) c.sendReceive(param);
         */
         //ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONFIG);
-        conf = new MyMyConfig(result.getConfig());
+        conf = new MyMyConfig(list);
         Map<String, Object> map = conf.getConfigValueMap();
-        for (String key : map.keySet()) {
-            Object value = map.get(key);
+        for (String akey : map.keySet()) {
+            Object value = map.get(akey);
             //System.out.println("k " + key + " " + value + " " + value.getClass().getName());
             //System.out.println("k " + key + " " + value);
             if (value != null) {
