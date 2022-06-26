@@ -1,0 +1,16 @@
+apiVersion: skaffold/v2beta1
+kind: Config
+metadata:
+  name: debianjava
+build:
+  tagPolicy:
+    sha256: {}
+  artifacts:
+  - image: debianjdk
+    context: ../../..
+    docker:
+      dockerfile: docker/cloud/debianjdk/Dockerfile
+  - image: debianjre
+    context: ../../..
+    docker:
+      dockerfile: docker/cloud/debianjre/Dockerfile

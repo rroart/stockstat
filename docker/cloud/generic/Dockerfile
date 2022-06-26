@@ -1,4 +1,4 @@
-FROM debian:bullseye
+FROM debianjdk:latest
 MAINTAINER <roart@nvg.ntnu.no>
 ARG distlib
 ARG distjar
@@ -18,9 +18,6 @@ ENV EXTRAS ${extras}
 ENV LANG ${lang}
 ENV APPID ${appid}
 ENV JDK_JAVA_OPTIONS ${jdk_java_options}
-#RUN microdnf install hostname
-RUN apt update -y
-RUN apt install -y procps openjdk-17-jdk-headless
 ADD $DISTLIB/$DISTJAR /usr/local/bin
 RUN mkdir /usr/local/conf
 WORKDIR /usr/local/bin
