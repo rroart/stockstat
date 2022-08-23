@@ -6,12 +6,16 @@ ARG myserver
 ARG myport
 ARG myiserver
 ARG myiport
+ARG myaserver
+ARG myaport
 ENV DIST ${dist}
 ENV MYWEBPORT ${mywebport}
 ENV MYSERVER ${myserver}
 ENV MYPORT ${myport}
 ENV MYISERVER ${myiserver}
 ENV MYIPORT ${myiport}
+ENV MYASERVER ${myaserver}
+ENV MYAPORT ${myaport}
 RUN apt update
 RUN apt install -y gettext-base
 RUN mkdir /app

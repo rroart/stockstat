@@ -79,6 +79,8 @@ if [ $web -eq 1 ]; then
     cd ../iclij-webr
     export REACT_APP_MYISERVER=$MYISERVER
     export REACT_APP_MYIPORT=$MYIPORT
+    export REACT_APP_MYASERVER=$MYASERVER
+    export REACT_APP_MYAPORT=$MYAPORT
     npx react-inject-env set -d docroot
     $COMMAND "npx http-server docroot -p $IWEBR" &
 

@@ -37,6 +37,7 @@ import roart.iclij.component.Component;
 import roart.iclij.component.factory.ComponentFactory;
 import roart.component.model.ComponentData;
 import roart.constants.IclijConstants;
+import roart.controller.IclijController;
 import roart.db.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
@@ -250,7 +251,8 @@ public abstract class MarketAction extends Action {
                 ComponentData param = componentDataMap.get(marketTime.getMarket());
                 MetaItem meta = new MetaUtil().findMeta(metas, marketTime.getMarket());
                 boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
-                getPicksFiltered(myData, param, config, marketTime, evolve, wantThree);                
+                String actionItem = LocalTime.now() + " " + Thread.currentThread().getId() + " " + marketTime.toStringId();
+                getPicksFilteredOuter(myData, param, config, marketTime, evolve, wantThree, actionItem);                
             }
         }
         for (ActionComponentItem marketTime : notrun) {
@@ -261,7 +263,8 @@ public abstract class MarketAction extends Action {
                 ComponentData param = componentDataMap.get(marketTime.getMarket());
                 MetaItem meta = new MetaUtil().findMeta(metas, marketTime.getMarket());
                 boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
-                getPicksFiltered(myData, param, config, marketTime, evolve, wantThree);                
+                String actionItem = LocalTime.now() + " " + Thread.currentThread().getId() + " " + marketTime.toStringId();
+                getPicksFilteredOuter(myData, param, config, marketTime, evolve, wantThree, actionItem);                
             }            
         }       
         for (ActionComponentItem marketTime : run) {
@@ -275,7 +278,8 @@ public abstract class MarketAction extends Action {
                 ComponentData param = componentDataMap.get(marketTime.getMarket());
                 MetaItem meta = new MetaUtil().findMeta(metas, marketTime.getMarket());
                 boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
-                getPicksFiltered(myData, param, config, marketTime, evolve, wantThree);                
+                String actionItem = LocalTime.now() + " " + Thread.currentThread().getId() + " " + marketTime.toStringId();
+                getPicksFilteredOuter(myData, param, config, marketTime, evolve, wantThree, actionItem);                
             }            
         }       
         return myData;
@@ -525,6 +529,17 @@ public abstract class MarketAction extends Action {
             }
         }
         return filterTimings;
+    }
+    
+    public void getPicksFilteredOuter(WebData myData, ComponentData param, IclijConfig config, ActionComponentItem marketTime, Boolean evolve, boolean wantThree, String actionItem) {
+        IclijController.taskList.add(actionItem);
+        try {
+            getPicksFiltered(myData, param, config, marketTime, evolve, wantThree);                
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            IclijController.taskList.remove(actionItem);
+        }
     }
 
     public void getPicksFiltered(WebData myData, ComponentData param, IclijConfig config, ActionComponentItem marketTime, Boolean evolve, boolean wantThree) {

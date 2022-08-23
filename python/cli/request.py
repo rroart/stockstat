@@ -13,6 +13,9 @@ url1 = 'http://' + ahost + ':' + aport + '/action/simulateinvest'
 url2 = 'http://' + ahost + ':' + aport + '/action/improvesimulateinvest'
 url3 = 'http://' + ahost + ':' + aport + '/action/autosimulateinvest'
 url4 = 'http://' + ahost + ':' + aport + '/action/improveautosimulateinvest'
+url5 = 'http://' + ahost + ':' + aport + '/event/pause'
+url6 = 'http://' + ahost + ':' + aport + '/event/continue'
+url7 = 'http://' + ahost + ':' + aport + '/gettasks'
 
 #headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 #headers={'Content-type':'application/json', 'Accept':'application/json'}
@@ -28,6 +31,15 @@ def request3(market, data):
 
 def request4(market, data):
     return requests.post(url4 + '/market/' + str(market), json=data, headers=headers)
+
+def requestpause():
+    return requests.post(url5, headers=headers)
+
+def requestcontinue():
+    return requests.post(url6, headers=headers)
+
+def requestgettasks():
+    return requests.post(url7, headers=headers)
 
 def request0(data):
     return requests.post(url, data='', headers=headers)

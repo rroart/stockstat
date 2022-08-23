@@ -2657,6 +2657,19 @@ def improveautosimulateinvestGwrap(market, startdate, enddate, ga, stocks, inter
 def improveautosimulateinvestG(market, startdate = None, enddate = None, ga = 0, intervalwhole = False, futurecount = 0, futuretime = 0, improvefilters = False, vote = False):
     mp.Process(target=improveautosimulateinvestGwrap, args=(market, startdate, enddate, ga, stocks, intervalwhole, filters, volumelimits, futurecount, futuretime, improvefilters, vote)).start()
 
+def eventpause():
+    request.requestpause()
+    
+def eventcontinue():
+    request.requestcontinue()
+    
+def gettasks():
+    response = request.requestgettasks()
+    resp = response.json()
+    print("Tasks", len(resp));
+    for e in resp:
+        print(e)
+    
 if not 'allstocks' in globals():
     allstocks = getstocks(conn)
     if filterweekend:

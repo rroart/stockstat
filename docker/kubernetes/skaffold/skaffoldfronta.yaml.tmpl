@@ -17,6 +17,8 @@ build:
       dockerfile: docker/cloud/weba/Dockerfile
       buildArgs:
         dist: '{{.IWEBADIST}}'
+        myaserver: '{{.MYASERVER}}'
+        myaport: '{{.MYAPORT}}'
         myiserver: '{{.MYISERVER}}'
         myiport: '{{.MYIPORT}}'
         myserver: '{{.MYSERVER}}'

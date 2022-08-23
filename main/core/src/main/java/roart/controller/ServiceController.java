@@ -71,6 +71,8 @@ public class ServiceController implements CommandLineRunner {
 
     private ControlService instance;
 
+    public static List<String> taskList;
+    
     @Value("${spring.profiles.active:}")
     private String activeProfile;
     
@@ -370,4 +372,17 @@ public class ServiceController implements CommandLineRunner {
             }
         }
     }
+    
+    @RequestMapping(value = "/" + EurekaConstants.GETTASKS,
+            method = RequestMethod.POST)
+    public List<String> getTasks()
+            throws Exception {
+        try {
+            return ServiceController.taskList;
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return new ArrayList<>();
+    }
+
 }

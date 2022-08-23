@@ -1,6 +1,7 @@
 package roart.action;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -43,6 +44,7 @@ import roart.iclij.model.component.ComponentInput;
 import roart.iclij.util.MarketUtil;
 import roart.populate.PopulateThread;
 import roart.constants.IclijConstants;
+import roart.controller.IclijController;
 
 public class ActionThread extends Thread {
 
@@ -87,7 +89,7 @@ public class ActionThread extends Thread {
             log.error(Constants.EXCEPTION, e);
         }
         while (true) {
-            if (updateDb && !pause) {
+            if (updateDb || !pause) {
                 try {
                     TimeUnit.SECONDS.sleep(60);
                 } catch (InterruptedException e) {
@@ -204,10 +206,12 @@ public class ActionThread extends Thread {
         boolean evolve = action.getEvolve(component, param);
         WebData myData = action.getWebData();
         if (item.getDbid() == null || action.getActionData().wantsUpdate(config)) {
+            String actionItem = LocalTime.now() + " " + Thread.currentThread().getId() + " " + item.toStringId();
             try {
                 long[] mem0 = MemUtil.mem();
                 log.info("Action item {} {}", item.toStringId(), MemUtil.print(mem0));
-                action.getPicksFiltered(myData, param, config, item, evolve, wantThree);                
+                action.getPicksFilteredOuter(myData, param, config, item, evolve, wantThree, actionItem);                
+                //IclijController.taskList.remove(actionItem);
                 long[] mem1 = MemUtil.mem();
                 long[] memdiff = MemUtil.diff(mem1, mem0);
                 log.info("Action mem {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));

@@ -1,6 +1,8 @@
 package roart.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -43,6 +45,8 @@ public class IclijController implements CommandLineRunner {
 
     @Value("${spring.profiles.active:}")
     private String activeProfile;
+    
+    public static List<String> taskList = new ArrayList<>();
     
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(IclijController.class, args);

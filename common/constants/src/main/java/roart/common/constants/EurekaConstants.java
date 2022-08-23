@@ -36,6 +36,7 @@ public class EurekaConstants {
     public static final String GETCONTENTFILTER = "getcontentfilter";
     public static final String GETCONTENTABOVEBELOW = "getcontentabovebelow";
     public static final String ACTION = "action";
+    public static final String GETTASKS = "gettasks";
 
     // app names
     public static final String LOCAL = "LOCAL";

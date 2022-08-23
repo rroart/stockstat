@@ -2,6 +2,7 @@ package roart.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -283,5 +284,17 @@ public class ServiceController {
     public void eventcontinue()
             throws Exception {
         ActionThread.setPause(false);
+    }
+    
+    @RequestMapping(value = "/" + EurekaConstants.GETTASKS,
+            method = RequestMethod.POST)
+    public List<String> getTasks()
+            throws Exception {
+        try {
+            return IclijController.taskList;
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return new ArrayList<>();
     }
 }

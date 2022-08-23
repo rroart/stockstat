@@ -17,6 +17,8 @@ build:
       dockerfile: docker/cloud/webr/Dockerfile
       buildArgs:
         docroot: '{{.IWEBRDOCROOT}}'
+        myaserver: '{{.MYASERVER}}'
+        myaport: '{{.MYAPORT}}'
         myiserver: '{{.MYISERVER}}'
         myiport: '{{.MYIPORT}}'
         myserver: '{{.MYSERVER}}'
