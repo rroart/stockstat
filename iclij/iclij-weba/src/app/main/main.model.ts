@@ -9,6 +9,7 @@ export interface MainState {
   enddate: string;
   market: string;
   markets: Array<string>;
+  tasks: Array<string>;
   config: any;
 }
 

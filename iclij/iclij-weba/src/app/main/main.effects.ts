@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { LocalStorageService } from '@app/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
-import { asyncScheduler, of } from 'rxjs';
+import { asyncScheduler, interval, of } from 'rxjs';
 
 import {
   catchError,
@@ -21,6 +21,8 @@ import {
   ActionGetconfig,
   ActionSetconfig,
   ActionSetconfigvaluemap,
+  ActionGettasks,
+  ActionSettasks,
   ActionRetrieve,
   ActionError,
   ActionGetcontent,
@@ -458,4 +460,49 @@ export class MainEffects {
         //return res['markets'];
       })
     );
+    
+  @Effect()
+  gettasks = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+    this.actions$.pipe(
+      ofType<ActionGettasks>(MainActionTypes.GETTASKS),
+      debounceTime(debounce, scheduler),
+      switchMap((action: ActionGettasks) => {
+        console.log(action);
+        //const res = this.service.retrieve0('/gettasks', {});
+        // action.payload.url
+        //console.log(res);
+        //const res3 = res.pipe(map(res => { console.log(res); return res; } ));
+        //const res2 = res.pipe(map(res => { return res.json(); } ));
+        //console.log(res2);
+	
+        return this.service.retrieve2('/gettasks', {}).pipe(
+          map(res => new ActionSettasks({ tasks: res })),
+          catchError(error => of(new ActionError({ error })))
+        );
+        //console.log(res);
+        //return new ActionSetmarkets({ markets: res['markets']});
+        //return res['markets'];
+      })
+    );
+
+  @Effect()
+  gettasksinterval$ = interval(60000).pipe(
+      switchMap(() => {
+        //const res = this.service.retrieve0('/gettasks', {});
+        // action.payload.url
+        //console.log(res);
+        //const res3 = res.pipe(map(res => { console.log(res); return res; } ));
+        //const res2 = res.pipe(map(res => { return res.json(); } ));
+        //console.log(res2);
+	
+        return this.service.retrieve2('/gettasks', {}).pipe(
+          map(res => new ActionSettasks({ tasks: res })),
+          catchError(error => of(new ActionError({ error })))
+        );
+        //console.log(res);
+        //return new ActionSetmarkets({ markets: res['markets']});
+        //return res['markets'];
+      })
+    );
+
 }

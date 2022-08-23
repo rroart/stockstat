@@ -8,6 +8,7 @@ import { Tabs, Tab } from 'react-bootstrap';
 
 import { Market } from '../Market'
 import { Configuration } from '../Configuration'
+import { ControlPanel } from '../ControlPanel'
 import { Misc } from '../Misc'
 import { Test } from '../test'
 //import Misc from '../util'
@@ -88,6 +89,7 @@ var newtab = new Tab(map);
           </Tab>
           <Tab eventKey={3} title="Control Panel">
             <h2>Control Panel</h2>
+            <ControlPanel {...this.props}/>
           </Tab>
           { mytabs.map((item, index) => this.getanewtab(item, 4 + index)) }
         </Tabs>

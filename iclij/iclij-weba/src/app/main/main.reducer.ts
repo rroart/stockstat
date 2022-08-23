@@ -8,6 +8,7 @@ export const initialState: MainState = {
   enddate: null,
   market: null,
   markets: [],
+  tasks: [],
   config: null,
 };
 
@@ -25,6 +26,7 @@ export function mainReducer(
       console.log('setconfig');
     case MainActionTypes.SETMARKET:
     case MainActionTypes.SETMARKETS:
+    case MainActionTypes.SETTASKS:
     case MainActionTypes.SETSTARTDATE:
     case MainActionTypes.SETENDDATE:
       console.log(action);
@@ -34,6 +36,8 @@ export function mainReducer(
     case MainActionTypes.GETMARKETS:
       return { ...state };
     case MainActionTypes.GETCONFIG:
+      return { ...state };
+    case MainActionTypes.GETTASKS:
       return { ...state };
     case MainActionTypes.INCREMENT:
       console.log(state);

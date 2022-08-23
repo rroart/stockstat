@@ -32,6 +32,8 @@ import { EvolvebarComponent } from './market/evolvebar.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
 import { ConfigtreeComponent } from './configuration/configtree.component';
 import { TreeviewComponent } from './configuration/treeview.component';
+import { ControlPanelComponent } from './controlpanel/controlpanel.component';
+import { TaskListComponent } from './controlpanel/tasklist.component';
 import { MytableComponent } from './table/mytable.component';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
@@ -55,6 +57,8 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
     ConfigurationComponent,
     ConfigtreeComponent,
     TreeviewComponent,
+    ControlPanelComponent,
+    TaskListComponent,
     MytableComponent,
     /*
     TodosContainerComponent,

@@ -46,6 +46,23 @@ export class MainService {
     //;
   }
 
+  retrieve2(url: string, config: any): Observable<any> {
+    //let headers = new Headers({ 'Content-Type': 'application/json' });
+    //let options = new RequestOptions({ headers: headers });
+    let param = config;
+    console.log(
+      'http://' + MainService.getAHost() + ':' + MainService.getAPort() + url
+    );
+    return this.httpClient.post(
+      'http://' + MainService.getAHost() + ':' + MainService.getAPort() + url,
+      param
+    );
+    //.pipe(
+    //map((res: Response) => { res.json() } ));
+    //.catch(MainService.handleError)
+    //;
+  }
+
   static handleError(error: Response) {
     console.log('Error ' + error);
     return Observable.throw(error || 'Server error');
@@ -79,6 +96,22 @@ export class MainService {
     console.log(myenv);
     if (typeof myenv.MYISERVER !== 'undefined' && myenv.MYISERVER !== '') {
       return myenv.MYISERVER;
+    }
+    return 'localhost';
+  }
+  
+  static getAPort() {
+    if (typeof myenv.MYAPORT !== 'undefined' && myenv.MYAPORT !== '') {
+      return myenv.MYAPORT;
+    }
+    return 80;
+  }
+
+  static getAHost() {
+    console.log('pppp');
+    console.log(myenv);
+    if (typeof myenv.MYASERVER !== 'undefined' && myenv.MYASERVER !== '') {
+      return myenv.MYASERVER;
     }
     return 'localhost';
   }

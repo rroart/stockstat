@@ -21,6 +21,8 @@ export enum MainActionTypes {
   SETCONFIG = '[Main] Set config',
   SETCONFIGVALUE = '[Main] Set config value',
   SETCONFIGVALUEMAP = '[Main] Set config value map',
+  GETTASKS = '[Main] Get tasks',
+  SETTASKS = '[Main] Set tasks',
   SETSTARTDATE = '[Main] Set start date',
   SETENDDATE = '[Main] Set end date',
   GETEVOLVE = '[Main] Get evolve',
@@ -160,6 +162,17 @@ export class ActionGetconfig implements Action {
   constructor() {}
 }
 
+export class ActionGettasks implements Action {
+  readonly type = MainActionTypes.GETTASKS;
+
+  constructor() {}
+}
+
+export class ActionSettasks implements Action {
+  readonly type = MainActionTypes.SETTASKS;
+  constructor(readonly payload: { tasks: Array<string> }) {}
+}
+
 export class ActionRetrieve implements Action {
   readonly type = MainActionTypes.RETRIEVE;
 
@@ -297,6 +310,8 @@ export type MainActions =
   | ActionSetconfig
   | ActionSetconfigvalue
   | ActionSetconfigvaluemap
+  | ActionGettasks
+  | ActionSettasks
   | ActionSetstartdate
   | ActionSetenddate
   | ActionRetrieve
