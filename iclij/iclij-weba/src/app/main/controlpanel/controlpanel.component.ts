@@ -9,6 +9,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { ActionIncrement } from '../main.actions';
 
 import { routeAnimations, TitleService } from '@app/core';
+import { MainService } from '../main.service';
+
 //import { tick } from '@angular/core';
 import {
   State as BaseSettingsState,
@@ -37,6 +39,7 @@ export class ControlPanelComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store<State>,
+    private service: MainService,
     private router: Router,
     private titleService: TitleService,
     private translate: TranslateService
@@ -109,6 +112,27 @@ export class ControlPanelComponent implements OnInit, OnDestroy {
   //setTimeout( () => { this.router.navigate(['/']); }, 5000);
   this.store.dispatch(new ActionIncrement({incCount: 2})));
   }
+
+  invalidatecache($event) {
+    this.service.retrieve2('/cache/invalidate', {}).subscribe();
+  }
+
+  dbupdatestart($event) {
+    this.service.retrieve2('/db/update/start', {}).subscribe();
+  }
+
+  dbupdateend($event) {
+    this.service.retrieve2('/db/update/end', {}).subscribe();
+  }
+
+  eventpause($event) {
+    this.service.retrieve2('/event/pause', {}).subscribe();
+  }
+
+  eventcontinue($event) {
+    this.service.retrieve2('/event/continue', {}).subscribe();
+  }
+
 
 async delay(ms: number) {
     await new Promise(resolve => setTimeout(()=>resolve(), ms)).then(()=>console.log("fired"));

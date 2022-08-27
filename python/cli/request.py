@@ -16,6 +16,9 @@ url4 = 'http://' + ahost + ':' + aport + '/action/improveautosimulateinvest'
 url5 = 'http://' + ahost + ':' + aport + '/event/pause'
 url6 = 'http://' + ahost + ':' + aport + '/event/continue'
 url7 = 'http://' + ahost + ':' + aport + '/gettasks'
+url8 = 'http://' + ahost + ':' + aport + '/db/update/start'
+url9 = 'http://' + ahost + ':' + aport + '/db/update/end'
+url10 = 'http://' + ahost + ':' + aport + '/cache/invalidate'
 
 #headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 #headers={'Content-type':'application/json', 'Accept':'application/json'}
@@ -44,4 +47,13 @@ def requestgettasks():
 def request0(data):
     return requests.post(url, data='', headers=headers)
     #return requests.post(url, data=json.dumps(data), headers=headers)
+
+def dbupdatestart():
+    return requests.post(url8, headers=headers)
+
+def dbupdateend():
+    return requests.post(url9, headers=headers)
+
+def cacheinvalidate():
+    return requests.post(url10, headers=headers)
 

@@ -2670,6 +2670,15 @@ def gettasks():
     for e in resp:
         print(e)
     
+def dbupdatestart():
+    request.dbupdatestart()
+    
+def dbupdateend():
+    request.dbupdateend()
+    
+def cacheinvalidate():
+    request.cacheinvalidate()
+    
 if not 'allstocks' in globals():
     allstocks = getstocks(conn)
     if filterweekend:
