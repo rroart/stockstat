@@ -89,7 +89,7 @@ public class ActionThread extends Thread {
             log.error(Constants.EXCEPTION, e);
         }
         while (true) {
-            if (updateDb || !pause) {
+            if (updateDb || pause) {
                 try {
                     TimeUnit.SECONDS.sleep(60);
                 } catch (InterruptedException e) {
