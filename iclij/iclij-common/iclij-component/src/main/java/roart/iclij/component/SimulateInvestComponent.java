@@ -573,7 +573,9 @@ public class SimulateInvestComponent extends ComponentML {
                     }
                     */
 		    // index == prev
+                    if (aOneRun.adviser != null) {
                     update(data.getCatValMap(aOneRun.adviser.getInterpolate(simConfig.getInterpolate())), aOneRun.mystocks, endIndexOffset + extradelay, new ArrayList<>(), endIndexOffset + extradelay, endIndexOffset);
+                    }
                     Capital sum = getSum(aOneRun.mystocks);
                     sum.amount += aOneRun.capital.amount;
 
