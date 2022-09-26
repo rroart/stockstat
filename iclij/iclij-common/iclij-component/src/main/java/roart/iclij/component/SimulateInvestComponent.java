@@ -24,6 +24,8 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
+import org.apache.curator.shaded.com.google.common.collect.MapDifference;
+import org.apache.curator.shaded.com.google.common.collect.Maps;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -226,6 +228,7 @@ public class SimulateInvestComponent extends ComponentML {
             handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent);
             return componentData;
         }
+        log.debug("stockdates {} {}", data.stockDates.size(), componentData.getStockDates().size());
         data.categoryValueFillMap = param.getFillCategoryValueMap();
         data.categoryValueMap = param.getCategoryValueMap();
         data.volumeMap = param.getVolumeMap();
@@ -311,7 +314,7 @@ public class SimulateInvestComponent extends ComponentML {
                 String adatestring2 = data.stockDates.get(data.stockDates.size() - 1 - mydate.indexOffset);
                 mydate.date = stockDatesBiMap.get(adatestring2);
                 //getAdjustedDate(data, investStart, offset, mydate);
-                Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> simConfigs;
+                Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> simConfigs;
                 List<SimulateFilter[]> filters = new ArrayList<>();
                 if (autoSimConfig == null) {
                     simConfigs = new HashMap<>();
@@ -329,9 +332,9 @@ public class SimulateInvestComponent extends ComponentML {
                     simConfigs = getSimConfigs(market.getConfig().getMarket(), autoSimConfig, autofilter, filters, config);
                     simConfigs = new HashMap<>(simConfigs);
                 }
-                List<SimulateInvestConfig> simsConfigs = new ArrayList<>();
+                List<Pair<Long, SimulateInvestConfig>> simsConfigs = new ArrayList<>();
                 if (autoSimConfig == null) {
-                    simsConfigs.add(simConfig);
+                    simsConfigs.add(new ImmutablePair(null, simConfig));
                 } else {
                     Set<Pair<LocalDate, LocalDate>> keys = new HashSet<>();
                     if (mydate.date != null) {
@@ -349,7 +352,7 @@ public class SimulateInvestComponent extends ComponentML {
                 if (autoSimConfig == null) {
                     currentSimConfig = simConfig;
                 }
-                OneRun currentOneRun = getOneRun(market, param, simConfig, data, investStart, investEnd, null);
+                OneRun currentOneRun = getOneRun(market, param, null, simConfig, data, investStart, investEnd, null);
                 Adviser selladviser = null;
                 Adviser voteadviser = null;
                 SimulateInvestConfig sell = null;
@@ -436,7 +439,8 @@ public class SimulateInvestComponent extends ComponentML {
                         }                        
                         // no. hits etc may be reset if changed
                         // winnerAdviser
-                        Collections.sort(simTriplets, (o1, o2) -> Double.compare(o2.getMiddle().autoscore, o1.getMiddle().autoscore));
+                        Collections.sort(simTriplets, (o1, o2) -> mycompare(o1, o2));
+                        // dbid
                         if (MAXARR > 0) {
                             if (MAXARR < 11) {
                                 if (!simTriplets.isEmpty() && simTriplets.get(0).getMiddle().autoscore != 0) {
@@ -475,12 +479,24 @@ public class SimulateInvestComponent extends ComponentML {
                     }
                     if (autoSimConfig != null && !simTriplets.isEmpty()) {
                         List<Double> alist = simTriplets.stream().map(o -> (o.getMiddle().autoscore)).collect(Collectors.toList());
-                        List<Integer> alist2 = simTriplets.stream().map(o -> (o.getLeft() .hashCode())).collect(Collectors.toList());
+                        List<Long> alist2 = simTriplets.stream().map(o -> (o.getMiddle().dbid)).collect(Collectors.toList());
                         List<Double> alist3 = simTriplets.stream().map(o -> o.getRight().plotCapital.size() > 0 ? o.getRight().plotCapital.get(o.getRight().plotCapital.size()-1) : 0.0).toList();
                         log.debug("alist {}", alist);
                         log.debug("alist {} {}", mydate.date, alist.subList(0, Math.min(5, alist.size())));
                         log.debug("alist {} {} {}", mydate.date, alist.size(), alist2.subList(0, Math.min(5, alist2.size())));
                         log.debug("alist {} {}", mydate.date, alist3.subList(0, Math.min(5, alist2.size())));
+                        if (alist.size() >= 2) {
+                            if (alist.get(0).doubleValue() == alist.get(1).doubleValue()) {
+                                SimulateInvestConfig c1 = simTriplets.get(0).getLeft();
+                                SimulateInvestConfig c2 = simTriplets.get(1).getLeft();
+                                log.debug("c1 {}", c1.asValuedMap());
+                                log.debug("c2 {}", c2.asValuedMap());
+                                MapDifference<String, Object> diff = Maps.difference(c1.asValuedMap(),  c2.asValuedMap());
+                                log.info("ccomm {} {}", mydate.date, diff.entriesInCommon());
+                                log.info("cdiff {} {}", mydate.date, diff.entriesDiffering());
+                                log.info("dbids {} {} {}", mydate.date, simTriplets.get(0).getMiddle().dbid, simTriplets.get(1).getMiddle().dbid);
+                            }
+                        }
                         OneRun oneRun = simTriplets.get(0).getMiddle();
                         if (oneRun.runs > 1 && ((oneRun.autoscore != null && oneRun.autoscore > autoSimConfig.getAutoscorelimit()) || (autoSimConfig.getKeepAdviser() && currentOneRun.autoscore != null && currentOneRun.autoscore > autoSimConfig.getKeepAdviserLimit()))) {
                             if (autoSimConfig.getVote() != null && autoSimConfig.getVote()) {
@@ -762,6 +778,15 @@ public class SimulateInvestComponent extends ComponentML {
         return componentData;
     }
 
+    private int mycompare(Triple<SimulateInvestConfig, OneRun, Results> o1,
+            Triple<SimulateInvestConfig, OneRun, Results> o2) {
+        int cmp = Double.compare(o2.getMiddle().autoscore, o1.getMiddle().autoscore);
+        if (cmp == 0) {
+            return Long.compare(o1.getMiddle().dbid, o2.getMiddle().dbid);
+        }
+        return cmp;
+    }
+
     private Double getScore(AutoSimulateInvestConfig autoSimConfig, OneRun aOneRun, Results aResult) {
         int numlast = autoSimConfig.getLastcount();
         Double score;
@@ -826,22 +851,22 @@ public class SimulateInvestComponent extends ComponentML {
     }
 
     private List<Triple<SimulateInvestConfig, OneRun, Results>> getTriples(Market market, ComponentData param,
-            Data data, LocalDate investStart, LocalDate investEnd, Mydate mydate, List<SimulateInvestConfig> simsConfigs) {
+            Data data, LocalDate investStart, LocalDate investEnd, Mydate mydate, List<Pair<Long, SimulateInvestConfig>> simsConfigs) {
         List<Triple<SimulateInvestConfig, OneRun, Results>> simPairs = new ArrayList<>();
-        for (SimulateInvestConfig aConfig : simsConfigs) {
-            int adviserId = aConfig.getAdviser();
-            OneRun onerun = getOneRun(market, param, aConfig, data, investStart, investEnd, adviserId);
+        for (Pair<Long, SimulateInvestConfig> aConfig : simsConfigs) {
+            int adviserId = aConfig.getRight().getAdviser();
+            OneRun onerun = getOneRun(market, param, aConfig.getLeft(), aConfig.getRight(), data, investStart, investEnd, adviserId);
 
             Results results = new Results();
 
-            Triple<SimulateInvestConfig, OneRun, Results> aTriple = new ImmutableTriple(aConfig, onerun, results);
+            Triple<SimulateInvestConfig, OneRun, Results> aTriple = new ImmutableTriple(aConfig.getRight(), onerun, results);
             simPairs.add(aTriple);
         }
 
        return simPairs;
     }
 
-    private OneRun getOneRun(Market market, ComponentData param, SimulateInvestConfig simConfig, Data data,
+    private OneRun getOneRun(Market market, ComponentData param, Long dbid, SimulateInvestConfig simConfig, Data data,
             LocalDate investStart, LocalDate investEnd, Integer adviserId) {
         OneRun onerun = new OneRun();
         if (adviserId != null) {
@@ -861,24 +886,25 @@ public class SimulateInvestComponent extends ComponentML {
         onerun.trendDec = new Integer[] { 0 };
 
         onerun.saveLastInvest = false;
+        onerun.dbid = dbid;
         return onerun;
     }
 
-    private List<SimulateInvestConfig> getSimConfigs(Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> simConfigs, Mydate mydate,
+    private List<Pair<Long, SimulateInvestConfig>> getSimConfigs(Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> simConfigs, Mydate mydate,
             Set<Pair<LocalDate, LocalDate>> keys, Market market) {
-        List<SimulateInvestConfig> simsConfigs = new ArrayList<>();
-        for (Entry<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> entry : simConfigs.entrySet()) {
+        List<Pair<Long, SimulateInvestConfig>> simsConfigs = new ArrayList<>();
+        for (Entry<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> entry : simConfigs.entrySet()) {
             Pair<LocalDate, LocalDate> key = entry.getKey();
-            List<SimulateInvestConfig> value = entry.getValue();
+            List<Pair<Long, SimulateInvestConfig>> value = entry.getValue();
             int months = Period.between(key.getLeft(), key.getRight()).getMonths();
             LocalDate checkDate = mydate.date.minusMonths(months);
             if (!checkDate.isBefore(key.getLeft()) && checkDate.isBefore(key.getRight())) {
                 // TODO value.merge...
-                List<SimulateInvestConfig> configs = value;
-                for (SimulateInvestConfig config : configs) {
+                List<Pair<Long, SimulateInvestConfig>> configs = value;
+                for (Pair<Long, SimulateInvestConfig> config : configs) {
                     SimulateInvestConfig defaultConfig = getSimulate(market.getSimulate());
-                    defaultConfig.merge(config);
-                    simsConfigs.add(defaultConfig);
+                    defaultConfig.merge(config.getRight());
+                    simsConfigs.add(new ImmutablePair(config.getLeft(), defaultConfig));
                 }
                 keys.add(key);
             }
@@ -953,7 +979,7 @@ public class SimulateInvestComponent extends ComponentML {
         return abnormExcludes;
     }
 
-    private Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> getSimConfigs(String market, AutoSimulateInvestConfig autoSimConf, List<SimulateFilter> filter, List<SimulateFilter[]> filters, IclijConfig config) {
+    private Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> getSimConfigs(String market, AutoSimulateInvestConfig autoSimConf, List<SimulateFilter> filter, List<SimulateFilter[]> filters, IclijConfig config) {
         List<SimDataItem> all = new ArrayList<>();
         try {
             String simkey = CacheConstants.SIMDATA + market + autoSimConf.getStartdate() + autoSimConf.getEnddate();
@@ -995,8 +1021,8 @@ public class SimulateInvestComponent extends ComponentML {
         }
         String listString = JsonUtil.convert(list);
         String key = CacheConstants.AUTOSIMCONFIG + market + autoSimConf.getStartdate() + autoSimConf.getEnddate() + "_" + autoSimConf.getInterval() + "_" + autoSimConf.getPeriod() + "_" + autoSimConf.getScorelimit().doubleValue() + " " + listString;
-        Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> retMap = (Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>>) MyCache.getInstance().get(key);
-        Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> newRetMap = new HashMap<>();
+        Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> retMap = (Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>>) MyCache.getInstance().get(key);
+        Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> newRetMap = new HashMap<>();
         if (retMap == null || VERIFYCACHE) {
             for (SimDataItem data : all) {
                 if (autoSimConf.getScorelimit().doubleValue() > data.getScore().doubleValue()) {
@@ -1021,6 +1047,7 @@ public class SimulateInvestComponent extends ComponentML {
                 if (period.intValue() == autoSimConf.getPeriod().intValue()) {
                     String amarket = data.getMarket();
                     if (market.equals(amarket)) {
+                        Long dbid = data.getDbid();
                         String configStr = data.getConfig();
                         //SimulateInvestConfig s = JsonUtil.convert(configStr, SimulateInvestConfig.class);
                         Map defaultMap = config.getDeflt();
@@ -1060,16 +1087,16 @@ public class SimulateInvestComponent extends ComponentML {
                             }
                         }
                         Pair<LocalDate, LocalDate> aKey = new ImmutablePair(data.getStartdate(), data.getEnddate());
-                        MapUtil.mapAddMe(newRetMap, aKey, simConf);
+                        MapUtil.mapAddMe(newRetMap, aKey, new ImmutablePair(dbid, simConf));
                     }
                 }
             }
         }
         if (VERIFYCACHE && retMap != null) {
-            for (Entry<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> entry : newRetMap.entrySet()) {
+            for (Entry<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> entry : newRetMap.entrySet()) {
                 Pair<LocalDate, LocalDate> key2 = entry.getKey();
-                List<SimulateInvestConfig> v2 = entry.getValue();
-                List<SimulateInvestConfig> v = retMap.get(key2);
+                List<Pair<Long, SimulateInvestConfig>> v2 = entry.getValue();
+                List<Pair<Long, SimulateInvestConfig>> v = retMap.get(key2);
                 if (v == null || v2 == null || v.size() != v2.size()) {
                     log.error("Difference with cache");
                     continue;
@@ -1383,7 +1410,7 @@ public class SimulateInvestComponent extends ComponentML {
                 if (!evolving) {
                     if (getBSValueIndexOffset(mydate, simConfig) >= endIndexOffset) {
                     if (offset == 0) {
-                        String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() + " " + simConfig.hashCode() : "";
+                        String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() + " " + onerun.dbid : "";
                         results.sumHistory.add(historydatestring + " " + onerun.capital.toString() + " " + sum.toString() + " " + new MathUtil().round(onerun.resultavg, 2) + " " + hasNoConf + " " + ids + " " + trend + adv);
                         results.plotDates.add(historydatestring);
                         results.plotDefault.add(onerun.resultavg);
@@ -1454,7 +1481,7 @@ public class SimulateInvestComponent extends ComponentML {
                         List<String> sellids = sells.stream().map(SimulateStock::getId).collect(Collectors.toList());
                         //ids.removeAll(sellids);
                         // TODO new portofolio?
-                        String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() + " " + simConfig.hashCode(): "";
+                        String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() + " " + onerun.dbid : "";
                         onerun.lastbuysell = "Stoploss sell: " + sellids + " Stocks: " + ids + adv;
                     } else {
                         int jj = 0;
@@ -1478,7 +1505,7 @@ public class SimulateInvestComponent extends ComponentML {
                 //ids.removeAll(sellids);
                 if (true /*isMain*/) {
                     String newids = "";
-                    String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() + " " + simConfig.hashCode(): "";
+                    String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() + " " + onerun.dbid : "";
                     if (extradelay == 0) {
                         List<String> idsnew = new ArrayList<>(ids);
                         idsnew.addAll(buyids);
@@ -2528,6 +2555,7 @@ public class SimulateInvestComponent extends ComponentML {
         List<SimulateStock> buys;
         Map<Integer, Map<String, List<SimulateStock>>> eventMap = new HashMap<>();
         String lastbuysell;
+        Long dbid;
     }
     
     class Results {

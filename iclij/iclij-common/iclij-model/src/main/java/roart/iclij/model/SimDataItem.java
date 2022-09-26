@@ -8,6 +8,8 @@ import roart.db.model.SimData;
 
 public class SimDataItem {
 
+    private Long dbid;
+    
     private LocalDate record;
     
     private String market;
@@ -22,6 +24,14 @@ public class SimDataItem {
     
     private String config;
     
+    public Long getDbid() {
+        return dbid;
+    }
+
+    public void setDbid(Long dbid) {
+        this.dbid = dbid;
+    }
+
     public LocalDate getRecord() {
         return record;
     }
@@ -110,6 +120,7 @@ public class SimDataItem {
     private static SimDataItem getSimDataItem(SimData data) {
         SimDataItem item = new SimDataItem();
         item.setConfig(new String(data.getConfig()));
+        item.setDbid(data.getDbid());
         item.setEnddate(data.getEnddate());
         if (data.getFilter() != null) {
             item.setFilter(new String(data.getFilter()));

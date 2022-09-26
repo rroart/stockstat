@@ -52,6 +52,14 @@ public class SimData implements Serializable {
     @Column
     byte[] config;
 
+    public Long getDbid() {
+        return dbid;
+    }
+
+    public void setDbid(Long dbid) {
+        this.dbid = dbid;
+    }
+
     public String getMarket() {
         return market;
     }

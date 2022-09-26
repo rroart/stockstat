@@ -26,6 +26,7 @@ public class ActionComponentItem {
     private String parameters;
     private LocalDate record;
     private BlockingQueue result;
+    private LocalDate date;
     
     public Long getDbid() {
         return dbid;
