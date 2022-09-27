@@ -510,6 +510,7 @@ public class SimulateInvestComponent extends ComponentML {
                                 Double score = getScore(autoSimConfig, currentOneRun, mainResult);
                                 if (!(autoSimConfig.getKeepAdviser() && score != null && score > autoSimConfig.getKeepAdviserLimit())) {                                    
                                 currentOneRun.adviser = oneRun.adviser;
+                                currentOneRun.dbid = oneRun.dbid;
                                 currentOneRun.hits = SerializationUtils.clone(oneRun.hits);
                                 currentOneRun.trendDec = SerializationUtils.clone(oneRun.trendDec);
                                 currentOneRun.trendInc = SerializationUtils.clone(oneRun.trendInc);
