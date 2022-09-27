@@ -364,12 +364,14 @@ public class SimulateInvestComponent extends ComponentML {
                 } else {
                     selladviser = new AdviserFactory().get(-1, market, investStart, investEnd, param, simConfig);
                     sell = JsonUtil.copy(simConfig);
+                    sell.setAdviser(-1);
                     sell.setConfidence(true);
                     sell.setConfidenceValue(2.0);
                     sell.setConfidenceFindTimes(0);
                     if (autoSimConfig.getVote() != null && autoSimConfig.getVote()) {
                         voteadviser = new AdviserFactory().get(-2, market, investStart, investEnd, param, simConfig);
                         vote = JsonUtil.copy(simConfig);
+                        vote.setAdviser(-2);
                         //vote.setConfidence(true);
                         //vote.setConfidenceValue(2.0);
                         //vote.setConfidenceFindTimes(0);
