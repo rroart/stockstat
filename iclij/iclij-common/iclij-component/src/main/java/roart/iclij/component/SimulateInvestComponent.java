@@ -488,7 +488,7 @@ public class SimulateInvestComponent extends ComponentML {
                         log.debug("alist {} {} {}", mydate.date, alist.size(), alist2.subList(0, Math.min(5, alist2.size())));
                         log.debug("alist {} {}", mydate.date, alist3.subList(0, Math.min(5, alist2.size())));
                         if (alist.size() >= 2) {
-                            if (alist.get(0).doubleValue() == alist.get(1).doubleValue()) {
+                            if (alist.get(0) != null && alist.get(1) != null && alist.get(0).doubleValue() == alist.get(1).doubleValue()) {
                                 SimulateInvestConfig c1 = simTriplets.get(0).getLeft();
                                 SimulateInvestConfig c2 = simTriplets.get(1).getLeft();
                                 log.debug("c1 {}", c1.asValuedMap());
