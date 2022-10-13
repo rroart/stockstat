@@ -494,9 +494,9 @@ public class SimulateInvestComponent extends ComponentML {
                                 log.debug("c1 {}", c1.asValuedMap());
                                 log.debug("c2 {}", c2.asValuedMap());
                                 MapDifference<String, Object> diff = Maps.difference(c1.asValuedMap(),  c2.asValuedMap());
-                                log.info("ccomm {} {}", mydate.date, diff.entriesInCommon());
-                                log.info("cdiff {} {}", mydate.date, diff.entriesDiffering());
-                                log.info("dbids {} {} {}", mydate.date, simTriplets.get(0).getMiddle().dbid, simTriplets.get(1).getMiddle().dbid);
+                                log.debug("ccomm {} {}", mydate.date, diff.entriesInCommon());
+                                log.debug("cdiff {} {}", mydate.date, diff.entriesDiffering());
+                                log.debug("dbids {} {} {}", mydate.date, simTriplets.get(0).getMiddle().dbid, simTriplets.get(1).getMiddle().dbid);
                             }
                         }
                         OneRun oneRun = simTriplets.get(0).getMiddle();
