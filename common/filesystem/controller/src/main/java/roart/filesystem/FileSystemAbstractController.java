@@ -263,10 +263,19 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
             if (str.endsWith("/")) {
                 str = str.substring(0, str.length() - 1);
             }
-            if (curatorClient.checkExists().forPath(str) != null) {
-                curatorClient.delete().deletingChildrenIfNeeded().forPath(str);
+            boolean success = false;
+            while (!success) {
+                try {
+                    if (curatorClient.checkExists().forPath(str) != null) {
+                        curatorClient.delete().deletingChildrenIfNeeded().forPath(str);
+                    }
+                    curatorClient.create().creatingParentsIfNeeded().forPath(str, bytes);
+                    success = true;
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                    Thread.sleep(10000);
+                }
             }
-            curatorClient.create().creatingParentsIfNeeded().forPath(str, bytes);
         }
         while (true) {
             Thread.sleep(10000);
@@ -279,7 +288,15 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
                 if (str.endsWith("/")) {
                     str = str.substring(0, str.length() - 1);
                 }
-                curatorClient.setData().forPath(str, bytes);
+                boolean success = false;
+                while (!success) {
+                    try {
+                        curatorClient.setData().forPath(str, bytes);
+                    } catch (Exception e) {
+                        log.error(Constants.EXCEPTION, e);
+                        Thread.sleep(10000);
+                    }
+                }
             }
         }
     }
