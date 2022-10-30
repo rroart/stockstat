@@ -1349,6 +1349,10 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTTHRESHOLD);
     }
 
+    public boolean wantsIclijSchedule() {
+        return (Boolean) getNotEmptyValueOrDefault(IclijConfigConstants.ICLIJSCHEDULE);
+    }
+
     public Object getValueOrDefault(String key) {
         // jackson messes around here...
         if (configValueMap == null) {
@@ -1363,4 +1367,18 @@ public class IclijConfig {
         }
         return retVal;
     }
+    
+    @JsonIgnore
+    public Object getNotEmptyValueOrDefault(String key) {
+        Object retVal = getConfigValueMap().get(key);
+        //System.out.println("r " + retVal + " " + deflt.get(key));
+        if (retVal instanceof String) {
+            String str = (String) retVal;
+            if (str.isEmpty()) {
+                retVal = null;
+            }
+        }
+        return Optional.ofNullable(retVal).orElse(getDeflt().get(key));
+    }
+
 }

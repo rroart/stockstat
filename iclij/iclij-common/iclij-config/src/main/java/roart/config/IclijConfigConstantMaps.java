@@ -354,6 +354,7 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.MARKETSSIMULATECONFIG, String.class);
         map.put(IclijConfigConstants.MARKETSSIMULATE2, String.class);
         map.put(IclijConfigConstants.MARKETSSIMULATECONFIG2, String.class);
+        map.put(IclijConfigConstants.ICLIJSCHEDULE, Boolean.class);
     }
 
     public static Map<String, Object> deflt = new HashMap<>();
@@ -607,6 +608,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.VERIFICATIONLOOPINTERVAL, 1);
         deflt.put(IclijConfigConstants.VERIFICATIONIMPROVEPROFIT, Boolean.FALSE);
         //deflt.put(IclijConfigConstants.MARKETSMARKETLISTMARKETEVOLUTIONCONFIG, null);
+        deflt.put(IclijConfigConstants.ICLIJSCHEDULE, Boolean.TRUE);
     }
 
     public static Map<String, String> text = new HashMap<>();
@@ -921,6 +923,7 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.VERIFICATIONIMPROVEPROFIT, "Enable improve profit");
         //text.put(IclijConfigConstants.MARKETSMARKETLISTMARKETEVOLUTIONCONFIG, "Market ML evolution config");
         text.put(IclijConfigConstants.MARKETSMARKETLISTMARKETMLCONFIG, "Market ML config");
+        text.put(IclijConfigConstants.ICLIJSCHEDULE, "Schedule");
    }
 
     public static Map<String, Double[]> range = new HashMap();
@@ -1266,5 +1269,6 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.VERIFICATIONIMPROVEPROFIT, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve profit"));
         //mymap.put(IclijConfigConstants.MARKETSMARKETLISTMARKETEVOLUTIONCONFIG, new IclijXMLType(String.class, null, "Market evolution config"));        
         mymap.put(IclijConfigConstants.MARKETSMARKETLISTMARKETMLCONFIG, new IclijXMLType(String.class, MLCONFIG, "Market ML config"));        
+        mymap.put(IclijConfigConstants.ICLIJSCHEDULE, new IclijXMLType(Boolean.class, Boolean.TRUE, "Schedule"));        
     }
 }

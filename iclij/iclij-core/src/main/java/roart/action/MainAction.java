@@ -22,6 +22,9 @@ public class MainAction extends Action {
     @Override
     public void goal(Action parent, ComponentData param, Integer priority) throws InterruptedException {
         IclijConfig config = IclijXMLConfig.getConfigInstance();
+        if (!config.wantsIclijSchedule()) {
+            return;
+        }
         System.out.println("Start");
         ControlService srv = new ControlService();
         boolean noException = false;

@@ -354,4 +354,5 @@ public class IclijConfigConstants {
     public static final String MARKETSSIMULATECONFIG = "markets.simulate.config";
     public static final String MARKETSSIMULATE2 = "markets.simulate[@id]";
     public static final String MARKETSSIMULATECONFIG2 = "markets.simulate[@id].config";
+    public static final String ICLIJSCHEDULE = "iclij.schedule";
 }
