@@ -101,10 +101,10 @@
     <maveninstall.version>2.5.2</maveninstall.version>
     <mavenshade.version>3.2.1</mavenshade.version>
     <jetty.version>9.4.12.v20180830</jetty.version>
-    <springboot.version>2.5.4</springboot.version>
-    <springcloud.version>3.0.3</springcloud.version>
-    <springcloudstarter.version>2020.0.3</springcloudstarter.version>
-    <springcore.version>5.3.9</springcore.version>
+    <springboot.version>3.0.0-RC1</springboot.version>
+    <springcloud.version>4.0.0-RC1</springcloud.version>
+    <springcloudstarter.version>2022.0.0-RC1</springcloudstarter.version>
+    <springcore.version>6.0.0-RC3</springcore.version>
     <eurekaclient.version>1.9.8</eurekaclient.version>
     <jackson.version>2.12.5</jackson.version>
     <hibernate.version>5.5.7.Final</hibernate.version>
@@ -121,7 +121,7 @@
     <commons.codec.version>1.15</commons.codec.version>
     <commons.beanutils.version>1.9.4</commons.beanutils.version>
     <httpclient.version>4.5.6</httpclient.version>
-    <jaxb.version>2.3.0</jaxb.version>
+    <jaxb.version>2.3.1</jaxb.version>
     <stanfordcorenlp.version>3.9.1</stanfordcorenlp.version>
     <opennlp.version>1.8.4</opennlp.version>
     <batik.version>1.8</batik.version>
@@ -137,8 +137,8 @@
     <guava.version>16.0.1</guava.version>
     <camel.version>3.6.0</camel.version>
     <camelactivemq.version>5.16.0</camelactivemq.version>
-    <springintegration.version>5.4.0</springintegration.version>
-    <springrabbit.version>2.3.1</springrabbit.version>
+    <springintegration.version>6.0.0-RC2</springintegration.version>
+    <springrabbit.version>3.0.0-RC1</springrabbit.version>
     <kafka.version>3.2.0</kafka.version> 
     <pulsar.version>2.10.0</pulsar.version>
     <hazelcast.version>3.12.12</hazelcast.version>
@@ -152,5 +152,19 @@
     <joss.version>0.9.14</joss.version>
     <awssdk.version>2.17.204</awssdk.version>
     <tweety.version>1.20</tweety.version>
- </properties>
+  </properties>
+  <repositories>
+    <repository> 
+        <id>repository.spring.milestone</id> 
+        <name>Spring Milestone Repository</name> 
+        <url>https://repo.spring.io/milestone</url> 
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository> 
+        <id>repository.spring.milestone</id> 
+        <name>Spring Milestone Repository</name> 
+        <url>https://repo.spring.io/milestone</url> 
+    </pluginRepository>
+  </pluginRepositories>
 </project>
