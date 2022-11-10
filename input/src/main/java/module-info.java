@@ -9,7 +9,7 @@ module input {
     exports roart;
 
     requires db;
-    requires java.persistence;
+    requires jakarta.persistence;
     requires java.xml;
     requires org.hibernate.orm.core;
     requires com.fasterxml.jackson.databind;

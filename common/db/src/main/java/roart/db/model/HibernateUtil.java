@@ -8,7 +8,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.query.MutationQuery;
 import org.hibernate.query.Query;
+import org.hibernate.query.SelectionQuery;
 import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,12 +102,12 @@ public class HibernateUtil {
     }
     */
 
-    public Query createQuery(String query) {
-        return sessionRead.createQuery(query);
+    public SelectionQuery createQuery(String query) {
+        return sessionRead.createSelectionQuery(query);
     }
 
-    public Query createWriteQuery(String query) {
-        return sessionWrite.createQuery(query);
+    public MutationQuery createWriteQuery(String query) {
+        return sessionWrite.createMutationQuery(query);
     }
 
     private static SessionFactory buildSessionFactory() {
@@ -136,24 +138,24 @@ public class HibernateUtil {
         }
     }
 
-    public <T> List<T> get(Query<T> query) throws Exception {
+    public <T> List<T> get(SelectionQuery<T> query) throws Exception {
         synchronized (sessionRead) {
             long time = System.currentTimeMillis();
             List<T> list = query.list();
             transactionRead.commit();
-            String queryString = query.getQueryString();
+            String queryString = query.toString();
             log.info("Db time {}s size {} for {} ", MathUtil.round((double) (System.currentTimeMillis() - time) / 1000, 1), list.size(), queryString.substring(0, Math.min(queryString.length(), 32)));
             return list;
         }
     }
 
     public <T> List<T> get(String queryString) throws Exception {
-        Query<T> query = sessionRead.createQuery(queryString);
+        SelectionQuery<T> query = (SelectionQuery<T>) sessionRead.createSelectionQuery(queryString);
         return get(query);
     }
 
     public void save(Object object) {
-        sessionWrite.save(object);
+        sessionWrite.persist(object);
     }
 
     // only for Main
@@ -170,7 +172,7 @@ public class HibernateUtil {
     }
 
     public void delete(String string) {
-        Query query = sessionWrite.createQuery(string);
+        MutationQuery query = sessionWrite.createMutationQuery(string);
         query.executeUpdate();
     }
 

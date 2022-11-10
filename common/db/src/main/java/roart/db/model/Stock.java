@@ -4,17 +4,18 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.transaction.Transactional;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.transaction.Transactional;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 //import org.hibernate.annotations.Index;
 import org.hibernate.query.Query;
+import org.hibernate.query.SelectionQuery;
 
 @Entity
 @Table(name = "Stock")
@@ -323,7 +324,7 @@ public class Stock implements Serializable /*,Comparable<Stock>*/ {
     @Transactional
     public static List<Stock> getAll(String mymarket) throws Exception {
         HibernateUtil hu = new HibernateUtil(false);
-        Query<Stock> query = hu.createQuery("from Stock where marketid = :mymarket").setParameter("mymarket",  mymarket);
+        SelectionQuery<Stock> query = hu.createQuery("from Stock where marketid = :mymarket").setParameter("mymarket",  mymarket);
         return hu.get(query);
     }
 
@@ -331,7 +332,7 @@ public class Stock implements Serializable /*,Comparable<Stock>*/ {
     @Transactional
     public static List<Date> getDates(String mymarket) throws Exception {
         HibernateUtil hu = new HibernateUtil(false);
-        Query<Date> query = hu.createQuery("select distinct(date) from Stock where marketid = :mymarket").setParameter("mymarket",  mymarket);
+        SelectionQuery<Date> query = hu.createQuery("select distinct(date) from Stock where marketid = :mymarket").setParameter("mymarket",  mymarket);
         return hu.get(query);
     }
 

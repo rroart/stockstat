@@ -5,20 +5,21 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.transaction.Transactional;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
+import jakarta.transaction.Transactional;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.query.Query;
 
+import org.hibernate.query.SelectionQuery;
 import roart.db.thread.Queues;
 
 @Entity
@@ -138,7 +139,7 @@ public class ActionComponent implements Serializable {
     @Transactional
     public static List<ActionComponent> getAll(String mymarket) throws Exception {
         HibernateUtil hu = new HibernateUtil(false);
-        Query<ActionComponent> query = hu.createQuery("from ActionComponent where market = :mymarket").setParameter("mymarket",  mymarket);
+        SelectionQuery<ActionComponent> query = hu.createQuery("from ActionComponent where market = :mymarket").setParameter("mymarket",  mymarket);
         return hu.get(query);
     }
 
@@ -161,7 +162,7 @@ public class ActionComponent implements Serializable {
         }
         */
         HibernateUtil hu = new HibernateUtil(false);
-        Query<ActionComponent> query = hu.createQuery(queryString);
+        SelectionQuery<ActionComponent> query = hu.createQuery(queryString);
         query.setParameter("market", market);
         query.setParameter("action", action);
         query.setParameter("component", component);

@@ -6,23 +6,25 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.transaction.Transactional;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
+import jakarta.transaction.Transactional;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.query.MutationQuery;
 import org.hibernate.query.Query;
 
+import org.hibernate.query.SelectionQuery;
 import roart.db.thread.Queues;
 
 @Entity
@@ -554,7 +556,7 @@ public class Memory implements Serializable {
     @Transactional
     public static List<Memory> getAll(String mymarket) throws Exception {
         HibernateUtil hu = new HibernateUtil(false);
-        Query<Memory> query = hu.createQuery("from Memory where market = :mymarket").setParameter("mymarket",  mymarket);
+        SelectionQuery<Memory> query = hu.createQuery("from Memory where market = :mymarket").setParameter("mymarket",  mymarket);
         return hu.get(query);
     }
 
@@ -587,7 +589,7 @@ public class Memory implements Serializable {
             queryString += " and date <= :enddate";
         }
         HibernateUtil hu = new HibernateUtil(false);
-        Query<Memory> query = hu.createQuery(queryString);
+        SelectionQuery<Memory> query = hu.createQuery(queryString);
         query.setParameter("market", market);
         if (action != null) {
             query.setParameter("action", action);
@@ -635,7 +637,7 @@ public class Memory implements Serializable {
             queryString += " and date <= :enddate";
         }
         HibernateUtil hu = new HibernateUtil(true);
-        Query<IncDec> query = hu.createWriteQuery(queryString);
+        MutationQuery query = hu.createWriteQuery(queryString);
         query.setParameter("market", market);
         //query.setParameter("action", action);
         if (component != null) {

@@ -5,20 +5,21 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.transaction.Transactional;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.transaction.Transactional;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.query.Query;
+import org.hibernate.query.SelectionQuery;
 
 @Entity
 @Table(name = "Relation")
@@ -148,7 +149,7 @@ public class Relation implements Serializable {
     @Transactional
     public static List<Relation> getAll(String mymarket) throws Exception {
         HibernateUtil hu = new HibernateUtil(false);
-        Query<Relation> query = hu.createQuery("from Relation where market = :mymarket").setParameter("mymarket",  mymarket);
+        SelectionQuery<Relation> query = hu.createQuery("from Relation where market = :mymarket").setParameter("mymarket",  mymarket);
         return hu.get(query);
     }
 

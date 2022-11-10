@@ -3,16 +3,17 @@ package roart.db.model;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.transaction.Transactional;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.transaction.Transactional;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.query.Query;
+import org.hibernate.query.SelectionQuery;
 
 @Entity
 @Table(name = "Meta")
@@ -185,7 +186,7 @@ public class Meta implements Serializable /*,Comparable<Meta>*/ {
     @Transactional
     public static List<Meta> getAll(String mymarket) throws Exception {
         HibernateUtil hu = new HibernateUtil(false);
-        Query<Meta> query = hu.createQuery("from Meta where marketid = :mymarket").setParameter("mymarket",  mymarket);
+        SelectionQuery<Meta> query = hu.createQuery("from Meta where marketid = :mymarket").setParameter("mymarket",  mymarket);
         return hu.get(query);
     }
 

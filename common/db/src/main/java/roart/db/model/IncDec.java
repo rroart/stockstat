@@ -5,19 +5,21 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.query.MutationQuery;
 import org.hibernate.query.Query;
 
+import org.hibernate.query.SelectionQuery;
 import roart.db.thread.Queues;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.transaction.Transactional;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
+import jakarta.transaction.Transactional;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -187,7 +189,7 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
     @Transactional
     public static List<IncDec> getAll(String mymarket) throws Exception {
         HibernateUtil hu = new HibernateUtil(false);
-        Query<IncDec> query = hu.createQuery("from IncDec where market = :mymarket").setParameter("mymarket",  mymarket);
+        SelectionQuery<IncDec> query = hu.createQuery("from IncDec where market = :mymarket").setParameter("mymarket",  mymarket);
         return hu.get(query);
     }
 
@@ -202,7 +204,7 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
             queryString += " and date <= :enddate";
         }
         HibernateUtil hu = new HibernateUtil(false);
-        Query<IncDec> query = hu.createQuery(queryString);
+        SelectionQuery<IncDec> query = hu.createQuery(queryString);
         query.setParameter("market", market);
         //query.setParameter("action", action);
         if (startDate != null) {
@@ -240,7 +242,7 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
             queryString += " and date <= :enddate";
         }
         HibernateUtil hu = new HibernateUtil(true);
-        Query<IncDec> query = hu.createWriteQuery(queryString);
+        MutationQuery query = hu.createWriteQuery(queryString);
         query.setParameter("market", market);
         //query.setParameter("action", action);
         if (component != null) {
