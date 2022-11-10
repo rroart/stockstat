@@ -74,5 +74,5 @@ module core {
     requires jol.core;
     requires curator.client;
     requires curator.framework;
-    requires jedis;
+    requires redis.clients.jedis;
 }
