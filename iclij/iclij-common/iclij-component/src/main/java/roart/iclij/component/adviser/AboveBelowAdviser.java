@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -119,8 +120,8 @@ public class AboveBelowAdviser extends Adviser {
             List<IncDecItem> mylocals = new MiscUtil().getIncDecLocals(myincdecs);
             if (simulateConfig.getAbovebelow()) {
                 Set<IncDecItem> mys = new HashSet<>();
-                LocalDate mydate = date.minusDays(market.getConfig().getFindtime());
-                LocalDate olddate = mydate.minusDays(market.getConfig().getFindtime());
+                Date mydate = TimeUtil.convertDate3(date.minusDays(market.getConfig().getFindtime()));
+                Date olddate = TimeUtil.convertDate3(date.minusDays(market.getConfig().getFindtime()));
                 List<String>[] list = p(market.getConfig().getMarket(), olddate, mydate);
                 List<String> components = list[0];
                 List<String> subcomponents = list[1];
@@ -179,7 +180,7 @@ public class AboveBelowAdviser extends Adviser {
         MyCache.getInstance().put(key, valueMap);
     }
     
-    public List<String>[] p(String market, LocalDate startdate, LocalDate enddate) {
+    public List<String>[] p(String market, Date startdate, Date enddate) {
         List<AboveBelowItem> list = null;
         try {
             list = AboveBelowItem.getAll(market, startdate, enddate);

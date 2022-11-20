@@ -10,7 +10,7 @@ import roart.db.model.AboveBelow;
 public class AboveBelowItem {
     private LocalDate record;
     
-    private LocalDate date;
+    private Date date;
     
     private String market;
 
@@ -28,11 +28,11 @@ public class AboveBelowItem {
         this.record = record;
     }
 
-    public LocalDate getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -85,7 +85,7 @@ public class AboveBelowItem {
         data.save();
      }
     
-    public static List<AboveBelowItem> getAll(String market, LocalDate startdate, LocalDate enddate) throws Exception {
+    public static List<AboveBelowItem> getAll(String market, Date startdate, Date enddate) throws Exception {
         List<AboveBelow> sims = AboveBelow.getAll(market, startdate, enddate);
         List<AboveBelowItem> simItems = new ArrayList<>();
         for (AboveBelow sim : sims) {

@@ -40,7 +40,7 @@ public class AboveBelow implements Serializable {
     private LocalDate record;
     
     @Column
-    private LocalDate date;
+    private Date date;
     
     @Column
     private String market;
@@ -62,11 +62,11 @@ public class AboveBelow implements Serializable {
         this.record = record;
     }
 
-    public LocalDate getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -104,7 +104,7 @@ public class AboveBelow implements Serializable {
     
     @Transient
     @Transactional
-    public static List<AboveBelow> getAll(String market, LocalDate startDate, LocalDate endDate) throws Exception {
+    public static List<AboveBelow> getAll(String market, Date startDate, Date endDate) throws Exception {
         HibernateUtil hu = new HibernateUtil(false);
         String queryString = "from AboveBelow where ";
         if (market != null) {
@@ -123,10 +123,10 @@ public class AboveBelow implements Serializable {
             query.setParameter("market", market);
         }
         if (startDate != null) {
-            query.setParameter("startdate", Date.from(startDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), TemporalType.DATE);
+            query.setParameter("startdate", startDate, TemporalType.DATE);
         }
         if (endDate != null) {
-            query.setParameter("enddate", Date.from(endDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), TemporalType.DATE);
+            query.setParameter("enddate", endDate, TemporalType.DATE);
         }
         return hu.get(query);
     }

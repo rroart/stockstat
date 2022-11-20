@@ -158,8 +158,13 @@ public class HibernateUtil {
         sessionWrite.persist(object);
     }
 
+    public void saveOrUpdate(Object object) {
+        sessionWrite.saveOrUpdate(object);
+    }
+
     // only for Main
-    public <T> T get(Class aClass, Serializable id) throws HibernateException, Exception {
+    public <T> T get(Class<T> aClass, Serializable id) throws HibernateException, Exception {
+        if (true) return null;
         synchronized (sessionRead) {
             //System.out.println("se" + sessionRead);
             //System.out.println("tr" + transactionRead);

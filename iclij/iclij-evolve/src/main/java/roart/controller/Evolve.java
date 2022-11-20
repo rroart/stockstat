@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -426,9 +427,9 @@ public class Evolve {
             AboveBelowItem abovebelow = new AboveBelowItem();
             abovebelow.setComponents(JsonUtil.convert(mycomponents));
             String date = (String) myMap.get(EvolveConstants.DATE);
-            LocalDate date2 = null;;
+            Date date2 = null;;
             try {
-                date2 = TimeUtil.convertDate(date);
+                date2 = TimeUtil.convertDate2(date);
             } catch (ParseException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();

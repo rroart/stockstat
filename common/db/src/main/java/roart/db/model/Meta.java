@@ -159,7 +159,7 @@ public class Meta implements Serializable /*,Comparable<Meta>*/ {
         if (fi == null) {
             fi = new Meta();
             fi.setMarketid(id);
-            hu.save(fi);
+            hu.saveOrUpdate(fi);
         }
         return fi;
     }
@@ -167,7 +167,7 @@ public class Meta implements Serializable /*,Comparable<Meta>*/ {
     @Transient
     @Transactional
     public static Meta getById(String id) throws Exception {
-        return new HibernateUtil(false).get(Meta.class, id);                                           
+        return new HibernateUtil(false).get(Meta.class, id);
     }
 
     @Transient

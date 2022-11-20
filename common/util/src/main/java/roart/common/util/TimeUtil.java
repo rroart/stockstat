@@ -62,7 +62,11 @@ public class TimeUtil {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
         return date.format(formatter);
     }
-
+    
+    public static Date convertDate3(LocalDate date) {
+        return Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+    }
+    
     public static long daysSince(LocalDate date) {
         return ChronoUnit.DAYS.between(date, LocalDate.now());
     }

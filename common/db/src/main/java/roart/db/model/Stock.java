@@ -297,7 +297,7 @@ public class Stock implements Serializable /*,Comparable<Stock>*/ {
         if (fi == null) {
             fi = new Stock();
             fi.setDbid(dbid);
-            hu.save(fi);
+            hu.saveOrUpdate(fi);
         }
         return fi;
     }
