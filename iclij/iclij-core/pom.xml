@@ -12,10 +12,10 @@
   <name>Stock Statistics Iclij Core</name>
   <build>
     <plugins>
-      <plugin>
+      <!--plugin>
 	<groupId>org.mortbay.jetty</groupId>
 	<artifactId>jetty-maven-plugin</artifactId>
-      </plugin>
+      </plugin-->
       <plugin>
 	<groupId>org.springframework.boot</groupId>
 	<artifactId>spring-boot-maven-plugin</artifactId>
@@ -96,7 +96,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-      <exclusions>
+      <!--exclusions>
         <exclusion>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-starter-tomcat</artifactId>
@@ -105,13 +105,13 @@
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-starter-logging</artifactId>
         </exclusion>
-      </exclusions>
+      </exclusions-->
     </dependency>
-    <dependency>
+    <!--dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-jetty</artifactId>
       <version>${springboot.version}</version>
-    </dependency>
+    </dependency-->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-webflux</artifactId>
