@@ -1885,7 +1885,16 @@ public class SimulateInvestComponent extends ComponentML {
                     int start = size - 1 - firstidx;
                     int end = size - 1 - lastidx;
                     for (int i = start; i <= end; i++) {
-                        Integer volume = (Integer) list.get(i).get(0);
+                        Object volumeObject = list.get(i).get(0);
+                        if (volumeObject == null) {
+                            continue;
+                        }
+                        Long volume;
+                        if (volumeObject instanceof Integer) {
+                            volume = (long) ((Integer) list.get(i).get(0)).intValue();
+                        } else {
+                            volume = (Long) list.get(i).get(0);
+                        }
                         Double price = mainList.get(i /* mainList.size() - 1 - indexOffset */);
                         if (volume != null) {
                             if (price == null) {
