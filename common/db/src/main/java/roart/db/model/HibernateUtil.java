@@ -164,7 +164,6 @@ public class HibernateUtil {
 
     // only for Main
     public <T> T get(Class<T> aClass, Serializable id) throws HibernateException, Exception {
-        if (true) return null;
         synchronized (sessionRead) {
             //System.out.println("se" + sessionRead);
             //System.out.println("tr" + transactionRead);

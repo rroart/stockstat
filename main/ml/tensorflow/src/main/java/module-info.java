@@ -10,7 +10,6 @@ module ml.tensorflow {
 
     requires common.config;
     requires common.webflux;
-    requires ehcache;
     requires org.slf4j;
     requires ml.common;
     requires pipeline.model;
