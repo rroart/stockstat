@@ -1,32 +1,37 @@
 package roart.controller;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
+import roart.common.cache.MyCache;
 import roart.common.config.ConfigConstants;
-import roart.common.config.MyConfig;
 import roart.common.config.MyMyConfig;
 import roart.common.config.MyXMLConfig;
 import roart.common.constants.Constants;
@@ -36,35 +41,17 @@ import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
 import roart.common.util.JsonUtil;
 import roart.common.util.MemUtil;
-import roart.db.dao.DbDao;
 import roart.db.thread.DatabaseThread;
-import roart.eureka.util.EurekaUtil;
 import roart.executor.MyExecutors;
-import roart.result.model.GUISize;
-import roart.result.model.ResultItem;
 import roart.service.ControlService;
 import roart.service.evolution.EvolutionService;
-import roart.common.cache.MyCache;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
-import org.openjdk.jol.vm.VM;
-import org.openjdk.jol.info.ClassLayout;
-import org.openjdk.jol.info.GraphLayout;
 
 @CrossOrigin
 @RestController
 @SpringBootApplication
 @EnableDiscoveryClient
 public class ServiceController implements CommandLineRunner {
-
+    
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private ControlService instance;
@@ -339,9 +326,9 @@ public class ServiceController implements CommandLineRunner {
         String communications = instance.getCommunications();
         new ServiceControllerOther(myservices, services, communications, ServiceParam.class).start();
         new DatabaseThread().start();
-        new MemRunner().run();
         MyCache.setCache(instance.wantCache());
         MyCache.setCacheTTL(instance.getCacheTTL());
+        new MemRunner().run();
     }
     
     @RequestMapping(value = "cache/invalidate",
@@ -350,6 +337,7 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         MyCache.getInstance().invalidate();
     }
+    
     class MemRunner implements Runnable {
 
         private static Logger log = LoggerFactory.getLogger(MemRunner.class);
