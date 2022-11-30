@@ -315,18 +315,28 @@
       <groupId>roart</groupId>
       <artifactId>stockstat-ml-spark</artifactId>
       <version>${stockstat.version}</version>
-    </dependency>
-    <!-- for Spark? -->
-    <dependency>
-      <groupId>org.codehaus.janino</groupId>
-      <artifactId>janino</artifactId>
-      <version>${janino.version}</version>
-    </dependency>
-    <!-- for Spark -->
-    <dependency>
-      <groupId>com.github.luben</groupId>
-      <artifactId>zstd-jni</artifactId>
-      <version>1.5.0-4</version>
+      <exclusions>
+	<exclusion>
+	  <groupId>org.apache.spark</groupId>
+	  <artifactId>spark-core_2.13</artifactId>
+	</exclusion>
+	<exclusion>
+	  <groupId>org.apache.spark</groupId>
+	  <artifactId>spark-mllib_2.13</artifactId>
+	</exclusion>
+	<exclusion>
+	  <groupId>org.apache.spark</groupId>
+	  <artifactId>spark-mllib-local_2.13</artifactId>
+	</exclusion>
+	<exclusion>
+	  <groupId>org.apache.spark</groupId>
+	  <artifactId>spark-sql_2.13</artifactId>
+	</exclusion>
+	<exclusion>
+	  <groupId>org.apache.spark</groupId>
+	  <artifactId>spark-network-common_2.13</artifactId>
+	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
@@ -363,6 +373,43 @@
       <artifactId>kafka-clients</artifactId>
       <version>2.6.0</version>
     </dependency>
+    <!-- generic used by Spark -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.17.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-collections4</artifactId>
+      <version>4.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.scala-lang.modules</groupId>
+      <artifactId>scala-xml_2.13</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>2.13.8</version>
+    </dependency>
+    <dependency>
+      <groupId>org.scalanlp</groupId>
+      <artifactId>breeze_2.13</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.janino</groupId>
+      <artifactId>janino</artifactId>
+      <version>${janino.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.luben</groupId>
+      <artifactId>zstd-jni</artifactId>
+      <version>1.5.2-1</version>
+    </dependency>
+    <!-- end -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
@@ -370,10 +417,10 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-    <groupId>org.openjdk.jol</groupId>
-    <artifactId>jol-core</artifactId>
-    <version>0.16</version>
-    <scope>provided</scope>
+      <groupId>org.openjdk.jol</groupId>
+      <artifactId>jol-core</artifactId>
+      <version>0.16</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 </project>

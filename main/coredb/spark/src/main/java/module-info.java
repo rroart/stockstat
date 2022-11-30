@@ -12,7 +12,6 @@ module coredb.spark {
     requires common.constants;
     requires common.model;
     requires common.util;
-    requires commons.lang;
     requires coredb;
     requires model;
     requires pipeline.model;

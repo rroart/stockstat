@@ -34,9 +34,59 @@
 		  <include>org.apache.spark:spark-mllib-local_2.13</include>
 		  <include>org.apache.spark:spark-sql_2.13</include>
 		  <include>org.apache.spark:spark-network-common_2.13</include>
+		  <include>org.apache.spark:spark-tags_2.13</include>
 		  <include>org.eclipse.jetty:jetty-http</include>
+		  <include>jakarta.servlet:jakarta.servlet-api</include>
+		  <include>org.glassfish.jersey.core:jersey-client</include>
+		  <include>org.glassfish.jersey.core:jersey-common</include>
+		  <include>org.glassfish.jersey.core:jersey-server</include>
+		  <include>org.glassfish.jersey.containers:jersey-container-servlet</include>
+		  <include>org.glassfish.jersey.containers:jersey-container-servlet-core</include>
+		  <include>org.glassfish.jersey.inject:jersey-hk2</include>
+		  <include>org.antlr:antlr4-runtime</include>
+		  <include>org.apache.spark:spark-kvstore_2.13</include>
+		  <include>org.apache.spark:spark-launcher_2.13</include>
+		  <include>org.apache.spark:spark-network-shuffle_2.13</include>
+		  <include>org.apache.spark:spark-unsafe_2.13</include>
+		  <include>org.apache.hadoop:hadoop-common</include>
+		  <include>org.apache.hadoop:hadoop-mapreduce-client-core</include>
+		  <include>io.dropwizard.metrics:metrics-core</include>
+		  <include>io.dropwizard.metrics:metrics-json</include>
+		  <include>com.esotericsoftware:kryo-shaded</include>
+		  <include>com.twitter:chill_2.13</include>
+		  <include>com.fasterxml.jackson.module:jackson-module-scala_2.13</include>
+		  <include>org.json4s:json4s-core_2.13</include>
+		  <include>org.json4s:json4s-jackson_2.13</include>
+		  <include>org.apache.xbean:xbean-asm9-shaded</include>
+		  <include>org.roaringbitmap:RoaringBitmap</include>
+		  <include>com.clearspring.analytics:stream</include>
+		  <include>com.ning:comprss.lzf</include>
+		  <include>org.apache.parquet:parquet-column</include>
+		  <include>org.apache.parquet:parquet-hadoop</include>
+		  <include>org.apache.parquet:parquet-common</include>
+		  <include>org.apache.parquet:parquet-format-structures</include>
+		  <include>dev.ludovic.netlib:blas</include>
+		  <include>dev.ludovic.netlib:lapack</include>
+		  <include>dev.ludovic.netlib:arpack</include>
 		</includes>
               </artifactSet>
+	      <relocations>
+		<relocation>
+		  <pattern>javax.servlet</pattern>
+		  <shadedPattern>spark.javax.servlet</shadedPattern>
+		</relocation>
+		<relocation>
+		  <pattern>org.glassfish</pattern>
+		  <shadedPattern>spark.org.glassfish</shadedPattern>
+		</relocation>
+		<relocation>
+		  <pattern>org.antlr</pattern>
+		  <shadedPattern>spark.org.antlr</shadedPattern>
+		</relocation>
+	      </relocations>
+	      <transformers>
+		<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+              </transformers>
             </configuration>
           </execution>
         </executions>
@@ -44,11 +94,6 @@
     </plugins>
   </build>
   <dependencies>
-    <dependency>
-      <groupId>org.apache.spark</groupId>
-      <artifactId>spark-catalyst_2.13</artifactId>
-      <version>${spark.version}</version>
-    </dependency>
     <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-core_2.13</artifactId>
@@ -77,7 +122,90 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-http</artifactId>
-      <version>9.4.12.v20180830</version>
+      <version>9.4.46.v20220331</version>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>${jakartaservlet.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.core</groupId>
+      <artifactId>jersey-client</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.core</groupId>
+      <artifactId>jersey-common</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.core</groupId>
+      <artifactId>jersey-server</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.containers</groupId>
+      <artifactId>jersey-container-servlet</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.containers</groupId>
+      <artifactId>jersey-container-servlet-core</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.inject</groupId>
+      <artifactId>jersey-hk2</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-common</artifactId>
+      <version>3.3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-mapreduce-client-core</artifactId>
+      <version>3.3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.twitter</groupId>
+      <artifactId>chill_2.13</artifactId>
+      <version>0.10.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.xbean</groupId>
+          <artifactId>xbean-asm7-shaded</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.json4s</groupId>
+      <artifactId>json4s-core_2.13</artifactId>
+      <version>3.7.0-M11</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.json4s</groupId>
+      <artifactId>json4s-jackson_${scala.binary.version}</artifactId>
+      <version>3.7.0-M11</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.ning</groupId>
+      <artifactId>compress-lzf</artifactId>
+      <version>1.1</version>
     </dependency>
   </dependencies>
 </project>

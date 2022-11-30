@@ -15,7 +15,6 @@ module stocketl {
     requires common.model;
     requires common.util;
     requires stockutil;
-    requires commons.lang;
     requires commons.math3;
     requires jcommon;
     requires jfreechart;
