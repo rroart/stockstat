@@ -78,7 +78,7 @@
     "url-loader": "^0.6.2",
     "webpack": "^3.10.0",
     "webpack-bundle-analyzer": "^2.9.2",
-    "webpack-dashboard": "^1.0.2",
+    "webpack-dashboard": "^3.3.7",
     "webpack-dev-server": "^2.11.0",
     "webpack-s3-plugin": "^1.0.0-rc.0"
   },
