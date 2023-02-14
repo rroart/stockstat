@@ -551,13 +551,23 @@ public class SimulateInvestComponent extends ComponentML {
                 //Collections.sort(simTriplets, (o1, o2) -> Double.compare(o2.getMiddle().autoscore, o1.getMiddle().autoscore));
                 simTriplets = simTriplets.stream().filter(e -> ArraysUtil.getLast(e.getRight().plotCapital) != null).collect(Collectors.toList());
                 Collections.sort(simTriplets, (o1, o2) -> Double.compare(ArraysUtil.getLast(o2.getRight().plotCapital), ArraysUtil.getLast(o1.getRight().plotCapital)));
-                Map<Integer, Double> advMap = new HashMap<>();
+                Map<Integer, String> advMap = new HashMap<>();
                 if (autoSimConfig != null) {
                     for (Triple<SimulateInvestConfig, OneRun, Results> triplet : simTriplets) {
                         SimulateInvestConfig aConfig = triplet.getLeft();
                         int adviser = aConfig.getAdviser();
+                        SimulateFilter afilter;
+                        if (autoSimConfig != null) {
+                            afilter = filters.get(0)[0];
+                        } else {
+                            afilter = filters.get(0)[currentSimConfig.getAdviser()];
+                        }
+                        String corr = "f";
+                        if (!(triplet.getRight().plotCapital.size() < 2) && !SimUtil.isCorrelating(afilter, triplet.getRight().plotCapital, null)) {
+                            corr = "t";
+                        }
                         if (!advMap.containsKey(adviser)) {
-                            advMap.put(adviser, ArraysUtil.getLast(triplet.getRight().plotCapital));
+                            advMap.put(adviser, "(" + ArraysUtil.getLast(triplet.getRight().plotCapital) + " " + corr + ")");
                         }
                     }
                     log.info("Adviser map {}", advMap);
