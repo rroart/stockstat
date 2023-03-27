@@ -14,11 +14,6 @@
   <dependencies>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-db</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
       <artifactId>stockstat-common-constants</artifactId>
       <version>${stockstat.version}</version>
     </dependency>

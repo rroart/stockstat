@@ -33,6 +33,13 @@
 	 <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M5</version>
+		<configuration>
+		  <argLine>
+		    --add-opens java.base/java.lang=spring.core
+		    --add-reads model=ALL-UNNAMED
+		    --add-opens db/roart.db.model=org.hibernate.orm.core
+		  </argLine>
+		</configuration>
          </plugin>
 	 <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>

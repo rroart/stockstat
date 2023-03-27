@@ -5,7 +5,7 @@
  * @author roart
  *
  */
-module core {
+open module core {
     requires batik.awt.util;
     requires batik.dom;
     requires batik.svggen;
@@ -75,4 +75,9 @@ module core {
     requires curator.client;
     requires curator.framework;
     requires redis.clients.jedis;
+    requires spring.jdbc;
+    requires java.sql;
+    requires jakarta.cdi;
+    requires jakarta.interceptor;
+    requires spring.data.jdbc;
 }

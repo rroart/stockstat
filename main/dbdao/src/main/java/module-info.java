@@ -5,7 +5,7 @@
  * @author roart
  *
  */
-module dbdao {
+open module dbdao {
     exports roart.db.dao;
     exports roart.db.dao.util;
 
@@ -22,4 +22,11 @@ module dbdao {
     requires common.model;
     requires common.cache;
     requires common.util;
+    requires spring.beans;
+    requires spring.context;
+    requires spring.data.commons;
+    requires spring.jdbc;
+    requires spring.boot;
+    requires spring.tx;
+    requires spring.data.relational;
 }

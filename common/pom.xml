@@ -20,6 +20,7 @@
     <module>constants</module>
     <module>controller</module>
     <module>db</module>
+    <module>springdata</module>
     <module>eureka</module>
     <module>filesystem</module>
     <module>inmemory</module>
