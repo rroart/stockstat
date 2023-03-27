@@ -137,6 +137,10 @@
       <version>${springboot.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-model</artifactId>
       <version>${stockstat.version}</version>
