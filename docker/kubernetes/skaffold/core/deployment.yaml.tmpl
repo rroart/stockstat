@@ -82,10 +82,10 @@ spec:
       - pathType: Prefix
         path: "/"
         backend:
-          service:
-            name: stockstat-core$APPID-debug
-            port:
-              number: 8000
+          #service:
+          #  name: stockstat-core$APPID-debug
+          #  port:
+          #    number: 8000
           service:
             name: stockstat-core$APPID
             port:
