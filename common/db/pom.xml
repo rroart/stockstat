@@ -47,10 +47,5 @@
       <artifactId>log4j</artifactId>
       <version>${log4j.version}</version>
     </dependency>
-    <!--dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-ehcache</artifactId>
-      <version>${ehcache.version}</version>
-    </dependency-->
   </dependencies>
 </project>
