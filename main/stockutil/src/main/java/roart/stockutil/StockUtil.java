@@ -24,8 +24,8 @@ import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
+import roart.common.model.StockItem;
 import roart.common.util.TimeUtil;
-import roart.model.StockItem;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 
