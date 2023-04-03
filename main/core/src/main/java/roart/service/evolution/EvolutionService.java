@@ -36,6 +36,7 @@ import roart.common.ml.NeuralNetTensorflowConfig;
 import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.common.model.FileObject;
 import roart.common.model.MetaItem;
+import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.db.dao.DbDao;
 import roart.db.dao.util.DbDaoUtil;
@@ -55,7 +56,6 @@ import roart.gene.NeuralNetConfigGene;
 import roart.gene.NeuralNetConfigGeneFactory;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
-import roart.model.StockItem;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.model.data.StockData;
@@ -79,6 +79,11 @@ public class EvolutionService {
 
     ResultItemTable mlTimesTable = ServiceUtil.createMLTimesTable(otherTableMap);
     ResultItemTable eventTable = ServiceUtil.createEventTable(otherTableMap);
+    private DbDao dao;
+
+    public EvolutionService(DbDao dao) {
+        this.dao = dao;
+    }
 
     public List<ResultItem> getEvolveRecommender(MyMyConfig conf, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws JsonParseException, JsonMappingException, IOException {
         log.info("mydate {}", conf.getdate());
@@ -88,7 +93,7 @@ public class EvolutionService {
         EvolutionConfig evolutionConfig = mapper.readValue(conf.getTestIndictorrecommenderEvolutionConfig(), EvolutionConfig.class);
     
         //createOtherTables();
-        StockData stockData = new Extract().getStockData(conf);
+        StockData stockData = new Extract(dao).getStockData(conf);
         if (stockData == null) {
             return new ArrayList<>();
         }
@@ -300,7 +305,7 @@ public class EvolutionService {
                 return new ArrayList<>();
             }
         }
-        StockData stockData = new Extract().getStockData(conf);
+        StockData stockData = new Extract(dao).getStockData(conf);
         if (stockData == null) {
             return new ArrayList<>();
         }
@@ -325,7 +330,7 @@ public class EvolutionService {
             DataReader dataReader = new DataReader(conf, stockData.marketdatamap, stockData.cat, conf.getMarket());
             //Pipeline[] datareaders = new Pipeline[1];
             Pipeline[] datareaders = new ServiceUtil().getDataReaders(conf, stockData.periodText,
-                    stockData.marketdatamap, stockData);
+                    stockData.marketdatamap, stockData, dao);
     
             //datareaders[0] = dataReader;
     

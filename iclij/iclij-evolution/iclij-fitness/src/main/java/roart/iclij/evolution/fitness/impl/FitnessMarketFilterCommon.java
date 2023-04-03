@@ -17,10 +17,10 @@ import org.slf4j.LoggerFactory;
 
 import roart.iclij.model.action.MarketActionData;
 import roart.common.constants.Constants;
+import roart.common.model.IncDecItem;
 import roart.component.model.ComponentData;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.IncDecItem;
 import roart.iclij.model.WebData;
 import roart.iclij.util.MarketUtil;
 import roart.iclij.util.MiscUtil;

@@ -19,7 +19,6 @@ import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
-import roart.iclij.model.MLMetricsItem;
 import roart.service.model.ProfitData;
 
 public class RecommenderChromosome2 extends ConfigMapChromosome2 {

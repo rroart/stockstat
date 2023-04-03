@@ -44,6 +44,11 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
+      <artifactId>stockstat-coredb-spring</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
       <artifactId>stockstat-coredb-common</artifactId>
       <version>${stockstat.version}</version>
     </dependency>

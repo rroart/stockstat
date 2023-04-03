@@ -13,11 +13,11 @@ import org.slf4j.LoggerFactory;
 
 import io.jenetics.Phenotype;
 import roart.common.constants.Constants;
+import roart.common.model.MLMetricsItem;
 import roart.component.model.ComponentData;
 import roart.evolution.config.EvolutionConfig;
 import roart.iclij.config.Market;
 import roart.iclij.config.MarketFilter;
-import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.Parameters;
 import roart.service.model.ProfitData;
 

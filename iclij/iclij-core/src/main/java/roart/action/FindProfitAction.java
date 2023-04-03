@@ -19,22 +19,22 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
+import roart.common.model.ActionComponentItem;
+import roart.common.model.IncDecItem;
+import roart.common.model.MLMetricsItem;
+import roart.common.model.MemoryItem;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentTimeUtil;
-import roart.db.IclijDbDao;
+import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MLMetricsItem;
-import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
-import roart.iclij.model.action.ActionComponentItem;
 import roart.iclij.model.action.FindProfitActionData;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.util.MarketUtil;
@@ -46,8 +46,8 @@ public class FindProfitAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
-    public FindProfitAction() {
-        setActionData(new FindProfitActionData());
+    public FindProfitAction(IclijDbDao dbDao) {
+        setActionData(new FindProfitActionData(dbDao));
     }
     
     //@Override
@@ -107,12 +107,12 @@ public class FindProfitAction extends MarketAction {
                 try {
                     for (IncDecItem item : profitdata.getBuys().values()) {
                         myitem = item;
-                        item.save();
+                        getActionData().getDbDao().save(item);
                         System.out.println(item);
                     }
                     for (IncDecItem item : profitdata.getSells().values()) {
                         myitem = item;
-                        item.save();
+                        getActionData().getDbDao().save(item);
                         System.out.println(item);
                     }
                 } catch (Exception e) {
@@ -162,7 +162,7 @@ public class FindProfitAction extends MarketAction {
             myData.getUpdateMap().putAll(componentData.getUpdateMap());
             List<MemoryItem> memories;
             try {
-                memories = component.calculateMemory(componentData, parameters);
+                memories = component.calculateMemory(getActionData(), componentData, parameters);
                 allMemories.addAll(memories);
            } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
@@ -175,7 +175,7 @@ public class FindProfitAction extends MarketAction {
     protected List<IncDecItem> getIncDecItems() {
         List<IncDecItem> incdecitems = null;
         try {
-            incdecitems = IclijDbDao.getAllIncDecs();
+            incdecitems = getActionData().getDbDao().getAllIncDecs();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -206,7 +206,7 @@ public class FindProfitAction extends MarketAction {
             //List<MemoryItem> newMemories = findAllMarketComponentsToCheck(myData, param, 0, config, marketTime, evolve, dataMap, componentMap);
             LocalDate prevdate = getPrevDate(param, market);
             LocalDate olddate = prevdate.minusDays(((int) MarketAction.AVERAGE_SIZE) * getActionData().getTime(market));
-            List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market, getName(), marketTime.getComponent(), marketTime.getSubcomponent(), JsonUtil.convert(marketTime.getParameters()), olddate, prevdate);
+            List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market, getName(), marketTime.getComponent(), marketTime.getSubcomponent(), JsonUtil.convert(marketTime.getParameters()), olddate, prevdate, getActionData().getDbDao());
             return marketMemory;
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -264,7 +264,7 @@ public class FindProfitAction extends MarketAction {
 
         List<IncDecItem> incdecitems = null;
         try {
-            incdecitems = IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), olddate, prevdate, null);
+            incdecitems = getActionData().getDbDao().getAllIncDecs(market.getConfig().getMarket(), olddate, prevdate, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

@@ -41,6 +41,7 @@ import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.model.MetaItem;
+import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.db.dao.DbDao;
@@ -52,7 +53,6 @@ import roart.graphcategory.GraphCategoryIndex;
 import roart.graphcategory.GraphCategoryPeriod;
 import roart.graphcategory.GraphCategoryPeriodTopBottom;
 import roart.graphcategory.GraphCategoryPrice;
-import roart.model.StockItem;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.model.data.StockData;
@@ -76,7 +76,7 @@ public class ControlService {
 
     public List<String> getMarkets() {
         try {
-            return DbDao.getMarkets();
+            return dbDao.getMarkets();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -85,17 +85,24 @@ public class ControlService {
 
     public List<MetaItem> getMetas() {
         try {
-            return DbDao.getMetas();
+            return dbDao.getMetas();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
         return new ArrayList<>();
     }
 
+    private DbDao dbDao;
+
+    public ControlService(DbDao dbDao) {
+        super();
+        this.dbDao = dbDao;
+    }
+
     public Map<String, String> getStocks(String market, MyMyConfig conf) {
         try {
             Map<String, String> stockMap = new HashMap<>();
-            List<StockItem> stocks = DbDao.getAll(market, conf);
+            List<StockItem> stocks = dbDao.getAll(market, conf);
             stocks.remove(null);
             for (StockItem stock : stocks) {
                 stockMap.put(stock.getId(), stock.getName());
@@ -125,7 +132,7 @@ public class ControlService {
         log.info("mydate {}", conf.getdate());
         log.info("mydate {}", conf.getDays());
         //createOtherTables();
-        StockData stockData = new Extract().getStockData(conf);
+        StockData stockData = new Extract(dbDao).getStockData(conf);
         if (stockData == null) {
             return new ArrayList<>();
         }
@@ -137,7 +144,7 @@ public class ControlService {
 
         try {
             Pipeline[] datareaders = new ServiceUtil().getDataReaders(conf, stockData.periodText,
-                    stockData.marketdatamap, stockData);
+                    stockData.marketdatamap, stockData, dbDao);
 
             SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
             String mydate = dt.format(conf.getdate());
@@ -460,7 +467,7 @@ public class ControlService {
         try {
             log.info("mydate {}", conf.getdate());
             log.info("mydate {}", conf.getDays());
-            StockData stockData = new Extract().getStockData(conf);
+            StockData stockData = new Extract(dbDao).getStockData(conf);
             if (stockData == null) {
                 return new ArrayList<>();
             }
@@ -507,7 +514,7 @@ public class ControlService {
             Map<String, StockData> stockDataMap = new HashMap<>();
             Set<String> markets = new ServiceUtil().getMarkets(ids);
             for (String market : markets) {
-                StockData stockData = new Extract().getStockData(conf, market);
+                StockData stockData = new Extract(dbDao).getStockData(conf, market);
                 if (stockData == null) {
                     return new ArrayList<>();
                 }
@@ -555,7 +562,7 @@ public class ControlService {
         row.add("Pearson (e)");
         table.add(row);
         try {
-            List<StockItem> stocks = DbDao.getAll(conf.getMarket(), conf);
+            List<StockItem> stocks = dbDao.getAll(conf.getMarket(), conf);
             log.info("stocks {}", stocks.size());
             Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
             Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
@@ -610,7 +617,7 @@ public class ControlService {
         conf.setConfigValueMap(new HashMap<>(conf.getConfigValueMap()));
         */
         conf.getConfigValueMap().putAll(aMap);
-        StockData stockData = new Extract().getStockData(conf);
+        StockData stockData = new Extract(dbDao).getStockData(conf);
         if (stockData != null) {
             Map<String, Object> map = new HashMap<>();
             map.put(PipelineConstants.DATELIST, stockData.stockdates);
@@ -623,7 +630,7 @@ public class ControlService {
             if ("0".equals(conf.getMarket())) {
                 int jj = 0;
             }
-            dates = DbDao.getDates(conf.getMarket(), conf);
+            dates = dbDao.getDates(conf.getMarket(), conf);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

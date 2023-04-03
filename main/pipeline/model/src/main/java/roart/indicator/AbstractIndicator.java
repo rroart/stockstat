@@ -17,9 +17,9 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.MathUtil;
-import roart.model.StockItem;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.pipeline.Pipeline;

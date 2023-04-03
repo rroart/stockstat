@@ -44,6 +44,8 @@ module iclij.webcore {
     requires org.apache.commons.lang3;
     requires io.jenetics.base;
     requires org.slf4j;
+    requires dbdao;
+    requires spring.data.jdbc;
     //requires springfox.core;
     //requires springfox.spi;
     //requires springfox.spring.web;

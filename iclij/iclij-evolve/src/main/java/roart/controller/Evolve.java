@@ -21,6 +21,7 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,21 +49,24 @@ import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.ml.MLMapsML;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
+import roart.common.model.AboveBelowItem;
+import roart.common.model.ActionComponentItem;
+import roart.common.model.ConfigItem;
+import roart.common.model.IncDecItem;
+import roart.common.model.MLMetricsItem;
+import roart.common.model.MemoryItem;
+import roart.common.model.TimingItem;
 import roart.common.util.JsonUtil;
 import roart.common.util.MathUtil;
 import roart.common.util.TimeUtil;
-import roart.db.IclijDbDao;
+import roart.db.dao.IclijDbDao;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.NeuralNetChromosome2;
 import roart.filesystem.FileSystemDao;
 import roart.gene.NeuralNetConfigGene;
 import roart.iclij.evolution.marketfilter.chromosome.impl.AboveBelowChromosome;
 import roart.iclij.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
-import roart.iclij.model.AboveBelowItem;
-import roart.iclij.model.ConfigItem;
-import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.Parameters;
-import roart.iclij.model.action.ActionComponentItem;
 import roart.iclij.util.MiscUtil;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
@@ -70,10 +74,6 @@ import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.constants.IclijConstants;
 import roart.gene.impl.ConfigMapGene;
-import roart.iclij.model.AboveBelowItem;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MemoryItem;
-import roart.iclij.model.TimingItem;
 import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.inmemory.model.Inmemory;
@@ -90,6 +90,12 @@ public class Evolve {
 
     public static CuratorFramework curatorClient;
 
+    private IclijDbDao dbDao;
+    
+    public Evolve(IclijDbDao dbDao) {
+        this.dbDao = dbDao;
+    }
+    
     public void method(String param) {
         
         param = getParam(param);
@@ -113,7 +119,7 @@ public class Evolve {
         Pair<String, String> subcomponent = new NeuralNetConfigs().getSubcomponent(myclass);
         List<MLMetricsItem> mltests = null;
         try {
-            mltests = IclijDbDao.getAllMLMetrics(market, null, null);
+            mltests = dbDao.getAllMLMetrics(market, null, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -176,7 +182,7 @@ public class Evolve {
         String value = JsonUtil.convert(object);
         i.setValue(value);            
         try {
-            i.save();
+            dbDao.save(i);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -201,7 +207,7 @@ public class Evolve {
         }
         mct.setParameters(JsonUtil.convert(p));
         try {
-            mct.save();
+            dbDao.save(mct);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -294,7 +300,7 @@ public class Evolve {
         Pair<String, String> subComponent = new ImmutablePair<>(subcomponent, subsubcomponent);
         List<MLMetricsItem> mltests = null;
         try {
-            mltests = IclijDbDao.getAllMLMetrics(market, null, null);
+            mltests = dbDao.getAllMLMetrics(market, null, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -440,7 +446,7 @@ public class Evolve {
             abovebelow.setScore(newer);
             abovebelow.setSubcomponents(JsonUtil.convert(mysubcomponents));
             try {
-                abovebelow.save();
+                dbDao.save(abovebelow);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }

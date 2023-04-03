@@ -37,6 +37,11 @@
 		  <argLine>
 		    --add-opens java.base/java.lang=spring.core
 		    --add-reads model=ALL-UNNAMED
+		    --add-reads springdata=ALL-UNNAMED
+		    --add-opens springdata/roart.common.springdata.model=spring.core
+		    --add-opens springdata/roart.common.springdata.repository=spring.core
+		    --add-opens coredb.spring/roart.db.spring=spring.core
+		    --add-opens iclij.core/roart.controller=spring.core
 		    --add-opens db/roart.db.model=org.hibernate.orm.core
 		  </argLine>
 		</configuration>

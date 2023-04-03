@@ -36,7 +36,7 @@ import roart.etl.ValueETL;
 import roart.etl.db.Extract;
 import roart.indicator.util.IndicatorUtils;
 import roart.common.constants.Constants;
-import roart.model.StockItem;
+import roart.common.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.pipeline.data.ExtraData;
 import roart.stockutil.MetaUtil;
@@ -47,6 +47,8 @@ import roart.stockutil.StockUtil;
 
 public class ExtraReader extends Pipeline {
 
+    private DbDao dbDao;
+    
     //Map<MarketStock, List<StockItem>> pairStockMap;
     //Map<MarketStock, Map<Date, StockItem>> pairDateMap;
     //Map<Pair<String, String>, String> pairCatMap;
@@ -58,10 +60,10 @@ public class ExtraReader extends Pipeline {
     Map<String, Pipeline[]> dataReaderMap;
     public Set<MarketStock> allMarketStocks;
     
-    public ExtraReader(MyMyConfig conf, Map<String, MarketData> marketdatamap, int category, StockData stockData) throws Exception {
+    public ExtraReader(MyMyConfig conf, Map<String, MarketData> marketdatamap, int category, StockData stockData, DbDao dbDao) throws Exception {
         super(conf, category);
         readData(conf, marketdatamap, category, stockData);        
-
+        this.dbDao = dbDao;
     }
     private void readData(MyMyConfig conf, Map<String, MarketData> marketdatamap, int category, StockData stockData2) throws Exception {
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
@@ -144,7 +146,7 @@ public class ExtraReader extends Pipeline {
         stockDataMap = new HashMap<>();
         dataReaderMap = new HashMap<>();
         for (String market : markets) {
-            StockData stockData = new Extract().getStockData(conf, market);
+            StockData stockData = new Extract(dbDao).getStockData(conf, market);
             stockDataMap.put(market, stockData);
             Pipeline[] datareaders = getDataReaders(conf, stockData.periodText,
                     stockData.marketdatamap, market);
@@ -247,9 +249,9 @@ public class ExtraReader extends Pipeline {
         log.info("stocks {}", stocksId.size());
         MarketData marketdata = new MarketData();
         marketdata.stocks = stocksId;
-        String[] periodText = DbDaoUtil.getPeriodText(market, conf);
+        String[] periodText = DbDaoUtil.getPeriodText(market, conf, dbDao);
         marketdata.periodtext = periodText;
-        marketdata.meta = DbDao.getById(market, conf);
+        marketdata.meta = dbDao.getById(market, conf);
         Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocksId);
         stockdatemap = StockUtil.filterFew(stockdatemap, conf.getFilterDate());
         if (days == 0) {

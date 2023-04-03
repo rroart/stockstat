@@ -15,24 +15,26 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
 import roart.common.constants.Constants;
+import roart.common.model.AboveBelowItem;
+import roart.common.model.IncDecItem;
+import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.constants.IclijConstants;
-import roart.db.IclijDbDao;
+import roart.db.dao.IclijDbDao;
 import roart.iclij.config.Market;
 import roart.iclij.config.SimulateInvestConfig;
-import roart.iclij.model.AboveBelowItem;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MemoryItem;
+import roart.iclij.model.action.MarketActionData;
 import roart.iclij.util.MiscUtil;
 
 public class AboveBelowAdviser extends Adviser {
@@ -44,8 +46,10 @@ public class AboveBelowAdviser extends Adviser {
     private Map<Integer, List<IncDecItem>> valueMap;
 
     private String aParameter;
+
+    private IclijDbDao dbDao;
     
-    public AboveBelowAdviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param, SimulateInvestConfig simulateConfig) {
+    public AboveBelowAdviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param, SimulateInvestConfig simulateConfig, IclijDbDao dbDao) {
         super(market, investStart, investEnd, param, simulateConfig);
         SimulateInvestData simulateParam;
         if (param instanceof SimulateInvestData) {
@@ -65,12 +69,13 @@ public class AboveBelowAdviser extends Adviser {
             getAllMemories();
         }
         */
+        this.dbDao = dbDao;
     }
     
     private void getAllIncDecs() {
         try {
             //allIncDecs = IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), investStart, investEnd, null);
-            allIncDecs = IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), null, null, null);
+            allIncDecs = dbDao.getAllIncDecs(market.getConfig().getMarket(), null, null, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -183,7 +188,7 @@ public class AboveBelowAdviser extends Adviser {
     public List<String>[] p(String market, Date startdate, Date enddate) {
         List<AboveBelowItem> list = null;
         try {
-            list = AboveBelowItem.getAll(market, startdate, enddate);
+            list = dbDao.getAllAboveBelow(market, startdate, enddate);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

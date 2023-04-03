@@ -6,7 +6,6 @@
  *
  */
 open module model {
-    exports roart.model;
     exports roart.model.data;
 
     requires java.sql;

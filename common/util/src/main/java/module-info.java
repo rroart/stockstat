@@ -15,5 +15,6 @@ module common.util {
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.core;
     requires guava;
+    requires java.sql;
     //requires org.slf4j;
 }

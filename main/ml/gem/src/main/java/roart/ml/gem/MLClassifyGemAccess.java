@@ -34,13 +34,14 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.webflux.WebFluxUtil;
+import roart.common.model.ContItem;
 import roart.ml.common.MLClassifyAccess;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
 import roart.ml.model.LearnTestClassify;
 import roart.ml.model.LearnTestClassifyResult;
-import roart.model.ContItem;
 import roart.pipeline.common.aggregate.Aggregator;
+import roart.db.dao.IclijDbDao;
 
 public class MLClassifyGemAccess extends MLClassifyAccess {
 
@@ -355,7 +356,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         long millis0 = System.currentTimeMillis();
         for (ContItem cont : newConts) {
             try {
-                cont.save();
+                IclijDbDao.badAccess.save(cont);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
@@ -367,7 +368,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         long millis0 = System.currentTimeMillis();
         List<ContItem> conts = null;
         try {
-             conts = ContItem.getAll();
+             conts = IclijDbDao.badAccess.getAllContItem();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

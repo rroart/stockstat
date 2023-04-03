@@ -13,13 +13,13 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import roart.common.config.MarketStock;
 import roart.common.config.MyMyConfig;
+import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
 import roart.db.common.DbAccess;
 import roart.db.dao.DbDao;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
-import roart.model.StockItem;
 import roart.model.data.StockData;
 import roart.pipeline.Pipeline;
 
@@ -44,7 +44,6 @@ public abstract class Indicator extends AbstractIndicator {
         marketCalculatedMap = new HashMap<>();
         marketResultMap = new HashMap<>();
 
-        DbAccess dbDao = DbDao.instance(conf);
         for (Entry<String, Map<String, double[][]>> entry : marketListMap.entrySet()) {
             String market = entry.getKey();
             Map<String, double[][]> myTruncListMap = entry.getValue();
@@ -52,7 +51,7 @@ public abstract class Indicator extends AbstractIndicator {
             if (!anythingHere(newMyTruncListMap)) {
                 continue;
             }
-            List<Map> resultList = getMarketCalcResults(dbDao, myTruncListMap);
+            List<Map> resultList = getMarketCalcResults(myTruncListMap);
             if (resultList == null || resultList.isEmpty()) {
                 continue;
             }
@@ -136,7 +135,6 @@ public abstract class Indicator extends AbstractIndicator {
     }
 
     protected void calculateAll(int category, Pipeline[] datareaders) throws Exception {
-        DbAccess dbDao = DbDao.instance(conf);
         Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
         Pipeline datareader = pipelineMap.get("" + category);
         if (datareader == null) {
@@ -160,7 +158,7 @@ public abstract class Indicator extends AbstractIndicator {
         if (wantPercentizedPriceIndex() != null) {
             //wantPercentizedPriceIndex = wantPercentizedPriceIndex();
         }
-        List<Map> resultList = getMarketCalcResults(dbDao, wantPercentizedPriceIndex ? truncBase100FillListMap : truncFillListMap);
+        List<Map> resultList = getMarketCalcResults(wantPercentizedPriceIndex ? truncBase100FillListMap : truncFillListMap);
         objectMap = resultList.get(0);
         calculatedMap = resultList.get(1);
         resultMap = resultList.get(2);
@@ -170,7 +168,7 @@ public abstract class Indicator extends AbstractIndicator {
         return null;
     }
 
-    protected List getMarketCalcResults(DbAccess dbDao, Map<String, double[][]> aListMap) {
+    protected List getMarketCalcResults(Map<String, double[][]> aListMap) {
         List<Map> resultList = new ArrayList<>();
         if (aListMap == null || aListMap.isEmpty()) {
             return resultList;
@@ -179,7 +177,7 @@ public abstract class Indicator extends AbstractIndicator {
         log.info("time0 {}", (System.currentTimeMillis() - time0));
 
         long time2 = System.currentTimeMillis();
-        Map<String, Object[]> myObjectMap = dbDao.doCalculationsArr(conf, aListMap, key, this, conf.wantPercentizedPriceIndex());
+        Map<String, Object[]> myObjectMap = IndicatorUtils.doCalculationsArrNonNull(conf, aListMap, key, this, conf.wantPercentizedPriceIndex());
 
         log.info("time2 {}", (System.currentTimeMillis() - time2));
         long time1 = System.currentTimeMillis();

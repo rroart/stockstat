@@ -21,6 +21,9 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.RecommendConstants;
+import roart.common.model.IncDecItem;
+import roart.common.model.MLMetricsItem;
+import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -35,9 +38,6 @@ import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MLMetricsItem;
-import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.util.MiscUtil;
@@ -402,12 +402,12 @@ public class ComponentRecommender extends ComponentNoML {
     }
     
     @Override
-    public List<MemoryItem> calculateMemory(ComponentData componentparam, Parameters parameters) throws Exception {
+    public List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters) throws Exception {
         RecommenderData param = (RecommenderData) componentparam;
         List<MemoryItem> memoryList = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
             AbstractScore eval = new ProportionScore(i == 0);
-            getMemories(param, memoryList, eval, i, parameters);
+            getMemories(param, memoryList, eval, i, parameters, actionData);
         }
         return memoryList;
     }
@@ -434,7 +434,7 @@ public class ComponentRecommender extends ComponentNoML {
         return changeSet;
     }
 
-    public void getMemories(RecommenderData param, List<MemoryItem> memoryList, AbstractScore eval, int position, Parameters parameters) throws Exception {
+    public void getMemories(RecommenderData param, List<MemoryItem> memoryList, AbstractScore eval, int position, Parameters parameters, MarketActionData actionData) throws Exception {
         Map<String, List<Double>> resultMap = new HashMap<>();
         for (String key : param.getCategoryValueMap().keySet()) {
             if (param.getRecommendBuySell() == null) {
@@ -495,7 +495,7 @@ public class ComponentRecommender extends ComponentNoML {
         memory.setConfidence((double) goodBuy / totalBuy);
         //memory.setPosition(position);
         if (param.isDoSave()) {
-            memory.save();
+            actionData.getDbDao().save(memory);
         }
         if (param.isDoPrint()) {
             System.out.println(memory);
@@ -610,7 +610,7 @@ public class ComponentRecommender extends ComponentNoML {
         buyMemory.setConfidence((double) goodBuy / totalBuy);
         buyMemory.setPosition(0);
         if (doSave) {
-            buyMemory.save();
+            //actionData.getDbDao().save(buyMemory);
         }
         MemoryItem sellMemory = new MemoryItem();
         sellMemory.setMarket(market);
@@ -627,7 +627,7 @@ public class ComponentRecommender extends ComponentNoML {
         sellMemory.setConfidence((double) goodSell / totalSell);
         sellMemory.setPosition(1);
         if (doSave) {
-            sellMemory.save();
+            //actionData.getDbDao().save(sellMemory);
         }
         //System.out.println("testing buy " + goodBuy + " " + totalBuy + " sell " + goodSell + " " + totalSell);
         //System.out.println("k3 " + categoryValueMap.get("VIX"));
@@ -756,7 +756,7 @@ public class ComponentRecommender extends ComponentNoML {
         buyMemory.setConfidence((double) goodBuy / totalBuy);
         buyMemory.setPosition(0);
         if (doSave) {
-            buyMemory.save();
+            //actionData.getDbDao().save(buyMemory);
         }
         MemoryItem sellMemory = new MemoryItem();
         sellMemory.setMarket(market);
@@ -773,7 +773,7 @@ public class ComponentRecommender extends ComponentNoML {
         sellMemory.setConfidence((double) goodSell / totalSell);
         sellMemory.setPosition(1);
         if (doSave) {
-            sellMemory.save();
+            //actionData.getDbDao().save(sellMemory);
         }
         //System.out.println("testing buy " + goodBuy + " " + totalBuy + " sell " + goodSell + " " + totalSell);
         //System.out.println("k3 " + categoryValueMap.get("VIX"));

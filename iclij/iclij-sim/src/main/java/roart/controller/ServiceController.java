@@ -31,7 +31,6 @@ import roart.iclij.service.IclijServiceResult;
 
 @CrossOrigin
 @RestController
-@SpringBootApplication
 @EnableDiscoveryClient
 public class ServiceController {
 

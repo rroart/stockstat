@@ -43,4 +43,7 @@ module iclij.sim {
     requires common.config;
     requires curator.client;
     requires curator.framework;
+    requires dbdao;
+    requires common.model;
+    requires spring.data.jdbc;
 }

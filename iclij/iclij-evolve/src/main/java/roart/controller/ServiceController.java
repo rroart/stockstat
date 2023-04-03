@@ -31,8 +31,6 @@ import roart.iclij.service.IclijServiceResult;
 
 @CrossOrigin
 @RestController
-@SpringBootApplication
-@EnableDiscoveryClient
 public class ServiceController {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());

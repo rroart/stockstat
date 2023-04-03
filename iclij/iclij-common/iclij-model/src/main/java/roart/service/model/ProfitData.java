@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import roart.common.config.MyMyConfig;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MemoryItem;
+import roart.common.model.IncDecItem;
+import roart.common.model.MemoryItem;
 
 public class ProfitData {
     private ProfitInputData inputdata;

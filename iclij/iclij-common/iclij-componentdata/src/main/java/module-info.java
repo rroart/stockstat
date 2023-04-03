@@ -10,7 +10,6 @@ module iclij.common.componentdata {
 
     requires common.model;
     requires common.util;
-    requires db;
     requires common.config;
     requires iclij.common.config;
     requires iclij.common.constants;

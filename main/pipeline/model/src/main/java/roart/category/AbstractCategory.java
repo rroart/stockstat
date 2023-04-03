@@ -10,9 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.MyMyConfig;
+import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.indicator.AbstractIndicator;
-import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.result.model.ResultItemTableRow;
 

@@ -14,15 +14,22 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.Extra;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
+import roart.common.model.ConfigItem;
+import roart.common.model.IncDecItem;
+import roart.common.model.MLMetricsItem;
+import roart.common.model.MemoryItem;
+import roart.common.model.TimingItem;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
 import roart.constants.IclijConstants;
+import roart.db.dao.IclijDbDao;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
@@ -35,12 +42,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.ConfigItem;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MLMetricsItem;
-import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
-import roart.iclij.model.TimingItem;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.model.config.ActionComponentConfig;
 import roart.iclij.service.ControlService;
@@ -157,7 +159,7 @@ public abstract class Component {
         boolean interrupted = false;
         if (evolve) {   
             EvolutionConfig actionEvolveConfig = JsonUtil.convert(action.getEvolutionConfig(param.getInput().getConfig()), EvolutionConfig.class);
-            evolveMap = handleEvolve(market, pipeline, evolve, param, subcomponent, scoreMap, null, parameters, actionEvolveConfig, action.getMLConfig(param.getInput().getConfig()));
+            evolveMap = handleEvolve(action, market, pipeline, evolve, param, subcomponent, scoreMap, null, parameters, actionEvolveConfig, action.getMLConfig(param.getInput().getConfig()));
             //if (IclijConstants.EVOLVE.equals(param.getAction())) {
             //    action.saveTimingCommon(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, evolve);
            //}
@@ -171,10 +173,10 @@ public abstract class Component {
         }
         try {
         	if (IclijConstants.MACHINELEARNING.equals(action.getName())) {
-        		saveAccuracy(param);
+        		saveAccuracy(action, param);
         	}
         	if (IclijConstants.DATASET.equals(action.getName())) {
-        		saveAccuracy2(param, subcomponent);
+        		saveAccuracy2(action, param, subcomponent);
         	}
         	if (!interrupted) {
         		saveTiming(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, false, hasParent, action);
@@ -234,7 +236,7 @@ public abstract class Component {
         log.info("Disable {}", disableML);
     }
 
-    public TimingItem saveTiming(ComponentData param, boolean evolve, long time0, Double score, Boolean buy, String subcomponent, String mlmarket, String description, Parameters parameters, boolean save) {
+    public TimingItem saveTiming(MarketActionData actionData, ComponentData param, boolean evolve, long time0, Double score, Boolean buy, String subcomponent, String mlmarket, String description, Parameters parameters, boolean save) {
         TimingItem timing = new TimingItem();
         timing.setAction(param.getAction());
         timing.setBuy(buy);
@@ -251,7 +253,7 @@ public abstract class Component {
         timing.setDescription(description);
         try {
             if (param.isDoSave() || save) {
-                timing.save();
+                actionData.getDbDao().save(timing);
             }
             return timing;
         } catch (Exception e) {
@@ -260,7 +262,7 @@ public abstract class Component {
         return null;
     }
     
-    protected abstract Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket, Parameters parameters, EvolutionConfig actionEvolveConfig, String actionML);
+    protected abstract Map<String, Object> handleEvolve(MarketActionData action, Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket, Parameters parameters, EvolutionConfig actionEvolveConfig, String actionML);
 
     public abstract EvolutionConfig getEvolutionConfig(ComponentData componentdata, EvolutionConfig actionEvolutionConfig);
     
@@ -280,7 +282,7 @@ public abstract class Component {
 
     public abstract void calculateIncDec(ComponentData param, ProfitData profitdata, Memories positions, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters);
 
-    public abstract List<MemoryItem> calculateMemory(ComponentData param, Parameters parameters) throws Exception;
+    public abstract List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception;
 
     public abstract String getPipeline();
     
@@ -346,7 +348,7 @@ public abstract class Component {
         		Extra[] extras = JsonUtil.convert((String)confMap.get(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST), Extra[].class);
         		confMap.put(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST, extras);              	
         	}
-            configSaves(param, confMap, subcomponent);
+            configSaves(action, param, confMap, subcomponent);
             //}
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -362,7 +364,7 @@ public abstract class Component {
         }
     }
     
-    protected void configSaves(ComponentData param, Map<String, Object> anUpdateMap, String subcomponent) {
+    protected void configSaves(MarketActionData actionData, ComponentData param, Map<String, Object> anUpdateMap, String subcomponent) {
         // TODO save whole?
         //for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
             String key = IclijConstants.ALL;
@@ -382,7 +384,7 @@ public abstract class Component {
             String value = JsonUtil.convert(object);
             configItem.setValue(value);
             try {
-                configItem.save();
+                actionData.getDbDao().save(configItem);
             } catch (Exception e) {
                 log.info(Constants.EXCEPTION, e);
             }
@@ -522,7 +524,7 @@ public abstract class Component {
     
     // a new implementation with better fitness outside of chromosome
     
-    public void saveAccuracy(ComponentData componentparam) throws Exception {
+    public void saveAccuracy(MarketActionData actionData, ComponentData componentparam) throws Exception {
         ComponentMLData param = (ComponentMLData) componentparam;
         if (param.getResultMeta() == null) {
             return;
@@ -544,11 +546,11 @@ public abstract class Component {
             item.setTrainAccuracy(meta.getTrainAccuracy());
             item.setLoss(meta.getLoss());
             item.setThreshold(meta.getThreshold());
-            item.save();
+            actionData.getDbDao().save(item);
         }
     }
 
-    public void saveAccuracy2(ComponentData componentparam, String subcomponent) throws Exception {
+    public void saveAccuracy2(MarketActionData actionData, ComponentData componentparam, String subcomponent) throws Exception {
         ComponentMLData param = (ComponentMLData) componentparam;
         if (param.getResultMap() == null) {
             return;
@@ -572,7 +574,7 @@ public abstract class Component {
         //item.setTrainAccuracy();
         //item.setLoss();
         item.setThreshold(1.0);
-        item.save();
+        actionData.getDbDao().save(item);
     }
 
     protected IncDecItem mapAdder(Map<String, IncDecItem> map, String key, Double add, Map<String, String> nameMap, LocalDate date, String market, String subcomponent, String localcomponent, String parameters) {
@@ -651,7 +653,7 @@ public abstract class Component {
         scoreDescription = action.getScoreDescription(calculateAccuracy(param), scoreMap);
         Double score = (Double) scoreDescription[0];
         String description = (String) scoreDescription[1];
-        TimingItem timing = component.saveTiming(param, evolve, time0, score, null, subcomponent, mlmarket, description, parameters, hasParent);
+        TimingItem timing = component.saveTiming(action, param, evolve, time0, score, null, subcomponent, mlmarket, description, parameters, hasParent);
         param.getTimings().add(timing);
     }
 }

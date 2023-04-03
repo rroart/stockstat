@@ -16,4 +16,6 @@ module coredb.hibernate {
     requires model;
     requires org.slf4j;
     requires pipeline.model;
+    requires java.sql;
+    requires common.constants;
 }

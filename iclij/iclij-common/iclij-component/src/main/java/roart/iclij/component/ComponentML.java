@@ -21,6 +21,8 @@ import roart.common.constants.ResultMetaConstants;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.NeuralNetTensorflowConfig;
 import roart.common.ml.TensorflowPredictorLSTMConfig;
+import roart.common.model.ConfigItem;
+import roart.common.model.MLMetricsItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -34,8 +36,6 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.ConfigItem;
-import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.util.MLUtil;
@@ -47,7 +47,7 @@ import roart.service.model.ProfitData;
 public abstract class ComponentML extends Component {
 
     @Override
-    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket, Parameters parameters, EvolutionConfig actionEvolveConfig, String actionML) {
+    protected Map<String, Object> handleEvolve(MarketActionData action, Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket, Parameters parameters, EvolutionConfig actionEvolveConfig, String actionML) {
         // special
         //String localMl = param.getInput().getConfig().getFindProfitMLIndicatorMLConfig();
         Map<String, EvolveMLConfig> mlConfigMap = getConfig().getMLConfig(market, param.getInput().getConfig(), mlmarket, actionML);
@@ -66,7 +66,7 @@ public abstract class ComponentML extends Component {
             Map<String, Object> resultMap = new HashMap<>();
             param.getService().conf.setdate(TimeUtil.convertDate(param.getFutureDate()));
             List<ResultItem> retlist = param.getService().getEvolveML(true, param.getDisableList(), pipeline, param.getService().conf, anUpdateMap, aScoreMap, resultMap);
-            mlSaves(mlConfigMap, param, anUpdateMap, subcomponent, parameters);
+            mlSaves(action, mlConfigMap, param, anUpdateMap, subcomponent, parameters);
             if (param.getUpdateMap() != null) {
                 param.getUpdateMap().putAll(anUpdateMap); 
             }
@@ -80,7 +80,7 @@ public abstract class ComponentML extends Component {
         //Map<String, Object> i = setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, false);
     }
 
-    private void mlSaves(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, String subcomponent, Parameters parameters) {
+    private void mlSaves(MarketActionData actionData, Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, String subcomponent, Parameters parameters) {
         //for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
             String key = IclijConstants.ALL;
             String nnconfigString = JsonUtil.convert(anUpdateMap);
@@ -144,7 +144,7 @@ public abstract class ComponentML extends Component {
             configItem.setParameters(JsonUtil.convert(parameters));
             configItem.setValue(nnconfigString);
             try {
-                configItem.save();
+                actionData.getDbDao().save(configItem);
             } catch (Exception e) {
                 log.info(Constants.EXCEPTION, e);
             }

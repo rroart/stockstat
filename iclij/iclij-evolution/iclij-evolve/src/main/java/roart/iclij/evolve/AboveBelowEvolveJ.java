@@ -21,16 +21,16 @@ import io.jenetics.Phenotype;
 import io.jenetics.engine.Engine;
 import io.jenetics.engine.EvolutionResult;
 import roart.common.constants.Constants;
+import roart.common.model.IncDecItem;
+import roart.common.model.MLMetricsItem;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
-import roart.db.IclijDbDao;
+import roart.db.dao.IclijDbDao;
 import roart.evolution.config.EvolutionConfig;
 import roart.iclij.component.Component;
 import roart.iclij.config.Market;
 import roart.iclij.evolution.fitness.impl.FitnessAboveBelow2;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.util.MiscUtil;
@@ -50,7 +50,7 @@ public class AboveBelowEvolveJ extends EvolveJ {
         date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
         LocalDate prevDate = date.minusDays(market.getConfig().getFindtime());
         try {
-            allIncDecs = IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), prevDate, date, null);
+            allIncDecs = action.getDbDao().getAllIncDecs(market.getConfig().getMarket(), prevDate, date, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

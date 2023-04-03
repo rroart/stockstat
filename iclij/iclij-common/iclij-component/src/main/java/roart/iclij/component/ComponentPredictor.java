@@ -17,6 +17,9 @@ import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.ResultMetaConstants;
+import roart.common.model.IncDecItem;
+import roart.common.model.MLMetricsItem;
+import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -33,9 +36,6 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MLMetricsItem;
-import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.service.ControlService;
@@ -257,7 +257,7 @@ public class ComponentPredictor extends ComponentML {
         }
     }
 
-    public List<MemoryItem> calculateMemory(ComponentData componentparam, Parameters parameters) throws Exception {
+    public List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters) throws Exception {
         PredictorData param = (PredictorData) componentparam;
         Map<String, List<Double>> resultMap = (Map<String, List<Double>>) param.getResultMap().get("result");
         List<MemoryItem> memoryList = new ArrayList<>();
@@ -317,7 +317,7 @@ public class ComponentPredictor extends ComponentML {
             incMemory.setSize(total);
             incMemory.setConfidence((double) goodInc / totalInc);
             if (param.isDoSave()) {
-                incMemory.save();
+                actionData.getDbDao().save(incMemory);
             }
             MemoryItem decMemory = new MemoryItem();
             decMemory.setAction(param.getAction());
@@ -337,7 +337,7 @@ public class ComponentPredictor extends ComponentML {
             decMemory.setSize(total);
             decMemory.setConfidence((double) goodDec / totalDec);
             if (param.isDoSave()) {
-                decMemory.save();
+                actionData.getDbDao().save(decMemory);
             }
             if (param.isDoPrint()) {
                 System.out.println(incMemory);

@@ -16,14 +16,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
+import roart.common.model.TimingItem;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.constants.IclijConstants;
-import roart.db.IclijDbDao;
+import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.Market;
-import roart.iclij.model.TimingItem;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.util.MarketUtil;
 import roart.util.ServiceUtil;
@@ -32,7 +32,13 @@ public class PopulateThread extends Thread {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private IclijDbDao dbDao;
+
     public static volatile List<Triple<String, String, String>> queue = Collections.synchronizedList(new ArrayList<>());
+
+    public PopulateThread(IclijDbDao dbDao) {
+        this.dbDao = dbDao;
+    }
 
     @Override
     public void run() {
@@ -91,7 +97,7 @@ public class PopulateThread extends Thread {
                     LocalDate oldDate = currentDate.minusDays(findTime);
                     List<TimingItem> timingitems = null;
                     try {
-                        timingitems = IclijDbDao.getAllTiming(market.getConfig().getMarket(), IclijConstants.FINDPROFIT, oldDate, currentDate);
+                        timingitems = dbDao.getAllTiming(market.getConfig().getMarket(), IclijConstants.FINDPROFIT, oldDate, currentDate);
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
                     }
@@ -112,10 +118,10 @@ public class PopulateThread extends Thread {
                         continue;
                     }
                     ComponentInput componentInput = new ComponentInput(config, null, null, lastStockdate, null, true, false, new ArrayList<>(), new HashMap<>());
-                    ServiceUtil.getFindProfit(componentInput, timingitems);
+                    ServiceUtil.getFindProfit(componentInput, timingitems, dbDao);
                     if (config.getFindProfitMemoryFilter()) {
                         try {
-                            timingitems = IclijDbDao.getAllTiming(market.getConfig().getMarket(), IclijConstants.IMPROVEABOVEBELOW, oldDate, currentDate);
+                            timingitems = dbDao.getAllTiming(market.getConfig().getMarket(), IclijConstants.IMPROVEABOVEBELOW, oldDate, currentDate);
                         } catch (Exception e) {
                             log.error(Constants.EXCEPTION, e);
                         }
@@ -125,7 +131,7 @@ public class PopulateThread extends Thread {
                             config.setDate(aCurrentDate);
                             ComponentInput componentInput3 = new ComponentInput(config, null, null, aCurrentDate, null, true, false, new ArrayList<>(), new HashMap<>());
                             try {
-                                ServiceUtil.getImproveAboveBelow(componentInput3);
+                                ServiceUtil.getImproveAboveBelow(componentInput3, dbDao);
                             } catch (Exception e) {
                                 log.error(Constants.EXCEPTION, e);
                             }
@@ -133,7 +139,7 @@ public class PopulateThread extends Thread {
                     }
                     if (config.getFindProfitMemoryFilter()) {
                         try {
-                            timingitems = IclijDbDao.getAllTiming(market.getConfig().getMarket(), IclijConstants.IMPROVEFILTER, oldDate, currentDate);
+                            timingitems = dbDao.getAllTiming(market.getConfig().getMarket(), IclijConstants.IMPROVEFILTER, oldDate, currentDate);
                         } catch (Exception e) {
                             log.error(Constants.EXCEPTION, e);
                         }
@@ -143,7 +149,7 @@ public class PopulateThread extends Thread {
                             config.setDate(aCurrentDate);
                             ComponentInput componentInput3 = new ComponentInput(config, null, null, aCurrentDate, null, true, false, new ArrayList<>(), new HashMap<>());
                             try {
-                                ServiceUtil.getImproveFilter(componentInput3);
+                                ServiceUtil.getImproveFilter(componentInput3, dbDao);
                             } catch (Exception e) {
                                 log.error(Constants.EXCEPTION, e);
                             }

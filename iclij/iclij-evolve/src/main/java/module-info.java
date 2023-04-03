@@ -44,4 +44,7 @@ module iclij.evolve {
     requires org.slf4j;
     requires curator.client;
     requires curator.framework;
+    requires common.model;
+    requires dbdao;
+    requires spring.data.jdbc;
 }

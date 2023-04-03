@@ -9,6 +9,7 @@ module ml.gem {
     exports roart.ml.gem;
 
     requires common.config;
+    requires common.model;
     requires common.webflux;
     requires org.slf4j;
     requires ml.common;
@@ -17,4 +18,6 @@ module ml.gem {
     requires model;
     requires common.constants;
     requires org.apache.commons.codec;
+    requires dbdao;
+    requires coredb;
 }

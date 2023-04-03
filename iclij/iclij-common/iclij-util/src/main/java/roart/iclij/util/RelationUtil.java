@@ -12,19 +12,19 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+import roart.common.model.IncDecItem;
+import roart.common.model.RelationItem;
+import roart.common.model.TimingItem;
 import roart.constants.RelationConstants;
-import roart.db.IclijDbDao;
+import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.Market;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.RelationItem;
-import roart.iclij.model.TimingItem;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.IclijServiceList;
 
 public class RelationUtil {
-    public Set[] method(ComponentInput componentInput, Set<IncDecItem> listIncDecs) throws Exception {
+    public Set[] method(ComponentInput componentInput, Set<IncDecItem> listIncDecs, IclijDbDao dbDao) throws Exception {
         IclijXMLConfig conf = IclijXMLConfig.instance();
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
         /*
@@ -40,7 +40,7 @@ public class RelationUtil {
 
          */
 
-        Set<RelationItem> relations = new HashSet<>(IclijDbDao.getAllRelations());
+        Set<RelationItem> relations = new HashSet<>(dbDao.getAllRelations());
         
         //List<RelationItem> foundRelations = search(listAll, relations);
         

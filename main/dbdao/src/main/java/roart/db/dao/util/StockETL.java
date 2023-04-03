@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import roart.common.config.MyMyConfig;
+import roart.common.model.StockItem;
 import roart.common.util.TimeUtil;
-import roart.model.StockItem;
 
 // Impurity, should be in ETL, only temporarily here.
 

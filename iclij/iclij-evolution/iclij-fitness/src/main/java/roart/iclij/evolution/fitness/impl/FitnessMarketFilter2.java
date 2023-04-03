@@ -21,6 +21,9 @@ import org.slf4j.LoggerFactory;
 import roart.iclij.model.action.MarketActionData;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
+import roart.common.model.IncDecItem;
+import roart.common.model.MLMetricsItem;
+import roart.common.model.MemoryItem;
 import roart.iclij.component.Component;
 import roart.iclij.component.factory.ComponentFactory;
 import roart.component.model.ComponentData;
@@ -28,9 +31,6 @@ import roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome;
 import roart.iclij.config.Market;
 import roart.iclij.factory.actioncomponentconfig.ActionComponentConfigFactory;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MLMetricsItem;
-import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
@@ -229,7 +229,7 @@ public class FitnessMarketFilter2 {
             myData.getUpdateMap().putAll(componentData.getUpdateMap());
             List<MemoryItem> memories;
             try {
-                memories = component.calculateMemory(componentData, parameters);
+                memories = component.calculateMemory(action, componentData, parameters);
                 if (memories == null || memories.isEmpty()) {
                     int jj = 0;
                 }

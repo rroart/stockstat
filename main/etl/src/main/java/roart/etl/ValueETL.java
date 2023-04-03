@@ -70,7 +70,7 @@ public class ValueETL {
         for (Entry<String, Double[][]> entry : listMap.entrySet()) {
             Double[][] array = entry.getValue();
             Double[][] newArray = new Double[array.length][];
-            if ("ETLX".equals(entry.getKey())) {
+            if ("2647727".equals(entry.getKey())) {
                 int jj = 0;
             }
             for (int i = 0; i < array.length; i ++) {

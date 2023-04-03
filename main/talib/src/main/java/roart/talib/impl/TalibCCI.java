@@ -10,7 +10,6 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MInteger;
 
-import roart.model.StockItem;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.stockutil.StockUtil;

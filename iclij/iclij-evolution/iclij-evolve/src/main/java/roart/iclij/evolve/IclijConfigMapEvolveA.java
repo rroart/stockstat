@@ -27,6 +27,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import roart.common.constants.Constants;
+import roart.common.model.MLMetricsItem;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
@@ -38,7 +39,6 @@ import roart.iclij.config.Market;
 import roart.iclij.evolution.fitness.impl.FitnessIclijConfigMap;
 import roart.iclij.evolution.fitness.impl.FitnessIclijConfigMap3;
 import roart.iclij.evolution.fitness.impl.IclijConfigMapChromosome3;
-import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
 import roart.service.model.ProfitData;

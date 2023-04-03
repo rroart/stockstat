@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+import roart.common.model.MemoryItem;
 import roart.component.model.ComponentData;
 import roart.constants.IclijPipelineConstants;
-import roart.iclij.model.MemoryItem;
+import roart.db.dao.IclijDbDao;
 
 public abstract class Action {
+    
     private Queue<Action> goals = new LinkedList<>();
     
     public Queue<Action> getGoals() {

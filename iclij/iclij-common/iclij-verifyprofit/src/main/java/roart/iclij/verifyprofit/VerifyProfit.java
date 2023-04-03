@@ -17,11 +17,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.model.IncDecItem;
 import roart.common.util.ArraysUtil;
 import roart.common.util.TimeUtil;
 import roart.common.util.ValidateUtil;
 import roart.iclij.config.IclijConfig;
-import roart.iclij.model.IncDecItem;
 import roart.iclij.model.Trend;
 
 public class VerifyProfit {

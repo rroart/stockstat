@@ -5,9 +5,9 @@ import java.util.Date;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-import roart.model.OHLC;
+import roart.common.model.OHLC;
 
-@Table("stock")
+@Table
 public class Stock {
 
     @Id
@@ -63,6 +63,9 @@ public class Stock {
         this.period7 = period7;
         this.period8 = period8;
         this.period9 = period9;
+    }
+
+    public Stock() {
     }
 
     public String getDbid() {

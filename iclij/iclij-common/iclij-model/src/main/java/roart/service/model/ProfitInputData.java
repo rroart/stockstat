@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Triple;
 
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MemoryItem;
+import roart.common.model.IncDecItem;
+import roart.common.model.MemoryItem;
 
 public class ProfitInputData {
         

@@ -17,11 +17,11 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
+import roart.common.model.StockItem;
 import roart.common.util.ValidateUtil;
 import roart.db.dao.DbDao;
 import roart.db.dao.util.DbDaoUtil;
 import roart.etl.MarketDataETL;
-import roart.model.StockItem;
 import roart.model.data.MarketData;
 import roart.model.data.StockData;
 import roart.stockutil.StockUtil;
@@ -35,10 +35,17 @@ public class Extract {
         return getStockData(conf, market);
     }
 
+    private DbDao dbDao;
+    
+    public Extract(DbDao dbDao) {
+        super();
+        this.dbDao = dbDao;
+    }
+
     public StockData getStockData(MyMyConfig conf, String market) {
         List<StockItem> stocks = null;
         try {
-            stocks = DbDao.getAll(market, conf);
+            stocks = dbDao.getAll(market, conf);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -46,10 +53,10 @@ public class Extract {
             return null;
         }
         log.info("stocks {}", stocks.size());
-        String[] periodText = DbDaoUtil.getPeriodText(market, conf);
+        String[] periodText = DbDaoUtil.getPeriodText(market, conf, dbDao);
         MetaItem meta = null;
         try {
-            meta = DbDao.getById(market, conf);
+            meta = dbDao.getById(market, conf);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

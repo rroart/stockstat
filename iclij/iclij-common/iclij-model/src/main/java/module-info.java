@@ -14,11 +14,11 @@ module iclij.common.model {
 
     requires common.model;
     requires common.util;
-    requires db;
     requires common.config;
     requires iclij.common.config;
     requires iclij.common.constants;
     requires org.apache.commons.lang3;
     requires org.slf4j;
     requires common.constants;
+    requires dbdao;
 }

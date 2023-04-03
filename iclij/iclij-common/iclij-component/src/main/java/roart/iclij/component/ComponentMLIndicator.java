@@ -19,6 +19,9 @@ import roart.common.config.Extra;
 import roart.common.config.MarketStockExpression;
 import roart.common.constants.Constants;
 import roart.common.constants.ResultMetaConstants;
+import roart.common.model.IncDecItem;
+import roart.common.model.MLMetricsItem;
+import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
@@ -35,9 +38,6 @@ import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MLMetricsItem;
-import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.util.MiscUtil;
@@ -240,7 +240,7 @@ public class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public List<MemoryItem> calculateMemory(ComponentData componentparam, Parameters parameters) throws Exception {
+    public List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters) throws Exception {
         MLIndicatorData param = (MLIndicatorData) componentparam;
         List<MemoryItem> memoryList = new ArrayList<>();
         Map<String, Object> resultMap = param.getResultMap();
@@ -444,7 +444,7 @@ public class ComponentMLIndicator extends ComponentML {
             memory.setLearnConfidence(learnConfidence);
             //memory.setPosition(count);
             if (param.isDoSave()) {
-                memory.save();
+                actionData.getDbDao().save(memory);
             }
             if (param.isDoPrint()) {
                 System.out.println(memory);

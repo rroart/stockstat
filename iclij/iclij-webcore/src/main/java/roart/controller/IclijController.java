@@ -20,12 +20,15 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@SpringBootApplication
+@ComponentScan(basePackages = "roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository")
+@EnableJdbcRepositories("roart.common.springdata.repository")
 @EnableDiscoveryClient
+@SpringBootApplication
 public class IclijController implements CommandLineRunner {
 
     @Value("${spring.profiles.active:}")

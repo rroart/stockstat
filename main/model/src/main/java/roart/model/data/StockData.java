@@ -3,7 +3,7 @@ package roart.model.data;
 import java.util.List;
 import java.util.Map;
 
-import roart.model.StockItem;
+import roart.common.model.StockItem;
 
 public class StockData {
 

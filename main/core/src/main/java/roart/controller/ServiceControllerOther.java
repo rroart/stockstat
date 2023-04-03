@@ -22,14 +22,15 @@ import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
 import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
+import roart.db.dao.DbDao;
 import roart.common.controller.ServiceControllerOtherAbstract;
 
 public class ServiceControllerOther extends ServiceControllerOtherAbstract {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public ServiceControllerOther(String myservices, String services, String communications, Class replyclass) {
-        super(myservices, services, communications, replyclass);
+    public ServiceControllerOther(String myservices, String services, String communications, Class replyclass, DbDao dao) {
+        super(myservices, services, communications, replyclass, null);
     }
 
     public void get(Object param, Communication c) { 

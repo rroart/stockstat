@@ -13,8 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
+import roart.common.model.StockItem;
 import roart.common.util.ArraysUtil;
-import roart.model.StockItem;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.stockutil.StockDao;
@@ -23,47 +23,6 @@ import roart.stockutil.StockUtil;
 public class TaUtil {
 
     private static Logger log = LoggerFactory.getLogger(TaUtil.class);
-
-    @Deprecated
-    private int getArr2(int days, String market, Set<Pair<String, String>> ids, Integer periodInt,
-            List<StockItem>[] datedstocklists, double[] values) {
-        int size = 0;
-        int count = days - 1;
-        int downcount = Math.min(days, datedstocklists.length);
-        for (int j = 0; j < datedstocklists.length && downcount > 0 ; j++) {
-            //        for (int j = datedstocklists.length - 1; j >= 0 && downcount > 0 ; j--) {
-            List<StockItem> list = datedstocklists[j];
-            if (list == null) {
-                log.info("listnull " + market + " " + " " + j);
-                continue;
-            }
-            if (periodInt == null) {
-                //System.out.println("tata " + market + " " + periodstr);
-                continue;
-            }
-            int period = periodInt;
-            grr:  for (int i = 0; i < list.size(); i++) {
-                StockItem stock = list.get(i);
-                Pair<String, String> pair = new ImmutablePair(market, stock.getId());
-                if (ids.contains(pair)) {
-                    try {
-                        Double value = StockDao.getMainValue(stock, period);
-                        if (value == null) {
-                            continue;
-                        }
-                        values[count] = value;
-                        count--;
-                        downcount--;
-                        size++;
-                        break grr;
-                    } catch (Exception e) {
-                        log.error(Constants.EXCEPTION, e);
-                    }
-                }
-            }    
-        }
-        return size;
-    }
 
     public int getArr(int days, String market, String id, Set<Pair<String, String>> ids, Integer periodInt,
             List<StockItem>[] datedstocklists, double[][] arrarr) {

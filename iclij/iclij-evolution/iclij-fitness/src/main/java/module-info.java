@@ -29,4 +29,5 @@ module iclij.evolutionfitness {
 	requires common.util;
 	requires iclij.evolutionchromosome;
     requires io.jenetics.base;
+    requires common.model;
 }

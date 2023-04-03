@@ -12,7 +12,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
-import roart.model.StockItem;
+import roart.common.model.StockItem;
 import roart.result.model.GUISize;
 import roart.result.model.ResultItem;
 import roart.result.model.ResultItemBytes;

@@ -18,21 +18,20 @@ import org.apache.commons.lang3.tuple.Triple;
 
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
+import roart.common.model.IncDecItem;
+import roart.common.model.MLMetricsItem;
+import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.constants.IclijConstants;
-import roart.db.IclijDbDao;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.Fitness;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MLMetricsItem;
-import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
@@ -70,14 +69,14 @@ public class AboveBelowComponent extends ComponentML {
         date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
         LocalDate prevDate = date.minusDays(market.getConfig().getFindtime());
         try {
-            allIncDecs = IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), prevDate, date, null);
+            allIncDecs = action.getDbDao().getAllIncDecs(market.getConfig().getMarket(), prevDate, date, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
         List<IncDecItem> incdecs = allIncDecs; // new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
         List<String> parametersList = new MiscUtil().getParameters(incdecs);
         if (parametersList.isEmpty()) {
-            saveTiming(param, true, time0, null, null, subcomponent, null, null, null, action.doSaveTiming());
+            saveTiming(action, param, true, time0, null, null, subcomponent, null, null, null, action.doSaveTiming());
         }
 
         return componentData;
@@ -101,7 +100,7 @@ public class AboveBelowComponent extends ComponentML {
     }
 
     @Override
-    public List<MemoryItem> calculateMemory(ComponentData param, Parameters parameters) throws Exception {
+    public List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception {
         return null;
     }
 

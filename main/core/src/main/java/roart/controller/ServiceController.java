@@ -9,6 +9,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.sql.DataSource;
+
+//import javax.sql.DataSource;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -17,9 +21,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,11 +57,15 @@ import roart.db.thread.DatabaseThread;
 import roart.executor.MyExecutors;
 import roart.service.ControlService;
 import roart.service.evolution.EvolutionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import roart.db.dao.DbDao;
 
+@ComponentScan(basePackages = "roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository")
+@EnableJdbcRepositories("roart.common.springdata.repository")
 @CrossOrigin
 @RestController
-@SpringBootApplication
 @EnableDiscoveryClient
+@SpringBootApplication
 public class ServiceController implements CommandLineRunner {
     
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -61,9 +77,12 @@ public class ServiceController implements CommandLineRunner {
     @Value("${spring.profiles.active:}")
     private String activeProfile;
     
+    @Autowired
+    DbDao dao;
+
     private ControlService getInstance() {
         if (instance == null) {
-            instance = new ControlService();
+            instance = new ControlService(dao);
         }
         return instance;
     }
@@ -268,7 +287,7 @@ public class ServiceController implements CommandLineRunner {
             maps.put("update", updateMap);
             maps.put("score", scoreMap);
             maps.put("result", resultMap);
-            result.setList(new EvolutionService().getEvolveRecommender( aConfig, disableList, updateMap, scoreMap, resultMap));
+            result.setList(new EvolutionService(dao).getEvolveRecommender( aConfig, disableList, updateMap, scoreMap, resultMap));
             result.setMaps(maps);
             result.setConfig(aConfig);
         } catch (Exception e) {
@@ -299,7 +318,7 @@ public class ServiceController implements CommandLineRunner {
             maps.put("score", scoreMap);
             maps.put("result", resultMap);
             NeuralNetCommand neuralnetcommand = param.getNeuralnetcommand();
-            result.setList(new EvolutionService().getEvolveML( aConfig, disableList, updateMap, ml, neuralnetcommand, scoreMap, resultMap));
+            result.setList(new EvolutionService(dao).getEvolveML( aConfig, disableList, updateMap, ml, neuralnetcommand, scoreMap, resultMap));
             result.setMaps(maps);
             result.setConfig(aConfig);
         } catch (Exception e) {
@@ -312,9 +331,12 @@ public class ServiceController implements CommandLineRunner {
     public static void main(String[] args) throws Exception {
         //DbDao.instance("hibernate");
         //DbDao.instance("spark");
-        SpringApplication.run(ServiceController.class, args);
+        applicationContext = SpringApplication.run(ServiceController.class, args);
+        displayAllBeans();
     }
-
+    
+    private static ApplicationContext applicationContext;
+    
     @Override
     public void run(String... args) throws InterruptedException, JsonParseException, JsonMappingException, IOException {        
         System.out.println("Using profile " + activeProfile);
@@ -324,11 +346,27 @@ public class ServiceController implements CommandLineRunner {
         String myservices = instance.getMyservices();
         String services = instance.getServices();
         String communications = instance.getCommunications();
-        new ServiceControllerOther(myservices, services, communications, ServiceParam.class).start();
+        new ServiceControllerOther(myservices, services, communications, ServiceParam.class, dao).start();
         new DatabaseThread().start();
         MyCache.setCache(instance.wantCache());
         MyCache.setCacheTTL(instance.getCacheTTL());
-        new MemRunner().run();
+        //new MemRunner().run();
+    }
+    
+    public static void displayAllBeans() {
+        String[] allBeanNames = applicationContext.getBeanDefinitionNames();
+        for(String beanName : allBeanNames) {
+            System.out.println(beanName);
+        }
+    }
+    
+    public DataSource getDataSource() {
+        return DataSourceBuilder.create()
+          .driverClassName("org.postgresql.Driver")
+          .url("jdbc:postgresql://localhost:5432/stockstatdev")
+          .username("stockstat")
+          .password("password")
+          .build();     
     }
     
     @RequestMapping(value = "cache/invalidate",

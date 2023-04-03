@@ -14,7 +14,7 @@ import roart.etl.DatelistToMapETL;
 import roart.indicator.util.IndicatorUtils;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
-import roart.model.StockItem;
+import roart.common.model.StockItem;
 import roart.result.model.ResultItemTableRow;
 import roart.model.data.MarketData;
 import roart.stockutil.StockDao;

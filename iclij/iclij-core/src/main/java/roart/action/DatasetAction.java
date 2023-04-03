@@ -15,28 +15,29 @@ import org.apache.commons.lang3.tuple.Triple;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.ServiceConstants;
+import roart.common.model.ActionComponentItem;
+import roart.common.model.IncDecItem;
+import roart.common.model.MLMetricsItem;
+import roart.common.model.MemoryItem;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
+import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MLMetricsItem;
-import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
-import roart.iclij.model.action.ActionComponentItem;
 import roart.iclij.model.action.DatasetActionData;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 
 public class DatasetAction extends MarketAction {
 
-    public DatasetAction() {
-        setActionData(new DatasetActionData());
+    public DatasetAction(IclijDbDao dbDao) {
+        setActionData(new DatasetActionData(dbDao));
     }
-    
+
     @Override
     protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param,
             Memories listComponent, Map<String, Component> componentMap,

@@ -6,6 +6,8 @@
  *
  */
 module iclij.core {
+    exports roart.controller;
+    
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
@@ -40,7 +42,6 @@ module iclij.core {
     requires myexecutor;
     requires org.apache.commons.lang3;
     requires io.jenetics.base;
-    requires db;
     requires common.communication.model;
     requires common.communication.factory;
     //requires com.google.common;
@@ -66,5 +67,9 @@ module iclij.core {
 	requires evolution.config;
 	requires iclij.evolutionchromosome;
 	requires iclij.evolutionevolve;
-
+    requires spring.data.jdbc;
+    requires jakarta.cdi;
+    requires jakarta.interceptor;
+    requires dbdao;
+    requires db;
 }

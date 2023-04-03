@@ -17,6 +17,7 @@ import roart.common.constants.CommunicationConstants;
 import roart.common.constants.Constants;
 import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
+import roart.db.dao.IclijDbDao;
 
 public abstract class ServiceControllerOtherAbstract {
 
@@ -26,12 +27,14 @@ public abstract class ServiceControllerOtherAbstract {
     protected String services;
     protected String communications;
     private Class replyclass;
-
-    public ServiceControllerOtherAbstract(String myservices, String services, String communications, Class replyclass) {
+    protected IclijDbDao dbDao;
+    
+    public ServiceControllerOtherAbstract(String myservices, String services, String communications, Class replyclass, IclijDbDao dbDao) {
         this.myservices = myservices;
         this.services = services;
         this.communications = communications;
         this.replyclass = replyclass;
+        this.dbDao = dbDao;
     }
 
     public void get(final Communication c) {

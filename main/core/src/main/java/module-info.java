@@ -80,4 +80,5 @@ open module core {
     requires jakarta.cdi;
     requires jakarta.interceptor;
     requires spring.data.jdbc;
+    requires springdata;
 }

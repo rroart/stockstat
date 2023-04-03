@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.component.model.ComponentData;
+import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.service.ControlService;
@@ -17,6 +18,12 @@ import roart.iclij.service.ControlService;
 public class MainAction extends Action {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
+
+    private IclijDbDao dbDao;
+
+    public MainAction(IclijDbDao dbDao) {
+        this.dbDao = dbDao;
+    }
 
     @SuppressWarnings("squid:S2189")
     @Override
@@ -75,34 +82,34 @@ public class MainAction extends Action {
 
     private void addGoals() {
         if (IclijXMLConfig.getConfigInstance().wantsMachineLearningAutorun() ) {        
-            getGoals().add(new MachineLearningAction());
+            getGoals().add(new MachineLearningAction(dbDao));
         }
         if (IclijXMLConfig.getConfigInstance().wantsFindProfitAutorun() ) {        
-            getGoals().add(new FindProfitAction());
+            getGoals().add(new FindProfitAction(dbDao));
         }
         if (IclijXMLConfig.getConfigInstance().wantsEvolveAutorun() ) {        
-            getGoals().add(new EvolveAction());
+            getGoals().add(new EvolveAction(dbDao));
         }
         if (IclijXMLConfig.getConfigInstance().wantsImproveProfitAutorun()) {        
-            getGoals().add(new ImproveProfitAction());
+            getGoals().add(new ImproveProfitAction(dbDao));
         }
         if (IclijXMLConfig.getConfigInstance().wantsImproveFilterAutorun()) {        
-            getGoals().add(new ImproveFilterAction());
+            getGoals().add(new ImproveFilterAction(dbDao));
         }
         if (IclijXMLConfig.getConfigInstance().wantsImproveAbovebelowAutorun()) {        
-            getGoals().add(new ImproveAboveBelowAction());
+            getGoals().add(new ImproveAboveBelowAction(dbDao));
         }
         if (IclijXMLConfig.getConfigInstance().wantsCrosstestAutorun()) {        
-            getGoals().add(new CrossTestAction());
+            getGoals().add(new CrossTestAction(dbDao));
         }
         if (IclijXMLConfig.getConfigInstance().wantsSimulateInvestAutorun()) {        
-            getGoals().add(new SimulateInvestAction());
+            getGoals().add(new SimulateInvestAction(dbDao));
         }
         if (IclijXMLConfig.getConfigInstance().wantsImproveSimulateInvestAutorun()) {        
-            getGoals().add(new ImproveSimulateInvestAction());
+            getGoals().add(new ImproveSimulateInvestAction(dbDao));
         }
         if (IclijXMLConfig.getConfigInstance().wantsDatasetAutorun()) {        
-            getGoals().add(new DatasetAction());
+            getGoals().add(new DatasetAction(dbDao));
         }
     }
 

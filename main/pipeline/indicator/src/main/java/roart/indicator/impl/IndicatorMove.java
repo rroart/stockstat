@@ -6,7 +6,7 @@ import java.util.Map;
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.constants.Constants;
-import roart.model.StockItem;
+import roart.common.model.StockItem;
 import roart.stockutil.StockUtil;
 
 public class IndicatorMove extends Indicator {

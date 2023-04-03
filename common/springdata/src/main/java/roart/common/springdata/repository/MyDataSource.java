@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class MyDataSource {
-    @Bean
+    //@Bean
     public DataSource getDataSource() {
         System.out.println("DDDDDDDDDDDDDDDDDDDDDDDDDD");
         return DataSourceBuilder.create()

@@ -3,6 +3,10 @@ package roart.iclij.model;
 import java.util.List;
 import java.util.Map;
 
+import roart.common.model.IncDecItem;
+import roart.common.model.MemoryItem;
+import roart.common.model.TimingItem;
+
 public class WebDataJson {
     private List<MemoryItem> memoryItems;
     

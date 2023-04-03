@@ -11,6 +11,9 @@ import java.util.Map;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.ServiceConstants;
+import roart.common.model.IncDecItem;
+import roart.common.model.MLMetricsItem;
+import roart.common.model.MemoryItem;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
@@ -18,7 +21,6 @@ import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.constants.SimConstants;
-import roart.db.IclijDbDao;
 import roart.iclij.evolution.chromosome.winner.IclijConfigMapChromosomeWinner;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.Fitness;
@@ -29,9 +31,6 @@ import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MLMetricsItem;
-import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
 import roart.service.model.ProfitData;
@@ -116,7 +115,7 @@ public class ImproveAutoSimulateInvestComponent extends ComponentML {
     }
 
     @Override
-    public List<MemoryItem> calculateMemory(ComponentData param, Parameters parameters) throws Exception {
+    public List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception {
         return null;
     }
 
@@ -210,17 +209,8 @@ public class ImproveAutoSimulateInvestComponent extends ComponentML {
         return param.getService().getMetas();
     }
 
-    public List<IncDecItem> getAllIncDecs(Market market, LocalDate investStart, LocalDate investEnd) {
-        try {
-            return IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), investStart, investEnd, null);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        return new ArrayList<>();
-    }
-    
     @Override
-    protected void configSaves(ComponentData param, Map<String, Object> anUpdateMap, String subcomponent) {
+    protected void configSaves(MarketActionData actionData, ComponentData param, Map<String, Object> anUpdateMap, String subcomponent) {
     }
     
 }

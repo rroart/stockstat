@@ -14,6 +14,10 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
 import roart.common.constants.ServiceConstants;
+import roart.common.model.ActionComponentItem;
+import roart.common.model.IncDecItem;
+import roart.common.model.MLMetricsItem;
+import roart.common.model.MemoryItem;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
@@ -21,7 +25,7 @@ import roart.iclij.component.ImproveSimulateInvestComponent;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.constants.SimConstants;
-import roart.db.IclijDbDao;
+import roart.db.dao.IclijDbDao;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.Fitness;
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapChromosome;
@@ -33,13 +37,9 @@ import roart.iclij.evolution.fitness.impl.FitnessIclijConfigMap;
 import roart.iclij.evolve.Evolve;
 import roart.iclij.evolve.SimulateInvestEvolveFactory;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MLMetricsItem;
-import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
-import roart.iclij.model.action.ActionComponentItem;
 import roart.iclij.model.action.ImproveSimulateInvestActionData;
 import roart.iclij.model.action.SimulateInvestActionData;
 import roart.iclij.util.MarketUtil;
@@ -51,8 +51,8 @@ public class ImproveSimulateInvestAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public ImproveSimulateInvestAction() {
-        setActionData(new ImproveSimulateInvestActionData());
+    public ImproveSimulateInvestAction(IclijDbDao dbDao) {
+        setActionData(new ImproveSimulateInvestActionData(dbDao));
     }
     
     @Override
@@ -117,7 +117,7 @@ public class ImproveSimulateInvestAction extends MarketAction {
             }
             
             SimulateInvestData param = new SimulateInvestData(componentparam);
-            param.setAllIncDecs(((ImproveSimulateInvestComponent)component).getAllIncDecs(market, null, null));
+            param.setAllIncDecs(getAllIncDecs(market, null, null));
             param.setAllMetas(((ImproveSimulateInvestComponent)component).getAllMetas(componentparam));
             ((ImproveSimulateInvestComponent)component).getResultMaps(param, market);
             List<String> confList = component.getConflist();
@@ -142,4 +142,15 @@ public class ImproveSimulateInvestAction extends MarketAction {
         }
 
     }
+
+    public List<IncDecItem> getAllIncDecs(Market market, LocalDate investStart,
+            LocalDate investEnd) {
+        try {
+            return getActionData().getDbDao().getAllIncDecs(market.getConfig().getMarket(), investStart, investEnd, null);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return new ArrayList<>();
+    }
+
 }

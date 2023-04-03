@@ -7,11 +7,16 @@ import java.util.List;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.constants.IclijConstants;
+import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
 
 public class ImproveSimulateInvestActionData extends MarketActionData {
+
+    public ImproveSimulateInvestActionData(IclijDbDao dbDao) {
+        super(dbDao);
+    }
 
     @Override
     public String getName() {

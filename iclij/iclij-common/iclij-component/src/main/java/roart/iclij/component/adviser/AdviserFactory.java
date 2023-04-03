@@ -3,19 +3,20 @@ package roart.iclij.component.adviser;
 import java.time.LocalDate;
 
 import roart.component.model.ComponentData;
+import roart.db.dao.IclijDbDao;
 import roart.iclij.config.Market;
 import roart.iclij.config.SimulateInvestConfig;
 
 public class AdviserFactory {
 
-    public static Adviser get(int i, Market market, LocalDate investStart, LocalDate investEnd, ComponentData param, SimulateInvestConfig simulateConfig) {
+    public static Adviser get(int i, Market market, LocalDate investStart, LocalDate investEnd, ComponentData param, SimulateInvestConfig simulateConfig, IclijDbDao dbDao) {
         switch (i) {
         case -2:
             return new AggregateAdviser(market, investStart, investEnd, param, simulateConfig);
         case -1:
             return new DummyAdviser(market, investStart, investEnd, param, simulateConfig);
         case 0:
-            return new AboveBelowAdviser(market, investStart, investEnd, param, simulateConfig);
+            return new AboveBelowAdviser(market, investStart, investEnd, param, simulateConfig, dbDao);
         case 1:
             return new PeriodAdviser(market, investStart, investEnd, param, simulateConfig);
         case 2:

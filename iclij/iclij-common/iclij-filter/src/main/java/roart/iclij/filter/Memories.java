@@ -16,10 +16,10 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.model.MLMetricsItem;
+import roart.common.model.MemoryItem;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
-import roart.iclij.model.MLMetricsItem;
-import roart.iclij.model.MemoryItem;
 import roart.iclij.util.MiscUtil;
 
 public class Memories {

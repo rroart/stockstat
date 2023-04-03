@@ -27,6 +27,11 @@
       <artifactId>stockstat-common-util</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
+     <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-dbdao</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-iclij-common-config</artifactId>
@@ -52,10 +57,5 @@
 	<artifactId>jackson-annotations</artifactId>
 	<version>${jackson.version}</version>
 	</dependency>
-	       <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-db</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
   </dependencies>
 </project>

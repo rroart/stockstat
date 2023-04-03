@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import roart.common.model.MetaItem;
-import roart.model.StockItem;
+import roart.common.model.StockItem;
 
 public class MarketData {
     public List<StockItem> stocks;

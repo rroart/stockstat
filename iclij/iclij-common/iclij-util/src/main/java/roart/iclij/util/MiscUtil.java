@@ -22,14 +22,10 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import roart.iclij.model.ConfigItem;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MapList;
-import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
-import roart.iclij.model.TimingItem;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.ControlService;
@@ -37,11 +33,17 @@ import roart.iclij.service.IclijServiceList;
 import roart.iclij.service.IclijServiceResult;
 import roart.common.constants.Constants;
 import roart.common.constants.ResultMetaConstants;
+import roart.common.model.ConfigItem;
+import roart.common.model.IncDecItem;
+import roart.common.model.MLMetricsItem;
+import roart.common.model.MemoryItem;
+import roart.common.model.TimingItem;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
-import roart.db.IclijDbDao;
 import roart.iclij.config.Market;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MiscUtil {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -295,7 +297,7 @@ public class MiscUtil {
         //LocalDate date = componentInput.getEnddate();
         //LocalDate olddate = date.minusDays(2 * marketaction.getTime(market));
         List<ConfigItem> filterConfigs = new ArrayList<>();
-        List<ConfigItem> configs = IclijDbDao.getAllConfigs(market.getConfig().getMarket(), action, component, subcomponent, JsonUtil.convert(parameters), null, null);
+        List<ConfigItem> configs = marketaction.getDbDao().getAllConfigs(market.getConfig().getMarket(), action, component, subcomponent, JsonUtil.convert(parameters), null, null);
         for (ConfigItem config : configs) {
             if (buy != null && config.getBuy() != null && buy != config.getBuy()) {
                 continue;

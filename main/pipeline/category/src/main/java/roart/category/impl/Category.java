@@ -4,7 +4,7 @@ import java.util.List;
 
 import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
-import roart.model.StockItem;
+import roart.common.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.result.model.ResultItemTableRow;
 import roart.stockutil.StockDao;

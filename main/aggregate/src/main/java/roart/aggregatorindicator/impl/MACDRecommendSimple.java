@@ -16,7 +16,7 @@ import roart.common.config.ConfigConstants;
 import roart.common.config.MyConfig;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.RecommendConstants;
-import roart.model.StockItem;
+import roart.common.model.StockItem;
 import roart.stockutil.StockDao;
 
 public class MACDRecommendSimple extends RecommendMACD {

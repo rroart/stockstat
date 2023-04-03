@@ -9,6 +9,7 @@ import roart.common.model.MetaItem;
  * A DAO for Metadata
  */
 
+@Deprecated
 public class MetaDao {
     
     /**
@@ -20,7 +21,4 @@ public class MetaDao {
      * @throws Exception
      */
     
-    public static String getPeriod(MetaItem meta, int i) throws Exception {
-    	return meta.getperiod(i);
-    }
 }

@@ -55,6 +55,14 @@ public class TimeUtil {
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();        
     }
 
+    public static LocalDate convertDate(java.sql.Date date) {
+        if (date == null) {
+            log.error("Date null (break point)");
+            return null;
+        }
+        return date.toLocalDate();        
+    }
+
     public static String convertDate2(LocalDate date) {
         if (date == null) {
             return null;

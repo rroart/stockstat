@@ -40,4 +40,6 @@ module iclij.common.component {
 	requires evolution.fitness;
     requires curator.client;
     requires curator.framework;
+    requires spring.beans;
+    requires dbdao;
 }

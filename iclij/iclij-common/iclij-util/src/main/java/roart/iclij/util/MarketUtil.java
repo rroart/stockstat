@@ -12,14 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
+import roart.common.model.IncDecItem;
+import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.component.model.ComponentData;
-import roart.db.IclijDbDao;
+import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MemoryItem;
 import roart.iclij.model.config.ActionComponentConfig;
 import roart.service.model.ProfitData;
 
@@ -73,20 +73,20 @@ public class MarketUtil {
         return filtered;
     }
 
-    public List<MemoryItem> getMarketMemory(Market market) {
+    public List<MemoryItem> getMarketMemory(Market market, IclijDbDao dbDao) {
         List<MemoryItem> marketMemory = null;
         try {
-            marketMemory = IclijDbDao.getAll(market.getConfig().getMarket());
+            marketMemory = dbDao.getAll(market.getConfig().getMarket());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
         return marketMemory;
     }
 
-    public List<MemoryItem> getMarketMemory(Market market, String action, String component, String subcomponent, String parameters, LocalDate startDate, LocalDate endDate) {
+    public List<MemoryItem> getMarketMemory(Market market, String action, String component, String subcomponent, String parameters, LocalDate startDate, LocalDate endDate, IclijDbDao dbDao) {
         List<MemoryItem> marketMemory = null;
         try {
-            marketMemory = IclijDbDao.getAllMemories(market.getConfig().getMarket(), action, component, subcomponent, parameters, startDate, endDate);
+            marketMemory = dbDao.getAllMemories(market.getConfig().getMarket(), action, component, subcomponent, parameters, startDate, endDate);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

@@ -28,6 +28,10 @@ ENV MYCONFIG ${myconfig}
 ENV MYDBSERVER ${mydbserver}
 ENV MYDBSERVERPORT ${mydbserverport}
 ENV MYDBSERVERDB ${mydbserverdb}
+ENV SPRINGDATAURL ${springdataurl}
+ENV SPRINGDATAUSERNAME ${springdatausername}
+ENV SPRINGDATAPASSWORD ${springdatapassword}
+ENV SPRINGDATADRIVER ${springdatadriver}
 ENV MYDEBUG ${mydebug}
 ENV JDK_JAVA_OPTIONS ${jdk_java_options}
 ADD $DISTLIB/$DISTJAR /usr/local/bin

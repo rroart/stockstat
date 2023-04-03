@@ -6,11 +6,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.model.MLMetricsItem;
 import roart.component.model.ComponentData;
 import roart.evolution.config.EvolutionConfig;
 import roart.iclij.component.Component;
 import roart.iclij.config.Market;
-import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
 import roart.service.model.ProfitData;

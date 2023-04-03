@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.model.ConfigItem;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.RecommenderData;
@@ -21,7 +22,6 @@ import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.ConfigItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.util.MiscUtil;
@@ -31,7 +31,7 @@ import roart.service.model.ProfitData;
 public abstract class ComponentNoML extends Component {
 
     @Override
-    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket, Parameters parameters, EvolutionConfig actionEvolveConfig, String actionML) {
+    protected Map<String, Object> handleEvolve(MarketActionData action, Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket, Parameters parameters, EvolutionConfig actionEvolveConfig, String actionML) {
         if (evolve) {
             String confStr = param.getInput().getConfig().getEvolveIndicatorrecommenderEvolutionConfig();
             if (confStr != null) {
@@ -44,7 +44,7 @@ public abstract class ComponentNoML extends Component {
             Map<String, Object> aScoreMap = new HashMap<>();
             Map<String, Object> resultMap = new HashMap<>();
             List<ResultItem> retlist = param.getService().getEvolveRecommender(true, param.getDisableList(), anUpdateMap, scoreMap, resultMap);
-            nomlSaves(param, anUpdateMap);
+            nomlSaves(action, param, anUpdateMap);
             if (param.getUpdateMap() != null) {
                 param.getUpdateMap().putAll(anUpdateMap); 
             }
@@ -67,7 +67,7 @@ public abstract class ComponentNoML extends Component {
         return map;
     }
     
-    private void nomlSaves(ComponentData param, Map<String, Object> anUpdateMap) {
+    private void nomlSaves(MarketActionData actionData, ComponentData param, Map<String, Object> anUpdateMap) {
         //for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
             String key = IclijConstants.ALL;
             Object object = JsonUtil.convert(anUpdateMap);
@@ -85,7 +85,7 @@ public abstract class ComponentNoML extends Component {
                 return;
             }
             try {
-                configItem.save();
+                actionData.getDbDao().save(configItem);
             } catch (Exception e) {
                 log.info(Constants.EXCEPTION, e);
             }

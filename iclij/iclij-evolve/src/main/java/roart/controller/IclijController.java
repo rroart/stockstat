@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.common.cache.MyCache;
+import roart.db.dao.IclijDbDao;
 import roart.db.thread.DatabaseThread;
 import roart.executor.MyExecutors;
 import roart.iclij.config.IclijConfig;
@@ -17,19 +18,26 @@ import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.service.ControlService;
 import roart.iclij.service.IclijServiceParam;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@SpringBootApplication
+@ComponentScan(basePackages = "roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository")
+@EnableJdbcRepositories("roart.common.springdata.repository")
 @EnableDiscoveryClient
+@SpringBootApplication
 public class IclijController implements CommandLineRunner {
+
+    @Autowired
+    private IclijDbDao dbDao;
 
     @Value("${spring.profiles.active:}")
     private String activeProfile;
@@ -48,7 +56,7 @@ public class IclijController implements CommandLineRunner {
             String myservices = instance.getMyservices();
             String services = instance.getServices();
             String communications = instance.getCommunications();
-            new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class).start();
+            new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, dbDao).start();
             new DatabaseThread().start();
             MyCache.setCache(instance.wantCache());
             MyCache.setCacheTTL(instance.getCacheTTL());

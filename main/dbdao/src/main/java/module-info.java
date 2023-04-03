@@ -12,7 +12,6 @@ open module dbdao {
     requires common.config;
     requires coredb;
     requires coredb.spark;
-    requires db;
     requires model;
     requires pipeline.model;
     requires org.slf4j;
@@ -29,4 +28,5 @@ open module dbdao {
     requires spring.boot;
     requires spring.tx;
     requires spring.data.relational;
+    requires coredb.spring;
 }

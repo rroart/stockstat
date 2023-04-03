@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.MyMyConfig;
 import roart.common.ml.NeuralNetCommand;
+import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.model.PipelineResultData;
-import roart.model.StockItem;
 import roart.result.model.ResultItemTableRow;
 import roart.result.model.ResultMeta;
 

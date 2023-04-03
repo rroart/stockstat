@@ -16,11 +16,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
 import roart.common.config.ConfigConstants;
+import roart.common.model.IncDecItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.component.model.ComponentData;
 import roart.iclij.config.Market;
 import roart.iclij.config.SimulateInvestConfig;
-import roart.iclij.model.IncDecItem;
 
 public class DayAdviser extends Adviser {
 

@@ -74,4 +74,11 @@ public class MetaItem {
         this.lhc = lhc;
     }
 
+    public String getPeriod(int i) {
+        return period[i];
+    }
+
+    public void setPeriod(int i, String s) {
+        period[i] = s;
+    }
 }

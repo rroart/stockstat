@@ -3,6 +3,8 @@ package roart.iclij.component;
 import java.util.List;
 import java.util.Map;
 
+import roart.common.model.MLMetricsItem;
+import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
@@ -12,8 +14,6 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.MLMetricsItem;
-import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
 import roart.service.model.ProfitData;
@@ -62,7 +62,7 @@ public class FilterComponent extends ComponentML {
     }
 
     @Override
-    public List<MemoryItem> calculateMemory(ComponentData param, Parameters parameters) throws Exception {
+    public List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception {
         return null;
     }
 

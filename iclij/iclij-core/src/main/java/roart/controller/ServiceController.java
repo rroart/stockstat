@@ -7,8 +7,12 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,6 +28,7 @@ import roart.action.ActionThread;
 import roart.common.cache.MyCache;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
+import roart.db.dao.IclijDbDao;
 import roart.iclij.config.AutoSimulateInvestConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
@@ -37,11 +42,12 @@ import roart.util.ServiceUtil;
 
 @CrossOrigin
 @RestController
-@SpringBootApplication
-@EnableDiscoveryClient
 public class ServiceController {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    private IclijDbDao dbDao;
 
     private ControlService instance;
 
@@ -76,7 +82,7 @@ public class ServiceController {
             method = RequestMethod.POST)
     public IclijServiceResult getVerify(@RequestBody IclijServiceParam param)
             throws Exception {
-        return ServiceUtil.getVerify(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
+        return ServiceUtil.getVerify(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()), dbDao);
     }
 
     @RequestMapping(value = "action/findprofit",
@@ -84,7 +90,7 @@ public class ServiceController {
     public IclijServiceResult getFindProfitMarket(@RequestBody IclijServiceParam param)
             throws Exception {
         //MainAction.goals.add(new FindProfitAction());
-        return ServiceUtil.getFindProfit(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), true, false, new ArrayList<>(), new HashMap<>()), new ArrayList<>());
+        return ServiceUtil.getFindProfit(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), true, false, new ArrayList<>(), new HashMap<>()), new ArrayList<>(), dbDao);
         //Map<String, IncDecItem>[] result = new FindProfitAction().getPicks(param.getIclijConfig().getMarket(), false, param.getIclijConfig().getDate(), null, param .getIclijConfig());
        //IclijServiceResult ret = new IclijServiceResult();
        //ret.setError(error);
@@ -97,7 +103,7 @@ public class ServiceController {
             throws Exception {
         //MainAction.goals.add(new ImproveProfitAction());
         //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
-        return ServiceUtil.getImproveAboveBelow(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), true, false, new ArrayList<>(), new HashMap<>()));
+        return ServiceUtil.getImproveAboveBelow(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), true, false, new ArrayList<>(), new HashMap<>()), dbDao);
     }
 
     @RequestMapping(value = "action/improvefilter",
@@ -106,7 +112,7 @@ public class ServiceController {
             throws Exception {
         //MainAction.goals.add(new ImproveProfitAction());
         //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
-        return ServiceUtil.getImproveFilter(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), true, false, new ArrayList<>(), new HashMap<>()));
+        return ServiceUtil.getImproveFilter(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), true, false, new ArrayList<>(), new HashMap<>()), dbDao);
     }
 
     @RequestMapping(value = "action/improveprofit",
@@ -115,7 +121,7 @@ public class ServiceController {
             throws Exception {
         //MainAction.goals.add(new ImproveProfitAction());
         //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
-        return ServiceUtil.getImproveProfit(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), true, false, new ArrayList<>(), new HashMap<>()));
+        return ServiceUtil.getImproveProfit(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), true, false, new ArrayList<>(), new HashMap<>()), dbDao);
     }
 
     @RequestMapping(value = "action/simulateinvest",
@@ -124,7 +130,7 @@ public class ServiceController {
             throws Exception {
         //MainAction.goals.add(new ImproveProfitAction());
         //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
-        return ServiceUtil.getSimulateInvest(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), true, false, new ArrayList<>(), new HashMap<>()));
+        return ServiceUtil.getSimulateInvest(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), true, false, new ArrayList<>(), new HashMap<>()), dbDao);
     }
 
     @RequestMapping(value = "action/simulateinvest/market/{market}",
@@ -136,7 +142,7 @@ public class ServiceController {
         IclijConfig config = new IclijConfig(IclijXMLConfig.getConfigInstance());
         Map<String, Object> map = simConfig.asMap();
         config.getConfigValueMap().putAll(map);
-        return ServiceUtil.getSimulateInvest(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()));
+        return ServiceUtil.getSimulateInvest(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), dbDao);
     }
 
     @RequestMapping(value = "action/improvesimulateinvest/market/{market}",
@@ -172,7 +178,7 @@ public class ServiceController {
             config.getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, adviser);
         }
         */
-        return ServiceUtil.getImproveSimulateInvest(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), map));
+        return ServiceUtil.getImproveSimulateInvest(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), map), dbDao);
     }
 
     @RequestMapping(value = "action/autosimulateinvest/market/{market}",
@@ -184,7 +190,7 @@ public class ServiceController {
         IclijConfig config = new IclijConfig(IclijXMLConfig.getConfigInstance());
         Map<String, Object> map = simConfig.asMap();
         config.getConfigValueMap().putAll(map);
-        return ServiceUtil.getAutoSimulateInvest(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()));
+        return ServiceUtil.getAutoSimulateInvest(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), dbDao);
     }
 
     @RequestMapping(value = "action/improveautosimulateinvest/market/{market}",
@@ -220,7 +226,7 @@ public class ServiceController {
             config.getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, adviser);
         }
         */
-        return ServiceUtil.getImproveAutoSimulateInvest(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), map));
+        return ServiceUtil.getImproveAutoSimulateInvest(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), map), dbDao);
     }
 
     @RequestMapping(value = "action/improvefilter/market/{market}/ga/{ga}",
@@ -236,7 +242,7 @@ public class ServiceController {
         if (ga != null) {
             config.getConfigValueMap().put(IclijConfigConstants.EVOLVEGA, ga);
         }
-        return ServiceUtil.getImproveFilter(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()));
+        return ServiceUtil.getImproveFilter(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), dbDao);
     }
 
     @RequestMapping(value = "action/improveabovebelow/market/{market}/ga/{ga}",
@@ -252,7 +258,7 @@ public class ServiceController {
         if (ga != null) {
             config.getConfigValueMap().put(IclijConfigConstants.EVOLVEGA, ga);
         }
-        return ServiceUtil.getImproveAboveBelow(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()));
+        return ServiceUtil.getImproveAboveBelow(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), dbDao);
     }
 
     @RequestMapping(value = "cache/invalidate",

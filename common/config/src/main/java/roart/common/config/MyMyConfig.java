@@ -912,7 +912,7 @@ public class MyMyConfig extends MyConfig {
 
     public boolean wantDbHibernate() {
         System.out.println("hb " + (Boolean) getConfigValueMap().get(ConfigConstants.DATABASEHIBERNATE));
-        return (Boolean) getValueOrDefault(ConfigConstants.DATABASEHIBERNATE);
+        return (Boolean) getNotEmptyValueOrDefault(ConfigConstants.DATABASEHIBERNATE);
     }
 
     public boolean wantPredictors() {

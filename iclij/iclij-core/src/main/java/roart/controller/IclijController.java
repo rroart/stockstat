@@ -18,6 +18,7 @@ import roart.action.MainAction;
 import roart.common.cache.MyCache;
 import roart.common.constants.Constants;
 import roart.common.util.MemUtil;
+import roart.db.dao.IclijDbDao;
 import roart.db.thread.DatabaseThread;
 import roart.eureka.util.EurekaUtil;
 import roart.executor.MyExecutors;
@@ -29,20 +30,27 @@ import roart.populate.PopulateThread;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@SpringBootApplication
+@ComponentScan(basePackages = "roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository")
+@EnableJdbcRepositories("roart.common.springdata.repository")
 @EnableDiscoveryClient
+@SpringBootApplication
 public class IclijController implements CommandLineRunner {
 
+    @Autowired
+    private IclijDbDao dbDao;
+    
     @Value("${spring.profiles.active:}")
     private String activeProfile;
     
@@ -62,15 +70,15 @@ public class IclijController implements CommandLineRunner {
             String myservices = instance.getMyservices();
             String services = instance.getServices();
             String communications = instance.getCommunications();
-            new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class).start();
-            new PopulateThread().start();
+            new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, dbDao).start();
+            new PopulateThread(dbDao).start();
             new DatabaseThread().start();
-            new ActionThread().start();
+            new ActionThread(dbDao).start();
             new MemRunner().start();
             MyCache.setCache(instance.wantCache());
             MyCache.setCacheTTL(instance.getCacheTTL());
             if (MainAction.wantsGoals()) {        
-                Action action = new MainAction();
+                Action action = new MainAction(dbDao);
                 action.goal(null, null, null);
             }
 	    } catch (Exception e) {

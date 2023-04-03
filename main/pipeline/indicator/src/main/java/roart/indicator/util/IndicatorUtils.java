@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.category.AbstractCategory;
 import roart.common.config.MarketStock;
+import roart.common.config.MyConfig;
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.db.common.DbAccess;
@@ -35,8 +36,9 @@ import roart.indicator.impl.IndicatorSTOCH;
 import roart.indicator.impl.IndicatorSTOCHRSI;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
-import roart.model.StockItem;
+import roart.common.model.StockItem;
 import roart.pipeline.Pipeline;
+import roart.pipeline.common.Calculatable;
 import roart.pipeline.data.ExtraData;
 import roart.pipeline.impl.DataReader;
 import roart.pipeline.impl.ExtraReader;
@@ -780,4 +782,43 @@ public class IndicatorUtils {
         }
     }
 
+    public static Map<String, Object[]> doCalculationsArrNonNull(MyConfig conf, Map<String, double[][]> listMap, String key, Calculatable indicator, boolean wantPercentizedPriceIndex) {
+        Map<String, Object[]> objectMap = new HashMap<>();
+        for (String id : listMap.keySet()) {
+            //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
+            double [][] list = listMap.get(id);
+            if ("F00000HGSN".equals(id)) {              
+                log.debug("braz " + Arrays.toString(list));                
+            }
+            /*
+           if (wantPercentizedPriceIndex && list.length > 0 && list[0].length > 0) {
+               double first = list[0][0];
+               for(int i = 0; i < list.length; i ++)
+                list[i] = ArraysUtil.getPercentizedPriceIndex(list[i], key, indicator.getCategory(), first);
+            }
+           */
+           if ("2647727".equals(id)) {              
+               log.debug("braz " + Arrays.toString(list));                
+           }
+            log.debug("beg end " + id + " "+ key);
+            //System.out.println("beg end " + begOfArray.value + " " + endOfArray.value);
+            log.debug("list " + list.length + " " + Arrays.asList(list));
+            //double momentum = tu.getMom(list, conf.getDays());
+            if (list.length == 180) {
+                log.debug("180");
+            } else {
+                log.debug("not");
+            }
+            if (list[0].length == 0) {
+                //continue;
+            }
+            Object[] objs = (Object[]) indicator.calculate(list);
+            if ("F00000HGSN".equals(id)) {
+                log.debug("braz " + Arrays.asList(list));
+            }
+            objectMap.put(id, objs);
+        }
+        return objectMap;
+    }
+    
 }

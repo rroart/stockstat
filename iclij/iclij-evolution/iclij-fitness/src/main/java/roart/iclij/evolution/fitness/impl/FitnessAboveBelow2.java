@@ -13,11 +13,11 @@ import io.jenetics.BitGene;
 import io.jenetics.Chromosome;
 import io.jenetics.Genotype;
 import roart.iclij.model.action.MarketActionData;
+import roart.common.model.IncDecItem;
+import roart.common.model.MLMetricsItem;
 import roart.component.model.ComponentData;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.Parameters;
 import roart.service.model.ProfitData;
 

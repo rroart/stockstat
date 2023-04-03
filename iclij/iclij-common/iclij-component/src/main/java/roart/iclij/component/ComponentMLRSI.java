@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
+import roart.common.model.MLMetricsItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.component.model.ComponentData;
 import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
@@ -18,7 +19,6 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
 import roart.service.model.ProfitData;

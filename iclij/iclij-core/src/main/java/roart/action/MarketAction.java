@@ -25,10 +25,16 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
+import roart.common.model.ActionComponentItem;
+import roart.common.model.IncDecItem;
+import roart.common.model.MLMetricsItem;
+import roart.common.model.MemoryItem;
 import roart.common.model.MetaItem;
+import roart.common.model.TimingItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.MetaUtil;
@@ -38,7 +44,7 @@ import roart.iclij.component.factory.ComponentFactory;
 import roart.component.model.ComponentData;
 import roart.constants.IclijConstants;
 import roart.controller.IclijController;
-import roart.db.IclijDbDao;
+import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
@@ -48,15 +54,10 @@ import roart.iclij.config.Market;
 import roart.iclij.evolution.fitness.impl.FitnessAboveBelow;
 import roart.iclij.factory.actioncomponentconfig.ActionComponentConfigFactory;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MapList;
-import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
-import roart.iclij.model.TimingItem;
 import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
-import roart.iclij.model.action.ActionComponentItem;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.model.config.ActionComponentConfig;
@@ -129,7 +130,7 @@ public abstract class MarketAction extends Action {
     public WebData getMarkets(Action parent, ComponentInput input, Boolean evolve, Integer priority) {
         List<TimingItem> timings = null;
         try {
-            timings = IclijDbDao.getAllTiming();
+            timings = getActionData().getDbDao().getAllTiming();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -339,7 +340,7 @@ public abstract class MarketAction extends Action {
     private List<ActionComponentItem> getList(String action, Map<String, Component> componentMapFiltered, List<TimingItem> timings, Market market, ComponentData param, List<TimingItem> currentTimings, List<TimingItem> timingsdone) {
         List<MLMetricsItem> mltests = null;
         try {
-            mltests = IclijDbDao.getAllMLMetrics(market.getConfig().getMarket(), null, null);
+            mltests = getActionData().getDbDao().getAllMLMetrics(market.getConfig().getMarket(), null, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -571,13 +572,13 @@ public abstract class MarketAction extends Action {
         
         List<TimingItem> timings = null;
         try {
-            timings = IclijDbDao.getAllTiming(market.getConfig().getMarket(), IclijConstants.MACHINELEARNING, olddate, prevdate);
+            timings = getActionData().getDbDao().getAllTiming(market.getConfig().getMarket(), IclijConstants.MACHINELEARNING, olddate, prevdate);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
         List<MLMetricsItem> mltests = null;
         try {
-            mltests = IclijDbDao.getAllMLMetrics(market.getConfig().getMarket(), null, null);
+            mltests = getActionData().getDbDao().getAllMLMetrics(market.getConfig().getMarket(), null, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -762,7 +763,7 @@ public abstract class MarketAction extends Action {
     public void getListComponents(WebData myData, ComponentData param, IclijConfig config,
             Parameters parameters, Boolean evolve, Market market, Map<String, ComponentData> dataMap,
             Memories memories, LocalDate olddate, LocalDate prevdate) {
-        List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market, IclijConstants.IMPROVEABOVEBELOW, null, null, JsonUtil.convert(parameters), olddate, prevdate);
+        List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market, IclijConstants.IMPROVEABOVEBELOW, null, null, JsonUtil.convert(parameters), olddate, prevdate, getActionData().getDbDao());
         marketMemory = marketMemory.stream().filter(e -> "Confidence".equals(e.getType())).collect(Collectors.toList());
         if (!marketMemory.isEmpty()) {
             int jj = 0;

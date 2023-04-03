@@ -19,9 +19,15 @@ import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.constants.ServiceConstants;
+import roart.common.model.ActionComponentItem;
+import roart.common.model.IncDecItem;
+import roart.common.model.MLMetricsItem;
+import roart.common.model.MemoryItem;
+import roart.common.model.TimingItem;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
+import roart.db.dao.IclijDbDao;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.fitness.Fitness;
 import roart.gene.impl.ConfigMapGene;
@@ -32,13 +38,8 @@ import roart.iclij.config.Market;
 import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.iclij.evolution.chromosome.winner.ConfigMapChromosomeWinner;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MLMetricsItem;
-import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
-import roart.iclij.model.TimingItem;
 import roart.iclij.model.WebData;
-import roart.iclij.model.action.ActionComponentItem;
 import roart.iclij.model.action.EvolveActionData;
 import roart.iclij.model.action.ImproveProfitActionData;
 import roart.iclij.util.MiscUtil;
@@ -50,8 +51,8 @@ public class ImproveProfitAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
-    public ImproveProfitAction() {
-        setActionData(new ImproveProfitActionData());
+    public ImproveProfitAction(IclijDbDao dbDao) {
+        setActionData(new ImproveProfitActionData(dbDao));
     }
     
     private List<Market> getMarkets(IclijConfig instance) {

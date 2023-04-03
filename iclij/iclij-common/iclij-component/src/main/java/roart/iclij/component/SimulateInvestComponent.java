@@ -38,7 +38,11 @@ import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.constants.ServiceConstants;
+import roart.common.model.IncDecItem;
+import roart.common.model.MLMetricsItem;
+import roart.common.model.MemoryItem;
 import roart.common.model.MetaItem;
+import roart.common.model.SimDataItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
@@ -53,7 +57,6 @@ import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.constants.IclijConstants;
 import roart.constants.SimConstants;
-import roart.db.IclijDbDao;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.iclij.evolution.chromosome.winner.IclijConfigMapChromosomeWinner;
@@ -70,11 +73,7 @@ import roart.iclij.config.Market;
 import roart.iclij.config.SimulateFilter;
 import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.MLMetricsItem;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
-import roart.iclij.model.SimDataItem;
 import roart.iclij.model.Trend;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.service.IclijServiceResult;
@@ -329,7 +328,7 @@ public class SimulateInvestComponent extends ComponentML {
                     //simConfigs = new ArrayList<>();
                     //simConfigs.add(getSimConfig(config));
                 } else {
-                    simConfigs = getSimConfigs(market.getConfig().getMarket(), autoSimConfig, autofilter, filters, config);
+                    simConfigs = getSimConfigs(market.getConfig().getMarket(), autoSimConfig, autofilter, filters, config, action);
                     simConfigs = new HashMap<>(simConfigs);
                 }
                 List<Pair<Long, SimulateInvestConfig>> simsConfigs = new ArrayList<>();
@@ -343,7 +342,7 @@ public class SimulateInvestComponent extends ComponentML {
                     }
                 }
                 List<Triple<SimulateInvestConfig, OneRun, Results>> simTriplets = getTriples(market, param, data,
-                        investStart, investEnd, mydate, simsConfigs);
+                        investStart, investEnd, mydate, simsConfigs, action);
                 if (evolving || offset > 0) {
                     investEnd = lastInvestEnd;
                 }
@@ -352,24 +351,24 @@ public class SimulateInvestComponent extends ComponentML {
                 if (autoSimConfig == null) {
                     currentSimConfig = simConfig;
                 }
-                OneRun currentOneRun = getOneRun(market, param, null, simConfig, data, investStart, investEnd, null);
+                OneRun currentOneRun = getOneRun(market, param, null, simConfig, data, investStart, investEnd, null, action);
                 Adviser selladviser = null;
                 Adviser voteadviser = null;
                 SimulateInvestConfig sell = null;
                 SimulateInvestConfig vote = null;
                 if (autoSimConfig == null) {
                     int adviserId = simConfig.getAdviser();
-                    currentOneRun.adviser = new AdviserFactory().get(adviserId, market, investStart, investEnd, param, simConfig);
+                    currentOneRun.adviser = new AdviserFactory().get(adviserId, market, investStart, investEnd, param, simConfig, action.getDbDao());
                     currentOneRun.adviser.getValueMap(data.stockDates, data.firstidx, data.lastidx, data.getCatValMap(currentOneRun.adviser.getInterpolate(simConfig.getInterpolate())));
                 } else {
-                    selladviser = new AdviserFactory().get(-1, market, investStart, investEnd, param, simConfig);
+                    selladviser = new AdviserFactory().get(-1, market, investStart, investEnd, param, simConfig, action.getDbDao());
                     sell = JsonUtil.copy(simConfig);
                     sell.setAdviser(-1);
                     sell.setConfidence(true);
                     sell.setConfidenceValue(2.0);
                     sell.setConfidenceFindTimes(0);
                     if (autoSimConfig.getVote() != null && autoSimConfig.getVote()) {
-                        voteadviser = new AdviserFactory().get(-2, market, investStart, investEnd, param, simConfig);
+                        voteadviser = new AdviserFactory().get(-2, market, investStart, investEnd, param, simConfig, action.getDbDao());
                         vote = JsonUtil.copy(simConfig);
                         vote.setAdviser(-2);
                         //vote.setConfidence(true);
@@ -467,7 +466,7 @@ public class SimulateInvestComponent extends ComponentML {
                         simsConfigs = getSimConfigs(simConfigs, mydate, keys, market);
                         simConfigs.keySet().removeAll(keys);
                         List<Triple<SimulateInvestConfig, OneRun, Results>> newSimTriplets = getTriples(market, param, data,
-                                investStart, investEnd, mydate, simsConfigs);
+                                investStart, investEnd, mydate, simsConfigs, action);
                         if (newSimTriplets.size() > 0) {
                             if (MAXARR > 0) {
                                 //newSimTriplets = newSimTriplets.subList(0, Math.min(MAXARR, simTriplets.size()));
@@ -864,11 +863,11 @@ public class SimulateInvestComponent extends ComponentML {
     }
 
     private List<Triple<SimulateInvestConfig, OneRun, Results>> getTriples(Market market, ComponentData param,
-            Data data, LocalDate investStart, LocalDate investEnd, Mydate mydate, List<Pair<Long, SimulateInvestConfig>> simsConfigs) {
+            Data data, LocalDate investStart, LocalDate investEnd, Mydate mydate, List<Pair<Long, SimulateInvestConfig>> simsConfigs, MarketActionData action) {
         List<Triple<SimulateInvestConfig, OneRun, Results>> simPairs = new ArrayList<>();
         for (Pair<Long, SimulateInvestConfig> aConfig : simsConfigs) {
             int adviserId = aConfig.getRight().getAdviser();
-            OneRun onerun = getOneRun(market, param, aConfig.getLeft(), aConfig.getRight(), data, investStart, investEnd, adviserId);
+            OneRun onerun = getOneRun(market, param, aConfig.getLeft(), aConfig.getRight(), data, investStart, investEnd, adviserId, action);
 
             Results results = new Results();
 
@@ -880,10 +879,10 @@ public class SimulateInvestComponent extends ComponentML {
     }
 
     private OneRun getOneRun(Market market, ComponentData param, Long dbid, SimulateInvestConfig simConfig, Data data,
-            LocalDate investStart, LocalDate investEnd, Integer adviserId) {
+            LocalDate investStart, LocalDate investEnd, Integer adviserId, MarketActionData action) {
         OneRun onerun = new OneRun();
         if (adviserId != null) {
-        onerun.adviser = new AdviserFactory().get(adviserId, market, investStart, investEnd, param, simConfig);
+        onerun.adviser = new AdviserFactory().get(adviserId, market, investStart, investEnd, param, simConfig, action.getDbDao());
         onerun.adviser.getValueMap(data.stockDates, data.firstidx, data.lastidx, data.getCatValMap(onerun.adviser.getInterpolate(simConfig.getInterpolate())));
         }
         onerun.capital = new Capital();
@@ -992,7 +991,7 @@ public class SimulateInvestComponent extends ComponentML {
         return abnormExcludes;
     }
 
-    private Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> getSimConfigs(String market, AutoSimulateInvestConfig autoSimConf, List<SimulateFilter> filter, List<SimulateFilter[]> filters, IclijConfig config) {
+    private Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> getSimConfigs(String market, AutoSimulateInvestConfig autoSimConf, List<SimulateFilter> filter, List<SimulateFilter[]> filters, IclijConfig config, MarketActionData actionData) {
         List<SimDataItem> all = new ArrayList<>();
         try {
             String simkey = CacheConstants.SIMDATA + market + autoSimConf.getStartdate() + autoSimConf.getEnddate();
@@ -1003,7 +1002,7 @@ public class SimulateInvestComponent extends ComponentML {
                 if (autoSimConf.getEnddate() != null) {
                     endDate = TimeUtil.convertDate(TimeUtil.replace(autoSimConf.getEnddate()));
                 }
-                all = SimDataItem.getAll(market, null, null); // fix later: , startDate, endDate);
+                actionData.getDbDao().getAllSimData(market, null, null); // fix later: , startDate, endDate);
                 MyCache.getInstance().put(simkey, all);
             }
             /*
@@ -2227,7 +2226,7 @@ public class SimulateInvestComponent extends ComponentML {
     }
 
     @Override
-    public List<MemoryItem> calculateMemory(ComponentData param, Parameters parameters) throws Exception {
+    public List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception {
         return null;
     }
 
@@ -2504,25 +2503,6 @@ public class SimulateInvestComponent extends ComponentML {
             }
         }
         return newbuys;
-    }
-
-    private List<IncDecItem> getAllIncDecs(Market market, LocalDate investStart, LocalDate investEnd) {
-        try {
-            return IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), investStart, investEnd, null);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        return new ArrayList<>();
-    }
-
-    private List<MemoryItem> getAllMemories(Market market, LocalDate investStart, LocalDate investEnd) {
-        try {
-            return IclijDbDao.getAllMemories(market.getConfig().getMarket(), IclijConstants.IMPROVEABOVEBELOW, PipelineConstants.ABOVEBELOW, null, null, investStart, investEnd);
-            // also filter on params
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }        
-        return new ArrayList<>();
     }
 
     private List<MetaItem> getAllMetas(ComponentData param) {

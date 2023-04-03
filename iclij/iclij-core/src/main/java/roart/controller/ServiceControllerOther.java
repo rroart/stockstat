@@ -24,6 +24,7 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
+import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.model.component.ComponentInput;
@@ -36,8 +37,8 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public ServiceControllerOther(String myservices, String services, String communications, Class replyclass) {
-        super(myservices, services, communications, replyclass);
+    public ServiceControllerOther(String myservices, String services, String communications, Class replyclass, IclijDbDao dbDao) {
+        super(myservices, services, communications, replyclass, dbDao);
     }
 
     public void get(Object param, Communication c) { 

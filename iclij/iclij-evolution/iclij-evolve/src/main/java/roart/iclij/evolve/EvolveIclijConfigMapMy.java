@@ -3,6 +3,7 @@ package roart.iclij.evolve;
 import java.util.List;
 import java.util.Map;
 
+import roart.common.model.MLMetricsItem;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.iclij.evolution.chromosome.winner.IclijConfigMapChromosomeWinner;
@@ -12,7 +13,6 @@ import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapGene;
 import roart.iclij.component.Component;
 import roart.iclij.config.Market;
 import roart.iclij.evolution.fitness.impl.FitnessIclijConfigMap;
-import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
 import roart.service.model.ProfitData;

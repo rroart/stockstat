@@ -1,16 +1,23 @@
 package roart.action;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import roart.iclij.model.action.ActionComponentItem;
+import roart.common.model.ActionComponentItem;
+import roart.db.dao.IclijDbDao;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 public class ActionThreadTest {
 
-	@Test
+    @Autowired
+    private IclijDbDao dbDao;
+
+    @Test
 	public void test() {
-		ActionThread t = new ActionThread();
+		ActionThread t = new ActionThread(dbDao);
 		
 		ActionComponentItem item1 = new ActionComponentItem();
 		item1.setPriority(-20);

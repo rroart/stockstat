@@ -10,7 +10,6 @@ import org.ta4j.core.TimeSeries;
 import org.ta4j.core.indicators.ATRIndicator;
 import org.ta4j.core.indicators.StochasticRSIIndicator;
 
-import roart.model.StockItem;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.stockutil.StockUtil;

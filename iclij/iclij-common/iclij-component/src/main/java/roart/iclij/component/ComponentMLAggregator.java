@@ -13,6 +13,9 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import roart.common.constants.Constants;
 import roart.common.constants.ResultMetaConstants;
+import roart.common.model.IncDecItem;
+import roart.common.model.MLMetricsItem;
+import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -25,9 +28,6 @@ import roart.iclij.evolution.chromosome.winner.ConfigMapChromosomeWinner;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MLMetricsItem;
-import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.util.MiscUtil;
@@ -68,6 +68,9 @@ public abstract class ComponentMLAggregator extends ComponentML {
         }
         Map<String, Object> resultMap = param.getResultMap();
         Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
+        if (aResultMap == null) {
+            int jj = 0;
+        }
         System.out.println("c " + aResultMap.keySet());
         System.out.println("a " + resultMap.keySet());
         System.out.println("b " + param.getCategoryValueMap().keySet());
@@ -158,7 +161,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
     }
 
     @Override
-    public List<MemoryItem> calculateMemory(ComponentData componentparam, Parameters parameters) throws Exception {
+    public List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters) throws Exception {
         ComponentMLData param = (ComponentMLData) componentparam;
         Map<String, Object> resultMap = param.getResultMap();
         Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
@@ -417,7 +420,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
             memory.setLearnConfidence(learnConfidence);
             //memory.setPosition(count);
             if (param.isDoSave()) {
-                memory.save();
+                actionData.getDbDao().save(memoryList);
             }
             memoryList.add(memory);
             if (param.isDoPrint()) {

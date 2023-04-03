@@ -14,7 +14,6 @@ module iclij.common.verifyprofit {
     requires iclij.common.config;
     requires iclij.common.model;
     requires iclij.common.service;
-    requires db;
     requires common.config;
     requires org.apache.commons.lang3;
     requires org.slf4j;

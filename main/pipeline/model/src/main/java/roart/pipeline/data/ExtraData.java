@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang3.tuple.Pair;
 
 import roart.category.AbstractCategory;
-import roart.model.StockItem;
+import roart.common.model.StockItem;
 import roart.pipeline.Pipeline;
 
 public class ExtraData {

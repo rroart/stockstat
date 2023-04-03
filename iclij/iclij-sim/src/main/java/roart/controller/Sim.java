@@ -25,6 +25,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -50,13 +51,14 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.SimulateFilter;
-import roart.iclij.model.SimDataItem;
 import roart.iclij.util.MiscUtil;
 import roart.simulate.model.SimulateStock;
 import roart.simulate.model.StockHistory;
 import roart.simulate.util.SimUtil;
 import roart.constants.SimConstants;
+import roart.db.dao.IclijDbDao;
 import roart.common.inmemory.model.InmemoryMessage;
+import roart.common.model.SimDataItem;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.factory.InmemoryFactory;
 import org.apache.commons.math3.stat.correlation.KendallsCorrelation;
@@ -71,6 +73,12 @@ public class Sim {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private IclijDbDao dbDao;
+    
+    public Sim(IclijDbDao dbDao) {
+        this.dbDao = dbDao;
+    }
+    
     public static CuratorFramework curatorClient;
 
     public void method(String param, String string, boolean b) {
@@ -269,7 +277,7 @@ public class Sim {
                 data.setFilter(JsonUtil.convert(filter));
                 data.setConfig(JsonUtil.convert(chromosome.getMap()));
                 try {
-                    data.save();
+                    dbDao.save(data);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -295,7 +303,7 @@ public class Sim {
             data.setFilter(JsonUtil.convert(filter));
             data.setConfig(JsonUtil.convert(chromosome.getMap()));
             try {
-                data.save();
+                dbDao.save(data);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }

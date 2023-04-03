@@ -9,11 +9,16 @@ import java.util.stream.Collectors;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.constants.IclijConstants;
+import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
 
 public class EvolveActionData extends MarketActionData {
+
+    public EvolveActionData(IclijDbDao dbDao) {
+        super(dbDao);
+    }
 
     @Override
     public Short getTime(Market market) {

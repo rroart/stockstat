@@ -8,6 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
 import roart.iclij.model.config.ActionComponentConfig;
@@ -15,6 +16,8 @@ import roart.iclij.model.config.ActionComponentConfig;
 public abstract class MarketActionData {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
+    
+    private IclijDbDao dbDao;
     
     public abstract String getName();
 
@@ -28,6 +31,11 @@ public abstract class MarketActionData {
         return false;
     }
     
+    public MarketActionData(IclijDbDao dbDao) {
+        super();
+        this.dbDao = dbDao;
+    }
+
     public Map<Boolean, String> getBooleanTexts() {
         Map<Boolean, String> map = new HashMap<>();
         map.put(null, "");
@@ -72,4 +80,7 @@ public abstract class MarketActionData {
         return new Object[] { null, null };
     }
 
+    public IclijDbDao getDbDao() {
+        return dbDao;
+    }
 }

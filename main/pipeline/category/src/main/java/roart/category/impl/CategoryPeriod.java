@@ -5,6 +5,7 @@ import java.util.Map;
 
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.model.StockItem;
 import roart.common.util.MathUtil;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.impl.IndicatorATR;
@@ -15,7 +16,6 @@ import roart.indicator.impl.IndicatorRSI;
 import roart.indicator.impl.IndicatorSTOCH;
 import roart.indicator.impl.IndicatorSTOCHRSI;
 import roart.indicator.util.IndicatorUtils;
-import roart.model.StockItem;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.pipeline.Pipeline;

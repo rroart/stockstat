@@ -15,4 +15,5 @@ module common.controller {
     requires org.slf4j;
     requires guava;
     requires com.fasterxml.jackson.databind;
+    requires dbdao;
 }

@@ -14,11 +14,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import roart.common.config.MyConfig;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.model.OHLC;
+import roart.common.model.StockItem;
 import roart.common.util.ArraysUtil;
 import roart.common.util.MapUtil;
 import roart.common.util.TimeUtil;
-import roart.model.OHLC;
-import roart.model.StockItem;
 import roart.model.data.MarketData;
 
 public class StockDao {

@@ -18,21 +18,22 @@ public class DbDaoUtil {
      * 
      * @return the period text fields
      * @param market
+     * @param dbDao 
      */
     
-    public static String[] getPeriodText(String market, MyMyConfig conf) {
+    public static String[] getPeriodText(String market, MyMyConfig conf, DbDao dbDao) {
         String[] periodText = { "Period1", "Period2", "Period3", "Period4", "Period5", "Period6", "Period7", "Period8", "Period9" };
         MetaItem meta = null;
         try {
-            meta = DbDao.getById(market, conf);
+            meta = dbDao.getById(market, conf);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
         try {
             if (meta != null) {
                 for (int i = 0; i < Constants.PERIODS; i++) {
-                    if (MetaDao.getPeriod(meta, i) != null) {
-                        periodText[i] = MetaDao.getPeriod(meta, i);
+                    if (meta.getPeriod(i) != null) {
+                        periodText[i] = meta.getPeriod(i);
                     }
                 }
             }
@@ -42,10 +43,12 @@ public class DbDaoUtil {
         return periodText;
     }
 
+    // ?
+    @Deprecated
     public static MetaItem getMeta(String market, MyMyConfig conf) {
         MetaItem meta = null;
         try {
-            meta = DbDao.getById(market, conf);
+            //meta = DbDao.getById(market, conf);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
