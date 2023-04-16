@@ -31,7 +31,7 @@ import java.util.List;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class IncDec implements Serializable /*,Comparable<Meta>*/ {
 
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Id
     @Column
     private Long dbid;

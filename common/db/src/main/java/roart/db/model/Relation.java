@@ -27,7 +27,7 @@ import org.hibernate.query.SelectionQuery;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Relation implements Serializable {
 
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Id
     @Column
     private Long dbid;

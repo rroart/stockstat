@@ -42,6 +42,8 @@
 		    --add-opens springdata/roart.common.springdata.repository=spring.core
 		    --add-opens coredb.spring/roart.db.spring=spring.core
 		    --add-opens iclij.core/roart.controller=spring.core
+		    --add-opens iclij.common.config/roart.iclij.config=spring.core
+		    --add-opens common.config/roart.common.config=spring.core
 		    --add-opens db/roart.db.model=org.hibernate.orm.core
 		  </argLine>
 		</configuration>

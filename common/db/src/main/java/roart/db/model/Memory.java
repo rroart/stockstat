@@ -32,7 +32,7 @@ import roart.db.thread.Queues;
 @org.hibernate.annotations.Table(appliesTo = "Memory")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Memory implements Serializable {
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Id
     @Column
     private Long id;

@@ -31,7 +31,7 @@ import roart.db.thread.Queues;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Timing implements Serializable {
 
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Id
     @Column
     private Long dbid;
