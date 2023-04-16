@@ -16,4 +16,5 @@ module common.config {
     requires com.fasterxml.jackson.databind;
     requires commons.configuration2;
     requires common.constants;
+    requires spring.context;
 }

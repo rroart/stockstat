@@ -16,7 +16,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.apache.commons.configuration2.Configuration;
+//import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.HierarchicalConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.XMLConfiguration;
@@ -37,12 +37,15 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.springframework.context.annotation.Configuration;
+
 import roart.common.config.ConfigTreeMap;
 import roart.common.config.Extra;
 import roart.common.config.MarketStockExpression;
 import roart.common.constants.Constants;
 import roart.config.IclijConfigConstantMaps;
 
+@Configuration
 public class IclijXMLConfig {
 
     protected static Logger log = LoggerFactory.getLogger(IclijXMLConfig.class);
@@ -68,10 +71,11 @@ public class IclijXMLConfig {
         return (IclijConfig) configInstance;
     }
 
-    private static Configuration config = null;
+    private static org.apache.commons.configuration2.Configuration config = null;
     private static XMLConfiguration configxml = null;
 
     public IclijXMLConfig() {
+        getConfigInstance();
         try {
             String configFile = System.getProperty("config");
             if (configFile == null) {

@@ -16,4 +16,5 @@ module iclij.common.config {
     requires com.fasterxml.jackson.databind;
     requires common.constants;
     requires com.fasterxml.jackson.annotation;
+    requires spring.context;
 }

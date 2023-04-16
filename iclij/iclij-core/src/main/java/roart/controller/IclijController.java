@@ -42,7 +42,7 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.bind.annotation.RestController;
 
-@ComponentScan(basePackages = "roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository")
+@ComponentScan(basePackages = "roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
 @EnableJdbcRepositories("roart.common.springdata.repository")
 @EnableDiscoveryClient
 @SpringBootApplication

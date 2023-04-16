@@ -60,7 +60,7 @@ import roart.service.evolution.EvolutionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import roart.db.dao.DbDao;
 
-@ComponentScan(basePackages = "roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository")
+@ComponentScan(basePackages = "roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.common.config")
 @EnableJdbcRepositories("roart.common.springdata.repository")
 @CrossOrigin
 @RestController
@@ -358,15 +358,6 @@ public class ServiceController implements CommandLineRunner {
         for(String beanName : allBeanNames) {
             System.out.println(beanName);
         }
-    }
-    
-    public DataSource getDataSource() {
-        return DataSourceBuilder.create()
-          .driverClassName("org.postgresql.Driver")
-          .url("jdbc:postgresql://localhost:5432/stockstatdev")
-          .username("stockstat")
-          .password("password")
-          .build();     
     }
     
     @RequestMapping(value = "cache/invalidate",

@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.apache.commons.configuration2.Configuration;
+//import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.HierarchicalConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.XMLConfiguration;
@@ -28,8 +28,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.springframework.context.annotation.Configuration;
+
 import roart.common.constants.Constants;
 
+@Configuration
 public class MyXMLConfig {
 
     protected static Logger log = LoggerFactory.getLogger(MyConfig.class);
@@ -55,10 +58,11 @@ public class MyXMLConfig {
         return configInstance;
     }
 
-    private static Configuration config = null;
+    private static org.apache.commons.configuration2.Configuration config = null;
     private static XMLConfiguration configxml = null;
 
     public MyXMLConfig() {
+        getConfigInstance();
         try {
             String configFile = System.getProperty("config");
             if (configFile == null) {
