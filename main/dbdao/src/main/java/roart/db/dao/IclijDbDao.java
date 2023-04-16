@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import roart.common.util.TimeUtil;
 import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
+import roart.common.config.MyXMLConfig;
 import roart.common.model.AboveBelowItem;
 import roart.common.model.ActionComponentItem;
 import roart.common.model.ConfigItem;
@@ -27,10 +28,16 @@ import roart.db.hibernate.DbHibernateAccess;
 import roart.db.spring.DbSpringAccess;
 
 import org.springframework.stereotype.Component;
+import roart.common.config.MyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.config.MyXMLConfig;
 
 @Component
 public class IclijDbDao {
     private static Logger log = LoggerFactory.getLogger(IclijDbDao.class);
+
+    @Autowired
+    MyXMLConfig conf;
 
     public static DbAccess badAccess;
     
@@ -40,9 +47,16 @@ public class IclijDbDao {
 
     @Autowired
     public IclijDbDao(DbSpringAccess dbSpringAccess) {
+        MyMyConfig instance = new MyMyConfig(MyXMLConfig.getConfigInstance());
+        boolean hibernate = instance.wantDbHibernate();
+
         this.dbSpringAccess = dbSpringAccess;
-        //access = dbSpringAccess;
-        access = new DbHibernateAccess();
+        if (hibernate) {
+            access = new DbHibernateAccess();
+        } else {
+            access = dbSpringAccess;
+        }
+        log.info("Hibernate enabled: {}", hibernate);
         badAccess = access;
     }
     

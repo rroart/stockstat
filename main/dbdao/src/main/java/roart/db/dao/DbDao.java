@@ -17,6 +17,7 @@ import roart.common.config.CacheConstants;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
+import roart.common.config.MyXMLConfig;
 import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
 import roart.common.cache.MyCache;
@@ -26,13 +27,16 @@ import roart.db.hibernate.DbHibernateAccess;
 import roart.db.spring.DbSpringAccess;
 import roart.db.spark.DbSpark;
 import roart.db.spark.DbSparkAccess;
+import roart.common.config.MyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.config.MyXMLConfig;
 
-@Configuration
-@ComponentScan
 @Component
-@Service
 public class DbDao {
     private static Logger log = LoggerFactory.getLogger(DbDao.class);
+
+    @Autowired
+    MyXMLConfig conf;
 
     private DbAccess access = null;
 
@@ -40,9 +44,16 @@ public class DbDao {
 
     @Autowired
     public DbDao(DbSpringAccess dbSpringAccess) {
+        MyMyConfig instance = new MyMyConfig(MyXMLConfig.getConfigInstance());
+        boolean hibernate = instance.wantDbHibernate();
+
         this.dbSpringAccess = dbSpringAccess;
-        // access = dbSpringAccess;
-        access = new DbHibernateAccess();
+        if (hibernate) {
+            access = new DbHibernateAccess();
+        } else {
+            access = dbSpringAccess;
+        }
+        log.info("Hibernate enabled: {}", hibernate);
    }
     
     public List<StockItem> getAll(String type, String language) throws Exception {
