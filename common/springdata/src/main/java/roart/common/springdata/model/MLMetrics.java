@@ -27,9 +27,9 @@ public class MLMetrics {
 
     private String localcomponent;
 
-    private Double trainAccuracy;
+    private Double trainaccuracy;
 
-    private Double testAccuracy;
+    private Double testaccuracy;
 
     private Double loss;
 
@@ -88,19 +88,19 @@ public class MLMetrics {
     }
 
     public Double getTrainAccuracy() {
-        return trainAccuracy;
+        return trainaccuracy;
     }
 
     public void setTrainAccuracy(Double trainAccuracy) {
-        this.trainAccuracy = trainAccuracy;
+        this.trainaccuracy = trainAccuracy;
     }
 
     public Double getTestAccuracy() {
-        return testAccuracy;
+        return testaccuracy;
     }
 
     public void setTestAccuracy(Double testAccuracy) {
-        this.testAccuracy = testAccuracy;
+        this.testaccuracy = testAccuracy;
     }
 
     public Double getLoss() {
@@ -121,6 +121,6 @@ public class MLMetrics {
 
     @Override
     public String toString() {
-        return market + " " + component + " " + subcomponent + " " + localcomponent + " " + testAccuracy + " " + loss + " " + threshold + " " + record + " " + date + "\n"; 
+        return market + " " + component + " " + subcomponent + " " + localcomponent + " " + testaccuracy + " " + loss + " " + threshold + " " + record + " " + date + "\n"; 
     }
 }

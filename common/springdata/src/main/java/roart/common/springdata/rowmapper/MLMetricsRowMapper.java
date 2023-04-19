@@ -15,18 +15,18 @@ import org.springframework.jdbc.core.RowMapper;
 public class MLMetricsRowMapper implements RowMapper<MLMetricsItem>{
     @Override
     public MLMetricsItem mapRow(ResultSet rs, int rowNum) throws SQLException {
-	MLMetricsItem item = new MLMetricsItem();
- item.setRecord(TimeUtil.convertDate(rs.getDate("record")));
-item.setDate(TimeUtil.convertDate(rs.getDate("date")));
-item.setMarket(rs.getString("market"));
-item.setComponent(rs.getString("component"));
-item.setSubcomponent(rs.getString("subcomponent"));
-item.setLocalcomponent(rs.getString("localcomponent"));
-item.setTrainAccuracy(rs.getDouble("trainaccuracy"));
-item.setTestAccuracy(rs.getDouble("testaccuracy"));
-item.setLoss(rs.getDouble("loss"));
-item.setThreshold(rs.getDouble("threshold"));
+        MLMetricsItem item = new MLMetricsItem();
+        item.setRecord(TimeUtil.convertDate(rs.getDate("record")));
+        item.setDate(TimeUtil.convertDate(rs.getDate("date")));
+        item.setMarket(rs.getString("market"));
+        item.setComponent(rs.getString("component"));
+        item.setSubcomponent(rs.getString("subcomponent"));
+        item.setLocalcomponent(rs.getString("localcomponent"));
+        item.setTrainAccuracy((Double) rs.getObject("trainaccuracy"));
+        item.setTestAccuracy((Double) rs.getObject("testaccuracy"));
+        item.setLoss((Double) rs.getObject("loss"));
+        item.setThreshold((Double) rs.getObject("threshold"));
 
-return item;   
+        return item;   
     }
 }

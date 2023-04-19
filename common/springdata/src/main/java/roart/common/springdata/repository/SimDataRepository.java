@@ -32,7 +32,7 @@ public class SimDataRepository {
     NamedParameterJdbcTemplate jdbcTemplate;
     
     public List<SimDataItem> getAll(String market, LocalDate startDate, LocalDate endDate) throws Exception {
-        String queryString = "select * from SimData where ";
+        String queryString = "select * from sim where ";
         if (market != null) {
             queryString += " market = :market";
         } else {

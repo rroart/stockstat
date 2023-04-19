@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
 import roart.common.model.AboveBelowItem;
 import roart.common.model.ActionComponentItem;
 import roart.common.model.ConfigItem;
@@ -143,6 +144,7 @@ public class DbSpringAccess extends DbAccess {
         try {
             return service.getSimData(market, startDate, endDate);
         } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
             return null;
         }
     }
@@ -152,6 +154,7 @@ public class DbSpringAccess extends DbAccess {
        try {
         return service.getAboveBelow(market, startDate, endDate);
     } catch (Exception e) {
+        log.error(Constants.EXCEPTION, e);
         return null;
     }
     }

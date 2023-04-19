@@ -1002,7 +1002,7 @@ public class SimulateInvestComponent extends ComponentML {
                 if (autoSimConf.getEnddate() != null) {
                     endDate = TimeUtil.convertDate(TimeUtil.replace(autoSimConf.getEnddate()));
                 }
-                actionData.getDbDao().getAllSimData(market, null, null); // fix later: , startDate, endDate);
+                all = actionData.getDbDao().getAllSimData(market, null, null); // fix later: , startDate, endDate);
                 MyCache.getInstance().put(simkey, all);
             }
             /*

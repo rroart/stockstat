@@ -39,12 +39,6 @@ public class IncDec {
     
     private String localcomponent;
     
-    // not saved
-    private Boolean verified;
-    
-    // not saved
-    private String verificationComment;
-    
     public IncDec() {
         super();
     }
@@ -145,25 +139,9 @@ public class IncDec {
         this.localcomponent = localcomponent;
     }
 
-    public Boolean getVerified() {
-        return verified;
-    }
-
-    public void setVerified(Boolean verified) {
-        this.verified = verified;
-    }
-
-    public String getVerificationComment() {
-        return verificationComment;
-    }
-
-    public void setVerificationComment(String verificationComment) {
-        this.verificationComment = verificationComment;
-    }
-
     @Override
     public String toString() {
-        return market + " " + record + " " + date + " " + increase + " " + id + " " + name + " " + score + " " + component + " " + subcomponent + " " + localcomponent + " " + description + " " + verified + " " + verificationComment + " " + parameters + "\n"; 
+        return market + " " + record + " " + date + " " + increase + " " + id + " " + name + " " + score + " " + component + " " + subcomponent + " " + localcomponent + " " + description + " " + parameters + "\n"; 
     }
     
     @Override

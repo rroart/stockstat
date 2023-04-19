@@ -86,7 +86,7 @@ public class IncDecRepository {
         jdbcTemplate.update(queryString, query);
     }
     public List<IncDecItem> getAll(String mymarket) throws Exception {
-        String sql = "select * from incdec where marketid = ?";
+        String sql = "select * from incdec where market = ?";
         MapSqlParameterSource query = new MapSqlParameterSource();
         query.addValue("market", mymarket);
         return jdbcTemplate.query(sql, query, new IncDecRowMapper());

@@ -35,7 +35,7 @@ public class ContRepository {
     }
     
     public List<ContItem> getAll(String mymarket) throws Exception {
-        String sql = "select * from cont where marketid = :market";
+        String sql = "select * from cont where market = :market";
         MapSqlParameterSource namedParameters = new MapSqlParameterSource();
         namedParameters.addValue("market", mymarket);
         return jdbcTemplate.query(sql, namedParameters, new ContRowMapper());

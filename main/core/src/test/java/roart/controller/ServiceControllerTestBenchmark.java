@@ -11,22 +11,22 @@ import java.util.List;
 
 import roart.common.config.MyMyConfig;
 
-@SpringBootTest
 @Import(DbDaoUtil.class)
+@SpringBootTest
 public class ServiceControllerTestBenchmark {
 
     @Autowired
-    private DbDaoUtil dbDao;
+    private DbDaoUtil dbDaoUtil;
     
     //@Test
     public void test() throws Exception {
-        System.out.println("S" + dbDao);
-        List<String> markets = dbDao.getMarkets();
+        System.out.println("S" + dbDaoUtil);
+        List<String> markets = dbDaoUtil.getMarkets();
         int[][] bench = new int[markets.size()][3];
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < markets.size(); j++) {
                 long time0 = System.currentTimeMillis();
-                dbDao.getAll(markets.get(j), i);
+                dbDaoUtil.getAll(markets.get(j), i);
                 int abench = (int) ((System.currentTimeMillis() - time0) / 1000);
                 bench[j][i] = abench;
             }
@@ -38,11 +38,6 @@ public class ServiceControllerTestBenchmark {
             }
             System.out.println("");
         }
-    }
-    
-    @Test
-    public void t() throws Exception {
-        dbDao.bla2();
     }
 }
 

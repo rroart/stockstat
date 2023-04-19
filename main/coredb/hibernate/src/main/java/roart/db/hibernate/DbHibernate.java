@@ -38,6 +38,7 @@ import roart.pipeline.common.Calculatable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDate;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.ArrayList;
@@ -332,7 +333,7 @@ public class DbHibernate {
         configItem.setScore(config.getScore());
         configItem.setSubcomponent(config.getSubcomponent());
         if (config.getValue() != null) {
-            configItem.setValue(JsonUtil.strip(new String(config.getValue())));
+            configItem.setValue(JsonUtil.strip(new String(config.getValue(), StandardCharsets.UTF_8)));
         }
         return configItem;
     }
@@ -452,11 +453,11 @@ public class DbHibernate {
 
     private static SimDataItem map(SimData data) {
         SimDataItem item = new SimDataItem();
-        item.setConfig(new String(data.getConfig()));
+        item.setConfig(new String(data.getConfig(), StandardCharsets.UTF_8));
         item.setDbid(data.getDbid());
         item.setEnddate(data.getEnddate());
         if (data.getFilter() != null) {
-            item.setFilter(new String(data.getFilter()));
+            item.setFilter(new String(data.getFilter(), StandardCharsets.UTF_8));
         }
         item.setMarket(data.getMarket());
         item.setRecord(data.getRecord());
@@ -529,7 +530,7 @@ public class DbHibernate {
         config.setScore(item.getScore());
         config.setSubcomponent(item.getSubcomponent());
         if (item.getValue() != null) {
-            config.setValue(JsonUtil.strip(item.getValue()).getBytes());
+            config.setValue(JsonUtil.strip(item.getValue()).getBytes(StandardCharsets.UTF_8));
         }
         return config;
     }
@@ -633,10 +634,10 @@ public class DbHibernate {
 
     public static SimData map(SimDataItem item) {
         SimData data = new SimData();
-        data.setConfig(item.getConfig().getBytes());
+        data.setConfig(item.getConfig().getBytes(StandardCharsets.UTF_8));
         data.setEnddate(item.getEnddate());
         if (item.getFilter() != null) {
-            data.setFilter(item.getFilter().getBytes());
+            data.setFilter(item.getFilter().getBytes(StandardCharsets.UTF_8));
         }
         data.setMarket(item.getMarket());
         data.setRecord(item.getRecord());

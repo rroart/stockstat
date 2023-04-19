@@ -51,7 +51,7 @@ public class MLMetricsRepository {
     }
 
     public List<MLMetricsItem> getAll(String mymarket) throws Exception {
-        String sql = "select * from mlmetrics where marketid = :market";
+        String sql = "select * from mlmetrics where market = :market";
         MapSqlParameterSource namedParameters = new MapSqlParameterSource();
         namedParameters.addValue("market", mymarket);
         return jdbcTemplate.query(sql, namedParameters, new MLMetricsRowMapper());

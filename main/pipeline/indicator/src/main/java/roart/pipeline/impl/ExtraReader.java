@@ -62,8 +62,8 @@ public class ExtraReader extends Pipeline {
     
     public ExtraReader(MyMyConfig conf, Map<String, MarketData> marketdatamap, int category, StockData stockData, DbDao dbDao) throws Exception {
         super(conf, category);
-        readData(conf, marketdatamap, category, stockData);        
         this.dbDao = dbDao;
+        readData(conf, marketdatamap, category, stockData);        
     }
     private void readData(MyMyConfig conf, Map<String, MarketData> marketdatamap, int category, StockData stockData2) throws Exception {
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);

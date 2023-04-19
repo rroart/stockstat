@@ -63,7 +63,7 @@ public class ConfigRepository {
     }
    
     public List<ConfigItem> getAll(String mymarket) throws Exception {
-        String sql = "select * from config where marketid = :market";
+        String sql = "select * from config where market = :market";
         MapSqlParameterSource namedParameters = new MapSqlParameterSource();
         namedParameters.addValue("market", mymarket);
         return jdbcTemplate.query(sql, namedParameters, new ConfigRowMapper());

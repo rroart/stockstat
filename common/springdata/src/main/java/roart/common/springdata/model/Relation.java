@@ -25,11 +25,11 @@ public class Relation {
 
     private String type;
 
-    private String otherMarket;
+    private String othermarket;
 
-    private String otherId;
+    private String otherid;
 
-    private String otherAltId;
+    private String otheraltid;
 
     private Double value;
 
@@ -66,27 +66,27 @@ public class Relation {
     }
 
     public String getOtherMarket() {
-        return otherMarket;
+        return othermarket;
     }
 
     public void setOtherMarket(String otherMarket) {
-        this.otherMarket = otherMarket;
+        this.othermarket = otherMarket;
     }
 
     public String getOtherId() {
-        return otherId;
+        return otherid;
     }
 
     public void setOtherId(String otherId) {
-        this.otherId = otherId;
+        this.otherid = otherId;
     }
 
     public String getOtherAltId() {
-        return otherAltId;
+        return otheraltid;
     }
 
     public void setOtherAltId(String otherAltId) {
-        this.otherAltId = otherAltId;
+        this.otheraltid = otherAltId;
     }
 
     public String getType() {
@@ -107,6 +107,6 @@ public class Relation {
 
     @Override
     public String toString() {
-        return market + " " + id + " " + altId + " " + type + " " + value + " " + otherMarket + " " + otherId + " " + otherAltId + "\n";
+        return market + " " + id + " " + altId + " " + type + " " + value + " " + othermarket + " " + otherid + " " + otheraltid + "\n";
     }
 }

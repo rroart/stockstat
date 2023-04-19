@@ -16,21 +16,21 @@ public class ActionComponentRowMapper implements RowMapper<ActionComponentItem>{
     @Override
     public ActionComponentItem mapRow(ResultSet rs, int rowNum) throws SQLException {
 
-	ActionComponentItem item = new ActionComponentItem();
-     item.setDbid(rs.getLong("dbid"));
-     item.setAction(rs.getString("action"));
-     item.setComponent(rs.getString("component"));
-     item.setSubcomponent(rs.getString("subcomponent"));
-     item.setMarket(rs.getString("market"));
-     item.setTime(rs.getDouble("time"));
-     item.setHaverun(rs.getBoolean("haverun"));
-     item.setPriority(rs.getInt("priority"));
-    //List<TimingItem> timings;
-     item.setBuy(rs.getBoolean("buy"));
-     item.setParameters(rs.getString("parameters"));
-     item.setRecord(TimeUtil.convertDate(rs.getDate("record")));
-     //item.setResult(rs.getBlockingQueue("result"));
-     item.setDate(TimeUtil.convertDate(rs.getDate("date")));
-     return item;
+        ActionComponentItem item = new ActionComponentItem();
+        item.setDbid((Long) rs.getObject("dbid"));
+        item.setAction(rs.getString("action"));
+        item.setComponent(rs.getString("component"));
+        item.setSubcomponent(rs.getString("subcomponent"));
+        item.setMarket(rs.getString("market"));
+        item.setTime((Double) rs.getObject("time"));
+        item.setHaverun((Boolean) rs.getObject("haverun"));
+        item.setPriority((Integer) rs.getObject("priority"));
+        //List<TimingItem> timings;
+        item.setBuy((Boolean) rs.getObject("buy"));
+        item.setParameters(rs.getString("parameters"));
+        item.setRecord(TimeUtil.convertDate(rs.getDate("record")));
+        //item.setResult(rs.getBlockingQueue("result"));
+        item.setDate(TimeUtil.convertDate(rs.getDate("date")));
+        return item;
     }
 }

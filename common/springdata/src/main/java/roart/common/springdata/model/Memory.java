@@ -32,7 +32,7 @@ public class Memory {
     
     private Double confidence;
     
-    private Double learnConfidence;
+    private Double learnconfidence;
     
     private String category;
     
@@ -68,43 +68,43 @@ public class Memory {
     
     private Long tp;
     
-    private Long tpSize;
+    private Long tpsize;
     
-    private Double tpConf;
+    private Double tpconf;
     
-    private Double tpProb;
+    private Double tpprob;
     
-    private Double tpProbConf;
+    private Double tpprobconf;
     
     private Long tn;
     
-    private Long tnSize;
+    private Long tnsize;
     
-    private Double tnConf;
+    private Double tnconf;
     
-    private Double tnProb;
+    private Double tnprob;
     
-    private Double tnProbConf;
+    private Double tnprobconf;
     
     private Long fp;
     
-    private Long fpSize;
+    private Long fpsize;
     
-    private Double fpConf;
+    private Double fpconf;
     
-    private Double fpProb;
+    private Double fpprob;
     
-    private Double fpProbConf;
+    private Double fpprobconf;
     
     private Long fn;
     
-    private Long fnSize;
+    private Long fnsize;
     
-    private Double fnConf;
+    private Double fnconf;
     
-    private Double fnProb;
+    private Double fnprob;
     
-    private Double fnProbConf;
+    private Double fnprobconf;
     
     private Integer position;
     
@@ -150,31 +150,31 @@ public class Memory {
         ret += "Confidence " + nullToEmpty(confidence) + " (positives/size : " + positives + "/" + size + ")\n";
         ret += "AboveConfidence " + " (positives/size : " + abovepositives + "/" + abovesize + ")\n";
         ret += "BelowConfidence " + " (positives/size : " + belowpositives + "/" + belowsize + ")\n";
-        if (learnConfidence != null) {
-            ret += "Learning confidence " + nullToEmpty(learnConfidence) + "\n";
+        if (learnconfidence != null) {
+            ret += "Learning confidence " + nullToEmpty(learnconfidence) + "\n";
         }
-        if (tpSize != null) {
-            ret += "TP " + tp + " / " + tpSize + " " + nullToEmpty(tpConf) + "\n";
-            if (tpProb != null) {
-                ret += "Prob " + tpProb + " / " + tpSize + " " + nullToEmpty(tpProbConf) + "\n";
+        if (tpsize != null) {
+            ret += "TP " + tp + " / " + tpsize + " " + nullToEmpty(tpconf) + "\n";
+            if (tpprob != null) {
+                ret += "Prob " + tpprob + " / " + tpsize + " " + nullToEmpty(tpprobconf) + "\n";
             }
         }
-        if (tnSize != null) {
-            ret += "TN " + tn + " / " + tnSize + " " + nullToEmpty(tnConf) + "\n";
-            if (tnProb != null) {
-                ret += "Prob " + tnProb + " / " + tnSize + " " + nullToEmpty(tnProbConf) + "\n";
+        if (tnsize != null) {
+            ret += "TN " + tn + " / " + tnsize + " " + nullToEmpty(tnconf) + "\n";
+            if (tnprob != null) {
+                ret += "Prob " + tnprob + " / " + tnsize + " " + nullToEmpty(tnprobconf) + "\n";
             }
         }
-        if (fpSize != null) {
-            ret += "FP " + fp + " / " + fpSize + " " + nullToEmpty(fpConf) + "\n";
-            if (fpProb != null) {
-                ret += "Prob " + fpProb + " / " + fpSize + " " + nullToEmpty(fpProbConf) + "\n";
+        if (fpsize != null) {
+            ret += "FP " + fp + " / " + fpsize + " " + nullToEmpty(fpconf) + "\n";
+            if (fpprob != null) {
+                ret += "Prob " + fpprob + " / " + fpsize + " " + nullToEmpty(fpprobconf) + "\n";
             }
         }
-        if (fnSize != null) {
-            ret += "FN " + fn + " / " + fnSize + " " + nullToEmpty(fnConf) + "\n";
-            if (fnProb != null) {
-                ret += "Prob " + fnProb + " / " + fnSize + " " + nullToEmpty(fnProbConf) + "\n";
+        if (fnsize != null) {
+            ret += "FN " + fn + " / " + fnsize + " " + nullToEmpty(fnconf) + "\n";
+            if (fnprob != null) {
+                ret += "Prob " + fnprob + " / " + fnsize + " " + nullToEmpty(fnprobconf) + "\n";
             }
         }
         return ret;
@@ -257,11 +257,11 @@ public class Memory {
     }
     
     public Double getLearnConfidence() {
-        return learnConfidence;
+        return learnconfidence;
     }
     
     public void setLearnConfidence(Double learnConfidence) {
-        this.learnConfidence = learnConfidence;
+        this.learnconfidence = learnConfidence;
     }
     
     public String getCategory() {
@@ -401,35 +401,35 @@ public class Memory {
     }
     
     public Long getTpSize() {
-        return tpSize;
+        return tpsize;
     }
     
     public void setTpSize(Long tpSize) {
-        this.tpSize = tpSize;
+        this.tpsize = tpSize;
     }
     
     public Double getTpConf() {
-        return tpConf;
+        return tpconf;
     }
     
     public void setTpConf(Double tpConf) {
-        this.tpConf = tpConf;
+        this.tpconf = tpConf;
     }
     
     public Double getTpProb() {
-        return tpProb;
+        return tpprob;
     }
     
     public void setTpProb(Double tpProb) {
-        this.tpProb = tpProb;
+        this.tpprob = tpProb;
     }
     
     public Double getTpProbConf() {
-        return tpProbConf;
+        return tpprobconf;
     }
     
     public void setTpProbConf(Double tpProbConf) {
-        this.tpProbConf = tpProbConf;
+        this.tpprobconf = tpProbConf;
     }
     
     public Long getTn() {
@@ -441,35 +441,35 @@ public class Memory {
     }
     
     public Long getTnSize() {
-        return tnSize;
+        return tnsize;
     }
     
     public void setTnSize(Long tnSize) {
-        this.tnSize = tnSize;
+        this.tnsize = tnSize;
     }
     
     public Double getTnConf() {
-        return tnConf;
+        return tnconf;
     }
     
     public void setTnConf(Double tnConf) {
-        this.tnConf = tnConf;
+        this.tnconf = tnConf;
     }
     
     public Double getTnProb() {
-        return tnProb;
+        return tnprob;
     }
     
     public void setTnProb(Double tnProb) {
-        this.tnProb = tnProb;
+        this.tnprob = tnProb;
     }
     
     public Double getTnProbConf() {
-        return tnProbConf;
+        return tnprobconf;
     }
     
     public void setTnProbConf(Double tnProbConf) {
-        this.tnProbConf = tnProbConf;
+        this.tnprobconf = tnProbConf;
     }
     
     public Long getFp() {
@@ -481,35 +481,35 @@ public class Memory {
     }
     
     public Long getFpSize() {
-        return fpSize;
+        return fpsize;
     }
     
     public void setFpSize(Long fpSize) {
-        this.fpSize = fpSize;
+        this.fpsize = fpSize;
     }
     
     public Double getFpConf() {
-        return fpConf;
+        return fpconf;
     }
     
     public void setFpConf(Double fpConf) {
-        this.fpConf = fpConf;
+        this.fpconf = fpConf;
     }
 
     public Double getFpProb() {
-        return fpProb;
+        return fpprob;
     }
     
     public void setFpProb(Double fpProb) {
-        this.fpProb = fpProb;
+        this.fpprob = fpProb;
     }
     
     public Double getFpProbConf() {
-        return fpProbConf;
+        return fpprobconf;
     }
     
     public void setFpProbConf(Double fpProbConf) {
-        this.fpProbConf = fpProbConf;
+        this.fpprobconf = fpProbConf;
     }
     
     public Long getFn() {
@@ -521,35 +521,35 @@ public class Memory {
     }
     
     public Long getFnSize() {
-        return fnSize;
+        return fnsize;
     }
     
     public void setFnSize(Long fnSize) {
-        this.fnSize = fnSize;
+        this.fnsize = fnSize;
     }
     
     public Double getFnConf() {
-        return fnConf;
+        return fnconf;
     }
     
     public void setFnConf(Double fnConf) {
-        this.fnConf = fnConf;
+        this.fnconf = fnConf;
     }
     
     public Double getFnProb() {
-        return fnProb;
+        return fnprob;
     }
     
     public void setFnProb(Double fnProb) {
-        this.fnProb = fnProb;
+        this.fnprob = fnProb;
     }
     
     public Double getFnProbConf() {
-        return fnProbConf;
+        return fnprobconf;
     }
     
     public void setFnProbConf(Double fnProbConf) {
-        this.fnProbConf = fnProbConf;
+        this.fnprobconf = fnProbConf;
     }
     
     public Integer getPosition() {

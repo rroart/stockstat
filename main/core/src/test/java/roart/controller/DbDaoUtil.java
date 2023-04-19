@@ -51,49 +51,5 @@ public class DbDaoUtil {
         return list;
     }
 
-    public void bla() throws Exception {
-        //System.setProperty("connection.url","jdbc:postgresql://localhost:5432/stockstatdev?user=stockstat&password=password");
-        //System.setProperty("
-        long time0;
- 
-        System.out.println("t0");
-        time0 = System.currentTimeMillis();
-        getAll("ose", 0);
-        System.out.println("" + (System.currentTimeMillis() - time0) / 1000);
-        
-        System.out.println("t1");
-        time0 = System.currentTimeMillis();
-        DbHibernate.getAll2("ose");
-        System.out.println("" + (System.currentTimeMillis() - time0) / 1000);
-        
-        System.out.println("t2");
-        time0 = System.currentTimeMillis();
-        getAll("ose", 2);
-        System.out.println("" + (System.currentTimeMillis() - time0) / 1000);
-        
-        System.out.println("t3");
-        time0 = System.currentTimeMillis();
-        getAll("ose", 1);
-        System.out.println("" + (System.currentTimeMillis() - time0) / 1000);
-        System.out.println("t4");
-    }
-
-    @Value("${spring.datasource.url}")
-    String str;
-    
-    public void bla2() throws Exception {
-        //System.setProperty("connection.url","jdbc:postgresql://localhost:5432/stockstatdev?user=stockstat&password=password");
-        System.out.println("pr " + System.getProperty("spring.datasource.url"));
-        System.out.println("str " + str);
-        long time0;
- 
-        System.out.println("t3");
-        time0 = System.currentTimeMillis();
-        getAll("ose", 1);
-        System.out.println("" + (System.currentTimeMillis() - time0) / 1000);
-        
-        System.out.println("t4");
-    }
-
 }
 

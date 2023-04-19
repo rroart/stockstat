@@ -89,7 +89,7 @@ public class TimingRepository {
     }
 
     public List<TimingItem> getAll(String mymarket) throws Exception {
-        String sql = "select * from timing where marketid = :market";
+        String sql = "select * from timing where market = :market";
         MapSqlParameterSource namedParameters = new MapSqlParameterSource();
         namedParameters.addValue("market", mymarket);
         return jdbcTemplate.query(sql, namedParameters, new TimingRowMapper());

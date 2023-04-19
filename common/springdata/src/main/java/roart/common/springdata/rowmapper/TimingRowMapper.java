@@ -15,21 +15,21 @@ import org.springframework.jdbc.core.RowMapper;
 public class TimingRowMapper implements RowMapper<TimingItem>{
     @Override
     public TimingItem mapRow(ResultSet rs, int rowNum) throws SQLException {
-	TimingItem item = new TimingItem();
- item.setRecord(TimeUtil.convertDate(rs.getDate("record")));
-    item.setDate(TimeUtil.convertDate(rs.getDate("date")));
-    item.setMarket(rs.getString("market"));
-item.setMlmarket(rs.getString("mlmarket"));
-    item.setAction(rs.getString("action"));
-    item.setEvolve(rs.getBoolean("evolve"));
-    item.setComponent(rs.getString("component"));
-    item.setSubcomponent(rs.getString("subcomponent"));
-    item.setParameters(rs.getString("parameters"));
-    item.setMytime(rs.getDouble("time"));
-item.setScore(rs.getDouble("score"));
-    item.setBuy(rs.getBoolean("buy"));
-    item.setDescription(rs.getString("description"));
-    return item;
+        TimingItem item = new TimingItem();
+        item.setRecord(TimeUtil.convertDate(rs.getDate("record")));
+        item.setDate(TimeUtil.convertDate(rs.getDate("date")));
+        item.setMarket(rs.getString("market"));
+        item.setMlmarket(rs.getString("mlmarket"));
+        item.setAction(rs.getString("action"));
+        item.setEvolve((Boolean) rs.getObject("evolve"));
+        item.setComponent(rs.getString("component"));
+        item.setSubcomponent(rs.getString("subcomponent"));
+        item.setParameters(rs.getString("parameters"));
+        item.setMytime((Double) rs.getObject("time"));
+        item.setScore((Double) rs.getObject("score"));
+        item.setBuy((Boolean) rs.getObject("buy"));
+        item.setDescription(rs.getString("description"));
+        return item;
 
     }
 }

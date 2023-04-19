@@ -59,6 +59,7 @@ import roart.common.springdata.repository.SimDataRepository;
 import roart.common.springdata.repository.StockRepository;
 import roart.pipeline.common.Calculatable;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -199,7 +200,7 @@ public class DbSpring {
         data.setSubcomponents(item.getSubcomponents());
         return data;
     }
-    
+
     private ActionComponentItem map(ActionComponent ac) {
         ActionComponentItem item = new ActionComponentItem();
         item.setAction(ac.getAction());
@@ -282,7 +283,7 @@ public class DbSpring {
         contItem.setMd5(cont.getMd5());
         return contItem;
     }
-    
+
     private MetaItem map(Meta meta) {
         MetaItem item = new MetaItem();
         item.setMarketid(meta.getMarketid());
@@ -449,11 +450,11 @@ public class DbSpring {
 
     private SimDataItem map(SimData data) {
         SimDataItem item = new SimDataItem();
-        item.setConfig(new String(data.getConfig()));
+        item.setConfig(new String(data.getConfig(), StandardCharsets.UTF_8));
         item.setDbid(data.getDbid());
         item.setEnddate(data.getEnddate());
         if (data.getFilter() != null) {
-            item.setFilter(new String(data.getFilter()));
+            item.setFilter(new String(data.getFilter(), StandardCharsets.UTF_8));
         }
         item.setMarket(data.getMarket());
         item.setRecord(data.getRecord());
