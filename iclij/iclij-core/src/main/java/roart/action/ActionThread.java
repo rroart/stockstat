@@ -53,15 +53,15 @@ public class ActionThread extends Thread {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private IclijDbDao dbDao;
-    
+
     public static volatile List<ActionComponentItem> queue = Collections.synchronizedList(new ArrayList<>());
-    
+
     public static volatile Set<String> queued = Collections.synchronizedSet(new HashSet<>());
-    
+
     private static volatile boolean updateDb = false;
-    
+
     private static volatile boolean pause = false;
-    
+
     public ActionThread(IclijDbDao dbDao) {
         this.dbDao = dbDao;
     }
@@ -109,7 +109,7 @@ public class ActionThread extends Thread {
             ActionComponentItem ac = null;
             List<ActionComponentItem> dblist = new ArrayList<>();
             try {
-                 dblist = dbDao.getAllActionComponent();
+                dblist = dbDao.getAllActionComponent();
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
@@ -161,26 +161,26 @@ public class ActionThread extends Thread {
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
-               try {
+                try {
                     dbDao.deleteById(blItem, id);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
                 try {
-                	// TODO don't delete if failed
+                    // TODO don't delete if failed
                     if (item.getDbid() != null) {
                         dbDao.deleteById(item, "" + item.getDbid());
-                    }
+                   }
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
                 if (!finished && item.getDbid() != null) {
-                	try {
-                		item.setPriority(100 + item.getPriority());
-                		dbDao.save(item);
-                	} catch (Exception e) {
-                		log.error(Constants.EXCEPTION, e);
-                	}
+                    try {
+                        item.setPriority(100 + item.getPriority());
+                        dbDao.save(item);
+                    } catch (Exception e) {
+                        log.error(Constants.EXCEPTION, e);
+                    }
                 }
             }
             try {
@@ -194,7 +194,7 @@ public class ActionThread extends Thread {
 
     private boolean runAction(IclijConfig instance, ActionComponentItem item, List<ActionComponentItem> dblist) {
         boolean finished = false;
-    	IclijConfig config = new IclijConfig(instance);
+        IclijConfig config = new IclijConfig(instance);
         config.setMarket(item.getMarket());
         MarketAction action = ActionFactory.get(item.getAction(), dbDao);
         action.setParent(action);
@@ -210,7 +210,7 @@ public class ActionThread extends Thread {
         param.setAction(action.getName());
         List<String> stockDates = param.getService().getDates(item.getMarket());
         if (!IclijConfigConstants.DATASET.equals(action.getName())) {
-        action.getParamDates(market, param, stockDates);
+            action.getParamDates(market, param, stockDates);
         }
         List<MetaItem> metas = param.getService().getMetas();
         MetaItem meta = new MetaUtil().findMeta(metas, item.getMarket());
@@ -230,45 +230,48 @@ public class ActionThread extends Thread {
                 log.info("Action mem {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
                 finished = true;
                 if (item.getDbid() != null) {
-                	// flow
-                	// better evolve triggers config save for ml, and new generated ml action
-                	// better improveprofit triggers config save for findprofit, and new generated ml action (-db deletes and repopulation)
-                	// if generated ml or improveprofit action
-                	//    if generated ml action, then generate improveprofit action if none already
-                	//	  db delete and repopulate
-                	if (action.getActionData().wantsUpdate(config)) {
-                		if (IclijConstants.MACHINELEARNING.equals(item.getAction()) || IclijConstants.IMPROVEPROFIT.equals(item.getAction())) {
-                			if (IclijConstants.MACHINELEARNING.equals(item.getAction())) {
-                				//                            	otherAction = IclijConstants.IMPROVEPROFIT;
-                				//                        	} else {
-                				//                        		otherAction = IclijConstants.MACHINELEARNING;
-                				MarketAction anAction = ActionFactory.get(IclijConstants.IMPROVEPROFIT, dbDao);
-                				String mypriorityKey = anAction.getActionData().getPriority();
-                				int aPriority = action.getPriority(config, mypriorityKey);
-                				ActionComponentItem it = dblist.stream().filter(dbitem -> (IclijConstants.IMPROVEPROFIT.equals(dbitem.getAction()) && item.getMarket().equals(dbitem.getMarket()) && item.getComponent().equals(dbitem.getComponent()) && item.getSubcomponent().equals(item.getSubcomponent()))).findAny().orElse(null); 
-                				if (it == null && item.getPriority() == -10) {
-                					mct(IclijConstants.IMPROVEPROFIT, item.getMarket(), item.getComponent(), item.getSubcomponent(), aPriority);
-                				}
-                			}
-                			//mct(item.getMarket(), IclijConstants.MACHINELEARNING, item.getComponent(), item.getSubcomponent());
-                			// delete timing findprofit improveprofit
-                			// only after improveprofit?
-                			try {
-                				log.info("Deleting AboveBelow etc {} {} {}", item.getMarket(), item.getComponent(), item.getSubcomponent());
-                				dbDao.delete(new TimingItem(), item.getMarket(), IclijConstants.FINDPROFIT, item.getComponent(), item.getSubcomponent(), null, null);
-                				dbDao.delete(new IncDecItem(), item.getMarket(), null, item.getComponent(), item.getSubcomponent(), null, null);
-                				dbDao.delete(new MemoryItem(), item.getMarket(), null, item.getComponent(), item.getSubcomponent(), null, null);
-                				dbDao.delete(new AboveBelowItem(), item.getMarket(), null, null, null, null, null);
-                			} catch (Exception e) {
-                				log.error(Constants.EXCEPTION, e);
-                			}                        
-                			PopulateThread.queue.add(new ImmutableTriple(item.getMarket(), item.getComponent(), item.getSubcomponent()));
-                		}
-                	}
+                    // flow
+                    // better evolve triggers config save for ml, and new generated ml action
+                    // better improveprofit triggers config save for findprofit, and new generated ml action (-db deletes and repopulation)
+                    // if generated ml or improveprofit action
+                    //    if generated ml action, then generate improveprofit action if none already
+                    //	  db delete and repopulate
+                    if (action.getActionData().wantsUpdate(config)) {
+                        if (IclijConstants.MACHINELEARNING.equals(item.getAction()) || IclijConstants.IMPROVEPROFIT.equals(item.getAction())) {
+                            if (IclijConstants.MACHINELEARNING.equals(item.getAction())) {
+                                //                            	otherAction = IclijConstants.IMPROVEPROFIT;
+                                //                        	} else {
+                                //                        		otherAction = IclijConstants.MACHINELEARNING;
+                                MarketAction anAction = ActionFactory.get(IclijConstants.IMPROVEPROFIT, dbDao);
+                                String mypriorityKey = anAction.getActionData().getPriority();
+                                int aPriority = action.getPriority(config, mypriorityKey);
+                                ActionComponentItem it = dblist.stream().filter(dbitem -> (IclijConstants.IMPROVEPROFIT.equals(dbitem.getAction()) && item.getMarket().equals(dbitem.getMarket()) && item.getComponent().equals(dbitem.getComponent()) && item.getSubcomponent().equals(item.getSubcomponent()))).findAny().orElse(null); 
+                                if (it == null && item.getPriority() == -10) {
+                                    mct(IclijConstants.IMPROVEPROFIT, item.getMarket(), item.getComponent(), item.getSubcomponent(), aPriority);
+                                }
+                            }
+                            //mct(item.getMarket(), IclijConstants.MACHINELEARNING, item.getComponent(), item.getSubcomponent());
+                            // delete timing findprofit improveprofit
+                            // only after improveprofit?
+                            try {
+                                log.info("Deleting AboveBelow etc {} {} {}", item.getMarket(), item.getComponent(), item.getSubcomponent());
+                                dbDao.delete(new TimingItem(), item.getMarket(), IclijConstants.FINDPROFIT, item.getComponent(), item.getSubcomponent(), null, null);
+                                dbDao.delete(new IncDecItem(), item.getMarket(), null, item.getComponent(), item.getSubcomponent(), null, null);
+                                dbDao.delete(new MemoryItem(), item.getMarket(), null, item.getComponent(), item.getSubcomponent(), null, null);
+                                dbDao.delete(new AboveBelowItem(), item.getMarket(), null, null, null, null, null);
+                            } catch (Exception e) {
+                                log.error(Constants.EXCEPTION, e);
+                            }                        
+                            PopulateThread.queue.add(new ImmutableTriple(item.getMarket(), item.getComponent(), item.getSubcomponent()));
+                        }
+                    }
                 }
             } catch (Exception e) {
-            	log.error(Constants.EXCEPTION, e);
+                log.error(Constants.EXCEPTION, e);
             }
+        }
+        if (item.getDbid() != null && !action.getActionData().wantsUpdate(config)) {
+            finished = true;
         }
         return finished;
     }
@@ -277,7 +280,7 @@ public class ActionThread extends Thread {
         int run = i.isHaverun() ? 1 : 0;
         return (int) (100000 * (i.getPriority() + run) - i.getTime());
     }
-    
+
     private void mct(String action, String market, String component, String subcomponent, int priority) {
         Parameters p = new Parameters();
         p.setFuturedays(10);
@@ -296,7 +299,7 @@ public class ActionThread extends Thread {
             log.error(Constants.EXCEPTION, e);
         }
     }
-    
+
     /*
      * Needs its own thread
                 if (item.getResult() != null) {
