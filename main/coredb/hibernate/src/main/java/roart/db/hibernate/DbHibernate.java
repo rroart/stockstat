@@ -829,6 +829,10 @@ public class DbHibernate {
         if (object instanceof IncDecItem obj) {
             obj2 = map(obj);
         }
+        if (obj2 == null) {
+            log.error("Unknown save object");
+            return null;
+        }
         Queues.queue.add(obj2);
         if (true)         return null;
         if (object instanceof IncDecItem) {

@@ -664,44 +664,48 @@ public class DbSpring {
 
     public Object save(Object object) {
         try {
+            Object obj2 = null;
             if (object instanceof AboveBelowItem obj) {
-                springAboveBelowRepo.save(map(obj));
+                obj2 = springAboveBelowRepo.save(map(obj));
             }
             if (object instanceof ActionComponentItem obj) {
-                springActionComponentRepo.save(map(obj));
+                obj2 = springActionComponentRepo.save(map(obj));
             }
             if (object instanceof ConfigItem obj) {
-                springConfigRepo.save(map(obj));
+                obj2 = springConfigRepo.save(map(obj));
             }
             if (object instanceof ContItem obj) {
-                springContRepo.save(map(obj));
+                obj2 = springContRepo.save(map(obj));
             }
             if (object instanceof MemoryItem obj) {
-                springMemoryRepo.save(map(obj));
+                obj2 = springMemoryRepo.save(map(obj));
             }
             if (object instanceof MetaItem obj) {
-                springMetaRepo.save(map(obj));
+                obj2 = springMetaRepo.save(map(obj));
             }
             if (object instanceof MLMetricsItem obj) {
-                springMLMetricsRepo.save(map(obj));
+                obj2 = springMLMetricsRepo.save(map(obj));
             }
             if (object instanceof RelationItem obj) {
-                springRelationRepo.save(map(obj));
+                obj2 = springRelationRepo.save(map(obj));
             }
             if (object instanceof SimDataItem obj) {
-                springSimDataRepo.save(map(obj));
+                obj2 = springSimDataRepo.save(map(obj));
             }
             if (object instanceof StockItem obj) {
-                springStockRepo.save(map(obj));
+                obj2 = springStockRepo.save(map(obj));
             }
             if (object instanceof TimingItem obj) {
-                springTimingRepo.save(map(obj));
+                obj2 = springTimingRepo.save(map(obj));
             }
             if (object instanceof TimingBLItem obj) {
-                springTimingBLRepo.save(map(obj));
+                obj2 = springTimingBLRepo.save(map(obj));
             }
             if (object instanceof IncDecItem obj) {
-                springIncdecRepo.save(map(obj));
+                obj2 = springIncdecRepo.save(map(obj));
+            }
+            if (obj2 == null) {
+                throw new Exception("Unknown save object");
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

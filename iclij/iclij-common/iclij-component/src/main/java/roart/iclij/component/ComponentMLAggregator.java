@@ -420,7 +420,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
             memory.setLearnConfidence(learnConfidence);
             //memory.setPosition(count);
             if (param.isDoSave()) {
-                actionData.getDbDao().save(memoryList);
+                actionData.getDbDao().save(memory);
             }
             memoryList.add(memory);
             if (param.isDoPrint()) {
