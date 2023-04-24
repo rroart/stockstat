@@ -135,13 +135,19 @@ public class ActionThread extends Thread {
                     continue;
                 }
                 String id = item.toStringId();
+                log.info("Working with id {}", id);
                 TimingBLItem blItem = blacklist.stream().filter(anitem -> id.equals(anitem.getId())).findAny().orElse(null);
+                List<TimingBLItem> checkList = blacklist.stream().filter(anitem -> id.equals(anitem.getId())).toList();
+                if (checkList.size() > 1) {
+                    log.error("List size {} for {}", checkList.size(), id);
+                }
                 if (blItem != null && blItem.getCount() >= 3) {
                     continue;
                 } 
                 if (blItem == null) {
                     blItem = new TimingBLItem();
                     blItem.setId(id);
+                    blItem.setRecord(LocalDate.now());
                 } else {
                     try {
                         dbDao.deleteById(blItem, id);
@@ -170,7 +176,7 @@ public class ActionThread extends Thread {
                     // TODO don't delete if failed
                     if (item.getDbid() != null) {
                         dbDao.deleteById(item, "" + item.getDbid());
-                   }
+                    }
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
