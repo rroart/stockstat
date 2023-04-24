@@ -13,6 +13,10 @@ ARG myconfig
 ARG mydbserver
 ARG mydbserverport=5432
 ARG mydbserverdb=stockstat
+ARG springdataurl
+ARG springdatausername
+ARG springdatapassword
+ARG springdatadriver
 ARG mydebug
 ARG jdk_java_options=
 ENV DISTLIB ${distlib}
