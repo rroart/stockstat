@@ -720,7 +720,7 @@ public class DbSpring {
             }
             if (object instanceof TimingBLItem) {
                 // not @id
-                timingBLRepo.deleteByDbid(dbid);
+                timingBLRepo.deleteById(dbid);
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

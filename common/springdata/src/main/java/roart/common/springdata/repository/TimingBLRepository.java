@@ -58,6 +58,13 @@ public class TimingBLRepository {
     }
 
     public void deleteByDbid(String id) {
+        String sql = "delete from timingbl where dbid = :id";
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+        namedParameters.addValue("dbid", id);
+        jdbcTemplate.update(sql, namedParameters);        
+    }
+
+    public void deleteById(String id) {
         String sql = "delete from timingbl where id = :id";
         MapSqlParameterSource namedParameters = new MapSqlParameterSource();
         namedParameters.addValue("id", id);
