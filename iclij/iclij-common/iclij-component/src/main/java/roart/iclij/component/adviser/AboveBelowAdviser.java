@@ -51,6 +51,7 @@ public class AboveBelowAdviser extends Adviser {
     
     public AboveBelowAdviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param, SimulateInvestConfig simulateConfig, IclijDbDao dbDao) {
         super(market, investStart, investEnd, param, simulateConfig);
+        this.dbDao = dbDao;
         SimulateInvestData simulateParam;
         if (param instanceof SimulateInvestData) {
             simulateParam = (SimulateInvestData) param;
@@ -69,7 +70,6 @@ public class AboveBelowAdviser extends Adviser {
             getAllMemories();
         }
         */
-        this.dbDao = dbDao;
     }
     
     private void getAllIncDecs() {
