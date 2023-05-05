@@ -810,11 +810,11 @@ public class SimulateInvestComponent extends ComponentML {
                 if (numlast == 0) {
                     score = (aResult.plotCapital.get(aResult.plotCapital.size() - 1) - 1)/ aResult.plotCapital.size();
                     if (autoSimConfig.getInterval() == 1 && score != ((aResult.plotCapital.get(aResult.plotCapital.size() - 1) - 1)/ aResult.plotCapital.size())) {
-                        System.out.println("sc " + score + " " + aOneRun.runs);
-                        System.out.println("" + aResult.plotCapital.get(aResult.plotCapital.size() - 1));
-                        System.out.println("" + aResult.plotCapital.size());
-                        System.out.println("" + (((aResult.plotCapital.get(aResult.plotCapital.size() - 1) - 1)/ aResult.plotCapital.size())));
-                        System.out.println("ERRERR");
+                        log.info("sc {} {} ", score, aOneRun.runs);
+                        log.info("{}", aResult.plotCapital.get(aResult.plotCapital.size() - 1));
+                        log.info("{}", aResult.plotCapital.size());
+                        log.info("{}", (((aResult.plotCapital.get(aResult.plotCapital.size() - 1) - 1)/ aResult.plotCapital.size())));
+                        log.error("ERRERR");
                     }
                 }
                 int firstidx = aResult.plotCapital.size() - 1 - numlast;
@@ -824,7 +824,7 @@ public class SimulateInvestComponent extends ComponentML {
                 double newscore = aResult.plotCapital.get(aResult.plotCapital.size() - 1) - aResult.plotCapital.get(firstidx);
                 newscore = newscore / (aResult.plotCapital.size() - firstidx);
                 if (autoSimConfig.getInterval() == 1 && Math.abs(newscore - score) > 0.00000000001 ) {
-                    System.out.println("ERRERR");                    
+                    log.error("ERRERR");                    
                 }
             } else {
                 int jj = 0;

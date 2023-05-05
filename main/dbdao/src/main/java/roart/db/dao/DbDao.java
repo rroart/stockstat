@@ -135,13 +135,12 @@ public class DbDao {
             metaitems.add(metaItem);
         }
         */
-        log.info("time0 " + (System.currentTimeMillis() - time0));
+        log.info("time0 {}", (System.currentTimeMillis() - time0));
         MyCache.getInstance().put(key, metas);
         return metas;
     }
 
     public MetaItem getById(String market, MyMyConfig conf) throws Exception {
-        System.out.println("mymarket " + market);
         return access.getMetaByMarket(market);
     }
 }

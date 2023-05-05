@@ -44,7 +44,7 @@ public class MyMyConfig extends MyConfig {
             }
             Class classType = getType().get(key);
             if (classType == null) {
-                System.out.println("Null class " + key);
+                log.info("Null class {}", key);
                 continue;
             }
                     
@@ -906,12 +906,10 @@ public class MyMyConfig extends MyConfig {
     }
 
     public boolean wantDbSpark() {
-        System.out.println("sp " + (Boolean) getConfigValueMap().get(ConfigConstants.DATABASESPARK));
         return (Boolean) getValueOrDefault(ConfigConstants.DATABASESPARK);
     }
 
     public boolean wantDbHibernate() {
-        System.out.println("hb " + (Boolean) getConfigValueMap().get(ConfigConstants.DATABASEHIBERNATE));
         return (Boolean) getNotEmptyValueOrDefault(ConfigConstants.DATABASEHIBERNATE);
     }
 
