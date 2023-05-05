@@ -8,8 +8,11 @@ export interface MainState {
   startdate: string;
   enddate: string;
   market: string;
+  market2: string;
   markets: Array<string>;
+  tasks: Array<string>;
   config: any;
+  config2: any;
 }
 
 export interface State extends AppState {

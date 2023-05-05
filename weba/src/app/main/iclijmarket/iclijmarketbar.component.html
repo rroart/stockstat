@@ -1,0 +1,36 @@
+  <h1>marketbar</h1>
+  <mat-select placeholder="Get market" (selectionChange)="changemarket($event)">
+    <mat-option *ngFor="let market of markets" [value]="market">{{ market }}</mat-option>
+  </mat-select>
+  <mat-select placeholder="Get ml market" (selectionChange)="changemlmarket($event)">
+    <mat-option *ngFor="let market of markets" [value]="market">{{ market }}</mat-option>
+  </mat-select>
+  <button class="mat-raised-button" (click)="resetmarket($event)">Reset market</button>
+  <button class="mat-raised-button" (click)="resetmlmarket($event)">Reset ml market</button>
+   <input matInput [matDatepicker]="startpicker" placeholder="Start date" (dateChange)=handleStartDateChange($event)>
+   <mat-datepicker-toggle matSuffix [for]="startpicker"></mat-datepicker-toggle>
+   <mat-datepicker #startpicker></mat-datepicker>
+   <input matInput [matDatepicker]="endpicker" placeholder="End date" (dateChange)=handleEndDateChange($event)>
+   <mat-datepicker-toggle matSuffix [for]="endpicker"></mat-datepicker-toggle>
+   <mat-datepicker #endpicker></mat-datepicker>
+   <br/>
+  <button class="mat-raised-button" (click)="resetStartDate($event)">Reset start date</button>
+  <button class="mat-raised-button" (click)="resetEndDate($event)">Reset end date</button>
+  <br/>
+  <button class="mat-raised-button" (click)="getContent($event)">Get find profit data</button>
+  <button class="mat-raised-button" (click)="getContentMachineLearning($event)">Get machine learning data</button>
+  <button class="mat-raised-button" (click)="getContentEvolve($event)">Get evolve data</button>
+  <button class="mat-raised-button" (click)="getContentImprove($event)">Get improve profit data</button>
+  <button class="mat-raised-button" (click)="getContentDataset($event)">Get dataset data</button>
+  <button class="mat-raised-button" (click)="getContentCrosstest($event)">Get crosstest data</button>
+  <button class="mat-raised-button" (click)="getContentFilter($event)">Get filter data</button>
+  <button class="mat-raised-button" (click)="getContentAboveBelow($event)">Get above below data</button>
+  <br>
+  <button class="mat-raised-button" (click)="getVerify($event)">Run and get find profit verification data</button>
+  <button class="mat-raised-button" (click)="getVerifyLoop($event)">Run and get find profit verification data loop</button>
+  <br/>
+  <button class="mat-raised-button" (click)="getSingleMarket($event)">Run and get find profit data</button>
+  <button class="mat-raised-button" (click)="getSingleMarketLoop($event)">Run and get find profit data loop</button>
+  <br/>
+  <button class="mat-raised-button" (click)="getImproveProfit($event)">Run and get single improve profit data</button>
+  <button class="mat-raised-button" (click)="getImproveAboveBelow($event)">Run and get single improve above below data</button>

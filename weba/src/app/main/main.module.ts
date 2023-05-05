@@ -29,10 +29,19 @@ import { MainService } from './main.service';
 import { MarketComponent } from './market/market.component';
 import { MarketbarComponent } from './market/marketbar.component';
 import { EvolvebarComponent } from './market/evolvebar.component';
+import { IclijMarketComponent } from './iclijmarket/iclijmarket.component';
+import { IclijMarketbarComponent } from './iclijmarket/iclijmarketbar.component';
+import { IclijEvolvebarComponent } from './iclijmarket/iclijevolvebar.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
 import { ConfigtreeComponent } from './configuration/configtree.component';
 import { TreeviewComponent } from './configuration/treeview.component';
+import { IclijConfigurationComponent } from './iclijconfiguration/iclijconfiguration.component';
+import { IclijConfigtreeComponent } from './iclijconfiguration/iclijconfigtree.component';
+import { IclijTreeviewComponent } from './iclijconfiguration/iclijtreeview.component';
+import { ControlPanelComponent } from './controlpanel/controlpanel.component';
+import { TaskListComponent } from './controlpanel/tasklist.component';
 import { MytableComponent } from './table/mytable.component';
+import { MyIclijtableComponent } from './iclijtable/myiclijtable.component';
 import { MyimageComponent } from './table/myimage.component';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
@@ -53,11 +62,20 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
     MarketComponent,
     MarketbarComponent,
     EvolvebarComponent,
+    IclijMarketComponent,
+    IclijMarketbarComponent,
+    IclijEvolvebarComponent,
     ConfigurationComponent,
+    IclijConfigurationComponent,
     ConfigtreeComponent,
     TreeviewComponent,
+    IclijConfigtreeComponent,
+    IclijTreeviewComponent,
     MyimageComponent,
+    ControlPanelComponent,
+    TaskListComponent,
     MytableComponent,
+    MyIclijtableComponent,
     /*
     TodosContainerComponent,
     StockMarketContainerComponent,

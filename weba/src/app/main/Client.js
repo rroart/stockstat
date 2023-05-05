@@ -30,4 +30,9 @@ const fetchApi = {
             .catch((error) => console.log(error.message))
             .then (data => data)
     }
+
+    export const geturl = (query) => {
+	return "http://" + getHost() + ":" + getPort() + query;
+    }
+
 }

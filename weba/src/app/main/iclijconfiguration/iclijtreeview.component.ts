@@ -1,12 +1,14 @@
 import { Store, select } from '@ngrx/store';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, Input } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivationEnd, Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { filter, takeUntil, map } from 'rxjs/operators';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatInputModule } from '@angular/material/input';
 
-import { ActionIncrement, ActionGetmarkets, ActionGetconfig } from './main.actions';
+import { ActionIncrement, ActionSetconfigvaluemap } from '../main.actions';
 
 import { routeAnimations, TitleService } from '@app/core';
 //import { tick } from '@angular/core';
@@ -16,45 +18,36 @@ import {
   SettingsState
 } from '@app/settings';
 
-import { selectMain, selectTabs } from './main.selectors';
-import { MainState } from './main.state';
-import { State as BaseMainState } from './main.state';
+import { selectMain } from '../main.selectors';
+import { MainState } from '../main.state';
+import { State as BaseMainState } from '../main.state';
 import { selectAuth } from '@app/core/auth/auth.selectors';
-
-import { Client, ConvertToSelect } from './Client';
-
-import { MytableComponent } from './table/mytable.component';
-import { MyIclijtableComponent } from './iclijtable/myiclijtable.component';
-import { MyimageComponent } from './table/myimage.component';
 
 interface State extends BaseSettingsState, BaseMainState {}
 
 @Component({
-  selector: 'anms-main',
-  templateUrl: './main.component.html',
+  selector: 'iclijtreeview',
+  templateUrl: './iclijtreeview.component.html',
   //styleUrls: ['./main.component.scss'],
   animations: [routeAnimations]
 })
-export class MainComponent implements OnInit, OnDestroy {
+export class IclijTreeviewComponent implements OnInit, OnDestroy {
   private unsubscribe$: Subject<void> = new Subject<void>();
   private isAuthenticated$: Observable<boolean>;
 
-  count: number;
   main: MainState;
 
-  maintabs = [
-    { link: 'todos', label: 'anms.main.menu.todos' },
-    { link: 'stock-market', label: 'anms.main.menu.stocks' },
-    { link: 'theming', label: 'anms.main.menu.theming' },
-    { link: 'crud', label: 'anms.main.menu.crud' },
-    { link: 'form', label: 'anms.main.menu.form' },
-    { link: 'notifications', label: 'anms.main.menu.notifications' },
-    { link: 'authenticated', label: 'anms.main.menu.auth', auth: true }
-  ];
+@Input() text : Map<String, String>;    
+@Input() type : Map<String, String>;    
+@Input() elem : any; //ConfigTreeMap;
+@Input() configValueMap : Map<String, String>;
+values2: Array<any>;
+    textname: String;
+myvalue: String;
+checkbox: boolean = false;
+checkboxvalue: any; //boolean;
 
-  mytabs: any;
-  mystuff: any;
-  
+
   constructor(
     private store: Store<State>,
     private router: Router,
@@ -63,57 +56,44 @@ export class MainComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.store.dispatch(new ActionGetconfig());
-    this.store.dispatch(new ActionGetmarkets());
     this.translate.setDefaultLang('en');
     this.subscribeToMain();
-    this.subscribeToTabs();
-    this.subscribeToSettings();
+    //this.subscribeToSettings();
     this.subscribeToRouterEvents();
     this.isAuthenticated$ = this.store.pipe(
       select(selectAuth),
       map(auth => auth.isAuthenticated)
     );
-    this.mytabs = this.main.tabs;
+            this.values2 = Object.values(this.elem["configTreeMap"]);
+        this.textname = this.text[this.elem.name];
+        if (this.textname == null) {
+           this.textname = this.elem.name;
+           let idx = this.textname.indexOf(".");
+           if (idx >= 0) {
+              this.textname = this.textname.substring(idx + 1);
+           }
+        }
 
-    const myrows = [];
-    const obj1 = new Object();
-    obj1['cols']=['a','b','c'];
-    const obj2 = new Object();
-    obj2['cols']=[1,2,3];
-    const obj3 = new Object();
-    obj3['cols']=[4,5,6];
-    const obj4 = new Object();
-    obj4['cols']=[7,8,9];
-    myrows.push(obj1);
-    myrows.push(obj2);
-    myrows.push(obj3);
-    myrows.push(obj4);
-    const obj = new Object();
-    obj['rows']=myrows;
-    obj['blbl']="bla";
-    const myarray = [];
-    myarray.push(obj);
-    this.testarray = myarray;
-    console.log(myarray);
+	//console.log(this.configValueMap);
+    this.myvalue = this.configValueMap[this.elem.name];
+
+        const typename = this.type[this.elem.name];
+        this.myvalue = this.configValueMap[this.elem.name];
+        if (typename == "java.lang.Boolean") {
+           this.checkbox = true;
+	   //console.log(this.myvalue);
+	   this.checkboxvalue = this.myvalue;
+	   if (this.checkboxvalue == null) {
+           //this.checkboxvalue = false;
+	   }
+         //console.log("boolval " + this.checkboxvalue);
+           }
+
   }
-
-  testarray: any;
 
   ngOnDestroy(): void {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
-  }
-
-  private subscribeToSettings() {
-    this.store
-      .pipe(
-        select(selectSettings),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe((settings: SettingsState) =>
-        this.translate.use(settings.language)
-      );
   }
 
   private subscribeToRouterEvents() {
@@ -140,25 +120,13 @@ export class MainComponent implements OnInit, OnDestroy {
       )
       .subscribe((main: MainState) => {
         this.main = main;
-        this.setCount(main);
-      });
-  }
-
-  private subscribeToTabs() {
-    this.store
-      .pipe(
-        select(selectTabs),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe((main: MainState) => {
-      this.mytabs = main;
-      console.log(main);
+        //this.setCount(main);
       });
   }
 
   private setCount(main: MainState) {
   console.log(main);
-    this.count = main.count;
+    //this.count = main.count;
   }
 
   //@ViewChild('increment') increment;
@@ -179,6 +147,23 @@ export class MainComponent implements OnInit, OnDestroy {
   //setTimeout( () => { this.router.navigate(['/']); }, 5000);
   this.store.dispatch(new ActionIncrement({incCount: 2})));
   }
+
+        switchMe(event) {
+        console.log(event.checked);
+        console.log("switched2"+event.checked);
+    console.log("va3 " + this.elem.name + " " + event.checked);
+    //this.configValueMap.set(this.elem.name, event.target.checked);
+    // TODO same
+    this.store.dispatch(new ActionSetconfigvaluemap([this.elem.name, event.checked]));
+        }
+
+    onSubmit($event) {
+    console.log($event);
+    console.log("va " + this.elem.name + " " +$event.target.value);
+    //this.configValueMap.set(this.elem.name, value);
+    // TODO same
+    this.store.dispatch(new ActionSetconfigvaluemap([this.elem.name, $event.target.value]));
+}
 
 async delay(ms: number) {
     await new Promise(resolve => setTimeout(()=>resolve(), ms)).then(()=>console.log("fired"));

@@ -1,0 +1,12 @@
+      <label>{{textname}}</label>
+          <mat-checkbox *ngIf='checkbox && checkboxvalue' checked=true (change)="switchMe($event)">A</mat-checkbox>
+          <mat-checkbox *ngIf='checkbox && !checkboxvalue' (change)="switchMe($event)">B</mat-checkbox>
+          <input *ngIf='!checkbox && myvalue != null' #atext (change)="onSubmit($event)" value="{{myvalue}}"/>
+      <ul>
+        <div *ngFor="let value of values2">
+          <li>
+            <iclijtreeview [elem]="value" [text]="text" [type]="type" [configValueMap]="configValueMap"></iclijtreeview>
+            </li>
+        </div>
+        </ul>
+ 

@@ -36,6 +36,11 @@ export const selectMarket = createSelector(
   (state: MainState) => state.market
 );
 
+export const selectMarket2 = createSelector(
+  selectMainState,
+  (state: MainState) => state.market2
+);
+
 export const selectMarkets = createSelector(
   selectMainState,
   (state: MainState) => state.markets
@@ -44,4 +49,9 @@ export const selectMarkets = createSelector(
 export const selectConfig = createSelector(
   selectMainState,
   (state: MainState) => state.config
+);
+
+export const selectConfig2 = createSelector(
+  selectMainState,
+  (state: MainState) => state.config2
 );

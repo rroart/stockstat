@@ -7,8 +7,11 @@ export const initialState: MainState = {
   startdate: null,
   enddate: null,
   market: null,
+  market2: null,
   markets: [],
+  tasks: [],
   config: null,
+  config2: null,
 };
 
 export function mainReducer(
@@ -22,9 +25,12 @@ export function mainReducer(
       console.log(action.payload);
       return state;
     case MainActionTypes.SETCONFIG:
+    case MainActionTypes.SETCONFIG2:
       console.log('setconfig');
     case MainActionTypes.SETMARKET:
+    case MainActionTypes.SETMARKET2:
     case MainActionTypes.SETMARKETS:
+    case MainActionTypes.SETTASKS:
     case MainActionTypes.SETSTARTDATE:
     case MainActionTypes.SETENDDATE:
       console.log(action);
