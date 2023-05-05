@@ -8,6 +8,10 @@ build:
       dockerfile: docker/cloud/weba/Dockerfile
       buildArgs:
         dist: '{{.WEBADIST}}'
+        myaserver: '{{.MYASERVER}}'
+        myaport: '{{.MYAPORT}}'
+        myiserver: '{{.MYISERVER}}'
+        myiport: '{{.MYIPORT}}'
         myserver: '{{.MYSERVER}}'
         myport: '{{.MYPORT}}'
         mywebport: "80"
