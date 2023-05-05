@@ -173,6 +173,7 @@ public abstract class Indicator extends AbstractIndicator {
         if (aListMap == null || aListMap.isEmpty()) {
             return resultList;
         }
+        log.info("time for {}", title);
         long time0 = System.currentTimeMillis();
         log.info("time0 {}", (System.currentTimeMillis() - time0));
 
