@@ -19,6 +19,40 @@ function getHost() {
     return "localhost";
 }
 
+function getIPort() {
+    console.log(env.REACT_APP_NODE_ENV);
+    if (typeof env.REACT_APP_MYIPORT !== 'undefined') {
+        return env.REACT_APP_MYIPORT;
+    }
+    return 80;
+}
+
+function getIHost() {
+    console.log("pppp");
+    console.log(env);
+    if (typeof env.REACT_APP_MYISERVER !== 'undefined') {
+        return env.REACT_APP_MYISERVER;
+    }
+    return "localhost";
+}
+
+function getAPort() {
+    console.log(env.REACT_APP_NODE_ENV);
+    if (typeof env.REACT_APP_MYAPORT !== 'undefined') {
+        return env.REACT_APP_MYAPORT;
+    }
+    return 80;
+}
+
+function getAHost() {
+    console.log("pppp");
+    console.log(env);
+    if (typeof env.REACT_APP_MYASERVER !== 'undefined') {
+        return env.REACT_APP_MYASERVER;
+    }
+    return "localhost";
+}
+
 function search(query, serviceparam, cb) {
     console.log(JSON.stringify(serviceparam));
     /*
@@ -80,6 +114,32 @@ const fetchApi = {
 	    .then(parseJSON)
 	    .catch((error) => console.log(error.message))
 	    .then (data => data)
+    },
+    search2(query, serviceparam) {
+	console.log(query);
+	console.log(JSON.stringify(serviceparam));
+	return fetch("http://" + getIHost() + ":" + getIPort() + query, {
+	    method: "POST",
+	    headers: { 'Accept': 'application/json;charset=utf-8', 'Content-Type': 'application/json', },
+	    body: JSON.stringify(serviceparam),
+	})
+	    .then(statusHelper)
+	    .then(parseJSON)
+	    .catch((error) => console.log(error.message))
+	    .then (data => data)
+    },
+    search3(query, serviceparam) {
+	console.log(query);
+	console.log(JSON.stringify(serviceparam));
+	return fetch("http://" + getAHost() + ":" + getAPort() + query, {
+	    method: "POST",
+	    headers: { 'Accept': 'application/json;charset=utf-8', 'Content-Type': 'application/json', },
+	    body: JSON.stringify(serviceparam),
+	})
+	    .then(statusHelper)
+	    .then(parseJSON)
+	    .catch((error) => console.log(error.message))
+	    .then (data => data)
     }
 }
 
@@ -91,5 +151,9 @@ function statusHelper (response) {
   }
 }
 
-const Client = { search, searchsynch, fetchApi };
+export const geturl = (query) => {
+    return "http://" + getAHost() + ":" + getAPort() + query;
+}
+
+const Client = { search, searchsynch, fetchApi, geturl };
 export default Client;

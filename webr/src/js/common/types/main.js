@@ -4,6 +4,16 @@ export type mainType = {
   source: string,
 }
 
+class IclijServiceParam {
+    iclijConfig: object;
+    ids: string[];
+    market: string;
+    wantMaps: boolean;
+    confList: string[];
+    webpath: string;
+    offset: int;
+}
+
 class ServiceParam {
     config: object;
     ids: string[];
@@ -22,6 +32,21 @@ class ServiceResult {
     list: string[];
     maps: object;
     error: string;
+}
+
+class IclijServiceResult {
+    iclijConfig: object;
+    markets: string[];
+    stocks: object;
+    list: string[];
+    maps: object;
+    error: string;
+    lists: IclijServiceList[];
+}
+
+class IclijServiceList {
+    title: string;
+    list: object;
 }
 
 class MyConfig {
@@ -45,4 +70,5 @@ class NeuralNetCommand {
     mldynamic : boolean;
 }
 
-export { ServiceParam, ServiceResult, MyConfig, GuiSize, NeuralNetCommand }
+export { ServiceParam, ServiceResult, IclijServiceParam, IclijServiceResult, IclijServiceList, MyConfig, GuiSize, NeuralNetCommand }
+

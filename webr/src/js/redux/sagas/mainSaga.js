@@ -7,8 +7,9 @@ import type { mainType } from '../../common/types/main'
 import { MyConfig, GuiSize } from '../../common/types/main'
 
 import { Client, ConvertToSelect } from '../../common/components/util'
-import { ServiceParam, ServiceResult, NeuralNetCommand } from '../../common/types/main'
+import { ServiceParam, ServiceResult, NeuralNetCommand, IclijServiceParam, IclijServiceResult } from '../../common/types/main'
 import { MyTable } from '../../common/components/Table'
+import { IclijMyTable } from '../../common/components/IclijTable'
 
 export function* fetchMainData() {
   // pretend there is an api call
@@ -32,6 +33,18 @@ export function* fetchConfig() {
     const config2 = config;
     console.log(config2);
     yield put(mainActions.setconfig(config2.config));
+}
+
+export function* fetchConfig2() {
+    var serviceparam = new IclijServiceParam();
+    //serviceparam.market = '0';
+    console.log("hereconfig");
+    let config = yield call(Client.fetchApi.search3, "/getconfig", serviceparam);
+    console.log("hereconfig2");
+    console.log(config);
+    const config2 = config;
+    console.log(config2);
+    yield put(mainActions.setconfig2(config2.iclijConfig));
 }
 
 function getMyConfig(config, market, date) {
@@ -63,6 +76,33 @@ export function* fetchContent(action) {
     neuralnetcommand.mldynamic = false;
     serviceparam.neuralnetcommand = neuralnetcommand;
     let result = yield call(Client.fetchApi.search, "/getcontent", serviceparam);
+    console.log("herecontent2");
+    console.log(result);
+    console.log(action);
+    const config2 = result;
+    console.log(config2);
+    const list = result.list;
+    const tab = MyTable.getTab(result.list, Date.now(), props);
+    yield put(mainActions.newtabMain(tab));
+}
+
+export function* fetchContent2NO(action) {
+    var serviceparam = new ServiceParam();
+    console.log(action);
+    const config = action.payload.config;
+    const props = action.payload.props;
+    const date = config.get('enddate');
+    serviceparam.market = config.get('market');
+    console.log(serviceparam.market);
+    serviceparam.config = getMyConfig(config, serviceparam.market, date);
+    console.log("herecontent");
+    console.log(serviceparam.market);
+    var neuralnetcommand = new NeuralNetCommand();
+    neuralnetcommand.mllearn = false;
+    neuralnetcommand.mlclassify = true;
+    neuralnetcommand.mldynamic = false;
+    serviceparam.neuralnetcommand = neuralnetcommand;
+    let result = yield call(Client.fetchApi.search2, "/getcontent", serviceparam);
     console.log("herecontent2");
     console.log(result);
     console.log(action);
@@ -162,6 +202,315 @@ export function* fetchEvolve(action) {
     yield put(mainActions.newtabMain(tab));
 }
 
+//export function* fetchIclijContent(action) {
+export function* fetchContent2(action) {
+    var serviceparam = new IclijServiceParam();
+    console.log(action);
+    const config = action.payload.config;
+    const props = action.payload.props;
+    const date = config.get('enddate');
+    console.log(date);
+    serviceparam.market = config.get('market');
+    console.log(serviceparam.market);
+    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    console.log("herecontent");
+    console.log(serviceparam.market);
+    let result = yield call(Client.fetchApi.search2, "/getcontent", serviceparam);
+    console.log("herecontent2");
+    console.log(result);
+    console.log(action);
+    const config2 = result;
+    console.log(config2);
+    const list = result.lists;
+    const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+    yield put(mainActions.newtabMain(tab));
+}
+
+export function* fetchContentEvolve(action) {
+    var serviceparam = new IclijServiceParam();
+    console.log(action);
+    const config = action.payload.config;
+    const props = action.payload.props;
+    const date = config.get('enddate');
+    serviceparam.market = config.get('market');
+    console.log(serviceparam.market);
+    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    console.log("herecontent");
+    console.log(serviceparam.market);
+    let result = yield call(Client.fetchApi.search, "/getcontentevolve", serviceparam);
+    console.log("herecontent2");
+    console.log(result);
+    console.log(action);
+    const config2 = result;
+    console.log(config2);
+    const list = result.lists;
+    const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+    yield put(mainActions.newtabMain(tab));
+}
+
+export function* fetchContentDataset(action) {
+    var serviceparam = new IclijServiceParam();
+    console.log(action);
+    const config = action.payload.config;
+    const props = action.payload.props;
+    const date = config.get('enddate');
+    serviceparam.market = config.get('market');
+    console.log(serviceparam.market);
+    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    console.log("herecontent");
+    console.log(serviceparam.market);
+    let result = yield call(Client.fetchApi.search2, "/getcontentdataset", serviceparam);
+    console.log("herecontent2");
+    console.log(result);
+    console.log(action);
+    const config2 = result;
+    console.log(config2);
+    const list = result.lists;
+    const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+    yield put(mainActions.newtabMain(tab));
+}
+
+export function* fetchContentCrosstest(action) {
+    var serviceparam = new IclijServiceParam();
+    console.log(action);
+    const config = action.payload.config;
+    const props = action.payload.props;
+    const date = config.get('enddate');
+    serviceparam.market = config.get('market');
+    console.log(serviceparam.market);
+    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    console.log("herecontent");
+    console.log(serviceparam.market);
+    let result = yield call(Client.fetchApi.search2, "/getcontentcrosstest", serviceparam);
+    console.log("herecontent2");
+    console.log(result);
+    console.log(action);
+    const config2 = result;
+    console.log(config2);
+    const list = result.lists;
+    const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+    yield put(mainActions.newtabMain(tab));
+}
+
+export function* fetchContentFilter(action) {
+    var serviceparam = new IclijServiceParam();
+    console.log(action);
+    const config = action.payload.config;
+    const props = action.payload.props;
+    const date = config.get('enddate');
+    serviceparam.market = config.get('market');
+    console.log(serviceparam.market);
+    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    console.log("herecontent");
+    console.log(serviceparam.market);
+    let result = yield call(Client.fetchApi.search2, "/getcontentfilter", serviceparam);
+    console.log("herecontent2");
+    console.log(result);
+    console.log(action);
+    const config2 = result;
+    console.log(config2);
+    const list = result.lists;
+    const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+    yield put(mainActions.newtabMain(tab));
+}
+
+export function* fetchContentAboveBelow(action) {
+    var serviceparam = new IclijServiceParam();
+    console.log(action);
+    const config = action.payload.config;
+    const props = action.payload.props;
+    const date = config.get('enddate');
+    serviceparam.market = config.get('market');
+    console.log(serviceparam.market);
+    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    console.log("herecontent");
+    console.log(serviceparam.market);
+    let result = yield call(Client.fetchApi.search2, "/getcontentabovebelow", serviceparam);
+    console.log("herecontent2");
+    console.log(result);
+    console.log(action);
+    const config2 = result;
+    console.log(config2);
+    const list = result.lists;
+    const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+    yield put(mainActions.newtabMain(tab));
+}
+
+export function* fetchContentImprove(action) {
+    var serviceparam = new IclijServiceParam();
+    console.log(action);
+    const config = action.payload.config;
+    const props = action.payload.props;
+    const date = config.get('enddate');
+    serviceparam.market = config.get('market');
+    console.log(serviceparam.market);
+    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    console.log("herecontent");
+    console.log(serviceparam.market);
+    let result = yield call(Client.fetchApi.search2, "/getcontentimprove", serviceparam);
+    console.log("herecontent2");
+    console.log(result);
+    console.log(action);
+    const config2 = result;
+    console.log(config2);
+    const list = result.lists;
+    const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+    yield put(mainActions.newtabMain(tab));
+}
+
+export function* fetchContentMachineLearning(action) {
+    var serviceparam = new IclijServiceParam();
+    console.log(action);
+    const config = action.payload.config;
+    const props = action.payload.props;
+    const date = config.get('enddate');
+    serviceparam.market = config.get('market');
+    console.log(serviceparam.market);
+    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    console.log("herecontent");
+    console.log(serviceparam.market);
+    let result = yield call(Client.fetchApi.search2, "/getcontentmachinelearning", serviceparam);
+    console.log("herecontent2");
+    console.log(result);
+    console.log(action);
+    const config2 = result;
+    console.log(config2);
+    const list = result.lists;
+    console.log(list);
+    const tab = IclijMyTable.getTab(result.lists, Date.now(), props);
+    yield put(mainActions.newtabMain(tab));
+}
+
+export function* fetchSingleMarket(action) {
+    var serviceparam = new IclijServiceParam();
+    const config = action.payload.config;
+    serviceparam.market = config.get('market');
+    console.log(action);
+    const props = action.payload.props;
+    const loop = action.payload.loop;
+    var date = config.get('enddate');
+    let loops = 1
+    if (loop) {
+	date = config.get('startdate');
+    }
+    console.log(loop);
+    console.log(date);
+    const iclijConfig = getMyConfig(config, serviceparam.market, date);
+    serviceparam.iclijConfig = iclijConfig;
+    if (loop) {
+	loops = iclijConfig.configValueMap.get('singlemarket.loops');
+    }
+    var i = 0;
+    for (i = 0; i < loops; i++) {
+	console.log(serviceparam.market);
+	//serviceparam.offset = i * config.get('singlemarket').get('loopinterval');
+	if (loop) {
+	    serviceparam.offset = i * serviceparam.iclijConfig.configValueMap.get('singlemarket.loopinterval');
+	}
+	console.log("herecontent");
+	console.log(serviceparam.market);
+	let result = yield call(Client.fetchApi.search2, "/findprofit", serviceparam);
+	console.log("herecontent2");
+	console.log(result);
+	console.log(action);
+	const config2 = result;
+	console.log(config2);
+	const list = result.lists;
+	const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+	yield put(mainActions.newtabMain(tab));
+    }
+}
+
+export function* fetchImproveProfit(action) {
+    var serviceparam = new IclijServiceParam();
+    console.log(action);
+    const config = action.payload.config;
+    const props = action.payload.props;
+    const date = config.get('enddate');
+    serviceparam.market = config.get('market');
+    console.log(serviceparam.market);
+    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    console.log("herecontent");
+    console.log(serviceparam.market);
+    let result = yield call(Client.fetchApi.search2, "/improveprofit", serviceparam);
+    console.log("herecontent2");
+    console.log(result);
+    console.log(action);
+    const config2 = result;
+    console.log(config2);
+    const list = result.lists;
+    const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+    yield put(mainActions.newtabMain(tab));
+}
+
+export function* fetchImproveAboveBelow(action) {
+    var serviceparam = new IclijServiceParam();
+    console.log(action);
+    const config = action.payload.config;
+    const props = action.payload.props;
+    const date = config.get('enddate');
+    serviceparam.market = config.get('market');
+    console.log(serviceparam.market);
+    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    console.log("herecontent");
+    console.log(serviceparam.market);
+    let result = yield call(Client.fetchApi.search2, "/improveabovebelow", serviceparam);
+    console.log("herecontent2");
+    console.log(result);
+    console.log(action);
+    const config2 = result;
+    console.log(config2);
+    const list = result.lists;
+    const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+    yield put(mainActions.newtabMain(tab));
+}
+
+export function* fetchGetVerify(action) {
+    var serviceparam = new IclijServiceParam();
+    const config = action.payload.config;
+    serviceparam.market = config.get('market');
+    console.log(action);
+    const props = action.payload.props;
+    const loop = action.payload.loop;
+    var date = config.get('enddate');
+    let loops = 1
+    if (loop) {
+	date = config.get('startdate');
+    }
+    console.log(loop);
+    console.log(date);
+    const iclijConfig = getMyConfig(config, serviceparam.market, date);
+    serviceparam.iclijConfig = iclijConfig;
+    if (loop) {
+	loops = iclijConfig.configValueMap.get('verification.loops');
+    }
+    var i = 0;
+    for (i = 0; i < loops; i++) {
+	console.log(serviceparam.market);
+	console.log(config);
+	console.log(Object.keys(config));
+	console.log(config.get('verification'));
+	console.log(config['verification']);
+	console.log(serviceparam.iclijConfig);
+	//serviceparam.offset = i * config.get('verification').get('loopinterval');
+	console.log(serviceparam.iclijConfig.configValueMap.get('verification.loopinterval'))
+	if (loop) {
+	    serviceparam.offset = i * serviceparam.iclijConfig.configValueMap.get('verification.loopinterval');
+	}
+	console.log("herecontent");
+	console.log(serviceparam.market);
+	let result = yield call(Client.fetchApi.search2, "/getverify", serviceparam);
+	console.log("herecontent2");
+	console.log(result);
+	console.log(action);
+	const config2 = result;
+	console.log(config2);
+	const list = result.lists;
+	const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+	yield put(mainActions.newtabMain(tab));
+    }
+}
+
 export function* fetchMarkets() {
     console.log("heremarkets");
     const serviceparam = new ServiceParam();
@@ -244,12 +593,25 @@ function* watchGetConfig() {
   yield takeLatest(mainConstants.GETCONFIG, fetchConfig);
 }
 
+function* watchGetConfig2() {
+    console.log("watchgetconfig2");
+  yield takeLatest(mainConstants.GETCONFIG, fetchConfig2);
+}
+
 function* watchGetContent() {
     console.log("watchgetcontent");
     //console.log(action);
     //const config = null;
     //console.log(config);
     yield takeEvery(mainConstants.GETCONTENT, fetchContent);
+}
+
+function* watchGetContent2() {
+    console.log("watchgetcontent");
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
+    yield takeEvery(mainConstants.GETCONTENT2, fetchContent2);
 }
 
 function* watchGetContentGraph() {
@@ -270,6 +632,94 @@ function* watchGetEvolveNN() {
 function* watchGetEvolve() {
     console.log("watchgetevolve");
   yield takeEvery(mainConstants.GETEVOLVE, fetchEvolve);
+}
+
+function* watchGetContentImprove() {
+    console.log("watchgetimprove");
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
+    yield takeEvery(mainConstants.GETCONTENTIMPROVE, fetchContentImprove);
+}
+
+function* watchGetContentEvolve() {
+    console.log("watchgetcontentevolve");
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
+    yield takeEvery(mainConstants.GETCONTENTEVOLVE, fetchContentEvolve);
+}
+
+function* watchGetContentDataset() {
+    console.log("watchgetcontentdataset");
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
+    yield takeEvery(mainConstants.GETCONTENTDATASET, fetchContentDataset);
+}
+
+function* watchGetContentCrosstest() {
+    console.log("watchgetcontentcrosstest");
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
+    yield takeEvery(mainConstants.GETCONTENTCROSSTEST, fetchContentCrosstest);
+}
+
+function* watchGetContentFilter() {
+    console.log("watchgetcontentfilter");
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
+    yield takeEvery(mainConstants.GETCONTENTFILTER, fetchContentFilter);
+}
+
+function* watchGetContentAboveBelow() {
+    console.log("watchgetcontentabovebelow");
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
+    yield takeEvery(mainConstants.GETCONTENTABOVEBELOW, fetchContentAboveBelow);
+}
+
+function* watchGetContentMachineLearning() {
+    console.log("watchgetcontentmachinelearning");
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
+    yield takeEvery(mainConstants.GETCONTENTMACHINELEARNING, fetchContentMachineLearning);
+}
+
+function* watchGetSingleMarket() {
+    console.log("watchgetsinglemarket");
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
+    yield takeEvery(mainConstants.GETSINGLEMARKET, fetchSingleMarket);
+}
+
+function* watchGetImproveProfit() {
+    console.log("watchgetimproveprofit");
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
+    yield takeEvery(mainConstants.GETIMPROVEPROFIT, fetchImproveProfit);
+}
+
+function* watchGetImproveAboveBelow() {
+    console.log("watchgetimproveabovebelow");
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
+    yield takeEvery(mainConstants.GETIMPROVEABOVEBELOW, fetchImproveAboveBelow);
+}
+
+function* watchGetVerify() {
+    console.log("watchgetcontent");
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
+    yield takeEvery(mainConstants.GETVERIFY, fetchGetVerify);
 }
 
 function* watchGetR3() {
@@ -294,9 +744,22 @@ export const mainSaga = [
     fork(watchCount),
     fork(watchGetMarkets),
     fork(watchGetConfig),
+    fork(watchGetConfig2),
     fork(watchGetContent),
+    fork(watchGetContent2),
     fork(watchGetContentGraph),
     fork(watchGetEvolveRecommender),
     fork(watchGetEvolveNN),
     fork(watchGetEvolve),
+    fork(watchGetContentImprove),
+    fork(watchGetContentEvolve),
+    fork(watchGetContentDataset),
+    fork(watchGetContentCrosstest),
+    fork(watchGetContentFilter),
+    fork(watchGetContentAboveBelow),
+    fork(watchGetContentMachineLearning),
+    fork(watchGetSingleMarket),
+    fork(watchGetImproveProfit),
+    fork(watchGetImproveAboveBelow),
+    fork(watchGetVerify),
 ];

@@ -8,6 +8,9 @@ import { Tabs, Tab } from 'react-bootstrap';
 
 import { Market } from '../Market'
 import { Configuration } from '../Configuration'
+import { IclijMarket } from '../IclijMarket'
+import { IclijConfiguration } from '../IclijConfiguration'
+import { ControlPanel } from '../ControlPanel'
 import { Test } from '../test'
 //import Misc from '../util'
 //import Client from '../util/Client'
@@ -88,10 +91,19 @@ var nums = [ [ '1' , '2'], ['3' , '4'], ['5', '6']];
             <h2>Configuration</h2>
 	    <Configuration {...this.props}/>
           </Tab>
-          <Tab eventKey={3} title="Control Panel">
-            <h2>Control Panel</h2>
+          <Tab eventKey={3} title="Market">
+            <h2>Iclij Market</h2>
+            <IclijMarket {...this.props}/>
           </Tab>
-	  { mytabs.map((item, index) => this.getanewtab(item, 4 + index)) }
+          <Tab eventKey={4} title="Configuration">
+            <h2>Iclij Configuration</h2>
+	    <IclijConfiguration {...this.props}/>
+          </Tab>
+          <Tab eventKey={5} title="Control Panel">
+              <h2>Control Panel</h2>
+	      <ControlPanel {...this.props}/>
+          </Tab>
+	  { mytabs.map((item, index) => this.getanewtab(item, 6 + index)) }
         </Tabs>
         <Button
        bsStyle="primary"

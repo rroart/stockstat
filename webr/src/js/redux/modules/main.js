@@ -18,20 +18,35 @@ const INCREMENT_ASYNC = 'app/main/INCREMENT_ASYNC';
 const INCREMENT2 = 'app/main/INCREMENT2';
 const GET_COUNT = 'app/main/GET_COUNT';
 const SETMARKET = 'app/main/SETMARKET';
+const SETMARKET2 = 'app/main/SETMARKET2';
 const SETMLMARKET = 'app/main/SETMLMARKET';
 const SETMARKETS = 'app/main/SETMARKETS';
 const GETMARKETS = 'app/main/GETMARKETS';
 const SETSTARTDATE = 'app/main/SETSTARTDATE';
 const SETENDDATE = 'app/main/SETENDDATE';
 const SETCONFIG = 'app/main/SETCONFIG';
+const SETCONFIG2 = 'app/main/SETCONFIG2';
 const SETCONFIGVALUE = 'app/main/SETCONFIGVALUE';
+const SETCONFIGVALUE2 = 'app/main/SETCONFIGVALUE2';
 const SETCONFIGVALUEMAP = 'app/main/SETCONFIGVALUEMAP';
 const GETCONFIG = 'app/main/GETCONFIG';
 const GETCONTENT = 'app/main/GETCONTENT';
+const GETCONTENT2 = 'app/main/GETCONTENT2';
 const GETCONTENTGRAPH = 'app/main/GETCONTENTGRAPH';
 const GETEVOLVERECOMMENDER = 'app/main/GETEVOLVERECOMMENDER';
 const GETEVOLVENN = 'app/main/GETEVOLVENN';
 const GETEVOLVE = 'app/main/GETEVOLVE';
+const GETCONTENTIMPROVE = 'app/main/GETCONTENTIMPROVE';
+const GETCONTENTEVOLVE = 'app/main/GETCONTENTEVOLVE';
+const GETCONTENTDATASET = 'app/main/GETCONTENTDATASET';
+const GETCONTENTCROSSTEST = 'app/main/GETCONTENTCROSSTEST';
+const GETCONTENTFILTER = 'app/main/GETCONTENTFILTER';
+const GETCONTENTABOVEBELOW = 'app/main/GETCONTENTABOVEBELOW';
+const GETCONTENTMACHINELEARNING = 'app/main/GETCONTENTMACHINELEARNING';
+const GETSINGLEMARKET = 'app/main/GETSINGLEMARKET'
+const GETIMPROVEPROFIT = 'app/main/GETIMPROVEPROFIT'
+const GETIMPROVEABOVEBELOW = 'app/main/GETIMPROVEABOVEBELOW'
+const GETVERIFY = 'app/main/GETVERIFY'
 
 export const constants = {
   INCREMENT2,
@@ -47,20 +62,35 @@ export const constants = {
     NEWTAB_MAIN3,
     GET_COUNT,
     SETMARKET,
+    SETMARKET2,
     SETMLMARKET,
     SETMARKETS,
     GETMARKETS,
     SETSTARTDATE,
     SETENDDATE,
     SETCONFIG,
+    SETCONFIG2,
     SETCONFIGVALUE,
+    SETCONFIGVALUE2,
     SETCONFIGVALUEMAP,
     GETCONFIG,
     GETCONTENT,
+    GETCONTENT2,
     GETCONTENTGRAPH,
     GETEVOLVERECOMMENDER,
     GETEVOLVENN,
     GETEVOLVE,
+    GETCONTENTIMPROVE,
+    GETCONTENTEVOLVE,
+    GETCONTENTDATASET,
+    GETCONTENTCROSSTEST,
+    GETCONTENTFILTER,
+    GETCONTENTABOVEBELOW,
+    GETCONTENTMACHINELEARNING,
+    GETSINGLEMARKET,
+    GETIMPROVEPROFIT,
+    GETIMPROVEABOVEBELOW,
+    GETVERIFY,
 };
 
 // ------------------------------------
@@ -80,20 +110,35 @@ export const increment2 = createAction(INCREMENT2, ( count ) => ({ count }));
 export const incrementasync = createAction(INCREMENT_ASYNC, () => ({  }));
 export const getCount = createAction(GET_COUNT, () => ({ }));
 export const setmarket = createAction(SETMARKET, (market) => ({ market } ) );
+export const setimarket = createAction(SETMARKET2, (market) => ({ market } ) );
 export const setmlmarket = createAction(SETMLMARKET, (market) => ({ market } ) );
 export const getMarkets = createAction(GETMARKETS, () => ( {} ) );
 export const setmarkets = createAction(SETMARKETS, (markets) => ( { markets } ) );
 export const setstartdate = createAction(SETSTARTDATE, (startdate) => ( { startdate } ) );
 export const setenddate = createAction(SETENDDATE, (enddate) => ( { enddate } ) );
 export const setconfig = createAction(SETCONFIG, (config) => ( { config } ) );
+export const setconfig2 = createAction(SETCONFIG2, (iconfig) => ( { iconfig } ) );
 export const setconfigvalue = createAction(SETCONFIGVALUE, ( array ) => ( array ) );
+export const seticonfigvalue = createAction(SETCONFIGVALUE2, ( array ) => ( array ) );
 export const setconfigvaluemap = createAction(SETCONFIGVALUEMAP, ( array ) => ( array ) );
 export const getConfig = createAction(GETCONFIG, () => ( {} ) );
 export const getcontent = createAction(GETCONTENT, (config, market, props) => ( { config, market, props } ) );
+export const getcontent2 = createAction(GETCONTENT2, (config, market, props) => ( { config, market, props } ) );
 export const getcontentgraph = createAction(GETCONTENTGRAPH, (config, value, props) => ( { config, value, props } ) );
 export const getevolverecommender = createAction(GETEVOLVERECOMMENDER, () => ( {} ) );
 export const getevolvenn = createAction(GETEVOLVENN, () => ( {} ) );
 export const getevolve = createAction(GETEVOLVE, (array) => ( { array } ) );
+export const getcontentevolve = createAction(GETCONTENTEVOLVE, (config, market, props) => ( { config, market, props } ) );
+export const getcontentdataset = createAction(GETCONTENTDATASET, (config, market, props) => ( { config, market, props } ) );
+export const getcontentcrosstest = createAction(GETCONTENTCROSSTEST, (config, market, props) => ( { config, market, props } ) );
+export const getcontentfilter = createAction(GETCONTENTFILTER, (config, market, props) => ( { config, market, props } ) );
+export const getcontentabovebelow = createAction(GETCONTENTABOVEBELOW, (config, market, props) => ( { config, market, props } ) );
+export const getcontentimprove = createAction(GETCONTENTIMPROVE, (config, market, props) => ( { config, market, props } ) );
+export const getcontentmachinelearning = createAction(GETCONTENTMACHINELEARNING, (config, market, props) => ( { config, market, props } ) );
+export const getsinglemarket = createAction(GETSINGLEMARKET, (config, market, props, loop) => ( { config, market, props, loop } ) );
+export const getimproveprofit = createAction(GETIMPROVEPROFIT, (config, market, props) => ( { config, market, props } ) );
+export const getimproveabovebelow = createAction(GETIMPROVEABOVEBELOW, (config, market, props) => ( { config, market, props } ) );
+export const getverify = createAction(GETVERIFY, (config, market, props, loop) => ( { config, market, props, loop } ) );
 				      
 export const actions = {
   getAwesomeCode,
@@ -109,20 +154,35 @@ export const actions = {
     incrementasync,
     getCount,
     setmarket,
+    setimarket,
     setmlmarket,
     setmarkets,
     setstartdate,
     setenddate,
     setconfig,
+    setconfig2,
     setconfigvalue,
+    seticonfigvalue,
     setconfigvaluemap,
     getConfig,
     getMarkets,
     getcontent,
+    getcontent2,
     getcontentgraph,
     getevolverecommender,
     getevolvenn,
     getevolve,
+    getcontentevolve,
+    getcontentdataset,
+    getcontentcrosstest,
+    getcontentfilter,
+    getcontentabovebelow,
+    getcontentimprove,
+    getcontentmachinelearning,
+    getsinglemarket,
+    getimproveprofit,
+    getimproveabovebelow,
+    getverify,
 };
 
 export const reducers = {
@@ -179,6 +239,10 @@ export const reducers = {
 	state.merge({
 	    ...payload
 	}),
+    [SETMARKET2]: (state, { payload }) =>
+	state.merge({
+	    ...payload
+	}),
     [SETMLMARKET]: (state, { payload }) =>
 	state.merge({
 	    ...payload
@@ -199,7 +263,15 @@ export const reducers = {
 	state.merge({
 	    ...payload
 	}),
+    [SETCONFIG2]: (state, { payload }) =>
+	state.merge({
+	    ...payload
+	}),
     [SETCONFIGVALUE]: (state, { payload }) =>
+	state.merge({
+	    config: getConfigAfterSet(state, payload)
+    }),
+    [SETCONFIGVALUE2]: (state, { payload }) =>
 	state.merge({
 	    config: getConfigAfterSet(state, payload)
     }),
@@ -234,70 +306,7 @@ function gettabs4(state, payload) {
     return arr;
 }
 
-function gettabs4not(state, payload) {
-    console.log("state0");
-    console.log(state);
-    var st2 = ([ ...state, payload]);
-    console.log(st2);
-    var st3 = {
-		...state,
-		markets: payload
-    };
-    console.log(st3);
-    var arr = (state.get('tabs'));
-    console.log(arr);
-    var arrayLength = arr.length;
-    var newpay = payload + arrayLength;
-    arr.push(newpay);
-    console.log("state1");
-    console.log(state);
-    console.log(arr);
-    return arr;
-}
-
-function gettabs5(state, payload) {
-    console.log("state0");
-    console.log(state);
-    var st2 = ([ ...state, payload]);
-    console.log(st2);
-    var st3 = {
-		...state,
-		markets: payload
-    };
-    console.log(st3);
-    var arr = (state.get('tabs'));
-    console.log(arr);
-    var arrayLength = arr.length;
-    var newpay = payload + arrayLength;
-    arr.push(newpay);
-    console.log("state1");
-    console.log(state);
-    console.log(arr);
-    return new Immutable.Map(state);
-}
-
-function gettabs6(state, payload) {
-    console.log("state0");
-    console.log(state);
-    var st2 = ([ ...state, payload]);
-    console.log(st2);
-    var st3 = {
-		...state,
-		markets: payload
-    };
-    console.log(st3);
-    var arr = (state.get('tabs'));
-    console.log(arr);
-    var arrayLength = arr.length;
-    var newpay = payload + arrayLength;
-    arr.push(newpay);
-    console.log("state1");
-    console.log(state);
-    console.log(arr);
-    return arr;
-}
-
-function gettabs2(state, payload) {
+ function gettabs2(state, payload) {
     var tabs = []
     console.log("state0");
     console.log(state);
@@ -325,48 +334,12 @@ function gettabs3(state) {
 }
 
 function getConfigAfterSet(state, payload) {
-    //state.get('config').set(payload)
     var config = state.get('config');
-    //console.log(config);
-    //console.log(payload);
-    //var valueMap = config.get('configValueMap');
-    //console.log(valueMap);
-    //var valueMap2 = valueMap; //.set(payload);
-    //var k = Object.keys(payload)[0];
-    //var v = Object.values(payload)[0];
-    //valueMap2 = valueMap2.set(k, v);
-    //valueMap2 = valueMap2.set({k: v});
-    //console.log(k);
-    //console.log(v);
-    //console.log(valueMap2.get(payload));
-    //console.log(valueMap2.get(k));
-    //console.log(valueMap2.get("predictors[@enable]"));
-    //console.log(valueMap2.get("predictors.lstm.horizon"));
-    //console.log(valueMap);
-    //console.log(valueMap2);
     return config.set(payload[0], payload[1]);
 }
 
 function getConfigValueMapAfterSet(state, payload) {
-    //state.get('config').set(payload)
     var config = state.get('config');
-    //console.log(config);
-    //console.log(payload);
-    //var valueMap = config.get('configValueMap');
-    //console.log(valueMap);
-    //var valueMap2 = valueMap; //.set(payload);
-    //var k = Object.keys(payload)[0];
-    //var v = Object.values(payload)[0];
-    //valueMap2 = valueMap2.set(k, v);
-    //valueMap2 = valueMap2.set({k: v});
-    //console.log(k);
-    //console.log(v);
-    //console.log(valueMap2.get(payload));
-    //console.log(valueMap2.get(k));
-    //console.log(valueMap2.get("predictors[@enable]"));
-    //console.log(valueMap2.get("predictors.lstm.horizon"));
-    //console.log(valueMap);
-    //console.log(valueMap2);
     const valueMap = config.get('configValueMap');
     return config.set('configValueMap', valueMap.set(payload[0], payload[1]));
 }
@@ -381,8 +354,10 @@ export const initialState = () =>
       startdate: '',
       enddate: '',
       market: '',
+      imarket: '',
       markets: [],
       config: '',
+      iconfig: '',
   })
 
 export default handleActions(reducers, initialState());
