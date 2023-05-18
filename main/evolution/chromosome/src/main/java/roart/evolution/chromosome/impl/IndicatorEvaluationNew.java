@@ -9,8 +9,7 @@ import java.util.Map.Entry;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import roart.common.config.MyConfig;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
 import roart.gene.CalcGene;
@@ -23,7 +22,7 @@ import roart.model.data.MarketData;
 @Deprecated
 public class IndicatorEvaluationNew extends AbstractChromosome {
     
-    private MyMyConfig conf;
+    private IclijConfig conf;
 
     private Object[] retObj;
     
@@ -33,7 +32,7 @@ public class IndicatorEvaluationNew extends AbstractChromosome {
     
     private Integer index;
     
-    public IndicatorEvaluationNew(MyMyConfig conf, String key, Object[] retObj, boolean b, Integer index) {
+    public IndicatorEvaluationNew(IclijConfig conf, String key, Object[] retObj, boolean b, Integer index) {
         this.conf = conf;
         this.key = key;
         this.retObj = retObj;
@@ -41,11 +40,11 @@ public class IndicatorEvaluationNew extends AbstractChromosome {
         this.index = index;
     }
 
-    public MyMyConfig getConf() {
+    public IclijConfig getConf() {
         return conf;
     }
 
-    public void setConf(MyMyConfig conf) {
+    public void setConf(IclijConfig conf) {
         this.conf = conf;
     }
 
@@ -166,7 +165,7 @@ public class IndicatorEvaluationNew extends AbstractChromosome {
 
     @Override
     public Individual crossover(AbstractChromosome evaluation) {
-        MyMyConfig config = new MyMyConfig(conf);
+        IclijConfig config = new IclijConfig(conf);
         List<String> keys = new ArrayList<>();
         keys.add(key);
         evaluation.normalize();
@@ -175,7 +174,7 @@ public class IndicatorEvaluationNew extends AbstractChromosome {
 
     @Override
     public AbstractChromosome copy() {
-        AbstractChromosome newEval = new IndicatorEvaluationNew(new MyMyConfig(conf), key, retObj, useMax, index);
+        AbstractChromosome newEval = new IndicatorEvaluationNew(new IclijConfig(conf), key, retObj, useMax, index);
         return newEval;
     }
    

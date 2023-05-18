@@ -16,8 +16,8 @@ import roart.iclij.config.Market;
 
 public class MachineLearningActionData extends MarketActionData {
 
-    public MachineLearningActionData(IclijDbDao dbDao) {
-        super(dbDao);
+    public MachineLearningActionData(IclijConfig iclijConfig, IclijDbDao dbDao) {
+        super(iclijConfig, dbDao);
     }
 
     @Override

@@ -113,38 +113,38 @@ public abstract class MarketAction extends Action {
     }
     
     @Override
-    public void goal(Action parent, ComponentData param, Integer priority) {
-        getMarkets(parent, new ComponentInput(new IclijConfig(IclijXMLConfig.getConfigInstance()), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), null, priority);
+    public void goal(Action parent, ComponentData param, Integer priority, IclijConfig iclijConfig) {
+        getMarkets(iclijConfig, parent, new ComponentInput(iclijConfig, null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), null, priority);
     }
 
-    public WebData getMarket(Action parent, ComponentData param, Market market, Boolean evolve, Integer priority, List<TimingItem> timingsdone) {
+    public WebData getMarket(IclijConfig iclijConfig, Action parent, ComponentData param, Market market, Boolean evolve, Integer priority, List<TimingItem> timingsdone) {
         List<Market> markets = new ArrayList<>();
         if (market != null) {
             markets.add(market);
         } else {
-            markets = new MarketUtil().getMarkets(false);
+            markets = new MarketUtil().getMarkets(false, iclijConfig);
         }
-        return getMarkets(parent, param, markets, new ArrayList<>(), evolve, priority, timingsdone, false);
+        return getMarkets(iclijConfig, parent, param, markets, new ArrayList<>(), evolve, priority, timingsdone, false);
     }        
     
-    public WebData getMarkets(Action parent, ComponentInput input, Boolean evolve, Integer priority) {
+    public WebData getMarkets(IclijConfig iclijConfig, Action parent, ComponentInput input, Boolean evolve, Integer priority) {
         List<TimingItem> timings = null;
         try {
             timings = getActionData().getDbDao().getAllTiming();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        List<Market> markets = new MarketUtil().getMarkets(actionData.isDataset());
+        List<Market> markets = new MarketUtil().getMarkets(actionData.isDataset(), iclijConfig);
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(input, 0);
+            param = ComponentData.getParam(iclijConfig, input, 0);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        return getMarkets(parent, param, markets, timings, evolve, priority, new ArrayList<>(), true);
+        return getMarkets(iclijConfig, parent, param, markets, timings, evolve, priority, new ArrayList<>(), true);
     }        
     
-    private WebData getMarkets(Action parent, ComponentData paramTemplate, List<Market> markets, List<TimingItem> timings, Boolean evolve, Integer priority, List<TimingItem> timingsdone, boolean auto) {
+    private WebData getMarkets(IclijConfig iclijConfig, Action parent, ComponentData paramTemplate, List<Market> markets, List<TimingItem> timings, Boolean evolve, Integer priority, List<TimingItem> timingsdone, boolean auto) {
 	// test picks for aggreg recommend, predict etc
         // remember and make confidence
         // memory is with date, confidence %, inc/dec, semantic item
@@ -169,12 +169,12 @@ public abstract class MarketAction extends Action {
             ComponentInput input = new ComponentInput(config, null, marketName, null, 0, paramTemplate.getInput().isDoSave(), false, new ArrayList<>(), paramTemplate.getInput().getValuemap());
             ComponentData param = null;
             try {
-                param = ComponentData.getParam(input, 0, market);
+                param = ComponentData.getParam(iclijConfig, input, 0, market);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
             param.setAction(getName());
-            ControlService srv = new ControlService();
+            ControlService srv = new ControlService(iclijConfig);
             //srv.getConfig();
             param.setService(srv);
             srv.conf.setMarket(market.getConfig().getMarket());
@@ -402,6 +402,7 @@ public abstract class MarketAction extends Action {
                             }
                             //List<TimingItem> timingToDo = new ArrayList<>();
                             ActionComponentItem marketTime = new ActionComponentItem();
+                            // TODO
                             marketTime.setMarket(market.getConfig().getMarket());
                             //marketTime.componentName = componentName;
                             marketTime.setAction(this.getActionData().getName());
@@ -532,7 +533,7 @@ public abstract class MarketAction extends Action {
         return filterTimings;
     }
     
-    public void getPicksFilteredOuter(WebData myData, ComponentData param, IclijConfig config, ActionComponentItem marketTime, Boolean evolve, boolean wantThree, String actionItem) {
+    public void getPicksFilteredOuter(WebData myData, ComponentData param, IclijConfig config, ActionComponentItem marketTime, Boolean evolve, Boolean wantThree, String actionItem) {
         IclijController.taskList.add(actionItem);
         try {
             getPicksFiltered(myData, param, config, marketTime, evolve, wantThree);                
@@ -545,7 +546,7 @@ public abstract class MarketAction extends Action {
 
     public void getPicksFiltered(WebData myData, ComponentData param, IclijConfig config, ActionComponentItem marketTime, Boolean evolve, boolean wantThree) {
         log.info("Getting picks for date {}", param.getInput().getEnddate());
-        Market market = new MarketUtil().findMarket(marketTime.getMarket());
+        Market market = new MarketUtil().findMarket(marketTime.getMarket(), config);
         Map<String, ComponentData> dataMap = new HashMap<>();
         ProfitData profitdata = new ProfitData();
         Memories listComponentMap = new Memories(market);

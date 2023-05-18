@@ -46,8 +46,8 @@ public class FindProfitAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
-    public FindProfitAction(IclijDbDao dbDao) {
-        setActionData(new FindProfitActionData(dbDao));
+    public FindProfitAction(IclijConfig iclijConfig, IclijDbDao dbDao) {
+        setActionData(new FindProfitActionData(iclijConfig, dbDao));
     }
     
     //@Override
@@ -129,7 +129,7 @@ public class FindProfitAction extends MarketAction {
 
     public List<MemoryItem> findAllMarketComponentsToCheck(WebData myData, ComponentData param, int days, IclijConfig config, ActionComponentItem marketTime, boolean evolve, Map<String, ComponentData> dataMap, Map<String, Component> componentMap) {
         List<MemoryItem> allMemories = new ArrayList<>();
-        Market market = new MarketUtil().findMarket(marketTime.getMarket());
+        Market market = new MarketUtil().findMarket(marketTime.getMarket(), getActionData().getIclijConfig());
         Short startOffset = market.getConfig().getStartoffset();
         if (startOffset != null) {
             System.out.println("Using offset " + startOffset);
@@ -199,7 +199,7 @@ public class FindProfitAction extends MarketAction {
     
     @Override
     protected List<MemoryItem> getMemItems(ActionComponentItem marketTime, WebData myData, ComponentData param, IclijConfig config, Boolean evolve, Map<String, ComponentData> dataMap) {
-        Market market = new MarketUtil().findMarket(marketTime.getMarket());
+        Market market = new MarketUtil().findMarket(marketTime.getMarket(), getActionData().getIclijConfig());
         
         try {
             evolve = false;

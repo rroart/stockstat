@@ -208,7 +208,7 @@ public abstract class Component {
 				valueMap.putAll(loadValues);
 			} else {
 				String val = (String) loadValues.get(IclijConstants.ALL);
-				log.info("val {}", val);	
+				log.info("val {} {}", loadValues.get(IclijConstants.ALL).getClass(), val);	
 				Map<String, Object> map = JsonUtil.convert(val, Map.class);
 				if (map != null) {
 					valueMap.putAll(map);

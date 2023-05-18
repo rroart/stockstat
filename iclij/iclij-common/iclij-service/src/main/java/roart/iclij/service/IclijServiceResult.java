@@ -3,12 +3,16 @@ package roart.iclij.service;
 import java.util.List;
 import java.util.Map;
 
+import roart.common.model.MetaItem;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.model.WebData;
 import roart.iclij.model.WebDataJson;
+import roart.result.model.ResultItem;
 
 public class IclijServiceResult {
     private List<String> markets;
+    
+    private List<MetaItem> metas;
     
     private Map<String, String> stocks;
     
@@ -18,18 +22,28 @@ public class IclijServiceResult {
     
     private List<IclijServiceList> lists;
 
-    private IclijConfig iclijConfig;
+    private IclijConfig config;
 
     //private WebData webdata;
 
     private WebDataJson webdatajson;
 
+    private List<ResultItem> list;
+    
     public IclijServiceResult() {
         super();
     }
 
     public List<String> getMarkets() {
         return markets;
+    }
+
+    public List<MetaItem> getMetas() {
+        return metas;
+    }
+
+    public void setMetas(List<MetaItem> metas) {
+        this.metas = metas;
     }
 
     public void setMarkets(List<String> markets) {
@@ -68,12 +82,12 @@ public class IclijServiceResult {
         this.lists = lists;
     }
 
-    public IclijConfig getIclijConfig() {
-        return iclijConfig;
+    public IclijConfig getConfig() {
+        return config;
     }
 
-    public void setIclijConfig(IclijConfig iclijConfig) {
-        this.iclijConfig = iclijConfig;
+    public void setConfig(IclijConfig iclijConfig) {
+        this.config = iclijConfig;
     }
 /*
     public WebData getWebdata() {
@@ -92,4 +106,14 @@ public class IclijServiceResult {
     public void setWebdatajson(WebDataJson webdatajson) {
         this.webdatajson = webdatajson;
     }
+
+    public List<ResultItem> getList() {
+        return list;
+    }
+
+    public void setList(List<ResultItem> list) {
+        this.list = list;
+    }
+    
+    
 }

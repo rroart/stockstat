@@ -81,4 +81,6 @@ open module core {
     requires jakarta.interceptor;
     requires spring.data.jdbc;
     requires springdata;
+    requires iclij.common.config;
+    requires iclij.common.service;
 }

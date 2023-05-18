@@ -13,8 +13,8 @@ import roart.iclij.config.Market;
 
 public class ImproveAboveBelowActionData extends MarketActionData {
 
-    public ImproveAboveBelowActionData(IclijDbDao dbDao) {
-        super(dbDao);
+    public ImproveAboveBelowActionData(IclijConfig iclijConfig, IclijDbDao dbDao) {
+        super(iclijConfig, dbDao);
     }
 
     @Override

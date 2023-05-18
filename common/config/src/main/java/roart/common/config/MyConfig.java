@@ -15,14 +15,8 @@ public class MyConfig {
 
     private Map<String, Object> configValueMap;
     
-    private Map<String, String> text = new HashMap<>();
+    private ConfigMaps configMaps;
     
-    private Map<String, Object> deflt = new HashMap<>();
-    
-    private Map<String, Double[]> range = new HashMap<>();
-    
-    private Map<String, Class> type = new HashMap<>();
-
     //public boolean useSpark = false;
 
     //public String sparkMaster = null;
@@ -112,36 +106,12 @@ public class MyConfig {
         this.configValueMap = configValueMap;
     }
 
-    public Map<String, String> getText() {
-        return text;
+    public ConfigMaps getConfigMaps() {
+        return configMaps;
     }
 
-    public void setText(Map<String, String> text) {
-        this.text = text;
-    }
-
-    public Map<String, Object> getDeflt() {
-        return deflt;
-    }
-
-    public void setDeflt(Map<String, Object> deflt) {
-        this.deflt = deflt;
-    }
-
-    public Map<String, Class> getType() {
-        return type;
-    }
-
-    public void setType(Map<String, Class> type) {
-        this.type = type;
-    }
-
-    public Map<String, Double[]> getRange() {
-        return range;
-    }
-
-    public void setRange(Map<String, Double[]> range) {
-        this.range = range;
+    public void setConfigMaps(ConfigMaps configMaps) {
+        this.configMaps = configMaps;
     }
 
     /**

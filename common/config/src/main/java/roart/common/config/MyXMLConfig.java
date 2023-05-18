@@ -35,24 +35,24 @@ import roart.common.constants.Constants;
 @Configuration
 public class MyXMLConfig {
 
-    protected static Logger log = LoggerFactory.getLogger(MyConfig.class);
+    protected static Logger log = LoggerFactory.getLogger(MyXMLConfig.class);
 
     protected static MyXMLConfig instance = null;
 
-    public static MyXMLConfig instance() {
+    public static MyXMLConfig instance(ConfigMaps configMaps) {
         if (instance == null) {
-            instance = new MyXMLConfig();
+            instance = new MyXMLConfig(configMaps);
         }
         return instance;
     }
 
     protected static MyConfig configInstance = null;
 
-    public static MyConfig getConfigInstance() {
+    public static MyConfig getConfigInstance(ConfigMaps configMaps) {
         if (configInstance == null) {
             configInstance = new MyConfig();
             if (instance == null) { 
-                instance();
+                instance(configMaps);
             }
         }
         return configInstance;
@@ -61,8 +61,14 @@ public class MyXMLConfig {
     private static org.apache.commons.configuration2.Configuration config = null;
     private static XMLConfiguration configxml = null;
 
+    private ConfigMaps configMaps;
+
     public MyXMLConfig() {
-        getConfigInstance();
+    }
+    
+    public MyXMLConfig(ConfigMaps configMaps) {
+        this.configMaps = configMaps;
+        getConfigInstance(configMaps);
         try {
             String configFile = System.getProperty("config");
             if (configFile == null) {
@@ -83,6 +89,8 @@ public class MyXMLConfig {
         Document doc = null;
         configInstance.setConfigTreeMap(new ConfigTreeMap());
         configInstance.setConfigValueMap(new HashMap<String, Object>());
+        configInstance.setConfigMaps(configMaps);
+        /*
         ConfigConstantMaps.makeDefaultMap();
         ConfigConstantMaps.makeTextMap();
         ConfigConstantMaps.makeRangeMap();
@@ -91,6 +99,11 @@ public class MyXMLConfig {
         configInstance.setType(ConfigConstantMaps.map);
         configInstance.setText(ConfigConstantMaps.text);
         configInstance.setRange(ConfigConstantMaps.range);
+        configInstance.getDeflt().putAll(ConfigConstantMaps.deflt2);
+        configInstance.getType().putAll(ConfigConstantMaps.map2);
+        configInstance.getText().putAll(ConfigConstantMaps.text2);
+        configInstance.getRange().putAll(ConfigConstantMaps.range2);
+        */
         if (configxml != null) {
             printout();
             doc = configxml.getDocument();
@@ -102,7 +115,7 @@ public class MyXMLConfig {
                 String s = iter.next();
                 Object o = null;
                 String text = s;
-                Class myclass = ConfigConstantMaps.map.get(text);
+                Class myclass = configMaps.map.get(text);
 
                 if (myclass == null) {
                     log.info("Unknown {}", text);
@@ -129,13 +142,13 @@ public class MyXMLConfig {
             }
         }
         Set<String> setKeys = configInstance.getConfigValueMap().keySet();
-        Set<String> dfltKeys = new HashSet<>(configInstance.getDeflt().keySet());
+        Set<String> dfltKeys = new HashSet<>(configMaps.deflt.keySet());
         dfltKeys.removeAll(setKeys);
         System.out.println("keys to set " + dfltKeys);
         for (String key : dfltKeys) {
             ConfigTreeMap map = configInstance.getConfigTreeMap();
-            ConfigTreeMap.insert(map.getConfigTreeMap(), key, key, "", ConfigConstantMaps.deflt);
-            Object object = ConfigConstantMaps.deflt.get(key);
+            ConfigTreeMap.insert(map.getConfigTreeMap(), key, key, "", configMaps.deflt);
+            Object object = configMaps.deflt.get(key);
             if (configInstance.getConfigValueMap().get(key) == null) {
                 configInstance.getConfigValueMap().put(key, object);
             }

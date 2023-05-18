@@ -99,7 +99,7 @@ public abstract class MLPredictModel {
 
     protected <T> T getDefault(Class<T> clazz) {
         try {
-            return new ObjectMapper().readValue((String) getConf().getDeflt().get(getKey()), clazz);
+            return new ObjectMapper().readValue((String) getConf().getConfigMaps().deflt.get(getKey()), clazz);
         } catch (IOException e) {
             log.error(Constants.EXCEPTION, e);
             return null;

@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import roart.aggregatorindicator.impl.Recommend;
 import roart.category.AbstractCategory;
 import roart.common.config.ConfigConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.ml.NeuralNetCommand;
@@ -85,12 +85,12 @@ public class EvolutionService {
         this.dao = dao;
     }
 
-    public List<ResultItem> getEvolveRecommender(MyMyConfig conf, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws JsonParseException, JsonMappingException, IOException {
+    public List<ResultItem> getEvolveRecommender(IclijConfig conf, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws JsonParseException, JsonMappingException, IOException {
         log.info("mydate {}", conf.getdate());
         log.info("mydate {}", conf.getDays());
         String market = conf.getMarket();
         ObjectMapper mapper = new ObjectMapper();
-        EvolutionConfig evolutionConfig = mapper.readValue(conf.getTestIndictorrecommenderEvolutionConfig(), EvolutionConfig.class);
+        EvolutionConfig evolutionConfig = mapper.readValue(conf.getEvolveIndicatorrecommenderEvolutionConfig(), EvolutionConfig.class);
     
         //createOtherTables();
         StockData stockData = new Extract(dao).getStockData(conf);
@@ -138,7 +138,7 @@ public class EvolutionService {
         }
     }
     
-    private Double[] getThresholds(MyMyConfig conf, String thresholdString) {
+    private Double[] getThresholds(IclijConfig conf, String thresholdString) {
         try {
             Double.valueOf(thresholdString);
             log.error("Using old format {}", thresholdString);
@@ -148,7 +148,7 @@ public class EvolutionService {
         return JsonUtil.convert(thresholdString, Double[].class);
     }
 
-    private void findRecommendSettings(MyMyConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
+    private void findRecommendSettings(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
             Map<String, List<Recommend>> usedRecommenders, Map<String, List<String>[]> recommendKeyMap,
             Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, int days, Pipeline[] datareaders, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws Exception {
         TaUtil tu = new TaUtil();
@@ -228,7 +228,7 @@ public class EvolutionService {
         }
     }
 
-    private void findRecommendSettingsNew(MyMyConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
+    private void findRecommendSettingsNew(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
             Map<String, List<Recommend>> usedRecommenders, Map<String, List<String>[]> recommendKeyMap,
             Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, Pipeline[] datareaders) throws Exception {
         TaUtil tu = new TaUtil();
@@ -249,7 +249,7 @@ public class EvolutionService {
         }
     }
 
-    private void findRecommendSettingsNew(MyMyConfig conf, EvolutionConfig evolutionConfig, List<String> disableList,
+    private void findRecommendSettingsNew(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList,
             ResultItemTable table, Map<String, Object> updateMap, Object[] retObj, List<String> keyList, boolean doBuy) throws Exception {
         for (String id : keyList) {
             if (disableList.contains(id)) {
@@ -274,12 +274,12 @@ public class EvolutionService {
         }
     }
 
-    public List<ResultItem> getEvolveML(MyMyConfig conf, List<String> disableList, Map<String, Object> updateMap, String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws JsonParseException, JsonMappingException, IOException {
+    public List<ResultItem> getEvolveML(IclijConfig conf, List<String> disableList, Map<String, Object> updateMap, String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws JsonParseException, JsonMappingException, IOException {
         log.info("mydate {}", conf.getdate());
         log.info("mydate {}", conf.getDays());
         if (conf.isDataset()) {
             ObjectMapper mapper = new ObjectMapper();
-            EvolutionConfig evolutionConfig = mapper.readValue(conf.getTestMLEvolutionConfig(), EvolutionConfig.class);
+            EvolutionConfig evolutionConfig = mapper.readValue(conf.getEvolveMLEvolutionConfig(), EvolutionConfig.class);
             Set<String> markets = new HashSet<>();
             markets.add(conf.getMarket());
         
@@ -311,7 +311,7 @@ public class EvolutionService {
         }
         String market = conf.getMarket();
         ObjectMapper mapper = new ObjectMapper();
-        EvolutionConfig evolutionConfig = mapper.readValue(conf.getTestMLEvolutionConfig(), EvolutionConfig.class);
+        EvolutionConfig evolutionConfig = mapper.readValue(conf.getEvolveMLEvolutionConfig(), EvolutionConfig.class);
         //createOtherTables();
     
         List<ResultItemTable> otherTables = new ArrayList<>();
@@ -355,7 +355,7 @@ public class EvolutionService {
         }
     }
 
-    private void findMLSettings(MyMyConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
+    private void findMLSettings(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
             Map<String, Object> updateMap, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap, Map<String, MarketData> marketdatamap) throws Exception {
         TaUtil tu = new TaUtil();
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
@@ -436,7 +436,7 @@ public class EvolutionService {
         //NeuralNetConfigs newNNConfigs = new NeuralNetConfigs();
         List<String> foundkeys = getFoundKeys(conf, nnConfigs);
             /*
-            MyMyConfig workingConf = conf.copy();
+            IclijConfig workingConf = conf.copy();
             for (String tmpkey : keys) {
                 boolean enabled = (boolean) workingConf.getValueOrDefault(tmpkey);
                 boolean sameKey = key.equals(tmpkey);
@@ -527,7 +527,7 @@ public class EvolutionService {
         }
     }
 
-    private void findMLSettings(MyMyConfig conf, EvolutionConfig evolutionConfig, ResultItemTable table, Map<String, Object> updateMap,
+    private void findMLSettings(IclijConfig conf, EvolutionConfig evolutionConfig, ResultItemTable table, Map<String, Object> updateMap,
             String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap, Map<String, MarketData> marketdatamap) throws Exception {
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
         NeuralNetConfigs nnConfigs = null;
@@ -593,7 +593,7 @@ public class EvolutionService {
         }
     }
 
-    public static List<String> getFoundKeys(MyMyConfig conf, NeuralNetConfigs nnConfigs) {
+    public static List<String> getFoundKeys(IclijConfig conf, NeuralNetConfigs nnConfigs) {
         List<String> keys = getMLkeys();
         
         List<String> foundkeys = new ArrayList<>();

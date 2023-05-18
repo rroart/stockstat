@@ -36,7 +36,7 @@ import roart.category.impl.CategoryIndex;
 import roart.category.impl.CategoryPeriod;
 import roart.category.impl.CategoryPrice;
 import roart.common.config.ConfigConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
@@ -99,7 +99,7 @@ public class ControlService {
         this.dbDao = dbDao;
     }
 
-    public Map<String, String> getStocks(String market, MyMyConfig conf) {
+    public Map<String, String> getStocks(String market, IclijConfig conf) {
         try {
             Map<String, String> stockMap = new HashMap<>();
             List<StockItem> stocks = dbDao.getAll(market, conf);
@@ -128,7 +128,7 @@ public class ControlService {
      * @return the tabular result lists
      */
 
-    public List<ResultItem> getContent(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<String> disableList, NeuralNetCommand neuralnetcommand) {
+    public List<ResultItem> getContent(IclijConfig conf, Map<String, Map<String, Object>> maps, List<String> disableList, NeuralNetCommand neuralnetcommand) {
         log.info("mydate {}", conf.getdate());
         log.info("mydate {}", conf.getDays());
         //createOtherTables();
@@ -307,7 +307,7 @@ public class ControlService {
         }
     }
 
-    private void createRows(MyMyConfig conf, ResultItemTable table, List<StockItem> datedstocks, AbstractCategory[] categories,
+    private void createRows(IclijConfig conf, ResultItemTable table, List<StockItem> datedstocks, AbstractCategory[] categories,
             AbstractPredictor[] predictors, Aggregator[] aggregates) {
         if (conf.getMarket() == null) {
             return;
@@ -416,7 +416,7 @@ public class ControlService {
         return headrow;
     }
 
-    private Aggregator[] getAggregates(MyMyConfig conf, String[] periodText,
+    private Aggregator[] getAggregates(IclijConfig conf, String[] periodText,
             Map<String, MarketData> marketdatamap,
             AbstractCategory[] categories,
             Pipeline[] datareaders, List<String> disableList, Map<String, String> idNameMap, String catName, Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
@@ -439,7 +439,7 @@ public class ControlService {
         return aggregates;
     }
 
-    private GraphCategory[] getGraphCategories(MyMyConfig conf,
+    private GraphCategory[] getGraphCategories(IclijConfig conf,
             String[] periodTextNot,
             Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap) {
         GraphCategory[] categories = new GraphCategory[Constants.PERIODS + 2];
@@ -462,7 +462,7 @@ public class ControlService {
      * @return the image list
      */
 
-    public List<ResultItem> getContentGraph(MyMyConfig conf, GUISize guiSize) {
+    public List<ResultItem> getContentGraph(IclijConfig conf, GUISize guiSize) {
         List<ResultItem> retlist = new ArrayList<>();
         try {
             log.info("mydate {}", conf.getdate());
@@ -505,7 +505,7 @@ public class ControlService {
      * @return the image list
      */
 
-    public List<ResultItem> getContentGraph(MyMyConfig conf, Set<Pair<String, String>> ids, GUISize guiSize) {
+    public List<ResultItem> getContentGraph(IclijConfig conf, Set<Pair<String, String>> ids, GUISize guiSize) {
         List<ResultItem> retlist = new ArrayList<>();
         try {
             log.info("mydate {}", conf.getdate());
@@ -542,7 +542,7 @@ public class ControlService {
      * @return the tabular result lists
      */
 
-    public List<ResultItem> getContentStat(MyMyConfig conf) {
+    public List<ResultItem> getContentStat(IclijConfig conf) {
         List<ResultItem> retList = new ArrayList<>();
         ResultItemTable table = new ResultItemTable();
         ResultItemTableRow row = new ResultItemTableRow();
@@ -599,7 +599,7 @@ public class ControlService {
         return retList;
     }
 
-    public void getDates(MyMyConfig conf, Map<String, Map<String, Object>> maps) {
+    public void getDates(IclijConfig conf, Map<String, Map<String, Object>> maps) {
         Map<String, Object> aMap = new HashMap<>();
         /*
         aMap.put(ConfigConstants.MACHINELEARNING, false);
@@ -652,7 +652,7 @@ public class ControlService {
         }
     }
     
-    public static void configCurator(MyMyConfig conf) {
+    public static void configCurator(IclijConfig conf) {
         if (true) {
             RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);        
             String zookeeperConnectionString = conf.getZookeeper();

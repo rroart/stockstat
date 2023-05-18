@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import roart.common.config.CacheConstants;
+import roart.common.config.ConfigConstantMaps;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
@@ -27,25 +28,19 @@ import roart.db.hibernate.DbHibernateAccess;
 import roart.db.spring.DbSpringAccess;
 import roart.db.spark.DbSpark;
 import roart.db.spark.DbSparkAccess;
-import roart.common.config.MyConfig;
-import roart.common.config.MyMyConfig;
-import roart.common.config.MyXMLConfig;
+import roart.iclij.config.IclijConfig;
 
 @Component
 public class DbDao {
     private static Logger log = LoggerFactory.getLogger(DbDao.class);
-
-    @Autowired
-    MyXMLConfig conf;
-
+    
     private DbAccess access = null;
 
     DbSpringAccess dbSpringAccess;
 
     @Autowired
-    public DbDao(DbSpringAccess dbSpringAccess) {
-        MyMyConfig instance = new MyMyConfig(MyXMLConfig.getConfigInstance());
-        boolean hibernate = instance.wantDbHibernate();
+    public DbDao(IclijConfig iclijConfig, DbSpringAccess dbSpringAccess) {
+        boolean hibernate = iclijConfig.wantDbHibernate();
 
         this.dbSpringAccess = dbSpringAccess;
         if (hibernate) {

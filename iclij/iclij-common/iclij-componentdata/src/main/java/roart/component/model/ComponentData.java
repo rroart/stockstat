@@ -18,6 +18,7 @@ import roart.common.model.TimingItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.constants.IclijConstants;
+import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.model.component.ComponentInput;
@@ -99,16 +100,16 @@ public class ComponentData {
         this.input = input;
     }
 
-    public static ComponentData getParam(ComponentInput input, int days) throws Exception {
-        return getParam(input, days, null);
+    public static ComponentData getParam(IclijConfig iclijConfig, ComponentInput input, int days) throws Exception {
+        return getParam(iclijConfig, input, days, null);
     }
 
-    public static ComponentData getParam(ComponentInput input, int days, Market aMarket) throws Exception {
+    public static ComponentData getParam(IclijConfig iclijConfig, ComponentInput input, int days, Market aMarket) throws Exception {
         ComponentData param = new ComponentData(input);
         //param.setAction(IclijConstants.FINDPROFIT);
         String market = input.getConfig().getMarket();
         String mlmarket = input.getConfig().getMlmarket();
-        ControlService srv = new ControlService();
+        ControlService srv = new ControlService(iclijConfig);
         param.setService(srv);
         if (market != null) {
             srv.conf.setMarket(market);

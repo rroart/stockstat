@@ -10,6 +10,7 @@ open module dbdao {
     exports roart.db.dao.util;
 
     requires common.config;
+    requires iclij.common.config;
     requires coredb;
     requires coredb.spark;
     requires model;

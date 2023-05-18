@@ -49,7 +49,7 @@ public class ComponentMLMACD extends ComponentMLAggregator {
     
     @Deprecated
     static void setnns(MyMyConfig conf, IclijConfig config, List<String> nns) {
-        Map<String, String> map = config.getConv();
+        Map<String, String> map = config.getConfigMaps().conv;
         for (String key : nns) {
             System.out.println(conf.getConfigValueMap().keySet());
             Object o = config.getValueOrDefault(key);

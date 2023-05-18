@@ -7,6 +7,7 @@
  */
 module iclij.core {
     exports roart.controller;
+    exports roart.action;
     
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.core;
@@ -72,4 +73,7 @@ module iclij.core {
     requires jakarta.interceptor;
     requires dbdao;
     requires db;
+    requires springdata;
+    requires coredb.hibernate;
+    requires coredb;
 }

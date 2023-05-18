@@ -44,11 +44,6 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-common-service</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
       <artifactId>stockstat-common-eureka</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
@@ -85,6 +80,16 @@
    <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-webflux</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-communication-model</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-communication-factory</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>

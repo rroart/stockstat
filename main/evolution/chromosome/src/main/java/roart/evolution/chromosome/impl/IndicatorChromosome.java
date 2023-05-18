@@ -19,8 +19,7 @@ import java.util.Set;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import roart.common.config.MyConfig;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.fitness.AbstractScore;
@@ -44,7 +43,7 @@ public class IndicatorChromosome extends AbstractChromosome {
         this.keys = keys;
     }
 
-    private MyMyConfig conf;
+    private IclijConfig conf;
 
     private Object[] retObj;
 
@@ -58,7 +57,7 @@ public class IndicatorChromosome extends AbstractChromosome {
     
     private double threshold;
     
-    public IndicatorChromosome(MyMyConfig conf, List<String> keys, Object[] retObj, boolean b, List<String> disableList, AbstractScore evalUtil, int listlen, Double threshold) {
+    public IndicatorChromosome(IclijConfig conf, List<String> keys, Object[] retObj, boolean b, List<String> disableList, AbstractScore evalUtil, int listlen, Double threshold) {
         this.conf = conf.copy();
         setKeys(keys);
         this.retObj = retObj;
@@ -69,11 +68,11 @@ public class IndicatorChromosome extends AbstractChromosome {
         this.threshold = threshold;
     }
 
-    public MyMyConfig getConf() {
+    public IclijConfig getConf() {
         return conf;
     }
 
-    public void setConf(MyMyConfig conf) {
+    public void setConf(IclijConfig conf) {
         this.conf = conf;
     }
 
@@ -290,7 +289,7 @@ public class IndicatorChromosome extends AbstractChromosome {
             }
             configValueMap.put(key, value);
         }
-        MyMyConfig config = new MyMyConfig(conf);
+        IclijConfig config = new IclijConfig(conf);
         evaluation.normalize();
         config.setConfigValueMap(configValueMap);
 
@@ -299,7 +298,7 @@ public class IndicatorChromosome extends AbstractChromosome {
 
     @Override
     public AbstractChromosome copy() {
-        AbstractChromosome newEval = new IndicatorChromosome(new MyMyConfig(conf), new ArrayList<String>(keys), retObj, useMax, disableList, evalUtil, listlen, threshold);
+        AbstractChromosome newEval = new IndicatorChromosome(new IclijConfig(conf), new ArrayList<String>(keys), retObj, useMax, disableList, evalUtil, listlen, threshold);
         return newEval;
     }
 

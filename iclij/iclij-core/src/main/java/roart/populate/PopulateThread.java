@@ -34,9 +34,12 @@ public class PopulateThread extends Thread {
 
     private IclijDbDao dbDao;
 
+    private IclijConfig iclijConfig;
+
     public static volatile List<Triple<String, String, String>> queue = Collections.synchronizedList(new ArrayList<>());
 
-    public PopulateThread(IclijDbDao dbDao) {
+    public PopulateThread(IclijConfig iclijConfig, IclijDbDao dbDao) {
+        this.iclijConfig = iclijConfig;
         this.dbDao = dbDao;
     }
 
@@ -48,17 +51,17 @@ public class PopulateThread extends Thread {
             log.error(Constants.EXCEPTION, e);
             Thread.currentThread().interrupt();
         }
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+        IclijConfig instance = iclijConfig;
         List<Triple<Market, String, String>> markets = new ArrayList<>();
         if (instance.populate()) {
-        	markets = new MarketUtil().getMarkets(false).stream().map(e -> new ImmutableTriple<Market, String, String>(e, null, null)).collect(Collectors.toList());
+        	markets = new MarketUtil().getMarkets(false, iclijConfig).stream().map(e -> new ImmutableTriple<Market, String, String>(e, null, null)).collect(Collectors.toList());
         }
         while (true) {
             List<Triple<String, String, String>> copy = new ArrayList<>(queue);
             queue.removeAll(copy);
             if (markets.isEmpty()) {
                 for (Triple<String, String, String> market : copy) {
-                    Market aMarket = new MarketUtil().findMarket(market.getLeft());
+                    Market aMarket = new MarketUtil().findMarket(market.getLeft(), iclijConfig);
                     markets.add(new ImmutableTriple<Market, String, String>(aMarket, market.getMiddle(), market.getRight()));               
                 }
             }
@@ -78,7 +81,7 @@ public class PopulateThread extends Thread {
                 }
                 ComponentData param = null;
                 try {
-                    param = ComponentData.getParam(new ComponentInput(config, null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), 0, market);
+                    param = ComponentData.getParam(iclijConfig, new ComponentInput(config, null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), 0, market);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -118,7 +121,7 @@ public class PopulateThread extends Thread {
                         continue;
                     }
                     ComponentInput componentInput = new ComponentInput(config, null, null, lastStockdate, null, true, false, new ArrayList<>(), new HashMap<>());
-                    ServiceUtil.getFindProfit(componentInput, timingitems, dbDao);
+                    ServiceUtil.getFindProfit(componentInput, timingitems, dbDao, iclijConfig);
                     if (config.getFindProfitMemoryFilter()) {
                         try {
                             timingitems = dbDao.getAllTiming(market.getConfig().getMarket(), IclijConstants.IMPROVEABOVEBELOW, oldDate, currentDate);
@@ -131,7 +134,7 @@ public class PopulateThread extends Thread {
                             config.setDate(aCurrentDate);
                             ComponentInput componentInput3 = new ComponentInput(config, null, null, aCurrentDate, null, true, false, new ArrayList<>(), new HashMap<>());
                             try {
-                                ServiceUtil.getImproveAboveBelow(componentInput3, dbDao);
+                                ServiceUtil.getImproveAboveBelow(componentInput3, dbDao, iclijConfig);
                             } catch (Exception e) {
                                 log.error(Constants.EXCEPTION, e);
                             }
@@ -149,7 +152,7 @@ public class PopulateThread extends Thread {
                             config.setDate(aCurrentDate);
                             ComponentInput componentInput3 = new ComponentInput(config, null, null, aCurrentDate, null, true, false, new ArrayList<>(), new HashMap<>());
                             try {
-                                ServiceUtil.getImproveFilter(componentInput3, dbDao);
+                                ServiceUtil.getImproveFilter(componentInput3, dbDao, iclijConfig);
                             } catch (Exception e) {
                                 log.error(Constants.EXCEPTION, e);
                             }

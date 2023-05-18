@@ -21,19 +21,22 @@ public class MainAction extends Action {
 
     private IclijDbDao dbDao;
 
-    public MainAction(IclijDbDao dbDao) {
+    private IclijConfig iclijConfig;
+
+    public MainAction(IclijConfig iclijConfig, IclijDbDao dbDao) {
+        this.iclijConfig = iclijConfig;
         this.dbDao = dbDao;
     }
 
     @SuppressWarnings("squid:S2189")
     @Override
-    public void goal(Action parent, ComponentData param, Integer priority) throws InterruptedException {
-        IclijConfig config = IclijXMLConfig.getConfigInstance();
+    public void goal(Action parent, ComponentData param, Integer priority, IclijConfig iclijConfig) throws InterruptedException {
+        IclijConfig config = iclijConfig;
         if (!config.wantsIclijSchedule()) {
             return;
         }
         System.out.println("Start");
-        ControlService srv = new ControlService();
+        ControlService srv = new ControlService(iclijConfig);
         boolean noException = false;
         while (noException == false) {
             try {
@@ -69,7 +72,7 @@ public class MainAction extends Action {
                 for (int pri = 0; pri < 100; pri += 10) {
                     for (Action anAction : getGoals()) {
                         MarketAction action = (MarketAction) anAction;
-                        action.goal(this, param, pri);
+                        action.goal(this, param, pri, iclijConfig);
                     }
                 }
             }
@@ -81,49 +84,49 @@ public class MainAction extends Action {
     }
 
     private void addGoals() {
-        if (IclijXMLConfig.getConfigInstance().wantsMachineLearningAutorun() ) {        
-            getGoals().add(new MachineLearningAction(dbDao));
+        if (iclijConfig.wantsMachineLearningAutorun() ) {        
+            getGoals().add(new MachineLearningAction(iclijConfig, dbDao));
         }
-        if (IclijXMLConfig.getConfigInstance().wantsFindProfitAutorun() ) {        
-            getGoals().add(new FindProfitAction(dbDao));
+        if (iclijConfig.wantsFindProfitAutorun() ) {        
+            getGoals().add(new FindProfitAction(iclijConfig, dbDao));
         }
-        if (IclijXMLConfig.getConfigInstance().wantsEvolveAutorun() ) {        
-            getGoals().add(new EvolveAction(dbDao));
+        if (iclijConfig.wantsEvolveAutorun() ) {        
+            getGoals().add(new EvolveAction(iclijConfig, dbDao));
         }
-        if (IclijXMLConfig.getConfigInstance().wantsImproveProfitAutorun()) {        
-            getGoals().add(new ImproveProfitAction(dbDao));
+        if (iclijConfig.wantsImproveProfitAutorun()) {        
+            getGoals().add(new ImproveProfitAction(dbDao, iclijConfig));
         }
-        if (IclijXMLConfig.getConfigInstance().wantsImproveFilterAutorun()) {        
-            getGoals().add(new ImproveFilterAction(dbDao));
+        if (iclijConfig.wantsImproveFilterAutorun()) {        
+            getGoals().add(new ImproveFilterAction(iclijConfig, dbDao));
         }
-        if (IclijXMLConfig.getConfigInstance().wantsImproveAbovebelowAutorun()) {        
-            getGoals().add(new ImproveAboveBelowAction(dbDao));
+        if (iclijConfig.wantsImproveAbovebelowAutorun()) {        
+            getGoals().add(new ImproveAboveBelowAction(iclijConfig, dbDao));
         }
-        if (IclijXMLConfig.getConfigInstance().wantsCrosstestAutorun()) {        
-            getGoals().add(new CrossTestAction(dbDao));
+        if (iclijConfig.wantsCrosstestAutorun()) {        
+            getGoals().add(new CrossTestAction(iclijConfig, dbDao));
         }
-        if (IclijXMLConfig.getConfigInstance().wantsSimulateInvestAutorun()) {        
-            getGoals().add(new SimulateInvestAction(dbDao));
+        if (iclijConfig.wantsSimulateInvestAutorun()) {        
+            getGoals().add(new SimulateInvestAction(dbDao, iclijConfig));
         }
-        if (IclijXMLConfig.getConfigInstance().wantsImproveSimulateInvestAutorun()) {        
-            getGoals().add(new ImproveSimulateInvestAction(dbDao));
+        if (iclijConfig.wantsImproveSimulateInvestAutorun()) {        
+            getGoals().add(new ImproveSimulateInvestAction(iclijConfig, dbDao));
         }
-        if (IclijXMLConfig.getConfigInstance().wantsDatasetAutorun()) {        
-            getGoals().add(new DatasetAction(dbDao));
+        if (iclijConfig.wantsDatasetAutorun()) {        
+            getGoals().add(new DatasetAction(iclijConfig, dbDao));
         }
     }
 
-    public static boolean wantsGoals() {
-        return IclijXMLConfig.getConfigInstance().wantsMachineLearningAutorun()
-                || IclijXMLConfig.getConfigInstance().wantsFindProfitAutorun() 
-                || IclijXMLConfig.getConfigInstance().wantsEvolveAutorun()      
-                || IclijXMLConfig.getConfigInstance().wantsImproveProfitAutorun()      
-                || IclijXMLConfig.getConfigInstance().wantsImproveFilterAutorun()      
-                || IclijXMLConfig.getConfigInstance().wantsImproveAbovebelowAutorun()      
-                || IclijXMLConfig.getConfigInstance().wantsCrosstestAutorun()       
-                || IclijXMLConfig.getConfigInstance().wantsSimulateInvestAutorun()       
-                || IclijXMLConfig.getConfigInstance().wantsImproveSimulateInvestAutorun()       
-                || IclijXMLConfig.getConfigInstance().wantsDatasetAutorun();
+    public static boolean wantsGoals(IclijConfig iclijConfig) {
+        return iclijConfig.wantsMachineLearningAutorun()
+                || iclijConfig.wantsFindProfitAutorun() 
+                || iclijConfig.wantsEvolveAutorun()      
+                || iclijConfig.wantsImproveProfitAutorun()      
+                || iclijConfig.wantsImproveFilterAutorun()      
+                || iclijConfig.wantsImproveAbovebelowAutorun()      
+                || iclijConfig.wantsCrosstestAutorun()       
+                || iclijConfig.wantsSimulateInvestAutorun()       
+                || iclijConfig.wantsImproveSimulateInvestAutorun()       
+                || iclijConfig.wantsDatasetAutorun();
     }
 
     public void addIfNotContaining(Action action) {

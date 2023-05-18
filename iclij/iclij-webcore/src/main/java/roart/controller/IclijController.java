@@ -9,11 +9,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import roart.common.config.ConfigMaps;
+import roart.common.constants.Constants;
 import roart.eureka.util.EurekaUtil;
 import roart.executor.MyExecutors;
+import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.service.ControlService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -31,31 +37,37 @@ import org.springframework.web.bind.annotation.RestController;
 @SpringBootApplication
 public class IclijController implements CommandLineRunner {
 
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    IclijConfig iclijConfig;
+    
     @Value("${spring.profiles.active:}")
     private String activeProfile;
-    
-	public static void main(String[] args) throws Exception {
-		SpringApplication.run(IclijController.class, args);
-	}
 
-	@Override
-	public void run(String... args) throws InterruptedException, JsonParseException, JsonMappingException, IOException {	    
-	    System.out.println("Using profile " + activeProfile);
-	    try {
-	        MyExecutors.initThreads("dev".equals(activeProfile));
-            MyExecutors.init(new double[] { IclijXMLConfig.getConfigInstance().mpServerCpu() } );
-	    } catch (Exception e) {
-                e.printStackTrace();
-            }
-	}
+    public static void main(String[] args) throws Exception {
+        SpringApplication.run(IclijController.class, args);
+    }
 
-	@Bean(name = "OBJECT_MAPPER_BEAN")
-	public ObjectMapper jsonObjectMapper() {
-	    return Jackson2ObjectMapperBuilder.json()
-	            .serializationInclusion(JsonInclude.Include.NON_NULL)
-	            .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-	            .modules(new JavaTimeModule())
-	            .build();
-	}
+    @Override
+    public void run(String... args) throws InterruptedException, JsonParseException, JsonMappingException, IOException {	    
+        log.info("Using profile {}", activeProfile);
+        IclijConfig instance = iclijConfig;
+        try {
+            MyExecutors.initThreads("dev".equals(activeProfile));
+            MyExecutors.init(new double[] { instance.mpServerCpu() } );
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
+    @Bean(name = "OBJECT_MAPPER_BEAN")
+    public ObjectMapper jsonObjectMapper() {
+        return Jackson2ObjectMapperBuilder.json()
+                .serializationInclusion(JsonInclude.Include.NON_NULL)
+                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .modules(new JavaTimeModule())
+                .build();
+    }
 
 }

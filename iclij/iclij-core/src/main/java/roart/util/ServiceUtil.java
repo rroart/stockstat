@@ -42,20 +42,20 @@ import roart.iclij.util.MarketUtil;
 public class ServiceUtil {
     private static Logger log = LoggerFactory.getLogger(ServiceUtil.class);
 
-    public static IclijServiceResult getVerify(ComponentInput componentInput, IclijDbDao dbDao) {
+    public static IclijServiceResult getVerify(ComponentInput componentInput, IclijDbDao dbDao, IclijConfig iclijConfig) {
         actionThreadReady();
         IclijServiceResult result = new IclijServiceResult();
         ComponentData param = null;
         try {
             int verificationdays = componentInput.getConfig().verificationDays();
-            param = ComponentData.getParam(componentInput, verificationdays);
+            param = ComponentData.getParam(iclijConfig, componentInput, verificationdays);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
 
-        FindProfitAction findProfitAction = new FindProfitAction(dbDao);
-        Market market = new MarketUtil().findMarket(param.getInput().getMarket());
+        FindProfitAction findProfitAction = new FindProfitAction(iclijConfig, dbDao);
+        Market market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
         param.setMarket(market);
         WebData webData = findProfitAction.getVerifyMarket(componentInput, param, market, false, componentInput.getConfig().verificationDays());        
         WebDataJson webDataJson = convert(webData);
@@ -73,99 +73,99 @@ public class ServiceUtil {
         return webDataJson;
     }
 
-    public static IclijServiceResult getFindProfit(ComponentInput componentInput, List<TimingItem> timingList, IclijDbDao dbDao) {
+    public static IclijServiceResult getFindProfit(ComponentInput componentInput, List<TimingItem> timingList, IclijDbDao dbDao, IclijConfig iclijConfig) {
         actionThreadReady();
         IclijServiceResult result = new IclijServiceResult();
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(componentInput, 0);
+            param = ComponentData.getParam(iclijConfig, componentInput, 0);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
 
-        MarketAction findProfitAction = new FindProfitAction(dbDao);
-        Market market = new MarketUtil().findMarket(param.getInput().getMarket());
+        MarketAction findProfitAction = new FindProfitAction(iclijConfig, dbDao);
+        Market market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
         param.setMarket(market);
-        WebData webData = findProfitAction.getMarket(null, param, market, null, null, timingList);        
+        WebData webData = findProfitAction.getMarket(iclijConfig, null, param, market, null, null, timingList);        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
     }
 
-    public static IclijServiceResult getImproveAboveBelow(ComponentInput componentInput, IclijDbDao dbDao) {
+    public static IclijServiceResult getImproveAboveBelow(ComponentInput componentInput, IclijDbDao dbDao, IclijConfig iclijConfig) {
         actionThreadReady();
         IclijServiceResult result = new IclijServiceResult();
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(componentInput, 0);
+            param = ComponentData.getParam(iclijConfig, componentInput, 0);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
 
-        MarketAction improveAboveBelowAction = new ImproveAboveBelowAction(dbDao);
-        Market market = new MarketUtil().findMarket(param.getInput().getMarket());
+        MarketAction improveAboveBelowAction = new ImproveAboveBelowAction(iclijConfig, dbDao);
+        Market market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
         param.setMarket(market);
-        WebData webData = improveAboveBelowAction.getMarket(null, param, market, null, null, new ArrayList<>());        
+        WebData webData = improveAboveBelowAction.getMarket(iclijConfig, null, param, market, null, null, new ArrayList<>());        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
     }
 
-    public static IclijServiceResult getImproveFilter(ComponentInput componentInput, IclijDbDao dbDao) {
+    public static IclijServiceResult getImproveFilter(ComponentInput componentInput, IclijDbDao dbDao, IclijConfig iclijConfig) {
         actionThreadReady();
         IclijServiceResult result = new IclijServiceResult();
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(componentInput, 0);
+            param = ComponentData.getParam(iclijConfig, componentInput, 0);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
 
-        MarketAction improveFilterAction = new ImproveFilterAction(dbDao);
-        Market market = new MarketUtil().findMarket(param.getInput().getMarket());
+        MarketAction improveFilterAction = new ImproveFilterAction(iclijConfig, dbDao);
+        Market market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
         param.setMarket(market);
-        WebData webData = improveFilterAction.getMarket(null, param, market, null, null, new ArrayList<>());        
+        WebData webData = improveFilterAction.getMarket(iclijConfig, null, param, market, null, null, new ArrayList<>());        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
     }
 
-    public static IclijServiceResult getImproveProfit(ComponentInput componentInput, IclijDbDao dbDao) {
+    public static IclijServiceResult getImproveProfit(ComponentInput componentInput, IclijDbDao dbDao, IclijConfig iclijConfig) {
         actionThreadReady();
         IclijServiceResult result = new IclijServiceResult();
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(componentInput, 0);
+            param = ComponentData.getParam(iclijConfig, componentInput, 0);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
 
-        MarketAction improveProfitAction = new ImproveProfitAction(dbDao);
-        Market market = new MarketUtil().findMarket(param.getInput().getMarket());
+        MarketAction improveProfitAction = new ImproveProfitAction(dbDao, iclijConfig);
+        Market market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
         param.setMarket(market);
-        WebData webData = improveProfitAction.getMarket(null, param, market, null, null, new ArrayList<>());        
+        WebData webData = improveProfitAction.getMarket(iclijConfig, null, param, market, null, null, new ArrayList<>());        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
     }
 
-    public static IclijServiceResult getSimulateInvest(ComponentInput componentInput, IclijDbDao dbDao) {
+    public static IclijServiceResult getSimulateInvest(ComponentInput componentInput, IclijDbDao dbDao, IclijConfig iclijConfig) {
         actionThreadReady();
         IclijServiceResult result = new IclijServiceResult();
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(componentInput, 0);
+            param = ComponentData.getParam(iclijConfig, componentInput, 0);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
 
-        MarketAction simulateInvestAction = new SimulateInvestAction(dbDao);
-        Market market = new MarketUtil().findMarket(param.getInput().getMarket());
+        MarketAction simulateInvestAction = new SimulateInvestAction(dbDao, iclijConfig);
+        Market market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
         param.setMarket(market);
         LocalDate date = null;
         try {
@@ -178,73 +178,73 @@ public class ServiceUtil {
         }
         //param.getService().conf.setdate(date);
         param.getInput().setEnddate(date);
-        WebData webData = simulateInvestAction.getMarket(null, param, market, null, null, new ArrayList<>());        
+        WebData webData = simulateInvestAction.getMarket(iclijConfig, null, param, market, null, null, new ArrayList<>());        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
     }
 
-    public static IclijServiceResult getAutoSimulateInvest(ComponentInput componentInput, IclijDbDao dbDao) {
+    public static IclijServiceResult getAutoSimulateInvest(IclijConfig iclijConfig, ComponentInput componentInput, IclijDbDao dbDao) {
         actionThreadReady();
         IclijServiceResult result = new IclijServiceResult();
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(componentInput, 0);
+            param = ComponentData.getParam(iclijConfig, componentInput, 0);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
 
-        MarketAction simulateInvestAction = new SimulateInvestAction(dbDao);
-        Market market = new MarketUtil().findMarket(param.getInput().getMarket());
+        MarketAction simulateInvestAction = new SimulateInvestAction(dbDao, iclijConfig);
+        Market market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
         param.setMarket(market);
-        WebData webData = simulateInvestAction.getMarket(null, param, market, null, null, new ArrayList<>());        
+        WebData webData = simulateInvestAction.getMarket(iclijConfig, null, param, market, null, null, new ArrayList<>());        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
     }
 
-    public static IclijServiceResult getImproveSimulateInvest(ComponentInput componentInput, IclijDbDao dbDao) {
+    public static IclijServiceResult getImproveSimulateInvest(ComponentInput componentInput, IclijDbDao dbDao, IclijConfig iclijConfig) {
         actionThreadReady();
         IclijServiceResult result = new IclijServiceResult();
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(componentInput, 0);
+            param = ComponentData.getParam(iclijConfig, componentInput, 0);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
 
-        MarketAction simulateInvestAction = new ImproveSimulateInvestAction(dbDao);
+        MarketAction simulateInvestAction = new ImproveSimulateInvestAction(iclijConfig, dbDao);
         Market market = null;
         if (param.getInput().getMarket() != null) {
-            market = new MarketUtil().findMarket(param.getInput().getMarket());
+            market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
         }
         param.setMarket(market);
-        WebData webData = simulateInvestAction.getMarket(null, param, market, null, null, new ArrayList<>());        
+        WebData webData = simulateInvestAction.getMarket(iclijConfig, null, param, market, null, null, new ArrayList<>());        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
     }
 
-    public static IclijServiceResult getImproveAutoSimulateInvest(ComponentInput componentInput, IclijDbDao dbDao) {
+    public static IclijServiceResult getImproveAutoSimulateInvest(ComponentInput componentInput, IclijDbDao dbDao, IclijConfig iclijConfig) {
         actionThreadReady();
         IclijServiceResult result = new IclijServiceResult();
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(componentInput, 0);
+            param = ComponentData.getParam(iclijConfig, componentInput, 0);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
 
-        MarketAction simulateInvestAction = new ImproveAutoSimulateInvestAction(dbDao);
+        MarketAction simulateInvestAction = new ImproveAutoSimulateInvestAction(iclijConfig, dbDao);
         Market market = null;
         if (param.getInput().getMarket() != null) {
-            market = new MarketUtil().findMarket(param.getInput().getMarket());
+            market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
         }
         param.setMarket(market);
-        WebData webData = simulateInvestAction.getMarket(null, param, market, null, null, new ArrayList<>());        
+        WebData webData = simulateInvestAction.getMarket(iclijConfig, null, param, market, null, null, new ArrayList<>());        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
@@ -261,10 +261,10 @@ public class ServiceUtil {
         }
     }
 
-    public static IclijServiceResult getImproveAutoSimulateInvestNotYet(ComponentInput componentInput) throws Exception {
+    public static IclijServiceResult getImproveAutoSimulateInvestNotYet(IclijConfig iclijConfig, ComponentInput componentInput) throws Exception {
         IclijServiceResult result = new IclijServiceResult();
-        MarketAction simulateInvestAction = new ImproveAutoSimulateInvestAction(null);
-        BlockingQueue<WebData> queue = handleInputToActionThreadQueue(componentInput, simulateInvestAction);
+        MarketAction simulateInvestAction = new ImproveAutoSimulateInvestAction(iclijConfig, null);
+        BlockingQueue<WebData> queue = handleInputToActionThreadQueue(iclijConfig, componentInput, simulateInvestAction);
         WebData webData = queue.take();
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
@@ -272,27 +272,25 @@ public class ServiceUtil {
     }
 
     // not yet
-    private static BlockingQueue<WebData> handleInputToActionThreadQueue(ComponentInput componentInput,
-            MarketAction action) throws Exception {
+    private static BlockingQueue<WebData> handleInputToActionThreadQueue(IclijConfig iclijConfig,
+            ComponentInput componentInput, MarketAction action) throws Exception {
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(componentInput, 0);
+            param = ComponentData.getParam(iclijConfig, componentInput, 0);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             throw new Exception(e);
         }
         Market market = null;
         if (param.getInput().getMarket() != null) {
-            market = new MarketUtil().findMarket(param.getInput().getMarket());
+            market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
         }
         param.setMarket(market);
         String marketName = componentInput.getMarket();
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
-        IclijConfig config = new IclijConfig(instance);
         List<MetaItem> metas = param.getService().getMetas();
         MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
         boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
-        List<String> components = action.getActionData().getComponents(config, wantThree);
+        List<String> components = action.getActionData().getComponents(iclijConfig, wantThree);
         BlockingQueue<WebData> queue = null;
         // currently only suited and tested for actions with one component
         for (String component : components) {

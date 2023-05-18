@@ -16,8 +16,8 @@ import roart.iclij.config.Market;
 
 public class EvolveActionData extends MarketActionData {
 
-    public EvolveActionData(IclijDbDao dbDao) {
-        super(dbDao);
+    public EvolveActionData(IclijConfig iclijConfig, IclijDbDao dbDao) {
+        super(iclijConfig, dbDao);
     }
 
     @Override

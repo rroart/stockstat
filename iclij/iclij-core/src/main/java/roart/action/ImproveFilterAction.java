@@ -42,8 +42,8 @@ public class ImproveFilterAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
-    public ImproveFilterAction(IclijDbDao dbDao) {
-        setActionData(new ImproveFilterActionData(dbDao));
+    public ImproveFilterAction(IclijConfig iclijConfig, IclijDbDao dbDao) {
+        setActionData(new ImproveFilterActionData(iclijConfig, dbDao));
     }
     
     private List<Market> getMarkets(IclijConfig instance) {

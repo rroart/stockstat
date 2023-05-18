@@ -13,8 +13,8 @@ import roart.iclij.config.Market;
 
 public class DatasetActionData extends MarketActionData {
 
-    public DatasetActionData(IclijDbDao dbDao) {
-        super(dbDao);
+    public DatasetActionData(IclijConfig iclijConfig, IclijDbDao dbDao) {
+        super(iclijConfig, dbDao);
     }
 
     @Override

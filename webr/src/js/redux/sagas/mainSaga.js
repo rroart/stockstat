@@ -24,7 +24,7 @@ export function* fetchMainData() {
 }
 
 export function* fetchConfig() {
-    var serviceparam = new ServiceParam();
+    var serviceparam = new IclijServiceParam();
     //serviceparam.market = '0';
     console.log("hereconfig");
     let config = yield call(Client.fetchApi.search, "/getconfig", serviceparam);
@@ -44,7 +44,7 @@ export function* fetchConfig2() {
     console.log(config);
     const config2 = config;
     console.log(config2);
-    yield put(mainActions.setconfig2(config2.iclijConfig));
+    yield put(mainActions.setconfig2(config2.config));
 }
 
 function getMyConfig(config, market, date) {
@@ -60,7 +60,7 @@ function getMyConfig(config, market, date) {
 }
 
 export function* fetchContent(action) {
-    var serviceparam = new ServiceParam();
+    var serviceparam = new IclijServiceParam();
     console.log(action);
     const config = action.payload.config;
     const props = action.payload.props;
@@ -87,7 +87,7 @@ export function* fetchContent(action) {
 }
 
 export function* fetchContent2NO(action) {
-    var serviceparam = new ServiceParam();
+    var serviceparam = new IclijServiceParam();
     console.log(action);
     const config = action.payload.config;
     const props = action.payload.props;
@@ -114,7 +114,7 @@ export function* fetchContent2NO(action) {
 }
 
 export function* fetchContentGraph(action) {
-    var serviceparam = new ServiceParam();
+    var serviceparam = new IclijServiceParam();
     console.log(action);
     const config = action.payload.config;
     const id = action.payload.value;
@@ -144,7 +144,7 @@ export function* fetchContentGraph(action) {
 }
 
 export function* fetchEvolveRecommender() {
-    var serviceparam = new ServiceParam();
+    var serviceparam = new IclijServiceParam();
     //serviceparam.market = '0';
     console.log("here");
     let config = yield call(Client.fetchApi.search, "/getevolverecommender", serviceparam);
@@ -156,7 +156,7 @@ export function* fetchEvolveRecommender() {
 }
 
 export function* fetchEvolveNN() {
-    var serviceparam = new ServiceParam();
+    var serviceparam = new IclijServiceParam();
     //serviceparam.market = '0';
     console.log("hereconfig");
     let config = yield call(Client.fetchApi.search, "/getevolvenn", serviceparam);
@@ -175,7 +175,7 @@ export function* fetchEvolve(action) {
     const set = array[1];
     const config = array[2];
     const id = array[3];
-    const serviceparam = new ServiceParam();
+    const serviceparam = new IclijServiceParam();
     const date = config.get('enddate');
     serviceparam.market = config.get('market');
     console.log(serviceparam.market);
@@ -212,7 +212,7 @@ export function* fetchContent2(action) {
     console.log(date);
     serviceparam.market = config.get('market');
     console.log(serviceparam.market);
-    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    serviceparam.config = getMyConfig(config, serviceparam.market, date);
     console.log("herecontent");
     console.log(serviceparam.market);
     let result = yield call(Client.fetchApi.search2, "/getcontent", serviceparam);
@@ -234,7 +234,7 @@ export function* fetchContentEvolve(action) {
     const date = config.get('enddate');
     serviceparam.market = config.get('market');
     console.log(serviceparam.market);
-    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    serviceparam.config = getMyConfig(config, serviceparam.market, date);
     console.log("herecontent");
     console.log(serviceparam.market);
     let result = yield call(Client.fetchApi.search, "/getcontentevolve", serviceparam);
@@ -256,7 +256,7 @@ export function* fetchContentDataset(action) {
     const date = config.get('enddate');
     serviceparam.market = config.get('market');
     console.log(serviceparam.market);
-    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    serviceparam.config = getMyConfig(config, serviceparam.market, date);
     console.log("herecontent");
     console.log(serviceparam.market);
     let result = yield call(Client.fetchApi.search2, "/getcontentdataset", serviceparam);
@@ -278,7 +278,7 @@ export function* fetchContentCrosstest(action) {
     const date = config.get('enddate');
     serviceparam.market = config.get('market');
     console.log(serviceparam.market);
-    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    serviceparam.config = getMyConfig(config, serviceparam.market, date);
     console.log("herecontent");
     console.log(serviceparam.market);
     let result = yield call(Client.fetchApi.search2, "/getcontentcrosstest", serviceparam);
@@ -300,7 +300,7 @@ export function* fetchContentFilter(action) {
     const date = config.get('enddate');
     serviceparam.market = config.get('market');
     console.log(serviceparam.market);
-    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    serviceparam.config = getMyConfig(config, serviceparam.market, date);
     console.log("herecontent");
     console.log(serviceparam.market);
     let result = yield call(Client.fetchApi.search2, "/getcontentfilter", serviceparam);
@@ -322,7 +322,7 @@ export function* fetchContentAboveBelow(action) {
     const date = config.get('enddate');
     serviceparam.market = config.get('market');
     console.log(serviceparam.market);
-    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    serviceparam.config = getMyConfig(config, serviceparam.market, date);
     console.log("herecontent");
     console.log(serviceparam.market);
     let result = yield call(Client.fetchApi.search2, "/getcontentabovebelow", serviceparam);
@@ -344,7 +344,7 @@ export function* fetchContentImprove(action) {
     const date = config.get('enddate');
     serviceparam.market = config.get('market');
     console.log(serviceparam.market);
-    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    serviceparam.config = getMyConfig(config, serviceparam.market, date);
     console.log("herecontent");
     console.log(serviceparam.market);
     let result = yield call(Client.fetchApi.search2, "/getcontentimprove", serviceparam);
@@ -366,7 +366,7 @@ export function* fetchContentMachineLearning(action) {
     const date = config.get('enddate');
     serviceparam.market = config.get('market');
     console.log(serviceparam.market);
-    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    serviceparam.config = getMyConfig(config, serviceparam.market, date);
     console.log("herecontent");
     console.log(serviceparam.market);
     let result = yield call(Client.fetchApi.search2, "/getcontentmachinelearning", serviceparam);
@@ -395,17 +395,17 @@ export function* fetchSingleMarket(action) {
     }
     console.log(loop);
     console.log(date);
-    const iclijConfig = getMyConfig(config, serviceparam.market, date);
-    serviceparam.iclijConfig = iclijConfig;
+    const config = getMyConfig(config, serviceparam.market, date);
+    serviceparam.config = config;
     if (loop) {
-	loops = iclijConfig.configValueMap.get('singlemarket.loops');
+	loops = config.configValueMap.get('singlemarket.loops');
     }
     var i = 0;
     for (i = 0; i < loops; i++) {
 	console.log(serviceparam.market);
 	//serviceparam.offset = i * config.get('singlemarket').get('loopinterval');
 	if (loop) {
-	    serviceparam.offset = i * serviceparam.iclijConfig.configValueMap.get('singlemarket.loopinterval');
+	    serviceparam.offset = i * serviceparam.config.configValueMap.get('singlemarket.loopinterval');
 	}
 	console.log("herecontent");
 	console.log(serviceparam.market);
@@ -429,7 +429,7 @@ export function* fetchImproveProfit(action) {
     const date = config.get('enddate');
     serviceparam.market = config.get('market');
     console.log(serviceparam.market);
-    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    serviceparam.config = getMyConfig(config, serviceparam.market, date);
     console.log("herecontent");
     console.log(serviceparam.market);
     let result = yield call(Client.fetchApi.search2, "/improveprofit", serviceparam);
@@ -451,7 +451,7 @@ export function* fetchImproveAboveBelow(action) {
     const date = config.get('enddate');
     serviceparam.market = config.get('market');
     console.log(serviceparam.market);
-    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    serviceparam.config = getMyConfig(config, serviceparam.market, date);
     console.log("herecontent");
     console.log(serviceparam.market);
     let result = yield call(Client.fetchApi.search2, "/improveabovebelow", serviceparam);
@@ -479,10 +479,10 @@ export function* fetchGetVerify(action) {
     }
     console.log(loop);
     console.log(date);
-    const iclijConfig = getMyConfig(config, serviceparam.market, date);
-    serviceparam.iclijConfig = iclijConfig;
+    const config = getMyConfig(config, serviceparam.market, date);
+    serviceparam.config = config;
     if (loop) {
-	loops = iclijConfig.configValueMap.get('verification.loops');
+	loops = config.configValueMap.get('verification.loops');
     }
     var i = 0;
     for (i = 0; i < loops; i++) {
@@ -491,11 +491,11 @@ export function* fetchGetVerify(action) {
 	console.log(Object.keys(config));
 	console.log(config.get('verification'));
 	console.log(config['verification']);
-	console.log(serviceparam.iclijConfig);
+	console.log(serviceparam.config);
 	//serviceparam.offset = i * config.get('verification').get('loopinterval');
-	console.log(serviceparam.iclijConfig.configValueMap.get('verification.loopinterval'))
+	console.log(serviceparam.config.configValueMap.get('verification.loopinterval'))
 	if (loop) {
-	    serviceparam.offset = i * serviceparam.iclijConfig.configValueMap.get('verification.loopinterval');
+	    serviceparam.offset = i * serviceparam.config.configValueMap.get('verification.loopinterval');
 	}
 	console.log("herecontent");
 	console.log(serviceparam.market);
@@ -513,7 +513,7 @@ export function* fetchGetVerify(action) {
 
 export function* fetchMarkets() {
     console.log("heremarkets");
-    const serviceparam = new ServiceParam();
+    const serviceparam = new IclijServiceParam();
     //serviceparam.market = '0';
     console.log("heremarkets1");
     let markets = yield call(Client.fetchApi.search, "/getmarkets", serviceparam);

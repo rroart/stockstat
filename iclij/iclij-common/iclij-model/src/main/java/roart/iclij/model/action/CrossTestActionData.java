@@ -16,8 +16,8 @@ import roart.iclij.config.Market;
 
 public class CrossTestActionData extends MarketActionData {
 
-    public CrossTestActionData(IclijDbDao dbDao) {
-        super(dbDao);
+    public CrossTestActionData(IclijConfig iclijConfig, IclijDbDao dbDao) {
+        super(iclijConfig, dbDao);
     }
 
     @Override

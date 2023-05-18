@@ -43,9 +43,9 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import roart.common.cache.MyCache;
+import roart.common.config.ConfigConstantMaps;
 import roart.common.config.ConfigConstants;
-import roart.common.config.MyMyConfig;
-import roart.common.config.MyXMLConfig;
+import roart.common.config.ConfigMaps;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.ml.NeuralNetCommand;
@@ -59,23 +59,31 @@ import roart.service.ControlService;
 import roart.service.evolution.EvolutionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import roart.db.dao.DbDao;
+import roart.iclij.service.IclijServiceParam;
+import roart.iclij.service.IclijServiceResult;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfigConstants;
+import roart.iclij.config.IclijXMLConfig;
 
-@ComponentScan(basePackages = "roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.common.config")
+@ComponentScan(basePackages = "roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.common.config,roart.iclij.config")
 @EnableJdbcRepositories("roart.common.springdata.repository")
 @CrossOrigin
 @RestController
 @EnableDiscoveryClient
 @SpringBootApplication
 public class ServiceController implements CommandLineRunner {
-    
+
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private ControlService instance;
 
     public static List<String> taskList;
-    
+
     @Value("${spring.profiles.active:}")
     private String activeProfile;
+
+    @Autowired
+    IclijConfig iclijConfig;
     
     @Autowired
     DbDao dao;
@@ -94,9 +102,9 @@ public class ServiceController implements CommandLineRunner {
 
     @RequestMapping(value = "/" + EurekaConstants.SETCONFIG,
             method = RequestMethod.POST)
-    public ServiceResult configDb(@RequestBody ServiceParam param)
+    public IclijServiceResult configDb(@RequestBody IclijServiceParam param)
             throws Exception {
-        ServiceResult result = new ServiceResult();
+        IclijServiceResult result = new IclijServiceResult();
         try {
             System.out.println("new market" + param.getConfig().getMarket());
             System.out.println("new market" + param.getConfig());
@@ -111,11 +119,11 @@ public class ServiceController implements CommandLineRunner {
 
     @RequestMapping(value = "/" + EurekaConstants.GETCONFIG,
             method = RequestMethod.POST)
-    public ServiceResult getConfig(@RequestBody ServiceParam param)
+    public IclijServiceResult getConfig(@RequestBody IclijServiceParam param)
             throws Exception {
-        ServiceResult result = new ServiceResult();
+        IclijServiceResult result = new IclijServiceResult();
         try {
-            result.setConfig(MyXMLConfig.getConfigInstance());
+            result.setConfig(iclijConfig);
             System.out.println("configs " + result.getConfig());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -126,9 +134,9 @@ public class ServiceController implements CommandLineRunner {
 
     @RequestMapping(value = "/" + EurekaConstants.GETMARKETS,
             method = RequestMethod.POST)
-    public ServiceResult getMarkets(@RequestBody ServiceParam param)
+    public IclijServiceResult getMarkets(@RequestBody IclijServiceParam param)
             throws Exception {
-        ServiceResult result = new ServiceResult();
+        IclijServiceResult result = new IclijServiceResult();
         try {
             result.setMarkets(getInstance().getMarkets());
             log.info("Marketsize {}", result.getMarkets().size());
@@ -141,9 +149,9 @@ public class ServiceController implements CommandLineRunner {
 
     @RequestMapping(value = "/" + EurekaConstants.GETMETAS,
             method = RequestMethod.POST)
-    public ServiceResult getMetas(@RequestBody ServiceParam param)
+    public IclijServiceResult getMetas(@RequestBody IclijServiceParam param)
             throws Exception {
-        ServiceResult result = new ServiceResult();
+        IclijServiceResult result = new IclijServiceResult();
         try {
             result.setMetas(getInstance().getMetas());
             log.info("Metasize {}", result.getMetas().size());
@@ -154,17 +162,17 @@ public class ServiceController implements CommandLineRunner {
         return result;
     }
 
-     @RequestMapping(value = "/" + EurekaConstants.GETDATES,
+    @RequestMapping(value = "/" + EurekaConstants.GETDATES,
             method = RequestMethod.POST)
-    public ServiceResult getDates(@RequestBody ServiceParam param)
+    public IclijServiceResult getDates(@RequestBody IclijServiceParam param)
             throws Exception {
-        ServiceResult result = new ServiceResult();
+        IclijServiceResult result = new IclijServiceResult();
         Map<String, Map<String, Object>> maps = null;
         if (param.isWantMaps()) {
             maps = new HashMap<>();
         }
         try {
-            getInstance().getDates( new MyMyConfig(param.getConfig()), maps);
+            getInstance().getDates( new IclijConfig(param.getConfig()), maps);
             result.setMaps(maps);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -175,11 +183,11 @@ public class ServiceController implements CommandLineRunner {
 
     @RequestMapping(value = "/" + EurekaConstants.GETSTOCKS,
             method = RequestMethod.POST)
-    public ServiceResult getStocks(@RequestBody ServiceParam param)
+    public IclijServiceResult getStocks(@RequestBody IclijServiceParam param)
             throws Exception {
-        ServiceResult result = new ServiceResult();
+        IclijServiceResult result = new IclijServiceResult();
         try {
-            result.setStocks(getInstance().getStocks(param.getMarket(),  new MyMyConfig(param.getConfig())));
+            result.setStocks(getInstance().getStocks(param.getMarket(),  new IclijConfig(param.getConfig())));
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -189,9 +197,9 @@ public class ServiceController implements CommandLineRunner {
 
     @RequestMapping(value = "/" + EurekaConstants.GETCONTENT,
             method = RequestMethod.POST)
-    public ServiceResult getContent(@RequestBody ServiceParam param)
+    public IclijServiceResult getContent(@RequestBody IclijServiceParam param)
             throws Exception {
-        ServiceResult result = new ServiceResult();
+        IclijServiceResult result = new IclijServiceResult();
         Map<String, Map<String, Object>> maps = null;
         if (param.isWantMaps()) {
             maps = new HashMap<>();
@@ -204,13 +212,13 @@ public class ServiceController implements CommandLineRunner {
                 disableList = new ArrayList<>();
             }
             NeuralNetCommand neuralnetcommand = param.getNeuralnetcommand();
-            result.setList(getInstance().getContent( new MyMyConfig(param.getConfig()), maps, disableList, neuralnetcommand));
+            result.setList(getInstance().getContent( new IclijConfig(param.getConfig()), maps, disableList, neuralnetcommand));
             result.setMaps(maps);
             long[] mem1 = MemUtil.mem();
             long[] memdiff = MemUtil.diff(mem1, mem0);
             log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
             if (maps != null) {
-            //log.info("Length {}", JsonUtil.convert(maps).length());
+                //log.info("Length {}", JsonUtil.convert(maps).length());
             }
             //System.out.println(VM.current().details());
             //System.out.println(GraphLayout.parseInstance(maps).toFootprint());
@@ -223,11 +231,11 @@ public class ServiceController implements CommandLineRunner {
 
     @RequestMapping(value = "/" + EurekaConstants.GETCONTENTSTAT,
             method = RequestMethod.POST)
-    public ServiceResult getContentStat(@RequestBody ServiceParam param)
+    public IclijServiceResult getContentStat(@RequestBody IclijServiceParam param)
             throws Exception {
-        ServiceResult result = new ServiceResult();
+        IclijServiceResult result = new IclijServiceResult();
         try {
-            result.setList(getInstance().getContentStat( new MyMyConfig(param.getConfig())));
+            result.setList(getInstance().getContentStat( new IclijConfig(param.getConfig())));
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -237,11 +245,11 @@ public class ServiceController implements CommandLineRunner {
 
     @RequestMapping(value = "/" + EurekaConstants.GETCONTENTGRAPH,
             method = RequestMethod.POST)
-    public ServiceResult getContentGraph(@RequestBody ServiceParam param)
+    public IclijServiceResult getContentGraph(@RequestBody IclijServiceParam param)
             throws Exception {
-        ServiceResult result = new ServiceResult();
+        IclijServiceResult result = new IclijServiceResult();
         try {
-            result.setList(getInstance().getContentGraph( new MyMyConfig(param.getConfig()), param.getGuiSize()));
+            result.setList(getInstance().getContentGraph( new IclijConfig(param.getConfig()), param.getGuiSize()));
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -251,9 +259,9 @@ public class ServiceController implements CommandLineRunner {
 
     @RequestMapping(value = "/" + EurekaConstants.GETCONTENTGRAPH2,
             method = RequestMethod.POST)
-    public ServiceResult getContentGraph2(@RequestBody ServiceParam param)
+    public IclijServiceResult getContentGraph2(@RequestBody IclijServiceParam param)
             throws Exception {
-        ServiceResult result = new ServiceResult();
+        IclijServiceResult result = new IclijServiceResult();
         try {
             Set<Pair<String,String>> ids = new HashSet<>();
             for (String union : param.getIds()) {
@@ -261,7 +269,7 @@ public class ServiceController implements CommandLineRunner {
                 Pair<String, String> pair = new ImmutablePair(idsplit[0], idsplit[1]);
                 ids.add(pair);
             }
-            result.setList(getInstance().getContentGraph( new MyMyConfig(param.getConfig()), ids, param.getGuiSize()));
+            result.setList(getInstance().getContentGraph( new IclijConfig(param.getConfig()), ids, param.getGuiSize()));
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -271,11 +279,11 @@ public class ServiceController implements CommandLineRunner {
 
     @RequestMapping(value = "/" + EurekaConstants.GETEVOLVERECOMMENDER,
             method = RequestMethod.POST)
-    public ServiceResult getEvolveRecommender(@RequestBody ServiceParam param)
+    public IclijServiceResult getEvolveRecommender(@RequestBody IclijServiceParam param)
             throws Exception {
-        ServiceResult result = new ServiceResult();
+        IclijServiceResult result = new IclijServiceResult();
         try {
-            MyMyConfig aConfig = new MyMyConfig(param.getConfig());
+            IclijConfig aConfig = new IclijConfig(param.getConfig());
             List<String> disableList = param.getConfList();
             if (disableList == null) {
                 disableList = new ArrayList<>();
@@ -299,11 +307,11 @@ public class ServiceController implements CommandLineRunner {
 
     @RequestMapping(value = "/" + EurekaConstants.GETEVOLVENN,
             method = RequestMethod.POST)
-    public ServiceResult getTestML(@RequestBody ServiceParam param)
+    public IclijServiceResult getTestML(@RequestBody IclijServiceParam param)
             throws Exception {
-        ServiceResult result = new ServiceResult();
+        IclijServiceResult result = new IclijServiceResult();
         try {
-            MyMyConfig aConfig = new MyMyConfig(param.getConfig());
+            IclijConfig aConfig = new IclijConfig(param.getConfig());
             List<String> disableList = param.getConfList();
             if (disableList == null) {
                 disableList = new ArrayList<>();
@@ -334,39 +342,39 @@ public class ServiceController implements CommandLineRunner {
         applicationContext = SpringApplication.run(ServiceController.class, args);
         displayAllBeans();
     }
-    
+
     private static ApplicationContext applicationContext;
-    
+
     @Override
     public void run(String... args) throws InterruptedException, JsonParseException, JsonMappingException, IOException {        
-        System.out.println("Using profile " + activeProfile);
+        log.info("Using profile {}", activeProfile);
+        IclijConfig instance = iclijConfig;
         MyExecutors.initThreads("dev".equals(activeProfile));
-        MyExecutors.init(new double[] { 0, new MyMyConfig(MyXMLConfig.getConfigInstance()).getMLMPCpu() } );
-        MyMyConfig instance = new MyMyConfig(MyXMLConfig.getConfigInstance());
+        MyExecutors.init(new double[] { 0, iclijConfig.getMLMPCpu() } );
         String myservices = instance.getMyservices();
         String services = instance.getServices();
         String communications = instance.getCommunications();
-        new ServiceControllerOther(myservices, services, communications, ServiceParam.class, dao).start();
+        new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig, dao).start();
         new DatabaseThread().start();
         MyCache.setCache(instance.wantCache());
         MyCache.setCacheTTL(instance.getCacheTTL());
         //new MemRunner().run();
     }
-    
+
     public static void displayAllBeans() {
         String[] allBeanNames = applicationContext.getBeanDefinitionNames();
         for(String beanName : allBeanNames) {
             System.out.println(beanName);
         }
     }
-    
+
     @RequestMapping(value = "cache/invalidate",
             method = RequestMethod.POST)
     public void cacheinvalidate()
             throws Exception {
         MyCache.getInstance().invalidate();
     }
-    
+
     class MemRunner implements Runnable {
 
         private static Logger log = LoggerFactory.getLogger(MemRunner.class);
@@ -375,9 +383,9 @@ public class ServiceController implements CommandLineRunner {
 
         public void run() {
             long[] mem = MemUtil.mem();
-             log.info("MEM {}", MemUtil.print(mem));
+            log.info("MEM {}", MemUtil.print(mem));
 
-             while (true) {
+            while (true) {
                 try {
                     TimeUnit.SECONDS.sleep(600);
                 } catch (/*Interrupted*/Exception e) {
@@ -387,7 +395,7 @@ public class ServiceController implements CommandLineRunner {
             }
         }
     }
-    
+
     @RequestMapping(value = "/" + EurekaConstants.GETTASKS,
             method = RequestMethod.POST)
     public List<String> getTasks()

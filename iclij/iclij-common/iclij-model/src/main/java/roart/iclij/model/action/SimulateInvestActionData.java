@@ -16,8 +16,8 @@ import roart.iclij.config.Market;
 
 public class SimulateInvestActionData extends MarketActionData {
 
-    public SimulateInvestActionData(IclijDbDao dbDao) {
-        super(dbDao);
+    public SimulateInvestActionData(IclijConfig iclijConfig, IclijDbDao dbDao) {
+        super(iclijConfig, dbDao);
     }
 
     @Override

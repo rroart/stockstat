@@ -12,8 +12,8 @@ import roart.iclij.config.Market;
 
 public class FindProfitActionData extends MarketActionData {
 
-    public FindProfitActionData(IclijDbDao dbDao) {
-        super(dbDao);
+    public FindProfitActionData(IclijConfig iclijConfig, IclijDbDao dbDao) {
+        super(iclijConfig, dbDao);
     }
 
     @Override

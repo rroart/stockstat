@@ -282,7 +282,7 @@ public class SimulateInvestComponent extends ComponentML {
         if (parametersList.isEmpty()) {
             parametersList.add(null);
         }
-
+        
         List<Double> scores = new ArrayList<>();
 
         //LocalDate date = TimeUtil.getEqualBefore(data.stockDates, investStart);
@@ -297,7 +297,7 @@ public class SimulateInvestComponent extends ComponentML {
 
             setDataIdx(data, investStart, lastInvestEnd);
             
-            setExclusions(market, data, simConfig);
+            setExclusions(action, market, data, simConfig);
 
             setDataVolumeAndTrend(market, param, simConfig, data, investStart, investEnd, lastInvestEnd, evolving);
 
@@ -318,7 +318,7 @@ public class SimulateInvestComponent extends ComponentML {
                 if (autoSimConfig == null) {
                     simConfigs = new HashMap<>();
                     List<SimulateFilter> listoverride = filter; //simConfig.getFilters();
-                    List<SimulateFilter[]> list = getDefaultList();
+                    List<SimulateFilter[]> list = getDefaultList(action);
                     if (list != null) {
                         filters.addAll(list);
                     }
@@ -935,7 +935,7 @@ public class SimulateInvestComponent extends ComponentML {
         return newSimConfig;
     }
 
-    private void setExclusions(Market market, Data data, SimulateInvestConfig simConfig) {
+    private void setExclusions(MarketActionData action, Market market, Data data, SimulateInvestConfig simConfig) {
         String[] excludes = null;
         if (market.getSimulate() != null) {
             excludes = market.getSimulate().getExcludes();
@@ -946,7 +946,7 @@ public class SimulateInvestComponent extends ComponentML {
         data.configExcludeList = Arrays.asList(excludes);
         Set<String> configExcludeSet = new HashSet<>(data.configExcludeList);
 
-        Set<String> abnormExcludes = getTrendExclude(data, market);
+        Set<String> abnormExcludes = getTrendExclude(action, data, market);
         data.abnormExcludes = abnormExcludes;
         
         data.filteredCategoryValueMap = new HashMap<>(data.getCatValMap(false));
@@ -957,9 +957,8 @@ public class SimulateInvestComponent extends ComponentML {
         data.filteredCategoryValueFillMap.keySet().removeAll(abnormExcludes);
     }
 
-    private Set<String> getTrendExclude(Data data, Market market) {
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
-        Double margin = instance.getAbnormalChange();
+    private Set<String> getTrendExclude(MarketActionData action, Data data, Market market) {
+        Double margin = action.getIclijConfig().getAbnormalChange();
         if (margin == null) {
             return new HashSet<>();
         }
@@ -1023,7 +1022,7 @@ public class SimulateInvestComponent extends ComponentML {
         List<SimulateFilter[]> list = null;
         if (autoSimConf != null) {
             List<SimulateFilter> listoverride = filter; //autoSimConf.getFilters();
-            list = getDefaultList();
+            list = getDefaultList(actionData);
             if (list != null) {
                 filters.addAll(list);
             }
@@ -1062,12 +1061,12 @@ public class SimulateInvestComponent extends ComponentML {
                         Long dbid = data.getDbid();
                         String configStr = data.getConfig();
                         //SimulateInvestConfig s = JsonUtil.convert(configStr, SimulateInvestConfig.class);
-                        Map defaultMap = config.getDeflt();
+                        Map defaultMap = config.getConfigMaps().deflt;
                         Map map = JsonUtil.convert(configStr, Map.class);
                         Map newMap = new HashMap<>();
                         newMap.putAll(defaultMap);
                         newMap.putAll(map);
-                        IclijConfig dummy = new IclijConfig();
+                        IclijConfig dummy = new IclijConfig(config);
                         dummy.setConfigValueMap(newMap);
                         SimulateInvestConfig simConf = getSimConfig(dummy);
                         if (simConf.getInterval().intValue() != autoSimConf.getInterval().intValue()) {
@@ -1136,11 +1135,10 @@ public class SimulateInvestComponent extends ComponentML {
         }
     }
 
-    private List<SimulateFilter[]> getDefaultList() {
+    private List<SimulateFilter[]> getDefaultList(MarketActionData action) {
         List<SimulateFilter[]> list = null;
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
         try {
-            list = IclijXMLConfig.getSimulate(instance);
+            list = IclijXMLConfig.getSimulate(action.getIclijConfig());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

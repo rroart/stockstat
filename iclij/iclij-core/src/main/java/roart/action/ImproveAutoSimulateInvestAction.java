@@ -42,8 +42,8 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public ImproveAutoSimulateInvestAction(IclijDbDao dbDao) {
-        setActionData(new ImproveAutoSimulateInvestActionData(dbDao));
+    public ImproveAutoSimulateInvestAction(IclijConfig iclijConfig, IclijDbDao dbDao) {
+        setActionData(new ImproveAutoSimulateInvestActionData(iclijConfig, dbDao));
     }
     
     @Override

@@ -51,8 +51,8 @@ public class ImproveProfitAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
-    public ImproveProfitAction(IclijDbDao dbDao) {
-        setActionData(new ImproveProfitActionData(dbDao));
+    public ImproveProfitAction(IclijDbDao dbDao, IclijConfig iclijConfig) {
+        setActionData(new ImproveProfitActionData(iclijConfig, dbDao));
     }
     
     private List<Market> getMarkets(IclijConfig instance) {
@@ -100,7 +100,7 @@ public class ImproveProfitAction extends MarketAction {
                 param.getUpdateMap().putAll(updateMap);
             }
             List<String> confList = component.getConflist();
-            Map<String, Object> myConfig = componentData.getService().conf.getDeflt();
+            Map<String, Object> myConfig = componentData.getService().conf.getConfigMaps().deflt;
             Map<String, Object> defaults = new HashMap<>();
             for (String key : confList) {
                 Object value = myConfig.get(key);

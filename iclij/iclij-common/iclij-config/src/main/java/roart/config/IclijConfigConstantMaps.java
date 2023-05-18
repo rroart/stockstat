@@ -4,11 +4,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 import roart.common.config.ConfigConstants;
+import roart.common.config.ConfigMaps;
 import roart.common.constants.Constants;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLType;
 
 public class IclijConfigConstantMaps {
+    private static ConfigMaps instance = null;
+    public static ConfigMaps instance() {
+        if (instance == null) {
+            IclijConfigConstantMaps.makeDefaultMap();
+            IclijConfigConstantMaps.makeTextMap();
+            IclijConfigConstantMaps.makeTypeMap();
+            IclijConfigConstantMaps.makeConvertMap();
+            IclijConfigConstantMaps.makeRangeMap();
+            instance = new ConfigMaps(map, deflt, text, range, conv);
+        }
+        return instance;
+    }
+    
     private static final String ACONFIG = "{ \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : true }";
     
     private static final String DISABLECONFIG = "{ \"load\" : true, \"save\" : true, \"enable\" : false, \"evolve\" : true }";
@@ -72,7 +86,7 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.DATASETINDICATORRECOMMENDER, Boolean.class);
         map.put(IclijConfigConstants.DATASETML, Boolean.class);
         map.put(IclijConfigConstants.DATASETEVOLUTIONCONFIG, String.class);
-        map.put(IclijConfigConstants.DATASETMLCONFIG, String.class);
+        //map.put(IclijConfigConstants.DATASETMLCONFIG, String.class);
         map.put(IclijConfigConstants.DATASETMLTENSORFLOWSERVER, String.class);
         map.put(IclijConfigConstants.DATASETINDICATORRECOMMENDEREVOLUTIONCONFIG, String.class);
         map.put(IclijConfigConstants.DATASETAUTORUN, Boolean.class);
@@ -107,10 +121,10 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.EVOLVEGA, Integer.class);
         map.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER, Boolean.class);
         map.put(IclijConfigConstants.EVOLVEML, Boolean.class);
-        map.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, String.class);
+        //map.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, String.class);
         map.put(IclijConfigConstants.EVOLVEMLMLCONFIG, String.class);
         map.put(IclijConfigConstants.EVOLVEMLTENSORFLOWSERVER, String.class);
-        map.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, String.class);
+        //map.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, String.class);
         map.put(IclijConfigConstants.EVOLVEAUTORUN, Boolean.class);
         map.put(IclijConfigConstants.EVOLVEFITNESSMINIMUM, Integer.class);
         map.put(IclijConfigConstants.EVOLVEMLINDICATOR, Boolean.class);
@@ -142,15 +156,15 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.EVOLVETHRESHOLD, String.class);
         map.put(IclijConfigConstants.MISCSHUTDOWNHOUR, Integer.class);
         map.put(IclijConfigConstants.MISCPOPULATE, Boolean.class);
-        map.put(IclijConfigConstants.MISCMYSERVICES, String.class);
-        map.put(IclijConfigConstants.MISCSERVICES, String.class);
-        map.put(IclijConfigConstants.MISCCOMMUNICATIONS, String.class);
-        map.put(IclijConfigConstants.MISCCACHE, Boolean.class);
-        map.put(IclijConfigConstants.MISCCACHETTL, Integer.class);
-        map.put(IclijConfigConstants.MISCINMEMORYSERVER, String.class);
-        map.put(IclijConfigConstants.MISCINMEMORYHAZELCAST, String.class);
-        map.put(IclijConfigConstants.MISCINMEMORYREDIS, String.class);
-        map.put(IclijConfigConstants.MISCABNORMALCHANGE, Double.class);
+        //map.put(IclijConfigConstants.MISCMYSERVICES, String.class);
+        //map.put(IclijConfigConstants.MISCSERVICES, String.class);
+        //map.put(IclijConfigConstants.MISCCOMMUNICATIONS, String.class);
+        //map.put(IclijConfigConstants.MISCCACHE, Boolean.class);
+        //map.put(IclijConfigConstants.MISCCACHETTL, Integer.class);
+        //map.put(IclijConfigConstants.MISCINMEMORYSERVER, String.class);
+        //map.put(IclijConfigConstants.MISCINMEMORYHAZELCAST, String.class);
+        //map.put(IclijConfigConstants.MISCINMEMORYREDIS, String.class);
+        //map.put(IclijConfigConstants.MISCABNORMALCHANGE, Double.class);
         map.put(IclijConfigConstants.MPSERVERCPU, Double.class);
         map.put(IclijConfigConstants.MPCLIENTCPU, Double.class);
         map.put(IclijConfigConstants.FINDPROFITAUTORUN, Boolean.class);
@@ -417,8 +431,8 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER, Boolean.TRUE);
         deflt.put(IclijConfigConstants.EVOLVEML, Boolean.FALSE);
         deflt.put(IclijConfigConstants.EVOLVEMLMLCONFIG, MLCONFIG);
-        deflt.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, RECOMMENDEVOLUTIONCONFIG);
-        deflt.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, MLEVOLUTIONCONFIG);
+        //deflt.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, RECOMMENDEVOLUTIONCONFIG);
+        //deflt.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, MLEVOLUTIONCONFIG);
         deflt.put(IclijConfigConstants.EVOLVEMLTENSORFLOWSERVER, "http://localhost:8000");
         deflt.put(IclijConfigConstants.EVOLVEAUTORUN, Boolean.FALSE);
         deflt.put(IclijConfigConstants.EVOLVEFITNESSMINIMUM, 10);
@@ -442,17 +456,17 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.EVOLVEFUTUREDAYS, " [ 10 ]");
         deflt.put(IclijConfigConstants.EVOLVETHRESHOLD, "[ 1.0 ]");
         deflt.put(IclijConfigConstants.MISCPOPULATE, Boolean.FALSE);
-        deflt.put(IclijConfigConstants.MISCMYSERVICES, "{}");
-        deflt.put(IclijConfigConstants.MISCSERVICES, "{}");
-        deflt.put(IclijConfigConstants.MISCCOMMUNICATIONS, "{}");
+        //deflt.put(IclijConfigConstants.MISCMYSERVICES, "{}");
+        //deflt.put(IclijConfigConstants.MISCSERVICES, "{}");
+        //deflt.put(IclijConfigConstants.MISCCOMMUNICATIONS, "{}");
         deflt.put(IclijConfigConstants.MPSERVERCPU, 0.5);
         deflt.put(IclijConfigConstants.MPCLIENTCPU, 0.5);
-        deflt.put(IclijConfigConstants.MISCCACHE, Boolean.TRUE);
-        deflt.put(IclijConfigConstants.MISCCACHETTL, 3600);
-        deflt.put(IclijConfigConstants.MISCINMEMORYSERVER, Constants.REDIS);
-        deflt.put(IclijConfigConstants.MISCINMEMORYHAZELCAST, null);
-        deflt.put(IclijConfigConstants.MISCINMEMORYREDIS, "localhost");
-        deflt.put(IclijConfigConstants.MISCABNORMALCHANGE, null);
+        //deflt.put(IclijConfigConstants.MISCCACHE, Boolean.TRUE);
+        //deflt.put(IclijConfigConstants.MISCCACHETTL, 3600);
+        //deflt.put(IclijConfigConstants.MISCINMEMORYSERVER, Constants.REDIS);
+        //deflt.put(IclijConfigConstants.MISCINMEMORYHAZELCAST, null);
+        //deflt.put(IclijConfigConstants.MISCINMEMORYREDIS, "localhost");
+        //deflt.put(IclijConfigConstants.MISCABNORMALCHANGE, null);
         deflt.put(IclijConfigConstants.FINDPROFITAUTORUN, Boolean.FALSE);
         deflt.put(IclijConfigConstants.FINDPROFITMLDYNAMIC, Boolean.FALSE);
         deflt.put(IclijConfigConstants.FINDPROFITMLINDICATOR, Boolean.TRUE);
@@ -655,7 +669,7 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.DATASETINDICATORRECOMMENDER, "Enable evolution generated recommender settings");
         text.put(IclijConfigConstants.DATASETML, "Enable evolution generated ml configs");
         text.put(IclijConfigConstants.DATASETEVOLUTIONCONFIG, "ML GP config");
-        text.put(IclijConfigConstants.DATASETMLCONFIG, "Evolution default ml enabled");
+        //text.put(IclijConfigConstants.DATASETMLCONFIG, "Evolution default ml enabled");
         text.put(IclijConfigConstants.DATASETMLTENSORFLOWSERVER, "Enable evolution generated ml server");
         text.put(IclijConfigConstants.DATASETINDICATORRECOMMENDEREVOLUTIONCONFIG, "Indicator recommender GP config");
         text.put(IclijConfigConstants.DATASETAUTORUN, "Enable dataset autorun");
@@ -689,10 +703,10 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.EVOLVEGA, "Evolve GA");
         text.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER, "Enable evolution generated recommender settings");
         text.put(IclijConfigConstants.EVOLVEML, "Enable evolution generated ml configs");
-        text.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, "ML GP config");
+        //text.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, "ML GP config");
         text.put(IclijConfigConstants.EVOLVEMLMLCONFIG, "Evolution default ml enabled");
         text.put(IclijConfigConstants.EVOLVEMLTENSORFLOWSERVER, "Enable evolution generated ml server");
-        text.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, "Indicator recommender GP config");
+        //text.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, "Indicator recommender GP config");
         text.put(IclijConfigConstants.EVOLVEAUTORUN, "Enable evolve autorun");
         text.put(IclijConfigConstants.EVOLVEFITNESSMINIMUM, "Enable evolve fitness minimum");
         text.put(IclijConfigConstants.EVOLVEMLINDICATOR, "Enable evolve mlindicator");
@@ -725,15 +739,15 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.MISCSHUTDOWNHOUR, "Server shutdown hour");
         text.put(IclijConfigConstants.MISCPOPULATE, "Populate history");
         text.put(IclijConfigConstants.MPSERVERCPU, "Server cpu usage");
-        text.put(IclijConfigConstants.MISCMYSERVICES, "Services starting");
-        text.put(IclijConfigConstants.MISCSERVICES, "Services and communications");
-        text.put(IclijConfigConstants.MISCCOMMUNICATIONS, "Communications and connections");
-        text.put(IclijConfigConstants.MISCCACHE, "Cache enable");
-        text.put(IclijConfigConstants.MISCCACHETTL, "Cache TTL");
-        text.put(IclijConfigConstants.MISCINMEMORYSERVER, "In memory server");
-        text.put(IclijConfigConstants.MISCINMEMORYHAZELCAST, "In memory Hazelcast connection");
-        text.put(IclijConfigConstants.MISCINMEMORYREDIS, "In memory Redis connection");
-        text.put(IclijConfigConstants.MISCABNORMALCHANGE, "Abnormal change ignore");
+        //text.put(IclijConfigConstants.MISCMYSERVICES, "Services starting");
+        //text.put(IclijConfigConstants.MISCSERVICES, "Services and communications");
+        //text.put(IclijConfigConstants.MISCCOMMUNICATIONS, "Communications and connections");
+        //text.put(IclijConfigConstants.MISCCACHE, "Cache enable");
+        //text.put(IclijConfigConstants.MISCCACHETTL, "Cache TTL");
+        //text.put(IclijConfigConstants.MISCINMEMORYSERVER, "In memory server");
+        //text.put(IclijConfigConstants.MISCINMEMORYHAZELCAST, "In memory Hazelcast connection");
+        //text.put(IclijConfigConstants.MISCINMEMORYREDIS, "In memory Redis connection");
+        //text.put(IclijConfigConstants.MISCABNORMALCHANGE, "Abnormal change ignore");
         text.put(IclijConfigConstants.MPCLIENTCPU, "Client cpu usage");
         text.put(IclijConfigConstants.FINDPROFITAUTORUN, "Enable find profit autorun");
         text.put(IclijConfigConstants.FINDPROFITMLDYNAMIC, "Do machine learning dynamically if no persistent present");
@@ -958,8 +972,10 @@ public class IclijConfigConstantMaps {
             return;
         }
         conv.put(IclijConfigConstants.EVOLVEMLTENSORFLOWSERVER, ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER);
-        conv.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG);
-        conv.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, ConfigConstants.EVOLVEMLEVOLUTIONCONFIG);
+        conv.put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG);
+        conv.put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, ConfigConstants.EVOLVEMLEVOLUTIONCONFIG);
+        //conv.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG);
+        //conv.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, ConfigConstants.EVOLVEMLEVOLUTIONCONFIG);
     }
     
     public static Map<String, IclijXMLType> mymap = new HashMap<>();
@@ -1004,7 +1020,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.CROSSTESTTHRESHOLD, new IclijXMLType(String.class, " [ 1.0 ] ", "Crosstest threshold"));
         mymap.put(IclijConfigConstants.DATASETML, new IclijXMLType(Boolean.class, Boolean.FALSE, "Dataset ML enable"));
         mymap.put(IclijConfigConstants.DATASETEVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 10, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config"));
-        mymap.put(IclijConfigConstants.DATASETMLCONFIG, new IclijXMLType(String.class, null, "Evolution default ml enabled"));
+        //mymap.put(IclijConfigConstants.DATASETMLCONFIG, new IclijXMLType(String.class, null, "Evolution default ml enabled"));
         mymap.put(IclijConfigConstants.DATASETMLTENSORFLOWSERVER, new IclijXMLType(String.class, "http://localhost:8000", "Enable evolution generated ml server", ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER));
         mymap.put(IclijConfigConstants.DATASETINDICATORRECOMMENDEREVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 100, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1 }", "Indicator recommender GP config"));
         mymap.put(IclijConfigConstants.DATASETAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable dataset autorun"));
@@ -1039,10 +1055,10 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.EVOLVEGA, new IclijXMLType(Integer.class, 0, "Evolve GA"));
         mymap.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable evolution generated recommender settings"));
         mymap.put(IclijConfigConstants.EVOLVEML, new IclijXMLType(Boolean.class, Boolean.FALSE, "Evolve ML enable"));
-        mymap.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 10, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config", ConfigConstants.EVOLVEMLEVOLUTIONCONFIG));
+        //mymap.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 10, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config", ConfigConstants.EVOLVEMLEVOLUTIONCONFIG));
         mymap.put(IclijConfigConstants.EVOLVEMLMLCONFIG, new IclijXMLType(String.class, null, "Evolution default ml enabled"));
         mymap.put(IclijConfigConstants.EVOLVEMLTENSORFLOWSERVER, new IclijXMLType(String.class, "http://localhost:8000", "Enable evolution generated ml server", ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER));
-        mymap.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 100, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1 }", "Indicator recommender GP config", ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG));
+        //mymap.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 100, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1 }", "Indicator recommender GP config", ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG));
         mymap.put(IclijConfigConstants.EVOLVEAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable evolve autorun"));
         mymap.put(IclijConfigConstants.EVOLVEFITNESSMINIMUM, new IclijXMLType(Integer.class, 10, "Enable evolve fitness minimum"));
         mymap.put(IclijConfigConstants.EVOLVEMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable evolve mlindicator"));
@@ -1074,17 +1090,17 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.EVOLVETHRESHOLD, new IclijXMLType(String.class, " [ 1.0 ]", "Evolve threshold"));
         mymap.put(IclijConfigConstants.MISCSHUTDOWNHOUR, new IclijXMLType(Integer.class, null, "Server shutdown hour"));
         mymap.put(IclijConfigConstants.MISCPOPULATE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Populate history"));
-        mymap.put(IclijConfigConstants.MISCMYSERVICES, new IclijXMLType( String.class, "{}", "Services starting"));
-        mymap.put(IclijConfigConstants.MISCSERVICES, new IclijXMLType( String.class, "{}", "Services and communications"));
-        mymap.put(IclijConfigConstants.MISCINMEMORYSERVER, new IclijXMLType( String.class, Constants.REDIS, "In memory server"));
-        mymap.put(IclijConfigConstants.MISCINMEMORYHAZELCAST, new IclijXMLType( String.class, null, "In memory Hazelcast connection"));
-        mymap.put(IclijConfigConstants.MISCINMEMORYREDIS, new IclijXMLType( String.class, "localhost", "In memory Redis connection"));
-        mymap.put(IclijConfigConstants.MISCCOMMUNICATIONS, new IclijXMLType( String.class, "{}", "Communications and connections"));
-        mymap.put(IclijConfigConstants.MISCCACHE, new IclijXMLType( Boolean.class, Boolean.TRUE, "Cache enable"));
-        mymap.put(IclijConfigConstants.MISCCACHETTL, new IclijXMLType( Boolean.class, Boolean.TRUE, "Cache TTL"));
+        //mymap.put(IclijConfigConstants.MISCMYSERVICES, new IclijXMLType( String.class, "{}", "Services starting"));
+        //mymap.put(IclijConfigConstants.MISCSERVICES, new IclijXMLType( String.class, "{}", "Services and communications"));
+        //mymap.put(IclijConfigConstants.MISCINMEMORYSERVER, new IclijXMLType( String.class, Constants.REDIS, "In memory server"));
+        //mymap.put(IclijConfigConstants.MISCINMEMORYHAZELCAST, new IclijXMLType( String.class, null, "In memory Hazelcast connection"));
+        //mymap.put(IclijConfigConstants.MISCINMEMORYREDIS, new IclijXMLType( String.class, "localhost", "In memory Redis connection"));
+        //mymap.put(IclijConfigConstants.MISCCOMMUNICATIONS, new IclijXMLType( String.class, "{}", "Communications and connections"));
+        //mymap.put(IclijConfigConstants.MISCCACHE, new IclijXMLType( Boolean.class, Boolean.TRUE, "Cache enable"));
+        //mymap.put(IclijConfigConstants.MISCCACHETTL, new IclijXMLType( Boolean.class, Boolean.TRUE, "Cache TTL"));
         mymap.put(IclijConfigConstants.MPSERVERCPU, new IclijXMLType(Double.class, 0.5, "Server cpu usage"));
         mymap.put(IclijConfigConstants.MPCLIENTCPU, new IclijXMLType(Double.class, 0.5, "Client cpu usage"));
-        mymap.put(IclijConfigConstants.MISCABNORMALCHANGE, new IclijXMLType( Double.class, null, "Abnormal change ignore"));
+        //mymap.put(IclijConfigConstants.MISCABNORMALCHANGE, new IclijXMLType( Double.class, null, "Abnormal change ignore"));
         mymap.put(IclijConfigConstants.FINDPROFITAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable find profit autorun"));
         mymap.put(IclijConfigConstants.FINDPROFITMLDYNAMIC, new IclijXMLType(Boolean.class, Boolean.FALSE, "Do machine learning dynamically if no persistent present"));
         mymap.put(IclijConfigConstants.FINDPROFITMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable find profit mlindicator"));

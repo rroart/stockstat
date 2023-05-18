@@ -1,9 +1,11 @@
 package roart.iclij.service;
 
+import java.util.List;
 import java.util.Set;
 
+import roart.common.ml.NeuralNetCommand;
 import roart.iclij.config.IclijConfig;
-import roart.iclij.config.VerifyConfig;
+import roart.result.model.GUISize;
 
 public class IclijServiceParam {
     private Set<String> ids;
@@ -12,13 +14,19 @@ public class IclijServiceParam {
     
     private boolean wantMaps;
     
-    private IclijConfig iclijConfig;
+    private IclijConfig config;
     
     //private VerifyConfig verifyConfig;
 
     private String webpath;
     
     private Integer offset;
+
+    private List<String> confList;
+    
+    private NeuralNetCommand neuralnetcommand;
+
+    private GUISize guiSize;
     
     public Set<String> getIds() {
         return ids;
@@ -54,12 +62,12 @@ public class IclijServiceParam {
     }
 */
     
-    public IclijConfig getIclijConfig() {
-        return iclijConfig;
+    public IclijConfig getConfig() {
+        return config;
     }
 
-    public void setIclijConfig(IclijConfig iclijConfig) {
-        this.iclijConfig = iclijConfig;
+    public void setConfig(IclijConfig iclijConfig) {
+        this.config = iclijConfig;
     }
 
     public String getWebpath() {
@@ -76,6 +84,30 @@ public class IclijServiceParam {
 
     public void setOffset(Integer offset) {
         this.offset = offset;
+    }
+
+    public List<String> getConfList() {
+        return confList;
+    }
+
+    public void setConfList(List<String> confList) {
+        this.confList = confList;
+    }
+
+    public NeuralNetCommand getNeuralnetcommand() {
+        return neuralnetcommand;
+    }
+
+    public void setNeuralnetcommand(NeuralNetCommand neuralnetcommand) {
+        this.neuralnetcommand = neuralnetcommand;
+    }
+
+    public GUISize getGuiSize() {
+        return guiSize;
+    }
+
+    public void setGuiSize(GUISize guiSize) {
+        this.guiSize = guiSize;
     }
     
 }

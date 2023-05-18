@@ -16,7 +16,7 @@ import roart.aggregator.impl.MLRSI;
 import roart.aggregator.impl.MLSTOCH;
 import roart.category.AbstractCategory;
 import roart.common.config.ConfigConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
@@ -37,7 +37,7 @@ import roart.predictor.impl.PredictorTensorflowMLP;
 import roart.predictor.impl.PredictorTensorflowRNN;
 
 public class PipelineFactory {
-    public PipelineResultData myfactory(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, NeuralNetChromosome2 chromosome, String key, Map<String, MarketData> marketdatamap) throws Exception {
+    public PipelineResultData myfactory(IclijConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, NeuralNetChromosome2 chromosome, String key, Map<String, MarketData> marketdatamap) throws Exception {
         NeuralNetConfigGene nnConfigGene = ((NeuralNetChromosome2) chromosome).getNnConfig();
         NeuralNetConfigs nnConfigs = new NeuralNetConfigs();
         nnConfigs.set(key, nnConfigGene.getConfig());

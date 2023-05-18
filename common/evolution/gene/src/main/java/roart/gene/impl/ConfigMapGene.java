@@ -77,8 +77,8 @@ public class ConfigMapGene extends AbstractGene {
 
     private void generateConfigNum(Random rand, int confint) {
         String confName = confList.get(confint);
-        Double[] range = conf.getRange().get(confName);
-        Class type = conf.getType().get(confName);
+        Double[] range = conf.getConfigMaps().range.get(confName);
+        Class type = conf.getConfigMaps().map.get(confName);
         if (changedSpecial(map, confName, type)) {
             return;
         }

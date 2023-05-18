@@ -8,6 +8,8 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -29,8 +31,8 @@ import roart.common.controller.ServiceControllerOtherAbstract;
 
 public class ServiceControllerOther extends ServiceControllerOtherAbstract {
 
-    public ServiceControllerOther(String myservices, String services, String communications, Class replyclass, IclijDbDao dbDao) {
-        super(myservices, services, communications, replyclass, dbDao);
+    public ServiceControllerOther(String myservices, String services, String communications, Class replyclass, IclijConfig iclijConfig, IclijDbDao dbDao) {
+        super(myservices, services, communications, replyclass, iclijConfig, dbDao);
     }
 
     public void get(Object param, Communication c) { 
@@ -38,19 +40,19 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
         System.out.println("Cserv"+c.getService());
         if (serviceMatch(ServiceConstants.EVOLVEFILTEREVOLVE, c)) {
             r = new IclijServiceResult();
-            new Evolve(dbDao).method((String) param);
+            new Evolve(dbDao, iclijConfig).method((String) param);
         }
         if (serviceMatch(ServiceConstants.EVOLVEFILTERPROFIT, c)) {
             r = new IclijServiceResult();
-            new Evolve(dbDao).method2((String) param);
+            new Evolve(dbDao, iclijConfig).method2((String) param);
         }
         if (serviceMatch(ServiceConstants.EVOLVEFILTERFILTER, c)) {
             r = new IclijServiceResult();
-            new Evolve(dbDao).method3((String) param);
+            new Evolve(dbDao, iclijConfig).method3((String) param);
         }
         if (serviceMatch(ServiceConstants.EVOLVEFILTERABOVEBELOW, c)) {
             r = new IclijServiceResult();
-            new Evolve(dbDao).method4((String) param);
+            new Evolve(dbDao, iclijConfig).method4((String) param);
         }
         if (param instanceof IclijServiceParam) {
             sendReply(((IclijServiceParam) param).getWebpath(), c, r);

@@ -90,9 +90,12 @@ public class Evolve {
 
     public static CuratorFramework curatorClient;
 
+    private IclijConfig iclijConfig;
+
     private IclijDbDao dbDao;
     
-    public Evolve(IclijDbDao dbDao) {
+    public Evolve(IclijDbDao dbDao, IclijConfig iclijConfig) {
+        this.iclijConfig = iclijConfig;
         this.dbDao = dbDao;
     }
     
@@ -633,15 +636,13 @@ public class Evolve {
 
     private String getParam(String param) {
         InmemoryMessage message = JsonUtil.convert(param, InmemoryMessage.class);
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
-        Inmemory inmemory = InmemoryFactory.get(instance.getInmemoryServer(), instance.getInmemoryHazelcast(), instance.getInmemoryRedis());
+        Inmemory inmemory = InmemoryFactory.get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
         String newparam = inmemory.read(message);
         inmemory.delete(message);
         return newparam;
     }
 
     public void send(String service, Object object, ObjectMapper objectMapper) {
-        IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
         Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight());
         c.send(object);
@@ -665,11 +666,10 @@ public class Evolve {
     }
 
     private void print(String text) {
-        MyMyConfig instance2 = new MyMyConfig(MyXMLConfig.getConfigInstance());
-        String node = instance2.getEvolveSaveLocation();
-        String mypath = instance2.getEvolveSavePath();
-        configCurator(instance2);
-        new FileSystemDao(instance2, curatorClient).writeFile(node, mypath, null, text);
+        String node = iclijConfig.getEvolveSaveLocation();
+        String mypath = iclijConfig.getEvolveSavePath();
+        configCurator(iclijConfig);
+        new FileSystemDao(iclijConfig, curatorClient).writeFile(node, mypath, null, text);
     }
 
     public static void configCurator(MyMyConfig conf) {

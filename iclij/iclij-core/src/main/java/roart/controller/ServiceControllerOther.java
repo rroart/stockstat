@@ -9,6 +9,8 @@ import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -37,8 +39,8 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public ServiceControllerOther(String myservices, String services, String communications, Class replyclass, IclijDbDao dbDao) {
-        super(myservices, services, communications, replyclass, dbDao);
+    public ServiceControllerOther(String myservices, String services, String communications, Class replyclass, IclijConfig iclijConfig, IclijDbDao dbDao) {
+        super(myservices, services, communications, replyclass, iclijConfig, dbDao);
     }
 
     public void get(Object param, Communication c) { 
@@ -55,8 +57,8 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
         if (serviceMatch(EurekaConstants.GETCONFIG, c)) {
             r = new IclijServiceResult();
             try {
-                r.setIclijConfig(IclijXMLConfig.getConfigInstance());
-                System.out.println("configs " + r.getIclijConfig());
+                r.setConfig(iclijConfig);
+                System.out.println("configs " + r.getConfig());
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
                 r.setError(e.getMessage());
@@ -74,8 +76,7 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
 
     private String getParam(String param) {
         InmemoryMessage message = JsonUtil.convert(param, InmemoryMessage.class);
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
-        Inmemory inmemory = InmemoryFactory.get(instance.getInmemoryServer(), instance.getInmemoryHazelcast(), instance.getInmemoryRedis());
+        Inmemory inmemory = InmemoryFactory.get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
         String newparam = inmemory.read(message);
         inmemory.delete(message);
         return newparam;

@@ -204,7 +204,7 @@ public abstract class ComponentML extends Component {
 
     public static Map<String, Object> setnns(MyMyConfig conf, IclijConfig config, Map<String, EvolveMLConfig> mlConfigMap, boolean useEvolve) {
         Map<String, Object> returnmap = new HashMap<>();
-        Map<String, String> map = config.getConv();
+        Map<String, String> map = config.getConfigMaps().conv;
         for (Entry<String, EvolveMLConfig> entry : mlConfigMap.entrySet()) {
             String key = entry.getKey();
             EvolveMLConfig value = entry.getValue();

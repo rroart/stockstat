@@ -217,10 +217,9 @@ public class ComponentMLIndicator extends ComponentML {
 
     @Override
     public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
-        IclijConfig conf = IclijXMLConfig.getConfigInstance();
         List<Extra> mses = null;
         try {
-            mses = IclijXMLConfig.getMarketImportants(conf);
+            mses = IclijXMLConfig.getMarketImportants(action.getIclijConfig());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             mses = new ArrayList<>();

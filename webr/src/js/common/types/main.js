@@ -5,13 +5,15 @@ export type mainType = {
 }
 
 class IclijServiceParam {
-    iclijConfig: object;
+    config: object;
     ids: string[];
     market: string;
     wantMaps: boolean;
     confList: string[];
     webpath: string;
     offset: int;
+    guiSize: GuiSize;
+    neuralnetcommand: NeuralNetCommand;
 }
 
 class ServiceParam {
@@ -35,12 +37,13 @@ class ServiceResult {
 }
 
 class IclijServiceResult {
-    iclijConfig: object;
+    config: object;
     markets: string[];
     stocks: object;
     list: string[];
     maps: object;
     error: string;
+    list: string[];
     lists: IclijServiceList[];
 }
 

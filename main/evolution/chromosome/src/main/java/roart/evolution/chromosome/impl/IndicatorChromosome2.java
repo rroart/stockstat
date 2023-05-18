@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
 import roart.gene.CalcGene;
@@ -33,7 +33,7 @@ public class IndicatorChromosome2 extends AbstractChromosome {
 
     private List<String> keys;
     
-    private MyMyConfig conf;
+    private IclijConfig conf;
 
     private boolean useMax;
 
@@ -49,7 +49,7 @@ public class IndicatorChromosome2 extends AbstractChromosome {
         this.keys = keys;
     }
 
-    public IndicatorChromosome2(List<String> keys, MyMyConfig conf, Object[] retObj) {
+    public IndicatorChromosome2(List<String> keys, IclijConfig conf, Object[] retObj) {
         setKeys(keys);
         this.conf = conf;
         this.retObj = retObj;
@@ -185,7 +185,7 @@ public class IndicatorChromosome2 extends AbstractChromosome {
             }
             configValueMap.put(key, value);
         }
-        MyMyConfig config = new MyMyConfig(conf);
+        IclijConfig config = new IclijConfig(conf);
         evaluation.normalize();
         config.setConfigValueMap(configValueMap);
 

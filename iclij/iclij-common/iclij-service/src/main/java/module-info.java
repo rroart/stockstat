@@ -11,7 +11,6 @@ module iclij.common.service {
 
     requires iclij.common.config;
     requires common.config;
-    requires common.service;
     requires common.util;
     requires org.slf4j;
     requires common.model;

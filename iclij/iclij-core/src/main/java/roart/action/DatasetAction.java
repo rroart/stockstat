@@ -34,8 +34,8 @@ import roart.service.model.ProfitInputData;
 
 public class DatasetAction extends MarketAction {
 
-    public DatasetAction(IclijDbDao dbDao) {
-        setActionData(new DatasetActionData(dbDao));
+    public DatasetAction(IclijConfig iclijConfig, IclijDbDao dbDao) {
+        setActionData(new DatasetActionData(iclijConfig, dbDao));
     }
 
     @Override

@@ -45,8 +45,8 @@ public class SimulateInvestAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public SimulateInvestAction(IclijDbDao dbDao) {
-        setActionData(new SimulateInvestActionData(dbDao));
+    public SimulateInvestAction(IclijDbDao dbDao, IclijConfig iclijConfig) {
+        setActionData(new SimulateInvestActionData(iclijConfig, dbDao));
     }
     
     @Override

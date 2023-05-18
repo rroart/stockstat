@@ -2,6 +2,9 @@ package roart.iclij.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -12,39 +15,81 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Map.Entry;
 
+import roart.common.config.ConfigConstantMaps;
 import roart.common.config.ConfigConstants;
+import roart.common.config.ConfigMaps;
 import roart.common.config.ConfigTreeMap;
+import roart.common.config.MyMyConfig;
+import roart.config.IclijConfigConstantMaps;
 
-public class IclijConfig {
+@Configuration
+public class IclijConfig extends MyMyConfig {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public IclijConfig(IclijConfig config) {
-        this.configTreeMap = config.configTreeMap;
-        this.configValueMap = new HashMap<>(config.configValueMap);
-        this.deflt = config.deflt;
-        this.text = config.text;
-        this.type = config.type;
-        this.range = config.range;
-    }
+    protected static IclijConfig configInstance = null;
 
-    public IclijConfig() {        
-        // empty due to JSON
-    }
+    protected static IclijXMLConfig instance = null;
 
     private ConfigTreeMap configTreeMap;
 
     private Map<String, Object> configValueMap;
-    private Map<String, String> text = new HashMap<>();
-    private Map<String, Object> deflt = new HashMap<>();
-    private Map<String, Class> type = new HashMap<>();
-    private Map<String, String> conv = new HashMap<>();
-    private Map<String, Double[]> range = new HashMap<>();
+
+    private ConfigMaps configMaps;
 
     private LocalDate date;
 
     private String market;
 
     private String mlmarket;
+
+    public IclijConfig(IclijConfig config) {
+        this.configMaps = config.configMaps;
+        this.configTreeMap = config.configTreeMap;
+        this.configValueMap = new HashMap<>(config.configValueMap);
+    }
+
+    private static ConfigMaps instanceC() {
+        return ConfigConstantMaps.instance();
+    }
+
+    private static ConfigMaps instanceI() {
+        return IclijConfigConstantMaps.instance();
+    }
+
+    /*
+    @Deprecated
+    public IclijConfig getConfigInstance() {
+        if (configInstance == null) {
+            configInstance = new IclijConfig();
+            if (instance == null) { 
+                instance = IclijXMLConfig.instance(null, configMaps);
+            }
+        }
+        return configInstance;
+    }
+     */
+
+    /*
+    public IclijConfig() {
+        log.error("confMapps" + configMaps);
+        instance = IclijXMLConfig.instance(this, configMaps);
+    }
+     */
+
+    public IclijConfig() {
+        ConfigMaps configMaps = instanceC();
+        log.error("confMapps" + configMaps);
+        configMaps.add(instanceI());
+        log.error("confMapps" + configMaps);
+        instance = IclijXMLConfig.instance(this, configMaps);
+        log.error("confMapps2" + configMaps);
+    }
+
+    public IclijConfig copy() {
+        IclijConfig newConfig = new IclijConfig(this);
+        newConfig.setConfigValueMap(new HashMap<>(getConfigValueMap()));
+        return newConfig;
+    }
 
     public LocalDate getDate() {
         return date;
@@ -86,44 +131,12 @@ public class IclijConfig {
         this.configValueMap = configValueMap;
     }
 
-    public Map<String, String> getText() {
-        return text;
+    public ConfigMaps getConfigMaps() {
+        return configMaps;
     }
 
-    public void setText(Map<String, String> text) {
-        this.text = text;
-    }
-
-    public Map<String, Object> getDeflt() {
-        return deflt;
-    }
-
-    public void setDeflt(Map<String, Object> deflt) {
-        this.deflt = deflt;
-    }
-
-    public Map<String, Class> getType() {
-        return type;
-    }
-
-    public void setType(Map<String, Class> type) {
-        this.type = type;
-    }
-
-    public Map<String, String> getConv() {
-        return conv;
-    }
-
-    public void setConv(Map<String, String> conv) {
-        this.conv = conv;
-    }
-
-    public Map<String, Double[]> getRange() {
-        return range;
-    }
-
-    public void setRange(Map<String, Double[]> range) {
-        this.range = range;
+    public void setConfigMaps(ConfigMaps configMaps) {
+        this.configMaps = configMaps;
     }
 
     public Integer serverShutdownHour() {
@@ -134,6 +147,7 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.MISCPOPULATE);
     }
 
+    /*
     public String getMyservices() {
         return (String) getValueOrDefault(IclijConfigConstants.MISCMYSERVICES);
     }
@@ -169,6 +183,7 @@ public class IclijConfig {
     public Double getAbnormalChange() {
         return (Double) getValueOrDefault(IclijConfigConstants.MISCABNORMALCHANGE);
     }
+*/
 
     public double mpServerCpu() {
         return (Double) getValueOrDefault(IclijConfigConstants.MPSERVERCPU);
@@ -414,7 +429,7 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLINDICATOREVOLUTIONCONFIG);
     }
 
-   public boolean wantsImproveProfitRecommender() {
+    public boolean wantsImproveProfitRecommender() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITRECOMMENDER);
     }
 
@@ -522,7 +537,7 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLINDICATOREVOLUTIONCONFIG);
     }
 
-   public boolean wantsImproveFilterRecommender() {
+    public boolean wantsImproveFilterRecommender() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERRECOMMENDER);
     }
 
@@ -890,15 +905,15 @@ public class IclijConfig {
     public boolean wantsImproveSimulateInvestAutorun() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVESIMULATEINVESTAUTORUN);
     }
-    
+
     public String getImproveSimulateInvestEvolutionConfig() {
         return (String)getValueOrDefault(IclijConfigConstants.IMPROVESIMULATEINVESTEVOLUTIONCONFIG);
     }
-    
+
     public String getImproveAutoSimulateInvestEvolutionConfig() {
         return (String)getValueOrDefault(IclijConfigConstants.IMPROVEAUTOSIMULATEINVESTEVOLUTIONCONFIG);
     }
-    
+
     public boolean singlemarketEvolveFirstOnly() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY);
     }
@@ -961,6 +976,7 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.EVOLVEML);
     }
 
+    /*
     public String getEvolveMLEvolutionConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG);
     }
@@ -968,6 +984,7 @@ public class IclijConfig {
     public String getEvolveIndicatorrecommenderEvolutionConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG);
     }
+*/
 
     public String getEvolveMLMLConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.EVOLVEMLMLCONFIG);
@@ -1065,7 +1082,7 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.EVOLVEMLINDICATOREVOLUTIONCONFIG);
     }
 
-   public boolean wantsEvolveRecommender() {
+    public boolean wantsEvolveRecommender() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.EVOLVERECOMMENDER);
     }
 
@@ -1101,10 +1118,12 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.DATASETINDICATORRECOMMENDEREVOLUTIONCONFIG);
     }
 
+    /*
     public String getDatasetMLConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.DATASETMLCONFIG);
     }
-
+*/
+    
     public boolean wantsDatasetAutorun() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.DATASETAUTORUN);
     }
@@ -1197,7 +1216,7 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.DATASETMLINDICATOREVOLUTIONCONFIG);
     }
 
-   public boolean wantsDatasetRecommender() {
+    public boolean wantsDatasetRecommender() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.DATASETRECOMMENDER);
     }
 
@@ -1325,7 +1344,7 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTMLINDICATOREVOLUTIONCONFIG);
     }
 
-   public boolean wantsCrosstestRecommender() {
+    public boolean wantsCrosstestRecommender() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.CROSSTESTRECOMMENDER);
     }
 
@@ -1359,18 +1378,21 @@ public class IclijConfig {
             return null;
         }
         Object retVal = configValueMap.get(key);
-        retVal = Optional.ofNullable(retVal).orElse(deflt.get(key));
-        Class aClass = type.get(key);
+        retVal = Optional.ofNullable(retVal).orElse(configMaps.deflt.get(key));
+        Class aClass = configMaps.map.get(key);
         if (aClass != null && aClass == Double.class && retVal != null && retVal.getClass() == Integer.class) {
             Integer i = (Integer) retVal;
             retVal = i.doubleValue();
         }
         return retVal;
     }
-    
+
     @JsonIgnore
     public Object getNotEmptyValueOrDefault(String key) {
         Object retVal = getConfigValueMap().get(key);
+        System.out.println("r " + getConfigValueMap().keySet());
+        System.out.println("r " + getConfigMaps().deflt.keySet());
+        System.out.println("r " + retVal + " " + getConfigMaps().deflt.get(key));
         //System.out.println("r " + retVal + " " + deflt.get(key));
         if (retVal instanceof String) {
             String str = (String) retVal;
@@ -1378,7 +1400,7 @@ public class IclijConfig {
                 retVal = null;
             }
         }
-        return Optional.ofNullable(retVal).orElse(getDeflt().get(key));
+        return Optional.ofNullable(retVal).orElse(configMaps.map.get(key));
     }
 
 }

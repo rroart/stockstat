@@ -14,8 +14,8 @@ import roart.iclij.config.Market;
 
 public class ImproveFilterActionData extends MarketActionData {
 
-    public ImproveFilterActionData(IclijDbDao dbDao) {
-        super(dbDao);
+    public ImproveFilterActionData(IclijConfig iclijConfig, IclijDbDao dbDao) {
+        super(iclijConfig, dbDao);
     }
 
     @Override

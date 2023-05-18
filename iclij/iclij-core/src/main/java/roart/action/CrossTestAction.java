@@ -41,8 +41,8 @@ public class CrossTestAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public CrossTestAction(IclijDbDao dbDao) {
-        setActionData(new CrossTestActionData(dbDao));
+    public CrossTestAction(IclijConfig iclijConfig, IclijDbDao dbDao) {
+        setActionData(new CrossTestActionData(iclijConfig, dbDao));
     }
     
     @Override

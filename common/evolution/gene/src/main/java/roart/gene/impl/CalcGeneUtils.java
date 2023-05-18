@@ -37,7 +37,7 @@ public class CalcGeneUtils {
             }
             String jsonValue = (String) conf.getConfigValueMap().get(key);
             if (jsonValue == null || jsonValue.isEmpty()) {
-                jsonValue = (String) conf.getDeflt().get(key);
+                jsonValue = (String) conf.getConfigMaps().deflt.get(key);
             }
             CalcGene anode;
             CalcGene node;

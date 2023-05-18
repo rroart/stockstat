@@ -2,12 +2,32 @@ package roart.common.config;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
 
 public class ConfigConstantMaps {
 
+    private static ConfigMaps instance = null;
+    public static ConfigMaps instance() {
+        if (instance == null) {
+            ConfigConstantMaps.makeDefaultMap();
+            ConfigConstantMaps.makeTextMap();
+            ConfigConstantMaps.makeTypeMap();
+            //ConfigConstantMaps.makeConvertMap();
+            ConfigConstantMaps.makeRangeMap();
+            instance = new ConfigMaps(map, deflt, text, range, new HashMap<>());
+        }
+        return instance;
+    }
+
+    public static Map<String, Class> map2 = new HashMap();
+    public static Map<String, Object> deflt2 = new HashMap();
+    public static Map<String, String> text2 = new HashMap();
+    public static Map<String, Double[]> range2 = new HashMap();
+    
     private static final String THRESHOLD = "[ 1.0 ]";
     private static final String THRESHOLD3 = "[ 0.95, 1.0, 1.05 ]";
     
@@ -1642,6 +1662,26 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.FILESYSTEMS3REGION, new XMLType( String.class, "us-east-1", "S3 region"));
         mymap.put(ConfigConstants.FILESYSTEMS3ACCESSKEY, new XMLType( String.class, "minioadmin", "S3 access key"));
         mymap.put(ConfigConstants.FILESYSTEMS3SECRETKEY, new XMLType( String.class, "minioadmin", "S3 secret key"));
+    }
+    
+    public static Set<String> common = new HashSet<>();
+    public static void makeSet() {
+        common.add(ConfigConstants.MISCABNORMALCHANGE);
+        common.add(ConfigConstants.MISCCACHE);
+        common.add(ConfigConstants.MISCCACHETTL);
+        common.add(ConfigConstants.MISCCOMMUNICATIONS);
+        common.add(ConfigConstants.MISCINMEMORY);
+        common.add(ConfigConstants.MISCINMEMORYHAZELCAST);
+        common.add(ConfigConstants.MISCINMEMORYREDIS);
+        common.add(ConfigConstants.MISCINMEMORYSERVER);
+        common.add(ConfigConstants.MISCMYSERVICES);
+        common.add(ConfigConstants.MISCSERVICES);
+        common.add(ConfigConstants.MISCZOOKEEPER);
+        common.add(ConfigConstants.EVOLVESAVELOCATION);
+        common.add(ConfigConstants.EVOLVESAVEPATH);
+        common.add(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG);
+        common.add(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG);
+        common.add(ConfigConstants.DATABASEHIBERNATE);
     }
 
 }

@@ -41,8 +41,8 @@ public class MachineLearningAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public MachineLearningAction(IclijDbDao dbDao) {
-        setActionData(new MachineLearningActionData(dbDao));
+    public MachineLearningAction(IclijConfig iclijConfig, IclijDbDao dbDao) {
+        setActionData(new MachineLearningActionData(iclijConfig, dbDao));
     }
     
     @Override

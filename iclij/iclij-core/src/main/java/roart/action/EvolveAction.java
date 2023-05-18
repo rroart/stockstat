@@ -45,8 +45,8 @@ public class EvolveAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public EvolveAction(IclijDbDao dbDao) {
-        setActionData(new EvolveActionData(dbDao));
+    public EvolveAction(IclijConfig iclijConfig, IclijDbDao dbDao) {
+        setActionData(new EvolveActionData(iclijConfig, dbDao));
     }
     
     @Override

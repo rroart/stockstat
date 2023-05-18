@@ -12,7 +12,7 @@
     <module>input</module>
     <module>main</module>
     <module>testdata</module>
-    <module>web</module>
+    <!--module>web</module-->
     <module>weba</module>
     <module>webr</module>
     <module>distribution</module>
@@ -45,6 +45,7 @@
 		    --add-opens iclij.common.config/roart.iclij.config=spring.core
 		    --add-opens common.config/roart.common.config=spring.core
 		    --add-opens db/roart.db.model=org.hibernate.orm.core
+		    --add-opens iclij.core/roart.action=spring.core
 		  </argLine>
 		</configuration>
          </plugin>

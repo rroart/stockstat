@@ -56,8 +56,8 @@ public class ImproveAboveBelowAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public ImproveAboveBelowAction(IclijDbDao dbDao) {
-        setActionData(new ImproveAboveBelowActionData(dbDao));
+    public ImproveAboveBelowAction(IclijConfig iclijConfig, IclijDbDao dbDao) {
+        setActionData(new ImproveAboveBelowActionData(iclijConfig, dbDao));
     }
     
     @Override

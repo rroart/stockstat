@@ -97,7 +97,7 @@ public abstract class MLClassifyModel {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL, true);
-            return mapper.readValue((String) getConf().getDeflt().get(getKey()), clazz);
+            return mapper.readValue((String) getConf().getConfigMaps().deflt.get(getKey()), clazz);
         } catch (IOException e) {
             log.error(Constants.EXCEPTION, e);
             return null;

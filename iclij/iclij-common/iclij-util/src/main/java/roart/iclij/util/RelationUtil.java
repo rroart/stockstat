@@ -24,9 +24,7 @@ import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.IclijServiceList;
 
 public class RelationUtil {
-    public Set[] method(ComponentInput componentInput, Set<IncDecItem> listIncDecs, IclijDbDao dbDao) throws Exception {
-        IclijXMLConfig conf = IclijXMLConfig.instance();
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+    public Set[] method(ComponentInput componentInput, Set<IncDecItem> listIncDecs, IclijDbDao dbDao, IclijConfig iclijConfig) throws Exception {
         /*
 
     rel: market, id/null
@@ -49,7 +47,7 @@ public class RelationUtil {
         //List<IncDecItem> listAll = IncDecItem.getAll();
         Set<IncDecItem> currentIncDecs = new HashSet<>(listIncDecs);
         //currentIncDecs.addAll(listIncDecs);
-        List<Market> markets = conf.getMarkets(instance);
+        List<Market> markets = IclijXMLConfig.getMarkets(iclijConfig);
         markets = new MarketUtil().filterMarkets(markets, false);
         
         Set<Pair<String, String>> alreadyDone = new HashSet<>();

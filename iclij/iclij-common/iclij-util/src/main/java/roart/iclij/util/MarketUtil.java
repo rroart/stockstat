@@ -26,9 +26,8 @@ import roart.service.model.ProfitData;
 public class MarketUtil {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public Market findMarket(String market) {
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
-        List<Market> markets = getMarkets(instance);
+    public Market findMarket(String market, IclijConfig iclijConfig) {
+        List<Market> markets = getMarkets(iclijConfig);
         Market foundMarket = null;
         for (Market aMarket : markets) {
             if (market.equals(aMarket.getConfig().getMarket())) {
@@ -49,11 +48,10 @@ public class MarketUtil {
         return markets;
     }
 
-    public List<Market> getMarkets(boolean isDataset) {
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+    public List<Market> getMarkets(boolean isDataset, IclijConfig iclijConfig) {
         List<Market> markets = new ArrayList<>();
         try { 
-            markets = IclijXMLConfig.getMarkets(instance);
+            markets = IclijXMLConfig.getMarkets(iclijConfig);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

@@ -23,10 +23,7 @@ public class MyMyConfig extends MyConfig {
     public MyMyConfig(MyConfig config) {
         setConfigTreeMap(config.getConfigTreeMap());
         setConfigValueMap(new HashMap<>(config.getConfigValueMap()));
-        setDeflt(config.getDeflt());
-        setText(config.getText());
-        setRange(config.getRange());
-        setType(config.getType());
+        setConfigMaps(config.getConfigMaps());
         fixIntegerDouble();
         this.mydate = config.mydate;
         this.mymarket = config.mymarket;
@@ -42,7 +39,7 @@ public class MyMyConfig extends MyConfig {
                 //System.out.println("Null val " + key);
                 continue;
             }
-            Class classType = getType().get(key);
+            Class classType = getConfigMaps().map.get(key);
             if (classType == null) {
                 log.info("Null class {}", key);
                 continue;
@@ -1137,11 +1134,11 @@ public class MyMyConfig extends MyConfig {
     }
      */
 
-    public String getTestIndictorrecommenderEvolutionConfig() {
+    public String getEvolveIndicatorrecommenderEvolutionConfig() {
         return (String) getValueOrDefault(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG);
     }
 
-    public String getTestMLEvolutionConfig() {
+    public String getEvolveMLEvolutionConfig() {
         return (String) getValueOrDefault(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG);
     }
 
@@ -1645,27 +1642,27 @@ public class MyMyConfig extends MyConfig {
         Object retVal = getConfigValueMap().get(key);
         if (retVal != null) {
             String cl = retVal.getClass().getName();
-            Class classType = getType().get(key);
+            Class classType = getConfigMaps().map.get(key);
             if (retVal.getClass().isAssignableFrom(Integer.class) && classType.isAssignableFrom(Double.class)) {
                 getConfigValueMap().put(key, Double.valueOf((Integer)retVal));
                 retVal = Double.valueOf((Integer)retVal);
             }
         }
         //System.out.println("r " + retVal + " " + deflt.get(key));
-        return Optional.ofNullable(retVal).orElse(getDeflt().get(key));
+        return Optional.ofNullable(retVal).orElse(getConfigMaps().deflt.get(key));
     }
      
      @JsonIgnore
      public Object getNotEmptyValueOrDefault(String key) {
          Object retVal = getConfigValueMap().get(key);
-         //System.out.println("r " + retVal + " " + deflt.get(key));
+         System.out.println("r " + retVal + " " + getConfigMaps().deflt.get(key));
          if (retVal instanceof String) {
              String str = (String) retVal;
              if (str.isEmpty()) {
                  retVal = null;
              }
          }
-         return Optional.ofNullable(retVal).orElse(getDeflt().get(key));
+         return Optional.ofNullable(retVal).orElse(getConfigMaps().deflt.get(key));
      }
 
 }

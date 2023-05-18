@@ -73,9 +73,12 @@ public class Sim {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private IclijConfig iclijConfig;
+
     private IclijDbDao dbDao;
     
-    public Sim(IclijDbDao dbDao) {
+    public Sim(IclijConfig iclijConfig, IclijDbDao dbDao) {
+        this.iclijConfig = iclijConfig;
         this.dbDao = dbDao;
     }
     
@@ -104,9 +107,8 @@ public class Sim {
                 shortMap = getShortMap();
             }
             List<SimulateFilter[]> list = null;
-            IclijConfig instance = IclijXMLConfig.getConfigInstance();
             try {
-                list = IclijXMLConfig.getSimulate(instance);
+                list = IclijXMLConfig.getSimulate(iclijConfig);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
@@ -227,12 +229,11 @@ public class Sim {
                 output.add("Max " + MathUtil.round(aSummary.getKey(), 2) + " " + aSummary.getValue());
             }
             String simtext = (String) myMap.get(EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
-            MyMyConfig instance2 = new MyMyConfig(MyXMLConfig.getConfigInstance());
-            String node = instance2.getEvolveSaveLocation();
-            String mypath = instance2.getEvolveSavePath();
-            configCurator(instance2);
+            String node = iclijConfig.getEvolveSaveLocation();
+            String mypath = iclijConfig.getEvolveSavePath();
+            configCurator(iclijConfig);
             String text = printtext(string + " " + simtext, "File " + id, output);
-            String filename = new FileSystemDao(instance2, curatorClient).writeFile(node, mypath, null, text);
+            String filename = new FileSystemDao(iclijConfig, curatorClient).writeFile(node, mypath, null, text);
             
             //Map<String, Object> resultMap = winnerChromosome.getResultMap();
             String[] parts = simtext.split(" ");
@@ -357,12 +358,11 @@ public class Sim {
                 output.add("Max " + MathUtil.round(aSummary.getKey(), 2) + " " + aSummary.getValue());
             }
             String simtext = (String) myMap.get(EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
-            MyMyConfig instance2 = new MyMyConfig(MyXMLConfig.getConfigInstance());
-            String node = instance2.getEvolveSaveLocation();
-            String mypath = instance2.getEvolveSavePath();
-            configCurator(instance2);
+            String node = iclijConfig.getEvolveSaveLocation();
+            String mypath = iclijConfig.getEvolveSavePath();
+            configCurator(iclijConfig);
             String text = printtext("simauto " + simtext, "File " + id, output);
-            String filename = new FileSystemDao(instance2, curatorClient).writeFile(node, mypath, null, text);
+            String filename = new FileSystemDao(iclijConfig, curatorClient).writeFile(node, mypath, null, text);
         }
     }
 
@@ -435,8 +435,7 @@ public class Sim {
 
     private String getParam(String param) {
         InmemoryMessage message = JsonUtil.convert(param, InmemoryMessage.class);
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
-        Inmemory inmemory = InmemoryFactory.get(instance.getInmemoryServer(), instance.getInmemoryHazelcast(), instance.getInmemoryRedis());
+        Inmemory inmemory = InmemoryFactory.get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
         String newparam = inmemory.read(message);
         inmemory.delete(message);
         return newparam;

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.http.HttpStatus;
@@ -35,11 +36,14 @@ public class ServiceController {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
+    IclijConfig iclijConfig;
+    
     private ControlService instance;
 
     private ControlService getInstance() {
         if (instance == null) {
-            instance = new ControlService();
+            instance = new ControlService(iclijConfig);
         }
         return instance;
     }

@@ -17,4 +17,5 @@ module iclij.common.config {
     requires common.constants;
     requires com.fasterxml.jackson.annotation;
     requires spring.context;
+    requires spring.beans;
 }

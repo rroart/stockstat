@@ -256,7 +256,7 @@ public class MyVaadinUI extends UI implements ViewDisplay {
         System.out.println("name " + name);
         Object object = map.get(name);
         Component o = null;
-        String text = controlService.conf.getText().get(name);
+        String text = controlService.conf.getConfigMaps().text.get(name);
         if (object == null) {
             //System.out.println("null for " + name);
             String labelname = name;

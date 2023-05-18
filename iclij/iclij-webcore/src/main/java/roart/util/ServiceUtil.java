@@ -160,34 +160,31 @@ public class ServiceUtil {
         return cat;
     }
 
-    public static IclijServiceResult getConfig() throws Exception {
-        IclijXMLConfig conf = IclijXMLConfig.instance();
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+    public static IclijServiceResult getConfig(IclijConfig iclijConfig) throws Exception {
+        IclijConfig instance = iclijConfig;
         IclijServiceResult result = new IclijServiceResult();
-        result.setIclijConfig(instance);
+        result.setConfig(instance);
         return result;
     }
 
-    public static IclijServiceResult getContent(ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
+    public static IclijServiceResult getContent(IclijConfig iclijConfig, ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
         IclijServiceResult result = new IclijServiceResult();
-        FindProfitActionData findProfitActionData = new FindProfitActionData(dbDao);
+        FindProfitActionData findProfitActionData = new FindProfitActionData(iclijConfig, dbDao);
 
         LocalDate date = componentInput.getEnddate();
-        IclijXMLConfig i = new IclijXMLConfig();
-        IclijXMLConfig conf = IclijXMLConfig.instance();
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+        IclijConfig instance = iclijConfig;
 
         List<IncDecItem> listAll = dbDao.getAllIncDecs();
         Set<IncDecItem> listRel = new HashSet<>();
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
         Map<String, Object> trendMap = new HashMap<>();
-        List<Market> markets = conf.getMarkets(instance);
+        List<Market> markets = IclijXMLConfig.getMarkets(instance);
         markets = new MarketUtil().filterMarkets(markets, findProfitActionData.isDataset());
         for (Market market : markets) {
             ComponentData param = null;
             try {
-                param = ComponentData.getParam(componentInput, 0);
+                param = ComponentData.getParam(iclijConfig, componentInput, 0);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
                 return result;
@@ -253,7 +250,7 @@ public class ServiceUtil {
         IclijServiceList trends = convert(trendMap);
         lists.add(trends);
 
-        addRelations(componentInput, lists, listRel, dbDao);
+        addRelations(componentInput, lists, listRel, dbDao, iclijConfig);
 
         new MiscUtil().print(result);
         return result;
@@ -279,8 +276,8 @@ public class ServiceUtil {
         memories.method(currentList, config);
      }
 
-    private static void addRelations(ComponentInput componentInput, List<IclijServiceList> lists, Set<IncDecItem> listIncDecs, IclijDbDao dbDao) throws Exception {
-        Set[] objects = new RelationUtil().method(componentInput, listIncDecs, dbDao);
+    private static void addRelations(ComponentInput componentInput, List<IclijServiceList> lists, Set<IncDecItem> listIncDecs, IclijDbDao dbDao, IclijConfig iclijConfig) throws Exception {
+        Set[] objects = new RelationUtil().method(componentInput, listIncDecs, dbDao, iclijConfig);
 
         IclijServiceList incdecs = new IclijServiceList();
         incdecs.setTitle("Incdecs with relations");
@@ -294,24 +291,21 @@ public class ServiceUtil {
         lists.add(relations);
     }
 
-    public static IclijServiceResult getContentImprove(ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
-        ImproveProfitActionData improveProfitActionData = new ImproveProfitActionData(dbDao);
+    public static IclijServiceResult getContentImprove(IclijConfig iclijConfig, ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
+        ImproveProfitActionData improveProfitActionData = new ImproveProfitActionData(iclijConfig, dbDao);
         LocalDate date = componentInput.getEnddate();
-        IclijXMLConfig i = new IclijXMLConfig();
-        IclijXMLConfig conf = IclijXMLConfig.instance();
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
 
         List<IncDecItem> listAll = dbDao.getAllIncDecs();
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
-        List<Market> markets = conf.getMarkets(instance);
+        List<Market> markets = IclijXMLConfig.getMarkets(iclijConfig);
         markets = new MarketUtil().filterMarkets(markets, improveProfitActionData.isDataset());
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(lists);
 
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(componentInput, 0);
+            param = ComponentData.getParam(iclijConfig, componentInput, 0);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
@@ -329,24 +323,21 @@ public class ServiceUtil {
         return result;
     }
 
-    public static IclijServiceResult getContentFilter(ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
-        ImproveFilterActionData improveFilterActionData = new ImproveFilterActionData(dbDao);
+    public static IclijServiceResult getContentFilter(IclijConfig iclijConfig, ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
+        ImproveFilterActionData improveFilterActionData = new ImproveFilterActionData(iclijConfig, dbDao);
         LocalDate date = componentInput.getEnddate();
-        IclijXMLConfig i = new IclijXMLConfig();
-        IclijXMLConfig conf = IclijXMLConfig.instance();
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
 
         List<IncDecItem> listAll = dbDao.getAllIncDecs();
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
-        List<Market> markets = conf.getMarkets(instance);
+        List<Market> markets = IclijXMLConfig.getMarkets(iclijConfig);
         markets = new MarketUtil().filterMarkets(markets, improveFilterActionData.isDataset());
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(lists);
 
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(componentInput, 0);
+            param = ComponentData.getParam(iclijConfig, componentInput, 0);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
@@ -364,23 +355,21 @@ public class ServiceUtil {
         return result;
     }
 
-    public static IclijServiceResult getContentAboveBelow(ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
-        ImproveAboveBelowActionData improveAboveBelowActionData = new ImproveAboveBelowActionData(dbDao);
+    public static IclijServiceResult getContentAboveBelow(IclijConfig iclijConfig, ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
+        ImproveAboveBelowActionData improveAboveBelowActionData = new ImproveAboveBelowActionData(iclijConfig, dbDao);
         LocalDate date = componentInput.getEnddate();
-        IclijXMLConfig conf = IclijXMLConfig.instance();
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
 
         List<IncDecItem> listAll = dbDao.getAllIncDecs();
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
-        List<Market> markets = conf.getMarkets(instance);
+        List<Market> markets = IclijXMLConfig.getMarkets(iclijConfig);
         markets = new MarketUtil().filterMarkets(markets, improveAboveBelowActionData.isDataset());
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(lists);
 
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(componentInput, 0);
+            param = ComponentData.getParam(iclijConfig, componentInput, 0);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
@@ -425,7 +414,7 @@ public class ServiceUtil {
         //String marketName = market.getConfig().getMarket();
         long time0 = System.currentTimeMillis();
         List<MetaItem> metas = param.getService().getMetas();
-        for (Market market : new MarketUtil().getMarkets(actionData.isDataset())) {
+        for (Market market : new MarketUtil().getMarkets(actionData.isDataset(), actionData.getIclijConfig())) {
             String marketName = market.getConfig().getMarket();
             MetaItem meta = new MetaUtil().findMeta(metas, marketName);
             boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
@@ -448,22 +437,20 @@ public class ServiceUtil {
         log.info("Gettings {}", (System.currentTimeMillis() - time0) / 1000);
     }
 
-    public static IclijServiceResult getContentEvolve(ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
-        EvolveActionData evolveActionData = new EvolveActionData(dbDao);
+    public static IclijServiceResult getContentEvolve(IclijConfig iclijConfig, ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
+        EvolveActionData evolveActionData = new EvolveActionData(iclijConfig, dbDao);
         LocalDate date = componentInput.getEnddate();
-        IclijXMLConfig conf = IclijXMLConfig.instance();
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
 
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
-        List<Market> markets = conf.getMarkets(instance);
+        List<Market> markets = IclijXMLConfig.getMarkets(iclijConfig);
         markets = new MarketUtil().filterMarkets(markets, evolveActionData.isDataset());
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(lists);
 
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(componentInput, 0);
+            param = ComponentData.getParam(iclijConfig, componentInput, 0);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
@@ -481,22 +468,20 @@ public class ServiceUtil {
         return result;
     }
 
-    public static IclijServiceResult getContentDataset(ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
-        DatasetActionData datasetActionData = new DatasetActionData(dbDao);
+    public static IclijServiceResult getContentDataset(IclijConfig iclijConfig, ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
+        DatasetActionData datasetActionData = new DatasetActionData(iclijConfig, dbDao);
         LocalDate date = componentInput.getEnddate();
-        IclijXMLConfig conf = IclijXMLConfig.instance();
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
 
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
-        List<Market> markets = conf.getMarkets(instance);
+        List<Market> markets = IclijXMLConfig.getMarkets(iclijConfig);
         markets = new MarketUtil().filterMarkets(markets, datasetActionData.isDataset());
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(lists);
 
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(componentInput, 0);
+            param = ComponentData.getParam(iclijConfig, componentInput, 0);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
@@ -514,22 +499,20 @@ public class ServiceUtil {
         return result;
     }
 
-    public static IclijServiceResult getContentCrosstest(ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
-        CrossTestActionData crossTestActionData = new CrossTestActionData(dbDao);
+    public static IclijServiceResult getContentCrosstest(IclijConfig iclijConfig, ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
+        CrossTestActionData crossTestActionData = new CrossTestActionData(iclijConfig, dbDao);
         LocalDate date = componentInput.getEnddate();
-        IclijXMLConfig conf = IclijXMLConfig.instance();
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
 
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
-        List<Market> markets = conf.getMarkets(instance);
+        List<Market> markets = IclijXMLConfig.getMarkets(iclijConfig);
         markets = new MarketUtil().filterMarkets(markets, crossTestActionData.isDataset());
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(lists);
 
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(componentInput, 0);
+            param = ComponentData.getParam(iclijConfig, componentInput, 0);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
@@ -549,7 +532,7 @@ public class ServiceUtil {
 
     private static void getContentMemoriesUpdates(ComponentInput componentInput, List<IclijServiceList> lists,
             Map<String, Map<String, Object>> updateMarketMap, MarketActionData actionData, boolean useMemory) {
-        for (Market market : new MarketUtil().getMarkets(actionData.isDataset())) {
+        for (Market market : new MarketUtil().getMarkets(actionData.isDataset(), actionData.getIclijConfig())) {
             //for (Entry<String, Map<String, Object>> entry : updateMarketMap.entrySet()) {
             String marketName = market.getConfig().getMarket();
             Map<Boolean, String> booleanTexts = actionData.getBooleanTexts();
@@ -575,15 +558,13 @@ public class ServiceUtil {
         }
     }
 
-    public static IclijServiceResult getContentMachineLearning(ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
-        MachineLearningActionData mlActionData = new MachineLearningActionData(dbDao);
+    public static IclijServiceResult getContentMachineLearning(IclijConfig iclijConfig, ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
+        MachineLearningActionData mlActionData = new MachineLearningActionData(iclijConfig, dbDao);
         LocalDate date = componentInput.getEnddate();
-        IclijXMLConfig conf = IclijXMLConfig.instance();
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
 
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
-        List<Market> markets = conf.getMarkets(instance);
+        List<Market> markets = IclijXMLConfig.getMarkets(iclijConfig);
         markets = new MarketUtil().filterMarkets(markets, mlActionData.isDataset());
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(lists);
@@ -667,23 +648,21 @@ public class ServiceUtil {
         return subLists;
     }
 
-    public static IclijServiceResult getVerify(ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
+    public static IclijServiceResult getVerify(IclijConfig iclijConfig, ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
         String type = "Verify";
         //componentInput.setDoSave(componentInput.getConfig().wantVerificationSave());
         //componentInput.setDoSave(false);
         int verificationdays = componentInput.getConfig().verificationDays();
         boolean rerun = componentInput.getConfig().verificationRerun();
-        IclijServiceResult result = getFindProfitVerify(componentInput, type, verificationdays, rerun, dbDao);
+        IclijServiceResult result = getFindProfitVerify(iclijConfig, componentInput, type, verificationdays, rerun, dbDao);
         new MiscUtil().print(result);
         return result;
     }
 
-    private static IclijServiceResult getFindProfitVerify(ComponentInput componentInput, String type, int verificationdays, boolean rerun, IclijDbDao dbDao) throws Exception {
+    private static IclijServiceResult getFindProfitVerify(IclijConfig iclijConfig, ComponentInput componentInput, String type, int verificationdays, boolean rerun, IclijDbDao dbDao) throws Exception {
 
         componentInput.setDoSave(componentInput.getConfig().wantsFindProfitRerunSave());
         LocalDate date = componentInput.getEnddate();
-        IclijXMLConfig conf = IclijXMLConfig.instance();
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
 
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(new ArrayList<>());
@@ -691,13 +670,13 @@ public class ServiceUtil {
 
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(componentInput, 0);
+            param = ComponentData.getParam(iclijConfig, componentInput, 0);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
 
-        FindProfitActionData findProfitActionData = new FindProfitActionData(dbDao);
+        FindProfitActionData findProfitActionData = new FindProfitActionData(iclijConfig, dbDao);
         // this calculates, does not read from db
         List<MemoryItem> allMemoryItems = new ArrayList<>();
         //ProfitData picks = findProfitActionData.getPicks(param, allMemoryItems);
@@ -708,7 +687,7 @@ public class ServiceUtil {
         memories.setList(allMemoryItems);
         Map<String, Object> updateMap = new HashMap<>();
         //param.setUpdateMap(updateMap);
-        Market market = new MarketUtil().findMarket(param.getService().conf.getMarket());
+        Market market = new MarketUtil().findMarket(param.getService().conf.getMarket(), iclijConfig);
         
         LocalDate endDate = componentInput.getEnddate();
         int findTime = market.getConfig().getFindtime();
@@ -716,10 +695,10 @@ public class ServiceUtil {
         WebData myData;
         if (rerun) {
             myData = param.getService().getRun(IclijConstants.FINDPROFIT, componentInput);
-            if (instance.getFindProfitMemoryFilter()) {
+            if (iclijConfig.getFindProfitMemoryFilter()) {
                 myData = param.getService().getRun(IclijConstants.IMPROVEABOVEBELOW, componentInput);
             }
-            if (instance.getFindProfitMemoryFilter()) {
+            if (iclijConfig.getFindProfitMemoryFilter()) {
                 myData = param.getService().getRun(IclijConstants.IMPROVEFILTER, componentInput);
             }
             //ProfitData buysells = myData.profitData; // findProfitActionData.getPicks(param, allMemoryItems);
@@ -761,7 +740,7 @@ public class ServiceUtil {
         prevdate = TimeUtil.getBackEqualBefore2(prevdate, verificationdays + startoffset, stockDates);
         prevdate = prevdate.minusDays(findProfitActionData.getTime(market));
         LocalDate olddate = prevdate.minusDays(((int) AVERAGE_SIZE) * findProfitActionData.getTime(market));
-        getListComponents(null, param, instance, market, memoryFilter, prevdate, olddate, findProfitActionData);
+        getListComponents(null, param, iclijConfig, market, memoryFilter, prevdate, olddate, findProfitActionData);
 
         allListInc = allListInc
                 .stream()
@@ -832,10 +811,10 @@ public class ServiceUtil {
 
         Set<IncDecItem> currentIncDecs = new HashSet<>();
         List<IncDecItem> listAll = dbDao.getAllIncDecs();
-        List<Market> markets = conf.getMarkets(instance);
+        List<Market> markets = IclijXMLConfig.getMarkets(iclijConfig);
         markets = new MarketUtil().filterMarkets(markets, false);
         for (Market aMarket : markets) {
-            if (rerun && !instance.wantsFindProfitRerunSave() && market.getConfig().getMarket().equals(aMarket.getConfig().getMarket()) ) {
+            if (rerun && !iclijConfig.wantsFindProfitRerunSave() && market.getConfig().getMarket().equals(aMarket.getConfig().getMarket()) ) {
                 //List<IncDecItem> listIncDecs = new ArrayList<>();
                 //listIncDecs.addAll(myData.getIncs());
                 //listIncDecs.addAll(myData.getDecs());
@@ -849,12 +828,12 @@ public class ServiceUtil {
             currentIncDecs.addAll(marketCurrentIncDecs);
         }
         //roundList(currentIncDecs);
-        addRelations(componentInput, retLists, currentIncDecs, dbDao);
+        addRelations(componentInput, retLists, currentIncDecs, dbDao, iclijConfig);
 
         return result;
     }
 
-    public static IclijServiceResult getImproveAboveBelow(ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
+    public static IclijServiceResult getImproveAboveBelow(IclijConfig iclijConfig, ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
         String type = "Verify";
         //componentInput.setDoSave(componentInput.getConfig().wantVerificationSave());
         //componentInput.setDoSave(false);
@@ -862,8 +841,6 @@ public class ServiceUtil {
         boolean rerun = componentInput.getConfig().verificationRerun();
  
         componentInput.setDoSave(componentInput.getConfig().wantsFindProfitRerunSave());
-        IclijXMLConfig conf = IclijXMLConfig.instance();
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
 
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(new ArrayList<>());
@@ -871,7 +848,7 @@ public class ServiceUtil {
 
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(componentInput, 0);
+            param = ComponentData.getParam(iclijConfig, componentInput, 0);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
@@ -885,7 +862,7 @@ public class ServiceUtil {
         memories.setList(allMemoryItems);
         Map<String, Object> updateMap = new HashMap<>();
         //param.setUpdateMap(updateMap);
-        Market market = new MarketUtil().findMarket(param.getService().conf.getMarket());
+        Market market = new MarketUtil().findMarket(param.getService().conf.getMarket(), iclijConfig);
         WebData myData = null;
         if (rerun) {
             myData = param.getService().getRun(IclijConstants.IMPROVEABOVEBELOW, componentInput);
@@ -961,10 +938,10 @@ public class ServiceUtil {
 
         Set<IncDecItem> currentIncDecs = new HashSet<>();
         List<IncDecItem> listAll = dbDao.getAllIncDecs();
-        List<Market> markets = conf.getMarkets(instance);
+        List<Market> markets = IclijXMLConfig.getMarkets(iclijConfig);
         markets = new MarketUtil().filterMarkets(markets, false);
         for (Market aMarket : markets) {
-            if (rerun && !instance.wantsFindProfitRerunSave() && market.getConfig().getMarket().equals(aMarket.getConfig().getMarket()) ) {
+            if (rerun && !iclijConfig.wantsFindProfitRerunSave() && market.getConfig().getMarket().equals(aMarket.getConfig().getMarket()) ) {
                 //List<IncDecItem> listIncDecs = new ArrayList<>();
                 //listIncDecs.addAll(myData.getIncs());
                 //listIncDecs.addAll(myData.getDecs());
@@ -980,7 +957,7 @@ public class ServiceUtil {
             currentIncDecs.addAll(marketCurrentIncDecs);
         }
         //roundList(currentIncDecs);
-        addRelations(componentInput, retLists, currentIncDecs, dbDao);
+        addRelations(componentInput, retLists, currentIncDecs, dbDao, iclijConfig);
 
         return result;
     }
@@ -1002,6 +979,7 @@ public class ServiceUtil {
         aList.add(mapList);
     }
 
+    @Deprecated // ?
     public static ControlService getService(ComponentInput input, int days) throws Exception {
         String market = input.getConfig().getMarket();
         String mlmarket = input.getConfig().getMlmarket();
@@ -1011,7 +989,7 @@ public class ServiceUtil {
         }
          */
         //LocalDate date = input.getConfig().getDate();
-        ControlService srv = new ControlService();
+        ControlService srv = new ControlService(null);
         srv.getConfig();
         if (market != null) {
             srv.conf.setMarket(market);
@@ -1020,8 +998,8 @@ public class ServiceUtil {
         return srv;
     }
 
-    private static Map<String, List<List<Double>>> getSimpleContent(String market) throws Exception {
-        ControlService srv = new ControlService();
+    private static Map<String, List<List<Double>>> getSimpleContent(IclijConfig iclijConfig, String market) throws Exception {
+        ControlService srv = new ControlService(iclijConfig);
         srv.getConfig();
         if (market != null) {
             srv.conf.setMarket(market);
@@ -1054,9 +1032,9 @@ public class ServiceUtil {
     }
 
     @Deprecated
-    private static boolean wantThree(String market) {
+    private static boolean wantThree(IclijConfig iclijConfig, String market) {
         try {
-            Map<String, List<List<Double>>> listMap = getSimpleContent(market);
+            Map<String, List<List<Double>>> listMap = getSimpleContent(iclijConfig, market);
             return anythingHere3(listMap, Constants.OHLC);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -1119,17 +1097,17 @@ public class ServiceUtil {
     }
      */
 
-    public static IclijServiceResult getFindProfit(ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
+    public static IclijServiceResult getFindProfit(IclijConfig iclijConfig, ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
         String type = "FindProfit";
         int days = 0;  // config.verificationDays();
         //componentInput.setDoSave(false);
         boolean rerun = componentInput.getConfig().singlemarketRerun();
-        IclijServiceResult result = getFindProfitVerify(componentInput, type, days, rerun, dbDao);
+        IclijServiceResult result = getFindProfitVerify(iclijConfig, componentInput, type, days, rerun, dbDao);
         new MiscUtil().print(result);
         return result;
     }
 
-    public static IclijServiceResult getImproveProfit(ComponentInput componentInput, IclijDbDao dbDao) throws Exception {
+    public static IclijServiceResult getImproveProfit(ComponentInput componentInput, IclijDbDao dbDao, IclijConfig iclijConfig) throws Exception {
         try {
             int loopOffset = 0;
             int days = 0; // config.verificationDays();
@@ -1139,7 +1117,7 @@ public class ServiceUtil {
 
             ComponentData param = null;
             try {
-                param = ComponentData.getParam(componentInput, 0);
+                param = ComponentData.getParam(iclijConfig, componentInput, 0);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
                 return result;
@@ -1147,13 +1125,13 @@ public class ServiceUtil {
 
             componentInput.setDoSave(false);
             //FindProfitActionData findProfitActionData = new FindProfitActionData();
-            ImproveProfitActionData improveProfitActionData = new ImproveProfitActionData(dbDao);  
+            ImproveProfitActionData improveProfitActionData = new ImproveProfitActionData(iclijConfig, dbDao);  
             List<MemoryItem> allMemoryItems = new ArrayList<>(); // getMemoryItems(componentInput.getConfig(), param, days, getImproveProfitComponents(componentInput.getConfig()));
             //IclijServiceList memories = new IclijServiceList();
             //memories.setTitle("Memories");
             //memories.setList(allMemoryItems);
             Map<String, Object> updateMap = new HashMap<>();
-            Market market = new MarketUtil().findMarket(param.getService().conf.getMarket());
+            Market market = new MarketUtil().findMarket(param.getService().conf.getMarket(), iclijConfig);
             WebData webData = param.getService().getRun(IclijConstants.IMPROVEPROFIT, componentInput);
             List<MapList> mapList = new MiscUtil().getList(webData.getUpdateMap());
             IclijServiceList resultMap = new IclijServiceList();

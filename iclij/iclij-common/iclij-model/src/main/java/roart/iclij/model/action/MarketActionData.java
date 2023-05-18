@@ -19,6 +19,8 @@ public abstract class MarketActionData {
     
     private IclijDbDao dbDao;
     
+    private IclijConfig iclijConfig;
+    
     public abstract String getName();
 
     public abstract String getThreshold(IclijConfig conf);
@@ -31,9 +33,10 @@ public abstract class MarketActionData {
         return false;
     }
     
-    public MarketActionData(IclijDbDao dbDao) {
+    public MarketActionData(IclijConfig iclijConfig, IclijDbDao dbDao) {
         super();
         this.dbDao = dbDao;
+        this.iclijConfig = iclijConfig;
     }
 
     public Map<Boolean, String> getBooleanTexts() {
@@ -82,5 +85,9 @@ public abstract class MarketActionData {
 
     public IclijDbDao getDbDao() {
         return dbDao;
+    }
+
+    public IclijConfig getIclijConfig() {
+        return iclijConfig;
     }
 }
