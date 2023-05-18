@@ -127,7 +127,10 @@ public class Main {
                 // remove / in /name
                 //json = json.replaceAll("\\\"\\/([^\\\"]+)\\\":","\\\"$1\\\":");
                 // for the \" to "
-                json = json.replaceAll("\\\\\"", "\\\"");
+                json = json.replaceAll("....\\{searchQuery\\}...\"", "");
+                json = json.replaceAll("....\\{searchQuery\\}", "");
+                json = json.replaceAll("\\\\\"", "\"");
+                json = json.replaceAll("\\\\+\"", "q");
                 //json = json.replaceAll("\\\\\"([^\\\"]+)\\\\\":\\\\\"([^\\\"]+)\\\\\"","\\\"$1\\\":\\\"$2\\\"");
                 //System.out.println(json.length() + " " + json.substring(0, 200));
                 // remove illegal chars
@@ -142,11 +145,9 @@ public class Main {
                     //System.out.println(json.length());
                     //json = json.replaceAll("\\\"\\/([^\\\"]+)\\\":","\\\"$1\\\":");
                 }
-                //System.out.println(json.substring(0,10));
                 json = json.replaceAll("<a href=[^<]*>", "");
                 json = json.replaceAll(".humanynotifications.:\\[[^\\[]*\\],", "");
-                json = json.replaceAll(".\\{searchQuery\\}.", "");
-                json = json.replaceAll("\\\\\\\\\"filter\\\\\\\\\"", "");
+                json = json.replaceAll(" \"filter\" ", "");
                 json = json.replaceAll("\\\\\\\\,\"", "blbl\",\"");
                 try {
                 jsonNode = mapper.readTree(json);
@@ -168,6 +169,10 @@ public class Main {
             }
         }     
         return inStreams;
+    }
+
+    private static void print(String json, int start) {
+        System.out.println(json.length() + " " + json.substring(start + 0, start + 200));
     }
 
     private static String sanitizeField(String json) {
