@@ -12,6 +12,7 @@ module common.controller {
     requires common.communication.model;
     requires common.constants;
     requires common.util;
+    requires iclij.common.config;
     requires org.slf4j;
     requires guava;
     requires com.fasterxml.jackson.databind;
