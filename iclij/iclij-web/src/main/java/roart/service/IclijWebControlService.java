@@ -89,7 +89,7 @@ public class IclijWebControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         IclijServiceResult result = WebFluxUtil.sendIMe(IclijServiceResult.class, param, WebFluxConstants.GETCONFIG);
-        iclijConf = result.getIclijConfig();
+        iclijConf = result.getConfig();
         Map<String, Object> map = iclijConf.getConfigValueMap();
         for (Entry<String, Object> entry : map.entrySet()) {
             Object value = entry.getValue();
@@ -140,70 +140,70 @@ public class IclijWebControlService {
 
     public void getContent(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setIclijConfig(getIclijConf());
+        param.setConfig(getIclijConf());
         param.setWebpath(WebFluxConstants.GETCONTENT);
         new IclijThread(ui, param).start();
     }
 
     public void getContentImprove(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setIclijConfig(getIclijConf());
+        param.setConfig(getIclijConf());
         param.setWebpath(WebFluxConstants.GETCONTENTIMPROVE);
         new IclijThread(ui, param).start();
     }
 
     public void getContentEvolve(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setIclijConfig(getIclijConf());
+        param.setConfig(getIclijConf());
         param.setWebpath(WebFluxConstants.GETCONTENTEVOLVE);
         new IclijThread(ui, param).start();
     }
 
     public void getContentMachineLearning(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setIclijConfig(getIclijConf());
+        param.setConfig(getIclijConf());
         param.setWebpath(WebFluxConstants.GETCONTENTMACHINELEARNING);
         new IclijThread(ui, param).start();
     }
 
     public void getContentDataset(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setIclijConfig(getIclijConf());
+        param.setConfig(getIclijConf());
         param.setWebpath(WebFluxConstants.GETCONTENTDATASET);
         new IclijThread(ui, param).start();
     }
 
     public void getContentFilter(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setIclijConfig(getIclijConf());
+        param.setConfig(getIclijConf());
         param.setWebpath(WebFluxConstants.GETCONTENTFILTER);
         new IclijThread(ui, param).start();
     }
 
     public void getContentAboveBelow(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setIclijConfig(getIclijConf());
+        param.setConfig(getIclijConf());
         param.setWebpath(WebFluxConstants.GETCONTENTABOVEBELOW);
         new IclijThread(ui, param).start();
     }
 
     public void getContentCrosstest(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setIclijConfig(getIclijConf());
+        param.setConfig(getIclijConf());
         param.setWebpath(WebFluxConstants.GETCONTENTCROSSTEST);
         new IclijThread(ui, param).start();
     }
 
     public void getImproveAboveBelowMarket(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setIclijConfig(getIclijConf());
+        param.setConfig(getIclijConf());
         param.setWebpath(WebFluxConstants.GETIMPROVEABOVEBELOW);
         new IclijThread(ui, param).start();
     }
 
     public void getSingleMarket(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setIclijConfig(getIclijConf());
+        param.setConfig(getIclijConf());
         param.setWebpath(WebFluxConstants.GETSINGLEMARKET);
         new IclijThread(ui, param).start();
     }
@@ -211,7 +211,7 @@ public class IclijWebControlService {
     public void getSingleMarketLoop(MyIclijUI ui) {
         for (int i = 0; i < iclijConf.singlemarketLoops(); i++) {
             IclijServiceParam param = new IclijServiceParam();
-            param.setIclijConfig(getIclijConf());
+            param.setConfig(getIclijConf());
             param.setWebpath(WebFluxConstants.GETSINGLEMARKET);
             param.setOffset(i * getIclijConf().singlemarketLoopInterval());
             IclijThread thread = new IclijThread(ui, param);
@@ -226,7 +226,7 @@ public class IclijWebControlService {
 
     public void getImproveProfit(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setIclijConfig(getIclijConf());
+        param.setConfig(getIclijConf());
         param.setWebpath(WebFluxConstants.GETIMPROVEPROFIT);
         new IclijThread(ui, param).start();
     }
@@ -239,7 +239,7 @@ public class IclijWebControlService {
 
     public void getVerify(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setIclijConfig(getIclijConf());
+        param.setConfig(getIclijConf());
         param.setWebpath(WebFluxConstants.GETVERIFY);
         IclijThread thread = new IclijThread(ui, param);
         MyExecutors.run(thread, 0);
@@ -248,7 +248,7 @@ public class IclijWebControlService {
     public void getVerifyLoop(MyIclijUI ui) {
         for (int i = 0; i < iclijConf.verificationLoops(); i++) {
             IclijServiceParam param = new IclijServiceParam();
-            param.setIclijConfig(getIclijConf());
+            param.setConfig(getIclijConf());
             param.setWebpath(WebFluxConstants.GETVERIFY);
             param.setOffset(i * getIclijConf().verificationLoopInterval());
             IclijThread thread = new IclijThread(ui, param);
