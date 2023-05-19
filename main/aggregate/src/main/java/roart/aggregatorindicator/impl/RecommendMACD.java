@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import roart.pipeline.Pipeline;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.impl.IndicatorMACD;
@@ -13,7 +13,7 @@ import roart.model.data.MarketData;
 
 public abstract class RecommendMACD extends Recommend {
 
-    public RecommendMACD(MyMyConfig conf) {
+    public RecommendMACD(IclijConfig conf) {
         super(conf);
     }
 
@@ -36,7 +36,7 @@ public abstract class RecommendMACD extends Recommend {
         return PipelineConstants.INDICATORMACD;
     }
     /*
-    public static List<Recommend> getClasses(MyMyConfig conf) {
+    public static List<Recommend> getClasses(IclijConfig conf) {
         List<Recommend> all = new ArrayList<>();
         all.add(new MACDRecommendSimple(conf));
         all.add(new MACDRecommendComplex(conf));

@@ -8,7 +8,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.graphindicator.GraphIndicator;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.result.model.GUISize;
@@ -20,11 +20,11 @@ public abstract class GraphCategory {
     protected static Logger log = LoggerFactory.getLogger(GraphCategory.class);
 
     protected String title;
-    protected MyMyConfig conf;
+    protected IclijConfig conf;
     protected List<GraphIndicator> indicators = new ArrayList<>();
     protected List<AbstractPredictor> predictors = new ArrayList<>();
 
-    public GraphCategory(MyMyConfig conf, String periodText) {
+    public GraphCategory(IclijConfig conf, String periodText) {
         this.conf = conf;
         title = periodText;
     }

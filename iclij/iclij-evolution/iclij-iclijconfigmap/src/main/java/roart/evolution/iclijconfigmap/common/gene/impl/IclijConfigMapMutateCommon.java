@@ -12,8 +12,8 @@ public class IclijConfigMapMutateCommon {
     // not the same as in configmapgene
     public void generateConfigNum(Random rand, int confint, List<String> confList, IclijConfig conf, Map<String, Object> map) {
         String confName = confList.get(confint);
-        Double[] range = conf.getConfigMaps().range.get(confName);
-        Class type = conf.getConfigMaps().map.get(confName);
+        Double[] range = conf.getConfigData().getConfigMaps().range.get(confName);
+        Class type = conf.getConfigData().getConfigMaps().map.get(confName);
         if (type == Boolean.class) {
             Boolean b = rand.nextBoolean();
             map.put(confName, b);

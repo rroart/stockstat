@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.webflux.WebFluxUtil;
@@ -25,11 +25,11 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private MyMyConfig conf;
+    private IclijConfig conf;
 
     private String tensorflowServer;
     
-    public MLPredictTensorflowAccess(MyMyConfig conf) {
+    public MLPredictTensorflowAccess(IclijConfig conf) {
         this.conf = conf;
         findModels();
         tensorflowServer = conf.getTensorflowServer();

@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
 import roart.common.constants.CategoryConstants;
@@ -74,11 +74,11 @@ public class DataReader extends Pipeline {
         return map;
     }
     
-    public DataReader(MyMyConfig conf, int category) {
+    public DataReader(IclijConfig conf, int category) {
         super(conf, category);
     }
     
-    public DataReader(MyMyConfig conf, Map<String, MarketData> marketdatamap, int category, String market) throws Exception {
+    public DataReader(IclijConfig conf, Map<String, MarketData> marketdatamap, int category, String market) throws Exception {
         super(conf, category);
         this.setMarketdatamap(marketdatamap);
         readData(conf, marketdatamap, category, market);        
@@ -92,9 +92,9 @@ public class DataReader extends Pipeline {
         this.marketdatamap = marketdatamap;
     }
 
-    private void readData(MyMyConfig conf, Map<String, MarketData> marketdatamap, int category, String market) throws Exception {
+    private void readData(IclijConfig conf, Map<String, MarketData> marketdatamap, int category, String market) throws Exception {
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-        String dateme = dt.format(conf.getdate());
+        String dateme = dt.format(conf.getConfigData().getDate());
         MarketData marketData = marketdatamap.get(market);
         // note that there are nulls in the lists with sparse
         boolean currentYear = false;
@@ -118,7 +118,7 @@ public class DataReader extends Pipeline {
         calculateOtherListMaps(conf, category, marketData);
     }
 
-    void calculateOtherListMaps(MyMyConfig conf, int category, MarketData marketData) {
+    void calculateOtherListMaps(IclijConfig conf, int category, MarketData marketData) {
         ValueETL.zeroPrice(this.listMap, category);
         this.listMap = ValueETL.abnormalChange(this.listMap, conf);
         this.fillListMap = ValueETL.getReverseArrSparseFillHolesArr(conf, listMap);

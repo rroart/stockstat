@@ -9,7 +9,7 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import java.util.HashMap;
 import java.util.List;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 
 @Import(DbDaoUtil.class)
 @SpringBootTest

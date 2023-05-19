@@ -3,6 +3,7 @@ package roart.iclij.service;
 import java.util.List;
 import java.util.Map;
 
+import roart.common.config.ConfigData;
 import roart.common.model.MetaItem;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.model.WebData;
@@ -22,7 +23,7 @@ public class IclijServiceResult {
     
     private List<IclijServiceList> lists;
 
-    private IclijConfig config;
+    private ConfigData configData;
 
     //private WebData webdata;
 
@@ -82,25 +83,16 @@ public class IclijServiceResult {
         this.lists = lists;
     }
 
-    public IclijConfig getConfig() {
-        return config;
-    }
-
-    public void setConfig(IclijConfig iclijConfig) {
-        this.config = iclijConfig;
-    }
-/*
-    public WebData getWebdata() {
-        return webdata;
-    }
-
-    public void setWebdata(WebData webdata) {
-        this.webdata = webdata;
-    }
-    */
-
     public WebDataJson getWebdatajson() {
         return webdatajson;
+    }
+
+    public ConfigData getConfigData() {
+        return configData;
+    }
+
+    public void setConfigData(ConfigData configData) {
+        this.configData = configData;
     }
 
     public void setWebdatajson(WebDataJson webdatajson) {

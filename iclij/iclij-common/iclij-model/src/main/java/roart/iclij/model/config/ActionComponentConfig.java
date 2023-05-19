@@ -19,7 +19,7 @@ public abstract class ActionComponentConfig {
     public abstract int getPriority(IclijConfig config);
 
     public int getPriority(IclijConfig conf, String key) {
-        Integer value = (Integer) conf.getConfigValueMap().get(key + "[@priority]");
+        Integer value = (Integer) conf.getConfigData().getConfigValueMap().get(key + "[@priority]");
         return value != null ? value : 0;
     }
 

@@ -2,14 +2,14 @@ package roart.ml.tensorflow;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.TensorflowCNN2Config;
 import roart.ml.model.LearnTestClassify;
 
 public class MLClassifyTensorflowCNN2Model extends MLClassifyTensorflowModel{
-    public MLClassifyTensorflowCNN2Model(MyMyConfig conf) {
+    public MLClassifyTensorflowCNN2Model(IclijConfig conf) {
         super(conf);
     }
     

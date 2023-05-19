@@ -7,12 +7,12 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import roart.common.config.ConfigConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.RecommendConstants;
 
 public class STOCHRecommendComplex extends RecommendSTOCH {
     
-    public STOCHRecommendComplex(MyMyConfig conf) {
+    public STOCHRecommendComplex(IclijConfig conf) {
         super(conf);
     }
 

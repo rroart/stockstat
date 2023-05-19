@@ -1,6 +1,7 @@
 package roart.stockutil;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -21,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.category.AbstractCategory;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
@@ -199,12 +200,12 @@ public class StockUtil {
      * @return array of stock lists based on date
      */
 
-    public static List<StockItem>[] getDatedstocklists(Map<String, List<StockItem>> stockdatemap, Date datedate, int count, int mytableintervaldays) {
-        List<StockItem>[] datedstocklists = new ArrayList[count];
+    public static List<StockItem>[] getDatedstocklists(Map<String, List<StockItem>> stockdatemap, LocalDate datedate, int count, int mytableintervaldays) {
+        List<StockItem>[] datedstocklists = null;
+        datedstocklists = new ArrayList[count];
         for (int i = 0; i < count; i ++) {
             datedstocklists[i] = new ArrayList<>();          
         }
-
         List<String> list = new ArrayList<>(stockdatemap.keySet());
         Collections.sort(list);
         String date = null;
@@ -214,6 +215,8 @@ public class StockUtil {
         }
         log.info("datemapsize {}", list.size());
         int index = getStockDate(list, date);
+
+        
         if (index >= 0) {
             if (date == null) {
                 log.error("Date is null");

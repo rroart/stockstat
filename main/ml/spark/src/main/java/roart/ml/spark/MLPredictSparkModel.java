@@ -6,12 +6,12 @@ import org.apache.spark.sql.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.ml.model.MLPredictModel;
 
 public abstract class MLPredictSparkModel extends MLPredictModel {
 
-    public MLPredictSparkModel(MyMyConfig conf) {
+    public MLPredictSparkModel(IclijConfig conf) {
         super(conf);
     }
 

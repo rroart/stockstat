@@ -4,14 +4,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.model.IncDecItem;
 import roart.common.model.MemoryItem;
 
 public class ProfitData {
     private ProfitInputData inputdata;
     
-    private MyMyConfig conf;
+    private IclijConfig conf;
 
     private List<Integer> positions;
     
@@ -35,11 +35,11 @@ public class ProfitData {
         this.inputdata = inputdata;
     }
 
-    public MyMyConfig getConf() {
+    public IclijConfig getConf() {
         return conf;
     }
 
-    public void setConf(MyMyConfig conf) {
+    public void setConf(IclijConfig conf) {
         this.conf = conf;
     }
 

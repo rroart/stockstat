@@ -8,6 +8,7 @@
 module local {
     exports roart.filesystem.local;
 
+    requires iclij.common.config;
     requires common.config;
     requires common.constants;
     requires common.filesystem;

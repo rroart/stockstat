@@ -127,7 +127,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                         continue;
                     }
                     int offsetZero = (int) Math.round(off.get(0));
-                    LocalDate confdate0 = TimeUtil.convertDate(param.getService().conf.getdate());
+                    LocalDate confdate0 = param.getService().conf.getConfigData().getDate();
                     LocalDate confdate = param.getBaseDate();
                     LocalDate date = TimeUtil.getBackEqualBefore2(confdate, offsetZero, stockDates);
                     

@@ -50,7 +50,7 @@ public class MyXMLConfig {
 
     public static MyConfig getConfigInstance(ConfigMaps configMaps) {
         if (configInstance == null) {
-            configInstance = new MyConfig();
+            //configInstance = new MyConfig();
             if (instance == null) { 
                 instance(configMaps);
             }
@@ -87,9 +87,9 @@ public class MyXMLConfig {
             configxml = null;
         }
         Document doc = null;
-        configInstance.setConfigTreeMap(new ConfigTreeMap());
-        configInstance.setConfigValueMap(new HashMap<String, Object>());
-        configInstance.setConfigMaps(configMaps);
+        configInstance.getConfigData().setConfigTreeMap(new ConfigTreeMap());
+        configInstance.getConfigData().setConfigValueMap(new HashMap<String, Object>());
+        configInstance.getConfigData().setConfigMaps(configMaps);
         /*
         ConfigConstantMaps.makeDefaultMap();
         ConfigConstantMaps.makeTextMap();
@@ -108,7 +108,7 @@ public class MyXMLConfig {
             printout();
             doc = configxml.getDocument();
             if (doc != null) {
-                handleDoc(doc.getDocumentElement(), configInstance.getConfigTreeMap(), "");
+                handleDoc(doc.getDocumentElement(), configInstance.getConfigData().getConfigTreeMap(), "");
             }
             Iterator<String> iter = configxml.getKeys();
             while(iter.hasNext()) {
@@ -138,19 +138,19 @@ public class MyXMLConfig {
                 default:
                     log.info("unknown {}", myclass.getName());
                 }
-                configInstance.getConfigValueMap().put(s, o);
+                configInstance.getConfigData().getConfigValueMap().put(s, o);
             }
         }
-        Set<String> setKeys = configInstance.getConfigValueMap().keySet();
+        Set<String> setKeys = configInstance.getConfigData().getConfigValueMap().keySet();
         Set<String> dfltKeys = new HashSet<>(configMaps.deflt.keySet());
         dfltKeys.removeAll(setKeys);
         System.out.println("keys to set " + dfltKeys);
         for (String key : dfltKeys) {
-            ConfigTreeMap map = configInstance.getConfigTreeMap();
+            ConfigTreeMap map = configInstance.getConfigData().getConfigTreeMap();
             ConfigTreeMap.insert(map.getConfigTreeMap(), key, key, "", configMaps.deflt);
             Object object = configMaps.deflt.get(key);
-            if (configInstance.getConfigValueMap().get(key) == null) {
-                configInstance.getConfigValueMap().put(key, object);
+            if (configInstance.getConfigData().getConfigValueMap().get(key) == null) {
+                configInstance.getConfigData().getConfigValueMap().put(key, object);
             }
         }
 

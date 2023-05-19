@@ -5,15 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.dao.MLClassifyDao;
 import roart.pipeline.common.aggregate.Aggregator;
 
 public class MLNN {
-    private MyMyConfig conf;
+    private IclijConfig conf;
     
-    public MLNN(MyMyConfig conf) {
+    public MLNN(IclijConfig conf) {
         this.conf = conf;
         Object stocks = null;
         Object periodDataMap = null;

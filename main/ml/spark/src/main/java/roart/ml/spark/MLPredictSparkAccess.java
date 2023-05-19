@@ -15,7 +15,7 @@ import org.apache.spark.sql.SparkSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.ml.model.LearnTestPredictResult;
 import roart.ml.model.MLPredictAccess;
@@ -29,12 +29,12 @@ public class MLPredictSparkAccess extends MLPredictAccess {
 
     protected SparkSession spark;
 
-    private MyMyConfig conf;
+    private IclijConfig conf;
 
     private Map<String, Model> modelMap = new HashMap<>();
     private Map<String, Double> accuracyMap = new HashMap<>();
 
-    public MLPredictSparkAccess(MyMyConfig conf) {
+    public MLPredictSparkAccess(IclijConfig conf) {
         this.conf = conf;
         findModels();	
         String sparkmaster = conf.getMLSparkMaster();

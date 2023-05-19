@@ -71,7 +71,7 @@ public class PopulateThread extends Thread {
                     continue;
                 }                
                 IclijConfig config = new IclijConfig(instance);
-                config.setMarket(market.getConfig().getMarket());
+                config.getConfigData().setMarket(market.getConfig().getMarket());
                 Short populate = market.getConfig().getPopulate();
                 if (populate == null && !copy.contains(market.getConfig().getMarket())) {
                     continue;
@@ -113,7 +113,7 @@ public class PopulateThread extends Thread {
                     }
                     */
                     LocalDate lastStockdate = TimeUtil.getBackEqualBefore2(currentDate, 0, dates);
-                    config.setDate(lastStockdate);
+                    config.getConfigData().setDate(lastStockdate);
                     if (!lastStockdate.isAfter(oldDate)) {
                         currentDate = currentDate.plusDays(findTime);
                         date = TimeUtil.convertDate2(currentDate);
@@ -131,7 +131,7 @@ public class PopulateThread extends Thread {
                         if (timingitems.isEmpty()) {
                             int verificationdays = param.getInput().getConfig().verificationDays();
                             LocalDate aCurrentDate = lastStockdate; //TimeUtil.getForwardEqualAfter2(currentDate, verificationdays, dates);
-                            config.setDate(aCurrentDate);
+                            config.getConfigData().setDate(aCurrentDate);
                             ComponentInput componentInput3 = new ComponentInput(config, null, null, aCurrentDate, null, true, false, new ArrayList<>(), new HashMap<>());
                             try {
                                 ServiceUtil.getImproveAboveBelow(componentInput3, dbDao, iclijConfig);
@@ -149,7 +149,7 @@ public class PopulateThread extends Thread {
                         if (timingitems.isEmpty()) {
                             int verificationdays = param.getInput().getConfig().verificationDays();
                             LocalDate aCurrentDate = lastStockdate; //TimeUtil.getForwardEqualAfter2(currentDate, verificationdays, dates);
-                            config.setDate(aCurrentDate);
+                            config.getConfigData().setDate(aCurrentDate);
                             ComponentInput componentInput3 = new ComponentInput(config, null, null, aCurrentDate, null, true, false, new ArrayList<>(), new HashMap<>());
                             try {
                                 ServiceUtil.getImproveFilter(componentInput3, dbDao, iclijConfig);

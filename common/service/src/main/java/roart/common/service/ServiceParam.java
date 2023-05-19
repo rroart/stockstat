@@ -3,12 +3,12 @@ package roart.common.service;
 import java.util.List;
 import java.util.Set;
 
-import roart.common.config.MyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetCommand;
 import roart.result.model.GUISize;
 
 public class ServiceParam {
-    private MyConfig config;
+    private IclijConfig config;
     
     private GUISize guiSize;
     
@@ -28,11 +28,11 @@ public class ServiceParam {
         super();
     }
 
-    public MyConfig getConfig() {
+    public IclijConfig getConfig() {
         return config;
     }
 
-    public void setConfig(MyConfig config) {
+    public void setConfig(IclijConfig config) {
         this.config = config;
     }
 

@@ -19,4 +19,5 @@ module stockutil {
     requires org.slf4j;
     requires org.apache.commons.lang3;
     requires pipeline.model;
+    requires iclij.common.config;
 }

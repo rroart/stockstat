@@ -44,7 +44,7 @@ public class ControlService {
         param.setConfig(conf);
         ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG);
         conf = result.getConfig();
-        Map<String, Object> map = conf.getConfigValueMap();
+        Map<String, Object> map = conf.getConfigData().getConfigValueMap();
         for (String key : map.keySet()) {
             Object value = map.get(key);
             //System.out.println("k " + key + " " + value + " " + value.getClass().getName());
@@ -53,7 +53,7 @@ public class ControlService {
                 System.out.println("cls " + value.getClass().getName());
             }
         }
-        ConfigTreeMap map2 = conf.getConfigTreeMap();
+        ConfigTreeMap map2 = conf.getConfigData().getConfigTreeMap();
         print(map2, 0);
         MyMyConfig aConf = new MyMyConfig(conf);
         MyExecutors.init(new double[] { (aConf).getMLMPCpu() } );
@@ -205,13 +205,13 @@ public class ControlService {
 
     public void resetML(String ml) {
         if (ml.equals(PipelineConstants.PREDICTOR)) {
-            conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTMCONFIG, null);
+            conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTMCONFIG, null);
         }
         if (ml.equals(PipelineConstants.MLINDICATOR)) {
-            conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, null);
+            conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, null);
         }
         if (ml.equals(PipelineConstants.MLMACD)) {
-            conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACDMLCONFIG, null);
+            conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACDMLCONFIG, null);
         }
     }
     
@@ -286,7 +286,7 @@ public class ControlService {
             super.run();
             if (doSet) {
                 Map<String, Object> updateMap = getResult().getMaps().get("update");
-                conf.getConfigValueMap().putAll(updateMap);
+                conf.getConfigData().getConfigValueMap().putAll(updateMap);
             }
             if (doSet) {
                 getUi().access(() -> 

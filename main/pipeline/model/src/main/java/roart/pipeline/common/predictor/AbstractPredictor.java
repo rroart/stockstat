@@ -8,7 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
@@ -21,7 +21,7 @@ public abstract class AbstractPredictor extends PipelineResultData {
     protected static Logger log = LoggerFactory.getLogger(AbstractPredictor.class);
 
     protected String title;
-    protected MyMyConfig conf;
+    protected IclijConfig conf;
     protected int category;
     protected Map<String, Object[]> resultMap;
     protected Map<String, Object> accuracyMap;
@@ -31,7 +31,7 @@ public abstract class AbstractPredictor extends PipelineResultData {
 
     protected NeuralNetCommand neuralnetcommand;
    
-    public AbstractPredictor(MyMyConfig conf, String string, int category, NeuralNetCommand neuralnetcommand) {
+    public AbstractPredictor(IclijConfig conf, String string, int category, NeuralNetCommand neuralnetcommand) {
         this.title = string;
         this.conf = conf;
         this.category = category;

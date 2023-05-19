@@ -10,7 +10,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.result.model.GUISize;
 import roart.result.model.ResultItem;
@@ -26,7 +26,7 @@ import roart.talib.util.TaUtil;
 
 public class GraphIndicatorMACD extends GraphIndicator {
 
-    public GraphIndicatorMACD(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, String title) {
+    public GraphIndicatorMACD(IclijConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, String title) {
         super(conf, string, marketdatamap, periodDataMap, title);
     }
 

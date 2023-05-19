@@ -10,21 +10,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.aggregatorindicator.AggregatorIndicator;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.indicator.AbstractIndicator;
 
 public abstract class Recommend extends AggregatorIndicator {
     protected static Logger log = LoggerFactory.getLogger(AggregatorIndicator.class);
 
-    public Recommend(MyMyConfig conf) {
+    public Recommend(IclijConfig conf) {
         super(conf);
     }
     public abstract List<Pair<String, String>> getBuyList();
     public abstract List<Pair<String, String>> getSellList();
     public abstract String complexity();
     
-    public static Map<String, List<Recommend>> getUsedRecommenders(MyMyConfig conf) {
+    public static Map<String, List<Recommend>> getUsedRecommenders(IclijConfig conf) {
         List<Recommend> all = new ArrayList<>();
         all.add(new MACDRecommendSimple(conf));
         all.add(new MACDRecommendComplex(conf));
@@ -48,7 +48,7 @@ public abstract class Recommend extends AggregatorIndicator {
         return result;
     }
     
-    public static Map<String, List<String>[]> getRecommenderKeyMap(Map<String, List<Recommend>> usedRecommenders, Map<String, AbstractIndicator> usedIndicatorMap, MyMyConfig conf) {
+    public static Map<String, List<String>[]> getRecommenderKeyMap(Map<String, List<Recommend>> usedRecommenders, Map<String, AbstractIndicator> usedIndicatorMap, IclijConfig conf) {
         Map<String, List<String>[]> result = new HashMap<>();
         for (String complexity : usedRecommenders.keySet()) {
             List<String>[] recommenders = new ArrayList[2];

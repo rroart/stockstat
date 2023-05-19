@@ -72,8 +72,8 @@ public class ServiceController {
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            result.setConfig(iclijConfig);
-            System.out.println("configs " + result.getConfig());
+            result.setConfigData(iclijConfig.getConfigData());
+            System.out.println("configs " + result.getConfigData());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -143,7 +143,7 @@ public class ServiceController {
         //MainAction.goals.add(new ImproveProfitAction());
         //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
         Map<String, Object> map = simConfig.asMap();
-        iclijConfig.getConfigValueMap().putAll(map);
+        iclijConfig.getConfigData().getConfigValueMap().putAll(map);
         return ServiceUtil.getSimulateInvest(new ComponentInput(iclijConfig, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), dbDao, iclijConfig);
     }
 
@@ -157,14 +157,14 @@ public class ServiceController {
             market = null;
         }
         Map<String, Object> map = simConfig.asValuedMap();
-        iclijConfig.getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTSTARTDATE, simConfig.getStartdate());
-        iclijConfig.getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTENDDATE, simConfig.getEnddate());
+        iclijConfig.getConfigData().getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTSTARTDATE, simConfig.getStartdate());
+        iclijConfig.getConfigData().getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTENDDATE, simConfig.getEnddate());
         map.remove(IclijConfigConstants.SIMULATEINVESTSTARTDATE);
         map.remove(IclijConfigConstants.SIMULATEINVESTENDDATE);
         if (simConfig.getGa() != null) {
             int ga = simConfig.getGa();
             simConfig.setGa(null);
-            iclijConfig.getConfigValueMap().put(IclijConfigConstants.EVOLVEGA, ga);
+            iclijConfig.getConfigData().getConfigValueMap().put(IclijConfigConstants.EVOLVEGA, ga);
         }
         /*
         config.getConfigValueMap().putAll(map);
@@ -189,7 +189,7 @@ public class ServiceController {
         //MainAction.goals.add(new ImproveProfitAction());
         //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
         Map<String, Object> map = simConfig.asMap();
-        iclijConfig.getConfigValueMap().putAll(map);
+        iclijConfig.getConfigData().getConfigValueMap().putAll(map);
         return ServiceUtil.getAutoSimulateInvest(iclijConfig, new ComponentInput(iclijConfig, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), dbDao);
     }
 
@@ -203,14 +203,14 @@ public class ServiceController {
             market = null;
         }
         Map<String, Object> map = simConfig.asValuedMap();
-        iclijConfig.getConfigValueMap().put(IclijConfigConstants.AUTOSIMULATEINVESTSTARTDATE, simConfig.getStartdate());
-        iclijConfig.getConfigValueMap().put(IclijConfigConstants.AUTOSIMULATEINVESTENDDATE, simConfig.getEnddate());
+        iclijConfig.getConfigData().getConfigValueMap().put(IclijConfigConstants.AUTOSIMULATEINVESTSTARTDATE, simConfig.getStartdate());
+        iclijConfig.getConfigData().getConfigValueMap().put(IclijConfigConstants.AUTOSIMULATEINVESTENDDATE, simConfig.getEnddate());
         map.remove(IclijConfigConstants.AUTOSIMULATEINVESTSTARTDATE);
         map.remove(IclijConfigConstants.AUTOSIMULATEINVESTENDDATE);
         if (simConfig.getGa() != null) {
             int ga = simConfig.getGa();
             simConfig.setGa(null);
-            iclijConfig.getConfigValueMap().put(IclijConfigConstants.EVOLVEGA, ga);
+            iclijConfig.getConfigData().getConfigValueMap().put(IclijConfigConstants.EVOLVEGA, ga);
         }
         /*
         config.getConfigValueMap().putAll(map);
@@ -238,7 +238,7 @@ public class ServiceController {
             market = null;
         }
         if (ga != null) {
-            iclijConfig.getConfigValueMap().put(IclijConfigConstants.EVOLVEGA, ga);
+            iclijConfig.getConfigData().getConfigValueMap().put(IclijConfigConstants.EVOLVEGA, ga);
         }
         return ServiceUtil.getImproveFilter(new ComponentInput(iclijConfig, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), dbDao, iclijConfig);
     }
@@ -253,7 +253,7 @@ public class ServiceController {
             market = null;
         }
         if (ga != null) {
-            iclijConfig.getConfigValueMap().put(IclijConfigConstants.EVOLVEGA, ga);
+            iclijConfig.getConfigData().getConfigValueMap().put(IclijConfigConstants.EVOLVEGA, ga);
         }
         return ServiceUtil.getImproveAboveBelow(new ComponentInput(iclijConfig, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), dbDao, iclijConfig);
     }

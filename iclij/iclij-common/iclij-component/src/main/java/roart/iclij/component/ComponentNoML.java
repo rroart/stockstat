@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import roart.common.config.ConfigConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.ConfigItem;
 import roart.common.util.JsonUtil;
@@ -35,10 +35,10 @@ public abstract class ComponentNoML extends Component {
         if (evolve) {
             String confStr = param.getInput().getConfig().getEvolveIndicatorrecommenderEvolutionConfig();
             if (confStr != null) {
-                param.getService().conf.getConfigValueMap().put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, confStr);
+                param.getService().conf.getConfigData().getConfigValueMap().put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, confStr);
             }
-            param.getService().conf.getConfigValueMap().put(ConfigConstants.MISCMYTABLEDAYS, 100);
-            param.getService().conf.getConfigValueMap().put(ConfigConstants.MISCMYDAYS, 100);
+            param.getService().conf.getConfigData().getConfigValueMap().put(ConfigConstants.MISCMYTABLEDAYS, 100);
+            param.getService().conf.getConfigData().getConfigValueMap().put(ConfigConstants.MISCMYDAYS, 100);
 
             Map<String, Object> anUpdateMap = new HashMap<>();
             Map<String, Object> aScoreMap = new HashMap<>();

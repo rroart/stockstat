@@ -1,6 +1,6 @@
 package roart.db.dao.util;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
 import roart.db.dao.DbDao;
@@ -21,7 +21,7 @@ public class DbDaoUtil {
      * @param dbDao 
      */
     
-    public static String[] getPeriodText(String market, MyMyConfig conf, DbDao dbDao) {
+    public static String[] getPeriodText(String market, IclijConfig conf, DbDao dbDao) {
         String[] periodText = { "Period1", "Period2", "Period3", "Period4", "Period5", "Period6", "Period7", "Period8", "Period9" };
         MetaItem meta = null;
         try {
@@ -45,7 +45,7 @@ public class DbDaoUtil {
 
     // ?
     @Deprecated
-    public static MetaItem getMeta(String market, MyMyConfig conf) {
+    public static MetaItem getMeta(String market, IclijConfig conf) {
         MetaItem meta = null;
         try {
             //meta = DbDao.getById(market, conf);

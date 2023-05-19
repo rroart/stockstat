@@ -8,14 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.model.StockItem;
 import roart.common.util.TimeUtil;
 
 // Impurity, should be in ETL, only temporarily here.
 
 public class StockETL {
-    public static List<StockItem> filterWeekend(MyMyConfig conf, List<StockItem> stocks) {
+    public static List<StockItem> filterWeekend(IclijConfig conf, List<StockItem> stocks) {
         if (!conf.wantFilterWeekend()) {
             return stocks;
         }
@@ -35,7 +35,7 @@ public class StockETL {
         return retList;
     }
     
-    public static List<String> filterWeekendConvert(MyMyConfig conf, List<Date> dates) {
+    public static List<String> filterWeekendConvert(IclijConfig conf, List<Date> dates) {
         boolean filter = conf.wantFilterWeekend();
         Calendar calendar = Calendar.getInstance();
         List<String> retList = new ArrayList<>();
@@ -52,7 +52,7 @@ public class StockETL {
         return retList;
     }
     
-    public static Map<String, List<StockItem>> filterWeekend(MyMyConfig conf, Map<String, List<StockItem>> stockMap) {
+    public static Map<String, List<StockItem>> filterWeekend(IclijConfig conf, Map<String, List<StockItem>> stockMap) {
         if (!conf.wantFilterWeekend()) {
             return stockMap;
         }

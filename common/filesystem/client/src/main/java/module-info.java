@@ -8,6 +8,7 @@
 module common.filesystem.client {
     exports roart.filesystem;
 
+    requires iclij.common.config;
     requires common.config;
     requires common.constants;
     requires common.filesystem;

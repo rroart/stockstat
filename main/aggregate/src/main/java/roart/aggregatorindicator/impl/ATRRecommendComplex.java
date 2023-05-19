@@ -7,12 +7,12 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import roart.common.config.ConfigConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.RecommendConstants;
 
 public class ATRRecommendComplex extends RecommendATR {
     
-    public ATRRecommendComplex(MyMyConfig conf) {
+    public ATRRecommendComplex(IclijConfig conf) {
         super(conf);
     }
 

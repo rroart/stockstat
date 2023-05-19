@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.AboveBelowItem;
 import roart.common.model.ActionComponentItem;
@@ -50,7 +50,7 @@ public class DbSpringAccess extends DbAccess {
 	}
 
     @Override
-    public Map<String, Object[]> doCalculationsArr(MyMyConfig conf, Map<String, double[][]> listMap, String key,
+    public Map<String, Object[]> doCalculationsArr(IclijConfig conf, Map<String, double[][]> listMap, String key,
             Calculatable indicator, boolean wantPercentizedPriceIndex) {
         return null; // DbHibernate.doCalculationsArrNonNull(conf, listMap, key, indicator, wantPercentizedPriceIndex);
     }

@@ -371,7 +371,7 @@ public class ComponentPredictor extends ComponentML {
             //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(true);
             //buys.put(element.getKey(), incdec);
-            IncDecItem incdec = mapAdder(profitdata.getBuys(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(srv.conf.getdate()), srv.conf.getMarket(), subcomponent, null, JsonUtil.convert(parameters));
+            IncDecItem incdec = mapAdder(profitdata.getBuys(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), srv.conf.getConfigData().getDate(), srv.conf.getConfigData().getMarket(), subcomponent, null, JsonUtil.convert(parameters));
             incdec.setIncrease(true);
         }
         for (MyElement element : bottomList) {
@@ -383,7 +383,7 @@ public class ComponentPredictor extends ComponentML {
             String recommendation = "recommend sell";
             //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(false);
-            IncDecItem incdec = mapAdder(profitdata.getSells(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(srv.conf.getdate()), srv.conf.getMarket(), subcomponent, null, JsonUtil.convert(parameters));
+            IncDecItem incdec = mapAdder(profitdata.getSells(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), srv.conf.getConfigData().getDate(), srv.conf.getConfigData().getMarket(), subcomponent, null, JsonUtil.convert(parameters));
             incdec.setIncrease(false);
         }
     }

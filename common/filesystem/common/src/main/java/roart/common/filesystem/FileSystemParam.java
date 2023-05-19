@@ -1,9 +1,9 @@
 package roart.common.filesystem;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 
 public abstract class FileSystemParam {
     public String nodename;
     public String configid;
-    public MyMyConfig conf;
+    public IclijConfig conf;
 }

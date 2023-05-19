@@ -8,6 +8,7 @@
 module mldao {
     exports roart.ml.dao;
 
+    requires iclij.common.config;
     requires common.config;
     requires ml.common;
     requires ml.spark;

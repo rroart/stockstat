@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.ml.model.LearnTestClassifyResult;
@@ -26,11 +26,11 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private MyMyConfig conf;
+    private IclijConfig conf;
 
     private Random random = new Random();
 
-    public MLClassifyRandomAccess(MyMyConfig conf) {
+    public MLClassifyRandomAccess(IclijConfig conf) {
         this.conf = conf;
         findModels();
     }

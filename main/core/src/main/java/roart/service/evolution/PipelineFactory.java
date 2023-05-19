@@ -45,39 +45,39 @@ public class PipelineFactory {
         String value = mapper.writeValueAsString(nnConfigs);
         PipelineResultData pipelineData = null;
         if (ml.equals(PipelineConstants.MLMULTI)) {
-            conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMULTIMLCONFIG, value);
+            conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMULTIMLCONFIG, value);
             pipelineData = new MLMulti(conf, catName, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
         } 
         if (ml.equals(PipelineConstants.MLSTOCH)) {
-            conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLSTOCHMLCONFIG, value);
+            conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSMLSTOCHMLCONFIG, value);
             pipelineData = new MLSTOCH(conf, catName, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
         } 
         if (ml.equals(PipelineConstants.MLCCI)) {
-            conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLCCIMLCONFIG, value);
+            conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSMLCCIMLCONFIG, value);
             pipelineData = new MLCCI(conf, catName, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
         } 
         if (ml.equals(PipelineConstants.MLATR)) {
-            conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLATRMLCONFIG, value);
+            conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSMLATRMLCONFIG, value);
             pipelineData = new MLATR(conf, catName, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
         } 
         if (ml.equals(PipelineConstants.MLRSI)) {
-            conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLRSIMLCONFIG, value);
+            conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSMLRSIMLCONFIG, value);
             pipelineData = new MLRSI(conf, catName, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
         } 
         if (ml.equals(PipelineConstants.MLMACD)) {
-            conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACDMLCONFIG, value);
+            conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACDMLCONFIG, value);
             pipelineData = new MLMACD(conf, catName, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
         } 
         if (ml.equals(PipelineConstants.MLINDICATOR)) {
-            conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, value);
+            conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, value);
             pipelineData = new MLIndicator(conf, catName, marketdatamap, catName, cat, categories, dataReaders, neuralnetcommand);
         }
         if (ml.equals(PipelineConstants.DATASET)) {
-            conf.getConfigValueMap().put(ConfigConstants.DATASETMLCONFIG, value);
+            conf.getConfigData().getConfigValueMap().put(ConfigConstants.DATASETMLCONFIG, value);
             pipelineData = new MLDataset(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
         }
         if (ml.equals(PipelineConstants.PREDICTOR)) {
-            conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGPREDICTORSMLCONFIG, value);
+            conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGPREDICTORSMLCONFIG, value);
             //value = mapper.writeValueAsString(nnConfigs.getTensorflowConfig().getTensorflowLSTMConfig());
             //conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTMCONFIG, value);
             List<String> foundkeys = EvolutionService.getFoundKeys(conf, nnConfigs);

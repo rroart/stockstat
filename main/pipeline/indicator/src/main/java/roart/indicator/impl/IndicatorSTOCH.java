@@ -3,7 +3,7 @@ package roart.indicator.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.constants.Constants;
 import roart.pipeline.Pipeline;
@@ -13,7 +13,7 @@ import roart.talib.util.TaUtil;
 
 public class IndicatorSTOCH extends Indicator {
 
-    public IndicatorSTOCH(MyMyConfig conf, String string, String title, int category, Pipeline[] datareaders, boolean onlyExtra) throws Exception {
+    public IndicatorSTOCH(IclijConfig conf, String string, String title, int category, Pipeline[] datareaders, boolean onlyExtra) throws Exception {
         super(conf, string, category);
         this.key = title;
         if (isEnabled() && !onlyExtra) {

@@ -17,13 +17,14 @@ import roart.category.AbstractCategory;
 import roart.category.impl.CategoryIndex;
 import roart.category.impl.CategoryPeriod;
 import roart.category.impl.CategoryPrice;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
 import roart.db.dao.DbDao;
 import roart.db.dao.util.DbDaoUtil;
+import roart.iclij.config.IclijConfig;
 import roart.model.data.MarketData;
 import roart.model.data.StockData;
 import roart.pipeline.Pipeline;
@@ -85,19 +86,19 @@ public class ServiceUtil {
         return eventTable;
     }
 
-    public Pipeline[] getDataReaders(MyMyConfig conf, String[] periodText,
+    public Pipeline[] getDataReaders(IclijConfig conf, String[] periodText,
             Map<String, MarketData> marketdatamap, StockData stockData, DbDao dbDao) throws Exception {
         Pipeline[] datareaders = new Pipeline[Constants.PERIODS + 3];
-        datareaders[0] = new DataReader(conf, marketdatamap, Constants.INDEXVALUECOLUMN, conf.getMarket());
-        datareaders[1] = new DataReader(conf, marketdatamap, Constants.PRICECOLUMN, conf.getMarket());
+        datareaders[0] = new DataReader(conf, marketdatamap, Constants.INDEXVALUECOLUMN, conf.getConfigData().getMarket());
+        datareaders[1] = new DataReader(conf, marketdatamap, Constants.PRICECOLUMN, conf.getConfigData().getMarket());
         datareaders[2] = new ExtraReader(conf, marketdatamap, 0, stockData, dbDao);
         for (int i = 0; i < Constants.PERIODS; i++) {
-            datareaders[i + 3] = new DataReader(conf, marketdatamap, i, conf.getMarket());
+            datareaders[i + 3] = new DataReader(conf, marketdatamap, i, conf.getConfigData().getMarket());
         }
         return datareaders;
     }
 
-    public AbstractCategory[] getCategories(MyMyConfig conf, List<StockItem> stocks,
+    public AbstractCategory[] getCategories(IclijConfig conf, List<StockItem> stocks,
             String[] periodText,
             Pipeline[] datareaders) throws Exception {
         AbstractCategory[] categories = new AbstractCategory[Constants.PERIODS + 2];
@@ -109,14 +110,14 @@ public class ServiceUtil {
         return categories;
     }
 
-    public AbstractPredictor[] getPredictors(MyMyConfig conf, String[] periodText,
+    public AbstractPredictor[] getPredictors(IclijConfig conf, String[] periodText,
             Map<String, MarketData> marketdatamap,
             List<StockItem>[] datedstocklists,
             Pipeline[] datareaders, AbstractCategory[] categories, NeuralNetCommand neuralnetcommand) throws Exception {
         AbstractPredictor[] predictors = new AbstractPredictor[Constants.ALLPERIODS];
         //predictors[0] = new PredictorLSTM(conf, Constants.INDEX, stocks, marketdatamap, periodDataMap, datareaders, categories);
         //predictors[1] = new PredictorLSTM(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, datareaders, categories);
-        MarketData marketdata = marketdatamap.get(conf.getMarket());
+        MarketData marketdata = marketdatamap.get(conf.getConfigData().getMarket());
         for (int i = 0; i < Constants.ALLPERIODS; i++) {
             //AbstractPredictor predictor = new PredictorGRU(conf, categories[i].getTitle() + " LSTM", marketdatamap, periodDataMap, categories[i].getTitle(), categories[i].getPeriod(), categories, datareaders);
             List<AbstractPredictor> allpredictors = new ArrayList<>();

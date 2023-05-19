@@ -8,6 +8,7 @@
 module ml.gem {
     exports roart.ml.gem;
 
+    requires iclij.common.config;
     requires common.config;
     requires common.model;
     requires common.webflux;

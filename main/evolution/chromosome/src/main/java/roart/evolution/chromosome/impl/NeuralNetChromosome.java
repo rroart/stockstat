@@ -27,7 +27,7 @@ import roart.aggregator.impl.MLRSI;
 import roart.aggregator.impl.MLSTOCH;
 import roart.category.AbstractCategory;
 import roart.common.config.ConfigConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
@@ -54,7 +54,7 @@ import roart.predictor.impl.PredictorTensorflowRNN;
 public class NeuralNetChromosome extends AbstractChromosome {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private MyMyConfig conf;
+    private IclijConfig conf;
     
     private String ml;
 
@@ -74,7 +74,7 @@ public class NeuralNetChromosome extends AbstractChromosome {
     
     private Map<String, MarketData> marketdatamap;
     
-    public NeuralNetChromosome(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String key, NeuralNetConfigGene nnConfigGene, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, MarketData> marketdatamap) {
+    public NeuralNetChromosome(IclijConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String key, NeuralNetConfigGene nnConfigGene, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, MarketData> marketdatamap) {
         this.conf = conf.copy();
         this.ml = ml;
         this.dataReaders = dataReaders;
@@ -91,11 +91,11 @@ public class NeuralNetChromosome extends AbstractChromosome {
         this(chromosome.conf, chromosome.ml, chromosome.dataReaders, chromosome.categories, chromosome.key, chromosome.nnConfigGene.copy(), chromosome.catName, chromosome.cat, chromosome.neuralnetcommand, chromosome.marketdatamap);
     }
 
-    public MyMyConfig getConf() {
+    public IclijConfig getConf() {
         return conf;
     }
 
-    public void setConf(MyMyConfig conf) {
+    public void setConf(IclijConfig conf) {
         this.conf = conf;
     }
 
@@ -174,46 +174,46 @@ public class NeuralNetChromosome extends AbstractChromosome {
     }
 
     class MyFactory {
-        public PipelineResultData myfactory(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, MarketData> marketdatamap) throws Exception {
+        public PipelineResultData myfactory(IclijConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, MarketData> marketdatamap) throws Exception {
             NeuralNetConfigs nnConfigs = new NeuralNetConfigs();
             nnConfigs.set(key, nnConfigGene.getConfig());
             ObjectMapper mapper = new ObjectMapper();
             String value = mapper.writeValueAsString(nnConfigs);
             PipelineResultData pipelineData = null;
             if (ml.equals(PipelineConstants.MLMULTI)) {
-                conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMULTIMLCONFIG, value);
+                conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMULTIMLCONFIG, value);
                 pipelineData = new MLMulti(conf, catName, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
             } 
             if (ml.equals(PipelineConstants.MLSTOCH)) {
-                conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLSTOCHMLCONFIG, value);
+                conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSMLSTOCHMLCONFIG, value);
                 pipelineData = new MLSTOCH(conf, catName, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
             } 
             if (ml.equals(PipelineConstants.MLCCI)) {
-                conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLCCIMLCONFIG, value);
+                conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSMLCCIMLCONFIG, value);
                 pipelineData = new MLCCI(conf, catName, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
             } 
             if (ml.equals(PipelineConstants.MLATR)) {
-                conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLATRMLCONFIG, value);
+                conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSMLATRMLCONFIG, value);
                 pipelineData = new MLATR(conf, catName, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
             } 
             if (ml.equals(PipelineConstants.MLRSI)) {
-                conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLRSIMLCONFIG, value);
+                conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSMLRSIMLCONFIG, value);
                 pipelineData = new MLRSI(conf, catName, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
             } 
             if (ml.equals(PipelineConstants.MLMACD)) {
-                conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACDMLCONFIG, value);
+                conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACDMLCONFIG, value);
                 pipelineData = new MLMACD(conf, catName, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
             } 
             if (ml.equals(PipelineConstants.MLINDICATOR)) {
-                conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, value);
+                conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, value);
                 pipelineData = new MLIndicator(conf, catName, marketdatamap, catName, cat, categories, dataReaders, neuralnetcommand);
             }
             if (ml.equals(PipelineConstants.DATASET)) {
-                conf.getConfigValueMap().put(ConfigConstants.DATASETMLCONFIG, value);
+                conf.getConfigData().getConfigValueMap().put(ConfigConstants.DATASETMLCONFIG, value);
                 pipelineData = new MLDataset(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
             }
             if (ml.equals(PipelineConstants.PREDICTOR)) {
-                conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGPREDICTORSMLCONFIG, value);
+                conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGPREDICTORSMLCONFIG, value);
                 //value = mapper.writeValueAsString(nnConfigs.getTensorflowConfig().getTensorflowLSTMConfig());
                 //conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTMCONFIG, value);
                 List<String> foundkeys = getFoundKeys(conf, nnConfigs);
@@ -265,7 +265,7 @@ public class NeuralNetChromosome extends AbstractChromosome {
     }
     
     class MyCallable implements Callable {
-        private MyMyConfig conf;
+        private IclijConfig conf;
         private String ml;
         private Pipeline[] dataReaders;
         private AbstractCategory[] categories;
@@ -273,7 +273,7 @@ public class NeuralNetChromosome extends AbstractChromosome {
         private Integer cat;
         private NeuralNetCommand neuralnetcommand;
         
-        public MyCallable(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand) {
+        public MyCallable(IclijConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand) {
             this.conf = conf;
             this.ml = ml;
             this.dataReaders = dataReaders;
@@ -311,18 +311,18 @@ public class NeuralNetChromosome extends AbstractChromosome {
         return key + " " + nnConfigGene;
     }
 
-    public List<String> getFoundKeys(MyMyConfig conf, NeuralNetConfigs nnConfigs) {
+    public List<String> getFoundKeys(IclijConfig conf, NeuralNetConfigs nnConfigs) {
         List<String> keys = getMLkeys();
         
         List<String> foundkeys = new ArrayList<>();
         for (String key : keys) {
             //System.out.println(conf.getValueOrDefault(key));
-            if (!Boolean.TRUE.equals(conf.getConfigValueMap().get(key))) {
+            if (!Boolean.TRUE.equals(conf.getConfigData().getConfigValueMap().get(key))) {
                 continue;
             }
         
             Map<String, String> anotherConfigMap = nnConfigs.getAnotherConfigMap();
-            if (!Boolean.TRUE.equals(conf.getConfigValueMap().get(anotherConfigMap.get(key)))) {
+            if (!Boolean.TRUE.equals(conf.getConfigData().getConfigValueMap().get(anotherConfigMap.get(key)))) {
                 continue;
             }
             foundkeys.add(key);

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import roart.category.AbstractCategory;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
@@ -23,7 +23,7 @@ public class MACDBase extends Aggregator {
 
     private Map<String, Double[]> resultObject;
 
-    public MACDBase(MyMyConfig conf, String catName, String catName2, Integer cat, AbstractCategory[] categories,
+    public MACDBase(IclijConfig conf, String catName, String catName2, Integer cat, AbstractCategory[] categories,
             Map<String, String> idNameMap, Pipeline[] datareaders) {
         super(conf, "macdb", cat);
         AbstractCategory cat2 = null;

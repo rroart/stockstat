@@ -86,9 +86,9 @@ public class EvolutionService {
     }
 
     public List<ResultItem> getEvolveRecommender(IclijConfig conf, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws JsonParseException, JsonMappingException, IOException {
-        log.info("mydate {}", conf.getdate());
+        log.info("mydate {}", conf.getConfigData().getDate());
         log.info("mydate {}", conf.getDays());
-        String market = conf.getMarket();
+        String market = conf.getConfigData().getMarket();
         ObjectMapper mapper = new ObjectMapper();
         EvolutionConfig evolutionConfig = mapper.readValue(conf.getEvolveIndicatorrecommenderEvolutionConfig(), EvolutionConfig.class);
     
@@ -111,7 +111,7 @@ public class EvolutionService {
         table.add(headrow);
     
         try {
-            DataReader dataReader = new DataReader(conf, stockData.marketdatamap, stockData.cat, conf.getMarket());
+            DataReader dataReader = new DataReader(conf, stockData.marketdatamap, stockData.cat, conf.getConfigData().getMarket());
             Pipeline[] datareaders = new Pipeline[1];
             datareaders[0] = dataReader;
     
@@ -133,7 +133,7 @@ public class EvolutionService {
             return retlist;
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
-            log.info("Market {}", conf.getMarket());
+            log.info("Market {}", conf.getConfigData().getMarket());
             return new ArrayList<>();
         }
     }
@@ -182,7 +182,7 @@ public class EvolutionService {
                     resultMap.put(EvolveConstants.ID, "interrupted");
                     return;
                 }
-                String text = evolution.printtext(conf.getMarket() + " " + "recommend" + " " + i, "recommend", individuals);
+                String text = evolution.printtext(conf.getConfigData().getMarket() + " " + "recommend" + " " + i, "recommend", individuals);
                 String node = conf.getEvolveSaveLocation();
                 String mypath = conf.getEvolveSavePath();
                 ControlService.configCurator(conf);
@@ -191,17 +191,17 @@ public class EvolutionService {
                 for (String id : scoreList) {
                     ResultItemTableRow row = new ResultItemTableRow();
                     row.add(id);
-                    row.add("" + conf.getConfigValueMap().get(id));
+                    row.add("" + conf.getConfigData().getConfigValueMap().get(id));
                     //log.info("Buy {} {}", id, buy.getConf().getConfigValueMap().get(id));
                     //log.info("Buy {}", buy.getConf().getConfigValueMap().get(id).getClass().getName());
                     IndicatorChromosome newEval = (IndicatorChromosome) fittestIndividual.getEvaluation();
-                    row.add("" + newEval.getConf().getConfigValueMap().get(id));
+                    row.add("" + newEval.getConf().getConfigData().getConfigValueMap().get(id));
                     table.add(row);
                 }
                 // have a boolean here
                 for (String id : scoreList) {
                     IndicatorChromosome newEval = (IndicatorChromosome) fittestIndividual.getEvaluation();
-                    updateMap.put(id, newEval.getConf().getConfigValueMap().get(id));
+                    updateMap.put(id, newEval.getConf().getConfigData().getConfigValueMap().get(id));
                 }
                 if (i == 0) {
                     List<Double> scorelist2 = new ArrayList<>();
@@ -263,25 +263,25 @@ public class EvolutionService {
     
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(id);
-            row.add("" + conf.getConfigValueMap().get(id));
+            row.add("" + conf.getConfigData().getConfigValueMap().get(id));
             //log.info("Buy {} {}", id, buy.getConf().getConfigValueMap().get(id));
             //log.info("Buy {}", buy.getConf().getConfigValueMap().get(id).getClass().getName());
             IndicatorEvaluationNew newEval = (IndicatorEvaluationNew) buysell.getEvaluation();
          
-            row.add("" + newEval.getConf().getConfigValueMap().get(id));
+            row.add("" + newEval.getConf().getConfigData().getConfigValueMap().get(id));
             table.add(row);
-            updateMap.put(id, newEval.getConf().getConfigValueMap().get(id));
+            updateMap.put(id, newEval.getConf().getConfigData().getConfigValueMap().get(id));
         }
     }
 
     public List<ResultItem> getEvolveML(IclijConfig conf, List<String> disableList, Map<String, Object> updateMap, String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws JsonParseException, JsonMappingException, IOException {
-        log.info("mydate {}", conf.getdate());
+        log.info("mydate {}", conf.getConfigData().getDate());
         log.info("mydate {}", conf.getDays());
-        if (conf.isDataset()) {
+        if (conf.getConfigData().isDataset()) {
             ObjectMapper mapper = new ObjectMapper();
             EvolutionConfig evolutionConfig = mapper.readValue(conf.getEvolveMLEvolutionConfig(), EvolutionConfig.class);
             Set<String> markets = new HashSet<>();
-            markets.add(conf.getMarket());
+            markets.add(conf.getConfigData().getMarket());
         
             List<ResultItemTable> otherTables = new ArrayList<>();
             otherTables.add(mlTimesTable);
@@ -309,7 +309,7 @@ public class EvolutionService {
         if (stockData == null) {
             return new ArrayList<>();
         }
-        String market = conf.getMarket();
+        String market = conf.getConfigData().getMarket();
         ObjectMapper mapper = new ObjectMapper();
         EvolutionConfig evolutionConfig = mapper.readValue(conf.getEvolveMLEvolutionConfig(), EvolutionConfig.class);
         //createOtherTables();
@@ -327,7 +327,7 @@ public class EvolutionService {
     
         try {
 
-            DataReader dataReader = new DataReader(conf, stockData.marketdatamap, stockData.cat, conf.getMarket());
+            DataReader dataReader = new DataReader(conf, stockData.marketdatamap, stockData.cat, conf.getConfigData().getMarket());
             //Pipeline[] datareaders = new Pipeline[1];
             Pipeline[] datareaders = new ServiceUtil().getDataReaders(conf, stockData.periodText,
                     stockData.marketdatamap, stockData, dao);
@@ -335,7 +335,7 @@ public class EvolutionService {
             //datareaders[0] = dataReader;
     
             SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-            String mydate = dt.format(conf.getdate());
+            String mydate = dt.format(conf.getConfigData().getDate());
             List<StockItem> dayStocks = stockData.stockdatemap.get(mydate);
             AbstractCategory[] categories = new ServiceUtil().getCategories(conf, dayStocks,
                     stockData.periodText, datareaders);
@@ -471,7 +471,7 @@ public class EvolutionService {
                 resultMap.put(EvolveConstants.ID, "interrupted");
                 return;
             }
-            String title = EvolveConstants.EVOLVE + " " + conf.getMarket() + " " + ml + " " + nnconfig.getClass().getSimpleName();
+            String title = EvolveConstants.EVOLVE + " " + conf.getConfigData().getMarket() + " " + ml + " " + nnconfig.getClass().getSimpleName();
             String text = evolution.printtext(title, null, individuals);
             String node = conf.getEvolveSaveLocation();
             String mypath = conf.getEvolveSavePath();
@@ -562,7 +562,7 @@ public class EvolutionService {
                 resultMap.put(EvolveConstants.ID, "interrupted");
             	return;
             }
-            String title = EvolveConstants.EVOLVE + " " + conf.getMarket() + " " + ml + " " + nnconfig.getClass().getSimpleName();
+            String title = EvolveConstants.EVOLVE + " " + conf.getConfigData().getMarket() + " " + ml + " " + nnconfig.getClass().getSimpleName();
             String text = evolution.printtext(title, null, individuals);
             String node = conf.getEvolveSaveLocation();
             String mypath = conf.getEvolveSavePath();
@@ -599,12 +599,12 @@ public class EvolutionService {
         List<String> foundkeys = new ArrayList<>();
         for (String key : keys) {
             //System.out.println(conf.getValueOrDefault(key));
-            if (!Boolean.TRUE.equals(conf.getConfigValueMap().get(key))) {
+            if (!Boolean.TRUE.equals(conf.getConfigData().getConfigValueMap().get(key))) {
                 continue;
             }
         
             Map<String, String> anotherConfigMap = nnConfigs.getAnotherConfigMap();
-            if (!Boolean.TRUE.equals(conf.getConfigValueMap().get(anotherConfigMap.get(key)))) {
+            if (!Boolean.TRUE.equals(conf.getConfigData().getConfigValueMap().get(anotherConfigMap.get(key)))) {
                 continue;
             }
             foundkeys.add(key);

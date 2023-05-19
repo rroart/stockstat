@@ -108,7 +108,7 @@ public abstract class MarketAction extends Action {
     public abstract void setValMap(ComponentData param);
     
     public int getPriority(IclijConfig conf, String key) {
-        Integer value = (Integer) conf.getConfigValueMap().get(key + "[@priority]");
+        Integer value = (Integer) conf.getConfigData().getConfigValueMap().get(key + "[@priority]");
         return value != null ? value : 0;
     }
     
@@ -177,7 +177,7 @@ public abstract class MarketAction extends Action {
             ControlService srv = new ControlService(iclijConfig);
             //srv.getConfig();
             param.setService(srv);
-            srv.conf.setMarket(market.getConfig().getMarket());
+            srv.conf.getConfigData().setMarket(market.getConfig().getMarket());
             boolean skipIsDataset = !timingsdone.isEmpty();
             List<String> stockDates = null;
             if (skipIsDataset || !isDataset()) {

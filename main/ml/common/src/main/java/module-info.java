@@ -9,6 +9,7 @@ module ml.common {
     exports roart.ml.model;
     exports roart.ml.common;
 
+    requires iclij.common.config;
     requires common.config;
     requires common.constants;
     requires pipeline.model;

@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.category.AbstractCategory;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
@@ -19,7 +19,7 @@ import roart.talib.util.TaConstants;
 public class MLMulti extends IndicatorAggregator {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public MLMulti(MyMyConfig conf, String string, String title, int category, 
+    public MLMulti(IclijConfig conf, String string, String title, int category, 
             AbstractCategory[] categories, Map<String, String> idNameMap, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         super(conf, string, category, title, idNameMap, categories, datareaders, neuralnetcommand);
 /*
@@ -118,9 +118,9 @@ public class MLMulti extends IndicatorAggregator {
     }
 
     private class SubTypeMulti extends MergeSubType {
-        private MyMyConfig conf;
+        private IclijConfig conf;
         private String name;
-        public SubTypeMulti(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range, MyMyConfig conf, Filter[] filter, String name, MySubType mySubType) {
+        public SubTypeMulti(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range, IclijConfig conf, Filter[] filter, String name, MySubType mySubType) {
             super(afterbefore);
             this.listMap = (Map<String, Double[][]>) list;
             this.taMap = (Map<String, Object[]>) taObject;

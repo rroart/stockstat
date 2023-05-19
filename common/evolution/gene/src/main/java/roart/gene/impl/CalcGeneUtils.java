@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.config.MLConstants;
-import roart.common.config.MyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.SparkLORConfig;
 import roart.common.ml.SparkMLPCConfig;
@@ -18,26 +18,26 @@ import roart.common.ml.TensorflowLICConfig;
 import roart.gene.CalcGene;
 
 public class CalcGeneUtils {
-    public static void transformToNode(MyConfig conf, List<String> keys, boolean useMax, List<Double>[] minMax, List<String> disableList) throws JsonParseException, JsonMappingException, IOException {
+    public static void transformToNode(IclijConfig conf, List<String> keys, boolean useMax, List<Double>[] minMax, List<String> disableList) throws JsonParseException, JsonMappingException, IOException {
         ObjectMapper mapper = new ObjectMapper();
         for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
             if (disableList.contains(key)) {
                 continue;
             }
-            Object value = conf.getConfigValueMap().get(key);
+            Object value = conf.getConfigData().getConfigValueMap().get(key);
             // this if is added to the original
             if (value instanceof CalcGene) {
                 continue;
             }
             if (value instanceof Integer) {
                 CalcGene anode = new CalcDoubleGene();
-                conf.getConfigValueMap().put(key, anode);
+                conf.getConfigData().getConfigValueMap().put(key, anode);
                 continue;
             }
-            String jsonValue = (String) conf.getConfigValueMap().get(key);
+            String jsonValue = (String) conf.getConfigData().getConfigValueMap().get(key);
             if (jsonValue == null || jsonValue.isEmpty()) {
-                jsonValue = (String) conf.getConfigMaps().deflt.get(key);
+                jsonValue = (String) conf.getConfigData().getConfigMaps().deflt.get(key);
             }
             CalcGene anode;
             CalcGene node;
@@ -54,15 +54,15 @@ public class CalcGeneUtils {
                     node = CalcGeneFactory.get("Double", jsonValue, minMax, i, useMax);
                 }
             }
-            conf.getConfigValueMap().put(key, node);
+            conf.getConfigData().getConfigValueMap().put(key, node);
         }
     }
 
-    public static void transformToNode(MyConfig conf, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
+    public static void transformToNode(IclijConfig conf, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
         ObjectMapper mapper = new ObjectMapper();
         for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
-            Object value = conf.getConfigValueMap().get(key);
+            Object value = conf.getConfigData().getConfigValueMap().get(key);
             // this if is added to the original
             if (value instanceof NeuralNetConfig) {
                 continue;
@@ -89,35 +89,35 @@ public class CalcGeneUtils {
                         
                 }
                 anode = (NeuralNetConfig) mapper.readValue((String) value, classs);
-                conf.getConfigValueMap().put(key, anode);
+                conf.getConfigData().getConfigValueMap().put(key, anode);
                 return;
             }
         }
     }
 
-    public static void transformFromNode(MyConfig conf, List<String> keys, List<String> disableList) throws JsonParseException, JsonMappingException, IOException {
+    public static void transformFromNode(IclijConfig conf, List<String> keys, List<String> disableList) throws JsonParseException, JsonMappingException, IOException {
         ObjectMapper mapper = new ObjectMapper();
         for (String key : keys) {
             if (disableList.contains(key)) {
                 continue;
             }
-            CalcGene node = (CalcGene) conf.getConfigValueMap().get(key);
+            CalcGene node = (CalcGene) conf.getConfigData().getConfigValueMap().get(key);
             if (node instanceof CalcComplexGene) {
                 String string = mapper.writeValueAsString(node);
-                conf.getConfigValueMap().put(key, string);
+                conf.getConfigData().getConfigValueMap().put(key, string);
             } else {
                 CalcDoubleGene anode = (CalcDoubleGene) node;
-                conf.getConfigValueMap().put(key, anode.getWeight());
+                conf.getConfigData().getConfigValueMap().put(key, anode.getWeight());
             }
         }
     }
 
-    public static void transformFromNode(MyConfig conf, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
+    public static void transformFromNode(IclijConfig conf, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
         ObjectMapper mapper = new ObjectMapper();
         for (String key : keys) {
-            NeuralNetConfig node = (NeuralNetConfig) conf.getConfigValueMap().get(key);
+            NeuralNetConfig node = (NeuralNetConfig) conf.getConfigData().getConfigValueMap().get(key);
             String string = mapper.writeValueAsString(node);
-            conf.getConfigValueMap().put(key, string);
+            conf.getConfigData().getConfigValueMap().put(key, string);
         }
     }
 

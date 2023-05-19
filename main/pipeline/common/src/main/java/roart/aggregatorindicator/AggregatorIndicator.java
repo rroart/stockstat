@@ -2,14 +2,14 @@ package roart.aggregatorindicator;
 
 import java.util.Map;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.indicator.AbstractIndicator;
 import roart.pipeline.Pipeline;
 import roart.model.data.MarketData;
 
 public abstract class AggregatorIndicator {
-    protected MyMyConfig conf;
-    public AggregatorIndicator(MyMyConfig conf) {
+    protected IclijConfig conf;
+    public AggregatorIndicator(IclijConfig conf) {
         this.conf = conf;
     }
 

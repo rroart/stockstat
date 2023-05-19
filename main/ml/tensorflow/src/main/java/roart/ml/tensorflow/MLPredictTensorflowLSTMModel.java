@@ -1,7 +1,7 @@
 package roart.ml.tensorflow;
 
 import roart.common.config.ConfigConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.TensorflowPredictorLSTMConfig;
@@ -9,7 +9,7 @@ import roart.ml.model.LearnTestPredict;
 
 @Deprecated
 public class MLPredictTensorflowLSTMModel extends MLPredictTensorflowModel {
-    public MLPredictTensorflowLSTMModel(MyMyConfig conf) {
+    public MLPredictTensorflowLSTMModel(IclijConfig conf) {
         super(conf);
     }
 

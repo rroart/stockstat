@@ -15,7 +15,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
@@ -31,7 +31,7 @@ public abstract class AbstractIndicator extends Calculatable {
     protected static Logger log = LoggerFactory.getLogger(AbstractIndicator.class);
 
     protected String title;
-    protected MyMyConfig conf;
+    protected IclijConfig conf;
     protected String key;
     public int fieldSize = 0;
     protected Object[] emptyField;
@@ -58,7 +58,7 @@ public abstract class AbstractIndicator extends Calculatable {
     protected Map<String, Map<String, Object[]>> marketResultMap;
     protected Map<String, Map<String, Double[]>> marketCalculatedMap;
 
-    public AbstractIndicator(MyMyConfig conf, String string, int category) {
+    public AbstractIndicator(IclijConfig conf, String string, int category) {
         this.title = string;
         this.conf = conf;
         this.category = category;
@@ -194,7 +194,7 @@ public abstract class AbstractIndicator extends Calculatable {
         return result;
     }
 
-    protected Map<String, Object[]> getResultMap(MyMyConfig conf, Map<String, Object[]> objectMap, Map<String, Double[]> momMap) {
+    protected Map<String, Object[]> getResultMap(IclijConfig conf, Map<String, Object[]> objectMap, Map<String, Double[]> momMap) {
         Map<String, Object[]> result = new HashMap<>();
         if (listMap == null) {
             return result;
@@ -212,7 +212,7 @@ public abstract class AbstractIndicator extends Calculatable {
     }
 
     public Object[] getResultItem(StockItem stock) {
-        String market = conf.getMarket();
+        String market = conf.getConfigData().getMarket();
         String id = stock.getId();
         Pair<String, String> pair = new ImmutablePair<>(market, id);
         Set<Pair<String, String>> ids = new HashSet<>();

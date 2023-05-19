@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.category.AbstractCategory;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
@@ -31,7 +31,7 @@ public class MLSTOCH extends IndicatorAggregator {
         return objectMap;
     }
 
-    public MLSTOCH(MyMyConfig conf, String string, String title, int category, 
+    public MLSTOCH(IclijConfig conf, String string, String title, int category, 
             AbstractCategory[] categories, Map<String, String> idNameMap, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         super(conf, string, category, title, idNameMap, categories, datareaders, neuralnetcommand);
     }

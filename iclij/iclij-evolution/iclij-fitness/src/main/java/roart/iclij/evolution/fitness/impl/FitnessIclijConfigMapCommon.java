@@ -58,7 +58,7 @@ public class FitnessIclijConfigMapCommon {
                 map.putAll(override);
             }
             
-            param.getInput().getConfig().getConfigValueMap().putAll(map);
+            param.getInput().getConfig().getConfigData().getConfigValueMap().putAll(map);
             
             ComponentData componentData2 = component.handle(action, market, param, profitdata, listMap, evolve, map, subcomponent, null, parameters, false);
             String titletext = (String) componentData2.getUpdateMap().get(EvolveConstants.TITLETEXT);

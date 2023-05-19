@@ -429,7 +429,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
                 String value = values.iterator().next();
                 // Do something with the value                              
                 try {
-                    controlService.getIclijConf().setMarket(value);
+                    controlService.getIclijConf().getConfigData().setMarket(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -523,7 +523,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
         horDb.setHeight("20%");
         horDb.setWidth("60%");
         HorizontalLayout horTree = new HorizontalLayout();
-        ConfigTreeMap map2 = controlService.getIclijConf().getConfigTreeMap();
+        ConfigTreeMap map2 = controlService.getIclijConf().getConfigData().getConfigTreeMap();
         componentMap = new HashMap<>();
         print(map2, horTree);
 
@@ -538,7 +538,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
 
     Map<String, Component> componentMap ;
     private void print(ConfigTreeMap map2, HorizontalLayout tab) {
-        Map<String, Object> map = controlService.getIclijConf().getConfigValueMap();
+        Map<String, Object> map = controlService.getIclijConf().getConfigData().getConfigValueMap();
         String name = map2.getName();
         System.out.println("name " + name);
         Object object = map.get(name);
@@ -1192,7 +1192,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
 */
     private CheckBox getCheckbox(String text, String configKey) {
         CheckBox cb = new CheckBox(text);
-        Boolean origValue = (Boolean) controlService.getIclijConf().getConfigValueMap().get(configKey);
+        Boolean origValue = (Boolean) controlService.getIclijConf().getConfigData().getConfigValueMap().get(configKey);
         cb.setValue(origValue);
 
         // Handle changes in the value
@@ -1217,7 +1217,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
     private TextField getStringField(String text, String configKey) {
         TextField tf = new TextField(text);
         tf.setSizeFull();
-        String origValue = (String) controlService.getIclijConf().getConfigValueMap().get(configKey);
+        String origValue = (String) controlService.getIclijConf().getConfigData().getConfigValueMap().get(configKey);
 
         tf.setValue(origValue);
 
@@ -1241,7 +1241,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
 
     private TextField getIntegerField(String text, String configKey) {
         TextField tf = new TextField(text);
-        Integer origValue = (Integer) controlService.getIclijConf().getConfigValueMap().get(configKey);
+        Integer origValue = (Integer) controlService.getConfigData().getIclijConf().getConfigValueMap().get(configKey);
 
         tf.setValue("" + origValue);
 
@@ -1264,7 +1264,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
     }
     private TextField getDoubleField(String text, String configKey) {
         TextField tf = new TextField(text);
-        Double origValue = (Double) controlService.getIclijConf().getConfigValueMap().get(configKey);
+        Double origValue = (Double) controlService.getIclijConf().getConfigData().getConfigValueMap().get(configKey);
 
         tf.setValue("" + origValue);
 

@@ -15,6 +15,7 @@ module pipeline.model {
     exports roart.pipeline.common.predictor;
 
     requires common.config;
+    requires iclij.common.config;
     requires common.constants;
     requires common.model;
     requires common.util;

@@ -8,7 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.model.AboveBelowItem;
 import roart.common.model.ActionComponentItem;
 import roart.common.model.ConfigItem;
@@ -44,7 +44,7 @@ public class DbHibernateAccess extends DbAccess {
 	}
 
     @Override
-    public Map<String, Object[]> doCalculationsArr(MyMyConfig conf, Map<String, double[][]> listMap, String key,
+    public Map<String, Object[]> doCalculationsArr(IclijConfig conf, Map<String, double[][]> listMap, String key,
             Calculatable indicator, boolean wantPercentizedPriceIndex) {
         return DbHibernate.doCalculationsArrNonNull(conf, listMap, key, indicator, wantPercentizedPriceIndex);
     }

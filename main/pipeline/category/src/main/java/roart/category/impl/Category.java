@@ -3,7 +3,7 @@ package roart.category.impl;
 import java.util.List;
 
 import roart.category.AbstractCategory;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.result.model.ResultItemTableRow;
@@ -12,7 +12,7 @@ import roart.stockutil.StockUtil;
 
 public class Category extends AbstractCategory {
 
-    public Category(MyMyConfig conf, String periodText, List<StockItem> stocks, Pipeline[] datareaders) {
+    public Category(IclijConfig conf, String periodText, List<StockItem> stocks, Pipeline[] datareaders) {
         super(conf, periodText, stocks, datareaders);
     }
 

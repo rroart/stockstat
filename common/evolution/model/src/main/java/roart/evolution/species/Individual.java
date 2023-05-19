@@ -84,7 +84,7 @@ public class Individual  implements Comparable<Individual>{
     }
 
     /*
-    public  static MyMyConfig getNewWithValueCopy(MyMyConfig conf) {
+    public  static MyMyConfig getNewWithValueCopy(IclijConfig conf) {
         MyMyConfig newConf = new MyMyConfig(conf);
         Map<String, Object> configValueMap = new HashMap<>(conf.getConfigValueMap());
         newConf.setConfigValueMap(configValueMap);

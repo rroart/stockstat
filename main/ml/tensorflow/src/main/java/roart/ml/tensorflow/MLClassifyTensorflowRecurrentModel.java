@@ -1,10 +1,10 @@
 package roart.ml.tensorflow;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 
 public abstract class MLClassifyTensorflowRecurrentModel extends MLClassifyTensorflowModel {
 
-    public MLClassifyTensorflowRecurrentModel(MyMyConfig conf) {
+    public MLClassifyTensorflowRecurrentModel(IclijConfig conf) {
         super(conf);
     }
 

@@ -129,7 +129,7 @@ public class ControlService {
      */
 
     public List<ResultItem> getContent(IclijConfig conf, Map<String, Map<String, Object>> maps, List<String> disableList, NeuralNetCommand neuralnetcommand) {
-        log.info("mydate {}", conf.getdate());
+        log.info("mydate {}", conf.getConfigData().getDate());
         log.info("mydate {}", conf.getDays());
         //createOtherTables();
         StockData stockData = new Extract(dbDao).getStockData(conf);
@@ -147,7 +147,7 @@ public class ControlService {
                     stockData.marketdatamap, stockData, dbDao);
 
             SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-            String mydate = dt.format(conf.getdate());
+            String mydate = dt.format(conf.getConfigData().getDate());
             int dateIndex = TimeUtil.getIndexEqualBefore(stockData.stockdates, mydate);
             if (dateIndex >= 0) {
                 mydate = stockData.stockdates.get(dateIndex);
@@ -309,7 +309,7 @@ public class ControlService {
 
     private void createRows(IclijConfig conf, ResultItemTable table, List<StockItem> datedstocks, AbstractCategory[] categories,
             AbstractPredictor[] predictors, Aggregator[] aggregates) {
-        if (conf.getMarket() == null) {
+        if (conf.getConfigData().getMarket() == null) {
             return;
         }
         int cols = table.get(0).cols.size();
@@ -431,11 +431,11 @@ public class ControlService {
         aggregates[7] = new MLSTOCH(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
         aggregates[8] = new MLMulti(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
         aggregates[9] = new MLIndicator(conf, catName, marketdatamap, catName, cat, categories, datareaders, neuralnetcommand);
-        log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.MACHINELEARNING));
-        log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.AGGREGATORSMLMACD));
-        log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.INDICATORSMACD));
-        log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.INDICATORSRSI));
-        log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.INDICATORS));
+        log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.MACHINELEARNING));
+        log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.AGGREGATORSMLMACD));
+        log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.INDICATORSMACD));
+        log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.INDICATORSRSI));
+        log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.INDICATORS));
         return aggregates;
     }
 
@@ -465,7 +465,7 @@ public class ControlService {
     public List<ResultItem> getContentGraph(IclijConfig conf, GUISize guiSize) {
         List<ResultItem> retlist = new ArrayList<>();
         try {
-            log.info("mydate {}", conf.getdate());
+            log.info("mydate {}", conf.getConfigData().getDate());
             log.info("mydate {}", conf.getDays());
             StockData stockData = new Extract(dbDao).getStockData(conf);
             if (stockData == null) {
@@ -477,7 +477,7 @@ public class ControlService {
                 stocklist.sort(StockUtil.StockDateComparator);
             }
 
-            List<StockItem>[] datedstocklistsmove = StockUtil.getDatedstocklists(stockData.stockdatemap, conf.getdate(), stockData.days, conf.getTableMoveIntervalDays());
+            List<StockItem>[] datedstocklistsmove = StockUtil.getDatedstocklists(stockData.stockdatemap, conf.getConfigData().getDate(), stockData.days, conf.getTableMoveIntervalDays());
 
             List<StockItem>[][] stocklistPeriod = StockUtil.getListSorted(datedstocklistsmove, stockData.days);
             
@@ -508,7 +508,7 @@ public class ControlService {
     public List<ResultItem> getContentGraph(IclijConfig conf, Set<Pair<String, String>> ids, GUISize guiSize) {
         List<ResultItem> retlist = new ArrayList<>();
         try {
-            log.info("mydate {}", conf.getdate());
+            log.info("mydate {}", conf.getConfigData().getDate());
             Map<String, MarketData> marketdatamap = new HashMap<>();
             Map<String, PeriodData> periodDataMap = new HashMap<>();
             Map<String, StockData> stockDataMap = new HashMap<>();
@@ -562,7 +562,7 @@ public class ControlService {
         row.add("Pearson (e)");
         table.add(row);
         try {
-            List<StockItem> stocks = dbDao.getAll(conf.getMarket(), conf);
+            List<StockItem> stocks = dbDao.getAll(conf.getConfigData().getMarket(), conf);
             log.info("stocks {}", stocks.size());
             Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
             Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
@@ -583,13 +583,13 @@ public class ControlService {
              * Make stock lists based on the intervals
              */
 
-            List<StockItem> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, conf.getdate(), days, conf.getTableIntervalDays());
+            List<StockItem> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, conf.getConfigData().getDate(), days, conf.getTableIntervalDays());
 
             List<StockItem> datedstocks = datedstocklists[0];
             if (datedstocks == null) {
                 return new ArrayList<>();
             }
-            Math3Util.getStats(table, conf.getdate(), days, stockidmap, stockdatemap);
+            Math3Util.getStats(table, conf.getConfigData().getDate(), days, stockidmap, stockdatemap);
 
             log.info("retlist {}",retList.size());
         } catch (Exception e) {
@@ -616,7 +616,7 @@ public class ControlService {
         aMap.put(ConfigConstants.MISCMERGECY, false);        
         conf.setConfigValueMap(new HashMap<>(conf.getConfigValueMap()));
         */
-        conf.getConfigValueMap().putAll(aMap);
+        conf.getConfigData().getConfigValueMap().putAll(aMap);
         StockData stockData = new Extract(dbDao).getStockData(conf);
         if (stockData != null) {
             Map<String, Object> map = new HashMap<>();
@@ -627,10 +627,10 @@ public class ControlService {
         
         List<String> dates = null;
         try {
-            if ("0".equals(conf.getMarket())) {
+            if ("0".equals(conf.getConfigData().getMarket())) {
                 int jj = 0;
             }
-            dates = dbDao.getDates(conf.getMarket(), conf);
+            dates = dbDao.getDates(conf.getConfigData().getMarket(), conf);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -639,7 +639,7 @@ public class ControlService {
         }
         log.info("stocks {}", dates.size());
         Set<String> markets = new HashSet<>();
-        markets.add(conf.getMarket());
+        markets.add(conf.getConfigData().getMarket());
 
         try {
             Collections.sort(dates);

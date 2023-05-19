@@ -40,7 +40,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import roart.common.cache.MyCache;
 import roart.common.config.ConfigConstantMaps;
@@ -106,9 +109,9 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            System.out.println("new market" + param.getConfig().getMarket());
+            System.out.println("new market" + param.getConfig().getConfigData().getMarket());
             System.out.println("new market" + param.getConfig());
-            System.out.println("new some " + param.getConfig().getConfigValueMap().get(ConfigConstants.DATABASESPARKSPARKMASTER));
+            System.out.println("new some " + param.getConfig().getConfigData().getConfigValueMap().get(ConfigConstants.DATABASESPARKSPARKMASTER));
             //getInstance().config(param.config);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -123,8 +126,8 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            result.setConfig(iclijConfig);
-            System.out.println("configs " + result.getConfig());
+            result.setConfigData(iclijConfig.getConfigData());
+            System.out.println("configs " + result.getConfigData());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -297,7 +300,7 @@ public class ServiceController implements CommandLineRunner {
             maps.put("result", resultMap);
             result.setList(new EvolutionService(dao).getEvolveRecommender( aConfig, disableList, updateMap, scoreMap, resultMap));
             result.setMaps(maps);
-            result.setConfig(aConfig);
+            result.setConfigData(aConfig.getConfigData());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -328,7 +331,7 @@ public class ServiceController implements CommandLineRunner {
             NeuralNetCommand neuralnetcommand = param.getNeuralnetcommand();
             result.setList(new EvolutionService(dao).getEvolveML( aConfig, disableList, updateMap, ml, neuralnetcommand, scoreMap, resultMap));
             result.setMaps(maps);
-            result.setConfig(aConfig);
+            result.setConfigData(aConfig.getConfigData());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -407,5 +410,16 @@ public class ServiceController implements CommandLineRunner {
         }
         return new ArrayList<>();
     }
-
+    
+    //@Bean
+    public ObjectMapper getJacksonObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        //objectMapper.findAndRegisterModules();
+        //objectMapper.configure(
+        //        com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        //objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        
+        return objectMapper;
+    }
 }

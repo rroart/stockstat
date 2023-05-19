@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.fitness.AbstractScore;
@@ -24,7 +24,7 @@ import roart.gene.CalcGene;
 public class FitnessIndicatorChromosome extends Fitness {
     protected static Logger log = LoggerFactory.getLogger(AbstractChromosome.class);
 
-    private MyMyConfig conf;
+    private IclijConfig conf;
 
     private Object[] retObj;
 
@@ -36,7 +36,7 @@ public class FitnessIndicatorChromosome extends Fitness {
     
     private double threshold;
     
-    public FitnessIndicatorChromosome(MyMyConfig conf, Object[] retObj, AbstractScore evalUtil, int listlen, Double threshold) {
+    public FitnessIndicatorChromosome(IclijConfig conf, Object[] retObj, AbstractScore evalUtil, int listlen, Double threshold) {
         this.conf = conf.copy();
         this.retObj = retObj;
         this.evalUtil = evalUtil;
@@ -87,11 +87,11 @@ public class FitnessIndicatorChromosome extends Fitness {
                     continue;
                 }
                 // temp fix
-                Object o = conf.getConfigValueMap().get(key);
-                if (conf.getConfigValueMap().get(key) instanceof Integer) {
+                Object o = conf.getConfigData().getConfigValueMap().get(key);
+                if (conf.getConfigData().getConfigValueMap().get(key) instanceof Integer) {
                     int jj = 0;
                 }
-                CalcGene node = (CalcGene) conf.getConfigValueMap().get(key);
+                CalcGene node = (CalcGene) conf.getConfigData().getConfigValueMap().get(key);
                 double value = momrsi[i];
                 double calc = node.calc(value, 0); // (1 + change); // Math.pow(1 + change, 10);
                 if (Double.isNaN(calc)) {

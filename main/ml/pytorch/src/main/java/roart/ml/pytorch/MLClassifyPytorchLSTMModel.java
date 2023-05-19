@@ -2,14 +2,14 @@ package roart.ml.pytorch;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.PytorchLSTMConfig;
 import roart.ml.model.LearnTestClassify;
 
 public class MLClassifyPytorchLSTMModel  extends MLClassifyPytorchRecurrentModel {
-    public MLClassifyPytorchLSTMModel(MyMyConfig conf) {
+    public MLClassifyPytorchLSTMModel(IclijConfig conf) {
         super(conf);
     }
 

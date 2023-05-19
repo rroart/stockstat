@@ -3,12 +3,12 @@ package roart.common.service;
 import java.util.List;
 import java.util.Map;
 
-import roart.common.config.MyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.model.MetaItem;
 import roart.result.model.ResultItem;
 
 public class ServiceResult {
-    private MyConfig config;
+    private IclijConfig config;
     
     private List<String> markets;
     
@@ -26,11 +26,11 @@ public class ServiceResult {
         super();
     }
 
-    public MyConfig getConfig() {
+    public IclijConfig getConfig() {
         return config;
     }
 
-    public void setConfig(MyConfig config) {
+    public void setConfig(IclijConfig config) {
         this.config = config;
     }
 

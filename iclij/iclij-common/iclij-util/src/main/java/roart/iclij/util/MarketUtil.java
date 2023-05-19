@@ -100,7 +100,7 @@ public class MarketUtil {
             Map<String, Map<String, Object>> maps, boolean inc, List<String> mydates) {
         List<String> dates;
         if (mydates == null) {
-            dates = param.getService().getDates(param.getService().conf.getMarket());        
+            dates = param.getService().getDates(param.getService().conf.getConfigData().getMarket());        
         } else {
             dates = mydates;
         }

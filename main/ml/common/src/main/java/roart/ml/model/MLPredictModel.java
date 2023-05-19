@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
@@ -25,17 +25,17 @@ public abstract class MLPredictModel {
 
     public abstract String getKey();
     
-    private MyMyConfig conf;
+    private IclijConfig conf;
 
-    public MyMyConfig getConf() {
+    public IclijConfig getConf() {
         return conf;
     }
 
-    public void setConf(MyMyConfig conf) {
+    public void setConf(IclijConfig conf) {
         this.conf = conf;
     }
 
-    public MLPredictModel(MyMyConfig conf) {
+    public MLPredictModel(IclijConfig conf) {
         this.conf = conf;
     }
 
@@ -90,7 +90,7 @@ public abstract class MLPredictModel {
 
     protected <T> T convert(Class<T> clazz) {
         try {
-            return new ObjectMapper().readValue((String) getConf().getConfigValueMap().get(getKey()), clazz);
+            return new ObjectMapper().readValue((String) getConf().getConfigData().getConfigValueMap().get(getKey()), clazz);
         } catch (Exception e) {
             log.info(Constants.ERROR);
             return null;
@@ -99,7 +99,7 @@ public abstract class MLPredictModel {
 
     protected <T> T getDefault(Class<T> clazz) {
         try {
-            return new ObjectMapper().readValue((String) getConf().getConfigMaps().deflt.get(getKey()), clazz);
+            return new ObjectMapper().readValue((String) getConf().getConfigData().getConfigMaps().deflt.get(getKey()), clazz);
         } catch (IOException e) {
             log.error(Constants.EXCEPTION, e);
             return null;

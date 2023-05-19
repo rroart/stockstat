@@ -1,11 +1,11 @@
 package roart.ml.common;
 
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.pipeline.common.aggregate.Aggregator;
 
 public class MLClassifyRandomModel extends MLClassifyModel {
-    public MLClassifyRandomModel(MyMyConfig conf) {
+    public MLClassifyRandomModel(IclijConfig conf) {
         super(conf);
     }
 

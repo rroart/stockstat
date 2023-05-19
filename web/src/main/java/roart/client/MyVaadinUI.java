@@ -224,7 +224,7 @@ public class MyVaadinUI extends UI implements ViewDisplay {
 	tab.addComponent(getCleanupfs());
          */
         HorizontalLayout horTree = new HorizontalLayout();
-        ConfigTreeMap map2 = controlService.conf.getConfigTreeMap();
+        ConfigTreeMap map2 = controlService.conf.getConfigData().getConfigTreeMap();
         componentMap = new HashMap<>();
         print(map2, horTree);
 
@@ -251,12 +251,12 @@ public class MyVaadinUI extends UI implements ViewDisplay {
 
     Map<String, Component> componentMap ;
     private void print(ConfigTreeMap map2, HorizontalLayout tab) {
-        Map<String, Object> map = controlService.conf.getConfigValueMap();
+        Map<String, Object> map = controlService.conf.getConfigData().getConfigValueMap();
         String name = map2.getName();
         System.out.println("name " + name);
         Object object = map.get(name);
         Component o = null;
-        String text = controlService.conf.getConfigMaps().text.get(name);
+        String text = controlService.conf.getConfigData().getConfigMaps().text.get(name);
         if (object == null) {
             //System.out.println("null for " + name);
             String labelname = name;
@@ -613,7 +613,7 @@ public class MyVaadinUI extends UI implements ViewDisplay {
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value                              
                 try {
-                    controlService.conf.setMarket(value);
+                    controlService.conf.getConfigData().setMarket(value);
                     Notification.show("Request sent");
                     //displayResults();
                 } catch (Exception e) {
@@ -1191,7 +1191,7 @@ public class MyVaadinUI extends UI implements ViewDisplay {
      */
     private CheckBox getCheckbox(String text, String configKey) {
         CheckBox cb = new CheckBox(text);
-        Boolean origValue = (Boolean) controlService.conf.getConfigValueMap().get(configKey);
+        Boolean origValue = (Boolean) controlService.conf.getConfigData().getConfigValueMap().get(configKey);
         cb.setValue(origValue);
 
         // Handle changes in the value
@@ -1215,7 +1215,7 @@ public class MyVaadinUI extends UI implements ViewDisplay {
 
     private TextField getStringField(String text, String configKey) {
         TextField tf = new TextField(text);
-        String origValue = (String) controlService.conf.getConfigValueMap().get(configKey);
+        String origValue = (String) controlService.conf.getConfigData().getConfigValueMap().get(configKey);
 
         tf.setValue(origValue);
 
@@ -1239,7 +1239,7 @@ public class MyVaadinUI extends UI implements ViewDisplay {
 
     private TextField getIntegerField(String text, String configKey) {
         TextField tf = new TextField(text);
-        Integer origValue = (Integer) controlService.conf.getConfigValueMap().get(configKey);
+        Integer origValue = (Integer) controlService.conf.getConfigData().getConfigValueMap().get(configKey);
 
         tf.setValue("" + origValue);
 
@@ -1262,7 +1262,7 @@ public class MyVaadinUI extends UI implements ViewDisplay {
     }
     private TextField getDoubleField(String text, String configKey) {
         TextField tf = new TextField(text);
-        Double origValue = (Double) controlService.conf.getConfigValueMap().get(configKey);
+        Double origValue = (Double) controlService.conf.getConfigData().getConfigValueMap().get(configKey);
 
         tf.setValue("" + origValue);
 
@@ -1837,7 +1837,7 @@ public class MyVaadinUI extends UI implements ViewDisplay {
                 String idarr[] = id.split(",");
                 Set<Pair<String, String>> ids = new HashSet<>();
                 for (String id : idarr) {
-                    ids.add(new Pair(controlService.conf.getMarket(), id));
+                    ids.add(new Pair(controlService.conf.getConfigData().getMarket(), id));
                 }
                 displayResultsGraph(ids);
                 Notification.show("Request sent");

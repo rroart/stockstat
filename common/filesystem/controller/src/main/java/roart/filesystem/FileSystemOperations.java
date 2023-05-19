@@ -1,6 +1,6 @@
 package roart.filesystem;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.filesystem.FileSystemBooleanResult;
 import roart.common.filesystem.FileSystemByteResult;
 import roart.common.filesystem.FileSystemConstructorResult;
@@ -16,9 +16,9 @@ public abstract class FileSystemOperations {
     
     protected String nodename;
     protected String configid;
-    protected MyMyConfig nodeConf;
+    protected IclijConfig nodeConf;
 
-    public FileSystemOperations(String nodename, String configid, MyMyConfig nodeConf) {
+    public FileSystemOperations(String nodename, String configid, IclijConfig nodeConf) {
         this.nodename = nodename;
         this.configid = configid;
         this.nodeConf = nodeConf;

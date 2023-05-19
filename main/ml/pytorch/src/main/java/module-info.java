@@ -8,6 +8,7 @@
 module ml.pytorch {
     exports roart.ml.pytorch;
 
+    requires iclij.common.config;
     requires common.config;
     requires common.webflux;
     requires org.slf4j;

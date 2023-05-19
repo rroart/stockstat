@@ -8,6 +8,7 @@
 module coredb.spark {
     exports roart.db.spark;
 
+    requires iclij.common.config;
     requires common.config;
     requires common.constants;
     requires common.model;

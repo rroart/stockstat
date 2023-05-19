@@ -1,11 +1,11 @@
 package roart.filesystem;
 
 import roart.common.constants.EurekaConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 
 public class S3Access extends FileSystemAccess{
 
-    public S3Access(MyMyConfig conf) {
+    public S3Access(IclijConfig conf) {
 	super(conf);
     }
     

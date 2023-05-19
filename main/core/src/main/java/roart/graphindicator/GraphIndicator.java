@@ -12,7 +12,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
@@ -27,12 +27,12 @@ public abstract class GraphIndicator {
     protected static Logger log = LoggerFactory.getLogger(GraphIndicator.class);
 
     protected String title;
-    protected MyMyConfig conf;
+    protected IclijConfig conf;
     protected Map<String, MarketData> marketdatamap;
     protected Map<String, PeriodData> periodDataMap;
     protected String key;
 
-    public GraphIndicator(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, String title) {
+    public GraphIndicator(IclijConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, String title) {
         this.title = string;
         this.conf = conf;
         this.marketdatamap = marketdatamap;

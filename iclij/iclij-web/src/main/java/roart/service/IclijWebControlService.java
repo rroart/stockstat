@@ -89,8 +89,8 @@ public class IclijWebControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         IclijServiceResult result = WebFluxUtil.sendIMe(IclijServiceResult.class, param, WebFluxConstants.GETCONFIG);
-        iclijConf = result.getConfig();
-        Map<String, Object> map = iclijConf.getConfigValueMap();
+        iclijConf = null; //result.getConfig();
+        Map<String, Object> map = iclijConf.getConfigData().getConfigValueMap();
         for (Entry<String, Object> entry : map.entrySet()) {
             Object value = entry.getValue();
             //System.out.println("k " + key + " " + value + " " + value.getClass().getName());
@@ -99,7 +99,7 @@ public class IclijWebControlService {
                 System.out.println("cls " + value.getClass().getName());
             }
         }
-        ConfigTreeMap map2 = iclijConf.getConfigTreeMap();
+        ConfigTreeMap map2 = iclijConf.getConfigData().getConfigTreeMap();
         print(map2, 0);
         MyExecutors.init(new double[] { iclijConf.mpClientCpu() } );      
     }

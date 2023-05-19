@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.indicator.AbstractIndicator;
@@ -21,7 +21,7 @@ public abstract class AbstractCategory {
     protected static Logger log = LoggerFactory.getLogger(AbstractCategory.class);
 
     private String title;
-    protected MyMyConfig conf;
+    protected IclijConfig conf;
     protected List<StockItem> stocks;
     protected List<AbstractIndicator> indicators = new ArrayList<>();
     private Map<String, AbstractIndicator> indicatorMap = new HashMap<>();
@@ -30,7 +30,7 @@ public abstract class AbstractCategory {
     protected Map<String, Object[]> resultMap;
     protected int dataArraySize;
    
-    public AbstractCategory(MyMyConfig conf, String periodText, List<StockItem> stocks, Pipeline[] datareaders) {
+    public AbstractCategory(IclijConfig conf, String periodText, List<StockItem> stocks, Pipeline[] datareaders) {
         this.conf = conf;
         setTitle(periodText);
         this.stocks = stocks;
@@ -130,7 +130,7 @@ public abstract class AbstractCategory {
     
     public abstract Double[] getData(StockItem stock) throws Exception;
     
-    public void createResultMap(MyMyConfig conf, List<StockItem> stocks) throws Exception {
+    public void createResultMap(IclijConfig conf, List<StockItem> stocks) throws Exception {
         resultMap = new HashMap<>();
         dataArraySize = 0;
         if (stocks == null) {

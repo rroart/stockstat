@@ -2,7 +2,7 @@ package roart.aggregatorindicator.impl;
 
 import java.util.Map;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.impl.IndicatorMACD;
@@ -11,7 +11,7 @@ import roart.model.data.MarketData;
 
 public class AggregatorMLIndicatorMACD extends AggregatorMLIndicator {
 
-    public AggregatorMLIndicatorMACD(MyMyConfig conf) {
+    public AggregatorMLIndicatorMACD(IclijConfig conf) {
         super(conf);
     }
 

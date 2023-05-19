@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
@@ -49,12 +49,12 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
 
     protected SparkSession spark;
 
-    private MyMyConfig conf;
+    private IclijConfig conf;
 
     private Map<String, Model> modelMap = new HashMap<>();
     private Map<String, Double> accuracyMap = new HashMap<>();
 
-    public MLClassifySparkAccess(MyMyConfig conf) {
+    public MLClassifySparkAccess(IclijConfig conf) {
         this.conf = conf;
         findModels();	
         String sparkmaster = conf.getMLSparkMaster();

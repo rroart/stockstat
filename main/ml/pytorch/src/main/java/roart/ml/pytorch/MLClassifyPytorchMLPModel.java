@@ -2,7 +2,7 @@ package roart.ml.pytorch;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.PytorchMLPConfig;
@@ -10,7 +10,7 @@ import roart.ml.common.MLMeta;
 import roart.ml.model.LearnTestClassify;
 
 public class MLClassifyPytorchMLPModel  extends MLClassifyPytorchModel {
-    public MLClassifyPytorchMLPModel(MyMyConfig conf) {
+    public MLClassifyPytorchMLPModel(IclijConfig conf) {
         super(conf);
     }
 

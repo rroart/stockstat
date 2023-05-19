@@ -8,6 +8,7 @@
 module s3 {
     exports roart.filesystem.s3;
 
+    requires iclij.common.config;
     requires common.config;
     requires common.constants;
     requires common.filesystem;

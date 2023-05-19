@@ -31,8 +31,8 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
         if (serviceMatch(EurekaConstants.GETCONFIG, c)) {
             r = new IclijServiceResult();
             try {
-                r.setConfig(iclijConfig);
-                log.info("configs {}", r.getConfig());
+                r.setConfigData(iclijConfig.getConfigData());
+                log.info("configs {}", r.getConfigData());
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
                 r.setError(e.getMessage());

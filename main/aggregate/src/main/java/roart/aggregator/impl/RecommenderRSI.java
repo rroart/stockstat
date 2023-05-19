@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import roart.category.AbstractCategory;
-import roart.common.config.MyConfig;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
 import roart.etl.DatelistToMapETL;
@@ -29,16 +29,16 @@ public class RecommenderRSI extends Aggregator {
     Map<String, Double[][]> listMap;
     Map<String, double[][]> truncListMap;
 
-    public RecommenderRSI(MyMyConfig conf, String index, Map<String, MarketData> marketdatamap, AbstractCategory[] categories) throws Exception {
+    public RecommenderRSI(IclijConfig conf, String index, Map<String, MarketData> marketdatamap, AbstractCategory[] categories) throws Exception {
         super(conf, index, 0);
         if (!isEnabled()) {
             return;
         }
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-        String dateme = dt.format(conf.getdate());
-        this.listMap = DatelistToMapETL.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
+        String dateme = dt.format(conf.getConfigData().getDate());
+        this.listMap = DatelistToMapETL.getArrSparse(conf, conf.getConfigData().getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         //this.truncListMap = ArraysUtil.getTruncListArr(this.listMap);
-        AbstractCategory cat = StockUtil.getWantedCategory(categories, marketdatamap.get(conf.getMarket()).meta);
+        AbstractCategory cat = StockUtil.getWantedCategory(categories, marketdatamap.get(conf.getConfigData().getMarket()).meta);
         if (cat == null) {
             return;
         }

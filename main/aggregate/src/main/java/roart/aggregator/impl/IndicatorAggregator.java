@@ -31,7 +31,7 @@ import roart.aggregator.impl.IndicatorAggregator.SubType;
 import roart.category.AbstractCategory;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.ResultMetaConstants;
 import roart.common.ml.NeuralNetCommand;
@@ -113,7 +113,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     protected List<SubType> wantedSubTypes = new ArrayList<>();
 
-    public IndicatorAggregator(MyMyConfig conf, String string, int category, String title, Map<String, String> idNameMap, AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+    public IndicatorAggregator(IclijConfig conf, String string, int category, String title, Map<String, String> idNameMap, AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         super(conf, string, category);
         this.key = title;
         this.idNameMap = idNameMap;
@@ -155,7 +155,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     protected abstract AfterBeforeLimit getAfterBefore();
 
-    private void calculateMe(MyMyConfig conf,
+    private void calculateMe(IclijConfig conf,
             int category2, AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         AbstractCategory cat = StockUtil.getWantedCategory(categories, category);
         if (cat == null) {
@@ -237,7 +237,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     }
 
     private Double[] getThresholds() {
-        boolean gui = conf.getConfigValueMap().get(ConfigConstants.MISCTHRESHOLD) != null;
+        boolean gui = conf.getConfigData().getConfigValueMap().get(ConfigConstants.MISCTHRESHOLD) != null;
         log.debug("GUI thresholds {}", gui);
         String thresholdString = getAggregatorsThreshold();
         if (gui) {
@@ -318,7 +318,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         headrow.addarr(objs);
     }
 
-    private void doLearnTestClassify(NeuralNetConfigs nnConfigs, MyMyConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
+    private void doLearnTestClassify(NeuralNetConfigs nnConfigs, IclijConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
             Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult,
             Map<Double, String> labelMapShort, Map<SubType, MLMeta> metaMap, NeuralNetCommand neuralnetcommand, Double threshold) {
         List<SubType> subTypes = usedSubTypes();
@@ -388,7 +388,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             List<Triple<String, Object, Double>> classifyMLMap = transformLearnClassifyMap(classifyMap, false, mlmeta, model);
                             int size = getValidateSize(learnMLMap, mlmeta);
                             List<AbstractIndicator> indicators = new ArrayList<>();
-                            String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getMarket(), indicators, subType.getType(), mapType, mlmeta, threshold);
+                            String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getConfigData().getMarket(), indicators, subType.getType(), mapType, mlmeta, threshold);
                             String path = model.getPath();
                             boolean mldynamic = conf.wantMLDynamic();
                             //indicators.add(this);
@@ -526,7 +526,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         return mlMap;
     }
 
-    private void doLearnTestClassifyFuture(NeuralNetConfigs nnConfigs, MyMyConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
+    private void doLearnTestClassifyFuture(NeuralNetConfigs nnConfigs, IclijConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
             Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult,
             Map<Double, String> labelMapShort, Map<SubType, MLMeta> metaMap, NeuralNetCommand neuralnetcommand, Double threshold) {
         List<SubType> subTypes = usedSubTypes();
@@ -591,7 +591,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             List<Triple<String, Object, Double>> classifyMLMap = transformLearnClassifyMap(classifyMap, false, mlmeta, model);
                             int size = getValidateSize(learnMLMap, mlmeta);
                             List<AbstractIndicator> indicators = new ArrayList<>();
-                            String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getMarket(), indicators, subType.getType(), mapType, mlmeta, threshold);
+                            String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getConfigData().getMarket(), indicators, subType.getType(), mapType, mlmeta, threshold);
                             String path = model.getPath();
                             boolean mldynamic = conf.wantMLDynamic();
                             if (nnConfigs == null) {
@@ -741,7 +741,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         resultMeta.setLoss(result.getLoss());
     }
 
-    private void createResultMap(MyMyConfig conf,
+    private void createResultMap(IclijConfig conf,
             Map<Double, Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>>> mapResult0) {
         for (String id : listMap.keySet()) {
             Object[] fields = new Object[fieldSize];
@@ -813,7 +813,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         }
     } 
 
-    private void doClassifications(MyMyConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
+    private void doClassifications(IclijConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
             Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult) {
         AfterBeforeLimit afterbefore = getAfterBefore();
         // map from h/m + posnegcom to map<model, results>
@@ -854,7 +854,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         }
     }
 
-    private Map<String, Double[]> doClassifications(MyMyConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
+    private Map<String, Double[]> doClassifications(IclijConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
             Map<Double, String> labelMapShort, SubType subType,
             MLClassifyDao mldao, Map<String, Map<String, Double[]>> mapResult2, MLClassifyModel model, int mapTypeInt) {
         AfterBeforeLimit afterbefore = getAfterBefore();
@@ -917,7 +917,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         eventTableRows.add(event);
     }
 
-    private void doLearningAndTests(NeuralNetConfigs nnConfigs, MyMyConfig conf, Map<String, List<Triple<String, Object, Double>>> mapMap,
+    private void doLearningAndTests(NeuralNetConfigs nnConfigs, IclijConfig conf, Map<String, List<Triple<String, Object, Double>>> mapMap,
             Map<Double, String> labelMapShort, MLMeta mlmeta) {
         AfterBeforeLimit afterbefore = getAfterBefore();
         List<SubType> subTypes = usedSubTypes();
@@ -992,7 +992,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         mapTypes.put(NEGTYPE, NEGTYPESTR);
     }
 
-    private void handleSpentTime(MyMyConfig conf) {
+    private void handleSpentTime(IclijConfig conf) {
         if (conf.wantMLTimes()) {
             //Map<MLModel, Long> mapTime = new HashMap<>();
             for (MLClassifyModel model : mapTime.keySet()) {
@@ -1006,7 +1006,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         }
     }
 
-    private void handleOtherStats(MyMyConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap) {
+    private void handleOtherStats(IclijConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap) {
         // and others done with println
         if (conf.wantOtherStats() && conf.wantML()) {
             Map<Double, String> labelMapShort = createLabelMapShort();            
@@ -1445,7 +1445,7 @@ public abstract class IndicatorAggregator extends Aggregator {
      * 
      */
 
-    private Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> createPosNegMaps(MyMyConfig conf, Map<SubType, MLMeta> metaMap, Double threshold) {
+    private Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> createPosNegMaps(IclijConfig conf, Map<SubType, MLMeta> metaMap, Double threshold) {
         Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = new HashMap<>();
         for (String id : getListMap().keySet()) {
             double[][] list = getListMap().get(id);
@@ -1543,7 +1543,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     @Override
     public Object[] getResultItem(StockItem stock) {
-        String market = conf.getMarket();
+        String market = conf.getConfigData().getMarket();
         String id = stock.getId();
         Pair<String, String> pair = new ImmutablePair(market, id);
         Set<Pair<String, String>> ids = new HashSet<>();
@@ -1556,7 +1556,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         return result;
     }
 
-    private void doMergeLearn(MyMyConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
+    private void doMergeLearn(IclijConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
             AbstractCategory cat,
             AfterBeforeLimit afterbefore, Map<SubType, MLMeta> metaMap, Double threshold) {
         Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> newMapMap = new HashMap<>();
@@ -1994,7 +1994,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     public abstract String getFilenamePart();
     
     public String getFilename(MLClassifyDao dao, MLClassifyModel model, String in, String out, String market, List<AbstractIndicator> indicators, String subType, String mapType, MLMeta mlmeta, Double threshold) {
-        String testmarket = conf.getMLmarket();
+        String testmarket = conf.getConfigData().getMlmarket();
         if (testmarket != null) {
             market = testmarket;
         }

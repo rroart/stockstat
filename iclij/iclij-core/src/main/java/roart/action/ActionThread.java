@@ -211,7 +211,7 @@ public class ActionThread extends Thread {
     public boolean runAction(IclijConfig instance, ActionComponentItem item, List<ActionComponentItem> dblist) {
         boolean finished = false;
         IclijConfig iclijConfig = new IclijConfig(instance);
-        iclijConfig.setMarket(item.getMarket());
+        iclijConfig.getConfigData().setMarket(item.getMarket());
         MarketAction action = ActionFactory.get(item.getAction(), dbDao, iclijConfig);
         action.setParent(action);
         Market market = new MarketUtil().findMarket(item.getMarket(), iclijConfig);

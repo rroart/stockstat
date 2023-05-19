@@ -18,8 +18,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.aggregatorindicator.impl.Recommend;
 import roart.category.AbstractCategory;
-import roart.common.config.MyConfig;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.gene.CalcGene;
 import roart.gene.impl.CalcComplexGene;
@@ -45,14 +45,14 @@ public class AggregatorRecommenderIndicator extends Aggregator {
     Map<String, Map<String, Double[]>> resultMap;
     public List<String> disableList;
  
-    public AggregatorRecommenderIndicator(MyMyConfig conf, String index, Map<String, MarketData> marketdatamap, AbstractCategory[] categories,
+    public AggregatorRecommenderIndicator(IclijConfig conf, String index, Map<String, MarketData> marketdatamap, AbstractCategory[] categories,
             Pipeline[] datareaders, List<String> disableList) throws Exception {
         super(conf, index, 0);
         this.disableList = disableList;
         if (!isEnabled()) {
             return;
         }
-        AbstractCategory cat = StockUtil.getWantedCategory(categories, marketdatamap.get(conf.getMarket()).meta);
+        AbstractCategory cat = StockUtil.getWantedCategory(categories, marketdatamap.get(conf.getConfigData().getMarket()).meta);
         if (cat == null) {
             return;
         }
@@ -128,14 +128,14 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                         continue;
                     }
                     // temp fix
-                    Object o = conf.getConfigValueMap().get(key);
+                    Object o = conf.getConfigData().getConfigValueMap().get(key);
                     if (o instanceof Integer) {
                         Integer oint = (Integer) o;
                         buyRecommendValue += mergedResult[i] * oint;
                         continue;
                     }
-                    Object tmp = conf.getConfigValueMap().get(key);
-                    CalcGene node = (CalcGene) conf.getConfigValueMap().get(key);
+                    Object tmp = conf.getConfigData().getConfigValueMap().get(key);
+                    CalcGene node = (CalcGene) conf.getConfigData().getConfigValueMap().get(key);
                     //node.setDoBuy(useMax);
                     if (mergedResult.length < buyKeys.size()) {
                         int jj = 0;
@@ -155,13 +155,13 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                         continue;
                     }
                     // temp fix
-                    Object o = conf.getConfigValueMap().get(key);
+                    Object o = conf.getConfigData().getConfigValueMap().get(key);
                     if (o instanceof Integer) {
                         Integer oint = (Integer) o;
                         sellRecommendValue += mergedResult[i] * oint;
                         continue;
                     }                   
-                    CalcGene node = (CalcGene) conf.getConfigValueMap().get(key);
+                    CalcGene node = (CalcGene) conf.getConfigData().getConfigValueMap().get(key);
                     //node.setDoBuy(useMax);
                     double value = mergedResult[i];
                     double calc = node.calc(value, 0);

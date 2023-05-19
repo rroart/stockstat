@@ -1064,13 +1064,13 @@ public class SimulateInvestComponent extends ComponentML {
                         Long dbid = data.getDbid();
                         String configStr = data.getConfig();
                         //SimulateInvestConfig s = JsonUtil.convert(configStr, SimulateInvestConfig.class);
-                        Map defaultMap = config.getConfigMaps().deflt;
+                        Map defaultMap = config.getConfigData().getConfigMaps().deflt;
                         Map map = JsonUtil.convert(configStr, Map.class);
                         Map newMap = new HashMap<>();
                         newMap.putAll(defaultMap);
                         newMap.putAll(map);
                         IclijConfig dummy = new IclijConfig(config);
-                        dummy.setConfigValueMap(newMap);
+                        dummy.getConfigData().setConfigValueMap(newMap);
                         SimulateInvestConfig simConf = getSimConfig(dummy);
                         if (simConf.getInterval().intValue() != autoSimConf.getInterval().intValue()) {
                             continue;
@@ -2069,7 +2069,7 @@ public class SimulateInvestComponent extends ComponentML {
     }
 
     private SimulateInvestConfig getSimConfig(IclijConfig config) {
-        if (config.getConfigValueMap().get(IclijConfigConstants.SIMULATEINVESTDELAY) == null || (int) config.getConfigValueMap().get(IclijConfigConstants.SIMULATEINVESTDELAY) == 0) {
+        if (config.getConfigData().getConfigValueMap().get(IclijConfigConstants.SIMULATEINVESTDELAY) == null || (int) config.getConfigData().getConfigValueMap().get(IclijConfigConstants.SIMULATEINVESTDELAY) == 0) {
             return null;
         }
         SimulateInvestConfig simConfig = new SimulateInvestConfig();
@@ -2148,7 +2148,7 @@ public class SimulateInvestComponent extends ComponentML {
     }
     
     private AutoSimulateInvestConfig getAutoSimConfig(IclijConfig config) {
-        if (config.getConfigValueMap().get(IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL) == null || (int) config.getConfigValueMap().get(IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL) == 0) {
+        if (config.getConfigData().getConfigValueMap().get(IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL) == null || (int) config.getConfigData().getConfigValueMap().get(IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL) == 0) {
             return null;
         }
         AutoSimulateInvestConfig simConfig = new AutoSimulateInvestConfig();

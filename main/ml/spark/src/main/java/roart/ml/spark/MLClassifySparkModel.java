@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.ml.common.MLClassifyModel;
@@ -18,7 +18,7 @@ public abstract class MLClassifySparkModel extends MLClassifyModel {
 
     protected static Logger log = LoggerFactory.getLogger(MLClassifySparkModel.class);
     
-    public MLClassifySparkModel(MyMyConfig conf) {
+    public MLClassifySparkModel(IclijConfig conf) {
         super(conf);
     }
 

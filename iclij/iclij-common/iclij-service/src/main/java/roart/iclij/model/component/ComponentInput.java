@@ -48,7 +48,7 @@ public class ComponentInput {
         this.startdate = startdate;
         this.market = market;
         if (enddate == null) {
-            LocalDate date = config.getDate();
+            LocalDate date = config.getConfigData().getDate();
             if (date == null) {
                 date = LocalDate.now();
             }

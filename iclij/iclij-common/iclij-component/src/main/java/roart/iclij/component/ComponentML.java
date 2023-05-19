@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.ResultMetaConstants;
 import roart.common.ml.NeuralNetConfigs;
@@ -56,7 +56,7 @@ public abstract class ComponentML extends Component {
         if (evolve) {
             EvolutionConfig evolveConfig = getEvolutionConfig(param, actionEvolveConfig);
             String newConfStr = JsonUtil.convert(evolveConfig);
-            param.getService().conf.getConfigValueMap().put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, newConfStr);
+            param.getService().conf.getConfigData().getConfigValueMap().put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, newConfStr);
 
             // We do not need this with the other subcomp settings?
             //Map<String, Object> evolveMap = setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, true);
@@ -64,7 +64,7 @@ public abstract class ComponentML extends Component {
             Map<String, Object> anUpdateMap = new HashMap<>();
             Map<String, Object> aScoreMap = new HashMap<>();
             Map<String, Object> resultMap = new HashMap<>();
-            param.getService().conf.setdate(TimeUtil.convertDate(param.getFutureDate()));
+            param.getService().conf.getConfigData().setDate(param.getFutureDate());
             List<ResultItem> retlist = param.getService().getEvolveML(true, param.getDisableList(), pipeline, param.getService().conf, anUpdateMap, aScoreMap, resultMap);
             mlSaves(action, mlConfigMap, param, anUpdateMap, subcomponent, parameters);
             if (param.getUpdateMap() != null) {
@@ -202,9 +202,9 @@ public abstract class ComponentML extends Component {
         param.setResultMeta(resultMeta);
     }
 
-    public static Map<String, Object> setnns(MyMyConfig conf, IclijConfig config, Map<String, EvolveMLConfig> mlConfigMap, boolean useEvolve) {
+    public static Map<String, Object> setnns(IclijConfig conf, IclijConfig config, Map<String, EvolveMLConfig> mlConfigMap, boolean useEvolve) {
         Map<String, Object> returnmap = new HashMap<>();
-        Map<String, String> map = config.getConfigMaps().conv;
+        Map<String, String> map = config.getConfigData().getConfigMaps().conv;
         for (Entry<String, EvolveMLConfig> entry : mlConfigMap.entrySet()) {
             String key = entry.getKey();
             EvolveMLConfig value = entry.getValue();

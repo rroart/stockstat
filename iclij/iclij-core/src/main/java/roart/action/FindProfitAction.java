@@ -83,7 +83,7 @@ public class FindProfitAction extends MarketAction {
             //component.enableDisable(param, positions, param.getConfigValueMap(), buy);
 
             String mlmarket = market.getConfig().getMlmarket();
-            param.getService().conf.setMLmarket(mlmarket);
+            param.getService().conf.getConfigData().setMlmarket(mlmarket);
 
             boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
             //component.set(market, param, profitdata, positions, evolve);

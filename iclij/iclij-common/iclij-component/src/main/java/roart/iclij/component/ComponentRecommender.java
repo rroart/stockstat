@@ -217,7 +217,7 @@ public class ComponentRecommender extends ComponentNoML {
             //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(true);
             //buys.put(element.getKey(), incdec);
-            IncDecItem incdec = mapAdder(profitdata.getBuys(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()), param.getService().conf.getMarket(), null, "" + keys.getRight(), JsonUtil.convert(parameters));
+            IncDecItem incdec = mapAdder(profitdata.getBuys(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), param.getService().conf.getConfigData().getDate(), param.getService().conf.getConfigData().getMarket(), null, "" + keys.getRight(), JsonUtil.convert(parameters));
             if (incdec != null) {
             incdec.setIncrease(true);
             }
@@ -231,7 +231,7 @@ public class ComponentRecommender extends ComponentNoML {
             String recommendation = "recommend sell";
             //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(false);
-            IncDecItem incdec = mapAdder(profitdata.getSells(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()), param.getService().conf.getMarket(), null, "" + keys.getRight(), JsonUtil.convert(parameters));
+            IncDecItem incdec = mapAdder(profitdata.getSells(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), param.getService().conf.getConfigData().getDate(), param.getService().conf.getConfigData().getMarket(), null, "" + keys.getRight(), JsonUtil.convert(parameters));
             if (incdec != null) {
             incdec.setIncrease(false);
             }

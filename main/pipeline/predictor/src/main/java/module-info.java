@@ -16,6 +16,7 @@ module pipeline.predictor {
     requires pipeline.model;
     requires org.slf4j;
     requires stockutil;
+    requires iclij.common.config;
     requires common.config;
     requires common.util;
     requires model;

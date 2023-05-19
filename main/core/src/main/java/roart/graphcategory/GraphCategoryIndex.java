@@ -10,7 +10,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.graphindicator.GraphIndicator;
 import roart.graphindicator.GraphIndicatorATR;
@@ -32,7 +32,7 @@ public class GraphCategoryIndex extends GraphCategory {
     Map<String, MarketData> marketdatamap;
     Map<String, PeriodData> periodDataMap;
 
-    public GraphCategoryIndex(MyMyConfig conf, String string,
+    public GraphCategoryIndex(IclijConfig conf, String string,
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap) {
         super(conf, string);

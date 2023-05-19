@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import roart.pipeline.common.aggregate.Aggregator;
 import roart.category.AbstractCategory;
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
@@ -95,7 +95,7 @@ public class MLDataset extends Aggregator {
 
     List<MLClassifyDao> mldaos = new ArrayList<>();
 
-    public MLDataset(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, 
+    public MLDataset(IclijConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, 
             String title, int category, AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         super(conf, string, category);
         this.periodDataMap = periodDataMap;
@@ -156,7 +156,7 @@ public class MLDataset extends Aggregator {
 
     private Map<Integer, String> mapTypes = new HashMap<>();
 
-    private void calculate(MyMyConfig conf, Map<String, MarketData> marketdatamap,
+    private void calculate(IclijConfig conf, Map<String, MarketData> marketdatamap,
             AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         Map<String, Pipeline> pipelineMap = new HashMap<>();
         long time0 = System.currentTimeMillis();
@@ -188,7 +188,7 @@ public class MLDataset extends Aggregator {
             MLMeta mlmeta = new MLMeta();
             mlmeta.classify = true;
             mlmeta.features = true;
-            String dataset = conf.getMarket();
+            String dataset = conf.getConfigData().getMarket();
             boolean multi = neuralnetcommand.isMldynamic() || (neuralnetcommand.isMlclassify() && !neuralnetcommand.isMllearn());
             if (multi /*conf.wantMLMP()*/) {
                 doLearnTestClassifyFuture(nnConfigs, conf, mlmeta, neuralnetcommand, dataset);
@@ -203,7 +203,7 @@ public class MLDataset extends Aggregator {
 
     }
 
-    private void doLearnTestClassify(NeuralNetConfigs nnconfigs, MyMyConfig conf, MLMeta mlmeta,
+    private void doLearnTestClassify(NeuralNetConfigs nnconfigs, IclijConfig conf, MLMeta mlmeta,
             NeuralNetCommand neuralnetcommand, String dataset) {
         try {
             for (MLClassifyDao mldao : mldaos) {
@@ -226,7 +226,7 @@ public class MLDataset extends Aggregator {
         }
     }
 
-    private void doLearnTestClassifyFuture(NeuralNetConfigs nnconfigs, MyMyConfig conf, MLMeta mlmeta,
+    private void doLearnTestClassifyFuture(NeuralNetConfigs nnconfigs, IclijConfig conf, MLMeta mlmeta,
             NeuralNetCommand neuralnetcommand, String dataset) {
         try {
             // calculate sections and do ML
@@ -259,7 +259,7 @@ public class MLDataset extends Aggregator {
         }
     }
 
-    private void handleSpentTimes(MyMyConfig conf) {
+    private void handleSpentTimes(IclijConfig conf) {
         if (conf.wantMLTimes()) {
             for (Map.Entry<MLClassifyModel, Long> entry : mapTime.entrySet()) {
                 MLClassifyModel model = entry.getKey();
@@ -273,7 +273,7 @@ public class MLDataset extends Aggregator {
         }
     }
 
-    private void createResultMap(MyMyConfig conf, Map<MLClassifyModel, Map<String, Double[]>> mapResult) {
+    private void createResultMap(IclijConfig conf, Map<MLClassifyModel, Map<String, Double[]>> mapResult) {
         // empty
     }
 
@@ -308,7 +308,7 @@ public class MLDataset extends Aggregator {
 
     @Override
     public Object[] getResultItem(StockItem stock) {
-        String market = conf.getMarket();
+        String market = conf.getConfigData().getMarket();
         String id = stock.getId();
         Pair<String, String> pair = new ImmutablePair<>(market, id);
         Set<Pair<String, String>> ids = new HashSet<>();

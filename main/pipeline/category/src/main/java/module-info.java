@@ -16,6 +16,7 @@ module pipeline.category {
     requires stockutil;
     requires model;
     requires common.model;
+    requires iclij.common.config;
     requires common.config;
     requires common.util;
 }

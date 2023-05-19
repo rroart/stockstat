@@ -1,7 +1,7 @@
 package roart.ml.tensorflow;
 
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.ml.common.MLClassifyModel;
@@ -9,7 +9,7 @@ import roart.ml.model.LearnTestClassify;
 import roart.pipeline.common.aggregate.Aggregator;
 
 public abstract class MLClassifyTensorflowModel extends MLClassifyModel {
-    public MLClassifyTensorflowModel(MyMyConfig conf) {
+    public MLClassifyTensorflowModel(IclijConfig conf) {
         super(conf);
     }
 

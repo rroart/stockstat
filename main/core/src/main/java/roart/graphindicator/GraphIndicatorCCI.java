@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.result.model.GUISize;
@@ -18,7 +18,7 @@ import roart.talib.impl.TalibCCI;
 
 public class GraphIndicatorCCI extends GraphIndicator {
 
-    public GraphIndicatorCCI(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, String title) {
+    public GraphIndicatorCCI(IclijConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, String title) {
         super(conf, string, marketdatamap, periodDataMap, title);
     }
 

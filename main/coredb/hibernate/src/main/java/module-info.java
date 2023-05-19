@@ -8,6 +8,7 @@
 module coredb.hibernate {
     exports roart.db.hibernate;
 
+    requires iclij.common.config;
     requires common.config;
     requires common.model;
     requires common.util;

@@ -11,7 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.constants.FileSystemConstants;
@@ -52,9 +52,9 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
 
     private static Map<String, FileSystemOperations> operationMap = new HashMap();
 
-    protected abstract FileSystemOperations createOperations(String nodename, String configid, MyMyConfig nodeConf);
+    protected abstract FileSystemOperations createOperations(String nodename, String configid, IclijConfig nodeConf);
 
-    private FileSystemOperations getOperations(String nodename, String configid, MyMyConfig nodeConf) {
+    private FileSystemOperations getOperations(String nodename, String configid, IclijConfig nodeConf) {
         FileSystemOperations operations = operationMap.get(configid);
         if (operations == null) {
             operations = createOperations(nodename, configid, nodeConf);

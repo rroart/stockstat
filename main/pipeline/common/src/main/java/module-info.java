@@ -10,6 +10,7 @@ module pipeline.common {
 
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
+    requires iclij.common.config;
     requires common.config;
     requires common.constants;
     requires common.util;

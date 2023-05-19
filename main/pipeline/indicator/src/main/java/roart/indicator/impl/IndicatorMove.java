@@ -3,7 +3,7 @@ package roart.indicator.impl;
 import java.util.List;
 import java.util.Map;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.constants.Constants;
 import roart.common.model.StockItem;
@@ -16,7 +16,7 @@ public class IndicatorMove extends Indicator {
     // fix category/period
     int period;
 
-    public IndicatorMove(MyMyConfig conf, String string, List<StockItem>[] datedstocklists, int period) throws Exception {
+    public IndicatorMove(IclijConfig conf, String string, List<StockItem>[] datedstocklists, int period) throws Exception {
         super(conf, string, period);
         List<StockItem>[] stocklistPeriod = StockUtil.getListSorted(datedstocklists, 2, period);
         Map<String, Integer>[] periodmapArray = StockUtil.getListMove(2, stocklistPeriod, period);

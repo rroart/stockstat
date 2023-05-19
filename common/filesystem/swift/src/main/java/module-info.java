@@ -8,6 +8,7 @@
 module swift {
     exports roart.filesystem.swift;
 
+    requires iclij.common.config;
     requires common.config;
     requires common.constants;
     requires common.filesystem;

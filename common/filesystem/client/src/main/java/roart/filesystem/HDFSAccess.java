@@ -1,11 +1,11 @@
 package roart.filesystem;
 
 import roart.common.constants.EurekaConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 
 public class HDFSAccess extends FileSystemAccess {
 
-    public HDFSAccess(MyMyConfig conf) {
+    public HDFSAccess(IclijConfig conf) {
         super(conf);
     }
     

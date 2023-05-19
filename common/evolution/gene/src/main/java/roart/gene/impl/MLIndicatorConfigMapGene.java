@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Map;
 
 import roart.common.config.ConfigConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.gene.AbstractGene;
 
 public class MLIndicatorConfigMapGene extends ConfigMapGene {
     
-    public MLIndicatorConfigMapGene(List<String> confList, MyMyConfig conf) {
+    public MLIndicatorConfigMapGene(List<String> confList, IclijConfig conf) {
         super(confList, conf);
     }
 

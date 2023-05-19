@@ -38,7 +38,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.Extra;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.config.MyXMLConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
@@ -672,7 +672,7 @@ public class Evolve {
         new FileSystemDao(iclijConfig, curatorClient).writeFile(node, mypath, null, text);
     }
 
-    public static void configCurator(MyMyConfig conf) {
+    public static void configCurator(IclijConfig conf) {
         if (true) {
             RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);        
             String zookeeperConnectionString = conf.getZookeeper();

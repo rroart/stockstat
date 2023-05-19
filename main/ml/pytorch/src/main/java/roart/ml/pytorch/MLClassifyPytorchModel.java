@@ -1,7 +1,7 @@
 package roart.ml.pytorch;
 
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.ml.common.MLClassifyModel;
@@ -9,7 +9,7 @@ import roart.ml.model.LearnTestClassify;
 import roart.pipeline.common.aggregate.Aggregator;
 
 public abstract class MLClassifyPytorchModel extends MLClassifyModel {
-    public MLClassifyPytorchModel(MyMyConfig conf) {
+    public MLClassifyPytorchModel(IclijConfig conf) {
         super(conf);
     }
 

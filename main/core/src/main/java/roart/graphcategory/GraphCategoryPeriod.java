@@ -11,7 +11,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.graphindicator.GraphIndicator;
 import roart.graphindicator.GraphIndicatorMACD;
@@ -31,13 +31,13 @@ public class GraphCategoryPeriod extends GraphCategory {
     Map<String, MarketData> marketdatamap;
     Map<String, PeriodData> periodDataMap;
 
-    public GraphCategoryPeriod(MyMyConfig conf, int i, String periodText, 
+    public GraphCategoryPeriod(IclijConfig conf, int i, String periodText, 
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap) {
         super(conf, periodText);
         this.marketdatamap = marketdatamap;
         this.periodDataMap = periodDataMap;
-        String market = conf.getMarket();
+        String market = conf.getConfigData().getMarket();
         MarketData marketData = marketdatamap.get(market);
         if (MetaUtil.currentYear(marketData, periodText)) {
             indicators.add(new GraphIndicatorMACD(conf, title + " mom", marketdatamap, periodDataMap, title));

@@ -25,7 +25,7 @@ import roart.aggregator.impl.IndicatorAggregator.MergeSubType;
 import roart.aggregator.impl.IndicatorAggregator.MySubType;
 import roart.aggregator.impl.IndicatorAggregator.SubType;
 import roart.category.AbstractCategory;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
@@ -59,7 +59,7 @@ public class MLMACD extends IndicatorAggregator {
         return objectMap;
     }
 
-    public MLMACD(MyMyConfig conf, String string, String title, int category, 
+    public MLMACD(IclijConfig conf, String string, String title, int category, 
             AbstractCategory[] categories, Map<String, String> idNameMap, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         super(conf, string, category, title, idNameMap, categories, datareaders, neuralnetcommand);
     }

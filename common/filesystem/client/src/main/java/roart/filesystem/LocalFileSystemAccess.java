@@ -1,11 +1,11 @@
 package roart.filesystem;
 
 import roart.common.constants.EurekaConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 
 public class LocalFileSystemAccess extends FileSystemAccess {
 
-    public LocalFileSystemAccess(MyMyConfig conf) {
+    public LocalFileSystemAccess(IclijConfig conf) {
         super(conf);
     }
     

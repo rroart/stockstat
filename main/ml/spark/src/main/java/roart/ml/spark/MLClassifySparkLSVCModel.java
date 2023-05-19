@@ -12,7 +12,7 @@ import org.apache.spark.ml.PipelineStage;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
@@ -20,7 +20,7 @@ import roart.common.ml.SparkLORConfig;
 import roart.common.ml.SparkLSVCConfig;
 
 public  class MLClassifySparkLSVCModel  extends MLClassifySparkModel {
-    public MLClassifySparkLSVCModel(MyMyConfig conf) {
+    public MLClassifySparkLSVCModel(IclijConfig conf) {
         super(conf);
     }
     

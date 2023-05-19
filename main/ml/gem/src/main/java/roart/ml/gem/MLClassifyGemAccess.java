@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import roart.common.constants.Constants;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.GemEWCConfig;
 import roart.common.ml.GemGEMConfig;
 import roart.common.ml.GemIConfig;
@@ -47,11 +47,11 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private MyMyConfig conf;
+    private IclijConfig conf;
 
     private String gemServer;
 
-    public MLClassifyGemAccess(MyMyConfig conf) {
+    public MLClassifyGemAccess(IclijConfig conf) {
         this.conf = conf;
         findModels();
         gemServer = conf.getGEMServer();

@@ -8,6 +8,7 @@
 module ml.tensorflow {
     exports roart.ml.tensorflow;
 
+    requires iclij.common.config;
     requires common.config;
     requires common.webflux;
     requires org.slf4j;

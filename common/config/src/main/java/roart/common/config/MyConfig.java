@@ -5,30 +5,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class MyConfig {
+public abstract class MyConfig {
 
+    private ConfigData configData = new ConfigData();
+    
     public MyConfig() {
         super();
     }
 
-    private ConfigTreeMap configTreeMap;
+    public MyConfig(MyConfig config) {
+        // TODO Auto-generated constructor stub
+    }
 
-    private Map<String, Object> configValueMap;
-    
-    private ConfigMaps configMaps;
-    
+    public MyConfig(ConfigData data) {
+        // TODO Auto-generated constructor stub
+    }
+
     //public boolean useSpark = false;
 
     //public String sparkMaster = null;
 
-    protected Date mydate = null;
-
-    protected String mymarket = "0";
-
-    protected String mlmarket = null;
-
-    protected boolean dataset = false;
-    
     /*
 	private Integer mydays = 180;
 
@@ -90,73 +86,12 @@ public class MyConfig {
      */
     //public void config() throws Exception;
 
-    public ConfigTreeMap getConfigTreeMap() {
-        return configTreeMap;
+    public ConfigData getConfigData() {
+        return configData;
     }
 
-    public void setConfigTreeMap(ConfigTreeMap configTreeMap) {
-        this.configTreeMap = configTreeMap;
+    public void setConfigData(ConfigData configData) {
+        this.configData = configData;
     }
-
-    public Map<String, Object> getConfigValueMap() {
-        return configValueMap;
-    }
-
-    public void setConfigValueMap(Map<String, Object> configValueMap) {
-        this.configValueMap = configValueMap;
-    }
-
-    public ConfigMaps getConfigMaps() {
-        return configMaps;
-    }
-
-    public void setConfigMaps(ConfigMaps configMaps) {
-        this.configMaps = configMaps;
-    }
-
-    /**
-     * Set current date
-     * 
-     * @param date
-     */
-
-    public void setdate(Date date) {
-        mydate = date;
-    }
-
-    /**
-     * Get current date
-     * 
-     * @return date
-     */
-
-    public Date getdate() {
-        return mydate;
-    }
-
-    public void setMarket(String value) {
-        mymarket = value;
-    }
-
-    public String getMarket() {
-        return mymarket;
-    }
-
-    public void setMLmarket(String value) {
-        mlmarket = value;
-    }
-
-    public String getMLmarket() {
-        return mlmarket;
-    }
-
-    public boolean isDataset() {
-        return dataset;
-    }
-
-    public void setDataset(boolean dataset) {
-        this.dataset = dataset;
-    }
-
 
 }

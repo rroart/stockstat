@@ -75,7 +75,7 @@ public class ComponentData {
         this.input = componentparam.input;
         this.input.setValuemap(new HashMap<>(componentparam.input.getValuemap()));
         this.service = componentparam.service;
-        this.service.conf.setConfigValueMap(new HashMap<>(this.service.conf.getConfigValueMap()));
+        this.service.conf.getConfigData().setConfigValueMap(new HashMap<>(this.service.conf.getConfigData().getConfigValueMap()));
         this.category = componentparam.category;
         this.categoryTitle = componentparam.categoryTitle;
         this.setBaseDate(componentparam.getBaseDate());
@@ -89,7 +89,7 @@ public class ComponentData {
         this.volumeMap = componentparam.volumeMap;
         this.usedsec = componentparam.usedsec;
         this.updateMap = new HashMap<>(); //componentparam.updateMap;
-        this.configValueMap = new HashMap<>(this.service.conf.getConfigValueMap());
+        this.configValueMap = new HashMap<>(this.service.conf.getConfigData().getConfigValueMap());
         this.action = componentparam.action;
         this.disableList = componentparam.disableList;
         this.timings = componentparam.timings;
@@ -107,14 +107,14 @@ public class ComponentData {
     public static ComponentData getParam(IclijConfig iclijConfig, ComponentInput input, int days, Market aMarket) throws Exception {
         ComponentData param = new ComponentData(input);
         //param.setAction(IclijConstants.FINDPROFIT);
-        String market = input.getConfig().getMarket();
-        String mlmarket = input.getConfig().getMlmarket();
+        String market = input.getConfig().getConfigData().getMarket();
+        String mlmarket = input.getConfig().getConfigData().getMlmarket();
         ControlService srv = new ControlService(iclijConfig);
         param.setService(srv);
         if (market != null) {
-            srv.conf.setMarket(market);
+            srv.conf.getConfigData().setMarket(market);
             param.getInput().setMarket(market);
-            srv.conf.setMLmarket(mlmarket);
+            srv.conf.getConfigData().setMlmarket(mlmarket);
             param.getInput().setMlmarket(mlmarket);
         }
         // verification days, 0 or something
@@ -154,7 +154,7 @@ public class ComponentData {
     public void setService(ControlService service) {
         this.service = service;
         service.getConfig();
-        this.configValueMap = new HashMap<>(service.conf.getConfigValueMap());
+        this.configValueMap = new HashMap<>(service.conf.getConfigData().getConfigValueMap());
     }
 
     public Map<String, Object> getConfigValueMap() {
@@ -341,7 +341,7 @@ public class ComponentData {
     }
     
     public void getAndSetCategoryValueMap() {
-        getService().conf.setdate(TimeUtil.convertDate(this.getFutureDate()));
+        getService().conf.getConfigData().setDate(getFutureDate());
         Map<String, Object> setValueMap = new HashMap<>();
         setValueMap.put(ConfigConstants.AGGREGATORS, Boolean.FALSE);
         setValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
@@ -351,8 +351,8 @@ public class ComponentData {
         setValueMap.put(ConfigConstants.MISCTHRESHOLD, null);
         setValueMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
         setValueMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
-        service.conf.setConfigValueMap(new HashMap<>(configValueMap));
-        service.conf.getConfigValueMap().putAll(setValueMap);
+        service.conf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
+        service.conf.getConfigData().getConfigValueMap().putAll(setValueMap);
         Map<String, Map<String, Object>> result = getService().getContent();
         this.resultMaps = result;
         try {
@@ -370,7 +370,7 @@ public class ComponentData {
     }
 
     public void getAndSetWantedCategoryValueMap() {
-        getService().conf.setdate(TimeUtil.convertDate(this.getFutureDate()));
+        getService().conf.getConfigData().setDate(getFutureDate());
         Map<String, Object> setValueMap = new HashMap<>();
         setValueMap.put(ConfigConstants.AGGREGATORS, Boolean.FALSE);
         setValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
@@ -382,8 +382,8 @@ public class ComponentData {
         setValueMap.put(ConfigConstants.MISCMYDAYS, 0);
         setValueMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
         setValueMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
-        service.conf.setConfigValueMap(new HashMap<>(configValueMap));
-        service.conf.getConfigValueMap().putAll(setValueMap);
+        service.conf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
+        service.conf.getConfigData().getConfigValueMap().putAll(setValueMap);
         Map<String, Map<String, Object>> result = getService().getContent();
         this.resultMaps = result;
         try {
@@ -406,14 +406,14 @@ public class ComponentData {
 
     public Map<String, Object> getResultMap(String mapName, Map<String, Object> setValueMap) {
         zerokey(configValueMap);
-        service.conf.setConfigValueMap(new HashMap<>(configValueMap));
+        service.conf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
         zerokey(setValueMap);
-        service.conf.getConfigValueMap().putAll(setValueMap);
+        service.conf.getConfigData().getConfigValueMap().putAll(setValueMap);
         if (updateMap != null) {
             zerokey(updateMap);
-            service.conf.getConfigValueMap().putAll(updateMap);
+            service.conf.getConfigData().getConfigValueMap().putAll(updateMap);
         }
-        service.conf.setdate(TimeUtil.convertDate(this.getBaseDate()));
+        service.conf.getConfigData().setDate(getBaseDate());
         Map<String, Map<String, Object>> maps = service.getContent(getDisableList());
         this.resultMaps = maps;
         System.out.println(maps.keySet());

@@ -15,7 +15,7 @@ import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.constants.FileSystemConstants;
@@ -37,11 +37,11 @@ public class FileSystemDao {
 
     //private static Map<String, MyServer> myservers = new HashMap<>();
 
-    private static MyMyConfig conf;
+    private static IclijConfig conf;
 
     private static CuratorFramework curatorClient;
     
-    public FileSystemDao(MyMyConfig conf, CuratorFramework curatorClient) {
+    public FileSystemDao(IclijConfig conf, CuratorFramework curatorClient) {
 	this.conf = conf;
 	this.curatorClient = curatorClient;
     }

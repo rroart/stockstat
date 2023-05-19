@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.client.ResourceAccessException;
 
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
@@ -42,13 +42,13 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private MyMyConfig conf;
+    private IclijConfig conf;
 
     private List<String> tensorflowServers;
 
     private List<MLClassifyModel>  mymodels;
 
-    public MLClassifyTensorflowAccess(MyMyConfig conf) {
+    public MLClassifyTensorflowAccess(IclijConfig conf) {
         this.conf = conf;
         findModels();
         String serverString = conf.getTensorflowServer();

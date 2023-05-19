@@ -93,9 +93,9 @@ public class IclijXMLConfig {
             System.exit(1);
         }
         Document doc = configxml.getDocument();
-        configInstance.setConfigTreeMap(new ConfigTreeMap());
-        configInstance.setConfigValueMap(new HashMap<String, Object>());
-        configInstance.setConfigMaps(configMaps);
+        configInstance.getConfigData().setConfigTreeMap(new ConfigTreeMap());
+        configInstance.getConfigData().setConfigValueMap(new HashMap<String, Object>());
+        configInstance.getConfigData().setConfigMaps(configMaps);
         /*
         IclijConfigConstantMaps.makeDefaultMap();
         IclijConfigConstantMaps.makeTextMap();
@@ -125,7 +125,7 @@ public class IclijXMLConfig {
             printout();
             doc = configxml.getDocument();
             if (doc != null) {
-                handleDoc(doc.getDocumentElement(), configInstance.getConfigTreeMap(), "");
+                handleDoc(doc.getDocumentElement(), configInstance.getConfigData().getConfigTreeMap(), "");
             }
             setValues(configMaps);
         }
@@ -145,16 +145,16 @@ public class IclijXMLConfig {
         setValues(iter, "" /*root*/, configMaps);
         //iter.get
         //List<HierarchicalConfiguration<ImmutableNode>> iter3 = configxml.childConfigurationsAt(elem);
-        Set<String> setKeys = configInstance.getConfigValueMap().keySet();
-        Set<String> dfltKeys = configInstance.getConfigMaps().deflt.keySet();
+        Set<String> setKeys = configInstance.getConfigData().getConfigValueMap().keySet();
+        Set<String> dfltKeys = configInstance.getConfigData().getConfigMaps().deflt.keySet();
         dfltKeys.removeAll(setKeys);
         log.info("keys to set {}", dfltKeys);
         for (String key : dfltKeys) {
-            ConfigTreeMap map = configInstance.getConfigTreeMap();
+            ConfigTreeMap map = configInstance.getConfigData().getConfigTreeMap();
             ConfigTreeMap.insert(map.getConfigTreeMap(), key, key, "", configMaps.deflt);
             Object object = configMaps.deflt.get(key);
-            if (configInstance.getConfigValueMap().get(key) == null) {
-                configInstance.getConfigValueMap().put(key, object);
+            if (configInstance.getConfigData().getConfigValueMap().get(key) == null) {
+                configInstance.getConfigData().getConfigValueMap().put(key, object);
             }
         }
         int jj = 0;
@@ -240,7 +240,7 @@ public class IclijXMLConfig {
                 String pri = (String) elem2.getProperty("[@priority]");
                 if (pri != null) {
                     Integer priority = Integer.valueOf(pri);
-                    configInstance.getConfigValueMap().put(node0 + "[@priority]", priority);
+                    configInstance.getConfigData().getConfigValueMap().put(node0 + "[@priority]", priority);
                     System.out.println("pri " + node0 + " " + pri);
                 }
             } else {
@@ -267,11 +267,11 @@ public class IclijXMLConfig {
                     log.info("unknown {}", myclass.getName());
                 }
                 log.info("Node value {} {}", node0, o);
-                configInstance.getConfigValueMap().put(node0, o);
+                configInstance.getConfigData().getConfigValueMap().put(node0, o);
                 String pri = (String) elem2.getProperty("[@priority]");
                 if (pri != null) {
                     Integer priority = Integer.valueOf(pri);
-                    configInstance.getConfigValueMap().put(node0 + "[@priority]", priority);
+                    configInstance.getConfigData().getConfigValueMap().put(node0 + "[@priority]", priority);
                     log.info("Pri {} {} ", node0, pri);
                 }
             }
@@ -325,7 +325,7 @@ public class IclijXMLConfig {
                 //System.out.println("unknown " + myclass.getName());
                 log.info("unknown " + myclass.getName());
             }
-            configInstance.getConfigValueMap().put(s, o);
+            configInstance.getConfigData().getConfigValueMap().put(s, o);
         }
     }
 
@@ -417,7 +417,7 @@ public class IclijXMLConfig {
         if (id != null && !id.isEmpty()) {
             name = name + "[@id=" +id + "]";
             mytext = mytext + "[@id=" +id + "]";
-            configInstance.getConfigMaps().deflt.put(baseString + "." + name, String.class);
+            configInstance.getConfigData().getConfigMaps().deflt.put(baseString + "." + name, String.class);
         }
         String attribute = documentElement.getAttribute("enable");
         NodeList elements = documentElement.getChildNodes();
@@ -672,7 +672,7 @@ public class IclijXMLConfig {
     public static List<Market> getMarkets(IclijConfig config) throws JsonParseException, JsonMappingException, IOException {
         List<Market> retList = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
-        ConfigTreeMap map = config.getConfigTreeMap().search("markets.marketlist");
+        ConfigTreeMap map = config.getConfigData().getConfigTreeMap().search("markets.marketlist");
         if (map == null) {
             return retList;
         }
@@ -708,7 +708,7 @@ public class IclijXMLConfig {
     public static List<Extra> getMarketImportants(IclijConfig config) throws JsonParseException, JsonMappingException, IOException {
         List<Extra> retList = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
-        ConfigTreeMap map = config.getConfigTreeMap().search("markets.importants");
+        ConfigTreeMap map = config.getConfigData().getConfigTreeMap().search("markets.importants");
         if (map == null) {
             return retList;
         }
@@ -733,7 +733,7 @@ public class IclijXMLConfig {
     public static List<SimulateFilter[]> getSimulate(IclijConfig config) throws JsonParseException, JsonMappingException, IOException {
         List<SimulateFilter[]> retList = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
-        ConfigTreeMap map = config.getConfigTreeMap().search("markets.simulate");
+        ConfigTreeMap map = config.getConfigData().getConfigTreeMap().search("markets.simulate");
         if (map == null) {
             //return retList;
         }
@@ -770,7 +770,7 @@ public class IclijXMLConfig {
 
     private static MLConfigs getDefaultMlConfigs(IclijConfig config, ObjectMapper mapper, String text) {
         text = text.replaceFirst("\\[@id=[a-z0-9]*\\]", "[@id]");
-        String mlConfigsString = (String) config.getConfigMaps().deflt.get(text + ".mlconfig");
+        String mlConfigsString = (String) config.getConfigData().getConfigMaps().deflt.get(text + ".mlconfig");
         try {
             return mapper.readValue(mlConfigsString, MLConfigs.class);
         } catch (Exception e) {
@@ -784,7 +784,7 @@ public class IclijXMLConfig {
         ConfigTreeMap value = configMap.getConfigTreeMap().get(key);
         if (value != null) {
             String name = value.getName();
-            String atext = (String) config.getConfigValueMap().get(name);
+            String atext = (String) config.getConfigData().getConfigValueMap().get(name);
             try {
                 return mapper.readValue(atext, myclass);
             } catch (Exception e) {
@@ -804,12 +804,12 @@ public class IclijXMLConfig {
     public static List<MarketFilter> getFilterMarkets(IclijConfig config) throws JsonParseException, JsonMappingException, IOException {
         List<MarketFilter> retList = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
-        ConfigTreeMap map = config.getConfigTreeMap().search("markets.filtermarkets");
-        log.info("Keyset {}", config.getConfigValueMap().keySet());
+        ConfigTreeMap map = config.getConfigData().getConfigTreeMap().search("markets.filtermarkets");
+        log.info("Keyset {}", config.getConfigData().getConfigValueMap().keySet());
         for (Entry<String, ConfigTreeMap> entry : map.getConfigTreeMap().entrySet()) {
             ConfigTreeMap value = entry.getValue();
             String text = entry.getValue().getName();
-            String text2 = (String) config.getConfigValueMap().get(text);
+            String text2 = (String) config.getConfigData().getConfigValueMap().get(text);
             Map<String, ConfigTreeMap> aMap = entry.getValue().getConfigTreeMap();
             MarketFilter market = mapper.readValue(text2, new TypeReference<MarketFilter>(){});
             retList.add(market);

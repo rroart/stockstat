@@ -66,7 +66,7 @@ public class DatasetAction extends MarketAction {
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
             Memories positions = null;
-            param.getService().conf.setDataset(true);
+            param.getService().conf.getConfigData().setDataset(true);
             ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, null, null, getParent() != null);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {

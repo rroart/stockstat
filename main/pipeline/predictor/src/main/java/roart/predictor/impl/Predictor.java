@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import roart.category.AbstractCategory;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.ResultMetaConstants;
 import roart.common.ml.NeuralNetCommand;
@@ -49,7 +49,7 @@ import roart.stockutil.StockUtil;
 
 public abstract class Predictor extends AbstractPredictor {
 
-    public Predictor(MyMyConfig conf, String string, int category, NeuralNetCommand neuralnetcommand, Map<String, MarketData> marketdatamap, AbstractCategory[] categories, Pipeline[] datareaders) {
+    public Predictor(IclijConfig conf, String string, int category, NeuralNetCommand neuralnetcommand, Map<String, MarketData> marketdatamap, AbstractCategory[] categories, Pipeline[] datareaders) {
         super(conf, string, category, neuralnetcommand);
         if (!isEnabled()) {
             return;
@@ -146,12 +146,11 @@ public abstract class Predictor extends AbstractPredictor {
 
     // make an oo version of this
     @Override
-    public void calculate() throws Exception { // MyMyConfig conf, Map<String, MarketData> marketdatamap,
+    public void calculate() throws Exception { // IclijConfig conf, Map<String, MarketData> marketdatamap,
         if (!isEnabled()) {
             return;
         }
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-        String dateme = dt.format(conf.getdate());
 
         AbstractCategory cat = StockUtil.getWantedCategory(categories, category);
         if (cat == null) {
@@ -239,7 +238,7 @@ public abstract class Predictor extends AbstractPredictor {
 
     protected abstract String getNeuralNetConfig();
 
-    private void doPredictions(MyMyConfig conf, Map<MLClassifyModel, Map<String, Double[]>> mapResult, Map<String, Double[][]> aListMap, Map<String, double[][]> aTruncListMap, NeuralNetConfigs nnConfigs, int days, Double threshold) {
+    private void doPredictions(IclijConfig conf, Map<MLClassifyModel, Map<String, Double[]>> mapResult, Map<String, Double[][]> aListMap, Map<String, double[][]> aTruncListMap, NeuralNetConfigs nnConfigs, int days, Double threshold) {
         try {
             for (MLClassifyDao mldao : mldaos) {
                 if (mldao.getModels().size() != 1) {
@@ -297,7 +296,7 @@ public abstract class Predictor extends AbstractPredictor {
                     mlmeta.dim1 = 10;
                     mlmeta.classify = true;
                     mlmeta.features = true;
-                    String filename = getFilename(mldao, model, "" + conf.getPredictorsDays(), "" + conf.getPredictorsFuturedays(), conf.getMarket(), null);
+                    String filename = getFilename(mldao, model, "" + conf.getPredictorsDays(), "" + conf.getPredictorsFuturedays(), conf.getConfigData().getMarket(), null);
                     String path = model.getPath();
                     LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, null, map, model, conf.getPredictorsDays(), conf.getPredictorsFuturedays(), mapTime, classifylist, null, path, filename, neuralnetcommand, mlmeta, false);  
                     lossMap.put(mldao.getName() + model.getName(), result.getLoss());
@@ -358,7 +357,7 @@ public abstract class Predictor extends AbstractPredictor {
         return accuracy;
     }
 
-    private Map<String, Double[]> getMapResult(MyMyConfig conf, MLClassifyDao mldao, int horizon, int windowsize,
+    private Map<String, Double[]> getMapResult(IclijConfig conf, MLClassifyDao mldao, int horizon, int windowsize,
             int epochs, MLClassifyModel model, Map<String, Double[][]> aListMap, Map<String, double[][]> aTruncListMap) {
         Map<String, Double[]> localMapResult = new HashMap<>();
         for (String id : aListMap.keySet()) {
@@ -384,7 +383,7 @@ public abstract class Predictor extends AbstractPredictor {
         return labelMap1;
     }
 
-    private void createResultMap(MyMyConfig conf, Map<Double, Map<MLClassifyModel, Map<String, Double[]>>> mapResult0, Map<String, Double[][]> aListMap) {
+    private void createResultMap(IclijConfig conf, Map<Double, Map<MLClassifyModel, Map<String, Double[]>>> mapResult0, Map<String, Double[][]> aListMap) {
         Map<Double, String> labelMapShort = createLabelMapShort();
         for (String id : listMap.keySet()) {
             Object[] fields = new Object[fieldSize];
@@ -422,7 +421,7 @@ public abstract class Predictor extends AbstractPredictor {
         }
     }
 
-    private void handleSpentTime(MyMyConfig conf) {
+    private void handleSpentTime(IclijConfig conf) {
         if (conf.wantMLTimes()) {
             for (Entry<MLClassifyModel, Long> entry : mapTime.entrySet()) {
                 MLClassifyModel model = entry.getKey();
@@ -474,7 +473,7 @@ public abstract class Predictor extends AbstractPredictor {
 
     @Override
     public Object[] getResultItem(StockItem stock) {
-        String market = conf.getMarket();
+        String market = conf.getConfigData().getMarket();
         String id = stock.getId();
         Pair<String, String> pair = new ImmutablePair<>(market, id);
         Set<Pair<String, String>> ids = new HashSet<>();
@@ -539,7 +538,7 @@ public abstract class Predictor extends AbstractPredictor {
     }
 
     public String getFilename(MLClassifyDao dao, MLClassifyModel model, String in, String out, String market, List indicators) {
-        String testmarket = conf.getMLmarket();
+        String testmarket = conf.getConfigData().getMlmarket();
         if (testmarket != null) {
             market = testmarket;
         }
@@ -547,7 +546,7 @@ public abstract class Predictor extends AbstractPredictor {
     }
 
     private Double[] getThresholds() {
-        boolean gui = conf.getConfigValueMap().get(ConfigConstants.MISCTHRESHOLD) != null;
+        boolean gui = conf.getConfigData().getConfigValueMap().get(ConfigConstants.MISCTHRESHOLD) != null;
         log.info("GUI thresholds {}", gui);
         String thresholdString = conf.getAggregatorsIndicatorThreshold();
         if (gui) {

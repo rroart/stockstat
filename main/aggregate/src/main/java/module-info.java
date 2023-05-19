@@ -9,6 +9,7 @@ module aggregate {
     exports roart.aggregator.impl;
     exports roart.aggregatorindicator.impl;
     
+    requires iclij.common.config;
     requires common.config;
     requires common.constants;
     requires common.model;

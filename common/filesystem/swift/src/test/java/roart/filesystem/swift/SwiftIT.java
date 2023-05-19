@@ -3,7 +3,7 @@ package roart.filesystem.swift;
 import org.junit.jupiter.api.Test;
 
 import roart.common.config.ConfigConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.FileSystemConstants;
 import roart.common.filesystem.FileSystemBooleanResult;
 import roart.common.filesystem.FileSystemFileObjectParam;

@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import roart.common.config.ConfigConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 
 public abstract class RSIRecommend extends RecommendRSI {
     
-    public RSIRecommend(MyMyConfig conf) {
+    public RSIRecommend(IclijConfig conf) {
         super(conf);
     }
 

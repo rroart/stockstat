@@ -10,6 +10,7 @@ module pipeline.indicator {
     exports roart.indicator.util;
     exports roart.pipeline.impl;
     
+    requires iclij.common.config;
     requires common.config;
     requires common.constants;
     requires commons.math3;

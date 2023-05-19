@@ -152,7 +152,7 @@ public abstract class Component {
         	valueMap.putAll(getValueMap(action, param.getAction(), market, param, subcomponent, mlmarket, parameters));
         }
         String pipeline = getPipeline();
-        param.getService().conf.getConfigValueMap().putAll(valueMap);
+        param.getService().conf.getConfigData().getConfigValueMap().putAll(valueMap);
         Map<String, Object> scoreMap = new HashMap<>();
         Object[] scoreDescription = new Object[] { null, null };
         long time0 = System.currentTimeMillis();

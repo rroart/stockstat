@@ -17,10 +17,11 @@ import roart.common.config.CacheConstants;
 import roart.common.config.ConfigConstantMaps;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.config.MyXMLConfig;
 import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
+import roart.common.util.TimeUtil;
 import roart.common.cache.MyCache;
 import roart.db.common.DbAccess;
 import roart.db.dao.util.StockETL;
@@ -63,7 +64,7 @@ public class DbDao {
 
     /*
     @Deprecated
-    public Map<String, Object[]> doCalculationsArr(MyMyConfig conf, Map<String, double[][]> listMap, String key, AbstractIndicator indicator, boolean wantPercentizedPriceIndex) {
+    public Map<String, Object[]> doCalculationsArr(IclijConfig conf, Map<String, double[][]> listMap, String key, AbstractIndicator indicator, boolean wantPercentizedPriceIndex) {
         if (access == null) {
             return null;
         }
@@ -71,8 +72,8 @@ public class DbDao {
     }
     */
 
-    public List<StockItem> getAll(String market, MyMyConfig conf) throws Exception {
-        String key = CacheConstants.STOCKS + market + conf.getdate();
+    public List<StockItem> getAll(String market, IclijConfig conf) throws Exception {
+        String key = CacheConstants.STOCKS + market + conf.getConfigData().getDate();
         log.info("StockItem getall {}", key);
         List<StockItem> list = (List<StockItem>) MyCache.getInstance().get(key);
         if (list != null) {
@@ -87,16 +88,17 @@ public class DbDao {
         return list;
     }
 
-    public List<String> getDates(String market, MyMyConfig conf) throws Exception {
-        String key = CacheConstants.DATES + conf.getMarket() + conf.getdate();
+    public List<String> getDates(String market, IclijConfig conf) throws Exception {
+        String key = CacheConstants.DATES + conf.getConfigData().getMarket() + conf.getConfigData().getDate();
         List<String> list =  (List<String>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
         long time0 = System.currentTimeMillis();
         List<Date> dates = access.getDates(market);
-        if (conf.getdate() != null) {
-        dates = dates.stream().filter(e -> !e.after(conf.getdate())).collect(Collectors.toList());
+        if (conf.getConfigData().getDate() != null) {
+            Date confDate = TimeUtil.convertDate(conf.getConfigData().getDate());
+        dates = dates.stream().filter(e -> !e.after(confDate)).collect(Collectors.toList());
         }
         List<String> retlist = StockETL.filterWeekendConvert(conf, dates);
         log.info("StockItem getall {}", (System.currentTimeMillis() - time0) / 1000);
@@ -135,7 +137,7 @@ public class DbDao {
         return metas;
     }
 
-    public MetaItem getById(String market, MyMyConfig conf) throws Exception {
+    public MetaItem getById(String market, IclijConfig conf) throws Exception {
         return access.getMetaByMarket(market);
     }
 }

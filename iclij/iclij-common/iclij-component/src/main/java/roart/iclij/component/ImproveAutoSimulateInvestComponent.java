@@ -76,16 +76,16 @@ public class ImproveAutoSimulateInvestComponent extends ComponentML {
                     }
                     LocalDate end = start.plusMonths(time);
                     endDate = TimeUtil.convertDate2(end);
-                    config.getConfigValueMap().put(IclijConfigConstants.AUTOSIMULATEINVESTSTARTDATE, startDate);
-                    config.getConfigValueMap().put(IclijConfigConstants.AUTOSIMULATEINVESTENDDATE, endDate);
+                    config.getConfigData().getConfigValueMap().put(IclijConfigConstants.AUTOSIMULATEINVESTSTARTDATE, startDate);
+                    config.getConfigData().getConfigValueMap().put(IclijConfigConstants.AUTOSIMULATEINVESTENDDATE, endDate);
                     ComponentData ret2 = component.handle(action, market, newComponentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent);
                     Map<String, Double> scoreMap2 = ret2.getScoreMap();
                     scores.add(scoreMap2.get(SimConstants.SCORE));
                     startDate = endDate;
                 }
                 scoreMap.put(SimConstants.SCORE, Collections.min(scores));
-                config.getConfigValueMap().put(IclijConfigConstants.AUTOSIMULATEINVESTSTARTDATE, startDateOrig);
-                config.getConfigValueMap().put(IclijConfigConstants.AUTOSIMULATEINVESTENDDATE, endDateOrig);
+                config.getConfigData().getConfigValueMap().put(IclijConfigConstants.AUTOSIMULATEINVESTSTARTDATE, startDateOrig);
+                config.getConfigData().getConfigValueMap().put(IclijConfigConstants.AUTOSIMULATEINVESTENDDATE, endDateOrig);
             }
             return ret;
         }

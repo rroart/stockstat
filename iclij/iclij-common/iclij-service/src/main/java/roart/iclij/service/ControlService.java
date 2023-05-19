@@ -2,9 +2,10 @@ package roart.iclij.service;
 
 import roart.common.config.CacheConstants;
 import roart.common.config.ConfigConstants;
+import roart.common.config.ConfigData;
 import roart.common.config.ConfigTreeMap;
-import roart.common.config.MyConfig;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.inmemory.factory.InmemoryFactory;
@@ -71,12 +72,12 @@ public class ControlService {
   
     public void getConfig() {
         String key = CacheConstants.CONFIG;
-        IclijConfig list = ( IclijConfig) MyCache.getInstance().get(key);
+        ConfigData list = (ConfigData) MyCache.getInstance().get(key);
         if (list == null) {
         IclijServiceParam param = new IclijServiceParam();
         param.setConfig(conf);
         IclijServiceResult result = sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG);
-        list = result.getConfig();
+        list = result.getConfigData();
         MyCache.getInstance().put(key, list);
         }
         /*
@@ -89,7 +90,7 @@ public class ControlService {
         */
         //ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONFIG);
         conf = new  IclijConfig(list);
-        Map<String, Object> map = conf.getConfigValueMap();
+        Map<String, Object> map = conf.getConfigData().getConfigValueMap();
         for (String akey : map.keySet()) {
             Object value = map.get(akey);
             //System.out.println("k " + key + " " + value + " " + value.getClass().getName());
@@ -98,7 +99,7 @@ public class ControlService {
                 //System.out.println("cls " + value.getClass().getName());
             }
         }
-        ConfigTreeMap map2 = conf.getConfigTreeMap();
+        ConfigTreeMap map2 = conf.getConfigData().getConfigTreeMap();
         print(map2, 0);
        
     }
@@ -195,7 +196,7 @@ public class ControlService {
     }
     
     public List<String> getDates(String market) {
-        String key = CacheConstants.DATES + conf.getMarket() + conf.getdate();
+        String key = CacheConstants.DATES + conf.getConfigData().getMarket() + conf.getConfigData().getDate();
         List<String> list =  (List<String>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
@@ -225,7 +226,7 @@ public class ControlService {
         long[] mem0 = MemUtil.mem();
         log.info("MEM {}", MemUtil.print(mem0));
 
-        String key = CacheConstants.CONTENT + conf.getMarket() + conf.getMLmarket() + conf.getdate() + conf.getConfigValueMap();
+        String key = CacheConstants.CONTENT + conf.getConfigData().getMarket() + conf.getConfigData().getMlmarket() + conf.getConfigData().getDate() + conf.getConfigData().getConfigValueMap();
         Map<String, Map<String, Object>> list = (Map<String, Map<String, Object>>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;

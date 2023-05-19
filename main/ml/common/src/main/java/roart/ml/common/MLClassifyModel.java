@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.config.ConfigConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
@@ -25,17 +25,17 @@ public abstract class MLClassifyModel {
     
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private MyMyConfig conf;
+    private IclijConfig conf;
 
-    public MyMyConfig getConf() {
+    public IclijConfig getConf() {
         return conf;
     }
 
-    public void setConf(MyMyConfig conf) {
+    public void setConf(IclijConfig conf) {
         this.conf = conf;
     }
 
-    public MLClassifyModel(MyMyConfig conf) {
+    public MLClassifyModel(IclijConfig conf) {
         this.conf = conf;
     }
 
@@ -86,7 +86,7 @@ public abstract class MLClassifyModel {
 
     protected <T> T convert(Class<T> clazz) {
         try {
-            return new ObjectMapper().readValue((String) getConf().getConfigValueMap().get(getKey()), clazz);
+            return new ObjectMapper().readValue((String) getConf().getConfigData().getConfigValueMap().get(getKey()), clazz);
         } catch (Exception e) {
             log.info(Constants.ERROR);
             return null;
@@ -97,7 +97,7 @@ public abstract class MLClassifyModel {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL, true);
-            return mapper.readValue((String) getConf().getConfigMaps().deflt.get(getKey()), clazz);
+            return mapper.readValue((String) getConf().getConfigData().getConfigMaps().deflt.get(getKey()), clazz);
         } catch (IOException e) {
             log.error(Constants.EXCEPTION, e);
             return null;

@@ -16,7 +16,7 @@ import org.springframework.web.client.ResourceAccessException;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
@@ -39,13 +39,13 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private MyMyConfig conf;
+    private IclijConfig conf;
 
     private List<String> pytorchServers;
 
     private List<MLClassifyModel>  mymodels;
 
-    public MLClassifyPytorchAccess(MyMyConfig conf) {
+    public MLClassifyPytorchAccess(IclijConfig conf) {
         this.conf = conf;
         findModels();
         String serverString = conf.getPytorchServer();

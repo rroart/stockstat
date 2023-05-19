@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import roart.pipeline.Pipeline;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.impl.IndicatorRSI;
@@ -16,7 +16,7 @@ public abstract class RecommendSTOCH extends Recommend {
 
     public static AbstractIndicator indicator;
     
-    public RecommendSTOCH(MyMyConfig conf) {
+    public RecommendSTOCH(IclijConfig conf) {
         super(conf);
     }
 
@@ -39,7 +39,7 @@ public abstract class RecommendSTOCH extends Recommend {
         return PipelineConstants.INDICATORSTOCH;
     }
 /*
-    public static List<Recommend> getClasses(MyMyConfig conf) {
+    public static List<Recommend> getClasses(IclijConfig conf) {
         List<Recommend> all = new ArrayList<>();
         all.add(new RSIRecommendSimple(conf));
         all.add(new RSIRecommendComplex(conf));

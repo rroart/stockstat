@@ -12,6 +12,7 @@ module evolution.gene {
 
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
+    requires iclij.common.config;
     requires common.config;
     requires evolution.model;
     requires common.util;

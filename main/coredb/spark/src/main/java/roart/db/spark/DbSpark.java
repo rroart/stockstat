@@ -1,6 +1,6 @@
 package roart.db.spark;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
@@ -55,7 +55,7 @@ public class DbSpark {
     private static Properties prop;
 
     //private static Model model;
-    public DbSpark(MyMyConfig conf) {
+    public DbSpark(IclijConfig conf) {
 
         try {
             String sparkmaster = conf.getDbSparkMaster();

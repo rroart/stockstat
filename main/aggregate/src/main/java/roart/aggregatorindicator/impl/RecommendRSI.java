@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import roart.pipeline.Pipeline;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.impl.IndicatorRSI;
@@ -15,7 +15,7 @@ public abstract class RecommendRSI extends Recommend {
 
     public static AbstractIndicator indicator;
     
-    public RecommendRSI(MyMyConfig conf) {
+    public RecommendRSI(IclijConfig conf) {
         super(conf);
     }
 
@@ -38,7 +38,7 @@ public abstract class RecommendRSI extends Recommend {
         return PipelineConstants.INDICATORRSI;
     }
 /*
-    public static List<Recommend> getClasses(MyMyConfig conf) {
+    public static List<Recommend> getClasses(IclijConfig conf) {
         List<Recommend> all = new ArrayList<>();
         all.add(new RSIRecommendSimple(conf));
         all.add(new RSIRecommendComplex(conf));

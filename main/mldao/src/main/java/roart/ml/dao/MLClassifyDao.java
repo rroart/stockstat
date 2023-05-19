@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.ml.common.MLClassifyAccess;
@@ -28,11 +28,11 @@ public class MLClassifyDao {
 
     private MLClassifyAccess access = null;
 
-    public MLClassifyDao(String instance, MyMyConfig conf) {
+    public MLClassifyDao(String instance, IclijConfig conf) {
         instance(instance, conf);
     }
 
-    private void instance(String type, MyMyConfig conf) {
+    private void instance(String type, IclijConfig conf) {
         log.info("instance {}", type);
         if (type == null) {
             return;

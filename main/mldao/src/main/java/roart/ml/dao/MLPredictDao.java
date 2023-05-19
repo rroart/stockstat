@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.HashSet;
 
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.ml.model.LearnTestPredictResult;
 import roart.ml.model.MLPredictAccess;
@@ -27,11 +27,11 @@ public class MLPredictDao {
 
     private MLPredictAccess access = null;
 
-    public MLPredictDao(String instance, MyMyConfig conf) {
+    public MLPredictDao(String instance, IclijConfig conf) {
         instance(instance, conf);
     }
 
-    private void instance(String type, MyMyConfig conf) {
+    private void instance(String type, IclijConfig conf) {
         log.info("instance {}", type);
         if (type == null) {
             return;

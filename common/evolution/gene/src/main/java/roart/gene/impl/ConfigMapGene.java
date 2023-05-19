@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.util.MathUtil;
 import roart.gene.AbstractGene;
 
@@ -25,9 +25,9 @@ public class ConfigMapGene extends AbstractGene {
 
     protected List<String> confList;
 
-    private MyMyConfig conf;
+    private IclijConfig conf;
     
-    public ConfigMapGene(List<String> confList, MyMyConfig conf) {
+    public ConfigMapGene(List<String> confList, IclijConfig conf) {
         this.confList = confList;
         this.conf = conf;
     }
@@ -77,8 +77,8 @@ public class ConfigMapGene extends AbstractGene {
 
     private void generateConfigNum(Random rand, int confint) {
         String confName = confList.get(confint);
-        Double[] range = conf.getConfigMaps().range.get(confName);
-        Class type = conf.getConfigMaps().map.get(confName);
+        Double[] range = conf.getConfigData().getConfigMaps().range.get(confName);
+        Class type = conf.getConfigData().getConfigMaps().map.get(confName);
         if (changedSpecial(map, confName, type)) {
             return;
         }

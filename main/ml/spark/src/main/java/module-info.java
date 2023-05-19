@@ -9,6 +9,7 @@ module ml.spark {
     exports roart.ml.spark;
     exports roart.ml.spark.util;
 
+    requires iclij.common.config;
     requires common.config;
     requires common.constants;
     requires pipeline.common;

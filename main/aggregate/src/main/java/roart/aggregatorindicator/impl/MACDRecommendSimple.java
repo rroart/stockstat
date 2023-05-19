@@ -13,15 +13,15 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import roart.common.config.ConfigConstants;
-import roart.common.config.MyConfig;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.RecommendConstants;
 import roart.common.model.StockItem;
 import roart.stockutil.StockDao;
 
 public class MACDRecommendSimple extends RecommendMACD {
     
-    public MACDRecommendSimple(MyMyConfig conf) {
+    public MACDRecommendSimple(IclijConfig conf) {
         super(conf);
     }
 
@@ -56,7 +56,7 @@ public class MACDRecommendSimple extends RecommendMACD {
 
     /*
     //@Override
-    public void getBuySellRecommendations(Map<String, Double> buyMap, Map<String, Double> sellMap, MyConfig conf, List<Double> macdLists[],
+    public void getBuySellRecommendations(Map<String, Double> buyMap, Map<String, Double> sellMap, IclijConfig conf, List<Double> macdLists[],
             Map<String, Double[]> listMap, Map<String, Double[]> momMap, Map<String, Double[]> rsiMap, List<String> buyList, List<String> sellList) {
         int len = macdLists.length;
         Double macdMax[] = new Double[len];
@@ -95,7 +95,7 @@ public class MACDRecommendSimple extends RecommendMACD {
         }
     }
     
-    public static void getBuySellRecommendations2(Map<String, Double> buyMap, Map<String, Double> sellMap, MyConfig conf, List<Double> macdLists[] /*,List<Double> macdList, List<Double> histList, List<Double> macdDList,
+    public static void getBuySellRecommendations2(Map<String, Double> buyMap, Map<String, Double> sellMap, IclijConfig conf, List<Double> macdLists[] /*,List<Double> macdList, List<Double> histList, List<Double> macdDList,
             List<Double> histDList, Map<String, Double[]> listMap, Map<String, Double[]> momMap, List<String> buyList, List<String> sellList) {
         int len = macdLists.length;
         Double macdMax[] = new Double[len];

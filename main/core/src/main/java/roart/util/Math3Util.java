@@ -1,6 +1,7 @@
 package roart.util;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,7 +46,7 @@ public class Math3Util {
      * @param stockdatemap a map of date to stocklists
      */
 
-    public static void getStats(ResultItemTable table, Date datedate, int count, Map<String, List<StockItem>> stockidmap, Map<String, List<StockItem>> stockdatemap) {
+    public static void getStats(ResultItemTable table, LocalDate datedate, int count, Map<String, List<StockItem>> stockidmap, Map<String, List<StockItem>> stockdatemap) {
         List<String> list = new ArrayList<>(stockdatemap.keySet());
         Collections.sort(list);
         String date = null;

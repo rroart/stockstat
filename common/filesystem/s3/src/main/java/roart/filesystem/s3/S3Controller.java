@@ -1,6 +1,6 @@
 package roart.filesystem.s3;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.filesystem.FileSystemAbstractController;
 import roart.filesystem.FileSystemOperations;
 
@@ -19,7 +19,7 @@ public class S3Controller extends FileSystemAbstractController {
 	}
 
 	@Override
-	protected FileSystemOperations createOperations(String nodename, String configid, MyMyConfig nodeConf) {
+	protected FileSystemOperations createOperations(String nodename, String configid, IclijConfig nodeConf) {
 		return new S3(nodename, configid, nodeConf);
 	}
 }

@@ -6,17 +6,17 @@ import java.util.List;
 import java.util.Map;
 
 import roart.aggregatorindicator.AggregatorIndicator;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 
 public abstract class AggregatorMLIndicator extends AggregatorIndicator {
 
     private static final String ANYTHING = "anything";
     
-    public AggregatorMLIndicator(MyMyConfig conf) {
+    public AggregatorMLIndicator(IclijConfig conf) {
         super(conf);
     }
 
-    public static Map<String, List<AggregatorMLIndicator>> getUsedAggregatorMLIndicators(MyMyConfig conf) {
+    public static Map<String, List<AggregatorMLIndicator>> getUsedAggregatorMLIndicators(IclijConfig conf) {
         List<AggregatorMLIndicator> all = new ArrayList<>();
         all.add(new AggregatorMLIndicatorMACD(conf));
         all.add(new AggregatorMLIndicatorRSI (conf));

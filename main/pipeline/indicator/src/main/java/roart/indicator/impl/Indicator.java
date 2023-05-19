@@ -12,7 +12,7 @@ import java.util.Set;
 import org.apache.commons.lang3.tuple.Pair;
 
 import roart.common.config.MarketStock;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
@@ -25,7 +25,7 @@ import roart.pipeline.Pipeline;
 
 public abstract class Indicator extends AbstractIndicator {
 
-    public Indicator(MyMyConfig conf, String string, int category) {
+    public Indicator(IclijConfig conf, String string, int category) {
         super(conf, string, category);
     }
 

@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import roart.common.config.ConfigConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.constants.FileSystemConstants;
@@ -61,7 +61,7 @@ public class S3 extends FileSystemOperations {
 
     /*private*/ S3Config conf;
 
-    public S3(String nodename, String configid, MyMyConfig nodeConf) {
+    public S3(String nodename, String configid, IclijConfig nodeConf) {
         super(nodename, configid, nodeConf);
         try {
             

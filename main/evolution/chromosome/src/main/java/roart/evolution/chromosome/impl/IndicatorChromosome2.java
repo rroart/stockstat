@@ -91,7 +91,7 @@ public class IndicatorChromosome2 extends AbstractChromosome {
                 continue;
             }
             */
-            CalcGene node = (CalcGene) conf.getConfigValueMap().get(key);
+            CalcGene node = (CalcGene) conf.getConfigData().getConfigValueMap().get(key);
             node.mutate();
         }
     }
@@ -112,7 +112,7 @@ public class IndicatorChromosome2 extends AbstractChromosome {
             }
             CalcGene node = CalcGeneFactory.get(name, null, macdrsiMinMax, i, useMax);
             node.randomize();
-            conf.getConfigValueMap().put(key, node);
+            conf.getConfigData().getConfigValueMap().put(key, node);
         }
         normalize();
     }
@@ -137,7 +137,7 @@ public class IndicatorChromosome2 extends AbstractChromosome {
                 continue;
             }
             */
-            CalcGene anode = (CalcGene) conf.getConfigValueMap().get(key);
+            CalcGene anode = (CalcGene) conf.getConfigData().getConfigValueMap().get(key);
             int tmpNum = 0;
             if (anode instanceof CalcComplexGene) {
                 CalcComplexGene node = (CalcComplexGene) anode;
@@ -158,7 +158,7 @@ public class IndicatorChromosome2 extends AbstractChromosome {
             }
             */
             log.info("Class cast for key {}", key);
-            CalcGene anode = (CalcGene) conf.getConfigValueMap().get(key);
+            CalcGene anode = (CalcGene) conf.getConfigData().getConfigValueMap().get(key);
             int tmpNum = 0;
             if (anode instanceof CalcComplexGene) {
                 CalcComplexGene node = (CalcComplexGene) anode;
@@ -175,19 +175,19 @@ public class IndicatorChromosome2 extends AbstractChromosome {
     @Override
     public Individual crossover(AbstractChromosome evaluation) {
         Random rand = new Random();
-        Map<String, Object> configValueMap = new HashMap<>(((IndicatorChromosome2) evaluation).conf.getConfigValueMap());
+        Map<String, Object> configValueMap = new HashMap<>(((IndicatorChromosome2) evaluation).conf.getConfigData().getConfigValueMap());
         for (String key : keys) {
             Object value;
             if (rand.nextBoolean()) {
-                value = conf.getConfigValueMap().get(key);
+                value = conf.getConfigData().getConfigValueMap().get(key);
             } else {
-                value = ((IndicatorChromosome2) evaluation).conf.getConfigValueMap().get(key);
+                value = ((IndicatorChromosome2) evaluation).conf.getConfigData().getConfigValueMap().get(key);
             }
             configValueMap.put(key, value);
         }
         IclijConfig config = new IclijConfig(conf);
         evaluation.normalize();
-        config.setConfigValueMap(configValueMap);
+        config.getConfigData().setConfigValueMap(configValueMap);
 
         return new Individual(evaluation);
     }
@@ -201,7 +201,7 @@ public class IndicatorChromosome2 extends AbstractChromosome {
     @Override
     public boolean isEmpty() {
         for (String key : keys) {
-            Object object = conf.getConfigValueMap().get(key);
+            Object object = conf.getConfigData().getConfigValueMap().get(key);
             if (object == null) {
                 return true;
             }
@@ -227,7 +227,7 @@ public class IndicatorChromosome2 extends AbstractChromosome {
     public String toString() {
         String ret = "";
         for (String key : keys) {
-            ret = ret + conf.getConfigValueMap().get(key) + " ";
+            ret = ret + conf.getConfigData().getConfigValueMap().get(key) + " ";
         }
         return ret;
     }

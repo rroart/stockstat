@@ -305,7 +305,7 @@ public class MiscUtil {
             filterConfigs.add(config);
         }
         Collections.sort(filterConfigs, (o1, o2) -> (o2.getRecord().compareTo(o1.getRecord())));
-        Map<String, Class> type = srv.conf.getConfigMaps().map;
+        Map<String, Class> type = srv.conf.getConfigData().getConfigMaps().map;
         Map<String, Object> updateMap = new HashMap<>();
         if (filterConfigs.isEmpty()) {
         	return updateMap;

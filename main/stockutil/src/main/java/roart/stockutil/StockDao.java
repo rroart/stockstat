@@ -11,8 +11,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import roart.common.config.MyConfig;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.OHLC;
 import roart.common.model.StockItem;
@@ -103,7 +103,7 @@ public class StockDao {
      * @throws Exception
      */
 
-    public static Map<String, List<Double>[]> getArr(MyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
+    public static Map<String, List<Double>[]> getArr(IclijConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
             Map<String, MarketData> marketdataMap) throws Exception {
         Map<String, List<Double>[]> retMap = new HashMap<>();
         List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
@@ -123,7 +123,7 @@ public class StockDao {
         return retMap;
     }
 
-    public static List<String> getDateList(MyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
+    public static List<String> getDateList(IclijConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
             Map<String, MarketData> marketdataMap, boolean currentyear) throws Exception {
         List<String> retList = new ArrayList<>();
         List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
@@ -149,7 +149,7 @@ public class StockDao {
         return retList;
     }
 
-    public static Map<String, String> getNameMap(MyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
+    public static Map<String, String> getNameMap(IclijConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
             Map<String, MarketData> marketdataMap, boolean currentyear) throws Exception {
         Map<String, String> retList = new HashMap<>();
         List<StockItem>[] datedstocklists = marketdataMap.get(market).datedstocklists;

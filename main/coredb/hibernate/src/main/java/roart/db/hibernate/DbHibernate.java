@@ -1,6 +1,6 @@
 package roart.db.hibernate;
 
-import roart.common.config.MyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.AboveBelowItem;
 import roart.common.model.ActionComponentItem;
@@ -126,7 +126,7 @@ public class DbHibernate {
     }
 
     @Deprecated
-    public static Map<String, Object[]> doCalculationsArr(MyConfig conf, Map<String, Double[]> listMap, String key, Calculatable indicator, boolean wantPercentizedPriceIndex) {
+    public static Map<String, Object[]> doCalculationsArr(IclijConfig conf, Map<String, Double[]> listMap, String key, Calculatable indicator, boolean wantPercentizedPriceIndex) {
         Map<String, Object[]> objectMap = new HashMap<>();
         for (String id : listMap.keySet()) {
             //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
@@ -146,7 +146,7 @@ public class DbHibernate {
 
     // Moved
     @Deprecated
-    public static Map<String, Object[]> doCalculationsArrNonNull(MyConfig conf, Map<String, double[][]> listMap, String key, Calculatable indicator, boolean wantPercentizedPriceIndex) {
+    public static Map<String, Object[]> doCalculationsArrNonNull(IclijConfig conf, Map<String, double[][]> listMap, String key, Calculatable indicator, boolean wantPercentizedPriceIndex) {
         Map<String, Object[]> objectMap = new HashMap<>();
         for (String id : listMap.keySet()) {
             //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));

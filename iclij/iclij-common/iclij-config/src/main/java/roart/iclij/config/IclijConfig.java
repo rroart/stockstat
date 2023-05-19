@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 
 import roart.common.config.ConfigConstantMaps;
 import roart.common.config.ConfigConstants;
+import roart.common.config.ConfigData;
 import roart.common.config.ConfigMaps;
 import roart.common.config.ConfigTreeMap;
 import roart.common.config.MyMyConfig;
@@ -30,22 +31,8 @@ public class IclijConfig extends MyMyConfig {
 
     protected static IclijXMLConfig instance = null;
 
-    private ConfigTreeMap configTreeMap;
-
-    private Map<String, Object> configValueMap;
-
-    private ConfigMaps configMaps;
-
-    private LocalDate date;
-
-    private String market;
-
-    private String mlmarket;
-
     public IclijConfig(IclijConfig config) {
-        this.configMaps = config.configMaps;
-        this.configTreeMap = config.configTreeMap;
-        this.configValueMap = new HashMap<>(config.configValueMap);
+        super(config);
     }
 
     private static ConfigMaps instanceC() {
@@ -85,58 +72,12 @@ public class IclijConfig extends MyMyConfig {
         log.error("confMapps2" + configMaps);
     }
 
+    public IclijConfig(ConfigData data) {
+        super(data);
+    }
+
     public IclijConfig copy() {
-        IclijConfig newConfig = new IclijConfig(this);
-        newConfig.setConfigValueMap(new HashMap<>(getConfigValueMap()));
-        return newConfig;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public String getMarket() {
-        return market;
-    }
-
-    public void setMarket(String market) {
-        this.market = market;
-    }
-
-    public String getMlmarket() {
-        return mlmarket;
-    }
-
-    public void setMlmarket(String mlmarket) {
-        this.mlmarket = mlmarket;
-    }
-
-    public ConfigTreeMap getConfigTreeMap() {
-        return configTreeMap;
-    }
-
-    public void setConfigTreeMap(ConfigTreeMap configTreeMap) {
-        this.configTreeMap = configTreeMap;
-    }
-
-    public Map<String, Object> getConfigValueMap() {
-        return configValueMap;
-    }
-
-    public void setConfigValueMap(Map<String, Object> configValueMap) {
-        this.configValueMap = configValueMap;
-    }
-
-    public ConfigMaps getConfigMaps() {
-        return configMaps;
-    }
-
-    public void setConfigMaps(ConfigMaps configMaps) {
-        this.configMaps = configMaps;
+        return new IclijConfig(getConfigData().copy());
     }
 
     public Integer serverShutdownHour() {
@@ -1374,12 +1315,12 @@ public class IclijConfig extends MyMyConfig {
 
     public Object getValueOrDefault(String key) {
         // jackson messes around here...
-        if (configValueMap == null) {
+        if (getConfigData().getConfigValueMap() == null) {
             return null;
         }
-        Object retVal = configValueMap.get(key);
-        retVal = Optional.ofNullable(retVal).orElse(configMaps.deflt.get(key));
-        Class aClass = configMaps.map.get(key);
+        Object retVal = getConfigData().getConfigValueMap().get(key);
+        retVal = Optional.ofNullable(retVal).orElse(getConfigData().getConfigMaps().deflt.get(key));
+        Class aClass = getConfigData().getConfigMaps().map.get(key);
         if (aClass != null && aClass == Double.class && retVal != null && retVal.getClass() == Integer.class) {
             Integer i = (Integer) retVal;
             retVal = i.doubleValue();
@@ -1389,10 +1330,10 @@ public class IclijConfig extends MyMyConfig {
 
     @JsonIgnore
     public Object getNotEmptyValueOrDefault(String key) {
-        Object retVal = getConfigValueMap().get(key);
-        System.out.println("r " + getConfigValueMap().keySet());
-        System.out.println("r " + getConfigMaps().deflt.keySet());
-        System.out.println("r " + retVal + " " + getConfigMaps().deflt.get(key));
+        Object retVal = getConfigData().getConfigValueMap().get(key);
+        System.out.println("r " + getConfigData().getConfigValueMap().keySet());
+        System.out.println("r " + getConfigData().getConfigMaps().deflt.keySet());
+        System.out.println("r " + retVal + " " + getConfigData().getConfigMaps().deflt.get(key));
         //System.out.println("r " + retVal + " " + deflt.get(key));
         if (retVal instanceof String) {
             String str = (String) retVal;
@@ -1400,7 +1341,7 @@ public class IclijConfig extends MyMyConfig {
                 retVal = null;
             }
         }
-        return Optional.ofNullable(retVal).orElse(configMaps.map.get(key));
+        return Optional.ofNullable(retVal).orElse(getConfigData().getConfigMaps().map.get(key));
     }
 
 }

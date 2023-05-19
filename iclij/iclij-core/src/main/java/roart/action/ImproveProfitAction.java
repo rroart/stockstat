@@ -100,7 +100,7 @@ public class ImproveProfitAction extends MarketAction {
                 param.getUpdateMap().putAll(updateMap);
             }
             List<String> confList = component.getConflist();
-            Map<String, Object> myConfig = componentData.getService().conf.getConfigMaps().deflt;
+            Map<String, Object> myConfig = componentData.getService().conf.getConfigData().getConfigMaps().deflt;
             Map<String, Object> defaults = new HashMap<>();
             for (String key : confList) {
                 Object value = myConfig.get(key);

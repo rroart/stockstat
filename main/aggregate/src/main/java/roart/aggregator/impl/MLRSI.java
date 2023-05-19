@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.category.AbstractCategory;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
@@ -32,7 +32,7 @@ public class MLRSI extends IndicatorAggregator {
         return objectMap;
     }
 
-    public MLRSI(MyMyConfig conf, String string, String title, int category, 
+    public MLRSI(IclijConfig conf, String string, String title, int category, 
             AbstractCategory[] categories, Map<String, String> idNameMap, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         super(conf, string, category, title, idNameMap, categories, datareaders, neuralnetcommand);
     }
@@ -53,7 +53,7 @@ public class MLRSI extends IndicatorAggregator {
     }
 
     private class SubTypeRSI extends RsiSubType {
-        public SubTypeRSI(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range, MyMyConfig conf) {
+        public SubTypeRSI(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range, IclijConfig conf) {
             super(list, taObject, resultObject, afterbefore, range);
             double high = conf.getMLRSIBuyRSILimit();
             double low = conf.getMLRSISellRSILimit();
@@ -78,7 +78,7 @@ public class MLRSI extends IndicatorAggregator {
     }
 
     private class SubTypeSRSI extends RsiSubType {
-        public SubTypeSRSI(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range, MyMyConfig conf) {
+        public SubTypeSRSI(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range, IclijConfig conf) {
             super(list, taObject, resultObject, afterbefore, range);
             double high = conf.getMLRSIBuySRSILimit();
             double low = conf.getMLRSISellSRSILimit();
@@ -105,7 +105,7 @@ public class MLRSI extends IndicatorAggregator {
     private class MergeSubTypeRSI extends SubTypeRSI {
 
         public MergeSubTypeRSI(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore,
-                int[] range, MyMyConfig conf) {
+                int[] range, IclijConfig conf) {
             super(list, taObject, resultObject, afterbefore, range, conf);
          }
 

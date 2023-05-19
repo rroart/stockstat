@@ -3,7 +3,7 @@ package roart.category.impl;
 import java.util.List;
 import java.util.Map;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.StockItem;
 import roart.common.util.MathUtil;
@@ -26,7 +26,7 @@ import roart.stockutil.StockUtil;
 
 public class CategoryPeriod extends Category {
 
-    public CategoryPeriod(MyMyConfig conf, int i, String periodText, List<StockItem> stocks,             Pipeline[] datareaders) throws Exception {
+    public CategoryPeriod(IclijConfig conf, int i, String periodText, List<StockItem> stocks,             Pipeline[] datareaders) throws Exception {
         super(conf, periodText, stocks, datareaders);
         period = i;
         createResultMap(conf, stocks);
@@ -38,7 +38,7 @@ public class CategoryPeriod extends Category {
             return;
         }
         Map<String, MarketData> marketdatamap = datareader.getMarketdatamap();
-        String market = conf.getMarket();
+        String market = conf.getConfigData().getMarket();
         MarketData marketData = marketdatamap.get(market);
         List<StockItem>[] datedstocklists = marketData.datedstocklists;
         indicators.add(new IndicatorMove(conf, "Δ" + getTitle(), datedstocklists, period));

@@ -2,14 +2,14 @@ package roart.ml.gem;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.ml.GemGEMConfig;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.ml.model.LearnTestClassify;
 
 public class MLClassifyGemGEMModel  extends MLClassifyGemModel {
-    public MLClassifyGemGEMModel(MyMyConfig conf) {
+    public MLClassifyGemGEMModel(IclijConfig conf) {
         super(conf);
     }
 

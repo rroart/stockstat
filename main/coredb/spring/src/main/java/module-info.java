@@ -8,6 +8,7 @@
 module coredb.spring {
     exports roart.db.spring;
 
+    requires iclij.common.config;
     requires common.config;
     requires common.model;
     requires common.util;

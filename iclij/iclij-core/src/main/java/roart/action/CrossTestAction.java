@@ -61,7 +61,7 @@ public class CrossTestAction extends MarketAction {
                 continue;
             }
             for (String mlmarket : market.getConfig().getMlmarkets()) {
-                param.getService().conf.setMLmarket(mlmarket);
+                param.getService().conf.getConfigData().setMlmarket(mlmarket);
                 boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
                 //component.set(market, param, profitdata, positions, evolve);
                 //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
@@ -87,7 +87,7 @@ public class CrossTestAction extends MarketAction {
                 aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
                 aMap.put(ConfigConstants.MISCMYDAYS, 0);
                 Memories positions = null;
-                param.getService().conf.setdate(TimeUtil.convertDate(param.getFutureDate()));
+                param.getService().conf.getConfigData().setDate(param.getFutureDate());
                 ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, getParent() != null);
                 Map<String, Object> updateMap = componentData.getUpdateMap();
                 if (updateMap != null) {

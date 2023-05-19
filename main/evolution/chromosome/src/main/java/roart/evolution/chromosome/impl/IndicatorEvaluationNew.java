@@ -105,7 +105,7 @@ public class IndicatorEvaluationNew extends AbstractChromosome {
             double change = (list[newlistidx]/list[curlistidx] - 1);
             Double[] momrsi = entry.getValue();
             // temp fix
-            CalcGene node = (CalcGene) conf.getConfigValueMap().get(key);
+            CalcGene node = (CalcGene) conf.getConfigData().getConfigValueMap().get(key);
             double value = momrsi[index];
             recommend += node.calc(value, 0) * change;
         }
@@ -114,7 +114,7 @@ public class IndicatorEvaluationNew extends AbstractChromosome {
  
     @Override
     public void mutate() {
-        CalcGene node = (CalcGene) conf.getConfigValueMap().get(key);
+        CalcGene node = (CalcGene) conf.getConfigData().getConfigValueMap().get(key);
         node.mutate();
     }
 
@@ -127,7 +127,7 @@ public class IndicatorEvaluationNew extends AbstractChromosome {
         }
         CalcGene node = CalcGeneFactory.get(name, null, macdrsiMinMax, index, useMax);
         node.randomize();
-        conf.getConfigValueMap().put(key, node);
+        conf.getConfigData().getConfigValueMap().put(key, node);
         List<String> keys = new ArrayList<>();
         keys.add(key);
         normalize();

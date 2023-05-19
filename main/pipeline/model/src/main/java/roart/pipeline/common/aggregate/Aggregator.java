@@ -8,7 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.model.PipelineResultData;
@@ -22,7 +22,7 @@ public abstract class Aggregator extends PipelineResultData {
     protected static Logger log = LoggerFactory.getLogger(Aggregator.class);
 
     protected String title;
-    protected MyMyConfig conf;
+    protected IclijConfig conf;
     protected int category;
     
     protected Map<String, Object[]> objectMap;
@@ -36,7 +36,7 @@ public abstract class Aggregator extends PipelineResultData {
     protected List<Object[]> resultMetaArray;
     private List<ResultMeta> resultMetas;
 
-    public Aggregator(MyMyConfig conf, String string, int category) {
+    public Aggregator(IclijConfig conf, String string, int category) {
         this.title = string;
         this.conf = conf;
         this.category = category;

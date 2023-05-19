@@ -163,7 +163,7 @@ public class ServiceUtil {
     public static IclijServiceResult getConfig(IclijConfig iclijConfig) throws Exception {
         IclijConfig instance = iclijConfig;
         IclijServiceResult result = new IclijServiceResult();
-        result.setConfig(instance);
+        result.setConfigData(instance.getConfigData());
         return result;
     }
 
@@ -687,7 +687,7 @@ public class ServiceUtil {
         memories.setList(allMemoryItems);
         Map<String, Object> updateMap = new HashMap<>();
         //param.setUpdateMap(updateMap);
-        Market market = new MarketUtil().findMarket(param.getService().conf.getMarket(), iclijConfig);
+        Market market = new MarketUtil().findMarket(param.getService().conf.getConfigData().getMarket(), iclijConfig);
         
         LocalDate endDate = componentInput.getEnddate();
         int findTime = market.getConfig().getFindtime();
@@ -787,7 +787,7 @@ public class ServiceUtil {
             }
             addHeader(componentInput, type, result, baseDateStr, futureDateStr, market);
 
-            List<IclijServiceList> subLists = getServiceList(param.getService().conf.getMarket(), key, listInc, listDec, listIncDec);
+            List<IclijServiceList> subLists = getServiceList(param.getService().conf.getConfigData().getMarket(), key, listInc, listDec, listIncDec);
             retLists.addAll(subLists);
         }
 
@@ -862,7 +862,7 @@ public class ServiceUtil {
         memories.setList(allMemoryItems);
         Map<String, Object> updateMap = new HashMap<>();
         //param.setUpdateMap(updateMap);
-        Market market = new MarketUtil().findMarket(param.getService().conf.getMarket(), iclijConfig);
+        Market market = new MarketUtil().findMarket(param.getService().conf.getConfigData().getMarket(), iclijConfig);
         WebData myData = null;
         if (rerun) {
             myData = param.getService().getRun(IclijConstants.IMPROVEABOVEBELOW, componentInput);
@@ -917,7 +917,7 @@ public class ServiceUtil {
             }
             addHeader(componentInput, type, result, baseDateStr, futureDateStr, market);
 
-            List<IclijServiceList> subLists = getServiceList(param.getService().conf.getMarket(), key, listInc, listDec, listIncDec);
+            List<IclijServiceList> subLists = getServiceList(param.getService().conf.getConfigData().getMarket(), key, listInc, listDec, listIncDec);
             retLists.addAll(subLists);
         }
 
@@ -967,10 +967,10 @@ public class ServiceUtil {
         int offset = new ComponentTimeUtil().getFindProfitOffset(market, componentInput);
         IclijServiceList header = new IclijServiceList();
         result.getLists().add(header);
-        header.setTitle(type + " " + "Market: " + componentInput.getConfig().getMarket() + " Date: " + componentInput.getConfig().getDate() + " Offset: " + offset + " Threshold: " + componentInput.getConfig().getFindProfitManualThreshold());
+        header.setTitle(type + " " + "Market: " + componentInput.getConfig().getConfigData().getMarket() + " Date: " + componentInput.getConfig().getConfigData().getDate() + " Offset: " + offset + " Threshold: " + componentInput.getConfig().getFindProfitManualThreshold());
         IclijServiceList header2 = new IclijServiceList();
         result.getLists().add(header2);
-        header2.setTitle(type + " " + "ML market: " + componentInput.getConfig().getMlmarket() + " Date: " + componentInput.getConfig().getDate() + " Offset: " + offset);
+        header2.setTitle(type + " " + "ML market: " + componentInput.getConfig().getConfigData().getMlmarket() + " Date: " + componentInput.getConfig().getConfigData().getDate() + " Offset: " + offset);
         List<MapList> aList = new ArrayList<>();
         header.setList(aList);
         MapList mapList = new MapList();
@@ -981,8 +981,8 @@ public class ServiceUtil {
 
     @Deprecated // ?
     public static ControlService getService(ComponentInput input, int days) throws Exception {
-        String market = input.getConfig().getMarket();
-        String mlmarket = input.getConfig().getMlmarket();
+        String market = input.getConfig().getConfigData().getMarket();
+        String mlmarket = input.getConfig().getConfigData().getMlmarket();
         /*
         if (market == null) {
             throw new Exception("Market null");
@@ -992,8 +992,8 @@ public class ServiceUtil {
         ControlService srv = new ControlService(null);
         srv.getConfig();
         if (market != null) {
-            srv.conf.setMarket(market);
-            srv.conf.setMLmarket(mlmarket);
+            srv.conf.getConfigData().setMarket(market);
+            srv.conf.getConfigData().setMlmarket(mlmarket);
         }
         return srv;
     }
@@ -1002,10 +1002,10 @@ public class ServiceUtil {
         ControlService srv = new ControlService(iclijConfig);
         srv.getConfig();
         if (market != null) {
-            srv.conf.setMarket(market);
+            srv.conf.getConfigData().setMarket(market);
         }
-        new MLUtil().disabler(srv.conf.getConfigValueMap());
-        srv.conf.getConfigValueMap().put(ConfigConstants.MISCTHRESHOLD, null);
+        new MLUtil().disabler(srv.conf.getConfigData().getConfigValueMap());
+        srv.conf.getConfigData().getConfigValueMap().put(ConfigConstants.MISCTHRESHOLD, null);
         Map<String, Map<String, Object>> result = srv.getContent();
         Integer cat = (Integer) result.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
         Map<String, List<List<Double>>> listMap = (Map<String, List<List<Double>>>) result.get("" + cat).get(PipelineConstants.LIST);
@@ -1131,7 +1131,7 @@ public class ServiceUtil {
             //memories.setTitle("Memories");
             //memories.setList(allMemoryItems);
             Map<String, Object> updateMap = new HashMap<>();
-            Market market = new MarketUtil().findMarket(param.getService().conf.getMarket(), iclijConfig);
+            Market market = new MarketUtil().findMarket(param.getService().conf.getConfigData().getMarket(), iclijConfig);
             WebData webData = param.getService().getRun(IclijConstants.IMPROVEPROFIT, componentInput);
             List<MapList> mapList = new MiscUtil().getList(webData.getUpdateMap());
             IclijServiceList resultMap = new IclijServiceList();

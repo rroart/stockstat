@@ -14,32 +14,29 @@ import roart.common.util.JsonUtil;
 
 import java.util.Optional;
 
-public class MyMyConfig extends MyConfig {
+public abstract class MyMyConfig extends MyConfig {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     public MyMyConfig() {
     }
     
-    public MyMyConfig(MyConfig config) {
-        setConfigTreeMap(config.getConfigTreeMap());
-        setConfigValueMap(new HashMap<>(config.getConfigValueMap()));
-        setConfigMaps(config.getConfigMaps());
-        fixIntegerDouble();
-        this.mydate = config.mydate;
-        this.mymarket = config.mymarket;
-        this.mlmarket = config.mlmarket;
-        this.dataset = config.dataset;
+    public MyMyConfig(MyMyConfig config) {
+        super(config);
+    }
+
+    public MyMyConfig(ConfigData data) {
+        super(data);
     }
 
     private void fixIntegerDouble() {
-        for(Entry<String, Object> entry : getConfigValueMap().entrySet()) {
+        for(Entry<String, Object> entry : getConfigData().getConfigValueMap().entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
             if (value == null) {
                 //System.out.println("Null val " + key);
                 continue;
             }
-            Class classType = getConfigMaps().map.get(key);
+            Class classType = getConfigData().getConfigMaps().map.get(key);
             if (classType == null) {
                 log.info("Null class {}", key);
                 continue;
@@ -47,15 +44,9 @@ public class MyMyConfig extends MyConfig {
                     
             //System.out.println("k " + key + " " + value + " " +classType);
             if (value.getClass().isAssignableFrom(Integer.class) && classType.isAssignableFrom(Double.class)) {
-                getConfigValueMap().put(key, Double.valueOf((Integer)value));
+                getConfigData().getConfigValueMap().put(key, Double.valueOf((Integer)value));
             }
         }
-    }
-
-    public MyMyConfig copy() {
-        MyMyConfig newConfig = new MyMyConfig(this);
-        newConfig.setConfigValueMap(new HashMap<>(getConfigValueMap()));
-        return newConfig;
     }
 
     /*
@@ -369,7 +360,7 @@ public class MyMyConfig extends MyConfig {
     }
 
     public void disableML() {
-        getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
+        getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
     }
 
     public  boolean wantML() {
@@ -805,16 +796,16 @@ public class MyMyConfig extends MyConfig {
     }
 
     public boolean wantMLTimes() {
-        return (Boolean) getConfigValueMap().get(ConfigConstants.MISCMLSTATS)
+        return (Boolean) getConfigData().getConfigValueMap().get(ConfigConstants.MISCMLSTATS)
                 && wantML();
     }
 
     public boolean wantPercentizedPriceIndex() {
-        return (Boolean) getConfigValueMap().get(ConfigConstants.MISCPERCENTIZEPRICEINDEX);
+        return (Boolean) getConfigData().getConfigValueMap().get(ConfigConstants.MISCPERCENTIZEPRICEINDEX);
     }
 
     public boolean wantOtherStats() {
-        return (Boolean) getConfigValueMap().get(ConfigConstants.MISCOTHERSTATS);
+        return (Boolean) getConfigData().getConfigValueMap().get(ConfigConstants.MISCOTHERSTATS);
 
     }
 
@@ -887,15 +878,15 @@ public class MyMyConfig extends MyConfig {
     }
 
     public String getDbSparkMaster() {
-        return (String) getConfigValueMap().get(ConfigConstants.DATABASESPARKSPARKMASTER);
+        return (String) getConfigData().getConfigValueMap().get(ConfigConstants.DATABASESPARKSPARKMASTER);
     }
 
     public String getMLSparkMaster() {
-        return (String) getConfigValueMap().get(ConfigConstants.MACHINELEARNINGSPARKMLSPARKMASTER);
+        return (String) getConfigData().getConfigValueMap().get(ConfigConstants.MACHINELEARNINGSPARKMLSPARKMASTER);
     }
 
     public Integer getMLSparkTimeout() {
-        return (Integer) getConfigValueMap().get(ConfigConstants.MACHINELEARNINGSPARKMLSPARKNETWORKTIMEOUT);
+        return (Integer) getConfigData().getConfigValueMap().get(ConfigConstants.MACHINELEARNINGSPARKMLSPARKNETWORKTIMEOUT);
     }
 
     public int getMaxHoles() {
@@ -1613,7 +1604,7 @@ public class MyMyConfig extends MyConfig {
         if (key == null) {
             return 1.0;
         }
-        String myThreshold = (String) getConfigValueMap().get(key);
+        String myThreshold = (String) getConfigData().getConfigValueMap().get(key);
         try {
             double d = Double.valueOf(myThreshold);
             log.error("Using old format {}", myThreshold);
@@ -1635,34 +1626,34 @@ public class MyMyConfig extends MyConfig {
     }
 
     public Object getValue(String key) {
-        return getConfigValueMap().get(key);
+        return getConfigData().getConfigValueMap().get(key);
     }
     
      public Object getValueOrDefault(String key) {
-        Object retVal = getConfigValueMap().get(key);
+        Object retVal = getConfigData().getConfigValueMap().get(key);
         if (retVal != null) {
             String cl = retVal.getClass().getName();
-            Class classType = getConfigMaps().map.get(key);
+            Class classType = getConfigData().getConfigMaps().map.get(key);
             if (retVal.getClass().isAssignableFrom(Integer.class) && classType.isAssignableFrom(Double.class)) {
-                getConfigValueMap().put(key, Double.valueOf((Integer)retVal));
+                getConfigData().getConfigValueMap().put(key, Double.valueOf((Integer)retVal));
                 retVal = Double.valueOf((Integer)retVal);
             }
         }
         //System.out.println("r " + retVal + " " + deflt.get(key));
-        return Optional.ofNullable(retVal).orElse(getConfigMaps().deflt.get(key));
+        return Optional.ofNullable(retVal).orElse(getConfigData().getConfigMaps().deflt.get(key));
     }
      
      @JsonIgnore
      public Object getNotEmptyValueOrDefault(String key) {
-         Object retVal = getConfigValueMap().get(key);
-         System.out.println("r " + retVal + " " + getConfigMaps().deflt.get(key));
+         Object retVal = getConfigData().getConfigValueMap().get(key);
+         System.out.println("r " + retVal + " " + getConfigData().getConfigMaps().deflt.get(key));
          if (retVal instanceof String) {
              String str = (String) retVal;
              if (str.isEmpty()) {
                  retVal = null;
              }
          }
-         return Optional.ofNullable(retVal).orElse(getConfigMaps().deflt.get(key));
+         return Optional.ofNullable(retVal).orElse(getConfigData().getConfigMaps().deflt.get(key));
      }
 
 }

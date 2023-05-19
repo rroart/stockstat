@@ -35,8 +35,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 
-import roart.common.config.MyConfig;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.config.MyXMLConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
@@ -757,7 +757,7 @@ public class Sim {
         return stringBuilder.toString();
     }
     
-    public static void configCurator(MyMyConfig conf) {
+    public static void configCurator(IclijConfig conf) {
         if (true) {
             RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);        
             String zookeeperConnectionString = conf.getZookeeper();

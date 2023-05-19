@@ -1,6 +1,6 @@
 package roart.filesystem.local;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.filesystem.FileSystemAbstractController;
 import roart.filesystem.FileSystemOperations;
 
@@ -19,7 +19,7 @@ public class LocalController extends FileSystemAbstractController {
 	}
 
 	@Override
-	protected FileSystemOperations createOperations(String nodename, String configid, MyMyConfig nodeConf) {
+	protected FileSystemOperations createOperations(String nodename, String configid, IclijConfig nodeConf) {
 		return new LocalFileSystem(nodename, configid, nodeConf);
 	}
 }

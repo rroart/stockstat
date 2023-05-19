@@ -21,8 +21,8 @@ import org.slf4j.LoggerFactory;
 
 import roart.category.AbstractCategory;
 import roart.common.config.MarketStock;
-import roart.common.config.MyConfig;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.db.common.DbAccess;
 import roart.db.dao.DbDao;
@@ -67,7 +67,7 @@ public class IndicatorUtils {
      */
 
     @Deprecated
-    public static Object[] getDayMomMap(MyMyConfig conf, Map<String, Object[]> objectMap, Map<String, Double[]> listMap,
+    public static Object[] getDayMomMap(IclijConfig conf, Map<String, Object[]> objectMap, Map<String, Double[]> listMap,
             TaUtil tu) throws Exception {
         Object[] retobj = new Object[2];
         Map<Integer, Map<String, Double[]>> dayMomMap = new HashMap<>();
@@ -101,7 +101,7 @@ public class IndicatorUtils {
     }
 
     @Deprecated
-    public static Object[] getDayRsiMap(MyMyConfig conf, Map<String, Object[]> objectMap, Map<String, Double[]> listMap,
+    public static Object[] getDayRsiMap(IclijConfig conf, Map<String, Object[]> objectMap, Map<String, Double[]> listMap,
             TaUtil tu) throws Exception {
         Object[] retobj = new Object[2];
         Map<Integer, Map<String, Double[]>> dayRsiMap = new HashMap<>();
@@ -133,7 +133,7 @@ public class IndicatorUtils {
     }
 
     @Deprecated
-    public static Object[] getDayMomRsiMap(MyMyConfig conf, Map<String, Object[]> objectMacdMap, Map<String, Double[]> listMacdMap, Map<String, Object[]> objectRsiMap, Map<String, Double[]> listRsiMap, 
+    public static Object[] getDayMomRsiMap(IclijConfig conf, Map<String, Object[]> objectMacdMap, Map<String, Double[]> listMacdMap, Map<String, Object[]> objectRsiMap, Map<String, Double[]> listRsiMap, 
             TaUtil tu) throws Exception {
         Object[] retobj = new Object[2];
         Map<Integer, Map<String, Double[]>> dayMomRsiMap = new HashMap<>();
@@ -168,7 +168,7 @@ public class IndicatorUtils {
     }
 
     @Deprecated
-    public static Object[] getDayIndicatorMap(MyMyConfig conf, TaUtil tu, List<AbstractIndicator> indicators, int futureDays, int tableDays, int intervalDays) throws Exception {
+    public static Object[] getDayIndicatorMap(IclijConfig conf, TaUtil tu, List<AbstractIndicator> indicators, int futureDays, int tableDays, int intervalDays) throws Exception {
         List<Map<String, Object[]>> objectMapsList = new ArrayList<>();
         List<Map<String, Double[][]>> listList = new ArrayList<>();
         int arraySize = 0;
@@ -258,7 +258,7 @@ public class IndicatorUtils {
 
     // TODO return stockdate based on date
 
-    public static Object[] getDayIndicatorMap(MyMyConfig conf, List<AbstractIndicator> indicators, int futureDays, int tableDays, int intervalDays, ExtraData extraData, Pipeline[] datareaders, Map<String, MarketData> marketdatamap) throws Exception {
+    public static Object[] getDayIndicatorMap(IclijConfig conf, List<AbstractIndicator> indicators, int futureDays, int tableDays, int intervalDays, ExtraData extraData, Pipeline[] datareaders, Map<String, MarketData> marketdatamap) throws Exception {
         List<Map<String, Object[]>> objectMapsList = new ArrayList<>();
         List<Map<String, Double[][]>> listList = new ArrayList<>();
         int arraySize = getCommonArraySizeAndObjectMap(indicators, objectMapsList, listList, datareaders);
@@ -291,7 +291,7 @@ public class IndicatorUtils {
         if (tableDays < deltas) {
             deltas = 0;
         }
-        List<String> dateList = StockDao.getDateList(conf.getMarket(), marketdatamap);
+        List<String> dateList = StockDao.getDateList(conf.getConfigData().getMarket(), marketdatamap);
         for (int j = futureDays; j < tableDays - deltas; j += intervalDays) {
             String commonDate = commonDates.get(commonDates.size() - 1 - j);
             Map<String, Double[]> indicatorMap = new HashMap<>();
@@ -334,7 +334,7 @@ public class IndicatorUtils {
         return retobj;
     }
 
-    public static Object[] getDayIndicatorMap(MyMyConfig conf, TaUtil tu, List<AbstractIndicator> indicators, int futureDays, int tableDays, int intervalDays, ExtraData extraData, Pipeline[] datareaders) throws Exception {
+    public static Object[] getDayIndicatorMap(IclijConfig conf, TaUtil tu, List<AbstractIndicator> indicators, int futureDays, int tableDays, int intervalDays, ExtraData extraData, Pipeline[] datareaders) throws Exception {
         List<Map<String, Object[]>> objectMapsList = new ArrayList<>();
         List<Map<String, Double[][]>> listList = new ArrayList<>();
         int arraySize = getCommonArraySizeAndObjectMap(indicators, objectMapsList, listList, datareaders);
@@ -468,7 +468,7 @@ public class IndicatorUtils {
         return arraySize;
     }
 
-    private static int getExtraDataSize(MyMyConfig conf, ExtraData extraData, int arraySize,
+    private static int getExtraDataSize(IclijConfig conf, ExtraData extraData, int arraySize,
             List<AbstractIndicator> allIndicators) throws Exception {
         if (extraData.dateList != null) {
             if (!extraData.dateList.isEmpty()) {
@@ -489,7 +489,7 @@ public class IndicatorUtils {
         return arraySize;
     }
 
-    private static int getExtraDataSize2(MyMyConfig conf, ExtraData extraData, int arraySize,
+    private static int getExtraDataSize2(IclijConfig conf, ExtraData extraData, int arraySize,
             List<AbstractIndicator> allIndicators) throws Exception {
         if (extraData.dateList != null) {
             if (!extraData.dateList.isEmpty()) {
@@ -637,13 +637,13 @@ public class IndicatorUtils {
         return result;
     }
 
-    private static void getAllIndicators(List<AbstractIndicator> allIndicators, MyMyConfig conf, AbstractCategory[] categories,
+    private static void getAllIndicators(List<AbstractIndicator> allIndicators, IclijConfig conf, AbstractCategory[] categories,
             Set<MarketStock> marketStocks, Pipeline[] datareaders, Map<String, StockData> stockDataMap) throws Exception {
         Set<String> indicatorSet = new HashSet<>();
         for (MarketStock pairEntry : marketStocks) {
             String market = pairEntry.getMarket();
             String cat = pairEntry.getCategory();
-            if (market.equals(conf.getMarket())) {
+            if (market.equals(conf.getConfigData().getMarket())) {
                 for (AbstractCategory category : categories) {
                     StockData stockData = stockDataMap.get(market);
                     if (cat == null) {
@@ -782,7 +782,7 @@ public class IndicatorUtils {
         }
     }
 
-    public static Map<String, Object[]> doCalculationsArrNonNull(MyConfig conf, Map<String, double[][]> listMap, String key, Calculatable indicator, boolean wantPercentizedPriceIndex) {
+    public static Map<String, Object[]> doCalculationsArrNonNull(IclijConfig conf, Map<String, double[][]> listMap, String key, Calculatable indicator, boolean wantPercentizedPriceIndex) {
         Map<String, Object[]> objectMap = new HashMap<>();
         for (String id : listMap.keySet()) {
             //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));

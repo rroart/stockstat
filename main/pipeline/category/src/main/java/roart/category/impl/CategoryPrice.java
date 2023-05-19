@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import roart.category.AbstractCategory;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.StockItem;
 import roart.common.util.MathUtil;
@@ -23,7 +23,7 @@ import roart.stockutil.StockUtil;
 
 public class CategoryPrice extends Category {
 
-    public CategoryPrice(MyMyConfig conf, String string, List<StockItem> stocks,
+    public CategoryPrice(IclijConfig conf, String string, List<StockItem> stocks,
             Pipeline[] datareaders) throws Exception {
         super(conf, string, stocks, datareaders);
         period = Constants.PRICECOLUMN;

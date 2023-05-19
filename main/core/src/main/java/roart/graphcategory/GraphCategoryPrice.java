@@ -14,7 +14,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.model.StockItem;
@@ -42,7 +42,7 @@ public class GraphCategoryPrice extends GraphCategory {
     Map<String, MarketData> marketdatamap;
     Map<String, PeriodData> periodDataMap;
 
-    public GraphCategoryPrice(MyMyConfig conf, String string,
+    public GraphCategoryPrice(IclijConfig conf, String string,
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap) {
         super(conf, string);

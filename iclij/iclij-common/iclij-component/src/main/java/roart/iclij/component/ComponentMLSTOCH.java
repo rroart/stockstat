@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.model.MLMetricsItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.component.model.ComponentData;
@@ -48,14 +48,14 @@ public class ComponentMLSTOCH extends ComponentMLAggregator {
     }
     
     @Deprecated
-    static void setnns(MyMyConfig conf, IclijConfig config, List<String> nns) {
-        Map<String, String> map = config.getConfigMaps().conv;
+    static void setnns(IclijConfig conf, IclijConfig config, List<String> nns) {
+        Map<String, String> map = config.getConfigData().getConfigMaps().conv;
         for (String key : nns) {
-            System.out.println(conf.getConfigValueMap().keySet());
+            System.out.println(conf.getConfigData().getConfigValueMap().keySet());
             Object o = config.getValueOrDefault(key);
             boolean enable = (boolean) config.getValueOrDefault(key);
             String otherKey = map.get(key);
-            conf.getConfigValueMap().put(otherKey, enable);
+            conf.getConfigData().getConfigValueMap().put(otherKey, enable);
         }
     }
 

@@ -23,8 +23,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import roart.common.config.Extra;
 import roart.common.config.MarketStock;
 import roart.common.config.MarketStockExpression;
-import roart.common.config.MyConfig;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
@@ -60,14 +60,14 @@ public class ExtraReader extends Pipeline {
     Map<String, Pipeline[]> dataReaderMap;
     public Set<MarketStock> allMarketStocks;
     
-    public ExtraReader(MyMyConfig conf, Map<String, MarketData> marketdatamap, int category, StockData stockData, DbDao dbDao) throws Exception {
+    public ExtraReader(IclijConfig conf, Map<String, MarketData> marketdatamap, int category, StockData stockData, DbDao dbDao) throws Exception {
         super(conf, category);
         this.dbDao = dbDao;
         readData(conf, marketdatamap, category, stockData);        
     }
-    private void readData(MyMyConfig conf, Map<String, MarketData> marketdatamap, int category, StockData stockData2) throws Exception {
+    private void readData(IclijConfig conf, Map<String, MarketData> marketdatamap, int category, StockData stockData2) throws Exception {
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-        String dateme = dt.format(conf.getdate());
+        String dateme = dt.format(conf.getConfigData().getDate());
         //pairListMap = new HashMap<>();
         //pairDateMap = new HashMap<>();
         //pairCatMap = new HashMap<>();
@@ -86,8 +86,8 @@ public class ExtraReader extends Pipeline {
         if (str == null || str.isEmpty()) {
             return;
         }
-        String date = TimeUtil.convertDate3(conf.getdate());
-        MarketData marketdata = marketdatamap.get(conf.getMarket());
+        String date = TimeUtil.convertDate2(conf.getConfigData().getDate());
+        MarketData marketdata = marketdatamap.get(conf.getConfigData().getMarket());
         Extra extra = JsonUtil.convert(str, Extra.class);
         if (extras.length > 0) {
             extra.getSimple().clear();
@@ -111,7 +111,7 @@ public class ExtraReader extends Pipeline {
         Set<String> markets = new HashSet<>();
         if (!extra.getSimple().isEmpty()) {
             for (MarketStock ms : extra.getSimple()) {
-                if (conf.getMarket().equals(ms.getMarket())) {
+                if (conf.getConfigData().getMarket().equals(ms.getMarket())) {
                     //continue;
                 }
                 markets.add(ms.getMarket());
@@ -129,7 +129,7 @@ public class ExtraReader extends Pipeline {
             for (MarketStockExpression mse : extra.getComplex()) {
                 for (MarketStock ms : mse.getItems()) {
                     // skip if the same market
-                    if (conf.getMarket().equals(ms.getMarket())) {
+                    if (conf.getConfigData().getMarket().equals(ms.getMarket())) {
                         //continue;
                     }
                     markets.add(ms.getMarket());
@@ -152,7 +152,7 @@ public class ExtraReader extends Pipeline {
                     stockData.marketdatamap, market);
             dataReaderMap.put(market, datareaders);
         }
-        List<String> dateList = StockDao.getDateList(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
+        List<String> dateList = StockDao.getDateList(conf, conf.getConfigData().getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         commonDates = new HashSet<>(dateList);
         for (MarketStock ms : marketStocks) {
             String market = ms.getMarket();
@@ -243,7 +243,7 @@ public class ExtraReader extends Pipeline {
     }
 
     private Map<String, MarketData> getMarketdatamap(int days,
-            String market, MyMyConfig conf, List<StockItem> stocksId) throws Exception {
+            String market, IclijConfig conf, List<StockItem> stocksId) throws Exception {
         Map<String, MarketData> marketdatamap = new HashMap();
         log.info("prestocks");
         log.info("stocks {}", stocksId.size());
@@ -264,7 +264,7 @@ public class ExtraReader extends Pipeline {
          * Make stock lists based on the intervals
          */
 
-        List<StockItem> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, conf.getdate(), days, conf.getTableIntervalDays());
+        List<StockItem> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, conf.getConfigData().getDate(), days, conf.getTableIntervalDays());
         marketdata.datedstocklists = datedstocklists;
 
         marketdatamap.put(market,  marketdata);
@@ -272,7 +272,7 @@ public class ExtraReader extends Pipeline {
         return marketdatamap;
     }
 
-    public static Double[] getExtraData3(MyMyConfig conf, List<Date> dateList,
+    public static Double[] getExtraData3(IclijConfig conf, List<Date> dateList,
             Map<Pair<String, String>, Map<Date, StockItem>> pairDateMap, Map<Pair<String, String>, String> pairCatMap, int j, String id,
             Double[] result) throws Exception {
         int deltas = conf.getAggregatorsIndicatorExtrasDeltas();
@@ -308,7 +308,7 @@ public class ExtraReader extends Pipeline {
         return result;
     }
 
-    public static Double[] getExtraData(MyMyConfig conf, ExtraData extraData,
+    public static Double[] getExtraData(IclijConfig conf, ExtraData extraData,
             int j, String id,
             Double[] result) throws Exception {
         int deltas = conf.getAggregatorsIndicatorExtrasDeltas();
@@ -356,7 +356,7 @@ public class ExtraReader extends Pipeline {
         return result;
     }
 
-    public static Double[] getExtraData(MyMyConfig conf, ExtraData extraData,
+    public static Double[] getExtraData(IclijConfig conf, ExtraData extraData,
             int j, String id,
             Double[] result, String commonDate) throws Exception {
         int deltas = conf.getAggregatorsIndicatorExtrasDeltas();
@@ -406,7 +406,7 @@ public class ExtraReader extends Pipeline {
     }
 // ?
     @Deprecated
-    public Map<Pair<String, String>, Double[][]> getExtraData2(MyMyConfig conf, List<Date> dateList,
+    public Map<Pair<String, String>, Double[][]> getExtraData2(IclijConfig conf, List<Date> dateList,
             Map<Pair<String, String>, Map<Date, StockItem>> pairDateMap, Map<Pair<String, String>, String> pairCatMap, int j2, String id,
             Double[] result) throws Exception {
         int deltas = conf.getAggregatorsIndicatorExtrasDeltas();
@@ -452,7 +452,7 @@ public class ExtraReader extends Pipeline {
         }
     }
 
-    public static Map<Pair<String, String>, Double[]> getReverseArrSparseFillHoles(MyMyConfig conf, Map<Pair<String, String>, Double[]> listMap) {
+    public static Map<Pair<String, String>, Double[]> getReverseArrSparseFillHoles(IclijConfig conf, Map<Pair<String, String>, Double[]> listMap) {
         Map<Pair<String, String>, Double[]> retMap = new HashMap<>();
         //System.out.println("carn " + Arrays.asList(listMap.get("F00000NMNP")));
         for (Entry<Pair<String, String>, Double[]> entry : listMap.entrySet()) {
@@ -465,12 +465,12 @@ public class ExtraReader extends Pipeline {
         return retMap;
     }
 
-    public static int maxHoleNumber(MyMyConfig conf) {
+    public static int maxHoleNumber(IclijConfig conf) {
         return ValueETL.maxHoleNumber(conf);
     }
 
     // only dup due to maxholes and lacking parametrization of string/pair
-    public static Map<Pair<String, String>, Double[][]> getReverseArrSparseFillHolesArr(MyMyConfig conf, Map<Pair<String, String>, Double[][]> listMap) {
+    public static Map<Pair<String, String>, Double[][]> getReverseArrSparseFillHolesArr(IclijConfig conf, Map<Pair<String, String>, Double[][]> listMap) {
         Map<Pair<String, String>, Double[][]> retMap = new HashMap<>();
         for (Entry<Pair<String, String>, Double[][]> entry : listMap.entrySet()) {
             Pair<String, String> id = entry.getKey();
@@ -487,7 +487,7 @@ public class ExtraReader extends Pipeline {
         return retMap;
     }
 
-    private Pipeline[] getDataReaders(MyMyConfig conf, String[] periodText,
+    private Pipeline[] getDataReaders(IclijConfig conf, String[] periodText,
             Map<String, MarketData> marketdatamap, String market) throws Exception {
         Pipeline[] datareaders = new Pipeline[Constants.PERIODS + 2];
         datareaders[0] = new DataReader(conf, marketdatamap, Constants.INDEXVALUECOLUMN, market);

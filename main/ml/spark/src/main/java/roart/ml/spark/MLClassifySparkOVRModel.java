@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
@@ -30,7 +30,7 @@ import roart.ml.common.MLClassifyModel;
 import roart.pipeline.common.aggregate.Aggregator;
 
 public class MLClassifySparkOVRModel  extends MLClassifySparkModel {
-    public MLClassifySparkOVRModel(MyMyConfig conf) {
+    public MLClassifySparkOVRModel(IclijConfig conf) {
         super(conf);
     }
     

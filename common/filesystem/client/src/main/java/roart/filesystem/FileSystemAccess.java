@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.EurekaConstants;
 import roart.common.filesystem.FileSystemBooleanResult;
 import roart.common.filesystem.FileSystemByteResult;
@@ -34,11 +34,11 @@ public class FileSystemAccess {
 
     private String url;
 
-    private MyMyConfig conf;
+    private IclijConfig conf;
     
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public FileSystemAccess(MyMyConfig conf) {
+    public FileSystemAccess(IclijConfig conf) {
 	this.conf = conf;
     }
     

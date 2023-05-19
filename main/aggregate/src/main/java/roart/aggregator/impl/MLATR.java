@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.aggregator.impl.IndicatorAggregator.Filter;
 import roart.category.AbstractCategory;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
@@ -32,7 +32,7 @@ public class MLATR extends IndicatorAggregator {
         return objectMap;
     }
 
-    public MLATR(MyMyConfig conf, String string, String title, int category, 
+    public MLATR(IclijConfig conf, String string, String title, int category, 
             AbstractCategory[] categories, Map<String, String> idNameMap, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         super(conf, string, category, title, idNameMap, categories, datareaders, neuralnetcommand);
     }
