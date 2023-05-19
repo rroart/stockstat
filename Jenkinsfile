@@ -4,8 +4,10 @@ node {
       env.PATH = "${dockerHome}/bin:${env.PATH}"
       def buildImage = docker.build("buildimage", "-f docker/jenkins/Dockerfile.build docker/jenkins") 
       buildImage.inside {
+        mattermostSend "Build Started - ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.MYBRANCH}"
         env.npm_config_cache='/tmp/.npm'
         sh 'mvn verify -pl !web -pl !weba -pl !iclij/iclij-weba -DskipTests'
+        mattermostSend "Build Finished - ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.MYBRANCH}"
         if (env.MYBRANCH == 'develop') {
           env.OTHERBRANCH = 'master'
         } else {
@@ -14,7 +16,9 @@ node {
         sh 'git checkout $OTHERBRANCH'
 	sh 'git pull'
         sh 'git merge origin/$MYBRANCH || (git merge --abort && exit 1)'
+        mattermostSend "Merged ${env.MYBRANCH} to ${env.OTHERBRANCH}"
         sh 'mvn verify -pl !web -pl !weba -pl !iclij/iclij-weba -DskipTests'
+        mattermostSend "Build Finised - ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.OTHERBRANCH}"
         env.MYPUSH = sh(script: 'git config remote.origin.url | cut -c9-', returnStdout: true)
         withCredentials([usernameColonPassword(credentialsId: 'githubtoken', variable: 'TOKEN')]) {
           sh 'git push https://$TOKEN@$MYPUSH'
