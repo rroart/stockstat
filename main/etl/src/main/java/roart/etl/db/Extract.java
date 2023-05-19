@@ -14,10 +14,11 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
+import roart.common.util.TimeUtil;
 import roart.common.util.ValidateUtil;
 import roart.db.dao.DbDao;
 import roart.db.dao.util.DbDaoUtil;
@@ -30,8 +31,8 @@ public class Extract {
 
     private static Logger log = LoggerFactory.getLogger(Extract.class);
 
-    public StockData getStockData(MyMyConfig conf) {
-        String market = conf.getMarket();
+    public StockData getStockData(IclijConfig conf) {
+        String market = conf.getConfigData().getMarket();
         return getStockData(conf, market);
     }
 
@@ -42,7 +43,7 @@ public class Extract {
         this.dbDao = dbDao;
     }
 
-    public StockData getStockData(MyMyConfig conf, String market) {
+    public StockData getStockData(IclijConfig conf, String market) {
         List<StockItem> stocks = null;
         try {
             stocks = dbDao.getAll(market, conf);
@@ -64,7 +65,7 @@ public class Extract {
         Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
         Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
         stockdatemap = StockUtil.filterFew(stockdatemap, conf.getFilterDate());
-        if (conf.getdate() == null) {
+        if (conf.getConfigData().getDate() == null) {
             try {
                 getCurrentDate(conf, stockdatemap);
             } catch (ParseException e) {
@@ -114,7 +115,7 @@ public class Extract {
          * Make stock lists based on the intervals
          */
     
-        List<StockItem>[] datedstocklists = StockUtil.getDatedstocklists(stockdatemap, conf.getdate(), 2, conf.getTableMoveIntervalDays());
+        List<StockItem>[] datedstocklists = StockUtil.getDatedstocklists(stockdatemap, conf.getConfigData().getDate(), 2, conf.getTableMoveIntervalDays());
     
         List<StockItem> datedstocks = datedstocklists[0];
         if (datedstocks == null) {
@@ -149,7 +150,7 @@ public class Extract {
         return idNameMap;
     }
 
-    private void getCurrentDate(MyMyConfig conf, Map<String, List<StockItem>> stockdatemap) throws ParseException {
+    private void getCurrentDate(IclijConfig conf, Map<String, List<StockItem>> stockdatemap) throws ParseException {
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String date = null;
         TreeSet<String> set = new TreeSet<>(stockdatemap.keySet());
@@ -159,8 +160,8 @@ public class Extract {
             int jj = 0;
         }
         date = list.get(size - 1);
-        conf.setdate(dt.parse(date));
-        log.info("mydate2 {}", conf.getdate());
+        conf.getConfigData().setDate(TimeUtil.convertDate(dt.parse(date)));
+        log.info("mydate2 {}", conf.getConfigData().getDate());
     }
 
 }

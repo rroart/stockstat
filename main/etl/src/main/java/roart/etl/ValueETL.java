@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.util.ArraysUtil;
 
@@ -65,7 +65,7 @@ public class ValueETL {
         return Collections.unmodifiableMap(aMap);
     }
 
-    public static Map<String, Double[][]> getReverseArrSparseFillHolesArr(MyMyConfig conf, Map<String, Double[][]> listMap) {
+    public static Map<String, Double[][]> getReverseArrSparseFillHolesArr(IclijConfig conf, Map<String, Double[][]> listMap) {
         Map<String, Double[][]> retMap = new HashMap<>();
         for (Entry<String, Double[][]> entry : listMap.entrySet()) {
             Double[][] array = entry.getValue();
@@ -84,7 +84,7 @@ public class ValueETL {
         return Collections.unmodifiableMap(retMap);
     }
 
-    public static Map<String, Double[]> getReverseArrSparseFillHoles(MyMyConfig conf, Map<String, Double[]> listMap) {
+    public static Map<String, Double[]> getReverseArrSparseFillHoles(IclijConfig conf, Map<String, Double[]> listMap) {
         Map<String, Double[]> retMap = new HashMap<>();
         for (Entry<String, Double[]> entry : listMap.entrySet()) {
             Double[] array = entry.getValue();
@@ -97,11 +97,11 @@ public class ValueETL {
         return retMap;
     }
 
-    public static int maxHoleNumber(MyMyConfig conf) {
+    public static int maxHoleNumber(IclijConfig conf) {
         return conf.getMaxHoles();
     }
 
-    public static Map<String, Double[][]> abnormalChange(Map<String, Double[][]> listMap, MyMyConfig conf) {
+    public static Map<String, Double[][]> abnormalChange(Map<String, Double[][]> listMap, IclijConfig conf) {
         Double margin = conf.getAbnormalChange();
         if (margin == null) {
             return listMap;

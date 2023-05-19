@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.model.StockItem;
 import roart.common.util.MapUtil;
 import roart.model.data.MarketData;
@@ -15,7 +15,7 @@ import roart.stockutil.StockDao;
 
 public class DatelistToMapETL {
 
-    public static Map<String, Double[][]> getArrSparse(MyMyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
+    public static Map<String, Double[][]> getArrSparse(IclijConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
             Map<String, MarketData> marketdataMap, boolean currentyear) throws Exception {
         Map<String, Double[][]> retMap = new HashMap<>();
         List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
@@ -85,7 +85,7 @@ public class DatelistToMapETL {
         return Collections.unmodifiableMap(retMap);
     }
 
-    public static Map<String, Object[][]> getVolumes(MyMyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
+    public static Map<String, Object[][]> getVolumes(IclijConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
             Map<String, MarketData> marketdataMap, boolean currentyear) throws Exception {
         Map<String, Object[][]> retMap = new HashMap<>();
         List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;

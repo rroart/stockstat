@@ -10,6 +10,7 @@ module stocketl {
     exports roart.etl.db;
 
     requires dbdao;
+    requires iclij.common.config;
     requires common.config;
     requires common.constants;
     requires common.model;

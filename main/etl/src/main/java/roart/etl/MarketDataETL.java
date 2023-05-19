@@ -7,7 +7,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
 import roart.model.data.MarketData;
@@ -34,7 +34,7 @@ public class MarketDataETL {
      */
     
     public Map<String, MarketData> getMarketdatamap(int days,
-            String market, MyMyConfig conf, List<StockItem> stocks, String[] periodText, MetaItem meta) throws Exception {
+            String market, IclijConfig conf, List<StockItem> stocks, String[] periodText, MetaItem meta) throws Exception {
         Map<String, MarketData> marketdatamap = new HashMap();
         log.info("prestocks");
         log.info("stocks {}", stocks.size());
@@ -52,7 +52,7 @@ public class MarketDataETL {
          * Make stock lists based on the intervals
          */
 
-        List<StockItem> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, conf.getdate(), days, conf.getTableIntervalDays());
+        List<StockItem> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, conf.getConfigData().getDate(), days, conf.getTableIntervalDays());
         marketdata.datedstocklists = datedstocklists;
         marketdatamap.put(market,  marketdata);
         return marketdatamap;
