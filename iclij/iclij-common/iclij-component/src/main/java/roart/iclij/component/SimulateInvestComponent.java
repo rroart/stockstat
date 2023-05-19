@@ -282,6 +282,9 @@ public class SimulateInvestComponent extends ComponentML {
         if (parametersList.isEmpty()) {
             parametersList.add(null);
         }
+        if (autoSimConfig == null) {
+            data.stocks = param.getService().getStocks(market.getConfig().getMarket());           
+        }
         
         List<Double> scores = new ArrayList<>();
 
@@ -1492,7 +1495,9 @@ public class SimulateInvestComponent extends ComponentML {
                         //ids.removeAll(sellids);
                         // TODO new portofolio?
                         String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() + " " + onerun.dbid : "";
-                        onerun.lastbuysell = "Stoploss sell: " + sellids + " Stocks: " + ids + adv;
+                        String selltxt = getText(data.stocks, sellids);
+                        String idstxt = getText(data.stocks, ids);
+                        onerun.lastbuysell = "Stoploss sell: " + sellids + " Stocks: " + ids + " ( " + selltxt + " , " + idstxt + " ) "+ adv;
                     } else {
                         int jj = 0;
                     }
@@ -1516,16 +1521,29 @@ public class SimulateInvestComponent extends ComponentML {
                 if (true /*isMain*/) {
                     String newids = "";
                     String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() + " " + onerun.dbid : "";
+                    String idsnewtxt = "";
                     if (extradelay == 0) {
                         List<String> idsnew = new ArrayList<>(ids);
                         idsnew.addAll(buyids);
                         idsnew.removeAll(sellids);
                         newids = " -> " + idsnew;
+                        idsnewtxt = getText(data.stocks, idsnew);
                     }
-                    onerun.lastbuysell = "Buy: " + buyids + " Sell: " + sellids + " Stocks: " + ids + newids + adv;
-                }
+                    String buytxt = getText(data.stocks, buyids);
+                    String selltxt = getText(data.stocks, sellids);
+                    String idstxt = getText(data.stocks, ids);
+                    onerun.lastbuysell = "Buy: " + buyids + " Sell: " + sellids + " Stocks: " + ids + newids + " ( " + buytxt + " , " + selltxt + " , " + idstxt + " , " + idsnewtxt + " ) "+ adv;
+               }
             }
         }
+    }
+
+    private String getText(Map<String, String> stocks, List<String> ids) {
+        String txt = "";
+        for (String id : ids) {
+            txt = (stocks.containsKey(id) ? stocks.get(id) : id) + " ";
+        }
+        return txt;
     }
 
     private List<SimulateStock> addEvent(OneRun onerun, List<SimulateStock> stocks, String bs, int myIndexoffset) {
@@ -2575,6 +2593,7 @@ public class SimulateInvestComponent extends ComponentML {
         Map<String, List<List<Double>>> filteredCategoryValueMap;
         Map<String, List<List<Double>>> filteredCategoryValueFillMap;
         List<String> stockDates;
+        Map<String, String> stocks;
         Map<Integer, List<String>> volumeExcludeMap;
         Map<Integer, List<String>> volumeExcludeFillMap;
         List<String> configExcludeList;
