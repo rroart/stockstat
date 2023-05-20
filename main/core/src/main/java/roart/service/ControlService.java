@@ -146,8 +146,7 @@ public class ControlService {
             Pipeline[] datareaders = new ServiceUtil().getDataReaders(conf, stockData.periodText,
                     stockData.marketdatamap, stockData, dbDao);
 
-            SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-            String mydate = dt.format(conf.getConfigData().getDate());
+            String mydate = TimeUtil.format(conf.getConfigData().getDate());
             int dateIndex = TimeUtil.getIndexEqualBefore(stockData.stockdates, mydate);
             if (dateIndex >= 0) {
                 mydate = stockData.stockdates.get(dateIndex);
@@ -326,13 +325,12 @@ public class ControlService {
             }
         }
         */
-        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         for (StockItem stock : datedstocks) {
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(stock.getId());
             row.add(stock.getIsin());
             row.add(stock.getName());
-            row.add(dt.format(stock.getDate()));
+            row.add(TimeUtil.format(stock.getDate()));
             try {
                 for (int i = 0; i < Constants.ALLPERIODS; i++) {
                     categories[i].addResultItem(row, stock);

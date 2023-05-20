@@ -13,6 +13,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.StockItem;
+import roart.common.util.TimeUtil;
 import roart.result.model.GUISize;
 import roart.result.model.ResultItem;
 import roart.result.model.ResultItemBytes;
@@ -39,15 +40,14 @@ public class GraphCategoryPeriodTopBottom extends GraphCategory {
             int topbottom = conf.getTopBottom();
             String date0 = null;
             String date1 = null;
-            SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
             for (int i = days - 1; i > 0; i--) {
                 if (!stocklistPeriod[0][i].isEmpty()) {
-                    date0 = dt.format(stocklistPeriod[0][i].get(0).getDate());
+                    date0 = TimeUtil.format(stocklistPeriod[0][i].get(0).getDate());
                     break;
                 }
             }
             if (!stocklistPeriod[0][0].isEmpty()) {
-                date1 = dt.format(stocklistPeriod[0][0].get(0).getDate());
+                date1 = TimeUtil.format(stocklistPeriod[0][0].get(0).getDate());
             }
             {
                 DefaultCategoryDataset dataset = StockUtil.getTopChart(days, topbottom,

@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
 import roart.common.model.StockItem;
+import roart.common.util.TimeUtil;
 import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
 import roart.stockutil.StockDao;
@@ -51,8 +52,7 @@ public class Math3Util {
         Collections.sort(list);
         String date = null;
         if (datedate != null) {
-            SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-            date = dt.format(datedate);                
+            date = TimeUtil.format(datedate);                
         }
         int index = list.size() - 1 - StockUtil.getStockDate(list, date);
         log.info("index {}", index);
@@ -133,8 +133,7 @@ public class Math3Util {
         Collections.sort(list);
         String date = null;
         if (datedate != null) {
-            SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-            date = dt.format(datedate);                
+            date = TimeUtil.format(datedate);                
         }
         int index = list.size() - 1 - StockUtil.getStockDate(list, date);
         log.info("index {}", index);

@@ -70,6 +70,7 @@ import roart.service.util.ServiceUtil;
 import roart.stockutil.StockUtil;
 import roart.talib.util.TaUtil;
 import roart.common.util.JsonUtil;
+import roart.common.util.TimeUtil;
 
 public class EvolutionService {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -334,8 +335,7 @@ public class EvolutionService {
     
             //datareaders[0] = dataReader;
     
-            SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-            String mydate = dt.format(conf.getConfigData().getDate());
+            String mydate = TimeUtil.format(conf.getConfigData().getDate());
             List<StockItem> dayStocks = stockData.stockdatemap.get(mydate);
             AbstractCategory[] categories = new ServiceUtil().getCategories(conf, dayStocks,
                     stockData.periodText, datareaders);

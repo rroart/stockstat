@@ -63,7 +63,7 @@ public class SimulateInvestData extends ComponentData {
         this.resultRebaseMaps = resultRebaseMaps;
     }
 
-    public SimulateInvestConfig getConfig() {
+    public SimulateInvestConfig getSimConfig() {
         return config;
     }
 
