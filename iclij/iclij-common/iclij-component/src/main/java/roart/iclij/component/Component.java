@@ -134,7 +134,7 @@ public abstract class Component {
         if (subcomponent != null) {
             this.subenable(valueMap, subcomponent);
         }
-        if (action.wantsUpdate(param.getInput().getConfig())) {
+        if (action.wantsUpdate(param.getConfig())) {
         	if (IclijConstants.MACHINELEARNING.equals(action.getName())) {
             	valueMap.putAll(getValueMap(action, IclijConstants.FINDPROFIT, market, param, subcomponent, mlmarket, parameters));        		
         	}
@@ -158,8 +158,8 @@ public abstract class Component {
         long time0 = System.currentTimeMillis();
         boolean interrupted = false;
         if (evolve) {   
-            EvolutionConfig actionEvolveConfig = JsonUtil.convert(action.getEvolutionConfig(param.getInput().getConfig()), EvolutionConfig.class);
-            evolveMap = handleEvolve(action, market, pipeline, evolve, param, subcomponent, scoreMap, null, parameters, actionEvolveConfig, action.getMLConfig(param.getInput().getConfig()));
+            EvolutionConfig actionEvolveConfig = JsonUtil.convert(action.getEvolutionConfig(param.getConfig()), EvolutionConfig.class);
+            evolveMap = handleEvolve(action, market, pipeline, evolve, param, subcomponent, scoreMap, null, parameters, actionEvolveConfig, action.getMLConfig(param.getConfig()));
             //if (IclijConstants.EVOLVE.equals(param.getAction())) {
             //    action.saveTimingCommon(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, evolve);
            //}
@@ -302,7 +302,7 @@ public abstract class Component {
     
     public ComponentData improve(MarketActionData action, ComponentData param, AbstractChromosome chromosome, String subcomponent, ChromosomeWinner winner, Boolean buy, Fitness fitness, boolean save) {
         long time0 = System.currentTimeMillis();
-        EvolutionConfig evolutionConfig = JsonUtil.convert(action.getEvolutionConfig(param.getInput().getConfig()), EvolutionConfig.class);
+        EvolutionConfig evolutionConfig = JsonUtil.convert(action.getEvolutionConfig(param.getConfig()), EvolutionConfig.class);
         EvolutionConfig evolveConfig = getEvolutionConfig(param, evolutionConfig);
         evolutionConfig = evolveConfig;
         OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);

@@ -129,7 +129,7 @@ public class ImproveAboveBelowAction extends MarketAction {
             Map<String, Object> aMap = new HashMap<>();
 
             List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
-            int verificationdays = param.getInput().getConfig().verificationDays();
+            int verificationdays = param.getConfig().verificationDays();
 
             //ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters, mlTests);
             List<IncDecItem> allIncDecs = null;
@@ -239,9 +239,9 @@ public class ImproveAboveBelowAction extends MarketAction {
 
                 MemoryItem memory = new MemoryItem();
                 if (true) {
-                    int ga = param.getInput().getConfig().getEvolveGA();
+                    int ga = param.getConfig().getEvolveGA();
                     Evolve evolve2 = AboveBelowEvolveFactory.factory(ga);
-                    String evolutionConfigString = param.getInput().getConfig().getImproveAbovebelowEvolutionConfig();
+                    String evolutionConfigString = param.getConfig().getImproveAbovebelowEvolutionConfig();
                     EvolutionConfig evolutionConfig = JsonUtil.convert(evolutionConfigString, EvolutionConfig.class);
 
                     Map<String, Object> confMap = new HashMap<>();
@@ -296,7 +296,7 @@ public class ImproveAboveBelowAction extends MarketAction {
 
             Map<String, Object> results = param.getResultMap();
             if (results != null) {
-                param.getService().send(ServiceConstants.EVOLVEFILTERABOVEBELOW, results, param.getInput().getConfig());
+                param.getService().send(ServiceConstants.EVOLVEFILTERABOVEBELOW, results, param.getConfig());
             }
             //component.calculateIncDec(componentData, profitdata, positions);
             //System.out.println("Buys: " + market.getMarket() + buys);
@@ -414,7 +414,7 @@ public class ImproveAboveBelowAction extends MarketAction {
         */
         
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
-        int verificationdays = param.getInput().getConfig().verificationDays();
+        int verificationdays = param.getConfig().verificationDays();
         /*
         List<IncDecItem> allIncDecs = null;
         try {

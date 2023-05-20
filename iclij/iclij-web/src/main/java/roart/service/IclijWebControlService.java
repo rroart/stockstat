@@ -87,7 +87,7 @@ public class IclijWebControlService {
 
     public void getConfig() {
         ServiceParam param = new ServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         IclijServiceResult result = WebFluxUtil.sendIMe(IclijServiceResult.class, param, WebFluxConstants.GETCONFIG);
         iclijConf = null; //result.getConfig();
         Map<String, Object> map = iclijConf.getConfigData().getConfigValueMap();
@@ -119,14 +119,14 @@ public class IclijWebControlService {
 
     public List<String> getMarkets() {
         ServiceParam param = new ServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, WebFluxConstants.GETMARKETS);
         return result.getMarkets();    	
     }
 
     public Map<String, String> getStocks(String market) {
         ServiceParam param = new ServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         param.setMarket(market);
         ServiceResult result = WebFluxUtil.sendIMe(ServiceResult.class, param, WebFluxConstants.GETSTOCKS);
         return result.getStocks();   	
@@ -270,7 +270,7 @@ public class IclijWebControlService {
 
     public List getContentGraph(GUISize guiSize) {
         ServiceParam param = new ServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         param.setGuiSize(guiSize);
         ServiceResult result = WebFluxUtil.sendIMe(ServiceResult.class, param, WebFluxConstants.GETCONTENTGRAPH);
         return result.getList();
@@ -291,7 +291,7 @@ public class IclijWebControlService {
             idset.add(pair.getFirst() + "," + pair.getSecond());
         }
         ServiceParam param = new ServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         param.setIds(idset);
         param.setGuiSize(guiSize);
         ServiceResult result = WebFluxUtil.sendIMe(ServiceResult.class, param, WebFluxConstants.GETCONTENTGRAPH2);
@@ -310,21 +310,21 @@ public class IclijWebControlService {
 
     public List getContentStat() {
         ServiceParam param = new ServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         ServiceResult result = WebFluxUtil.sendIMe(ServiceResult.class, param, WebFluxConstants.GETCONTENTSTAT);
         return result.getList();
     }
 
     public void dbengine(Boolean useSpark) throws Exception {
         ServiceParam param = new ServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         ServiceResult result = WebFluxUtil.sendIMe(ServiceResult.class, param, WebFluxConstants.SETCONFIG);
         getConfig();
     }
 
     public List<ResultItem> getTestRecommender(boolean doSet) {
         ServiceParam param = new ServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         ServiceResult result = WebFluxUtil.sendIMe(ServiceResult.class, param, WebFluxConstants.GETEVOLVERECOMMENDER);
         if (doSet) {
             conf = result.getConfig();

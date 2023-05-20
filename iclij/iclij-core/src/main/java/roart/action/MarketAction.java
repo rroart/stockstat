@@ -114,7 +114,7 @@ public abstract class MarketAction extends Action {
     
     @Override
     public void goal(Action parent, ComponentData param, Integer priority, IclijConfig iclijConfig) {
-        getMarkets(iclijConfig, parent, new ComponentInput(iclijConfig, null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), null, priority);
+        getMarkets(iclijConfig, parent, new ComponentInput(iclijConfig.getConfigData(), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), null, priority);
     }
 
     public WebData getMarket(IclijConfig iclijConfig, Action parent, ComponentData param, Market market, Boolean evolve, Integer priority, List<TimingItem> timingsdone) {
@@ -156,7 +156,7 @@ public abstract class MarketAction extends Action {
         
         List<MetaItem> metas = paramTemplate.getService().getMetas();
             
-        IclijConfig config = paramTemplate.getInput().getConfig();
+        IclijConfig config = iclijConfig; //paramTemplate.getInput().getConfigData();
         List<ActionComponentItem> marketTimes = new ArrayList<>();
         Map<String, ComponentData> componentDataMap = new HashMap<>();
         for (Market market : markets) {
@@ -166,7 +166,7 @@ public abstract class MarketAction extends Action {
             String marketName = market.getConfig().getMarket();
             MetaItem meta = new MetaUtil().findMeta(metas, marketName);
             boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
-            ComponentInput input = new ComponentInput(config, null, marketName, null, 0, paramTemplate.getInput().isDoSave(), false, new ArrayList<>(), paramTemplate.getInput().getValuemap());
+            ComponentInput input = new ComponentInput(config.getConfigData(), null, marketName, null, 0, paramTemplate.getInput().isDoSave(), false, new ArrayList<>(), paramTemplate.getInput().getValuemap());
             ComponentData param = null;
             try {
                 param = ComponentData.getParam(iclijConfig, input, 0, market);
@@ -215,7 +215,7 @@ public abstract class MarketAction extends Action {
                         componentMapFiltered.put(entry.getKey(),  entry.getValue());
                     }
                 }
-                List<ActionComponentItem> marketTime = getList(getName(), componentMapFiltered, timings, market, param, currentTimings, timingsdone);
+                List<ActionComponentItem> marketTime = getList(getName(), componentMapFiltered, timings, market, param, currentTimings, timingsdone, iclijConfig);
                 marketTimes.addAll(marketTime);
             } else {
                 int jj = 0;
@@ -337,7 +337,7 @@ public abstract class MarketAction extends Action {
 
     protected static final int AVERAGE_SIZE = 5;
 
-    private List<ActionComponentItem> getList(String action, Map<String, Component> componentMapFiltered, List<TimingItem> timings, Market market, ComponentData param, List<TimingItem> currentTimings, List<TimingItem> timingsdone) {
+    private List<ActionComponentItem> getList(String action, Map<String, Component> componentMapFiltered, List<TimingItem> timings, Market market, ComponentData param, List<TimingItem> currentTimings, List<TimingItem> timingsdone, IclijConfig iclijConfig) {
         List<MLMetricsItem> mltests = null;
         try {
             mltests = getActionData().getDbDao().getAllMLMetrics(market.getConfig().getMarket(), null, null);
@@ -368,9 +368,9 @@ public abstract class MarketAction extends Action {
             Component component = entry.getValue();
             boolean evolve = getEvolve(component, param);
 
-            Double[] thresholds = getThresholds(param.getInput().getConfig());
-            Integer[] futuredays = getFuturedays(param.getInput().getConfig());
-            List<String> subComponents = component.getConfig().getSubComponents(market, param.getInput().getConfig(), null, getActionData().getMLConfig(param.getInput().getConfig()));
+            Double[] thresholds = getThresholds(iclijConfig);
+            Integer[] futuredays = getFuturedays(iclijConfig);
+            List<String> subComponents = component.getConfig().getSubComponents(market, iclijConfig, null, getActionData().getMLConfig(iclijConfig));
             for(String subComponent : subComponents) {
                 if (!isDataset()) {
                     boolean skipSubcomponent = getSkipSubComponent(mltests, confidence, componentName, subComponent);
@@ -411,7 +411,7 @@ public abstract class MarketAction extends Action {
                             marketTime.setParameters(JsonUtil.convert(parameters));
                             //marketTime.timings = timingToDo;
                             marketTime.setBuy(buy);
-                            IclijConfig config = param.getInput().getConfig();
+                            IclijConfig config = iclijConfig; //param.getInput().getConfigData();
                             String mypriorityKey = actionData.getPriority();
                             int aPriority = getPriority(config, mypriorityKey);
                             int mypriority = aPriority + entry.getValue().getConfig().getPriority(config);

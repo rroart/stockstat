@@ -41,7 +41,7 @@ public class ControlService {
 
     public void getConfig() {
         ServiceParam param = new ServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG);
         conf = result.getConfig();
         Map<String, Object> map = conf.getConfigData().getConfigValueMap();
@@ -74,14 +74,14 @@ public class ControlService {
 
     public List<String> getMarkets() {
         ServiceParam param = new ServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETMARKETS);
         return result.getMarkets();    	
     }
 
     public Map<String, String> getStocks(String market) {
         ServiceParam param = new ServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         param.setMarket(market);
         ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETSTOCKS);
         return result.getStocks();   	
@@ -95,7 +95,7 @@ public class ControlService {
 
     public void getContent(MyVaadinUI ui) {
         ServiceParam param = new ServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         param.setWebpath(EurekaConstants.GETCONTENT);
         MyMyConfig aConf = new MyMyConfig(conf);
         NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
@@ -129,7 +129,7 @@ public class ControlService {
 
     public List getContentGraph(GUISize guiSize) {
         ServiceParam param = new ServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         param.setGuiSize(guiSize);
         ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH);
         return result.getList();
@@ -150,7 +150,7 @@ public class ControlService {
             idset.add(pair.getFirst() + "," + pair.getSecond());
         }
         ServiceParam param = new ServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         param.setIds(idset);
         param.setGuiSize(guiSize);
         ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH2);
@@ -169,28 +169,28 @@ public class ControlService {
 
     public List getContentStat() {
         ServiceParam param = new ServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENTSTAT);
         return result.getList();
     }
 
     public void dbengine(Boolean useSpark) throws Exception {
         ServiceParam param = new ServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.SETCONFIG);
         getConfig();
     }
 
     public void getEvolveRecommender(MyVaadinUI ui, boolean doSet) {
         ServiceParam param = new ServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         param.setWebpath(EurekaConstants.GETEVOLVERECOMMENDER);
         new EvolveCoreThread(ui, param, doSet).start();
     }
 
     public void getEvolveML(MyVaadinUI ui, boolean doSet, String ml) {
         ServiceParam param = new ServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         Set<String> ids = new HashSet<>();
         ids.add(ml);
         param.setIds(ids);

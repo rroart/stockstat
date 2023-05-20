@@ -105,7 +105,7 @@ public class FitnessMarketFilter extends Fitness {
         Trend incProp = null;
         Trend incProp1 = null;
         try {
-            int verificationdays = param.getInput().getConfig().verificationDays();
+            int verificationdays = param.getConfig().verificationDays();
             Component component =  new ComponentFactory().factory(componentName);
             ActionComponentConfig config = ActionComponentConfigFactory.factoryfactory(action.getName()).factory(component.getPipeline());
             component.setConfig(config);
@@ -136,7 +136,7 @@ public class FitnessMarketFilter extends Fitness {
             myData.getUpdateMap().putAll(componentData.getUpdateMap());
         
             Memories listMap = new Memories(market);
-            listMap.method(myData.getMemoryItems(), param.getInput().getConfig());        
+            listMap.method(myData.getMemoryItems(), param.getConfig());        
             //ProfitData profitdata = new ProfitData();
             ProfitInputData inputdata = new ProfitInputData();
             profitdata.setInputdata(inputdata);
@@ -214,7 +214,7 @@ public class FitnessMarketFilter extends Fitness {
                     fitness4 = ((double)(countDec + countInc)) / size;
                 }
                 incdecFitness = fitness4;
-                int minimum = param.getInput().getConfig().getImproveProfitFitnessMinimum();
+                int minimum = param.getConfig().getImproveProfitFitnessMinimum();
                 if (minimum > 0 && size < minimum) {
                     log.info("Fit sum too small {} < {}", size, minimum);
                     incdecFitness = 0;

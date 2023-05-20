@@ -109,9 +109,9 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            System.out.println("new market" + param.getConfig().getConfigData().getMarket());
-            System.out.println("new market" + param.getConfig());
-            System.out.println("new some " + param.getConfig().getConfigData().getConfigValueMap().get(ConfigConstants.DATABASESPARKSPARKMASTER));
+            System.out.println("new market" + param.getConfigData().getMarket());
+            System.out.println("new market" + param.getConfigData());
+            System.out.println("new some " + param.getConfigData().getConfigValueMap().get(ConfigConstants.DATABASESPARKSPARKMASTER));
             //getInstance().config(param.config);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -175,7 +175,7 @@ public class ServiceController implements CommandLineRunner {
             maps = new HashMap<>();
         }
         try {
-            getInstance().getDates( new IclijConfig(param.getConfig()), maps);
+            getInstance().getDates( new IclijConfig(param.getConfigData()), maps);
             result.setMaps(maps);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -190,7 +190,7 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            result.setStocks(getInstance().getStocks(param.getMarket(),  new IclijConfig(param.getConfig())));
+            result.setStocks(getInstance().getStocks(param.getMarket(),  new IclijConfig(param.getConfigData())));
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -215,7 +215,7 @@ public class ServiceController implements CommandLineRunner {
                 disableList = new ArrayList<>();
             }
             NeuralNetCommand neuralnetcommand = param.getNeuralnetcommand();
-            result.setList(getInstance().getContent( new IclijConfig(param.getConfig()), maps, disableList, neuralnetcommand));
+            result.setList(getInstance().getContent( new IclijConfig(param.getConfigData()), maps, disableList, neuralnetcommand));
             result.setMaps(maps);
             long[] mem1 = MemUtil.mem();
             long[] memdiff = MemUtil.diff(mem1, mem0);
@@ -238,7 +238,7 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            result.setList(getInstance().getContentStat( new IclijConfig(param.getConfig())));
+            result.setList(getInstance().getContentStat( new IclijConfig(param.getConfigData())));
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -252,7 +252,7 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            result.setList(getInstance().getContentGraph( new IclijConfig(param.getConfig()), param.getGuiSize()));
+            result.setList(getInstance().getContentGraph( new IclijConfig(param.getConfigData()), param.getGuiSize()));
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -272,7 +272,7 @@ public class ServiceController implements CommandLineRunner {
                 Pair<String, String> pair = new ImmutablePair(idsplit[0], idsplit[1]);
                 ids.add(pair);
             }
-            result.setList(getInstance().getContentGraph( new IclijConfig(param.getConfig()), ids, param.getGuiSize()));
+            result.setList(getInstance().getContentGraph( new IclijConfig(param.getConfigData()), ids, param.getGuiSize()));
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -286,7 +286,7 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            IclijConfig aConfig = new IclijConfig(param.getConfig());
+            IclijConfig aConfig = new IclijConfig(param.getConfigData());
             List<String> disableList = param.getConfList();
             if (disableList == null) {
                 disableList = new ArrayList<>();
@@ -314,7 +314,7 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            IclijConfig aConfig = new IclijConfig(param.getConfig());
+            IclijConfig aConfig = new IclijConfig(param.getConfigData());
             List<String> disableList = param.getConfList();
             if (disableList == null) {
                 disableList = new ArrayList<>();

@@ -112,9 +112,9 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
             ((ImproveAutoSimulateInvestComponent)component).getResultMaps(param, market);
             List<String> confList = component.getConflist();
 
-            int ga = param.getInput().getConfig().getEvolveGA();
+            int ga = param.getConfig().getEvolveGA();
             Evolve evolve = SimulateInvestEvolveFactory.factory(ga);
-            String evolutionConfigString = param.getInput().getConfig().getImproveAutoSimulateInvestEvolutionConfig();
+            String evolutionConfigString = param.getConfig().getImproveAutoSimulateInvestEvolutionConfig();
             EvolutionConfig evolutionConfig = JsonUtil.convert(evolutionConfigString, EvolutionConfig.class);
             Map<String, Object> confMap = new HashMap<>();
             ComponentData e = evolve.evolve(action.getActionData(), param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap , evolutionConfig, component.getPipeline(), component, confList);
@@ -122,7 +122,7 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
             Object filters = param.getConfigValueMap().remove(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
             filters = param.getInput().getValuemap().get(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
             results.put(SimConstants.FILTER, filters);
-            e.getService().send(ServiceConstants.SIMAUTO, results, param.getInput().getConfig());
+            e.getService().send(ServiceConstants.SIMAUTO, results, param.getConfig());
             Map<String, Object> updateMap = e.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);

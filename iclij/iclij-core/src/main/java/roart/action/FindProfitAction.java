@@ -194,7 +194,7 @@ public class FindProfitAction extends MarketAction {
     
     @Override
     protected boolean getEvolve(Component component, ComponentData param) {
-        return component.wantEvolve(param.getInput().getConfig());
+        return component.wantEvolve(param.getConfig());
     }
     
     @Override
@@ -258,7 +258,7 @@ public class FindProfitAction extends MarketAction {
         LocalDate olddate = prevdate.minusDays(getActionData().getTime(market));
         ProfitData profitdata = new ProfitData();
         ProfitInputData inputdata = new ProfitInputData();
-        getListComponents(myData, param, componentInput.getConfig(), null, evolve, market, dataMap, listComponentMap, olddate, prevdate);
+        getListComponents(myData, param, param.getConfig(), null, evolve, market, dataMap, listComponentMap, olddate, prevdate);
         profitdata.setInputdata(inputdata);
         myData.setProfitData(profitdata);
 

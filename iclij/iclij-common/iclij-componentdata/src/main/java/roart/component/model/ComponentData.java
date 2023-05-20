@@ -29,6 +29,8 @@ public class ComponentData {
 
     private ComponentInput input;
     
+    private IclijConfig config;
+    
     // new
     private ControlService service;
     
@@ -72,6 +74,7 @@ public class ComponentData {
     }
     
     public ComponentData(ComponentData componentparam) {
+        this.config = componentparam.config;
         this.input = componentparam.input;
         this.input.setValuemap(new HashMap<>(componentparam.input.getValuemap()));
         this.service = componentparam.service;
@@ -107,8 +110,9 @@ public class ComponentData {
     public static ComponentData getParam(IclijConfig iclijConfig, ComponentInput input, int days, Market aMarket) throws Exception {
         ComponentData param = new ComponentData(input);
         //param.setAction(IclijConstants.FINDPROFIT);
-        String market = input.getConfig().getConfigData().getMarket();
-        String mlmarket = input.getConfig().getConfigData().getMlmarket();
+        String market = input.getConfigData().getMarket();
+        String mlmarket = input.getConfigData().getMlmarket();
+        param.config = iclijConfig;
         ControlService srv = new ControlService(iclijConfig);
         param.setService(srv);
         if (market != null) {
@@ -145,6 +149,14 @@ public class ComponentData {
 
     public boolean isDoPrint() {
         return input.isDoPrint();
+    }
+
+    public IclijConfig getConfig() {
+        return config;
+    }
+
+    public void setConfig(IclijConfig config) {
+        this.config = config;
     }
 
     public ControlService getService() {

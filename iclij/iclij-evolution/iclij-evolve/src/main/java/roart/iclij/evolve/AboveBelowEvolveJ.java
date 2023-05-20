@@ -44,7 +44,7 @@ public class AboveBelowEvolveJ extends EvolveJ {
             EvolutionConfig evolutionConfig, String pipeline, Component component, List<String> confList) {
         double score = -1;
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
-        int verificationdays = param.getInput().getConfig().verificationDays();
+        int verificationdays = param.getConfig().verificationDays();
         List<IncDecItem> allIncDecs = null;
         LocalDate date = param.getFutureDate();
         date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);

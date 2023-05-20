@@ -115,7 +115,7 @@ public class ComponentRecommender extends ComponentNoML {
         futuredays = 0;
         param.setFuturedays(futuredays);
 
-        handle2(action, market, param, profitdata, positions, evolve && param.getInput().getConfig().wantEvolveRecommender(), aMap, subcomponent, mlmarket, parameters, hasParent);
+        handle2(action, market, param, profitdata, positions, evolve && param.getConfig().wantEvolveRecommender(), aMap, subcomponent, mlmarket, parameters, hasParent);
 
         if (!evolve) {
         Map<String, Object> resultMap = param.getResultMap();
@@ -184,7 +184,7 @@ public class ComponentRecommender extends ComponentNoML {
 
     private void handleBuySell(ProfitData profitdata, ComponentData param, Pair<String, Integer> keys, Double confidenceFactor, List<MyElement> list, Parameters parameters) {
         int listSize = list.size();
-        int recommend = param.getInput().getConfig().recommendTopBottom();
+        int recommend = param.getConfig().recommendTopBottom();
         if (listSize < recommend * 3) {
             return;
         }

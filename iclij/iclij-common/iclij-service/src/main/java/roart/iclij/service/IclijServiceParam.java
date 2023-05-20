@@ -3,6 +3,7 @@ package roart.iclij.service;
 import java.util.List;
 import java.util.Set;
 
+import roart.common.config.ConfigData;
 import roart.common.ml.NeuralNetCommand;
 import roart.iclij.config.IclijConfig;
 import roart.result.model.GUISize;
@@ -15,6 +16,8 @@ public class IclijServiceParam {
     private boolean wantMaps;
     
     private IclijConfig config;
+    
+    private ConfigData configData;
     
     //private VerifyConfig verifyConfig;
 
@@ -62,12 +65,16 @@ public class IclijServiceParam {
     }
 */
     
-    public IclijConfig getConfig() {
-        return config;
-    }
-
     public void setConfig(IclijConfig iclijConfig) {
         this.config = iclijConfig;
+    }
+
+    public ConfigData getConfigData() {
+        return configData;
+    }
+
+    public void setConfigData(ConfigData configData) {
+        this.configData = configData;
     }
 
     public String getWebpath() {

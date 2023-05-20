@@ -103,7 +103,7 @@ public class MachineLearningAction extends MarketAction {
 
     @Override
     protected boolean getEvolve(Component component, ComponentData param) {
-        return component.wantEvolve(param.getInput().getConfig());
+        return component.wantEvolve(param.getConfig());
     }
 
     @Override

@@ -50,7 +50,7 @@ public abstract class ComponentML extends Component {
     protected Map<String, Object> handleEvolve(MarketActionData action, Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket, Parameters parameters, EvolutionConfig actionEvolveConfig, String actionML) {
         // special
         //String localMl = param.getInput().getConfig().getFindProfitMLIndicatorMLConfig();
-        Map<String, EvolveMLConfig> mlConfigMap = getConfig().getMLConfig(market, param.getInput().getConfig(), mlmarket, actionML);
+        Map<String, EvolveMLConfig> mlConfigMap = getConfig().getMLConfig(market, param.getConfig(), mlmarket, actionML);
         // part special
         // if (param.getInput().getConfig().wantEvolveML()) {
         if (evolve) {
@@ -153,7 +153,7 @@ public abstract class ComponentML extends Component {
 
     @Override
     protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, String action, Boolean buy, String subcomponent, String mlmarket, MarketActionData actionData, Parameters parameters) throws Exception {
-        Map<String, EvolveMLConfig> mlConfigMap = getConfig().getMLConfig(market, param.getInput().getConfig(), mlmarket, actionData.getMLConfig(param.getInput().getConfig()));
+        Map<String, EvolveMLConfig> mlConfigMap = getConfig().getMLConfig(market, param.getConfig(), mlmarket, actionData.getMLConfig(param.getConfig()));
         return mlLoads(mlConfigMap, param, anUpdateMap, market, action, buy, subcomponent, mlmarket, actionData, parameters);
     }
 
@@ -180,9 +180,9 @@ public abstract class ComponentML extends Component {
 
     @Override
     public EvolutionConfig getEvolutionConfig(ComponentData param, EvolutionConfig actionEvolutionConfig) {
-        String confStr = param.getInput().getConfig().getEvolveMLEvolutionConfig();
+        String confStr = param.getConfig().getEvolveMLEvolutionConfig();
         EvolutionConfig evolveConfig = JsonUtil.convert(confStr, EvolutionConfig.class);
-        EvolutionConfig localEvolveConfig = JsonUtil.convert(getConfig().getLocalEvolutionConfig(param.getInput().getConfig()), EvolutionConfig.class);
+        EvolutionConfig localEvolveConfig = JsonUtil.convert(getConfig().getLocalEvolutionConfig(param.getConfig()), EvolutionConfig.class);
         evolveConfig.merge(actionEvolutionConfig);
         evolveConfig.merge(localEvolveConfig);
         return evolveConfig;

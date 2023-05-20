@@ -216,7 +216,7 @@ public class ActionThread extends Thread {
         action.setParent(action);
         Market market = new MarketUtil().findMarket(item.getMarket(), iclijConfig);
         //ComponentInput input = new ComponentInput(new IclijConfig(IclijXMLConfig.getConfigInstance()), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>());
-        ComponentInput input = new ComponentInput(iclijConfig, null, item.getMarket(), null, null, true, false, new ArrayList<>(), new HashMap<>());
+        ComponentInput input = new ComponentInput(iclijConfig.getConfigData(), null, item.getMarket(), null, null, true, false, new ArrayList<>(), new HashMap<>());
         ComponentData param = null;
         try {
             param = ComponentData.getParam(iclijConfig, input, 0, market);

@@ -95,7 +95,7 @@ public class EvolveAction extends MarketAction {
                 return;
             }
             if (results != null) {
-            	componentData.getService().send(ServiceConstants.EVOLVEFILTEREVOLVE, results, param.getInput().getConfig());
+            	componentData.getService().send(ServiceConstants.EVOLVEFILTEREVOLVE, results, param.getConfig());
             }
            //component.calculateIncDec(componentData, profitdata, positions);
             //System.out.println("Buys: " + market.getMarket() + buys);

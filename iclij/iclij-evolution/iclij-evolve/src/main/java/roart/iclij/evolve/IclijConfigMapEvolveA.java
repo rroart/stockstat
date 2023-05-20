@@ -61,7 +61,7 @@ public class IclijConfigMapEvolveA extends EvolveA {
 
         SimulateInvestData param2 = (SimulateInvestData) param;
         List<String> stockDates = param2.getStockDates();
-        IclijConfigMapGene gene = new IclijConfigMapGene(confList, param.getInput().getConfig());
+        IclijConfigMapGene gene = new IclijConfigMapGene(confList, param.getConfig());
         IclijConfigMapChromosome chromosome = new IclijConfigMapChromosome(gene);
         //loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
         FitnessIclijConfigMap3 fit = new FitnessIclijConfigMap3(action, param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, stockDates);

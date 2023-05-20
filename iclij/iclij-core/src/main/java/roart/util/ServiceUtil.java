@@ -47,7 +47,7 @@ public class ServiceUtil {
         IclijServiceResult result = new IclijServiceResult();
         ComponentData param = null;
         try {
-            int verificationdays = componentInput.getConfig().verificationDays();
+            int verificationdays = iclijConfig.verificationDays();
             param = ComponentData.getParam(iclijConfig, componentInput, verificationdays);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -57,7 +57,7 @@ public class ServiceUtil {
         FindProfitAction findProfitAction = new FindProfitAction(iclijConfig, dbDao);
         Market market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
         param.setMarket(market);
-        WebData webData = findProfitAction.getVerifyMarket(componentInput, param, market, false, componentInput.getConfig().verificationDays());        
+        WebData webData = findProfitAction.getVerifyMarket(componentInput, param, market, false, iclijConfig.verificationDays());        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
@@ -169,8 +169,8 @@ public class ServiceUtil {
         param.setMarket(market);
         LocalDate date = null;
         try {
-            if (param.getInput().getConfig().getSimulateInvestEnddate() != null) {
-                date = TimeUtil.convertDate(TimeUtil.replace(param.getInput().getConfig().getSimulateInvestEnddate()));
+            if (param.getConfig().getSimulateInvestEnddate() != null) {
+                date = TimeUtil.convertDate(TimeUtil.replace(param.getConfig().getSimulateInvestEnddate()));
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

@@ -14,11 +14,11 @@ public abstract class MyConfig {
     }
 
     public MyConfig(MyConfig config) {
-        // TODO Auto-generated constructor stub
+        this.configData = config.getConfigData();
     }
 
     public MyConfig(ConfigData data) {
-        // TODO Auto-generated constructor stub
+        this.configData = data;
     }
 
     //public boolean useSpark = false;

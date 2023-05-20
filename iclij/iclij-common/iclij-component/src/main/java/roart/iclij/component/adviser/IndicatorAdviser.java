@@ -169,7 +169,7 @@ public abstract class IndicatorAdviser extends Adviser {
 
     private List<Pair<String, Double>> getValuePairs(Map<String, List<List<Double>>> categoryValueMap, int indexOffset, List<String> stockDates, List<String> excludes) {
         List<Pair<String, Double>> valueList = new ArrayList<>();
-        IclijConfig config = param.getInput().getConfig();
+        IclijConfig config = param.getConfig();
         for(Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
             if (excludes.contains(entry.getKey())) {
                 continue;
@@ -224,7 +224,7 @@ public abstract class IndicatorAdviser extends Adviser {
 
     private Map<Integer, List<Pair<String, Double>>> getValuePairs(Map<String, List<List<Double>>> categoryValueMap, List<String> stockDates, List<String> excludes, int firstidx, int lastidx) {
         Map<Integer, List<Pair<String, Double>>> valueMap = new HashMap<>();
-        IclijConfig config = param.getInput().getConfig();
+        IclijConfig config = param.getConfig();
         int size = stockDates.size();
         int start = size - 1 - firstidx;
         int end = size - 1 - lastidx;

@@ -25,7 +25,7 @@ public class EvolveIclijConfigMapMy extends EvolveMy {
             EvolutionConfig evolutionConfig, String pipeline, Component component, List<String> confList) {
         SimulateInvestData param2 = (SimulateInvestData) param;
         List<String> stockDates = param2.getStockDates();
-        IclijConfigMapGene gene = new IclijConfigMapGene(confList, param.getInput().getConfig());
+        IclijConfigMapGene gene = new IclijConfigMapGene(confList, param.getConfig());
         IclijConfigMapChromosome chromosome = new IclijConfigMapChromosome(gene);
         //loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
         FitnessIclijConfigMap fit = new FitnessIclijConfigMap(action, param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, stockDates);

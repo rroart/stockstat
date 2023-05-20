@@ -169,7 +169,7 @@ public class ComponentPredictor extends ComponentML {
         }
         Collections.sort(list0, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
         //Collections.sort(list1, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
-        handleBuySell(profitdata, param.getService(), param.getInput().getConfig(), keyPair, confidenceFactor, list0, parameters, subcomponent);
+        handleBuySell(profitdata, param.getService(), param.getConfig(), keyPair, confidenceFactor, list0, parameters, subcomponent);
         //handleBuySell(nameMap, buys, sells, okListMap, srv, config, keys, confidenceFactor, list1);
     }
     

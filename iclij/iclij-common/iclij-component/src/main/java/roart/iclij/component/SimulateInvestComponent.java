@@ -113,7 +113,7 @@ public class SimulateInvestComponent extends ComponentML {
         } else {
             simulateParam = new SimulateInvestData(param);
         }
-        IclijConfig config = param.getInput().getConfig();
+        IclijConfig config = param.getConfig();
 	// four cases
 	// autosimconfig set, both evolve and not, and simconfig is null
 	// autoconfig is not set, and simconfig is set, both evolve and not

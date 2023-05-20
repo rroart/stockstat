@@ -33,7 +33,7 @@ public class EvolveFilterMy extends EvolveMy {
             Map<String, Object> confMap, EvolutionConfig evolutionConfig, String pipeline, Component component,
             List<String> confList) {
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
-        int verificationdays = param.getInput().getConfig().verificationDays();
+        int verificationdays = param.getConfig().verificationDays();
 
         List<IncDecItem> allIncDecs = null;
         LocalDate date = param.getFutureDate();

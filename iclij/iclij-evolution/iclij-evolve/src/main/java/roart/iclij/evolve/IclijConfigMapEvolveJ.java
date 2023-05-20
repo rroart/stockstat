@@ -48,7 +48,7 @@ public class IclijConfigMapEvolveJ extends EvolveJ {
         FitnessIclijConfigMap2 fit = new FitnessIclijConfigMap2(action, param, profitdata, market, null, pipeline, buy, subcomponent, parameters, null, stockDates);
         int size = 7;
         //final Codec<IclijConfigMapChromosome, IclijConfigMapGene> codec = Codec.of(Genotype.of(new BitChromosome(new Boolean(), size)),gt -> (BitChromosome) gt.chromosome());
-        final Codec<IclijConfigMapChromosome, IclijConfigMapGene> codec = Codec.of(Genotype.of(new IclijConfigMapChromosome(confList, param.getInput().getConfig())),gt -> (IclijConfigMapChromosome) gt.getChromosome());
+        final Codec<IclijConfigMapChromosome, IclijConfigMapGene> codec = Codec.of(Genotype.of(new IclijConfigMapChromosome(confList, param.getConfig())),gt -> (IclijConfigMapChromosome) gt.getChromosome());
         final Engine<IclijConfigMapGene, Double> engine = Engine
                 //.bui
                 .builder(fit::fitness, codec /*IclijConfigMapChromosome.of(size)*/)

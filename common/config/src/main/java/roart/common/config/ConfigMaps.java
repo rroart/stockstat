@@ -14,6 +14,10 @@ public class ConfigMaps {
     public Map<String, Double[]> range = new HashMap();
     public Map<String, String> conv = new HashMap();
     
+    public ConfigMaps() {
+        // for jackson
+    }
+    
     public ConfigMaps(Map<String, Class> map, Map<String, Object> deflt, Map<String, String> text,
             Map<String, Double[]> range, Map<String, String> conv) {
         super();

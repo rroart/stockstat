@@ -53,12 +53,12 @@ public class FitnessMarketFilterCommon {
         mydecs = new MiscUtil().mergeList(mydecs, true);
         Set<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
         try {
-            int verificationdays = param.getInput().getConfig().verificationDays();
+            int verificationdays = param.getConfig().verificationDays();
             myData.setProfitData(profitdata);
         
             Memories listMap = new Memories(market);
             ProfitInputData inputdata = new ProfitInputData();
-            listMap.method(myData.getMemoryItems(), param.getInput().getConfig());        
+            listMap.method(myData.getMemoryItems(), param.getConfig());        
             profitdata.setInputdata(inputdata);
         
             short startoffset = new MarketUtil().getStartoffset(market);
@@ -74,7 +74,7 @@ public class FitnessMarketFilterCommon {
         
         double incdecFitness = 0.0;
         try {
-            incdecFitness = fitness(myincs, mydecs, myincdec, param.getInput().getConfig().getImproveAbovebelowFitnessMinimum(), buy);
+            incdecFitness = fitness(myincs, mydecs, myincdec, param.getConfig().getImproveAbovebelowFitnessMinimum(), buy);
             log.info("Fit #{} {} ", this.hashCode(), market.getFilter());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

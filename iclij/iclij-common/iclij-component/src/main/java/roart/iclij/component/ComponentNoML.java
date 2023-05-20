@@ -33,7 +33,7 @@ public abstract class ComponentNoML extends Component {
     @Override
     protected Map<String, Object> handleEvolve(MarketActionData action, Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket, Parameters parameters, EvolutionConfig actionEvolveConfig, String actionML) {
         if (evolve) {
-            String confStr = param.getInput().getConfig().getEvolveIndicatorrecommenderEvolutionConfig();
+            String confStr = param.getConfig().getEvolveIndicatorrecommenderEvolutionConfig();
             if (confStr != null) {
                 param.getService().conf.getConfigData().getConfigValueMap().put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, confStr);
             }
@@ -94,9 +94,9 @@ public abstract class ComponentNoML extends Component {
 
     @Override
     public EvolutionConfig getEvolutionConfig(ComponentData componentdata, EvolutionConfig actionEvolutionConfig) {
-        String confStr = componentdata.getInput().getConfig().getEvolveIndicatorrecommenderEvolutionConfig();
+        String confStr = componentdata.getConfig().getEvolveIndicatorrecommenderEvolutionConfig();
         EvolutionConfig evolveConfig = JsonUtil.convert(confStr, EvolutionConfig.class);
-        EvolutionConfig localEvolveConfig = JsonUtil.convert(getConfig().getLocalEvolutionConfig(componentdata.getInput().getConfig()), EvolutionConfig.class);
+        EvolutionConfig localEvolveConfig = JsonUtil.convert(getConfig().getLocalEvolutionConfig(componentdata.getConfig()), EvolutionConfig.class);
         evolveConfig.merge(actionEvolutionConfig);
         evolveConfig.merge(localEvolveConfig);
         return evolveConfig;

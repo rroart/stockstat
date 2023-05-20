@@ -110,7 +110,7 @@ public class ImproveProfitAction extends MarketAction {
             // if not interrupted
             if (results != null) {
             	results.put(EvolveConstants.DEFAULT, defaults);
-            	componentData.getService().send(ServiceConstants.EVOLVEFILTERPROFIT, results, param.getInput().getConfig());
+            	componentData.getService().send(ServiceConstants.EVOLVEFILTERPROFIT, results, param.getConfig());
             }
             //component.calculateIncDec(componentData, profitdata, positions);
             //System.out.println("Buys: " + market.getMarket() + buys);

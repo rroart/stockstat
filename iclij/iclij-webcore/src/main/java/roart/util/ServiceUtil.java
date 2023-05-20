@@ -418,14 +418,14 @@ public class ServiceUtil {
             String marketName = market.getConfig().getMarket();
             MetaItem meta = new MetaUtil().findMeta(metas, marketName);
             boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
-            List<String> componentList = actionData.getComponents(param.getInput().getConfig(), wantThree);
+            List<String> componentList = actionData.getComponents(param.getConfig(), wantThree);
             Map<Boolean, String> booleanTexts = actionData.getBooleanTexts();
             Boolean[] booleans = actionData.getBooleans();
             for (Boolean bool : booleans) {
                 updateMarketMap.put(market.getConfig().getMarket() + " " + booleanTexts.get(bool), new HashMap<>());
                 Map<String, ActionComponentConfig> componentMap = new ComponentMap().getComponentMap(componentList, actionData.getName());
                 for (ActionComponentConfig component : componentMap.values()) {
-                    List<String> subcomponents = component.getSubComponents(market, param.getInput().getConfig(), null, actionData.getMLConfig(param.getInput().getConfig()));
+                    List<String> subcomponents = component.getSubComponents(market, param.getConfig(), null, actionData.getMLConfig(param.getConfig()));
                     for (String subcomponent : subcomponents) {
                         Map<String, Object> anUpdateMap = new MiscUtil().loadConfig(param.getService(), param.getInput(), market, market.getConfig().getMarket(), actionData.getName(), actionData.getName(), false, bool, subcomponent, actionData, null);
                         updateMarketMap.get(market.getConfig().getMarket() + " " + booleanTexts.get(bool)).putAll(anUpdateMap);
@@ -652,8 +652,8 @@ public class ServiceUtil {
         String type = "Verify";
         //componentInput.setDoSave(componentInput.getConfig().wantVerificationSave());
         //componentInput.setDoSave(false);
-        int verificationdays = componentInput.getConfig().verificationDays();
-        boolean rerun = componentInput.getConfig().verificationRerun();
+        int verificationdays = iclijConfig.verificationDays();
+        boolean rerun = iclijConfig.verificationRerun();
         IclijServiceResult result = getFindProfitVerify(iclijConfig, componentInput, type, verificationdays, rerun, dbDao);
         new MiscUtil().print(result);
         return result;
@@ -661,7 +661,7 @@ public class ServiceUtil {
 
     private static IclijServiceResult getFindProfitVerify(IclijConfig iclijConfig, ComponentInput componentInput, String type, int verificationdays, boolean rerun, IclijDbDao dbDao) throws Exception {
 
-        componentInput.setDoSave(componentInput.getConfig().wantsFindProfitRerunSave());
+        componentInput.setDoSave(iclijConfig.wantsFindProfitRerunSave());
         LocalDate date = componentInput.getEnddate();
 
         IclijServiceResult result = new IclijServiceResult();
@@ -718,11 +718,11 @@ public class ServiceUtil {
         Trend trend;
         Trend trend2;
         if (rerun) {
-            trend = new TrendUtil().getTrend(componentInput.getConfig().verificationDays(), null /*TimeUtil.convertDate2(olddate)*/, startoffset, stockDates, findTime, param, market);
-            trend2 = new TrendUtil().getTrend(componentInput.getConfig().verificationDays(), null /*TimeUtil.convertDate2(prevdate)*/, startoffset, stockDates, param, market);
+            trend = new TrendUtil().getTrend(iclijConfig.verificationDays(), null /*TimeUtil.convertDate2(olddate)*/, startoffset, stockDates, findTime, param, market);
+            trend2 = new TrendUtil().getTrend(iclijConfig.verificationDays(), null /*TimeUtil.convertDate2(prevdate)*/, startoffset, stockDates, param, market);
         } else {
-            trend = new TrendUtil().getTrend(componentInput.getConfig().verificationDays(), null /*TimeUtil.convertDate2(olddate)*/, startoffset, stockDates, findTime, param, market);            
-            trend2 = new TrendUtil().getTrend(componentInput.getConfig().verificationDays(), null /*TimeUtil.convertDate2(prevdate)*/, startoffset, stockDates, param, market);            
+            trend = new TrendUtil().getTrend(iclijConfig.verificationDays(), null /*TimeUtil.convertDate2(olddate)*/, startoffset, stockDates, findTime, param, market);            
+            trend2 = new TrendUtil().getTrend(iclijConfig.verificationDays(), null /*TimeUtil.convertDate2(prevdate)*/, startoffset, stockDates, param, market);            
         }
         trendMap.put(market.getConfig().getMarket(), trend);
         trendMap.put(market.getConfig().getMarket() + "end", trend2);
@@ -780,12 +780,12 @@ public class ServiceUtil {
             }
             if (verificationdays > 0) {
                 if (rerun) {
-                    new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, listInc, listDec, listIncDec, startoffset, componentInput.getConfig().getFindProfitManualThreshold(), param, stockDates, market);
+                    new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, listInc, listDec, listIncDec, startoffset, iclijConfig.getFindProfitManualThreshold(), param, stockDates, market);
                 } else {
-                    new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, listInc, listDec, listIncDec, startoffset, componentInput.getConfig().getFindProfitManualThreshold(), param, stockDates, market);                
+                    new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, listInc, listDec, listIncDec, startoffset, iclijConfig.getFindProfitManualThreshold(), param, stockDates, market);                
                 }
             }
-            addHeader(componentInput, type, result, baseDateStr, futureDateStr, market);
+            addHeader(iclijConfig, componentInput, type, result, baseDateStr, futureDateStr, market);
 
             List<IclijServiceList> subLists = getServiceList(param.getService().conf.getConfigData().getMarket(), key, listInc, listDec, listIncDec);
             retLists.addAll(subLists);
@@ -837,10 +837,10 @@ public class ServiceUtil {
         String type = "Verify";
         //componentInput.setDoSave(componentInput.getConfig().wantVerificationSave());
         //componentInput.setDoSave(false);
-        int verificationdays = componentInput.getConfig().verificationDays();
-        boolean rerun = componentInput.getConfig().verificationRerun();
+        int verificationdays = iclijConfig.verificationDays();
+        boolean rerun = iclijConfig.verificationRerun();
  
-        componentInput.setDoSave(componentInput.getConfig().wantsFindProfitRerunSave());
+        componentInput.setDoSave(iclijConfig.wantsFindProfitRerunSave());
 
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(new ArrayList<>());
@@ -910,12 +910,12 @@ public class ServiceUtil {
             }
             if (verificationdays > 0) {
                 if (rerun) {
-                    new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, listInc, listDec, listIncDec, startoffset, componentInput.getConfig().getFindProfitManualThreshold(), param, stockDates, market);
+                    new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, listInc, listDec, listIncDec, startoffset, iclijConfig.getFindProfitManualThreshold(), param, stockDates, market);
                 } else {
-                    new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, listInc, listDec, listIncDec, startoffset, componentInput.getConfig().getFindProfitManualThreshold(), param, stockDates, market);                
+                    new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, listInc, listDec, listIncDec, startoffset, iclijConfig.getFindProfitManualThreshold(), param, stockDates, market);                
                 }
             }
-            addHeader(componentInput, type, result, baseDateStr, futureDateStr, market);
+            addHeader(iclijConfig, componentInput, type, result, baseDateStr, futureDateStr, market);
 
             List<IclijServiceList> subLists = getServiceList(param.getService().conf.getConfigData().getMarket(), key, listInc, listDec, listIncDec);
             retLists.addAll(subLists);
@@ -962,15 +962,15 @@ public class ServiceUtil {
         return result;
     }
 
-    private static void addHeader(ComponentInput componentInput, String type, IclijServiceResult result,
-            String basedate, String futuredate, Market market) {
+    private static void addHeader(IclijConfig iclijConfig, ComponentInput componentInput, String type,
+            IclijServiceResult result, String basedate, String futuredate, Market market) {
         int offset = new ComponentTimeUtil().getFindProfitOffset(market, componentInput);
         IclijServiceList header = new IclijServiceList();
         result.getLists().add(header);
-        header.setTitle(type + " " + "Market: " + componentInput.getConfig().getConfigData().getMarket() + " Date: " + componentInput.getConfig().getConfigData().getDate() + " Offset: " + offset + " Threshold: " + componentInput.getConfig().getFindProfitManualThreshold());
+        header.setTitle(type + " " + "Market: " + componentInput.getConfigData().getMarket() + " Date: " + componentInput.getConfigData().getDate() + " Offset: " + offset + " Threshold: " + iclijConfig.getFindProfitManualThreshold());
         IclijServiceList header2 = new IclijServiceList();
         result.getLists().add(header2);
-        header2.setTitle(type + " " + "ML market: " + componentInput.getConfig().getConfigData().getMlmarket() + " Date: " + componentInput.getConfig().getConfigData().getDate() + " Offset: " + offset);
+        header2.setTitle(type + " " + "ML market: " + componentInput.getConfigData().getMlmarket() + " Date: " + componentInput.getConfigData().getDate() + " Offset: " + offset);
         List<MapList> aList = new ArrayList<>();
         header.setList(aList);
         MapList mapList = new MapList();
@@ -981,8 +981,8 @@ public class ServiceUtil {
 
     @Deprecated // ?
     public static ControlService getService(ComponentInput input, int days) throws Exception {
-        String market = input.getConfig().getConfigData().getMarket();
-        String mlmarket = input.getConfig().getConfigData().getMlmarket();
+        String market = input.getConfigData().getMarket();
+        String mlmarket = input.getConfigData().getMlmarket();
         /*
         if (market == null) {
             throw new Exception("Market null");
@@ -1101,7 +1101,7 @@ public class ServiceUtil {
         String type = "FindProfit";
         int days = 0;  // config.verificationDays();
         //componentInput.setDoSave(false);
-        boolean rerun = componentInput.getConfig().singlemarketRerun();
+        boolean rerun = iclijConfig.singlemarketRerun();
         IclijServiceResult result = getFindProfitVerify(iclijConfig, componentInput, type, days, rerun, dbDao);
         new MiscUtil().print(result);
         return result;

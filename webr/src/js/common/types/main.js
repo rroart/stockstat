@@ -5,7 +5,7 @@ export type mainType = {
 }
 
 class IclijServiceParam {
-    config: object;
+    configData: object;
     ids: string[];
     market: string;
     wantMaps: boolean;
@@ -17,7 +17,7 @@ class IclijServiceParam {
 }
 
 class ServiceParam {
-    config: object;
+    configData: object;
     ids: string[];
     market: string;
     wantMaps: boolean;
@@ -28,7 +28,7 @@ class ServiceParam {
 }
 
 class ServiceResult {
-    config: object;
+    configData: object;
     markets: string[];
     stocks: object;
     list: string[];
@@ -37,7 +37,7 @@ class ServiceResult {
 }
 
 class IclijServiceResult {
-    config: object;
+    configData: object;
     markets: string[];
     stocks: object;
     list: string[];

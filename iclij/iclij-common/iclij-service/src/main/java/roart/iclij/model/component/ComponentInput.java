@@ -4,12 +4,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import roart.common.config.ConfigData;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
 
 public class ComponentInput {
 
-    private IclijConfig config;
+    private ConfigData configData;
     
     private LocalDate startdate;
     
@@ -41,14 +42,14 @@ public class ComponentInput {
         }
     }
 
-    public ComponentInput(IclijConfig config, LocalDate startdate, String market, LocalDate enddate, Integer loopoffset,
+    public ComponentInput(ConfigData configData, LocalDate startdate, String market, LocalDate enddate, Integer loopoffset,
             boolean doSave, boolean doPrint, List<String> keys, Map<String, Object> valuemap) {
         super();
-        this.config = config;
+        this.configData = configData;
         this.startdate = startdate;
         this.market = market;
         if (enddate == null) {
-            LocalDate date = config.getConfigData().getDate();
+            LocalDate date = configData.getDate();
             if (date == null) {
                 date = LocalDate.now();
             }
@@ -65,12 +66,12 @@ public class ComponentInput {
         this.valuemap = valuemap;
     }
 
-    public IclijConfig getConfig() {
-        return config;
+    public ConfigData getConfigData() {
+        return configData;
     }
 
-    public void setConfig(IclijConfig config) {
-        this.config = config;
+    public void setConfigData(ConfigData configData) {
+        this.configData = configData;
     }
 
     public LocalDate getStartdate() {

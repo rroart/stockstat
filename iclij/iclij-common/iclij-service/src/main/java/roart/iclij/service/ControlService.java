@@ -67,6 +67,7 @@ public class ControlService {
     	//conf = MyConfig.instance();
     	//getConfig();
         this.iclijConfig = iclijConfig;
+        this.conf = iclijConfig;
         objectMapper = jsonObjectMapper();
     }
   
@@ -75,7 +76,7 @@ public class ControlService {
         ConfigData list = (ConfigData) MyCache.getInstance().get(key);
         if (list == null) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         IclijServiceResult result = sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG);
         list = result.getConfigData();
         MyCache.getInstance().put(key, list);
@@ -167,7 +168,7 @@ public class ControlService {
 
     public List<String> getMarkets() {
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETMARKETS);
         return result.getMarkets();    	
     }
@@ -179,7 +180,7 @@ public class ControlService {
             return list;
         }
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETMETAS);
         list = result.getMetas();
         MyCache.getInstance().put(key, list);
@@ -189,7 +190,7 @@ public class ControlService {
     // Unused
     public Map<String, String> getStocks(String market) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         param.setMarket(market);
         IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETSTOCKS);
         return result.getStocks();   	
@@ -203,7 +204,7 @@ public class ControlService {
         }
                 
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         param.setWantMaps(true);
         param.setMarket(market);
         IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETDATES);
@@ -232,7 +233,7 @@ public class ControlService {
             return list;
         }
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         param.setWantMaps(true);
         param.setConfList(disableList);
         NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
@@ -276,7 +277,7 @@ public class ControlService {
 
     public List getContentGraph() {
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH);
         return result.getList();
     }
@@ -295,7 +296,7 @@ public class ControlService {
     		idset.add(pair.getLeft() + "," + pair.getRight());
     	}
     	IclijServiceParam param = new IclijServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         param.setIds(idset);
         IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH2);
         return result.getList();
@@ -303,7 +304,7 @@ public class ControlService {
 
     public Map<String, Map<String, Object>> getRerun(List<String> disableList) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         param.setWantMaps(true);
         param.setConfList(disableList);
         NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
@@ -328,21 +329,21 @@ public class ControlService {
 
     public List getContentStat() {
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENTSTAT);
         return result.getList();
     }
 
     public void dbengine(Boolean useSpark) throws Exception {
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.SETCONFIG);
         getConfig();
     }
 
     public List<ResultItem> getEvolveRecommender(boolean doSet, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, Map<String, Object> resultMap) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         param.setConfList(disableList);
         IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVERECOMMENDER);
         if (doSet) {
@@ -357,7 +358,7 @@ public class ControlService {
 
     public List<ResultItem> getEvolveML(boolean doSet, List<String> disableList, String ml,  IclijConfig conf, Map<String, Object> updateMap, Map<String, Object> scoreMap, Map<String, Object> resultMap) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfig(conf);
+        param.setConfigData(conf.getConfigData());
         Set<String> ids = new HashSet<>();
         ids.add(ml);
         param.setIds(ids);
@@ -383,7 +384,7 @@ public class ControlService {
     public WebData getRun(String action, ComponentInput componentInput) {
         // TODO Auto-generated method stub
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfig(componentInput.getConfig());
+        param.setConfigData(componentInput.getConfigData());
         param.setWebpath(EurekaConstants.ACTION + "/" + action);
         param.setOffset(componentInput.getLoopoffset());
         IclijServiceResult result = WebFluxUtil.sendAMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
@@ -402,9 +403,8 @@ public class ControlService {
     public WebData getVerify(String findprofit, ComponentInput componentInput) {
         // TODO Auto-generated method stub
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfig(componentInput.getConfig());
+        param.setConfigData(componentInput.getConfigData());
         param.setWebpath(EurekaConstants.GETVERIFY);
-        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(EurekaConstants.GETVERIFY, componentInput.getConfig().getServices(), componentInput.getConfig().getCommunications());
         param.setOffset(componentInput.getLoopoffset());
         IclijServiceResult result = sendAMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
         /*

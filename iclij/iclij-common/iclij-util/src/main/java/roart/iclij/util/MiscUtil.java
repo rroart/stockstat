@@ -48,23 +48,6 @@ public class MiscUtil {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    // ?
-    @Deprecated
-    public boolean getEvolve(int verificationdays, ComponentInput componentInput) {
-        if (true) return true;
-        Boolean evolvefirst;
-        if (verificationdays > 0) {
-            evolvefirst = componentInput.getConfig().verificationEvolveFirstOnly();
-        } else {
-            evolvefirst = componentInput.getConfig().singlemarketEvolveFirstOnly();
-        }
-        boolean evolve = true;
-        if (evolvefirst && componentInput.getLoopoffset() > 0) {
-            evolve = false;
-        }
-        return evolve;
-    }
-
     IclijServiceList getHeader(String title) {
         IclijServiceList header = new IclijServiceList();
         header.setTitle(title);
