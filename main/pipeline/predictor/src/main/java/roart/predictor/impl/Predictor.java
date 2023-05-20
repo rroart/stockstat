@@ -150,7 +150,6 @@ public abstract class Predictor extends AbstractPredictor {
         if (!isEnabled()) {
             return;
         }
-        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
 
         AbstractCategory cat = StockUtil.getWantedCategory(categories, category);
         if (cat == null) {

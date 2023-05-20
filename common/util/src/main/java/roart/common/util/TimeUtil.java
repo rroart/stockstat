@@ -255,4 +255,13 @@ public class TimeUtil {
                 calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY));
     }
 
+    public static String format(Date date) {
+        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
+        return dt.format(date);
+    }
+
+    public static String format(LocalDate date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.MYDATEFORMAT);
+        return date.format(formatter);
+    }
 }

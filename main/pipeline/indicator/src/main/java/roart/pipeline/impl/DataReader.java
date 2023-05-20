@@ -11,6 +11,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
+import roart.common.util.TimeUtil;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
 import roart.pipeline.Pipeline;
@@ -93,8 +94,7 @@ public class DataReader extends Pipeline {
     }
 
     private void readData(IclijConfig conf, Map<String, MarketData> marketdatamap, int category, String market) throws Exception {
-        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-        String dateme = dt.format(conf.getConfigData().getDate());
+        String dateme = TimeUtil.format(conf.getConfigData().getDate());
         MarketData marketData = marketdatamap.get(market);
         // note that there are nulls in the lists with sparse
         boolean currentYear = false;

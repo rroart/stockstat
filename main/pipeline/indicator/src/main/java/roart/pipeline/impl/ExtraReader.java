@@ -66,8 +66,7 @@ public class ExtraReader extends Pipeline {
         readData(conf, marketdatamap, category, stockData);        
     }
     private void readData(IclijConfig conf, Map<String, MarketData> marketdatamap, int category, StockData stockData2) throws Exception {
-        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-        String dateme = dt.format(conf.getConfigData().getDate());
+        String dateme = TimeUtil.format(conf.getConfigData().getDate());
         //pairListMap = new HashMap<>();
         //pairDateMap = new HashMap<>();
         //pairCatMap = new HashMap<>();

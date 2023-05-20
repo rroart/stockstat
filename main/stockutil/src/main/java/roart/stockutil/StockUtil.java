@@ -210,12 +210,10 @@ public class StockUtil {
         Collections.sort(list);
         String date = null;
         if (datedate != null) {
-            SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-            date = dt.format(datedate);                
+            date = TimeUtil.format(datedate);                
         }
         log.info("datemapsize {}", list.size());
         int index = getStockDate(list, date);
-
         
         if (index >= 0) {
             if (date == null) {
@@ -322,9 +320,8 @@ public class StockUtil {
     public static Map<String, List<StockItem>> splitDate(List<StockItem> stocks) {
         Map<String, List<StockItem>> mymap = new HashMap<String, List<StockItem>>();
         for (StockItem stock : stocks) {
-            SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
             try {
-            String date = dt.format(stock.getDate());
+            String date = TimeUtil.format(stock.getDate());
             List<StockItem> stocklist = mymap.get(date);
             if (stocklist == null) {
                 stocklist = new ArrayList<StockItem>();
@@ -783,7 +780,6 @@ public class StockUtil {
     public static DefaultCategoryDataset getFilterChartPeriod(int days,
             Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata) {
         Set<Pair<String, Integer>> pairs = perioddata.pairs;
-        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         Set<String> dateset = new HashSet<>();
         DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
         for (Entry<String, MarketData> entry : marketdatamap.entrySet()) {
@@ -811,7 +807,7 @@ public class StockUtil {
                                 continue;
                             }
                             dataset.addValue(value, stock.getName() , new Integer(-j));
-                            dateset.add(dt.format(stock.getDate()));
+                            dateset.add(TimeUtil.format(stock.getDate()));
                         } catch (Exception e) {
                             log.error(Constants.EXCEPTION, e);
                         }
@@ -878,7 +874,6 @@ public class StockUtil {
         if (equalize) {
             map = new HashMap<>();
         }
-        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         Set<String> dateset = new HashSet<>();
         DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
         for (int j = days - 1; j >= 0; j--) {
@@ -901,7 +896,7 @@ public class StockUtil {
                             String stockName = stock.getName();
                             log.info("info {} {} {}", stockName, value, Integer.valueOf(-j));
                             dataset.addValue(value, stockName , Integer.valueOf(-j));
-                            dateset.add(dt.format(stock.getDate()));
+                            dateset.add(TimeUtil.format(stock.getDate()));
                             if (map != null) {
                                 Set<Pair<Double, Integer>> set = map.get(stockName);
                                 if (set == null) {
