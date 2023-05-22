@@ -1,6 +1,10 @@
+import os
 import tkinter as tk
 
 def view(output):
+    display = os.environ.get('DISPLAY')
+    if display is None:
+        return
     root = tk.Tk()
     txt = tk.Text(master = root, fg='green', bg='black')
     txt.pack(side=tk.LEFT)

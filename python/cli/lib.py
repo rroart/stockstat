@@ -2,6 +2,7 @@
 
 #exec(open("./lib.py").read())
 
+import os
 import pandas as pd
 #import tensorflow as tf
 import numpy as np
@@ -11,6 +12,7 @@ import matplotlib.pyplot as plt
 
 from datetime import datetime, timedelta
 import time
+import mypost
 import request
 import multiprocessing as mp
 
@@ -2054,6 +2056,10 @@ def displaychart(ls, mynames, topbottom, periodtext, maindate, olddate, days):
         ####legend(1, g_range[2], mynames, cex=0.8, lty=1:6, pch=1:25, col=colours)
 
 def displayax(ax, ls, daynames, mynames, topbottom, periodtext, maindate, olddate, days, title, ylabel="Value"):
+    display = os.environ.get('DISPLAY')
+    if display is None:
+        return
+
     ####dev.new()
     ####colours = rainbow(topbottom)
     topbottom = len(ls)
@@ -2375,6 +2381,7 @@ def simulateinvest(market, startdate = None, enddate = None, confidence = False,
       print(updatemap['stats'])
       print(updatemap['minmax'])
     print(updatemap['lastbuysell'])
+    mypost.post(updatemap['lastbuysell'])
     return
 
 def improvesimulateinvest(market = None, startdate = None, enddate = None, ga = 0, adviser = None, indicatorpure = None, delay = 1, intervalwhole = True, stocks = None, indicatorreverse = None, interval = None, buyweight = None, volumelimits = None, filters = None, futurecount = 0, futuretime = 0, improvefilters = False):
@@ -2498,7 +2505,10 @@ def simulateinvest2G(market, startdate = None, enddate = None, confidence = Fals
 
 f = False
 t = True
-    
+
+def simulateinvests(market, startdate = None, enddate = None, c = f, cv = 0.7, ct = 4, st = t, stv = 0.9, ip = t, ib = f, ir = f, m = f, s = 5, b = t, i = 7, a = 0, p = 0, f = t, ist = t, istv = 0.9, d = 1, w = 1, iw = f, ch = f, nch = t, nctd = f, nctdt = 1, cti = f, ctit = 1, id = f, idu = t, vl = None, ab = f):
+    simulateinvest2Gwrap(market, startdate, enddate, c, cv, ct, st, stv, ip, ib, ir, m, s, b, i, a, p, f, ist, istv, d, w, iw, ch, nch, nctd, nctdt, cti, ctit, id, idu, vl, ab)
+
 def simulateinvestsG(market, startdate = None, enddate = None, c = f, cv = 0.7, ct = 4, st = t, stv = 0.9, ip = t, ib = f, ir = f, m = f, s = 5, b = t, i = 7, a = 0, p = 0, f = t, ist = t, istv = 0.9, d = 1, w = 1, iw = f, ch = f, nch = t, nctd = f, nctdt = 1, cti = f, ctit = 1, id = f, idu = t, vl = None, ab = f):
     mp.Process(target=simulateinvest2Gwrap, args=(market, startdate, enddate, c, cv, ct, st, stv, ip, ib, ir, m, s, b, i, a, p, f, ist, istv, d, w, iw, ch, nch, nctd, nctdt, cti, ctit, id, idu, vl, ab)).start()
 
@@ -2521,6 +2531,9 @@ LUCKY=[ { 'lucky' : 0.0, 'stable' : 0.0, 'correlation' : 0.0 } ] * 10
 ZERO=[ { 'lucky' : 0.0, 'stable' : 0.0 } ] * 10
 CORR07=[ { 'lucky' : 0.0, 'stable' : 0.0, 'correlation' : 0.7 } ] * 10
 CORR08=[ { 'lucky' : 0.0, 'stable' : 0.0, 'correlation' : 0.8 } ] * 10
+
+def autosimulateinvests(market, startdate = None, enddate = None, i = 1, p = 0, l = 5, d = 0.5, s = 1.0, a = 0, iw = False, f = None, vl = None, v = False, ka = False, kal = 0.0):
+    autosimulateinvest2Gwrap(market, startdate, enddate, i, p, l, d, s, a, iw, f, vl, v, ka, kal)
 
 def autosimulateinvestsG(market, startdate = None, enddate = None, i = 1, p = 0, l = 5, d = 0.5, s = 1.0, a = 0, iw = False, f = None, vl = None, v = False, ka = False, kal = 0.0):
     mp.Process(target=autosimulateinvest2Gwrap, args=(market, startdate, enddate, i, p, l, d, s, a, iw, f, vl, v, ka, kal)).start()
@@ -2620,6 +2633,7 @@ def autosimulateinvest(market, startdate = None, enddate = None, interval = 1, p
     if 'advisers' in updatemap:
         print(updatemap['advisers'])
     print(updatemap['lastbuysell'])
+    mypost.post(updatemap['lastbuysell'])
     return
 
 def improveautosimulateinvest(market = None, startdate = None, enddate = None, ga = 0, stocks = 5, intervalwhole = False, filters = None, volumelimits = None, futurecount = 0, futuretime = 0, improvefilters = False, vote = False):
@@ -2680,7 +2694,9 @@ def cacheinvalidate():
     request.cacheinvalidate()
     
 if not 'allstocks' in globals():
+    print("Loadings stocks")
     allstocks = getstocks(conn)
+    print("Stocks loaded");
     if filterweekend:
         allstocks = etl.filterweekend(allstocks)
     allmetas = getmetas(conn)
