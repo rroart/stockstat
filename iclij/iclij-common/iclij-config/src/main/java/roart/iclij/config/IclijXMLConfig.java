@@ -73,7 +73,7 @@ public class IclijXMLConfig {
         try {
             String configFile = System.getProperty("config");
             if (configFile == null) {
-                configFile = "iclij.xml";
+                return;
             }
             configFile = "../conf/" + configFile;
             //config = new PropertiesConfiguration(ConfigConstants.PROPFILE);

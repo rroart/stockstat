@@ -15,8 +15,6 @@ public class IclijServiceParam {
     
     private boolean wantMaps;
     
-    private IclijConfig config;
-    
     private ConfigData configData;
     
     //private VerifyConfig verifyConfig;
@@ -65,8 +63,8 @@ public class IclijServiceParam {
     }
 */
     
+    @Deprecated
     public void setConfig(IclijConfig iclijConfig) {
-        this.config = iclijConfig;
     }
 
     public ConfigData getConfigData() {

@@ -40,15 +40,15 @@ cd ../lib
 
 #java -jar stockstat-eureka-0.6-SNAPSHOT.jar 2>&1 | tee /tmp/eureka.out > /dev/null 2>&1 &
 if [ $core -eq 1 ]; then
-    $COMMAND "java --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED $DB $COREDEBUG -jar stockstat-core-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/core$OUTNAME.out $REDIRECT" &
+    $COMMAND "java --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED $DB -Dconfig=stockstat.xml $COREDEBUG -jar stockstat-core-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/core$OUTNAME.out $REDIRECT" &
 fi
 if [ $icore -eq 1 ]; then
-    $COMMAND "java $DB $ICOREDEBUG -jar stockstat-iclij-core-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclij$OUTNAME.out $REDIRECT" &
+    $COMMAND "java $DB -Dconfig=iclij.xml $ICOREDEBUG -jar stockstat-iclij-core-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclij$OUTNAME.out $REDIRECT" &
 fi
 if [ $web -eq 1 ]; then
-    $COMMAND "java $DB $IWEBCOREDEBUG -jar stockstat-iclij-webcore-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclijwebcore$OUTNAME.out $REDIRECT" &
-    $COMMAND "java -jar $IWEBDEBUG stockstat-iclij-web-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclijweb$OUTNAME.out $REDIRECT" &
-    $COMMAND "java -jar $WEBDEBUG stockstat-web-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/web$OUTNAME.out $REDIRECT" &
+    $COMMAND "java $DB -Dconfig=iclij.xml $IWEBCOREDEBUG -jar stockstat-iclij-webcore-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclijwebcore$OUTNAME.out $REDIRECT" &
+    #$COMMAND "java -jar $IWEBDEBUG stockstat-iclij-web-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclijweb$OUTNAME.out $REDIRECT" &
+    #$COMMAND "java -jar $WEBDEBUG stockstat-web-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/web$OUTNAME.out $REDIRECT" &
 fi
 if [ $isim -eq 1 ]; then
     $COMMAND "java $DB -Dconfig=isim.xml $ISIMDEBUG -jar stockstat-iclij-sim-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/isim$OUTNAME.out $REDIRECT" &
