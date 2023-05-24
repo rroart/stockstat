@@ -14,8 +14,8 @@ import roart.common.model.TimingBLItem;
 import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
-import roart.common.config.MyConfig;
-import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfig;
 import roart.common.config.MyXMLConfig;
 
 @Import(DbDaoUtil.class)
