@@ -19,15 +19,11 @@ public class ConfigConstantMaps {
             //ConfigConstantMaps.makeConvertMap();
             ConfigConstantMaps.makeRangeMap();
             instance = new ConfigMaps(map, deflt, text, range, new HashMap<>());
+            instance.keys = new HashSet(instance.map.keySet());
         }
         return instance;
     }
 
-    public static Map<String, Class> map2 = new HashMap();
-    public static Map<String, Object> deflt2 = new HashMap();
-    public static Map<String, String> text2 = new HashMap();
-    public static Map<String, Double[]> range2 = new HashMap();
-    
     private static final String THRESHOLD = "[ 1.0 ]";
     private static final String THRESHOLD3 = "[ 0.95, 1.0, 1.05 ]";
     

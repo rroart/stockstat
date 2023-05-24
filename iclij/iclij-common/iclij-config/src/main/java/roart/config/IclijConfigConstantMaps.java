@@ -1,8 +1,10 @@
 package roart.config;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
+import roart.common.config.ConfigConstantMaps;
 import roart.common.config.ConfigConstants;
 import roart.common.config.ConfigMaps;
 import roart.common.constants.Constants;
@@ -19,6 +21,9 @@ public class IclijConfigConstantMaps {
             IclijConfigConstantMaps.makeConvertMap();
             IclijConfigConstantMaps.makeRangeMap();
             instance = new ConfigMaps(map, deflt, text, range, conv);
+            instance.keys = new HashSet(instance.map.keySet());
+            ConfigConstantMaps.makeSet();
+            instance.keys.addAll(ConfigConstantMaps.common);
         }
         return instance;
     }

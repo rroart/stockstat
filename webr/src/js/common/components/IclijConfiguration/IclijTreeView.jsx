@@ -58,8 +58,8 @@ class IclijTreeView extends PureComponent {
   //console.log(map);
   const config = main.iconfig;
   //console.log(config);
-  const textMap = config.get('text');
-  const typeMap = config.get('type');
+      const textMap = config.get('configMaps').get('text');
+  const typeMap = config.get('configMaps').get('map');
   const valueMap = config.get('configValueMap');
   //console.log(typeMap);
   //console.log(textMap);

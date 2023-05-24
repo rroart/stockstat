@@ -37,8 +37,7 @@ export class IclijTreeviewComponent implements OnInit, OnDestroy {
 
   main: MainState;
 
-@Input() text : Map<String, String>;    
-@Input() type : Map<String, String>;    
+@Input() configMaps : any;
 @Input() elem : any; //ConfigTreeMap;
 @Input() configValueMap : Map<String, String>;
 values2: Array<any>;
@@ -65,7 +64,7 @@ checkboxvalue: any; //boolean;
       map(auth => auth.isAuthenticated)
     );
             this.values2 = Object.values(this.elem["configTreeMap"]);
-        this.textname = this.text[this.elem.name];
+        this.textname = this.configMaps.text[this.elem.name];
         if (this.textname == null) {
            this.textname = this.elem.name;
            let idx = this.textname.indexOf(".");
@@ -77,7 +76,7 @@ checkboxvalue: any; //boolean;
 	//console.log(this.configValueMap);
     this.myvalue = this.configValueMap[this.elem.name];
 
-        const typename = this.type[this.elem.name];
+        const typename = this.configMaps.map[this.elem.name];
         this.myvalue = this.configValueMap[this.elem.name];
         if (typename == "java.lang.Boolean") {
            this.checkbox = true;

@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import roart.common.config.ConfigMaps;
 import roart.common.constants.Constants;
 import roart.eureka.util.EurekaUtil;
 import roart.executor.MyExecutors;

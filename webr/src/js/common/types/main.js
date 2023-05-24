@@ -52,12 +52,16 @@ class IclijServiceList {
     list: object;
 }
 
-class MyConfig {
-    configTreeMap: object;
-    configValueMap: Map;
+class ConfigMaps {
     text: Map;
     deflt: Map;
     type: Map;
+}
+
+class ConfigData {
+    configMaps: ConfigMaps;
+    configTreeMap: object;
+    configValueMap: Map;
     date: object;
     market: string;
 }
@@ -73,5 +77,5 @@ class NeuralNetCommand {
     mldynamic : boolean;
 }
 
-export { ServiceParam, ServiceResult, IclijServiceParam, IclijServiceResult, IclijServiceList, MyConfig, GuiSize, NeuralNetCommand }
+export { ServiceParam, ServiceResult, IclijServiceParam, IclijServiceResult, IclijServiceList, ConfigMaps, ConfigData, GuiSize, NeuralNetCommand }
 

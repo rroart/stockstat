@@ -11,7 +11,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.common.cache.MyCache;
 import roart.common.config.ConfigConstantMaps;
-import roart.common.config.ConfigMaps;
 import roart.common.constants.Constants;
 import roart.db.dao.IclijDbDao;
 import roart.db.thread.DatabaseThread;
@@ -36,7 +35,7 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.bind.annotation.RestController;
 
-@ComponentScan(basePackages = "roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
+@ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
 @EnableJdbcRepositories("roart.common.springdata.repository")
 @EnableDiscoveryClient
 @SpringBootApplication

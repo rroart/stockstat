@@ -44,9 +44,10 @@ if [ $core -eq 1 ]; then
 fi
 if [ $icore -eq 1 ]; then
     $COMMAND "java $DB -Dconfig=iclij.xml $ICOREDEBUG -jar stockstat-iclij-core-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclij$OUTNAME.out $REDIRECT" &
+    $COMMAND "java $DB -Dconfig=iclij.xml $IWEBCOREDEBUG -jar stockstat-iclij-webcore-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclijwebcore$OUTNAME.out $REDIRECT" &
 fi
 if [ $web -eq 1 ]; then
-    $COMMAND "java $DB -Dconfig=iclij.xml $IWEBCOREDEBUG -jar stockstat-iclij-webcore-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclijwebcore$OUTNAME.out $REDIRECT" &
+    echo
     #$COMMAND "java -jar $IWEBDEBUG stockstat-iclij-web-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclijweb$OUTNAME.out $REDIRECT" &
     #$COMMAND "java -jar $WEBDEBUG stockstat-web-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/web$OUTNAME.out $REDIRECT" &
 fi
@@ -80,20 +81,20 @@ if [ $web -eq 1 ]; then
     npx react-inject-env set -d docroot
     $COMMAND "npx http-server docroot -p $WEBR" &
 
-    cd ../iclij-webr
-    export REACT_APP_MYISERVER=$MYISERVER
-    export REACT_APP_MYIPORT=$MYIPORT
-    export REACT_APP_MYASERVER=$MYASERVER
-    export REACT_APP_MYAPORT=$MYAPORT
-    npx react-inject-env set -d docroot
-    $COMMAND "npx http-server docroot -p $IWEBR" &
+    #cd ../iclij-webr
+    #export REACT_APP_MYISERVER=$MYISERVER
+    #export REACT_APP_MYIPORT=$MYIPORT
+    #export REACT_APP_MYASERVER=$MYASERVER
+    #export REACT_APP_MYAPORT=$MYAPORT
+    #npx react-inject-env set -d docroot
+    #$COMMAND "npx http-server docroot -p $IWEBR" &
 
     cd ../weba/dist
     envsubst < env.js.tmpl > env.js
     $COMMAND "http-server -p $WEBA" &
 
-    cd ../../iclij-weba/dist
-    envsubst < env.js.tmpl > env.js
-    $COMMAND "http-server -p $IWEBA" &
+    #cd ../../iclij-weba/dist
+    #envsubst < env.js.tmpl > env.js
+    #$COMMAND "http-server -p $IWEBA" &
 fi
 

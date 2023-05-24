@@ -35,11 +35,11 @@ public class IclijConfig extends MyMyConfig {
         super(config);
     }
 
-    private static ConfigMaps instanceC() {
+    public static ConfigMaps instanceC() {
         return ConfigConstantMaps.instance();
     }
 
-    private static ConfigMaps instanceI() {
+    public static ConfigMaps instanceI() {
         return IclijConfigConstantMaps.instance();
     }
 
@@ -63,13 +63,15 @@ public class IclijConfig extends MyMyConfig {
     }
      */
 
-    public IclijConfig() {
-        ConfigMaps configMaps = instanceC();
-        log.error("confMapps" + configMaps);
-        configMaps.add(instanceI());
-        log.error("confMapps" + configMaps);
-        instance = IclijXMLConfig.instance(this, configMaps);
-        log.error("confMapps2" + configMaps);
+    @Autowired
+    public IclijConfig(ConfigMaps configMaps) {
+        ConfigMaps myConfigMaps = instanceC();
+        log.error("confMapps" + myConfigMaps);
+        myConfigMaps.add(instanceI());
+        myConfigMaps.keys(configMaps.keys);
+        log.error("confMapps" + myConfigMaps);
+        instance = IclijXMLConfig.instance(this, myConfigMaps);
+        log.error("confMapps2" + myConfigMaps);
     }
 
     public IclijConfig(ConfigData data) {

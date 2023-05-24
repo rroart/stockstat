@@ -15,21 +15,7 @@ build:
         myserver: '{{.MYSERVER}}'
         myport: '{{.MYPORT}}'
         mywebport: "80"
-  - image: stockstat-iweba$IMGID
-    context: ../../..
-    docker:
-      dockerfile: docker/cloud/weba/Dockerfile
-      buildArgs:
-        dist: '{{.IWEBADIST}}'
-        myaserver: '{{.MYASERVER}}'
-        myaport: '{{.MYAPORT}}'
-        myiserver: '{{.MYISERVER}}'
-        myiport: '{{.MYIPORT}}'
-        myserver: '{{.MYSERVER}}'
-        myport: '{{.MYPORT}}'
-        mywebport: "80"
 deploy:
   kubectl:
     manifests:
     - weba/deployment.yaml
-    - iweba/deployment.yaml

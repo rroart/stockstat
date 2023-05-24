@@ -48,7 +48,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import roart.common.cache.MyCache;
 import roart.common.config.ConfigConstantMaps;
 import roart.common.config.ConfigConstants;
-import roart.common.config.ConfigMaps;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.ml.NeuralNetCommand;
@@ -68,7 +67,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
 
-@ComponentScan(basePackages = "roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.common.config,roart.iclij.config")
+@ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.common.config,roart.iclij.config")
 @EnableJdbcRepositories("roart.common.springdata.repository")
 @CrossOrigin
 @RestController

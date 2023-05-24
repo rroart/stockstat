@@ -46,8 +46,7 @@ export class ConfigtreeComponent implements OnInit, OnDestroy {
   values2: any;
   configValueMap: Map<String, Object>;
   
-  text:Map<String, String>;
-  type:Map<String, String>;
+  configMaps:any;
 
   constructor(
     private store: Store<State>,
@@ -86,8 +85,7 @@ export class ConfigtreeComponent implements OnInit, OnDestroy {
     console.log(this.main);
     console.log(this.realconfig);
     if (this.realconfig != null) {
-   this.text = this.realconfig.text;
-   this.type = this.realconfig.type;
+   this.configMaps = this.realconfig.configMaps;
   this.configValueMap = this.realconfig.configValueMap;
     this.values2 = Object.values(this.realconfig.configTreeMap.configTreeMap);
        console.log(this.realconfig.configValueMap);
@@ -113,8 +111,7 @@ ngOnChanges(changes: SimpleChanges) {
     console.log(this.main);
     console.log(this.realconfig);
     if (this.realconfig != null) {
-   this.text = this.realconfig.text;
-   this.type = this.realconfig.type;
+   this.configMaps = this.realconfig.configMaps;
     this.configValueMap = this.realconfig.configValueMap;
     this.values2 = Object.values(this.realconfig.configTreeMap.configTreeMap);
        console.log(this.configValueMap["predictors[@enable]"]);

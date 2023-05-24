@@ -13,6 +13,7 @@ public class ConfigMaps {
     public Map<String, String> text = new HashMap();
     public Map<String, Double[]> range = new HashMap();
     public Map<String, String> conv = new HashMap();
+    public Set<String> keys = new HashSet();
     
     public ConfigMaps() {
         // for jackson
@@ -44,6 +45,34 @@ public class ConfigMaps {
     private void intersect(Set<String> setA, Set<String> setB) {
         setA.retainAll(setB);
         System.out.println("diff " + setA);
+    }
+
+    public void keys(Set<String> mykeys) {
+        System.out.println("" + mykeys);
+        System.out.println("" + deflt.keySet());
+        map.keySet().retainAll(mykeys);
+        deflt.keySet().retainAll(mykeys);
+        text.keySet().retainAll(mykeys);
+        System.out.println("" + deflt.keySet());
+        if (true) return;
+        retain(map.keySet(), mykeys);
+        retain(deflt.keySet(), mykeys);
+        retain(text.keySet(), mykeys);        
+    }
+
+    private void retain(Set<String> keySet, Set<String> mykeys) {
+        Set<String> retain = new HashSet<>();
+        for (String aKey : keySet) {
+            String origKey = aKey;
+            aKey = aKey.replaceAll("\\[.*\\]", "");
+            for (String anotherKey : mykeys) {
+                anotherKey = anotherKey.replaceAll("\\[.*\\]", "");
+                if (aKey.equals(anotherKey)) {
+                    retain.add(origKey);
+                }
+            }
+        }
+        keySet.retainAll(retain);
     }
     
 }
