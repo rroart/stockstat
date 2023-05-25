@@ -62,5 +62,10 @@ public class EurekaConstants {
     public static final String READFILE = "readfile";
     public static final String WRITEFILE = "writefile";
     public static final String GETMD5 = "getmd5";
+    public static final String GETMODELS = "getmodels";
+    public static final String GETNAME = "getname";
+    public static final String GETSHORTNAME = "getshortname";
+    public static final String CLEAN = "clean";
+    public static final String LEARNTESTCLASSIFY = "learntestclassify";
 
 }

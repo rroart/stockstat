@@ -43,14 +43,14 @@ open module core {
     requires model;
     requires common.constants;
     requires ml.common;
-    requires ml.spark;
+    //requires ml.spark;
     requires ml.tensorflow;
     requires pipeline.model;
     requires pipeline.common;
     requires common.util;
     requires spring.boot;
     requires coredb;
-    requires coredb.spark;
+    //requires coredb.spark;
     requires coredb.hibernate;
     requires evolution.model;
     requires myexecutor;

@@ -1,4 +1,4 @@
-package roart.spark;
+package roart.db.spark.util;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.SparkSession;

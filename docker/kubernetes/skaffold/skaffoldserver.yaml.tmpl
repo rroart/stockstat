@@ -28,6 +28,24 @@ build:
         springdatadriver: '{{.SPRINGDATADRIVER}}'
         mydebug: '{{.MYDEBUG}}'
         jdk_java_options: '{{.JDK_JAVA_OPTIONS}}'
+  - image: stockstat-spark$IMGID
+    context: ../../..
+    docker:
+      dockerfile: docker/cloud/core/Dockerfile
+      buildArgs:
+        distlib: '{{.DISTLIB}}'
+        distjar: '{{.SPARKJAR}}'
+        mywebport: "80"
+        mydbserver: '{{.MYDBSERVER}}'
+        mydbserverport: '{{.MYDBSERVERPORT}}'
+        mydbserverdb: '{{.MYDBSERVERDB}}'
+        myconfig: '{{.MYCONFIG}}'
+        springdataurl: '{{.SPRINGDATAURL}}'
+        springdatausername: '{{.SPRINGDATAUSERNAME}}'
+        springdatapassword: '{{.SPRINGDATAPASSWORD}}'
+        springdatadriver: '{{.SPRINGDATADRIVER}}'
+        mydebug: '{{.MYDEBUG}}'
+        jdk_java_options: '{{.JDK_JAVA_OPTIONS}}'
   - image: stockstat-icore$IMGID
     context: ../../..
     docker:
@@ -113,6 +131,7 @@ deploy:
     manifests:
     - sparkdata/deployment.yaml
     - core/deployment.yaml
+    - corespark/deployment.yaml
     - icore/deployment.yaml
     - iwebcore/deployment.yaml
     - sim/deployment.yaml

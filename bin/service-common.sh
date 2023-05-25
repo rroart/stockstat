@@ -61,6 +61,7 @@ if [ $local -eq 1 ]; then
     $COMMAND "java $LOCAL -Dconfig=stockstat.xml $LOCALDEBUG -jar stockstat-local-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/local$OUTNAME.out $REDIRECT" &
 fi
 if [ $ml -eq 1 ]; then
+    $COMMAND "java --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED $DB -Dconfig=stockstat.xml $SPARKDEBUG -jar stockstat-spark-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/spark$OUTNAME.out $REDIRECT" &
     cd ../tensorflow
     $COMMAND "./flasktf.sh $TENSORFLOWSERVERPORT 2>&1 | tee /tmp/flasktf$OUTNAME.out" &
 

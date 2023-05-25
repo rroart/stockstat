@@ -5,8 +5,8 @@ import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
 import roart.common.util.ArraysUtil;
+import roart.db.spark.util.SparkSessionUtil;
 import roart.pipeline.common.Calculatable;
-import roart.spark.SparkSessionUtil;
 import scala.collection.mutable.ArraySeq;
 
 import java.util.Map;

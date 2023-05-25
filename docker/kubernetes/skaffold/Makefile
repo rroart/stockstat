@@ -1,5 +1,5 @@
 VERSION = 0.6-SNAPSHOT
-SUBDIRS = tensorflowdata pytorchdata sparkdata tensorflow pytorch pdfred postgresql webr iwebr core icore iwebcore dbclone weba iweba rabbitmq sim evolve
+SUBDIRS = tensorflowdata pytorchdata sparkdata tensorflow pytorch pdfred postgresql webr iwebr core corespark icore iwebcore dbclone weba iweba rabbitmq sim evolve
 
 all: $(SUBDIRS) skaffoldserver.yaml skaffoldml.yaml skaffoldfrontr.yaml skaffoldfronta.yaml skaffolddbclone.yaml skaffoldfilesystem.yaml conf
 

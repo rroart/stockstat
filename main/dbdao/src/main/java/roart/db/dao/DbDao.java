@@ -27,8 +27,8 @@ import roart.db.common.DbAccess;
 import roart.db.dao.util.StockETL;
 import roart.db.hibernate.DbHibernateAccess;
 import roart.db.spring.DbSpringAccess;
-import roart.db.spark.DbSpark;
-import roart.db.spark.DbSparkAccess;
+//import roart.db.spark.DbSpark;
+//import roart.db.spark.DbSparkAccess;
 import roart.iclij.config.IclijConfig;
 
 @Component

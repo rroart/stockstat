@@ -1,5 +1,6 @@
 export DISTLIB=distribution/target/stockstat-distribution-0.6-SNAPSHOT-bin/stockstat-distribution-0.6-SNAPSHOT/lib
 export COREJAR=stockstat-core-0.6-SNAPSHOT.jar
+export SPARKJAR=stockstat-spark-0.6-SNAPSHOT.jar
 export HDFSJAR=stockstat-hdfs-0.6-SNAPSHOT.jar
 export ICOREJAR=stockstat-iclij-core-0.6-SNAPSHOT.jar
 export EVOLVEJAR=stockstat-iclij-evolve-0.6-SNAPSHOT.jar

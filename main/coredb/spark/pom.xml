@@ -44,11 +44,6 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-spark</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
       <artifactId>stockstat-pipeline-model</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
