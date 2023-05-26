@@ -10,6 +10,8 @@ module mldao {
 
     requires iclij.common.config;
     requires common.config;
+    requires common.webflux;
+    requires common.constants;
     requires ml.common;
     requires ml.spark;
     requires ml.tensorflow;

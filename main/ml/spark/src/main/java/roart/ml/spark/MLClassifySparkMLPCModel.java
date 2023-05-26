@@ -1,22 +1,10 @@
 package roart.ml.spark;
 
-import java.util.Arrays;
-
-import org.apache.spark.ml.Model;
-import org.apache.spark.ml.classification.MultilayerPerceptronClassifier;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
-import org.apache.spark.ml.PipelineModel;
-import org.apache.spark.ml.Pipeline;
-import org.apache.spark.ml.PipelineStage;
-
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.iclij.config.IclijConfig;
-import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
-import roart.common.ml.SparkLORConfig;
 import roart.common.ml.SparkMLPCConfig;
 
 public class MLClassifySparkMLPCModel  extends MLClassifySparkModel {
@@ -37,31 +25,6 @@ public class MLClassifySparkMLPCModel  extends MLClassifySparkModel {
     @Override
     public String getKey() {
         return ConfigConstants.MACHINELEARNINGSPARKMLMLPCCONFIG;
-    }
-
-    @Override
-    public PipelineModel getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes) {
-        SparkMLPCConfig modelConf = getModel(conf, outcomes);
-        int layer = modelConf.getLayers();
-        int hidden = modelConf.getHidden();
-        //int[] nn = modelConf.getNn();
-        int[] layers = new int[layer + 2];
-        for (int i = 1; i <= layer; i++) {
-            layers[i] = hidden;
-        }
-        layers[0] = size;
-        layers[layers.length - 1] = outcomes + 1;
-        log.info("Used ML config {} {}", modelConf, Arrays.toString(layers));
-        MultilayerPerceptronClassifier trainer = new MultilayerPerceptronClassifier()
-                .setLayers(layers)
-                .setTol(modelConf.getTol())
-                //.setLearningRate(0.03)
-                //.setSeed(1234L)
-                .setMaxIter(modelConf.getMaxiter());
-        MultilayerPerceptronClassifier dummy = new MultilayerPerceptronClassifier();
-        log.info("dymmy " + dummy.getBlockSize() + " " + dummy.getMaxIter() + " " + dummy.getSeed() + " " + dummy.getStepSize() + " " + dummy.getTol());
-        Pipeline pipeline = new Pipeline().setStages(new PipelineStage[] { trainer } );
-        return pipeline.fit(train);
     }
 
     @Override

@@ -58,12 +58,15 @@ import roart.iclij.service.IclijServiceResult;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
-import roart.ml.spark.MLClassifySparkAccess;
+import roart.spark.MLClassifySparkAccess;
 import roart.ml.common.MLClassifyAccess;
 import roart.ml.model.LearnTestClassify;
+import roart.ml.model.LearnTestClassifyAccess;
 import roart.ml.model.LearnTestClassifyResult;
+import roart.ml.common.MLClassifyModel;
+import roart.spark.MLClassifySparkModel;
 
-@ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.common.config,roart.iclij.config")
+@ComponentScan(basePackages = "roart.controller,roart.model,roart.common.config,roart.iclij.config")
 @CrossOrigin
 @RestController
 @EnableDiscoveryClient
@@ -85,61 +88,14 @@ public class ServiceController implements CommandLineRunner {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/" + EurekaConstants.GETMODELS,
-            method = RequestMethod.POST)
-    public IclijServiceResult getmodels(@RequestBody IclijServiceParam param)
-            throws Exception {
-        IclijServiceResult result = new IclijServiceResult();
-        try {
-            result.setConfigData(iclijConfig.getConfigData());
-            System.out.println("configs " + result.getConfigData());
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-            result.setError(e.getMessage());
-        }
-        return result;
-    }
-
-    @RequestMapping(value = "/" + EurekaConstants.GETNAME,
-            method = RequestMethod.POST)
-    public IclijServiceResult getname(@RequestBody IclijServiceParam param)
-            throws Exception {
-        IclijServiceResult result = new IclijServiceResult();
-        try {
-            MLClassifyAccess access = new MLClassifySparkAccess(iclijConfig);
-            String name = access.getName();
-            result.setConfigData(iclijConfig.getConfigData());
-            System.out.println("configs " + result.getConfigData());
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-            result.setError(e.getMessage());
-        }
-        return result;
-    }
-
-    @RequestMapping(value = "/" + EurekaConstants.GETSHORTNAME,
-            method = RequestMethod.POST)
-    public IclijServiceResult getshortname(@RequestBody IclijServiceParam param)
-            throws Exception {
-        IclijServiceResult result = new IclijServiceResult();
-        try {
-            result.setConfigData(iclijConfig.getConfigData());
-            System.out.println("configs " + result.getConfigData());
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-            result.setError(e.getMessage());
-        }
-        return result;
-    }
-
     @RequestMapping(value = "/" + EurekaConstants.CLEAN,
             method = RequestMethod.POST)
     public IclijServiceResult clean(@RequestBody IclijServiceParam param)
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            result.setConfigData(iclijConfig.getConfigData());
-            System.out.println("configs " + result.getConfigData());
+            MLClassifyAccess access = new MLClassifySparkAccess(iclijConfig);            
+            access.clean();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -149,27 +105,13 @@ public class ServiceController implements CommandLineRunner {
 
     @RequestMapping(value = "/" + EurekaConstants.LEARNTESTCLASSIFY,
             method = RequestMethod.POST)
-    public IclijServiceResult learntestclassify0(@RequestBody IclijServiceParam param)
-            throws Exception {
-        IclijServiceResult result = new IclijServiceResult();
-        try {
-            result.setConfigData(iclijConfig.getConfigData());
-            System.out.println("configs " + result.getConfigData());
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-            result.setError(e.getMessage());
-        }
-        return result;
-    }
-
-    @RequestMapping(value = "/" + EurekaConstants.LEARNTESTCLASSIFY,
-            method = RequestMethod.POST)
-    public LearnTestClassifyResult learntestclassify(@RequestBody LearnTestClassify param)
+    public LearnTestClassifyResult learntestclassify(@RequestBody LearnTestClassifyAccess param)
             throws Exception {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
         try {
-            MLClassifyAccess access = new MLClassifySparkAccess(iclijConfig);
-            //LearnTestClassifyResult result0 = access.learntestclassify(nnconfigs, null, learnTestMap, model, size, outcomes, classifyMap, shortMap, path, filename, param.getNeuralnetcommand(), mlmeta, param.getClassify());
+            param.model.setConf(iclijConfig);
+            MLClassifyAccess access = new MLClassifySparkAccess(iclijConfig);            
+            result = access.learntestclassify(param.nnconfigs, null, param.learnTestMap, param.model, param.size, param.outcomes, param.classifyMap, param.shortMap, param.path, param.filename, param.neuralnetcommand, param.mlmeta, param.classify);
             
             //result.setConfigData(iclijConfig.getConfigData());
             //System.out.println("configs " + result.getConfigData());

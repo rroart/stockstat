@@ -84,7 +84,7 @@ public abstract class MLClassifyModel {
         map.put(key, val);
     }
 
-    protected <T> T convert(Class<T> clazz) {
+    public <T> T convert(Class<T> clazz) {
         try {
             return new ObjectMapper().readValue((String) getConf().getConfigData().getConfigValueMap().get(getKey()), clazz);
         } catch (Exception e) {
@@ -93,7 +93,7 @@ public abstract class MLClassifyModel {
         }
     }
 
-    protected <T> T getDefault(Class<T> clazz) {
+    public <T> T getDefault(Class<T> clazz) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL, true);

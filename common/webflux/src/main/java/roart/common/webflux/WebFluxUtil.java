@@ -35,6 +35,12 @@ public class WebFluxUtil {
         return sendMeInner(myclass, param, url, objectMapper);
     }
     
+    public static <T> T sendMMe(Class<T> myclass, Object param, String path) {
+        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        String url = "http://" + getMHostname() + ":" + getMPort() + "/" + path;
+        return sendMeInner(myclass, param, url, objectMapper);
+    }
+    
     public static <T> T sendIMe(Class<T> myclass, Object param, String path) {
         ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         String url = "http://" + getIHostname() + ":" + getIPort() + "/" + path;
@@ -138,6 +144,28 @@ public class WebFluxUtil {
         String port = System.getenv(EurekaConstants.MYIPORT.toUpperCase());
         if (port == null) {
             port = System.getProperty(EurekaConstants.MYIPORT);
+        }
+        if (port == null) {
+            port = EurekaConstants.HTTP;
+        }
+        return port;
+    }
+
+    public static String getMHostname() {
+        String hostname = System.getenv(EurekaConstants.MYMSERVER.toUpperCase());
+        if (hostname == null) {
+            hostname = System.getProperty(EurekaConstants.MYMSERVER);
+        }
+        if (hostname == null) {
+            hostname = EurekaConstants.LOCALHOST;
+        }
+        return hostname;
+    }
+    
+    public static String getMPort() {
+        String port = System.getenv(EurekaConstants.MYMPORT.toUpperCase());
+        if (port == null) {
+            port = System.getProperty(EurekaConstants.MYMPORT);
         }
         if (port == null) {
             port = EurekaConstants.HTTP;

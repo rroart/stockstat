@@ -1,4 +1,4 @@
-package roart.ml.spark.util;
+package roart.spark.util;
 
 import java.util.ArrayList;
 import java.util.HashSet;

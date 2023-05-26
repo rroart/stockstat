@@ -66,6 +66,7 @@ public class MLClassifyDao {
         return result;
     }
 
+    // not used?
     public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, List<Triple<String, Object, Double>> map, MLClassifyModel model, int size, int outcomes, Map<MLClassifyModel, Long> mapTime, String filename) {
         long time1 = System.currentTimeMillis();
         Double prob = access.learntest(nnconfigs, indicator, map, model, size, outcomes, filename);
@@ -80,6 +81,7 @@ public class MLClassifyDao {
         return access.eval(modelInt);
     }
 
+    // not used?
     public Map<String, Double[]> classify(Aggregator indicator, List<Triple<String, Object, Double>> classifyMLMap, MLClassifyModel model, int size, int outcomes, Map<Double, String> shortMap, Map<MLClassifyModel, Long> mapTime) {
         long time1 = System.currentTimeMillis();
         Map<String, Double[]> resultAccess = access.classify(indicator, classifyMLMap, model, size, outcomes, shortMap);

@@ -14,7 +14,7 @@ import roart.common.ml.NeuralNetConfigs;
 import roart.ml.model.LearnTestPredictResult;
 import roart.ml.model.MLPredictAccess;
 import roart.ml.model.MLPredictModel;
-import roart.ml.spark.MLPredictSparkAccess;
+//import roart.ml.spark.MLPredictSparkAccess;
 import roart.ml.tensorflow.MLPredictTensorflowAccess;
 import roart.pipeline.common.predictor.AbstractPredictor;
 
@@ -39,7 +39,7 @@ public class MLPredictDao {
         // temp fix
         if (true || access == null) {
             if (type.equals(MLConstants.SPARK)) {
-                access = new MLPredictSparkAccess(conf);
+                access = null; //new MLPredictSparkAccess(conf);
             }
             if (type.equals(MLConstants.TENSORFLOW)) {
                 access = new MLPredictTensorflowAccess(conf);

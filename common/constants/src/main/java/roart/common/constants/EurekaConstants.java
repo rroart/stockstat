@@ -4,9 +4,11 @@ public class EurekaConstants {
     public static final String MYSERVER = "myserver";
     public static final String MYASERVER = "myaserver";
     public static final String MYISERVER = "myiserver";
+    public static final String MYMSERVER = "mymserver";
     public static final String MYPORT = "myport";
     public static final String MYIPORT = "myiport";
     public static final String MYAPORT = "myaport";
+    public static final String MYMPORT = "mymport";
     public static final String LOCALHOST = "localhost";
     public static final String HTTP = "80";
     public static final String STOCKSTAT = "STOCKSTAT";
