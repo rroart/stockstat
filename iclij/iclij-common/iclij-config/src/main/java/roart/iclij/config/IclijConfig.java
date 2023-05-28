@@ -1343,7 +1343,7 @@ public class IclijConfig extends MyMyConfig {
                 retVal = null;
             }
         }
-        return Optional.ofNullable(retVal).orElse(getConfigData().getConfigMaps().map.get(key));
+        return Optional.ofNullable(retVal).orElse(getConfigData().getConfigMaps().deflt.get(key));
     }
 
 }
