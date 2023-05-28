@@ -12,6 +12,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import roart.iclij.config.IclijConfig;
+import roart.common.config.ConfigData;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.constants.FileSystemConstants;
@@ -52,9 +53,9 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
 
     private static Map<String, FileSystemOperations> operationMap = new HashMap();
 
-    protected abstract FileSystemOperations createOperations(String nodename, String configid, IclijConfig nodeConf);
+    protected abstract FileSystemOperations createOperations(String nodename, String configid, ConfigData nodeConf);
 
-    private FileSystemOperations getOperations(String nodename, String configid, IclijConfig nodeConf) {
+    private FileSystemOperations getOperations(String nodename, String configid, ConfigData nodeConf) {
         FileSystemOperations operations = operationMap.get(configid);
         if (operations == null) {
             operations = createOperations(nodename, configid, nodeConf);
@@ -69,7 +70,7 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
             throws Exception {
         String error = null;
         try {
-            FileSystemOperations operations = getOperations(param.nodename, param.configid, param.conf);
+            FileSystemOperations operations = getOperations(param.nodename, param.configid, param.configData);
         } catch (Exception e) {
             log.error(roart.common.constants.Constants.EXCEPTION, e);
             error = e.getMessage();
@@ -104,7 +105,7 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
             method = RequestMethod.POST)
     public FileSystemFileObjectResult processListFiles(@RequestBody FileSystemFileObjectParam param)
             throws Exception {
-        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.conf);
+        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.configData);
         FileSystemFileObjectResult ret = operations.listFiles(param);
         return ret;
     }
@@ -112,7 +113,7 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
     @PostMapping(value = "/" + EurekaConstants.LISTFILESFULL)
     public FileSystemMyFileResult processListFilesFull(@RequestBody FileSystemFileObjectParam param)
             throws Exception {
-        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.conf);
+        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.configData);
         FileSystemMyFileResult ret = operations.listFilesFull(param);
         return ret;
     }
@@ -121,7 +122,7 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
             method = RequestMethod.POST)
     public FileSystemBooleanResult processExist(@RequestBody FileSystemFileObjectParam param)
             throws Exception {
-        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.conf);
+        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.configData);
         FileSystemBooleanResult ret = operations.exists(param);
         return ret;
     }
@@ -130,7 +131,7 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
             method = RequestMethod.POST)
     public FileSystemPathResult processGetAbsolutePath(@RequestBody FileSystemFileObjectParam param)
             throws Exception {
-        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.conf);
+        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.configData);
         FileSystemPathResult ret = operations.getAbsolutePath(param);
         return ret;
     }
@@ -139,7 +140,7 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
             method = RequestMethod.POST)
     public FileSystemBooleanResult processIsDirectory(@RequestBody FileSystemFileObjectParam param)
             throws Exception {
-        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.conf);
+        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.configData);
         FileSystemBooleanResult ret = operations.isDirectory(param);
         return ret;
     }
@@ -148,7 +149,7 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
             method = RequestMethod.POST)
     public FileSystemByteResult processGetInputStream(@RequestBody FileSystemFileObjectParam param)
             throws Exception {
-        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.conf);
+        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.configData);
         FileSystemByteResult ret = operations.getInputStream(param);
         return ret;
     }
@@ -156,7 +157,7 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
     @PostMapping(value = "/" + EurekaConstants.GETWITHINPUTSTREAM)
     public FileSystemMyFileResult processGetWithInputStream(@RequestBody FileSystemPathParam param)
             throws Exception {
-        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.conf);
+        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.configData);
         FileSystemMyFileResult ret = operations.getWithInputStream(param, true);
         return ret;
     }
@@ -164,7 +165,7 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
     @PostMapping(value = "/" + EurekaConstants.GETWITHOUTINPUTSTREAM)
     public FileSystemMyFileResult processGetWithoutInputStream(@RequestBody FileSystemPathParam param)
             throws Exception {
-        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.conf);
+        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.configData);
         FileSystemMyFileResult ret = operations.getWithInputStream(param, false);
         return ret;
     }
@@ -173,7 +174,7 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
             method = RequestMethod.POST)
     public FileSystemFileObjectResult processGetParent(@RequestBody FileSystemFileObjectParam param)
             throws Exception {
-        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.conf);
+        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.configData);
         FileSystemFileObjectResult ret = operations.getParent(param);
         return ret;
     }
@@ -182,7 +183,7 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
             method = RequestMethod.POST)
     public FileSystemFileObjectResult processGet(@RequestBody FileSystemPathParam param)
             throws Exception {
-        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.conf);
+        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.configData);
         FileSystemFileObjectResult ret = operations.get(param);
         return ret;
     }
@@ -191,7 +192,7 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
             method = RequestMethod.POST)
     public FileSystemMessageResult processReadFile(@RequestBody FileSystemFileObjectParam param)
             throws Exception {
-        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.conf);
+        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.configData);
         FileSystemMessageResult ret = operations.readFile(param);
         return ret;
     }
@@ -201,7 +202,7 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
             method = RequestMethod.POST)
     public FileSystemMessageResult processWriteFile(@RequestBody FileSystemFileObjectParam param)
             throws Exception {
-        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.conf);
+        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.configData);
         FileSystemMessageResult ret = operations.writeFile(param);
         return ret;
     }
@@ -210,7 +211,7 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
             method = RequestMethod.POST)
     public FileSystemStringResult processGetMd5(@RequestBody FileSystemFileObjectParam param)
             throws Exception {
-        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.conf);
+        FileSystemOperations operations = getOperations(param.nodename, param.configid, param.configData);
         FileSystemStringResult ret = operations.getMd5(param);
         return ret;
     }

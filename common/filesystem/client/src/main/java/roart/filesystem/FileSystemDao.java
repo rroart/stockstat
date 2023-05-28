@@ -151,7 +151,7 @@ public class FileSystemDao {
     private static FileSystemAccess getFileSystemAccess(FileObject f) {
         if (f == null) {
             log.error("f null");
-            return new LocalFileSystemAccess(conf);
+            return new LocalFileSystemAccess(conf.getConfigData());
         }
         /*
         if (f.fs == null) {
@@ -179,7 +179,7 @@ public class FileSystemDao {
             log.error("URL null for {} {}", fs, path);
             return null;
         }
-        FileSystemAccess access = new FileSystemAccess(conf);
+        FileSystemAccess access = new FileSystemAccess(conf.getConfigData());
         access.constructor("http://" + url + "/");
         return access;
     }

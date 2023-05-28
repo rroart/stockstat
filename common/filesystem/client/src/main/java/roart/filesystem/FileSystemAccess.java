@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import roart.iclij.config.IclijConfig;
+import roart.common.config.ConfigData;
 import roart.common.constants.EurekaConstants;
 import roart.common.filesystem.FileSystemBooleanResult;
 import roart.common.filesystem.FileSystemByteResult;
@@ -34,12 +35,12 @@ public class FileSystemAccess {
 
     private String url;
 
-    private IclijConfig conf;
+    private ConfigData configData;
     
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public FileSystemAccess(IclijConfig conf) {
-	this.conf = conf;
+    public FileSystemAccess(ConfigData conf) {
+	this.configData = conf;
     }
     
     public String getAppName() { return null; }
@@ -48,7 +49,7 @@ public class FileSystemAccess {
         this.url = url;
         FileSystemConstructorParam param = new FileSystemConstructorParam();
         param.configid = "myid";
-        param.conf = conf;
+        param.configData = configData;
         //FileSystemConstructorResult result = WebFluxUtil.sendMe(FileSystemConstructorResult.class, param, getAppName(), EurekaConstants.CONSTRUCTOR);
         FileSystemConstructorResult result = WebFluxUtil.sendMe(FileSystemConstructorResult.class, url, param, EurekaConstants.CONSTRUCTOR);
         return result.error;
@@ -57,14 +58,14 @@ public class FileSystemAccess {
     public String destructor() {
         FileSystemConstructorParam param = new FileSystemConstructorParam();
         param.configid = "myid";
-        param.conf = conf;
+        param.configData = configData;
         FileSystemConstructorResult result = WebFluxUtil.sendMe(FileSystemConstructorResult.class, url, param, EurekaConstants.DESTRUCTOR);
         return result.error;
     }
     public List<FileObject> listFiles(FileObject f) {
         FileSystemFileObjectParam param = new FileSystemFileObjectParam();
         param.configid = "myid";
-        param.conf = conf;
+        param.configData = configData;
         param.fo = f;
         FileSystemFileObjectResult result = WebFluxUtil.sendMe(FileSystemFileObjectResult.class, url, param, EurekaConstants.LISTFILES);
         return Arrays.asList(result.getFileObject());
@@ -74,7 +75,7 @@ public class FileSystemAccess {
     public List<MyFile> listFilesFull(FileObject f) {
         FileSystemFileObjectParam param = new FileSystemFileObjectParam();
         param.configid = "myid";
-        param.conf = conf;
+        param.configData = configData;
         param.fo = f;
         FileSystemMyFileResult result = WebFluxUtil.sendMe(FileSystemMyFileResult.class, url, param, EurekaConstants.LISTFILESFULL);
         return new ArrayList<>(result.map.values());
@@ -84,7 +85,7 @@ public class FileSystemAccess {
     public boolean exists(FileObject f) {
         FileSystemFileObjectParam param = new FileSystemFileObjectParam();
         param.configid = "myid";
-        param.conf = conf;
+        param.configData = configData;
         param.fo = f;
         FileSystemBooleanResult result = WebFluxUtil.sendMe(FileSystemBooleanResult.class, url, param, EurekaConstants.EXIST);
         return result.bool;
@@ -94,7 +95,7 @@ public class FileSystemAccess {
     public String getAbsolutePath(FileObject f) {
         FileSystemFileObjectParam param = new FileSystemFileObjectParam();
         param.configid = "myid";
-        param.conf = conf;
+        param.configData = configData;
         param.fo = f;
         FileSystemPathResult result = WebFluxUtil.sendMe(FileSystemPathResult.class, url, param, EurekaConstants.GETABSOLUTEPATH);
         return result.getPath();
@@ -104,7 +105,7 @@ public class FileSystemAccess {
     public boolean isDirectory(FileObject f) {
         FileSystemFileObjectParam param = new FileSystemFileObjectParam();
         param.configid = "myid";
-        param.conf = conf;
+        param.configData = configData;
         param.fo = f;
         FileSystemBooleanResult result = WebFluxUtil.sendMe(FileSystemBooleanResult.class, url, param, EurekaConstants.ISDIRECTORY);
         return result.bool;
@@ -114,7 +115,7 @@ public class FileSystemAccess {
     public InputStream getInputStream(FileObject f) {
         FileSystemFileObjectParam param = new FileSystemFileObjectParam();
         param.configid = "myid";
-        param.conf = conf;
+        param.configData = configData;
         param.fo = f;
         FileSystemByteResult result = WebFluxUtil.sendMe(FileSystemByteResult.class, url, param, EurekaConstants.GETINPUTSTREAM);
         return new ByteArrayInputStream(result.bytes);
@@ -124,7 +125,7 @@ public class FileSystemAccess {
     public Map<String, MyFile> getWithInputStream(Set<FileObject> filenames) {
         FileSystemPathParam param = new FileSystemPathParam();
         param.configid = "myid";
-        param.conf = conf;
+        param.configData = configData;
         param.paths = filenames;
         FileSystemMyFileResult result = WebFluxUtil.sendMe(FileSystemMyFileResult.class, url, param, EurekaConstants.GETWITHINPUTSTREAM);
         return result.map;
@@ -134,7 +135,7 @@ public class FileSystemAccess {
     public Map<String, MyFile> getWithoutInputStream(Set<FileObject> filenames) {
         FileSystemPathParam param = new FileSystemPathParam();
         param.configid = "myid";
-        param.conf = conf;
+        param.configData = configData;
         param.paths = filenames;
         FileSystemMyFileResult result = WebFluxUtil.sendMe(FileSystemMyFileResult.class, url, param, EurekaConstants.GETWITHOUTINPUTSTREAM);
         return result.map;
@@ -144,7 +145,7 @@ public class FileSystemAccess {
     public FileObject getParent(FileObject f) {
         FileSystemFileObjectParam param = new FileSystemFileObjectParam();
         param.configid = "myid";
-        param.conf = conf;
+        param.configData = configData;
         param.fo = f;
         FileSystemFileObjectResult result = WebFluxUtil.sendMe(FileSystemFileObjectResult.class, url, param, EurekaConstants.GETPARENT);
         return result.getFileObject()[0];
@@ -154,7 +155,7 @@ public class FileSystemAccess {
     public FileObject get(FileObject fo) {
         FileSystemPathParam param = new FileSystemPathParam();
         param.configid = "myid";
-        param.conf = conf;
+        param.configData = configData;
         param.path = fo;
         FileSystemFileObjectResult result = WebFluxUtil.sendMe(FileSystemFileObjectResult.class, url, param, EurekaConstants.GET);
         return result.getFileObject()[0];
@@ -175,7 +176,7 @@ public class FileSystemAccess {
     public Map<String, InmemoryMessage> readFile(Set<FileObject> f) {
         FileSystemFileObjectParam param = new FileSystemFileObjectParam();
         param.configid = "myid";
-        param.conf = conf;
+        param.configData = configData;
         param.fos = f;
         FileSystemMessageResult result = WebFluxUtil.sendMe(FileSystemMessageResult.class, url, param, EurekaConstants.READFILE);
         return result.message;
@@ -186,7 +187,7 @@ public class FileSystemAccess {
         map.put(f.toString(), content);
         FileSystemFileObjectParam param = new FileSystemFileObjectParam();
         param.configid = "myid";
-        param.conf = conf;
+        param.configData = configData;
         param.map = map;
         FileSystemMessageResult result = WebFluxUtil.sendMe(FileSystemMessageResult.class, url, param, EurekaConstants.WRITEFILE);
         return true;
@@ -195,7 +196,7 @@ public class FileSystemAccess {
     public Map<String, String> getMd5(Set<FileObject> f) {
         FileSystemFileObjectParam param = new FileSystemFileObjectParam();
         param.configid = "myid";
-        param.conf = conf;
+        param.configData = configData;
         param.fos = f;
         FileSystemStringResult result = WebFluxUtil.sendMe(FileSystemStringResult.class, url, param, EurekaConstants.GETMD5);
         return result.map;

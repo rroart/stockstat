@@ -1,6 +1,7 @@
 package roart.filesystem.hdfs;
 
 import roart.iclij.config.IclijConfig;
+import roart.common.config.ConfigData;
 import roart.filesystem.FileSystemAbstractController;
 import roart.filesystem.FileSystemOperations;
 
@@ -19,7 +20,7 @@ public class HDFSController extends FileSystemAbstractController {
 	}
 
 	@Override
-	protected FileSystemOperations createOperations(String nodename, String configid, IclijConfig nodeConf) {
+	protected FileSystemOperations createOperations(String nodename, String configid, ConfigData nodeConf) {
 		return new HDFS(nodename, configid, nodeConf);
 	}
 }

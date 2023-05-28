@@ -1,6 +1,7 @@
 package roart.filesystem;
 
 import roart.iclij.config.IclijConfig;
+import roart.common.config.ConfigData;
 import roart.common.filesystem.FileSystemBooleanResult;
 import roart.common.filesystem.FileSystemByteResult;
 import roart.common.filesystem.FileSystemConstructorResult;
@@ -18,10 +19,10 @@ public abstract class FileSystemOperations {
     protected String configid;
     protected IclijConfig nodeConf;
 
-    public FileSystemOperations(String nodename, String configid, IclijConfig nodeConf) {
+    public FileSystemOperations(String nodename, String configid, ConfigData nodeConf) {
         this.nodename = nodename;
         this.configid = configid;
-        this.nodeConf = nodeConf;
+        this.nodeConf = new IclijConfig(nodeConf);
     }
 
     public abstract FileSystemConstructorResult destroy() throws Exception;

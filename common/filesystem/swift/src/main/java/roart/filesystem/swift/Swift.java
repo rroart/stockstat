@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import roart.common.config.ConfigConstants;
+import roart.common.config.ConfigData;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
@@ -60,8 +61,8 @@ public class Swift extends FileSystemOperations {
 
     private static final Character DELIMITER = '/';
 
-    public Swift(String nodename, String configid, IclijConfig nodeConf) {
-        super(nodename, configid, nodeConf);
+    public Swift(String nodename, String configid, ConfigData configData) {
+        super(nodename, configid, configData);
         try {
             conf = new SwiftConfig();
             String url = nodeConf.getSwiftUrl();

@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import roart.iclij.config.IclijConfig;
+import roart.common.config.ConfigData;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.constants.FileSystemConstants;
@@ -51,7 +52,7 @@ public class LocalFileSystem extends FileSystemOperations {
 
     private static final Logger log = LoggerFactory.getLogger(LocalFileSystem.class);
 
-    public LocalFileSystem(String nodename, String configid, IclijConfig nodeConf) {
+    public LocalFileSystem(String nodename, String configid, ConfigData nodeConf) {
         super(nodename, configid, nodeConf);
     }
 

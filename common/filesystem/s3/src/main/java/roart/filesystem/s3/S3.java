@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import roart.common.config.ConfigConstants;
+import roart.common.config.ConfigData;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
@@ -61,8 +62,8 @@ public class S3 extends FileSystemOperations {
 
     /*private*/ S3Config conf;
 
-    public S3(String nodename, String configid, IclijConfig nodeConf) {
-        super(nodename, configid, nodeConf);
+    public S3(String nodename, String configid, ConfigData configData) {
+        super(nodename, configid, configData);
         try {
             
             AwsBasicCredentials credentials = AwsBasicCredentials.create(nodeConf.getS3AccessKey(), nodeConf.getS3SecretKey());

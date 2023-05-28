@@ -23,6 +23,7 @@ import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 
 import roart.common.config.ConfigConstants;
+import roart.common.config.ConfigData;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
@@ -57,8 +58,8 @@ public class HDFS extends FileSystemOperations {
 
     private HDFSConfig conf;
 
-    public HDFS(String nodename, String configid, IclijConfig nodeConf) {
-        super(nodename, configid, nodeConf);
+    public HDFS(String nodename, String configid, ConfigData configData) {
+        super(nodename, configid, configData);
         conf = new HDFSConfig();
         Configuration configuration = new Configuration();
         conf.configuration = configuration;
