@@ -357,7 +357,9 @@ public class ServiceController implements CommandLineRunner {
         String services = instance.getServices();
         String communications = instance.getCommunications();
         new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig, dao).start();
-        new DatabaseThread().start();
+        if (iclijConfig.wantDbHibernate()) {
+            new DatabaseThread().start();
+        }
         MyCache.setCache(instance.wantCache());
         MyCache.setCacheTTL(instance.getCacheTTL());
         //new MemRunner().run();

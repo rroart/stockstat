@@ -74,7 +74,9 @@ public class IclijController implements CommandLineRunner {
             String communications = instance.getCommunications();
             new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig, dbDao).start();
             new PopulateThread(iclijConfig, dbDao).start();
-            new DatabaseThread().start();
+            if (iclijConfig.wantDbHibernate()) {
+                new DatabaseThread().start();
+            }
             new ActionThread(iclijConfig, dbDao).start();
             new MemRunner().start();
             MyCache.setCache(instance.wantCache());

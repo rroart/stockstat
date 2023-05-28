@@ -51,7 +51,6 @@ import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
 import roart.common.util.JsonUtil;
 import roart.common.util.MemUtil;
-import roart.db.thread.DatabaseThread;
 import org.springframework.beans.factory.annotation.Autowired;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
@@ -138,7 +137,6 @@ public class ServiceController implements CommandLineRunner {
         String myservices = instance.getMyservices();
         String services = instance.getServices();
         String communications = instance.getCommunications();
-        new DatabaseThread().start();
         MyCache.setCache(instance.wantCache());
         MyCache.setCacheTTL(instance.getCacheTTL());
         //new MemRunner().run();
