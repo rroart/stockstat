@@ -75,11 +75,11 @@
     <maveninstall.version>2.5.2</maveninstall.version>
     <mavenshade.version>3.4.1</mavenshade.version>
     <jetty.version>9.4.12.v20180830</jetty.version>
-    <springboot.version>3.0.0</springboot.version>
-    <springcloud.version>4.0.0-RC2</springcloud.version>
-    <springcloudstarter.version>2022.0.0-RC2</springcloudstarter.version>
-    <springcore.version>6.0.0</springcore.version>
-    <eurekaclient.version>1.9.8</eurekaclient.version>
+    <springboot.version>3.1.0</springboot.version>
+    <springcloud.version>4.0.2</springcloud.version>
+    <springcloudstarter.version>2022.0.3</springcloudstarter.version>
+    <springcore.version>6.0.9</springcore.version>
+    <eurekaclient.version>2.0.0</eurekaclient.version>
     <jackson.version>2.13.4</jackson.version>
     <hibernate.version>6.1.5.Final</hibernate.version>
     <hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
