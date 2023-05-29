@@ -210,16 +210,16 @@ public class ActionThread extends Thread {
 
     public boolean runAction(IclijConfig instance, ActionComponentItem item, List<ActionComponentItem> dblist) {
         boolean finished = false;
-        IclijConfig iclijConfig = new IclijConfig(instance);
-        iclijConfig.getConfigData().setMarket(item.getMarket());
-        MarketAction action = ActionFactory.get(item.getAction(), dbDao, iclijConfig);
+        IclijConfig myConfig = new IclijConfig(instance);
+        myConfig.getConfigData().setMarket(item.getMarket());
+        MarketAction action = ActionFactory.get(item.getAction(), dbDao, myConfig);
         action.setParent(action);
-        Market market = new MarketUtil().findMarket(item.getMarket(), iclijConfig);
+        Market market = new MarketUtil().findMarket(item.getMarket(), myConfig);
         //ComponentInput input = new ComponentInput(new IclijConfig(IclijXMLConfig.getConfigInstance()), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>());
-        ComponentInput input = new ComponentInput(iclijConfig.getConfigData(), null, item.getMarket(), null, null, true, false, new ArrayList<>(), new HashMap<>());
+        ComponentInput input = new ComponentInput(myConfig.getConfigData(), null, item.getMarket(), null, null, true, false, new ArrayList<>(), new HashMap<>());
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(iclijConfig, input, 0, market);
+            param = ComponentData.getParam(myConfig, input, 0, market);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -234,12 +234,12 @@ public class ActionThread extends Thread {
         Component component = new ComponentFactory().factory(item.getComponent());
         boolean evolve = action.getEvolve(component, param);
         WebData myData = action.getWebData();
-        if (item.getDbid() == null || action.getActionData().wantsUpdate(iclijConfig)) {
+        if (item.getDbid() == null || action.getActionData().wantsUpdate(myConfig)) {
             String actionItem = LocalTime.now() + " " + Thread.currentThread().getId() + " " + item.toStringId();
             try {
                 long[] mem0 = MemUtil.mem();
                 log.info("Action item {} {}", item.toStringId(), MemUtil.print(mem0));
-                action.getPicksFilteredOuter(myData, param, iclijConfig, item, evolve, wantThree, actionItem);                
+                action.getPicksFilteredOuter(myData, param, myConfig, item, evolve, wantThree, actionItem);                
                 //IclijController.taskList.remove(actionItem);
                 long[] mem1 = MemUtil.mem();
                 long[] memdiff = MemUtil.diff(mem1, mem0);
@@ -252,15 +252,15 @@ public class ActionThread extends Thread {
                     // if generated ml or improveprofit action
                     //    if generated ml action, then generate improveprofit action if none already
                     //	  db delete and repopulate
-                    if (action.getActionData().wantsUpdate(iclijConfig)) {
+                    if (action.getActionData().wantsUpdate(myConfig)) {
                         if (IclijConstants.MACHINELEARNING.equals(item.getAction()) || IclijConstants.IMPROVEPROFIT.equals(item.getAction())) {
                             if (IclijConstants.MACHINELEARNING.equals(item.getAction())) {
                                 //                            	otherAction = IclijConstants.IMPROVEPROFIT;
                                 //                        	} else {
                                 //                        		otherAction = IclijConstants.MACHINELEARNING;
-                                MarketAction anAction = ActionFactory.get(IclijConstants.IMPROVEPROFIT, dbDao, iclijConfig);
+                                MarketAction anAction = ActionFactory.get(IclijConstants.IMPROVEPROFIT, dbDao, myConfig);
                                 String mypriorityKey = anAction.getActionData().getPriority();
-                                int aPriority = action.getPriority(iclijConfig, mypriorityKey);
+                                int aPriority = action.getPriority(myConfig, mypriorityKey);
                                 ActionComponentItem it = dblist.stream().filter(dbitem -> (IclijConstants.IMPROVEPROFIT.equals(dbitem.getAction()) && item.getMarket().equals(dbitem.getMarket()) && item.getComponent().equals(dbitem.getComponent()) && item.getSubcomponent().equals(item.getSubcomponent()))).findAny().orElse(null); 
                                 if (it == null && item.getPriority() == -10) {
                                     mct(IclijConstants.IMPROVEPROFIT, item.getMarket(), item.getComponent(), item.getSubcomponent(), aPriority);
@@ -286,7 +286,7 @@ public class ActionThread extends Thread {
                 log.error(Constants.EXCEPTION, e);
             }
         }
-        if (item.getDbid() != null && !action.getActionData().wantsUpdate(iclijConfig)) {
+        if (item.getDbid() != null && !action.getActionData().wantsUpdate(myConfig)) {
             finished = true;
         }
         return finished;

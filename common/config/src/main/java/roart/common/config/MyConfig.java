@@ -14,7 +14,7 @@ public abstract class MyConfig {
     }
 
     public MyConfig(MyConfig config) {
-        this.configData = config.getConfigData();
+        this.configData = config.getConfigData().copy();
     }
 
     public MyConfig(ConfigData data) {

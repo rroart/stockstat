@@ -1,25 +1,17 @@
 package roart.iclij.config;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Map.Entry;
-
 import roart.common.config.ConfigConstantMaps;
-import roart.common.config.ConfigConstants;
 import roart.common.config.ConfigData;
 import roart.common.config.ConfigMaps;
-import roart.common.config.ConfigTreeMap;
 import roart.common.config.MyMyConfig;
 import roart.config.IclijConfigConstantMaps;
 
@@ -71,6 +63,7 @@ public class IclijConfig extends MyMyConfig {
         myConfigMaps.keys(configMaps.keys);
         log.error("confMapps" + myConfigMaps);
         instance = IclijXMLConfig.instance(this, myConfigMaps);
+        //this.getConfigData().mute();
         log.error("confMapps2" + myConfigMaps);
     }
 

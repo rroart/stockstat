@@ -1,44 +1,12 @@
 package roart.iclij.service;
 
-import roart.common.config.CacheConstants;
-import roart.common.config.ConfigConstants;
-import roart.common.config.ConfigData;
-import roart.common.config.ConfigTreeMap;
-import roart.iclij.config.IclijConfig;
-import roart.iclij.config.IclijConfig;
-import roart.common.constants.Constants;
-import roart.common.constants.EurekaConstants;
-import roart.common.inmemory.factory.InmemoryFactory;
-import roart.common.inmemory.model.InmemoryMessage;
-import roart.common.inmemory.model.Inmemory;
-import roart.common.ml.NeuralNetCommand;
-import roart.common.model.MetaItem;
-import roart.common.pipeline.PipelineConstants;
-import roart.common.webflux.WebFluxUtil;
-import roart.iclij.config.IclijConfig;
-import roart.iclij.config.IclijXMLConfig;
-import roart.iclij.model.WebData;
-import roart.iclij.model.WebDataJson;
-import roart.iclij.model.component.ComponentInput;
-import roart.result.model.ResultItem;
-import roart.common.util.ImmutabilityUtil;
-import roart.common.util.JsonUtil;
-import roart.common.util.MemUtil;
-import roart.common.util.ServiceConnectionUtil;
-import roart.common.communication.factory.CommunicationFactory;
-import roart.common.communication.model.Communication;
-import roart.common.cache.MyCache;
-import roart.common.webflux.WebFluxUtil;
-
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
@@ -53,10 +21,35 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import roart.common.cache.MyCache;
+import roart.common.communication.factory.CommunicationFactory;
+import roart.common.communication.model.Communication;
+import roart.common.config.CacheConstants;
+import roart.common.config.ConfigData;
+import roart.common.config.ConfigTreeMap;
+import roart.common.constants.Constants;
+import roart.common.constants.EurekaConstants;
+import roart.common.inmemory.factory.InmemoryFactory;
+import roart.common.inmemory.model.Inmemory;
+import roart.common.inmemory.model.InmemoryMessage;
+import roart.common.ml.NeuralNetCommand;
+import roart.common.model.MetaItem;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.util.ImmutabilityUtil;
+import roart.common.util.MemUtil;
+import roart.common.util.ServiceConnectionUtil;
+import roart.common.webflux.WebFluxUtil;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.model.WebData;
+import roart.iclij.model.WebDataJson;
+import roart.iclij.model.component.ComponentInput;
+import roart.result.model.ResultItem;
+
 public class ControlService {
     private static Logger log = LoggerFactory.getLogger(ControlService.class);
 
-    public  IclijConfig conf;
+    // Config for the core, not iclij
+    public IclijConfig conf;
     ObjectMapper objectMapper;
 
     private IclijConfig iclijConfig;
@@ -67,7 +60,6 @@ public class ControlService {
     	//conf = MyConfig.instance();
     	//getConfig();
         this.iclijConfig = iclijConfig;
-        this.conf = iclijConfig;
         objectMapper = jsonObjectMapper();
     }
   
@@ -76,7 +68,7 @@ public class ControlService {
         ConfigData list = (ConfigData) MyCache.getInstance().get(key);
         if (list == null) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfigData(conf.getConfigData());
+        param.setConfigData(iclijConfig.getConfigData());
         IclijServiceResult result = sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG);
         list = result.getConfigData();
         MyCache.getInstance().put(key, list);
@@ -90,7 +82,7 @@ public class ControlService {
         result = (ServiceResult) c.sendReceive(param);
         */
         //ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONFIG);
-        conf = new  IclijConfig(list);
+        conf = new IclijConfig(list.copy());
         Map<String, Object> map = conf.getConfigData().getConfigValueMap();
         for (String akey : map.keySet()) {
             Object value = map.get(akey);
@@ -137,7 +129,7 @@ public class ControlService {
     }
 
     public void send(String service, Object object, IclijConfig config) {
-        Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
+        Inmemory inmemory = InmemoryFactory.get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
         String id = service + System.currentTimeMillis() + UUID.randomUUID();
         InmemoryMessage message = inmemory.send(id, object);
         send(service, message);
