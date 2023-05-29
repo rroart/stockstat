@@ -6,7 +6,7 @@ node {
       buildImage.inside {
         mattermostSend "Build Started - ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.MYBRANCH}"
         env.npm_config_cache='/tmp/.npm'
-        sh 'mvn install -pl !webr -pl !weba -DskipTests'
+        sh 'mvn verify -pl !webr -pl !weba -DskipTests'
         mattermostSend "Build Finished - ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.MYBRANCH}"
         if (env.MYBRANCH == 'develop') {
           env.OTHERBRANCH = 'master'
@@ -17,7 +17,7 @@ node {
 	sh 'git pull'
         sh 'git merge origin/$MYBRANCH || (git merge --abort && exit 1)'
         mattermostSend "Merged ${env.MYBRANCH} to ${env.OTHERBRANCH}"
-        sh 'mvn install -pl !webr -pl !weba -DskipTests'
+        sh 'mvn verify -pl !webr -pl !weba -DskipTests'
         mattermostSend "Build Finished - ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.OTHERBRANCH}"
         env.MYPUSH = sh(script: 'git config remote.origin.url | cut -c9-', returnStdout: true)
         withCredentials([usernameColonPassword(credentialsId: 'githubtoken', variable: 'TOKEN')]) {
