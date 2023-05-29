@@ -6,7 +6,7 @@ node {
       buildImage.inside {
         mattermostSend "Build Started - ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.MYBRANCH}"
         env.npm_config_cache='/tmp/.npm'
-        sh 'mvn verify -pl !web -pl !weba -pl !iclij/iclij-weba -DskipTests'
+        sh 'mvn verify -pl !webr -pl !weba -pl -DskipTests'
         mattermostSend "Build Finished - ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.MYBRANCH}"
         if (env.MYBRANCH == 'develop') {
           env.OTHERBRANCH = 'master'
