@@ -1,6 +1,7 @@
 package roart.common.config;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -88,4 +89,11 @@ public class ConfigData {
         return data;
     }
     
+    public void mute() {
+        configValueMap = Collections.unmodifiableMap(configValueMap);
+    }
+    
+    public void unmute() {
+        configValueMap = new HashMap(configValueMap);
+    }
 }
