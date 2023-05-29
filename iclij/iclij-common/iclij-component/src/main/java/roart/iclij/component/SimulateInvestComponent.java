@@ -1541,7 +1541,7 @@ public class SimulateInvestComponent extends ComponentML {
     private String getText(Map<String, String> stocks, List<String> ids) {
         String txt = "";
         for (String id : ids) {
-            txt = (stocks.containsKey(id) ? stocks.get(id) : id) + " ";
+            txt = (stocks != null && stocks.containsKey(id) ? stocks.get(id) : id) + " ";
         }
         return txt;
     }
