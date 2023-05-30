@@ -105,7 +105,10 @@ public class ControlService {
             List<StockItem> stocks = dbDao.getAll(market, conf);
             stocks.remove(null);
             for (StockItem stock : stocks) {
-                stockMap.put(stock.getId(), stock.getName());
+                String name = stock.getName();
+                if (name != null && !name.isEmpty() && !name.isBlank()) {
+                    stockMap.put(stock.getId(), stock.getName());
+                }
             }
             return stockMap;
         } catch (Exception e) {
