@@ -282,7 +282,7 @@ public class SimulateInvestComponent extends ComponentML {
         if (parametersList.isEmpty()) {
             parametersList.add(null);
         }
-        if (autoSimConfig == null) {
+        if (!evolving) {
             data.stocks = param.getService().getStocks(market.getConfig().getMarket());           
         }
         
