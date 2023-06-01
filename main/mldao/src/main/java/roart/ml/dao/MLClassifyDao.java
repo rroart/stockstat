@@ -17,6 +17,7 @@ import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLClassifyRandomAccess;
 import roart.ml.common.MLMeta;
 import roart.ml.gem.MLClassifyGemAccess;
+import roart.ml.model.LearnClassify;
 import roart.ml.model.LearnTestClassifyResult;
 import roart.ml.pytorch.MLClassifyPytorchAccess;
 import roart.ml.spark.MLClassifySparkAccess;
@@ -57,7 +58,7 @@ public class MLClassifyDao {
         }
     }
 
-    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, List<Triple<String, Object, Double>> learnTestMap, MLClassifyModel model, int size, int outcomes, Map<MLClassifyModel, Long> mapTime, List<Triple<String, Object, Double>> classifyMap, Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta, boolean classify) {
+    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, List<LearnClassify> learnTestMap, MLClassifyModel model, int size, int outcomes, Map<MLClassifyModel, Long> mapTime, List<LearnClassify> classifyMap, Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta, boolean classify) {
         long time1 = System.currentTimeMillis();
         LearnTestClassifyResult result = access.learntestclassify(nnconfigs, indicator, learnTestMap, model, size, outcomes, classifyMap, shortMap, path, filename, neuralnetcommand, mlmeta, classify);
         long time = (System.currentTimeMillis() - time1);
@@ -67,7 +68,7 @@ public class MLClassifyDao {
     }
 
     // not used?
-    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, List<Triple<String, Object, Double>> map, MLClassifyModel model, int size, int outcomes, Map<MLClassifyModel, Long> mapTime, String filename) {
+    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, List<LearnClassify> map, MLClassifyModel model, int size, int outcomes, Map<MLClassifyModel, Long> mapTime, String filename) {
         long time1 = System.currentTimeMillis();
         Double prob = access.learntest(nnconfigs, indicator, map, model, size, outcomes, filename);
         long time = (System.currentTimeMillis() - time1);
@@ -82,7 +83,7 @@ public class MLClassifyDao {
     }
 
     // not used?
-    public Map<String, Double[]> classify(Aggregator indicator, List<Triple<String, Object, Double>> classifyMLMap, MLClassifyModel model, int size, int outcomes, Map<Double, String> shortMap, Map<MLClassifyModel, Long> mapTime) {
+    public Map<String, Double[]> classify(Aggregator indicator, List<LearnClassify> classifyMLMap, MLClassifyModel model, int size, int outcomes, Map<Double, String> shortMap, Map<MLClassifyModel, Long> mapTime) {
         long time1 = System.currentTimeMillis();
         Map<String, Double[]> resultAccess = access.classify(indicator, classifyMLMap, model, size, outcomes, shortMap);
         long time = (System.currentTimeMillis() - time1);

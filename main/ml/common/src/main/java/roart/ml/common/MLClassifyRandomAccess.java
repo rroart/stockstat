@@ -9,9 +9,6 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.MutableTriple;
-import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +16,7 @@ import roart.common.config.MLConstants;
 import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
+import roart.ml.model.LearnClassify;
 import roart.ml.model.LearnTestClassifyResult;
 import roart.pipeline.common.aggregate.Aggregator;
 
@@ -42,7 +40,7 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, List<Triple<String, Object, Double>> map, MLClassifyModel model, int size,
+    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, List<LearnClassify> map, MLClassifyModel model, int size,
             int outcomes, String filename) {
         return random.nextDouble();
     }
@@ -70,39 +68,39 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Map<String, Double[]> classify(Aggregator indicator, List<Triple<String, Object, Double>> map, MLClassifyModel model, int size,
+    public Map<String, Double[]> classify(Aggregator indicator, List<LearnClassify> map, MLClassifyModel model, int size,
             int outcomes, Map<Double, String> shortMap) {
         return new HashMap<>();
     }
 
-    private Map<String, Double[]> getCatMap(List<String> retList, List<Triple<String, Object, Double>> classifyMap, Object[] list) {
+    private Map<String, Double[]> getCatMap(List<String> retList, List<LearnClassify> classifyMap, Object[] list) {
         Map<String, Double[]> retMap = new HashMap<>();
         for (int j = 0; j < retList.size(); j ++) {
             Double acat = (Double) list[random.nextInt(list.length)];
             Double aprob = random.nextDouble();
             String id = retList.get(j);
             retMap.put(id, new Double[]{ acat, aprob });
-            Triple triple = classifyMap.get(j);
-            if (triple.getRight() != null) {
+            LearnClassify triple = classifyMap.get(j);
+            if (triple.getClassification() != null) {
                 int jj = 0;
             }
-            Triple mutableTriple = new MutableTriple(triple.getLeft(), triple.getMiddle(), acat);
+            LearnClassify mutableList = new LearnClassify(triple.getId(), triple.getArray(), acat);
             //triple.setRight(acat);
-            classifyMap.set(j, mutableTriple);
+            classifyMap.set(j, mutableList);
         }
         return retMap;
     }
 
-    private void getClassifyArray(List<Triple<String, Object, Double>> list, List<String> retList, Object[][] objobj) {
+    private void getClassifyArray(List<LearnClassify> list, List<String> retList, Object[][] objobj) {
         int i = 0;
-        for (Triple<String, Object, Double> entry : list) {
-            double[] value = (double[]) entry.getMiddle();
+        for (LearnClassify entry : list) {
+            double[] value = (double[]) entry.getArray();
             Object[] obj = new Object[value.length/* + 1*/];
             for (int j = 0; j < value.length; j ++) {
                 obj[j] = value[j];
             }
             objobj[i++] = obj;
-            retList.add(entry.getLeft());
+            retList.add((String) entry.getId());
         }
     }
 
@@ -117,8 +115,8 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
     }
 
     @Override
-    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, List<Triple<String, Object, Double>> learnMap,
-            MLClassifyModel model, int size, int outcomes, List<Triple<String, Object, Double>> classifyMap,
+    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, List<LearnClassify> learnMap,
+            MLClassifyModel model, int size, int outcomes, List<LearnClassify> classifyMap,
             Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta, boolean classify) {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
         if (classifyMap == null || classifyMap.isEmpty()) {
@@ -129,7 +127,7 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
         Map<Object, Long> countMap = null;
         if (learnMap != null) {
             //IndicatorUtils.filterNonExistingClassifications2(labelMapShort, learnMap);
-            countMap = learnMap.stream().collect(Collectors.groupingBy(e -> e.getRight(), Collectors.counting()));                            
+            countMap = learnMap.stream().collect(Collectors.groupingBy(e -> e.getClassification(), Collectors.counting()));                            
             list = countMap.keySet().toArray();
         }
         List<String> retList = new ArrayList<>();

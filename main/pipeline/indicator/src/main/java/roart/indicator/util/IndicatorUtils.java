@@ -34,6 +34,7 @@ import roart.indicator.impl.IndicatorMACD;
 import roart.indicator.impl.IndicatorRSI;
 import roart.indicator.impl.IndicatorSTOCH;
 import roart.indicator.impl.IndicatorSTOCHRSI;
+import roart.ml.common.MLClassifyAccess;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
 import roart.common.model.StockItem;
@@ -47,6 +48,7 @@ import roart.model.data.MarketData;
 import roart.model.data.StockData;
 import roart.talib.util.TaUtil;
 import java.util.Objects;
+import roart.ml.model.LearnClassify;
 
 public class IndicatorUtils {
 
@@ -766,17 +768,17 @@ public class IndicatorUtils {
         }
     }
 
-    public static void filterNonExistingClassifications4(Map<Double, String> labelMapShort, List<Triple<String, Object, Double>> list) {
+    public static void filterNonExistingClassifications4(Map<Double, String> labelMapShort, List<LearnClassify> list) {
         log.info("Values " + list);
         // due to tensorflow l classifying to 3rd (not inc dec)
-        List<Triple<String, Object, Double>> filterNonExistingClassifications = new ArrayList<>();
-        for (Triple<String, Object, Double> entry : list) {
-            Double value = entry.getRight();
+        List<LearnClassify> filterNonExistingClassifications = new ArrayList<>();
+        for (LearnClassify entry : list) {
+            Double value = (Double) entry.getClassification();
             if (labelMapShort.get(value) == null) {
                 filterNonExistingClassifications.add(entry);
             }
         }
-        for (Triple<String, Object, Double> key : filterNonExistingClassifications) {
+        for (LearnClassify key : filterNonExistingClassifications) {
             list.remove(key);
             log.error("Removing key {}", key);
         }

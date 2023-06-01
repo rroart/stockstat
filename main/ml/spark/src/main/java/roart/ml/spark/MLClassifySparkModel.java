@@ -25,7 +25,7 @@ public abstract class MLClassifySparkModel extends MLClassifyModel {
     
     @Override
     public String getPath() {
-        return getConf().getSparkMLPath();
+        return getConf() != null ? getConf().getSparkMLPath() : null;
     }
     
     @Override

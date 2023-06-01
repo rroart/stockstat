@@ -50,7 +50,9 @@ import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
 import roart.ml.dao.MLClassifyDao;
 import roart.ml.dao.MLClassifyLearnTestPredictCallable;
+import roart.ml.model.LearnClassify;
 import roart.ml.model.LearnTestClassifyResult;
+import roart.ml.common.MLClassifyAccess;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
 import roart.pipeline.Pipeline;
@@ -443,9 +445,9 @@ public class MLIndicator extends Aggregator {
                     if ((mlmeta.dim3 == null) == model.isFourDimensional()) {
                         continue;
                     }
-                    List<Triple<String, Object, Double>> learnMap = transformLearnClassifyMap(mergedCatMap, true, mlmeta, model);
-                    List<Triple<String, Object, Double>> classifyMap = transformLearnClassifyMap(mergedCatMap, false, mlmeta, model);
-                    Map<Object, Long> countMap1 = learnMap.stream().collect(Collectors.groupingBy(e2 -> labelMapShort.get(e2.getRight()), Collectors.counting()));                            
+                    List<LearnClassify> learnMap = transformLearnClassifyMap(mergedCatMap, true, mlmeta, model);
+                    List<LearnClassify> classifyMap = transformLearnClassifyMap(mergedCatMap, false, mlmeta, model);
+                    Map<Object, Long> countMap1 = learnMap.stream().collect(Collectors.groupingBy(e2 -> labelMapShort.get(e2.getClassification()), Collectors.counting()));                            
                     long count = countMap1.values().stream().distinct().count();
                     if (count == 1) {
                         log.info("Nothing to learn");
@@ -459,7 +461,7 @@ public class MLIndicator extends Aggregator {
                         //testCount++;
                         //continue;
                     } else {
-                        log.info("keyset {}", classifyMap.stream().map(Triple::getLeft).collect(Collectors.toList()));
+                        log.info("keyset {}", classifyMap.stream().map(e -> e.getId()).collect(Collectors.toList()));
                     }
                     // make OO of this, create object
                     Object[] meta1 = new Object[ResultMetaConstants.SIZE];
@@ -503,9 +505,9 @@ public class MLIndicator extends Aggregator {
                     if (neuralnetcommand.isMlcross() && classifyResult != null && classifyMap.size() > 0) {
                         //Map<String, Double[]> classifyResult = result.getCatMap();
                         int cls = 0;
-                        for (Triple<String, Object, Double> triple : classifyMap) {
-                            String key = triple.getLeft();
-                            Object obj = triple.getRight();
+                        for (LearnClassify triple : classifyMap) {
+                            String key = (String) triple.getId();
+                            Object obj = triple.getClassification();
                             double cat;
                             if (obj instanceof Integer) {
                                 cat = ((Integer) obj).doubleValue();
@@ -587,9 +589,9 @@ public class MLIndicator extends Aggregator {
                     if ((mlmeta.dim3 == null) == model.isFourDimensional()) {
                         continue;
                     }
-                    List<Triple<String, Object, Double>> learnMap = transformLearnClassifyMap(mergedCatMap, true, mlmeta, model);
-                    List<Triple<String, Object, Double>> classifyMap = transformLearnClassifyMap(mergedCatMap, false, mlmeta, model);
-                    Map<Object, Long> countMap1 = learnMap.stream().collect(Collectors.groupingBy(e2 -> labelMapShort.get(e2.getRight()), Collectors.counting()));                            
+                    List<LearnClassify> learnMap = transformLearnClassifyMap(mergedCatMap, true, mlmeta, model);
+                    List<LearnClassify> classifyMap = transformLearnClassifyMap(mergedCatMap, false, mlmeta, model);
+                    Map<Object, Long> countMap1 = learnMap.stream().collect(Collectors.groupingBy(e2 -> labelMapShort.get(e2.getClassification()), Collectors.counting()));                            
                     long count = countMap1.values().stream().distinct().count();
                     if (count == 1) {
                         log.info("Nothing to learn");
@@ -600,7 +602,7 @@ public class MLIndicator extends Aggregator {
                         log.error("map null ");
                         continue;
                     } else {
-                        log.info("keyset {}", classifyMap.stream().map(Triple::getLeft).collect(Collectors.toList()));
+                        log.info("keyset {}", classifyMap.stream().map(e -> e.getId()).collect(Collectors.toList()));
 
                     }
                     // make OO of this, create object
@@ -682,8 +684,8 @@ public class MLIndicator extends Aggregator {
         }
     }
 
-    private List<Triple<String, Object, Double>> transformLearnClassifyMap(Map<String, List<Pair<Object, Double>>> map, boolean classify, MLMeta mlmeta, MLClassifyModel model) {
-        List<Triple<String, Object, Double>> mlMap = new ArrayList<>();
+    private List<LearnClassify> transformLearnClassifyMap(Map<String, List<Pair<Object, Double>>> map, boolean classify, MLMeta mlmeta, MLClassifyModel model) {
+        List<LearnClassify> mlMap = new ArrayList<>();
         for (Entry<String, List<Pair<Object, Double>>> entry : map.entrySet()) {
             List<Pair<Object, Double>> list = entry.getValue();
             for (Pair<Object, Double> pair : list) {
@@ -691,7 +693,7 @@ public class MLIndicator extends Aggregator {
                 Object newarray = model.transform(array, mlmeta);
                 boolean classified = pair.getRight() != null;
                 if (classified == classify) {
-                    mlMap.add(new ImmutableTriple(entry.getKey(), newarray, pair.getRight()));
+                    mlMap.add(new LearnClassify(entry.getKey(), (double[]) newarray, pair.getRight()));
                 }
             }
         }

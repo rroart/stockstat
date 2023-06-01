@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,15 +36,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
 
 import roart.common.cache.MyCache;
 import roart.common.config.ConfigConstantMaps;
 import roart.common.config.ConfigConstants;
+import roart.common.config.MLConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.ml.NeuralNetCommand;
@@ -64,6 +69,10 @@ import roart.ml.model.LearnTestClassifyAccess;
 import roart.ml.model.LearnTestClassifyResult;
 import roart.ml.common.MLClassifyModel;
 import roart.spark.MLClassifySparkModel;
+import roart.ml.spark.MLClassifySparkLORModel;
+import roart.ml.spark.MLClassifySparkLSVCModel;
+import roart.ml.spark.MLClassifySparkMLPCModel;
+import roart.ml.spark.MLClassifySparkOVRModel;
 
 @ComponentScan(basePackages = "roart.controller,roart.model,roart.common.config,roart.iclij.config")
 @CrossOrigin
@@ -89,15 +98,15 @@ public class ServiceController implements CommandLineRunner {
 
     @RequestMapping(value = "/" + EurekaConstants.CLEAN,
             method = RequestMethod.POST)
-    public IclijServiceResult clean(@RequestBody IclijServiceParam param)
+    public LearnTestClassifyResult clean(@RequestBody LearnTestClassifyAccess param)
             throws Exception {
-        IclijServiceResult result = new IclijServiceResult();
+        LearnTestClassifyResult result = new LearnTestClassifyResult();
         try {
             MLClassifyAccess access = new MLClassifySparkAccess(iclijConfig);            
             access.clean();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
-            result.setError(e.getMessage());
+            //result.setError(e.getMessage());
         }
         return result;
     }
@@ -108,9 +117,10 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
         try {
-            param.model.setConf(iclijConfig);
+            //param.model.setConf(iclijConfig);
+            MLClassifyModel model = getModel(param.modelid);
             MLClassifyAccess access = new MLClassifySparkAccess(iclijConfig);            
-            result = access.learntestclassify(param.nnconfigs, null, param.learnTestMap, param.model, param.size, param.outcomes, param.classifyMap, param.shortMap, param.path, param.filename, param.neuralnetcommand, param.mlmeta, param.classify);
+            result = access.learntestclassify(param.nnconfigs, null, param.learnTestMap, model, param.size, param.outcomes, param.classifyMap, param.shortMap, param.path, param.filename, param.neuralnetcommand, param.mlmeta, param.classify);
             
             //result.setConfigData(iclijConfig.getConfigData());
             //System.out.println("configs " + result.getConfigData());
@@ -119,6 +129,20 @@ public class ServiceController implements CommandLineRunner {
             //result.setError(e.getMessage());
         }
         return result;
+    }
+
+    private MLClassifyModel getModel(int modelid) {
+        switch (modelid) {
+        case MLConstants.LOGISTICREGRESSION:
+            return new MLClassifySparkLORModel(iclijConfig);
+        case MLConstants.LINEARSUPPORTVECTORCLASSIFIER:
+            return new MLClassifySparkLSVCModel(iclijConfig);
+        case MLConstants.MULTILAYERPERCEPTRONCLASSIFIER:
+            return new MLClassifySparkMLPCModel(iclijConfig);
+        case MLConstants.ONEVSREST:
+            return new MLClassifySparkOVRModel(iclijConfig);
+        }
+        return null;
     }
 
     public static void main(String[] args) throws Exception {
@@ -199,5 +223,18 @@ public class ServiceController implements CommandLineRunner {
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         
         return objectMapper;
+    }
+    
+    private static final class TripleSerializer extends JsonSerializer<Triple> {
+
+        @Override
+        public void serialize(Triple value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            gen.writeStartObject();
+            gen.writeObjectField("left", value.getLeft());
+            gen.writeObjectField("middle", value.getMiddle());
+            gen.writeObjectField("right", value.getRight());
+            gen.writeEndObject();
+        }
+
     }
 }

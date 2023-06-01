@@ -23,7 +23,6 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.ml.PipelineModel;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.MutableTriple;
@@ -43,6 +42,7 @@ import roart.ml.spark.MLClassifySparkOVRModel;
 import roart.spark.MLClassifySparkModel;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
+import roart.ml.model.LearnClassify;
 import roart.ml.model.LearnTestClassifyResult;
 import roart.spark.util.SparkUtil;
 import roart.pipeline.common.aggregate.Aggregator;
@@ -69,7 +69,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, List<Triple<String, Object, Double>> map, MLClassifyModel model, int size,
+    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, List<LearnClassify> map, MLClassifyModel model, int size,
             int outcomes, String filename) {
         return learntestInner(nnconfigs, map, model, size, outcomes, filename);       
     }
@@ -80,7 +80,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Map<String, Double[]> classify(Aggregator indicator, List<Triple<String, Object, Double>> map, MLClassifyModel model, int size,
+    public Map<String, Double[]> classify(Aggregator indicator, List<LearnClassify> map, MLClassifyModel model, int size,
             int outcomes, Map<Double, String> shortMap) {
         Map<Integer, Map<String, Double[]>> retMap = new HashMap<>();
         return classifyInner(map, Integer.valueOf(model.getId()), size, outcomes, shortMap);
@@ -91,7 +91,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         return models;
     }
 
-    public Map<String, Double[]> classifyInner(List<Triple<String, Object, Double>> newMap, int modelInt, int size, int outcomes, Map<Double, String> shortMap) {
+    public Map<String, Double[]> classifyInner(List<LearnClassify> newMap, int modelInt, int size, int outcomes, Map<Double, String> shortMap) {
         long time0 = System.currentTimeMillis();
         Map<String, double[]> map = getMap2(newMap);
         Map<String, Double[]> retMap = new HashMap<>();
@@ -123,11 +123,11 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
                 retMap.put(id, retVal);
                 //MutablePair pair = (MutablePair) newMap.get(id);
                 //pair.setRight(predict);
-                Triple triple = newMap.get(j);
-                if (triple.getRight() != null) {
+                LearnClassify triple = newMap.get(j);
+                if (triple.getClassification() != null) {
                     int jj = 0;
                 }
-                Triple mutableTriple = new MutableTriple(triple.getLeft(), triple.getMiddle(), retVal[0]);
+                LearnClassify mutableTriple = new LearnClassify(triple.getId(), triple.getArray(), retVal[0]);
                 //triple.setRight(acat);
                 newMap.set(j, mutableTriple);
                 j++;
@@ -142,7 +142,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         return null;
     }
 
-    public Double learntestInner(NeuralNetConfigs nnconfigs, List<Triple<String, Object, Double>> newMap, MLClassifyModel mlmodel, int size, int classes, String filename) {
+    public Double learntestInner(NeuralNetConfigs nnconfigs, List<LearnClassify> newMap, MLClassifyModel mlmodel, int size, int classes, String filename) {
         Double accuracy = null;
         long time0 = System.currentTimeMillis();
         if (spark == null) {
@@ -188,18 +188,18 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
     }
 
 
-    private Map<String, double[]> getMap2(List<Triple<String, Object, Double>> list) {
+    private Map<String, double[]> getMap2(List<LearnClassify> list) {
         Map<String, double[]> map = new HashMap<>();
-        for (Triple<String, Object, Double> entry : list) {
-            map.put(entry.getLeft(), (double[]) entry.getMiddle());
+        for (LearnClassify entry : list) {
+            map.put(entry.getId(), (double[]) entry.getArray());
         }
         return map;
     }
 
-    private Map<double[], Double> getMap(List<Triple<String, Object, Double>> list) {
+    private Map<double[], Double> getMap(List<LearnClassify> list) {
         Map<double[], Double> map = new HashMap<>();
-        for (Triple<String, Object, Double> entry : list) {
-            map.put((double[]) entry.getMiddle(), entry.getRight());
+        for (LearnClassify entry : list) {
+            map.put((double[]) entry.getArray(), entry.getClassification());
         }
         return map;
     }
@@ -219,8 +219,8 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
     }
 
     @Override
-    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfig, Aggregator indicator, List<Triple<String, Object, Double>> learnMap,
-            MLClassifyModel mlmodel, int size, int classes, List<Triple<String, Object, Double>> classifyMap,
+    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfig, Aggregator indicator, List<LearnClassify> learnMap,
+            MLClassifyModel mlmodel, int size, int classes, List<LearnClassify> classifyMap,
             Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta, boolean classify) {
         LearnTestClassifyResult result2 = new LearnTestClassifyResult();
         if (neuralnetcommand.isMlclassify() && (classifyMap == null || classifyMap.isEmpty())) {
@@ -326,13 +326,13 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
                 retMap.put(id, retVal);
                 //MutablePair pair = (MutablePair) newMap2.get(id);
                 //pair.setRight(predict);
-                Triple triple = classifyMap.get(j);
-                if (triple.getRight() != null) {
+                LearnClassify triple = classifyMap.get(j);
+                if (triple.getClassification() != null) {
                     int jj = 0;
                 }
-                Triple mutableTriple = new MutableTriple(triple.getLeft(), triple.getMiddle(), retVal[0]);
+                LearnClassify mutableList = new LearnClassify(triple.getId(), triple.getArray(), retVal[0]);
                 //triple.setRight(acat);
-                classifyMap.set(j, mutableTriple);
+                classifyMap.set(j, mutableList);
                 j++;
             }
             log.info("classify done");

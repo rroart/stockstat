@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.MutableTriple;
-import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.ResourceAccessException;
@@ -31,6 +29,7 @@ import roart.common.webflux.WebFluxUtil;
 import roart.ml.common.MLClassifyAccess;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
+import roart.ml.model.LearnClassify;
 import roart.ml.model.LearnTestClassify;
 import roart.ml.model.LearnTestClassifyResult;
 import roart.pipeline.common.aggregate.Aggregator;
@@ -81,7 +80,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, List<Triple<String, Object, Double>> map, MLClassifyModel model, int size,
+    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, List<LearnClassify> map, MLClassifyModel model, int size,
             int classes, String filename) {
         return learntestInner(nnconfigs, map, size, classes, model);
     }
@@ -116,7 +115,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         return mymodels;
     }
     
-    private Double learntestInner(NeuralNetConfigs nnconfigs, List<Triple<String, Object, Double>> map, int size, int classes,
+    private Double learntestInner(NeuralNetConfigs nnconfigs, List<LearnClassify> map, int size, int classes,
             MLClassifyModel model) {
         // not used?
         //List<List<Object>> listlist = getListList(map);
@@ -136,11 +135,11 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         return test.getAccuracy();
     }
 
-    private void getTrainingSet(List<Triple<String, Object, Double>> list, Object[] objobj, Object[] cat) {
+    private void getTrainingSet(List<LearnClassify> list, Object[] objobj, Object[] cat) {
         int i = 0;
-        for (Triple<String, Object, Double> entry : list) {
-            Object key = entry.getMiddle();
-            cat[i] = entry.getRight();
+        for (LearnClassify entry : list) {
+            Object key = entry.getArray();
+            cat[i] = entry.getClassification();
             objobj[i++] = key;
         }
     }
@@ -167,7 +166,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Map<String, Double[]> classify(Aggregator indicator, List<Triple<String, Object, Double>> map, MLClassifyModel model, int size,
+    public Map<String, Double[]> classify(Aggregator indicator, List<LearnClassify> map, MLClassifyModel model, int size,
             int classes, Map<Double, String> shortMap) {
         Map<Integer, Map<String, Double[]>> retMap = new HashMap<>();
         if (map.isEmpty()) {
@@ -176,7 +175,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         return classifyInner(map, model, size, classes);
     }
 
-    private Map<String, Double[]> classifyInner(List<Triple<String, Object, Double>> map, MLClassifyModel model, int size,
+    private Map<String, Double[]> classifyInner(List<LearnClassify> map, MLClassifyModel model, int size,
             int classes) {
         LearnTestClassify param = new LearnTestClassify();
         List<String> retList = new ArrayList<>();
@@ -199,7 +198,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         return retMap;
     }
 
-    private Map<String, Double[]> getCatMap(List<String> retList, List<Triple<String, Object, Double>> classifyMap, LearnTestClassify ret, boolean classify) {
+    private Map<String, Double[]> getCatMap(List<String> retList, List<LearnClassify> classifyMap, LearnTestClassify ret, boolean classify) {
         Object[] cat = ret.getClassifycatarray();
         Object[] prob = ret.getClassifyprobarray();
         Map<String, Double[]> retMap = new HashMap<>();
@@ -213,23 +212,23 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
                 ArrayList list = (ArrayList) cat[j];
                 retMap.put(id, Arrays.copyOf((list).toArray(), list.size(), Double[].class));
             }
-            Triple triple = classifyMap.get(j);
-            if (triple.getRight() != null) {
+            LearnClassify triple = classifyMap.get(j);
+            if (triple.getClassification() != null) {
                 int jj = 0;
             }
-            Triple mutableTriple = new MutableTriple(triple.getLeft(), triple.getMiddle(), cat[j]);
+            LearnClassify mutableList = new LearnClassify(triple.getId(), triple.getArray(), (Integer) cat[j]);
             //triple.setRight(acat);
-            classifyMap.set(j, mutableTriple);
+            classifyMap.set(j, mutableList);
         }
         return retMap;
     }
 
-    private void getClassifyArray(List<Triple<String, Object, Double>> list, List<String> retList, Object[] objobj) {
+    private void getClassifyArray(List<LearnClassify> list, List<String> retList, Object[] objobj) {
         int i = 0;
-        for (Triple<String, Object, Double> entry : list) {
-            Object value = entry.getMiddle();
+        for (LearnClassify entry : list) {
+            Object value = entry.getArray();
             objobj[i++] = value;
-            retList.add(entry.getLeft());
+            retList.add((String) entry.getId());
         }
     }
 
@@ -244,8 +243,8 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
     }
 
     @Override
-    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, List<Triple<String, Object, Double>> learnMap,
-            MLClassifyModel model, int size, int classes, List<Triple<String, Object, Double>> classifyMap,
+    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, List<LearnClassify> learnMap,
+            MLClassifyModel model, int size, int classes, List<LearnClassify> classifyMap,
             Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta, boolean classify) {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
         if (classify && neuralnetcommand.isMlclassify() && (classifyMap == null || classifyMap.isEmpty())) {

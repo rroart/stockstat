@@ -35,6 +35,11 @@ public abstract class MLClassifyModel {
         this.conf = conf;
     }
 
+    // for jackson
+    public MLClassifyModel() {
+        super();
+    }
+
     public MLClassifyModel(IclijConfig conf) {
         this.conf = conf;
     }

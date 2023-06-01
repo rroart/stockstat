@@ -13,6 +13,7 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
+import roart.ml.model.LearnClassify;
 import roart.ml.model.LearnTestClassifyResult;
 
 public class MLClassifyLearnTestPredictCallable implements Callable {
@@ -22,7 +23,7 @@ public class MLClassifyLearnTestPredictCallable implements Callable {
     
     private Aggregator indicator;
     
-    private List<Triple<String, Object, Double>> learnmap;
+    private List<LearnClassify> learnmap;
     
     private MLClassifyModel model;
     
@@ -36,7 +37,7 @@ public class MLClassifyLearnTestPredictCallable implements Callable {
     
     private Map<MLClassifyModel, Long> mapTime;
     
-    private List<Triple<String, Object, Double>> classifymap;
+    private List<LearnClassify> classifymap;
     
     private  Map<Double, String> shortMap;
 
@@ -50,8 +51,8 @@ public class MLClassifyLearnTestPredictCallable implements Callable {
     
     private MLMeta mlmeta;
     
-    public MLClassifyLearnTestPredictCallable(NeuralNetConfigs nnconfigs, MLClassifyDao mldao, Aggregator indicator, List<Triple<String, Object, Double>> learnmap, MLClassifyModel model,
-            int size, int outcomes, Map<MLClassifyModel, Long> mapTime, List<Triple<String, Object, Double>> classifymap, Map<Double, String> shortMap,
+    public MLClassifyLearnTestPredictCallable(NeuralNetConfigs nnconfigs, MLClassifyDao mldao, Aggregator indicator, List<LearnClassify> learnmap, MLClassifyModel model,
+            int size, int outcomes, Map<MLClassifyModel, Long> mapTime, List<LearnClassify> classifymap, Map<Double, String> shortMap,
             String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta) {
         super();
         this.nnconfigs = nnconfigs;

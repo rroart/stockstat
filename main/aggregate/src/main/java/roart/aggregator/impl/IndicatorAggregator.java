@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Triple;
-import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,10 +44,12 @@ import roart.common.util.JsonUtil;
 import roart.executor.MyExecutors;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
+import roart.ml.common.MLClassifyAccess;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
 import roart.ml.dao.MLClassifyDao;
 import roart.ml.dao.MLClassifyLearnTestPredictCallable;
+import roart.ml.model.LearnClassify;
 import roart.ml.model.LearnTestClassifyResult;
 import roart.ml.pytorch.MLClassifyPytorchModel;
 import roart.model.data.PeriodData;
@@ -384,8 +386,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                             outcomes = 4;
                             log.debug("Outcomes {}", outcomes);
                             int size0 = getValidateSize2(learnMap, mlmeta);
-                            List<Triple<String, Object, Double>> learnMLMap = transformLearnClassifyMap(learnMap, true, mlmeta, model);
-                            List<Triple<String, Object, Double>> classifyMLMap = transformLearnClassifyMap(classifyMap, false, mlmeta, model);
+                            List<LearnClassify> learnMLMap = transformLearnClassifyMap(learnMap, true, mlmeta, model);
+                            List<LearnClassify> classifyMLMap = transformLearnClassifyMap(classifyMap, false, mlmeta, model);
                             int size = getValidateSize(learnMLMap, mlmeta);
                             List<AbstractIndicator> indicators = new ArrayList<>();
                             String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getConfigData().getMarket(), indicators, subType.getType(), mapType, mlmeta, threshold);
@@ -428,9 +430,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                             if (neuralnetcommand.isMlcross() && result.getCatMap() != null && classifyMLMap.size() > 0) {
                                 Map<String, Double[]> classifyResult = result.getCatMap();
                                 int cls = 0;
-                                for (Triple<String, Object, Double> triple : classifyMLMap) {
-                                    String key = triple.getLeft();
-                                    Object obj = triple.getRight();
+                                for (LearnClassify triple : classifyMLMap) {
+                                    String key = (String) triple.getId();
+                                    Object obj = triple.getClassification();
                                     double cat;
                                     if (obj instanceof Integer) {
                                         cat = ((Integer) obj).doubleValue();
@@ -509,8 +511,8 @@ public abstract class IndicatorAggregator extends Aggregator {
         return countMap;
     }
 
-    private List<Triple<String, Object, Double>> transformLearnClassifyMap(Map<String, List<Pair<double[], Pair<Object, Double>>>> learnMap, boolean classify, MLMeta mlmeta, MLClassifyModel model) {
-        List<Triple<String, Object, Double>> mlMap = new ArrayList<>();
+    private List<LearnClassify> transformLearnClassifyMap(Map<String, List<Pair<double[], Pair<Object, Double>>>> learnMap, boolean classify, MLMeta mlmeta, MLClassifyModel model) {
+        List<LearnClassify> mlMap = new ArrayList<>();
         for (Entry<String, List<Pair<double[], Pair<Object, Double>>>> entry : learnMap.entrySet()) {
             List<Pair<double[], Pair<Object, Double>>> list = entry.getValue();
             for (Pair<double[], Pair<Object, Double>> pair : list) {
@@ -519,7 +521,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                 Object newarray = model.transform(array, mlmeta);
                 boolean classified = arrayclassify.getRight() != null;
                 if (classified == classify) {
-                    mlMap.add(new ImmutableTriple(entry.getKey(), newarray, arrayclassify.getRight()));
+                    mlMap.add(new LearnClassify(entry.getKey(), (double[]) newarray, arrayclassify.getRight()));
                 }
             }
         }
@@ -587,8 +589,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                             outcomes = 4;
                             log.debug("Outcomes {}", outcomes);
                             int size0 = getValidateSize2(learnMap, mlmeta);
-                            List<Triple<String, Object, Double>> learnMLMap = transformLearnClassifyMap(learnMap, true, mlmeta, model);
-                            List<Triple<String, Object, Double>> classifyMLMap = transformLearnClassifyMap(classifyMap, false, mlmeta, model);
+                            List<LearnClassify> learnMLMap = transformLearnClassifyMap(learnMap, true, mlmeta, model);
+                            List<LearnClassify> classifyMLMap = transformLearnClassifyMap(classifyMap, false, mlmeta, model);
                             int size = getValidateSize(learnMLMap, mlmeta);
                             List<AbstractIndicator> indicators = new ArrayList<>();
                             String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getConfigData().getMarket(), indicators, subType.getType(), mapType, mlmeta, threshold);
@@ -671,13 +673,13 @@ public abstract class IndicatorAggregator extends Aggregator {
         }
     }
 
-    private int getValidateSize(List<Triple<String, Object, Double>> list, MLMeta mlmeta) {
+    private int getValidateSize(List<LearnClassify> list, MLMeta mlmeta) {
         int size = -1;
-        for (Triple<String, Object, Double> entry : list) {
-            Object myarray = entry.getMiddle();
+        for (LearnClassify entry : list) {
+            Object myarray = entry.getArray();
             int dim = myarray.getClass().getName().indexOf("D");
             if (dim == 1) {
-                double[] myvalue = (double[]) entry.getMiddle();
+                double[] myvalue = (double[]) entry.getArray();
                 if (size < 0) {
                     size = myvalue.length;
                 }
@@ -685,7 +687,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                     return -1;
                 }
             } else {
-                double[][] myvalue = (double[][]) entry.getMiddle();
+                double[][] myvalue = null; // (double[][]) entry.getArray();
                 for (int j = 0; j < myvalue.length; j++) {
                     if (size < 0) {
                         size = myvalue[j].length;
@@ -701,7 +703,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     private int getValidateSize2(Map<String, List<Pair<double[], Pair<Object, Double>>>> learnMap, MLMeta mlmeta) {
         int size = -1;
-        List<Triple<String, Object, Double>> mlMap = new ArrayList<>();
+        List<LearnClassify> mlMap = new ArrayList<>();
         for (Entry<String, List<Pair<double[], Pair<Object, Double>>>> entry : learnMap.entrySet()) {
             List<Pair<double[], Pair<Object, Double>>> list = entry.getValue();
             for (Pair<double[], Pair<Object, Double>> pair : list) {
@@ -854,6 +856,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         }
     }
 
+    // not used?
     private Map<String, Double[]> doClassifications(IclijConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
             Map<Double, String> labelMapShort, SubType subType,
             MLClassifyDao mldao, Map<String, Map<String, Double[]>> mapResult2, MLClassifyModel model, int mapTypeInt) {
@@ -870,7 +873,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         outcomes = 4;
         log.debug("Outcomes {}", outcomes);
         Map<String, List<Pair<double[], Pair<Object, Double>>>> learnMap = mapMap.get(subType).get(mapType);
-        List<Triple<String, Object, Double>> classifyMLMap = transformLearnClassifyMap(learnMap, true, null, model);
+        List<LearnClassify> classifyMLMap = transformLearnClassifyMap(learnMap, true, null, model);
         Map<String, Double[]> classifyResult = mldao.classify(this, classifyMLMap, model, afterbefore.before, outcomes, labelMapShort, mapTime);
         mapResult2.put(mapType, classifyResult);
         return classifyResult;
@@ -917,7 +920,8 @@ public abstract class IndicatorAggregator extends Aggregator {
         eventTableRows.add(event);
     }
 
-    private void doLearningAndTests(NeuralNetConfigs nnConfigs, IclijConfig conf, Map<String, List<Triple<String, Object, Double>>> mapMap,
+    // not used?
+    private void doLearningAndTests(NeuralNetConfigs nnConfigs, IclijConfig conf, Map<String, List<LearnClassify>> mapMap,
             Map<Double, String> labelMapShort, MLMeta mlmeta) {
         AfterBeforeLimit afterbefore = getAfterBefore();
         List<SubType> subTypes = usedSubTypes();
@@ -930,7 +934,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                     for (int mapTypeInt : getMapTypeList()) {
                         String mapType = mapTypes.get(mapTypeInt);
                         String mapName = subType.getType() + mapType;
-                        List<Triple<String, Object, Double>> map = mapMap.get(mapName);
+                        List<LearnClassify> map = mapMap.get(mapName);
                         if (map == null) {
                             log.error("map null {}", mapName);
                             continue;
@@ -942,7 +946,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                         Double testaccuracy = mldao.learntest(nnConfigs, this, map, model, size, outcomes, mapTime, null);  
                         accuracyMap.put(mldao.getName() + model.getName() + subType.getType() + mapType, testaccuracy);
                         IndicatorUtils.filterNonExistingClassifications4(labelMapShort, map);
-                        Map<String, Long> countMap = map.stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e.getRight()), Collectors.counting()));                            
+                        Map<String, Long> countMap = map.stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e.getClassification()), Collectors.counting()));                            
                         // make OO of this, create object
                         Object[] meta = new Object[9];
                         meta[0] = mldao.getName();
@@ -1365,7 +1369,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                 } else {
                     textlabel = startlabels[1];
                 }
-                triples.add(new ImmutableTriple(mystart, myend, textlabel));
+                triples.add(List.of(mystart, myend, textlabel));
             }
         }
          */

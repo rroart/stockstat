@@ -46,6 +46,7 @@ import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.result.model.ResultItemTableRow;
 import roart.result.model.ResultMeta;
 import roart.stockutil.StockUtil;
+import roart.ml.model.LearnClassify;
 
 public abstract class Predictor extends AbstractPredictor {
 
@@ -244,7 +245,7 @@ public abstract class Predictor extends AbstractPredictor {
                     log.error("Models size is {}", mldao.getModels().size());
                 }
                 for (MLClassifyModel model : mldao.getModels(predictorName())) {
-                    List<Triple<String, Object, Double>> map = new ArrayList<>();
+                    List<LearnClassify> map = new ArrayList<>();
                     // days find max
                     days = 0;
                     for (String id : aListMap.keySet()) {
@@ -265,10 +266,10 @@ public abstract class Predictor extends AbstractPredictor {
                         if (list != null && list.length == days) {
                             log.info("list {}", list.length);
                             Object list3 = ArrayUtils.toObject(list);
-                            map.add(new ImmutableTriple(id, list3, null));
+                            map.add(new LearnClassify(id, (double[]) list3, (Double) null));
                         }
                     }
-                    List<Triple<String, Object, Double>> classifylist = new ArrayList<>();
+                    List<LearnClassify> classifylist = new ArrayList<>();
                     for (String id : aListMap.keySet()) {
                         Double[] listl = aListMap.get(id)[0];
                         double[][] list0 = aTruncListMap.get(id);
@@ -277,7 +278,7 @@ public abstract class Predictor extends AbstractPredictor {
                         if (list != null && list.length >= conf.getPredictorsDays()) {
                             log.info("list {}", list.length);
                             Object list3 = ArrayUtils.toObject(Arrays.copyOfRange(list, list.length - conf.getPredictorsDays(), list.length));
-                            classifylist.add(new ImmutableTriple(id, list3, null));
+                            classifylist.add(new LearnClassify(id, (double[]) list3, (Double) null));
                         }
                     }
                     // make OO of this, create object

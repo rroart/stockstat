@@ -4,8 +4,6 @@ import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.apache.commons.lang3.tuple.Triple;
-
 import roart.ml.common.MLClassifyAccess;
 import roart.common.webflux.WebFluxUtil;
 import roart.iclij.config.IclijConfig;
@@ -18,6 +16,8 @@ import roart.common.config.MLConstants;
 import roart.common.constants.EurekaConstants;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
+import roart.ml.model.LearnClassify;
+import roart.ml.model.LearnTestClassify;
 import roart.ml.model.LearnTestClassifyAccess;
 
 public class MLClassifySparkAccess extends MLClassifyAccess {
@@ -50,7 +50,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, List<Triple<String, Object, Double>> map, MLClassifyModel model, int size, int outcomes, String filename) {
+    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, List<LearnClassify> map, MLClassifyModel model, int size, int outcomes, String filename) {
         return null;
     }
 
@@ -60,16 +60,16 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Map<String, Double[]> classify(Aggregator indicator, List<Triple<String, Object, Double>> map, MLClassifyModel model, int size, int outcomes, Map<Double, String> shortMap) {
+    public Map<String, Double[]> classify(Aggregator indicator, List<LearnClassify> map, MLClassifyModel model, int size, int outcomes, Map<Double, String> shortMap) {
         return null;
     }
 
     @Override
-    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, List<Triple<String, Object, Double>> learnTestMap, MLClassifyModel model, int size, int outcomes, List<Triple<String, Object, Double>> classifyMap, Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta, boolean classify) {
+    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, List<LearnClassify> learnTestMap, MLClassifyModel model, int size, int outcomes, List<LearnClassify> classifyMap, Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta, boolean classify) {
         LearnTestClassifyAccess param = new LearnTestClassifyAccess();
         param.nnconfigs = nnconfigs;
         param.learnTestMap = learnTestMap;
-        param.model = model;
+        param.modelid = model.getId();
         param.size = size;
         param.outcomes = outcomes;
         param.classifyMap = classifyMap;
@@ -77,8 +77,9 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         param.neuralnetcommand = neuralnetcommand;
         param.mlmeta = mlmeta;
         param.classify = classify;
-        param.model.setConf(null);
-        LearnTestClassifyResult result = WebFluxUtil.sendMMe(LearnTestClassifyResult.class, param, EurekaConstants.LEARNTESTCLASSIFY);
+        //param.modelid.setConf(null);
+        LearnTestClassify result = WebFluxUtil.sendMMe(LearnTestClassify.class, param, EurekaConstants.LEARNTESTCLASSIFY);
+        LearnTestClassifyResult r;
         return null;
     }
 
@@ -94,7 +95,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
 
     @Override
     public void clean() {
-        LearnTestClassifyResult result = WebFluxUtil.sendMMe(LearnTestClassifyResult.class, null, EurekaConstants.CLEAN);
+        LearnTestClassifyResult result = WebFluxUtil.sendMMe(LearnTestClassifyResult.class, new LearnTestClassifyAccess(), EurekaConstants.CLEAN);
     }
 
     @Override
