@@ -96,7 +96,6 @@
       <artifactId>spring-cloud-context</artifactId>
       <version>${springcloud.version}</version>
     </dependency-->
-    <!-- spark wants older jackson, 2.8 incompatible -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>

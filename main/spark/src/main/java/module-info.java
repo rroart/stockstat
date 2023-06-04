@@ -16,7 +16,6 @@ open module core {
     requires common.model;
     requires common.service;
     requires common.cache;
-    requires common.filesystem.client;
     //requires common.util;
     requires commons.lang;
     requires commons.math3;

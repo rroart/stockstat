@@ -34,9 +34,9 @@
 	</configuration>
       </plugin>
       <!--plugin>
-	<groupId>org.mortbay.jetty</groupId>
-	<artifactId>jetty-maven-plugin</artifactId>
-      </plugin-->
+	  <groupId>org.mortbay.jetty</groupId>
+	  <artifactId>jetty-maven-plugin</artifactId>
+	  </plugin-->
       <plugin>
 	<groupId>org.springframework.boot</groupId>
 	<artifactId>spring-boot-maven-plugin</artifactId>
@@ -62,12 +62,12 @@
   <dependencyManagement>
     <dependencies>
       <!--dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-parent</artifactId>
-        <version>${springcloudstarter.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency-->
+          <groupId>org.springframework.cloud</groupId>
+          <artifactId>spring-cloud-starter-parent</artifactId>
+          <version>${springcloudstarter.version}</version>
+          <type>pom</type>
+          <scope>import</scope>
+	  </dependency-->
       <dependency>
         <!-- Import dependency management from Spring Boot -->
         <groupId>org.springframework.boot</groupId>
@@ -83,17 +83,23 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
       <version>${springboot.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-logging</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!--dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-commons</artifactId>
-      <version>${springcloud.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-context</artifactId>
-      <version>${springcloud.version}</version>
-    </dependency-->
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-commons</artifactId>
+	<version>${springcloud.version}</version>
+	</dependency>
+	<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-context</artifactId>
+	<version>${springcloud.version}</version>
+	</dependency-->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
@@ -113,21 +119,21 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
       <!--exclusions>
-        <exclusion>
+          <exclusion>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-starter-tomcat</artifactId>
-        </exclusion>
-        <exclusion>
+          </exclusion>
+          <exclusion>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-starter-logging</artifactId>
-        </exclusion>
-      </exclusions-->
+          </exclusion>
+	  </exclusions-->
     </dependency>
     <!--dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-jetty</artifactId>
-      <version>${springboot.version}</version>
-    </dependency-->
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-jetty</artifactId>
+	<version>${springboot.version}</version>
+	</dependency-->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-webflux</artifactId>
@@ -163,11 +169,6 @@
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-common-filesystem-client</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>${commons.lang3.version}</version>
@@ -177,11 +178,11 @@
       <artifactId>stockstat-iclij-common-service</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
-    <!--dependency>
+    <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-shadow-spark</artifactId>
       <version>${stockstat.version}</version>
-    </dependency-->
+    </dependency>
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-ml-common</artifactId>
@@ -215,11 +216,11 @@
       </exclusions>
     </dependency>
     <!-- generic used by Spark -->
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <version>2.17.2</version>
-    </dependency>
+    <!--dependency>
+	<groupId>org.apache.logging.log4j</groupId>
+	<artifactId>log4j-core</artifactId>
+	<version>2.17.2</version>
+	</dependency-->
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-collections4</artifactId>
@@ -257,29 +258,114 @@
       <version>${stockstat.version}</version>
     </dependency>
     <!--dependency>
-      <groupId>org.apache.spark</groupId>
-      <artifactId>spark-core_2.11</artifactId>
-      <version>${spark.version}</version>
+	<groupId>org.apache.spark</groupId>
+	<artifactId>spark-core_2.11</artifactId>
+	<version>${spark.version}</version>
+	</dependency>
+	<dependency>
+	<groupId>org.apache.spark</groupId>
+	<artifactId>spark-sql_2.11</artifactId>
+	<version>${spark.version}</version>
+	</dependency>
+	<dependency>
+	<groupId>org.apache.spark</groupId>
+	<artifactId>spark-mllib_2.11</artifactId>
+	<version>${spark.version}</version>
+	</dependency-->
+    <!--dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>slf4j-log4j12</artifactId>
+	<version>${slf4j.version}</version>
+	</dependency-->          
+    <!--dependency>
+	<groupId>log4j</groupId>
+	<artifactId>log4j</artifactId>
+	<version>${log4j.version}</version>
+	</dependency-->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <version>${springboot.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.spark</groupId>
-      <artifactId>spark-sql_2.11</artifactId>
-      <version>${spark.version}</version>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.spark</groupId>
-      <artifactId>spark-mllib_2.11</artifactId>
-      <version>${spark.version}</version>
-    </dependency-->
+      <groupId>jakarta.interceptor</groupId>
+      <artifactId>jakarta.interceptor-api</artifactId>
+      <version>2.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.enterprise</groupId>
+      <artifactId>jakarta.enterprise.cdi-api</artifactId>
+      <version>4.0.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.inject</groupId>
+      <artifactId>jakarta.inject-api</artifactId>
+      <version>2.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <version>${commons.beanutils.version}</version>
+    </dependency>
+    <!--dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>slf4j-simple</artifactId>
+	<version>1.7.24</version>
+	</dependency-->
+    <!-- log4j -->
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
-    </dependency>          
+      <scope>${hadoop.deps.scope}</scope>
+    </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+      <!-- runtime scope is appropriate, but causes SBT build problems -->
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <version>${log4j.version}</version>
+      <scope>${hadoop.deps.scope}</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
       <version>${log4j.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${log4j.version}</version>
+    </dependency>
+    <dependency>
+      <!-- API bridge between log4j 1 and 2 -->
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-1.2-api</artifactId>
+      <version>${log4j.version}</version>
+      <scope>${hadoop.deps.scope}</scope>
+    </dependency>
   </dependencies>
+  <properties>
+    <slf4j.version>1.7.32</slf4j.version>
+    <log4j.version>2.20.0</log4j.version>
+    <hadoop.deps.scope>compile</hadoop.deps.scope>
+  </properties>
 </project>
