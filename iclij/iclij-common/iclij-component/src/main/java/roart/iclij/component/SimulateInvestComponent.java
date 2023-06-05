@@ -1532,7 +1532,15 @@ public class SimulateInvestComponent extends ComponentML {
                     String buytxt = getText(data.stocks, buyids);
                     String selltxt = getText(data.stocks, sellids);
                     String idstxt = getText(data.stocks, ids);
-                    onerun.lastbuysell = "Buy: " + buyids + " Sell: " + sellids + " Stocks: " + ids + newids + " ( " + buytxt + " , " + selltxt + " , " + idstxt + " , " + idsnewtxt + " ) "+ adv;
+                    String incdec = "";
+                    if (results.plotCapital != null) {
+                        List<Double> list = results.plotCapital;
+                        int len = list.size();
+                        if (len >= 2) {
+                            incdec = " ( " + MathUtil.round2(list.get(len - 2), 3) + " -> " + MathUtil.round2(list.get(len - 1), 3) + " )";
+                        }
+                    }
+                    onerun.lastbuysell = "Buy: " + buyids + " Sell: " + sellids + " Stocks: " + ids + newids + " ( " + buytxt + " , " + selltxt + " , " + idstxt + " , " + idsnewtxt + " ) " + incdec + " " + adv;
                }
             }
         }
