@@ -74,13 +74,13 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         param.outcomes = outcomes;
         param.classifyMap = classifyMap;
         param.shortMap = shortMap;
+        param.path = path;
+        param.filename = filename;
         param.neuralnetcommand = neuralnetcommand;
         param.mlmeta = mlmeta;
         param.classify = classify;
         //param.modelid.setConf(null);
-        LearnTestClassify result = WebFluxUtil.sendMMe(LearnTestClassify.class, param, EurekaConstants.LEARNTESTCLASSIFY);
-        LearnTestClassifyResult r;
-        return null;
+        return WebFluxUtil.sendMMe(LearnTestClassifyResult.class, param, EurekaConstants.LEARNTESTCLASSIFY);
     }
 
     @Override

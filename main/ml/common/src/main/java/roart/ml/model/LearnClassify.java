@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ser.std.StdArraySerializers.DoubleArraySer
 public class LearnClassify {
     private String id;
     
-    private double[] array;
+    private Object array;
     
     private Double classification;
 
@@ -14,14 +14,14 @@ public class LearnClassify {
         super();
     }
 
-    public LearnClassify(String id, double[] array, Double classification) {
+    public LearnClassify(String id, Object array, Double classification) {
         super();
         this.id = id;
         this.array = array;
         this.classification = classification;
     }
 
-    public LearnClassify(String id, double[] array, Integer classification) {
+    public LearnClassify(String id, Object array, Integer classification) {
         super();
         this.id = id;
         this.array = array;
@@ -36,7 +36,7 @@ public class LearnClassify {
         this.id = id;
     }
 
-    public double[] getArray() {
+    public Object getArray() {
         return array;
     }
 

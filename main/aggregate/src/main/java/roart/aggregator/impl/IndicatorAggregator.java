@@ -687,7 +687,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                     return -1;
                 }
             } else {
-                double[][] myvalue = null; // (double[][]) entry.getArray();
+                double[][] myvalue = (double[][]) entry.getArray();
                 for (int j = 0; j < myvalue.length; j++) {
                     if (size < 0) {
                         size = myvalue[j].length;
