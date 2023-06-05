@@ -127,7 +127,7 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-http</artifactId>
-      <version>9.4.46.v20220331</version>
+      <version>9.4.50.v20221201</version>
     </dependency>
     <dependency>
       <groupId>jakarta.servlet</groupId>
@@ -167,22 +167,22 @@
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-common</artifactId>
-      <version>3.3.2</version>
+      <version>3.3.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-client-api</artifactId>
-      <version>3.3.2</version>
+      <version>3.3.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-client-runtime</artifactId>
-      <version>3.3.2</version>
+      <version>3.3.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-mapreduce-client-core</artifactId>
-      <version>3.3.2</version>
+      <version>3.3.4</version>
     </dependency>
     <dependency>
       <groupId>com.twitter</groupId>
@@ -231,7 +231,7 @@
     <dependency>
       <groupId>com.ning</groupId>
       <artifactId>compress-lzf</artifactId>
-      <version>1.1</version>
+      <version>1.1.2</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.woodstox</groupId>

@@ -81,7 +81,7 @@
     <springcloudstarter.version>2022.0.3</springcloudstarter.version>
     <springcore.version>6.0.9</springcore.version>
     <eurekaclient.version>2.0.0</eurekaclient.version>
-    <jackson.version>2.13.4</jackson.version>
+    <jackson.version>2.14.2</jackson.version>
     <hibernate.version>6.1.5.Final</hibernate.version>
     <hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
     <hibernate.hbm2ddl.auto>create</hibernate.hbm2ddl.auto>
@@ -106,7 +106,7 @@
     <vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
     <servlet.version>3.1.0</servlet.version>
     <xmlapis.version>1.4.01</xmlapis.version>
-    <spark.version>3.3.1</spark.version>
+    <spark.version>3.4.0</spark.version>
     <talib.version>0.4.0</talib.version>
     <jenetics.version>5.2.0</jenetics.version>
     <guava.version>16.0.1</guava.version>
@@ -127,7 +127,7 @@
     <tweety.version>1.20</tweety.version>
     <!-- Spark needs old version -->
     <scala.binary.version>2.13</scala.binary.version>
-    <janino.version>3.0.16</janino.version>
+    <janino.version>3.1.9</janino.version>
     <jakartaservlet.version>4.0.3</jakartaservlet.version>
     <jersey.version>2.36</jersey.version>
     <antlr4.version>4.8</antlr4.version>
