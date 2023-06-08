@@ -10,7 +10,7 @@ import {
   ActionIncrement,
   ActionSetstartdate,
   ActionSetenddate,
-  ActionGetcontent,
+  ActionGetcontent2,
   ActionGetcontentEvolve,
   ActionGetcontentDataset,
   ActionGetcontentCrosstest,
@@ -195,72 +195,72 @@ export class IclijMarketbarComponent implements OnInit, OnDestroy {
   getContent($event) {
     console.log($event);
     console.log(this);
-    this.store.dispatch(new ActionGetcontent(this.main.config));
+    this.store.dispatch(new ActionGetcontent2(this.main.config2));
   }
 
   getContentMachineLearning($event) {
     console.log($event);
-    this.store.dispatch(new ActionGetcontentMachineLearning(this.main.config));
+    this.store.dispatch(new ActionGetcontentMachineLearning(this.main.config2));
   }
 
   getContentEvolve($event) {
     console.log($event);
-    this.store.dispatch(new ActionGetcontentEvolve(this.main.config));
+    this.store.dispatch(new ActionGetcontentEvolve(this.main.config2));
   }
 
   getContentDataset($event) {
     console.log($event);
-    this.store.dispatch(new ActionGetcontentDataset(this.main.config));
+    this.store.dispatch(new ActionGetcontentDataset(this.main.config2));
   }
 
   getContentCrosstest($event) {
     console.log($event);
-    this.store.dispatch(new ActionGetcontentCrosstest(this.main.config));
+    this.store.dispatch(new ActionGetcontentCrosstest(this.main.config2));
   }
 
   getContentFilter($event) {
     console.log($event);
-    this.store.dispatch(new ActionGetcontentFilter(this.main.config));
+    this.store.dispatch(new ActionGetcontentFilter(this.main.config2));
   }
 
   getContentAboveBelow($event) {
     console.log($event);
-    this.store.dispatch(new ActionGetcontentAboveBelow(this.main.config));
+    this.store.dispatch(new ActionGetcontentAboveBelow(this.main.config2));
   }
 
   getContentImprove($event) {
     console.log($event);
-    this.store.dispatch(new ActionGetcontentImprove(this.main.config));
+    this.store.dispatch(new ActionGetcontentImprove(this.main.config2));
   }
 
   getContentImproveAboveBelow($event) {
     console.log($event);
-    this.store.dispatch(new ActionGetImproveAboveBelow(this.main.config));
+    this.store.dispatch(new ActionGetImproveAboveBelow(this.main.config2));
   }
 
   getVerify($event) {
     console.log($event);
-    this.store.dispatch(new ActionGetVerify(this.main.config));
+    this.store.dispatch(new ActionGetVerify(this.main.config2));
   }
 
   getVerifyLoop($event) {
     console.log($event);
-    this.store.dispatch(new ActionGetVerifyLoop(this.main.config));
+    this.store.dispatch(new ActionGetVerifyLoop(this.main.config2));
   }
 
   getSingleMarket($event) {
     console.log($event);
-    this.store.dispatch(new ActionGetSingleMarket(this.main.config));
+    this.store.dispatch(new ActionGetSingleMarket(this.main.config2));
   }
 
   getSingleMarketLoop($event) {
     console.log($event);
-    this.store.dispatch(new ActionGetSingleMarketLoop(this.main.config));
+    this.store.dispatch(new ActionGetSingleMarketLoop(this.main.config2));
   }
 
   getImproveProfit($event) {
     console.log($event);
-    this.store.dispatch(new ActionGetImproveProfit(this.main.config));
+    this.store.dispatch(new ActionGetImproveProfit(this.main.config2));
   }
 
   async delay(ms: number) {

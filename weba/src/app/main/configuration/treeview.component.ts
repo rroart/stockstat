@@ -64,7 +64,7 @@ checkboxvalue: any; //boolean;
       map(auth => auth.isAuthenticated)
     );
             this.values2 = Object.values(this.elem["configTreeMap"]);
-        this.textname = this.configMaps.map[this.elem.name];
+        this.textname = this.configMaps.text[this.elem.name];
         if (this.textname == null) {
            this.textname = this.elem.name;
            let idx = this.textname.indexOf(".");

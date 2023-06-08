@@ -40,6 +40,7 @@ export function mainReducer(
     case MainActionTypes.GETMARKETS:
       return { ...state };
     case MainActionTypes.GETCONFIG:
+    case MainActionTypes.GETCONFIG2:
       return { ...state };
     case MainActionTypes.INCREMENT:
       console.log(state);
@@ -61,12 +62,16 @@ export function mainReducer(
       //return { ...state, ...action.payload };
       //return { ...state, { count: state.count + 1 } };
     case MainActionTypes.SETCONFIGVALUE:
-      //const newpayload = { config: getConfigAfterSet(state, payload) };
       return { ...state, config: getConfigAfterSet(state, action.payload) };
+    case MainActionTypes.SETCONFIGVALUE2:
+      //const newpayload = { config: getConfigAfterSet(state, payload) };
+      return { ...state, config: getConfigAfterSet2(state, action.payload) };
     case MainActionTypes.SETCONFIGVALUEMAP:
+      return { ...state, config: getConfigValueMapAfterSet(state, action.payload) };
+    case MainActionTypes.SETCONFIGVALUEMAP2:
       //const newpayload2 = { config: getConfigValueMapAfterSet(state, payload) };
       //return { ...state, config: { action.payload[0]: action.payload[1] } };
-      return { ...state, config: getConfigValueMapAfterSet(state, action.payload) };
+      return { ...state, config2: getConfigValueMapAfterSet2(state, action.payload) };
 
     default:
       return state;
@@ -82,8 +87,33 @@ function getConfigAfterSet(state, payload) {
     return config;
 }
 
+function getConfigAfterSet2(state, payload) {
+    var config = state.config2;
+    config = Object.assign({}, config);
+    console.log(state);
+    console.log(payload);
+    config[payload[0]] = payload[1];
+    return config;
+}
+
 function getConfigValueMapAfterSet(state, payload) {
     var config = state.config;
+    var valueMap = config.configValueMap;
+    valueMap = Object.assign({}, valueMap);
+    //console.log(valueMap);
+    //console.log(typeof valueMap);
+    valueMap[payload[0]] = payload[1];
+    console.log("here");
+    //valueMap = Object.defineProperty(valueMap, payload[0], { value: payload[1] });
+    console.log("here");
+    config = Object.assign({}, config);
+    config['configValueMap'] = valueMap;
+    console.log(config);
+    return config;
+}
+
+function getConfigValueMapAfterSet2(state, payload) {
+    var config = state.config2;
     var valueMap = config.configValueMap;
     valueMap = Object.assign({}, valueMap);
     //console.log(valueMap);

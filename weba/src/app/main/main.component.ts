@@ -6,7 +6,7 @@ import { Observable, Subject } from 'rxjs';
 import { filter, takeUntil, map } from 'rxjs/operators';
 import { MatButtonModule } from '@angular/material/button';
 
-import { ActionIncrement, ActionGetmarkets, ActionGetconfig } from './main.actions';
+import { ActionIncrement, ActionGetmarkets, ActionGetconfig, ActionGetconfig2 } from './main.actions';
 
 import { routeAnimations, TitleService } from '@app/core';
 //import { tick } from '@angular/core';
@@ -65,6 +65,7 @@ export class MainComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.store.dispatch(new ActionGetconfig());
     this.store.dispatch(new ActionGetmarkets());
+    this.store.dispatch(new ActionGetconfig2());
     this.translate.setDefaultLang('en');
     this.subscribeToMain();
     this.subscribeToTabs();

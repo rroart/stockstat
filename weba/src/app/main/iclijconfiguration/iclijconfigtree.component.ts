@@ -16,7 +16,7 @@ import {
   SettingsState
 } from '@app/settings';
 
-import { selectMain, selectConfig } from '../main.selectors';
+import { selectMain, selectConfig2 } from '../main.selectors';
 import { MainState } from '../main.state';
 import { State as BaseMainState } from '../main.state';
 import { selectAuth } from '@app/core/auth/auth.selectors';
@@ -139,7 +139,7 @@ ngOnChanges(changes: SimpleChanges) {
   private subscribeToConfig() {
     this.store
       .pipe(
-        select(selectConfig),
+        select(selectConfig2),
         takeUntil(this.unsubscribe$)
       )
       .subscribe((main: MainState) => {

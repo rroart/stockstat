@@ -63,6 +63,7 @@ function search(query, serviceparam, cb) {
   }).then(checkStatus);
     console.log(bla);
 */
+    console.log("http://" + getHost() + ":" + getPort() + query);
     return fetch("http://" + getHost() + ":" + getPort() + query, {
       method: "POST",
       headers: { 'Accept': 'application/json;charset=utf-8', 'Content-Type': 'application/json', },
@@ -105,6 +106,7 @@ const fetchApi = {
     search(query, serviceparam) {
 	console.log(query);
 	console.log(JSON.stringify(serviceparam));
+        console.log("http://" + getHost() + ":" + getPort() + query);
 	return fetch("http://" + getHost() + ":" + getPort() + query, {
 	    method: "POST",
 	    headers: { 'Accept': 'application/json;charset=utf-8', 'Content-Type': 'application/json', },
@@ -118,6 +120,7 @@ const fetchApi = {
     search2(query, serviceparam) {
 	console.log(query);
 	console.log(JSON.stringify(serviceparam));
+        console.log("http://" + getIHost() + ":" + getIPort() + query);
 	return fetch("http://" + getIHost() + ":" + getIPort() + query, {
 	    method: "POST",
 	    headers: { 'Accept': 'application/json;charset=utf-8', 'Content-Type': 'application/json', },
@@ -131,6 +134,7 @@ const fetchApi = {
     search3(query, serviceparam) {
 	console.log(query);
 	console.log(JSON.stringify(serviceparam));
+        console.log("http://" + getAHost() + ":" + getAPort() + query);
 	return fetch("http://" + getAHost() + ":" + getAPort() + query, {
 	    method: "POST",
 	    headers: { 'Accept': 'application/json;charset=utf-8', 'Content-Type': 'application/json', },

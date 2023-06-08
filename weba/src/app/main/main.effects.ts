@@ -122,7 +122,7 @@ export class MainEffects {
   @Effect()
   getconfiguration2 = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
-      ofType<ActionGetconfig>(MainActionTypes.GETCONFIG2),
+      ofType<ActionGetconfig2>(MainActionTypes.GETCONFIG2),
       debounceTime(debounce, scheduler),
       switchMap((action: ActionGetconfig2) => {
         console.log(action);

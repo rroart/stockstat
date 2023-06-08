@@ -138,31 +138,31 @@ export class IclijEvolvebarComponent implements OnInit, OnDestroy {
   }
 
   evolveMLMACD(event, props) {
-    this.store.dispatch(new ActionGetevolve(['getevolvenn', false, this.main.config, 'mlmacd']));
+    this.store.dispatch(new ActionGetevolve(['getevolvenn', false, this.main.config2, 'mlmacd']));
   }
 
   evolveMlindicator(event, props) {
-    this.store.dispatch(new ActionGetevolve(['getevolvenn', false, this.main.config, 'mlindicator']));
+    this.store.dispatch(new ActionGetevolve(['getevolvenn', false, this.main.config2, 'mlindicator']));
   }
 
   evolvePredictorLSTM(event, props) {
-    this.store.dispatch(new ActionGetevolve(['getevolvenn', false, this.main.config, 'predictorlstm']));
+    this.store.dispatch(new ActionGetevolve(['getevolvenn', false, this.main.config2, 'predictorlstm']));
   }
 
   evolveAndSetRecommender(event, props) {
-    this.store.dispatch(new ActionGetevolve(['getevolverecommender', true, this.main.config, '']));
+    this.store.dispatch(new ActionGetevolve(['getevolverecommender', true, this.main.config2, '']));
   }
 
   evolveAndSetMLMACD(event, props) {
-    this.store.dispatch(new ActionGetevolve(['getevolvenn', true, this.main.config, 'mlmacd']));
+    this.store.dispatch(new ActionGetevolve(['getevolvenn', true, this.main.config2, 'mlmacd']));
   }
 
   evolveAndSetMlindicator(event, props) {
-    this.store.dispatch(new ActionGetevolve(['getevolvenn', true, this.main.config, 'mlindicator']));
+    this.store.dispatch(new ActionGetevolve(['getevolvenn', true, this.main.config2, 'mlindicator']));
   }
 
   evolveAndSetPredictorLSTM(event, props) {
-    this.store.dispatch(new ActionGetevolve(['getevolvenn', true, this.main.config, 'predictorlstm']));
+    this.store.dispatch(new ActionGetevolve(['getevolvenn', true, this.main.config2, 'predictorlstm']));
   }
 
 async delay(ms: number) {
