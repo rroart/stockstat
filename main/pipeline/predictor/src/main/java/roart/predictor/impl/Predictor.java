@@ -266,7 +266,7 @@ public abstract class Predictor extends AbstractPredictor {
                         if (list != null && list.length == days) {
                             log.info("list {}", list.length);
                             Object list3 = ArrayUtils.toObject(list);
-                            map.add(new LearnClassify(id, (double[]) list3, (Double) null));
+                            map.add(new LearnClassify(id, list3, (Double) null));
                         }
                     }
                     List<LearnClassify> classifylist = new ArrayList<>();
@@ -278,7 +278,7 @@ public abstract class Predictor extends AbstractPredictor {
                         if (list != null && list.length >= conf.getPredictorsDays()) {
                             log.info("list {}", list.length);
                             Object list3 = ArrayUtils.toObject(Arrays.copyOfRange(list, list.length - conf.getPredictorsDays(), list.length));
-                            classifylist.add(new LearnClassify(id, (double[]) list3, (Double) null));
+                            classifylist.add(new LearnClassify(id, list3, (Double) null));
                         }
                     }
                     // make OO of this, create object

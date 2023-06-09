@@ -693,7 +693,7 @@ public class MLIndicator extends Aggregator {
                 Object newarray = model.transform(array, mlmeta);
                 boolean classified = pair.getRight() != null;
                 if (classified == classify) {
-                    mlMap.add(new LearnClassify(entry.getKey(), (double[]) newarray, pair.getRight()));
+                    mlMap.add(new LearnClassify(entry.getKey(), newarray, pair.getRight()));
                 }
             }
         }

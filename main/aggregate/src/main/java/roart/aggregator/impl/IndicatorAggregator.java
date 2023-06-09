@@ -521,7 +521,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                 Object newarray = model.transform(array, mlmeta);
                 boolean classified = arrayclassify.getRight() != null;
                 if (classified == classify) {
-                    mlMap.add(new LearnClassify(entry.getKey(), (double[]) newarray, arrayclassify.getRight()));
+                    mlMap.add(new LearnClassify(entry.getKey(), newarray, arrayclassify.getRight()));
                 }
             }
         }
