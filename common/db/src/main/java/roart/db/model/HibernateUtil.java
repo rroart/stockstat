@@ -115,9 +115,27 @@ public class HibernateUtil {
         if (factory == null) {
             Configuration configuration = new Configuration().configure();
             String connectionUrl = System.getProperty("connection.url");
+            String username = System.getProperty("connection.username");
+            String password = System.getProperty("connection.password");
+            String driver = System.getProperty("connection.driver_class");
+            String dialect = System.getProperty("connection.dialect");
             if (connectionUrl != null) {
                 configuration.setProperty("connection.url", connectionUrl);
+            }
+            if (connectionUrl != null) {
                 configuration.setProperty("hibernate.connection.url", connectionUrl);
+            }
+            if (username != null) {
+                configuration.setProperty("hibernate.connection.username", username);
+            }
+            if (password != null) {
+                configuration.setProperty("hibernate.connection.password", password);
+            }
+            if (driver != null) {
+                configuration.setProperty("connection.driver_class", driver);
+            }
+            if (dialect != null) {
+                configuration.setProperty("dialect", dialect);
             }
             aFactory = configuration.buildSessionFactory();
         }

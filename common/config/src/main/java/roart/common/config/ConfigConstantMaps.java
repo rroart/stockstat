@@ -37,6 +37,7 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.DATABASESPARK, Boolean.class);
         map.put(ConfigConstants.DATABASESPARKSPARKMASTER, String.class);
         map.put(ConfigConstants.DATABASEHIBERNATE, Boolean.class);
+        map.put(ConfigConstants.DATABASESPRING, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNING, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGMP, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGMPCPU, Double.class);
@@ -449,6 +450,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.DATABASESPARKSPARKMASTER, "spark://127.0.0.1:7077");
 	deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLSPARKNETWORKTIMEOUT, 300);
         deflt.put(ConfigConstants.DATABASEHIBERNATE, Boolean.FALSE);
+        deflt.put(ConfigConstants.DATABASESPRING, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGMP, Boolean.FALSE);
         deflt.put(ConfigConstants.MACHINELEARNINGMPCPU, 0.5);
@@ -850,6 +852,7 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.DATABASESPARK, "Enable Spark Database backend");
         text.put(ConfigConstants.DATABASESPARKSPARKMASTER, "Database Spark Master");
         text.put(ConfigConstants.DATABASEHIBERNATE, "Enable Hibernate Database backend");
+        text.put(ConfigConstants.DATABASESPRING, "Enable Spring Database backend");
         text.put(ConfigConstants.MACHINELEARNING, "Enable machine learning");
         text.put(ConfigConstants.MACHINELEARNINGMP, "Enable machine learning multiprocessing");
         text.put(ConfigConstants.MACHINELEARNINGMPCPU, "Machine learning multiprocessing total cpu");
@@ -1307,6 +1310,7 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.DATABASESPARK, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark Database backend"));
         mymap.put(ConfigConstants.DATABASESPARKSPARKMASTER, new XMLType( String.class, "spark://127.0.0.1:7077", "Database Spark Master"));
         mymap.put(ConfigConstants.DATABASEHIBERNATE, new XMLType( Boolean.class, Boolean.FALSE, "Enable Hibernate Database backend"));
+        mymap.put(ConfigConstants.DATABASESPRING, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spring Database backend"));
         mymap.put(ConfigConstants.MACHINELEARNING, new XMLType( Boolean.class, Boolean.TRUE, "Enable machine learning"));
         mymap.put(ConfigConstants.MACHINELEARNINGMP, new XMLType( Boolean.class, Boolean.FALSE, "Enable machine learning multiprocessing"));
         mymap.put(ConfigConstants.MACHINELEARNINGMPCPU, new XMLType( Double.class, 0.5, "Machine learning multiprocessing total cpu"));
@@ -1678,6 +1682,7 @@ public class ConfigConstantMaps {
         common.add(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG);
         common.add(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG);
         common.add(ConfigConstants.DATABASEHIBERNATE);
+        common.add(ConfigConstants.DATABASESPRING);
     }
 
 }

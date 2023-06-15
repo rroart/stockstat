@@ -901,6 +901,10 @@ public abstract class MyMyConfig extends MyConfig {
         return (Boolean) getNotEmptyValueOrDefault(ConfigConstants.DATABASEHIBERNATE);
     }
 
+    public boolean wantDbSpring() {
+        return (Boolean) getNotEmptyValueOrDefault(ConfigConstants.DATABASESPRING);
+    }
+
     public boolean wantPredictors() {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORS)
                 && wantML();
