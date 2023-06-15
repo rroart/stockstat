@@ -124,7 +124,7 @@ public class DbDao {
             return list;
         }
         long time0 = System.currentTimeMillis();
-        List<MetaItem> metas = access.getMetas();
+        List<MetaItem> metas = access.getAllMetas();
         List<MetaItem> metaitems = new ArrayList<>();
         /*
         for (Meta meta : metas) {

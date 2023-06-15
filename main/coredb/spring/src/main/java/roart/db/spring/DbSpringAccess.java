@@ -61,7 +61,7 @@ public class DbSpringAccess extends DbAccess {
     }
 
     @Override
-    public List<MetaItem> getMetas() {
+    public List<MetaItem> getAllMetas() {
         return service.getMetas();
     }
 
@@ -78,7 +78,7 @@ public class DbSpringAccess extends DbAccess {
     }
 
     @Override
-    public List<MemoryItem> getMemories() {
+    public List<MemoryItem> getAllMemories() {
         return service.getMemories();
     }
 
@@ -94,7 +94,7 @@ public class DbSpringAccess extends DbAccess {
     }
 
     @Override
-    public List<TimingItem> getTimings() {
+    public List<TimingItem> getAllTimings() {
         return service.getTimings();
     }
 
@@ -104,12 +104,12 @@ public class DbSpringAccess extends DbAccess {
     }
 
     @Override
-    public List<RelationItem> getRelations() {
+    public List<RelationItem> getAllRelations() {
         return service.getRelations();
     }
 
     @Override
-    public List<IncDecItem> getIncDecs() {
+    public List<IncDecItem> getAllIncDecs() {
         return service.getIncDecs();
     }
 
@@ -130,7 +130,7 @@ public class DbSpringAccess extends DbAccess {
     }
 
     @Override
-    public List<MLMetricsItem> getMLMetrics() {
+    public List<MLMetricsItem> getAllMLMetrics() {
         return service.getMLMetrics();
     }
 
@@ -165,7 +165,7 @@ public class DbSpringAccess extends DbAccess {
     }
 
     @Override
-    public List<TimingBLItem> getAllTimingBLItem() {
+    public List<TimingBLItem> getAllTimingBL() {
         return service.getTimingBL();
     }
 
@@ -175,8 +175,33 @@ public class DbSpringAccess extends DbAccess {
     }
 
     @Override
-    public List<ContItem> getAllContItem() {
+    public List<ContItem> getAllConts() {
         return service.getCont();
+    }
+
+    @Override
+    public List<StockItem> getAllStocks() throws Exception {
+        return service.getAllStocks();
+    }
+
+    @Override
+    public List<ConfigItem> getAllConfigs() {
+        return service.getAllConfigs();
+    }
+
+    @Override
+    public List<SimDataItem> getAllSimData(String market) {
+        return service.getAllSimData();
+    }
+
+    @Override
+    public List<AboveBelowItem> getAllAboveBelow() {
+        return service.getAllAboveBelow();
+    }
+
+    @Override
+    public List<SimDataItem> getAllSimData() {
+        return service.getAllSimData();
     }
 
 }

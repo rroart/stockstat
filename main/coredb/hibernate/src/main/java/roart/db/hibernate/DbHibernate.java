@@ -829,6 +829,11 @@ public class DbHibernate {
         if (object instanceof IncDecItem obj) {
             obj2 = map(obj);
         }
+        if (object instanceof List list) {
+            for (Object obj : list) {
+                save(obj);
+            }
+        }
         if (obj2 == null) {
             log.error("Unknown save object");
             return null;
@@ -928,6 +933,51 @@ public class DbHibernate {
     public static List<ContItem> getAllCont() {
         try {
             return Cont.getAll().stream().map(e -> map(e)).toList();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+
+    public static List<StockItem> getAllStocks() {
+        try {
+            return Stock.getAll().stream().map(e -> map(e)).toList();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+
+    public static List<ConfigItem> getAllConfigs() {
+        try {
+            return Config.getAll().stream().map(e -> map(e)).toList();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+
+    public static List<SimDataItem> getAllSimData() {
+        try {
+            return SimData.getAll().stream().map(e -> map(e)).toList();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+
+    public static List<AboveBelowItem> getAllAboveBelow() {
+        try {
+            return AboveBelow.getAll().stream().map(e -> map(e)).toList();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+
+    public static List<SimDataItem> getAllSimData(String market) {
+        try {
+            return SimData.getAll().stream().map(e -> map(e)).toList();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return null;

@@ -159,4 +159,11 @@ public class AboveBelow implements Serializable {
         }
         Queues.queuedeleteq.add(new ImmutablePair(hu, query));
     }
+    
+    @Transient
+    @Transactional
+    public static List<AboveBelow> getAll() throws Exception {
+        return new HibernateUtil(false).get("from AboveBelow");
+    }
+
 }

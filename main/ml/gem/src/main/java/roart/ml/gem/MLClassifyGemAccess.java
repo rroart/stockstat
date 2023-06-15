@@ -363,7 +363,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         long millis0 = System.currentTimeMillis();
         List<ContItem> conts = null;
         try {
-             conts = IclijDbDao.badAccess.getAllContItem();
+             conts = IclijDbDao.badAccess.getAllConts();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

@@ -412,6 +412,19 @@ public class ServiceController implements CommandLineRunner {
         return new ArrayList<>();
     }
     
+    @RequestMapping(value = "/" + EurekaConstants.GETTASKS + "d",
+            method = RequestMethod.POST)
+    public List<String> dbMigrate()
+            throws Exception {
+        try {
+            DbDao daoout = new DbDao(iclijConfig, null);
+            return null;
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return new ArrayList<>();
+    }
+    
     //@Bean
     public ObjectMapper getJacksonObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();

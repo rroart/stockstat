@@ -66,7 +66,7 @@ public class DbHibernateAccess extends DbAccess {
     }
 
     @Override
-    public List<MetaItem> getMetas() {
+    public List<MetaItem> getAllMetas() {
         try {
         return DbHibernate.getMetas();
         } catch (Exception e) {
@@ -88,7 +88,7 @@ public class DbHibernateAccess extends DbAccess {
     }
 
     @Override
-    public List<MemoryItem> getMemories() {
+    public List<MemoryItem> getAllMemories() {
         return DbHibernate.getMemories();
     }
 
@@ -104,7 +104,7 @@ public class DbHibernateAccess extends DbAccess {
     }
 
     @Override
-    public List<TimingItem> getTimings() {
+    public List<TimingItem> getAllTimings() {
         return DbHibernate.getTimings();
     }
 
@@ -114,12 +114,12 @@ public class DbHibernateAccess extends DbAccess {
     }
 
     @Override
-    public List<RelationItem> getRelations() {
+    public List<RelationItem> getAllRelations() {
         return DbHibernate.getRelations();
     }
 
     @Override
-    public List<IncDecItem> getIncDecs() {
+    public List<IncDecItem> getAllIncDecs() {
         return DbHibernate.getIncDecs();
     }
 
@@ -144,7 +144,7 @@ public class DbHibernateAccess extends DbAccess {
     }
 
     @Override
-    public List<MLMetricsItem> getMLMetrics() {
+    public List<MLMetricsItem> getAllMLMetrics() {
         return DbHibernate.getMLMetrics();
     }
 
@@ -169,7 +169,7 @@ public class DbHibernateAccess extends DbAccess {
     }
 
     @Override
-    public List<TimingBLItem> getAllTimingBLItem() {
+    public List<TimingBLItem> getAllTimingBL() {
         return DbHibernate.getAllTimingBLItem();
     }
 
@@ -179,8 +179,33 @@ public class DbHibernateAccess extends DbAccess {
     }
 
     @Override
-    public List<ContItem> getAllContItem() {
+    public List<ContItem> getAllConts() {
         return DbHibernate.getAllCont();
+    }
+
+    @Override
+    public List<StockItem> getAllStocks() throws Exception {
+        return DbHibernate.getAllStocks();
+    }
+
+    @Override
+    public List<ConfigItem> getAllConfigs() {
+        return DbHibernate.getAllConfigs();
+    }
+
+    @Override
+    public List<SimDataItem> getAllSimData(String market) {
+        return DbHibernate.getAllSimData(market);
+    }
+
+    @Override
+    public List<AboveBelowItem> getAllAboveBelow() {
+        return DbHibernate.getAllAboveBelow();
+    }
+
+    @Override
+    public List<SimDataItem> getAllSimData() {
+        return DbHibernate.getAllSimData();
     }
 }
 

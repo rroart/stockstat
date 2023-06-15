@@ -19,6 +19,7 @@ url7 = 'http://' + ahost + ':' + aport + '/gettasks'
 url8 = 'http://' + ahost + ':' + aport + '/db/update/start'
 url9 = 'http://' + ahost + ':' + aport + '/db/update/end'
 url10 = 'http://' + ahost + ':' + aport + '/cache/invalidate'
+url11 = 'http://' + ahost + ':' + aport + '/copy/'
 
 #headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 #headers={'Content-type':'application/json', 'Accept':'application/json'}
@@ -56,4 +57,7 @@ def dbupdateend():
 
 def cacheinvalidate():
     return requests.post(url10, headers=headers)
+
+def copydb(indb, outdb):
+    return requests.post(url11 + indb + "/" + outdb, headers=headers)
 

@@ -1,6 +1,7 @@
 package roart.db.model;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -21,6 +22,7 @@ import org.hibernate.query.Query;
 import jakarta.persistence.Transient;
 import jakarta.transaction.Transactional;
 import org.hibernate.query.SelectionQuery;
+
 import roart.db.thread.Queues;
 
 @Entity
@@ -152,6 +154,12 @@ public class SimData implements Serializable {
     @Transactional
     public void save() throws Exception {
         Queues.queue.add(this);
+    }
+
+    @Transient
+    @Transactional
+    public static List<SimData> getAll() throws Exception {
+        return new HibernateUtil(false).get("from SimData");
     }
 
 }

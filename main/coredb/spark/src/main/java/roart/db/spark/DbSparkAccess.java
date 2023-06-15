@@ -62,13 +62,13 @@ public class DbSparkAccess extends DbAccess {
     }
 
     @Override
-    public List<MetaItem> getMetas() {
+    public List<MetaItem> getAllMetas() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public List<MemoryItem> getMemories() {
+    public List<MemoryItem> getAllMemories() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -87,7 +87,7 @@ public class DbSparkAccess extends DbAccess {
     }
 
     @Override
-    public List<TimingItem> getTimings() {
+    public List<TimingItem> getAllTimings() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -99,13 +99,13 @@ public class DbSparkAccess extends DbAccess {
     }
 
     @Override
-    public List<RelationItem> getRelations() {
+    public List<RelationItem> getAllRelations() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public List<IncDecItem> getIncDecs() {
+    public List<IncDecItem> getAllIncDecs() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -130,7 +130,7 @@ public class DbSparkAccess extends DbAccess {
     }
 
     @Override
-    public List<MLMetricsItem> getMLMetrics() {
+    public List<MLMetricsItem> getAllMLMetrics() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -179,7 +179,7 @@ public class DbSparkAccess extends DbAccess {
     }
 
     @Override
-    public List<TimingBLItem> getAllTimingBLItem() {
+    public List<TimingBLItem> getAllTimingBL() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -191,7 +191,37 @@ public class DbSparkAccess extends DbAccess {
     }
 
     @Override
-    public List<ContItem> getAllContItem() {
+    public List<ContItem> getAllConts() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<StockItem> getAllStocks() throws Exception {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<ConfigItem> getAllConfigs() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<SimDataItem> getAllSimData() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<SimDataItem> getAllSimData(String market) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<AboveBelowItem> getAllAboveBelow() {
         // TODO Auto-generated method stub
         return null;
     }

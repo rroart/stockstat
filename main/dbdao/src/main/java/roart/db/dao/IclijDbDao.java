@@ -62,7 +62,7 @@ public class IclijDbDao {
             return list;
         }
         long time0 = System.currentTimeMillis();
-        list = access.getMemories();
+        list = access.getAllMemories();
         log.info("MemoryItem getall {}", (System.currentTimeMillis() - time0) / 1000);
         MyCache.getInstance().put(key, list);
         return list;
@@ -101,7 +101,7 @@ public class IclijDbDao {
             return list;
         }
         long time0 = System.currentTimeMillis();
-        list = access.getTimings();        
+        list = access.getAllTimings();        
         log.info("TimingItem getall {}", (System.currentTimeMillis() - time0) / 1000);
         MyCache.getInstance().put(key, list);
         return list;
@@ -127,7 +127,7 @@ public class IclijDbDao {
             return list;
         }
         long time0 = System.currentTimeMillis();
-        list = access.getRelations();        
+        list = access.getAllRelations();        
         log.info("RelationItem getall {}", (System.currentTimeMillis() - time0) / 1000);
         MyCache.getInstance().put(key, list);
         return list;
@@ -140,7 +140,7 @@ public class IclijDbDao {
             return list;
         }
         long time0 = System.currentTimeMillis();
-        list = access.getIncDecs();        
+        list = access.getAllIncDecs();        
         log.info("IncDecItem getall {}", (System.currentTimeMillis() - time0) / 1000);
         MyCache.getInstance().put(key, list);
         return list;
@@ -191,7 +191,7 @@ public class IclijDbDao {
             return list;
         }
         long time0 = System.currentTimeMillis();
-        list = access.getMLMetrics();        
+        list = access.getAllMLMetrics();        
         log.info("MLMetricsItem getall {}", (System.currentTimeMillis() - time0) / 1000);
         MyCache.getInstance().put(key, list);
         return list;
@@ -235,11 +235,11 @@ public class IclijDbDao {
     }
 
     public List<TimingBLItem> getAllTimingBLItem() {
-        return access.getAllTimingBLItem();
+        return access.getAllTimingBL();
     }
 
     public List<ContItem> getAllCont() {
-        return access.getAllContItem();
+        return access.getAllConts();
     }
 }
 

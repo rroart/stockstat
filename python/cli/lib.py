@@ -2693,6 +2693,9 @@ def dbupdateend():
 def cacheinvalidate():
     request.cacheinvalidate()
     
+def copydb(indb, outdb):
+    request.copydb(indb, outdb)
+    
 if not 'allstocks' in globals():
     print("Loadings stocks")
     allstocks = getstocks(conn)

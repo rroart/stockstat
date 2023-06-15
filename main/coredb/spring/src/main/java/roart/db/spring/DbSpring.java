@@ -704,6 +704,11 @@ public class DbSpring {
             if (object instanceof IncDecItem obj) {
                 obj2 = springIncdecRepo.save(map(obj));
             }
+            if (object instanceof List list) {
+                for (Object obj : list) {
+                    save(obj);
+                }
+            }
             if (obj2 == null) {
                 throw new Exception("Unknown save object");
             }
@@ -912,6 +917,42 @@ public class DbSpring {
     public List<ContItem> getCont() {
         try {
             return StreamSupport.stream(springContRepo.findAll().spliterator(), false).map(e -> map(e)).toList();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+
+    public List<StockItem> getAllStocks() {
+        try {
+            return StreamSupport.stream(springStockRepo.findAll().spliterator(), false).map(e -> map(e)).toList();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+
+    public List<ConfigItem> getAllConfigs() {
+        try {
+            return StreamSupport.stream(springConfigRepo.findAll().spliterator(), false).map(e -> map(e)).toList();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+
+    public List<SimDataItem> getAllSimData() {
+        try {
+            return StreamSupport.stream(springSimDataRepo.findAll().spliterator(), false).map(e -> map(e)).toList();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+
+    public List<AboveBelowItem> getAllAboveBelow() {
+        try {
+            return StreamSupport.stream(springAboveBelowRepo.findAll().spliterator(), false).map(e -> map(e)).toList();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return null;

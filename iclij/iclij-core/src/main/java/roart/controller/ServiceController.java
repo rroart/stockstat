@@ -28,7 +28,10 @@ import roart.action.ActionThread;
 import roart.common.cache.MyCache;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
+import roart.common.model.TimingItem;
+import roart.db.dao.DbAccessFactory;
 import roart.db.dao.IclijDbDao;
+import roart.db.spring.DbSpringAccess;
 import roart.iclij.config.AutoSimulateInvestConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
@@ -39,6 +42,7 @@ import roart.iclij.service.ControlService;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 import roart.util.ServiceUtil;
+import roart.db.common.DbAccess;
 
 @CrossOrigin
 @RestController
@@ -52,6 +56,9 @@ public class ServiceController {
     @Autowired
     private IclijDbDao dbDao;
 
+    @Autowired
+    private DbSpringAccess dbSpringAccess;
+    
     private ControlService instance;
 
     private ControlService getInstance() {
@@ -237,8 +244,6 @@ public class ServiceController {
             config.getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, adviser);
         }
          */
-        log.info("DDD" + myConfig.getInmemoryServer() + myConfig.getInmemoryHazelcast() + myConfig.getInmemoryRedis());
-        log.info("DDD" + myConfig.getConfigData().getConfigValueMap().size() + myConfig.getConfigData().getConfigValueMap().keySet());
         return ServiceUtil.getImproveAutoSimulateInvest(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), map), dbDao, myConfig);
     }
 
@@ -316,4 +321,25 @@ public class ServiceController {
         }
         return new ArrayList<>();
     }
+    
+    @PostMapping(value = "/" + "copy" + "/{dbin}/{dbout}")
+    public void cp(@PathVariable("dbin") String dbIn, @PathVariable("dbout") String dbOut)
+            throws Exception {
+        DbAccess in = DbAccessFactory.get(dbIn, dbSpringAccess);
+        DbAccess out = DbAccessFactory.get(dbOut, dbSpringAccess);
+        out.save(in.getAllStocks());
+        out.save(in.getAllMetas());
+        out.save(in.getAllMemories());
+        out.save(in.getAllIncDecs());
+        out.save(in.getAllConfigs());
+        out.save(in.getAllTimings());
+        out.save(in.getAllTimingBL());
+        out.save(in.getAllRelations());
+        out.save(in.getAllConts());
+        out.save(in.getAllMLMetrics());
+        out.save(in.getAllSimData());
+        out.save(in.getAllActionComponent());
+        out.save(in.getAllAboveBelow());
+    }
+
 }
