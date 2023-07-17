@@ -1,4 +1,4 @@
-FROM node:12
+FROM node:18
 MAINTAINER <rroart@gmail.com>
 ARG docroot
 ARG mywebport
