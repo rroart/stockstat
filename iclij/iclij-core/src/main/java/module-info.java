@@ -76,4 +76,5 @@ module iclij.core {
     requires springdata;
     requires coredb.hibernate;
     requires coredb;
+    requires coredb.spring;
 }
