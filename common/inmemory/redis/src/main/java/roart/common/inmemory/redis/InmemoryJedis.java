@@ -1,16 +1,17 @@
 package roart.common.inmemory.redis;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 
 public class InmemoryJedis extends Inmemory {
 
-    Jedis jedis;
-    
+    private JedisPool pool;
+
     public InmemoryJedis(String server) {
         super(server);
-        jedis = new Jedis(server);
+        pool = new JedisPool(server);
     }
 
     @Override
@@ -25,17 +26,23 @@ public class InmemoryJedis extends Inmemory {
 
     @Override
     protected void set(String key, String value) {
-        jedis.set(key, value);
+        try (Jedis jedis = pool.getResource()) {
+            jedis.set(key, value);
+        }
     }
 
     @Override
     protected String get(String key) {
-        String string = jedis.get(key);
-        return string;
+        try (Jedis jedis = pool.getResource()) {
+            String string = jedis.get(key);
+            return string;
+        }
     }
 
     @Override
     protected void del(String key) {
-        jedis.del(key);
+        try (Jedis jedis = pool.getResource()) {
+            jedis.del(key);
+        }
     }
 }
