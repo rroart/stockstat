@@ -115,7 +115,7 @@
     <springintegration.version>6.0.0</springintegration.version>
     <springrabbit.version>3.0.0</springrabbit.version>
     <kafka.version>3.5.0</kafka.version> 
-    <pulsar.version>2.10.0</pulsar.version>
+    <pulsar.version>3.0.0</pulsar.version>
     <hazelcast.version>3.12.12</hazelcast.version>
     <hazelcastclient.version>3.2.12</hazelcastclient.version>
     <redisclient.version>4.4.3</redisclient.version>
