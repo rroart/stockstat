@@ -54,20 +54,9 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-rabbitmq</artifactId>
-      <version>${camel.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-amqp</artifactId>
       <version>${camel.version}</version>
     </dependency>
-    <!-->dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-rabbitmq</artifactId>
-      <version>3.6.0</version>
-    </dependency-->
-	<!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-camel -->
 	<dependency>
     	<groupId>org.apache.activemq</groupId>
     	<artifactId>activemq-camel</artifactId>

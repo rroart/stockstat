@@ -110,8 +110,8 @@
     <talib.version>0.4.0</talib.version>
     <jenetics.version>5.2.0</jenetics.version>
     <guava.version>16.0.1</guava.version>
-    <camel.version>3.6.0</camel.version>
-    <camelactivemq.version>5.16.0</camelactivemq.version>
+    <camel.version>4.0.0-RC1</camel.version>
+    <camelactivemq.version>5.16.6</camelactivemq.version>
     <springintegration.version>6.0.0</springintegration.version>
     <springrabbit.version>3.0.0</springrabbit.version>
     <kafka.version>3.5.0</kafka.version> 
