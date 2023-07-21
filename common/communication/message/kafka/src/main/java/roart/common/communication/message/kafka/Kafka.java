@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.DeleteTopicsResult;
@@ -28,6 +27,8 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.communication.message.model.MessageCommunication;
+import roart.common.constants.Constants;
+
 import org.apache.commons.codec.digest.DigestUtils;
 
 import org.slf4j.Logger;
@@ -47,15 +48,11 @@ public class Kafka extends MessageCommunication {
         try {
             admin.listTopics().names().get().forEach(System.out::println);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         } catch (ExecutionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }    }
-    
-    //String brokerAddr;
-    //String topic;
+            log.error(Constants.EXCEPTION, e);
+        }    
+    }
     
     Producer<String, String> producer;
     KafkaConsumer<String, String> consumer;
@@ -111,25 +108,17 @@ public class Kafka extends MessageCommunication {
     }
     
     public void send(String s) {
-        /*
-        if (s.length() > MSGSIZE) {
-            log.error("Too big for Kafka");
-        }
-        */
         String md5Hex = DigestUtils.md5Hex(s).toUpperCase();      
         producer.send(new ProducerRecord<>(getSendService(), md5Hex, s));
-        System.out.println("Message sent successfully");
+        log.debug("Message sent successfully");
         producer.close();
     }
     
     public String[] receiveString() {
-        //Kafka Consumer subscribes list of topics here.
-        //consumer.subscribe(Arrays.asList(topicName));
-        //consumer.subscribe(Pattern.compile(topicName));
         Duration duration = Duration.ofSeconds(1);
 
         //print the topic name
-        System.out.println("Subscribed to topic " + getReceiveService());
+        log.debug("Subscribed to topic {}", getReceiveService());
         String[] retRecord = null;
         int returned = 0;
         while (returned == 0) {
@@ -139,19 +128,16 @@ public class Kafka extends MessageCommunication {
             int count = 0;
             for (ConsumerRecord<String, String> record : records) {
                 retRecord[count++] = record.value();
-                System.out.printf("offset = %d, key = %s, value = %s\n", 
+                log.debug("offset = {}, key = {}, value = {}\n", 
                         record.offset(), record.key(), record.value());
             }
         }
-        // print the offset,key and value for the consumer records.     
-        //consumer.close();
         return retRecord;
     }
 
     @Override
     public void destroy() {
-        // TODO Auto-generated method stub
-        
+        // TODO Auto-generated method stub        
     }
     
     @Override
