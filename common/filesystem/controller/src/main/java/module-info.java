@@ -21,7 +21,7 @@ module filesystem {
     requires spring.cloud.commons;
     requires spring.context;
     requires spring.web;
-    requires zookeeper;
+    //requires stockstat.shadow.zookeeper;
     requires common.model;
     requires common.util;
     //requires common.zookeeper;

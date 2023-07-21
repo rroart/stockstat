@@ -16,5 +16,6 @@
   <modules>
     <!--module>s3</module-->
     <module>spark</module>
+    <module>zookeeper</module>
   </modules>
 </project>

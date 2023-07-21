@@ -18,7 +18,7 @@ module common.filesystem.client {
     requires common.inmemory.factory;
     requires common.inmemory.model;
     requires com.fasterxml.jackson.annotation;
-    requires zookeeper;
+    requires stockstat.shadow.zookeeper;
     requires curator.client;
     requires curator.framework;
     requires curator.recipes;
