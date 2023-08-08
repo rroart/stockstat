@@ -31,8 +31,8 @@ import roart.common.controller.ServiceControllerOtherAbstract;
 
 public class ServiceControllerOther extends ServiceControllerOtherAbstract {
 
-    @Autowired
-    IclijConfig iclijConfig;
+    //@Autowired
+    //IclijConfig iclijConfig;
     
     public ServiceControllerOther(String myservices, String services, String communications, Class replyclass, IclijConfig iclijConfig, IclijDbDao dbDao) {
         super(myservices, services, communications, replyclass, iclijConfig, dbDao);
