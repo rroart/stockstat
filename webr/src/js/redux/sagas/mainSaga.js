@@ -1,19 +1,16 @@
-import { put, fork, takeLatest, takeEvery, call } from 'redux-saga/effects';
-import { delay } from 'redux-saga';
+import { put, fork, takeLatest, takeEvery, call, delay } from 'redux-saga/effects';
 import { constants as mainConstants, actions as mainActions } from '../modules/main';
 import { Tabs, Tab } from 'react-bootstrap';
 
-import type { mainType } from '../../common/types/main'
 import { ConfigMaps, ConfigData, GuiSize } from '../../common/types/main'
 
 import { Client, ConvertToSelect } from '../../common/components/util'
 import { ServiceParam, ServiceResult, NeuralNetCommand, IclijServiceParam, IclijServiceResult } from '../../common/types/main'
 import { MyTable } from '../../common/components/Table'
-import { IclijMyTable } from '../../common/components/IclijTable'
 
 export function* fetchMainData() {
   // pretend there is an api call
-  const result: mainType = {
+  const result = {
     title: 'Stockstat',
     description: __CONFIG__.description,
     source: 'This message is coming from Redux',
@@ -379,7 +376,7 @@ export function* fetchContentMachineLearning(action) {
     console.log(config2);
     const list = result.lists;
     console.log(list);
-    const tab = IclijMyTable.getTab(result.lists, Date.now(), props);
+    const tab = {}; //IclijMyTable.getTab(result.lists, Date.now(), props);
     yield put(mainActions.newtabMain(tab));
 }
 

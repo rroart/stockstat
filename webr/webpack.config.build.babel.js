@@ -3,11 +3,12 @@ import path from 'path';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import SaveAssetsJson from 'assets-webpack-plugin';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import precss from 'precss';
 import postcssCssnext from 'postcss-cssnext';
 
-import webpackConfig, { JS_SOURCE } from './webpack.config.common';
+const webpackConfig = require('./webpack.config.common');
+const JS_SOURCE = config.get('jsSourcePath');
 
 // ----------------------------------------------------------
 //  CONSTANT DECLARATION
@@ -21,20 +22,9 @@ const APP_ENTRY_POINT = `${JS_SOURCE}/router`;
 
 const webpackProdOutput = {
   publicPath: PUBLIC_PATH,
-  filename: `${config.get('assetPath')}/[name]-[hash].js`,
-  chunkFilename: `${config.get('assetPath')}/[id].[hash].js`,
+  filename: `${config.get('assetPath')}/[name]-[contenthash].js`,
+  chunkFilename: `${config.get('assetPath')}/[id].[contenthash].js`,
 };
-
-// This section is for common chunk behavior
-// do we need to exclude css from this rule
-const optimizationMinChunks = config.get('optimization.cssExclusion') ?
-  (module, count) => {
-    return module.resource &&
-      !(/\.css/).test(module.resource) &&
-      count >= config.get('optimization.commonMinCount');
-  }
-  :
-  config.get('optimization.commonMinCount');
 
 const html = config.get('html');
 
@@ -63,35 +53,14 @@ const htmlPlugins = html.map(page =>
 webpackConfig.output = Object.assign(webpackConfig.output, webpackProdOutput);
 
 webpackConfig.module.rules = webpackConfig.module.rules.concat({
-  test: /\.css$/,
-  use: ExtractTextPlugin.extract({
-    fallback: 'style-loader',
-    use: [
-      {
-        loader: 'css-loader',
-        options: { sourceMap: true, importLoaders: 1 }
-      },
-      {
-        loader: 'postcss-loader',
-        options: {
-          sourceMap: true,
-          plugins: () => [
-            precss(),
-            postcssCssnext({
-              browsers: ['last 2 versions', 'ie >= 9'],
-              compress: true,
-            }),
-          ],
-        },
-      }
-    ]
-  })
+  test: /\.css$/i,
+  use: [ MiniCssExtractPlugin.loader, 'css-loader' ]
 });
 
 webpackConfig.devtool = 'source-map';
 
 webpackConfig.entry = {
-  app: ['babel-polyfill', path.resolve(__dirname, APP_ENTRY_POINT)],
+    app: ['babel-polyfill', path.resolve(__dirname, APP_ENTRY_POINT)],
 };
 
 if (IS_S3_DEPLOY) {
@@ -136,8 +105,6 @@ webpackConfig.plugins.push(
   new webpack.DefinePlugin({
     __CONFIG__: JSON.stringify(config.get('app')),
     'process.env': {
-      MYSERVER: JSON.stringify(process.env.MYSERVER),
-      MYPORT: JSON.stringify(process.env.MYPORT),
       NODE_ENV: JSON.stringify('production')
     },
   }),
@@ -147,15 +114,7 @@ webpackConfig.plugins.push(
   }),
   // how you want your code to be optimized
   // all configurable
-  new webpack.IgnorePlugin(/un~$/),
-  new webpack.optimize.UglifyJsPlugin({
-    sourceMap: true,
-  }),
-  new webpack.optimize.CommonsChunkPlugin({
-    name: 'common',
-    filename: `${config.get('assetPath')}/common-[hash].js`,
-    minChunks: optimizationMinChunks,
-  }),
+  new webpack.IgnorePlugin({ resourceRegExp: /un~$/}),
   new SaveAssetsJson({
     path: path.join(__dirname, 'docroot'),
     filename: 'assets.json',
@@ -164,13 +123,11 @@ webpackConfig.plugins.push(
       version: process.env.PACKAGE_VERSION,
     },
   }),
-  new ExtractTextPlugin({
-    filename: `${config.get('assetPath')}/[name]-[hash].css`,
-    disable: false,
-    allChunks: true,
-  })
+  new MiniCssExtractPlugin()
 );
 
 webpackConfig.plugins = webpackConfig.plugins.concat(htmlPlugins);
+
+webpackConfig.mode = 'production';
 
 export default webpackConfig;

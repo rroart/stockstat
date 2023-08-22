@@ -8,6 +8,7 @@
 // The font-face here is just to show the setup is working
 */
 
+/*
 @font-face {
   font-family: "YourFavoriteFont";
   src: url("../assets/fonts/YourFavoriteFont.eot") format("embedded-opentype");
@@ -15,3 +16,4 @@
   font-weight: normal;
   font-style: normal;
 }
+*/

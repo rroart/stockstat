@@ -14,7 +14,6 @@ import { ControlPanel } from '../ControlPanel'
 import { Test } from '../test'
 //import Misc from '../util'
 //import Client from '../util/Client'
-import { MyTable } from '../Table'
 
 const tablist = [];
 
@@ -63,7 +62,7 @@ class Main extends React.Component {
 var mytabs = tabs;
 var map = new Object();
 map['title']='tit';
-var newtab = new Tab(map);
+//var newtab = new Tab(map);
  console.log(tabs);
  //tabs.push('mytit');
  var arrayLength = tabs.length;
@@ -75,8 +74,6 @@ var newtab = new Tab(map);
     //Do something
 }
 var nums = [ [ '1' , '2'], ['3' , '4'], ['5', '6']];
-    const res =  MyTable.convert2(nums);
-    console.log(res);
     if (result && result.size && result.size > 0) {
       return (
         <Fragment>

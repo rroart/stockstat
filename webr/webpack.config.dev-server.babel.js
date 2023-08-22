@@ -5,7 +5,8 @@ import DashboardPlugin from 'webpack-dashboard/plugin';
 import precss from 'precss';
 import postcssCssnext from 'postcss-cssnext';
 
-import webpackConfig, { JS_SOURCE } from './webpack.config.common';
+const webpackConfig = require('./webpack.config.common');
+const JS_SOURCE = config.get('jsSourcePath');
 
 // Please read the following link if
 // you have no idea how to use this feature
@@ -27,14 +28,11 @@ webpackConfig.output = Object.assign(webpackConfig.output, webpackDevOutput);
 webpackConfig.devServer = {
   host: HOST,
   port: PORT,
-  disableHostCheck: true,
-  clientLogLevel: 'error',
   compress: true,
-  noInfo: true,
-  quiet: true,
-  open: false,
-  stats: 'errors-only',
+  open: true,
 };
+
+webpackConfig.mode = 'development';
 
 // This is your testing container, we did
 // that for you, so you don't need to, if
@@ -65,9 +63,7 @@ webpackConfig.plugins.push(
   new webpack.DefinePlugin({
     __CONFIG__: JSON.stringify(config.get('app')),
     'process.env': {
-      MYSERVER: JSON.stringify(process.env.MYSERVER),
-      MYPORT: JSON.stringify(process.env.MYPORT),
-      NODE_ENV: JSON.stringify('development'),
+      NODE_ENV: JSON.stringify('development')
     },
   }),
 );
@@ -107,13 +103,6 @@ webpackConfig.module.rules = webpackConfig.module.rules.concat({
         sourceMap: true,
         // https://github.com/postcss/postcss-loader/issues/92
         // https://github.com/postcss/postcss-loader/issues/8
-        plugins: () => [
-          precss(),
-          postcssCssnext({
-            browsers: ['last 2 versions', 'ie >= 9'],
-            compress: true,
-          }),
-        ],
       },
     },
   ],
@@ -121,7 +110,7 @@ webpackConfig.module.rules = webpackConfig.module.rules.concat({
 
 webpackConfig.plugins = webpackConfig.plugins.concat(htmlPlugins);
 
-webpackConfig.devtool = 'cheap-module-eval-source-map';
+webpackConfig.devtool = 'eval-cheap-module-source-map';
 
 webpackConfig.entry = [
   'babel-polyfill',

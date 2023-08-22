@@ -1,10 +1,10 @@
 // Requiring dependencies
 // ================================================================================
-import path from 'path';
-import webpack from 'webpack';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
-import config from 'config';
+const path = require('path');
+const webpack = require('webpack');
+const ExtractTextPlugin = require('mini-css-extract-plugin');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const config = require('config');
 
 // trace which loader is deprecated
 // feel free to remove that if you don't need this feature
@@ -12,13 +12,13 @@ process.traceDeprecation = false;
 
 // Environment variable injection
 // ================================================================================
-import packageJSON from './package.json'
+const packageJSON = require('./package.json');
 process.env.PACKAGE_VERSION = packageJSON.version
 
 // Defining config variables
 // ================================================================================
 
-export const BUILD_PATH = path.join(__dirname, `docroot${config.get('publicPath')}`)
+const BUILD_PATH = path.join(__dirname, `docroot${config.get('publicPath')}`)
 
 const COMMON_LOADERS = [
   {
@@ -29,7 +29,7 @@ const COMMON_LOADERS = [
         options: {
           hash: 'sha512',
           digest: 'hex',
-          name: `${config.get('assetPath')}/[hash].[ext]`,
+          name: `${config.get('assetPath')}/[contenthash].[ext]`,
         }
       },
       {
@@ -58,11 +58,16 @@ const COMMON_LOADERS = [
     exclude: /node_modules/,
     loader: 'babel-loader',
     options: {
-      cacheDirectory: true,
+	cacheDirectory: true,
+	presets: [
+                            ["@babel/preset-env", { 
+                                "targets": "defaults"
+                            }]
+                        ],
       plugins: [
-        'transform-runtime',
-        'transform-decorators-legacy',
-        'syntax-dynamic-import'
+        '@babel/transform-runtime',
+        ['@babel/plugin-proposal-decorators', { "legacy": true }],
+          '@babel/syntax-dynamic-import',
       ],
     },
   },
@@ -122,14 +127,17 @@ const COMMON_LOADERS = [
 
 // Export
 // ===============================================================================
-export const JS_SOURCE = config.get('jsSourcePath');
+const JS_SOURCE = config.get('jsSourcePath');
 
-export default {
+module.exports = {
   output: {
     path: path.join(__dirname, 'docroot'),
   },
   resolve: {
     extensions: ['.js', '.jsx', '.css'],
+      fallback: {
+	  fs: false
+      },
     modules: [
       path.join(__dirname, 'src'),
       path.join(__dirname, 'assets'),
@@ -138,17 +146,11 @@ export default {
     ],
   },
   plugins: [
-    new webpack.IgnorePlugin(/vertx/), // https://github.com/webpack/webpack/issues/353
-    new CaseSensitivePathsPlugin(),
+      new webpack.IgnorePlugin({ resourceRegExp: /vertx/}), // https://github.com/webpack/webpack/issues/353
+      new CaseSensitivePathsPlugin(),
   ],
   module: {
     rules: COMMON_LOADERS,
-  },
-  node: {
-    console: true,
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty'
   },
   externals: {
     console:true,

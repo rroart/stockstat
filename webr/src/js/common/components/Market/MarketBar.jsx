@@ -4,10 +4,10 @@ import { Client, ConvertToSelect } from '../util'
 import Select from 'react-select';
 import { DropdownButton, MenuItem, ButtonToolbar, Button, Nav, Navbar, NavItem, FormControl } from 'react-bootstrap';
 import { ServiceParam, ServiceResult } from '../../types/main'
-import DatePicker from 'react-16-bootstrap-date-picker';
+import DatePicker from 'react-datepicker';
 
 class MarketBar extends PureComponent {
-  type : string;
+  type;
   constructor(props) {
     super(props);
     console.log("here");

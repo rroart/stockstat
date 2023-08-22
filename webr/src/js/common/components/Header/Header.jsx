@@ -5,7 +5,6 @@ import './Header.css';
 
 class Header extends PureComponent {
   render() {
-    const { pathname } = this.props.location;
 
     return (
       <header className="globalHeader">

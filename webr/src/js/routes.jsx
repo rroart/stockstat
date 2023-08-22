@@ -1,8 +1,11 @@
 import React from 'react';
 import {
+  useLocation,
+  useNavigate,
+  useParams,
+  BrowserRouter,
+  Routes,
   Route,
-  Switch,
-  withRouter,
 } from 'react-router-dom';
 import { Header } from './common/components/Header';
 import MainRouteHandler from './views/main';
@@ -16,16 +19,34 @@ const JustAnotherPage = () => (
 
 const HeaderWithRouter = withRouter(props => <Header {...props} />);
 
-module.exports = (
+function withRouter(Component) {
+  function ComponentWithRouterProp(props) {
+    let location = useLocation();
+    let navigate = useNavigate();
+    let params = useParams();
+    return (
+      <Component
+        {...props}
+        router={{ location, navigate, params }}
+      />
+    );
+  }
+
+  return ComponentWithRouterProp;
+}
+
+const amodule = (
   <div className="container">
     <HeaderWithRouter />
     <hr />
-    <div className="container__content">
-      <Switch>
-        <Route exact path="/" component={MainRouteHandler} />
-        <Route path="/page" component={JustAnotherPage} />
-        <Route path="*" component={MainRouteHandler} />
-      </Switch>
+      <div className="container__content">
+      <Routes>
+        <Route exact path="/" element={<MainRouteHandler/>} />
+        <Route path="/page" component={<JustAnotherPage/>} />
+          <Route path="*" component={<MainRouteHandler/>} />
+      </Routes>
     </div>
   </div>
 );
+
+export default amodule;

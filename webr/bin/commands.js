@@ -9,13 +9,13 @@ const option = process.argv[2];
 
 switch (option) {
   case 'lint':
-    shell.exec('cross-env eslint src/js/** server/** --format node_modules/eslint-friendly-formatter . --ext .js --ext .jsx  --cache; exit 0');
+    shell.exec('./node_modules/.bin/cross-env ./node_modules/.bin/eslint src/js/** server/** --format node_modules/eslint-friendly-formatter . --ext .js --ext .jsx  --cache; exit 0');
     break;
   case 'dev':
-    shell.exec(`cross-env HOST=${host} PORT=${port} webpack-dev-server --config webpack.config.dev-server.babel.js --hot --progress --no-info --inline --colors --content-base ./docroot`);
+    shell.exec(`./node_modules/.bin/cross-env HOST=${host} PORT=${port} ./node_modules/.bin/webpack-dev-server --config webpack.config.dev-server.babel.js --hot --progress`);
     break;
   case 'build':
-    shell.exec(`cross-env rimraf docroot && webpack --config webpack.config.build.babel.js --progress --display-error-details`);
+    shell.exec(`./node_modules/.bin/cross-env rimraf docroot && ./node_modules/.bin/webpack --config webpack.config.build.babel.js --progress`);
     break;
   default:
     // If the app type is invalid, stop execution of the file.

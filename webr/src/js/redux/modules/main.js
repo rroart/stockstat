@@ -1,7 +1,6 @@
 import { createAction, handleActions } from 'redux-actions';
 import { Map } from 'immutable';
 
-import type { mainType } from '../../common/types/main'
 import { Tabs, Tab } from 'react-bootstrap';
 import Immutable from 'immutable'
 
@@ -99,9 +98,9 @@ export const constants = {
 export const getAwesomeCode = createAction(GET_MAIN, () => ({}));
 export const getAwesomeR3 = createAction(GET_R3, () => ({}));
 export const getAwesomeR4 = createAction(GET_R4, () => ({}));
-export const updateMain = createAction(UPDATE_MAIN, (result2 : mainType) => ({ result2 }));
-export const updateR3 = createAction(UPDATE_R3, (result3 : string) => ({ result3 }));
-export const updateR4 = createAction(UPDATE_R4, (result4 : string) => ({ result4 }));
+export const updateMain = createAction(UPDATE_MAIN, (result2) => ({ result2 }));
+export const updateR3 = createAction(UPDATE_R3, (result3) => ({ result3 }));
+export const updateR4 = createAction(UPDATE_R4, (result4) => ({ result4 }));
 export const newtabMain3 = createAction(NEWTAB_MAIN3, () => ( new Tab()));
 export const newtabMain = createAction(NEWTAB_MAIN, (par) => ( par ) );
 //export const increment = createAction(INCREMENT);

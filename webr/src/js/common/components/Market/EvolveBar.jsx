@@ -7,7 +7,7 @@ import { ServiceParam, ServiceResult } from '../../types/main'
 import DatePicker from 'react-16-bootstrap-date-picker';
 
 class EvolveBar extends PureComponent {
-  type : string;
+  type;
   constructor(props) {
     super(props);
     console.log("here");

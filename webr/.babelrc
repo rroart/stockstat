@@ -1,19 +1,11 @@
 {
   "presets": [
-    ["env", {
-      "targets": {
-        "browsers": ["last 2 versions", "ie >= 10"]
-      }
-    }],
-    "react",
-    "stage-0"
+    [       "@babel/preset-env" ], [ "@babel/preset-react" ], ["@babel/preset-typescript", { "allExtensions": true, "isTSX": true } ]
   ],
   "env": {
     "development": {
-      "presets": ["react-hmre"]
     },
     "production": {
-      "presets": ["react-optimize"]
     },
   },
   "plugins": [
@@ -21,6 +13,6 @@
       "disable": {
         "production": true
       }
-    }]
+    }],
   ]
 }
