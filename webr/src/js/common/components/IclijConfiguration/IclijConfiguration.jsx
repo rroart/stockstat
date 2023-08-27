@@ -17,6 +17,7 @@ class IclijConfiguration extends PureComponent {
 }
 
   render() {
+    if (true) return;
   return(
   <div>
   <p>Empty</p>

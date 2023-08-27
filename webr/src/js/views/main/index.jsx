@@ -35,12 +35,22 @@ class MainView extends Component {
     this.props.getAwesomeR3();
     this.props.getAwesomeR4();
     this.props.getCount();
+    this.props.getMarkets();
+    this.props.getConfig();
+      const value = new Date().toISOString();
+      this.props.setenddate(value);
+
   }
 
   render() {
-      return (
+    console.log("here" + Object.keys(this.props));
+    console.log("here" + Object.keys({...this.props}));
+    const { main } = this.props;
+    console.log("here" +  main);
+    console.log("here" +  Object.keys(main));
+     return (
       <Fragment>
-        <LazyMain {...this.props} />
+        <LazyMain props = { this.props } />
         <ErrorBoundary>
           <MainWithError {...this.props} />
         </ErrorBoundary>

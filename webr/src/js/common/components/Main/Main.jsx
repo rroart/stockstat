@@ -14,6 +14,7 @@ import { ControlPanel } from '../ControlPanel'
 import { Test } from '../test'
 //import Misc from '../util'
 //import Client from '../util/Client'
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 const tablist = [];
 
@@ -21,43 +22,53 @@ function newtab() {   console.log("bla3")
 //main.watchNewTabMainnn
 }
 
-class Main extends React.Component {
-  newtab2() {
+function Main( {props} ) {
+  console.log("here" + Object.keys(props));
+  const [ tabs, setTabs ] = useState([]);
+  function callbackNewTab(data) {
+    tabs.push(data);
+    setTabs([...tabs]);
+    console.log("callb", tabs.length);
+    //main.tabs = tabs;
+  }
+
+  function newtab2() {
     console.log("bla4")
-    const { main } = this.props;
+    const { main } = props;
     main.watchNewTabMain()
   }
 
-  newtab3() {
+  function newtab3() {
     console.log("bla4")
-    //const { main } = this.props;
+    //const { main } = props;
     console.log(this);
-    console.log(this.props);
-    //console.log(this.props.updateR3());
-    //var me = this.props.updateR3();
+    console.log(props);
+    //console.log(props.updateR3());
+    //var me = props.updateR3();
     //console.log(me)
     console.log("bla5");
-    this.props.newtabMain(['bla']);
+    props.newtabMain(['bla']);
   }
 
-  onIncrementAsync() { this.props.incrementasync() }
-  onIncrement() { this.props.increment() }
-  onIncrement2() { this.props.increment2() }
+  function onIncrementAsync() { props.incrementasync() }
+ function  onIncrement() { props.increment() }
+  function onIncrement2() { props.increment2() }
 
-  getanewtab(data, num) {
-  return(
-          <Tab key={num} eventKey={num} title="Result">
-	    { data }
-          </Tab>
-	  )
-}
+  function getanewtab(data, num) {
+    return (
+      <Tab key={num} eventKey={num} title="Result">
+        {data}
+      </Tab>
+    )
+  }
 
-  render() {
-    const { main } = this.props;
+  const { main } = props;
+    console.log(main);
+    console.log(Object.keys(main));
     const result = main && main.result2 ? main.result2 : null;
     const result3 = main && main.result3 ? main.result3 : null;
     const count = main && main.count ? main.count : null;
-    const tabs = main && main.tabs ? main.tabs : null;
+    //const tabs = main && main.tabs ? main.tabs : null;
 
 var mytabs = tabs;
 var map = new Object();
@@ -69,12 +80,14 @@ map['title']='tit';
 	  console.log("arr");
 	  console.log(tabs);
 	  console.log(arrayLength);
+	  console.log(Object.keys(main));
+	  console.log(result);
 	  for (var i = 0; i < arrayLength; i++) {
     	  //alert(myStringArray[i]);
     //Do something
 }
 var nums = [ [ '1' , '2'], ['3' , '4'], ['5', '6']];
-    if (result && result.size && result.size > 0) {
+    if (result /*&& result.size && result.size > 0*/) {
       return (
         <Fragment>
           <h1>Stockstat</h1>
@@ -82,30 +95,30 @@ var nums = [ [ '1' , '2'], ['3' , '4'], ['5', '6']];
         <Tabs defaultActiveKey={1} id="maintabs">
           <Tab eventKey={1} title="Market">
             <h2>Market</h2>
-            <Market {...this.props}/>
+            <Market props = { props } callbackNewTab = {callbackNewTab} />
           </Tab>
           <Tab eventKey={2} title="Configuration">
             <h2>Configuration</h2>
-	    <Configuration {...this.props}/>
+	    <Configuration props = { props }/>
           </Tab>
           <Tab eventKey={3} title="Market">
             <h2>Iclij Market</h2>
-            <IclijMarket {...this.props}/>
+            <IclijMarket props = { props } callbackNewTab = {callbackNewTab} />
           </Tab>
           <Tab eventKey={4} title="Configuration">
             <h2>Iclij Configuration</h2>
-	    <IclijConfiguration {...this.props}/>
+	    <IclijConfiguration props = { props }/>
           </Tab>
           <Tab eventKey={5} title="Control Panel">
               <h2>Control Panel</h2>
-	      <ControlPanel {...this.props}/>
+	      <ControlPanel props = { props }/>
           </Tab>
-	  { mytabs.map((item, index) => this.getanewtab(item, 6 + index)) }
+	  { mytabs.map((item, index) => getanewtab(item, 6 + index)) }
         </Tabs>
         <Button
        bsStyle="primary"
        onClick={
-         () => { this.newtab3() }
+         () => { newtab3() }
 	 }
      >
      New tab
@@ -113,7 +126,7 @@ var nums = [ [ '1' , '2'], ['3' , '4'], ['5', '6']];
         <Button
        bsStyle="primary"
        onClick={
-         () => { this.onIncrementAsync() }
+         () => { onIncrementAsync() }
        }
      >
      Async
@@ -121,7 +134,7 @@ var nums = [ [ '1' , '2'], ['3' , '4'], ['5', '6']];
         <Button
        bsStyle="primary"
        onClick={
-         () => { this.onIncrement() }
+         () => { onIncrement() }
        }
      >
      Inc
@@ -129,7 +142,7 @@ var nums = [ [ '1' , '2'], ['3' , '4'], ['5', '6']];
         <Button
        bsStyle="primary"
        onClick={
-         () => { this.onIncrement2() }
+         () => { onIncrement2() }
        }
      >
      Inc2
@@ -138,7 +151,7 @@ var nums = [ [ '1' , '2'], ['3' , '4'], ['5', '6']];
           <p>If you see this screen, it means you are all setup \o/</p>
           <p>The following JSON are showing contents coming from Redux, Saga and Config.</p>
           <pre>
-            {JSON.stringify(result.toJS(), undefined, 2)}
+            {JSON.stringify(result/*.toJS()*/, undefined, 2)}
           </pre>
 	  <h4>Affero GPL</h4>
 </div>
@@ -147,6 +160,5 @@ var nums = [ [ '1' , '2'], ['3' , '4'], ['5', '6']];
     }
     return <div />;
   }
-}
 
-export default Main;
+export default memo(Main);

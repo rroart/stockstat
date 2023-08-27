@@ -6,7 +6,7 @@ import { ConfigMaps, ConfigData, GuiSize } from '../../common/types/main'
 
 import { Client, ConvertToSelect } from '../../common/components/util'
 import { ServiceParam, ServiceResult, NeuralNetCommand, IclijServiceParam, IclijServiceResult } from '../../common/types/main'
-import { MyTable } from '../../common/components/Table'
+import { MyTable } from '../../common/components/MyTable'
 
 export function* fetchMainData() {
   // pretend there is an api call

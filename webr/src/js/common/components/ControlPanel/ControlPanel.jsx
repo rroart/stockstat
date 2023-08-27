@@ -15,28 +15,28 @@ class ControlPanel extends PureComponent {
         };
 	const res = fetch(url, settings);
 	//const data = await res.json();
-    }	
-    
+    }
+
     invalidatecache(event, props) {
         this.actionbutton([ '/cache/invalidate' ]);
     }
-    
+
     dbupdatestart(event, props) {
         this.actionbutton([ '/db/update/start' ]);
     }
-    
+
     dbupdateend(event, props) {
         this.actionbutton([ '/db/update/end' ]);
     }
-    
+
     eventpause(event, props) {
         this.actionbutton([ '/event/pause' ]);
     }
-    
+
     eventcontinue(event, props) {
         this.actionbutton([ '/event/continue' ]);
     }
-    
+
 
     render() {
 	return(
@@ -44,11 +44,9 @@ class ControlPanel extends PureComponent {
 		<p>Empty</p>
 		<TaskList {...this.props}/>
 		<Navbar>
-		    <Navbar.Header>
 			<Navbar.Brand>
 			    Brand
 			</Navbar.Brand>
-		    </Navbar.Header>
 		    <Nav>
 			<NavItem eventKey={1} href="#">
 			    <Button

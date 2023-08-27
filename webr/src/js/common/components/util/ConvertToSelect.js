@@ -37,5 +37,24 @@ function convert2(list) {
   return myArray;
 }
 
-const ConvertToSelect = { convert, convert2 };
+function convert3(list) {
+  console.log("here");
+  //console.log(list);
+  //console.log(typeof list);
+  var myArray = [];
+  //console.log(list.size)
+  for(let i in list) {
+    //console.log(list[i]);
+    var item = {
+      label: list[i],
+      value: list[i],
+    }
+    myArray.push(item);
+  }
+  //console.log(typeof myArray);
+  //console.log(myArray);
+  return myArray;
+}
+
+const ConvertToSelect = { convert, convert2, convert3 };
 export default ConvertToSelect;

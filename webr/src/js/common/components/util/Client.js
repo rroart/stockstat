@@ -7,7 +7,7 @@ function getPort() {
     if (typeof env.REACT_APP_MYPORT !== 'undefined') {
 	return env.REACT_APP_MYPORT;
     }
-    return 80;
+    return 12345; // 80;
 }
 
 function getHost() {
@@ -24,7 +24,7 @@ function getIPort() {
     if (typeof env.REACT_APP_MYIPORT !== 'undefined') {
         return env.REACT_APP_MYIPORT;
     }
-    return 80;
+    return 12345; // 80;
 }
 
 function getIHost() {
@@ -41,7 +41,7 @@ function getAPort() {
     if (typeof env.REACT_APP_MYAPORT !== 'undefined') {
         return env.REACT_APP_MYAPORT;
     }
-    return 80;
+    return 12347; // 80;
 }
 
 function getAHost() {

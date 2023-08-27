@@ -7,18 +7,13 @@ import { DropdownButton, MenuItem, ButtonToolbar, Nav, Navbar, NavItem, FormCont
 import IclijMarketBar from './IclijMarketBar';
 import IclijEvolveBar from './IclijEvolveBar';
 
-class IclijMarket extends PureComponent {
-  constructor() {
-    super();
-  }
-
-  render() {
+function IclijMarket( { props } ) {
     return (
       <div>
-    <IclijMarketBar {...this.props}/>
+    <IclijMarketBar props = { props }/>
       </div>
     );
   }
-}
+
 
 export default IclijMarket;

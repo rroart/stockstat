@@ -6,76 +6,57 @@ import { DropdownButton, MenuItem, ButtonToolbar, Button, Nav, Navbar, NavItem, 
 import { ServiceParam, ServiceResult } from '../../types/main'
 import DatePicker from 'react-16-bootstrap-date-picker';
 
-class EvolveBar extends PureComponent {
-  type;
-  constructor(props) {
-    super(props);
-    console.log("here");
-    console.log(props);
-    console.log(this.props);
-      var value = new Date().toISOString();
-      console.log(this.props);
-      this.props.setenddate(value);
-    console.log("here");
-    //console.log(this.state.markets);
-}
+function EvolveBar( { props }) {
 
-  resetRecommender(event, props) {
+  function resetRecommender(event, props) {
 
   }
 
-  resetMLMACD(event, props) {
+  function resetMLMACD(event, props) {
     props.setconfigvaluemap([ 'aggregators.mlmacd.mlconfig', null ]);
   }
 
-  resetMlindicator(event, props) {
+  function resetMlindicator(event, props) {
     props.setconfigvaluemap([ 'aggregators.indicator.mlconfig', null ]);
   }
 
-  resetPredictorLSTM(event, props) {
+  function resetPredictorLSTM(event, props) {
     props.setconfigvaluemap([ 'machinelearning.tensorflow.lstm.config', null ]);
   }
 
-  evolveRecommender(event, props) {
+  function evolveRecommender(event, props) {
     props.getevolve(['getevolverecommender', false, props.main.config, '']);
   }
 
-  evolveMLMACD(event, props) {
+  function evolveMLMACD(event, props) {
     props.getevolve(['getevolvenn', false, props.main.config, 'mlmacd']);
   }
 
-  evolveMlindicator(event, props) {
+  function evolveMlindicator(event, props) {
     props.getevolve(['getevolvenn', false, props.main.config, 'mlindicator']);
   }
 
-  evolvePredictorLSTM(event, props) {
+  function evolvePredictorLSTM(event, props) {
     props.getevolve(['getevolvenn', false, props.main.config, 'predictorlstm']);
   }
 
-  evolveAndSetRecommender(event, props) {
+ function  evolveAndSetRecommender(event, props) {
     props.getevolve(['getevolverecommender', true, props.main.config, '']);
   }
 
-  evolveAndSetMLMACD(event, props) {
+  function evolveAndSetMLMACD(event, props) {
     props.getevolve(['getevolvenn', true, props.main.config, 'mlmacd']);
   }
 
-  evolveAndSetMlindicator(event, props) {
+  function evolveAndSetMlindicator(event, props) {
     props.getevolve(['getevolvenn', true, props.main.config, 'mlindicator']);
   }
 
-  evolveAndSetPredictorLSTM(event, props) {
+  function evolveAndSetPredictorLSTM(event, props) {
     props.getevolve(['getevolvenn', true, props.main.config, 'predictorlstm']);
   }
 
-/*
-  componentDidMount() {
-    this.props.getMarkets();
-  }
-  */
-
-  render() {
-    const { main } = this.props;
+    const { main } = props;
     console.log(main);
     const markets = main && main.markets ? main.markets : null;
     const startdate = main && main.startdate ? main.startdate : null;
@@ -88,80 +69,59 @@ class EvolveBar extends PureComponent {
     return (
       <div>
       <Navbar>
-        <Navbar.Header>
-          <Navbar.Brand>
-            <a href="#home">{this.type}</a>
-          </Navbar.Brand>
-        </Navbar.Header>
         <Nav>
           <NavItem eventKey={1} href="#">
-	    <Button bsStyle="primary" onClick={ (e) => this.resetRecommender(e, this.props) } >Reset recommender</Button>
+	    <Button bsStyle="primary" onClick={ (e) => resetRecommender(e, props) } >Reset recommender</Button>
           </NavItem>
           <NavItem eventKey={2} href="#">
-	    <Button bsStyle="primary" onClick={ e => this.evolveRecommender(e, this.props) } >Evolve recommender</Button>
+	    <Button bsStyle="primary" onClick={ e => evolveRecommender(e, props) } >Evolve recommender</Button>
           </NavItem>
           <NavItem eventKey={3} href="#">
-            <Button bsStyle="primary" onClick={ (e) => this.evolveAndSetRecommender(e, this.props) } >Evolve recommender and set</Button>
+            <Button bsStyle="primary" onClick={ (e) => evolveAndSetRecommender(e, props) } >Evolve recommender and set</Button>
           </NavItem>
         </Nav>
        </Navbar>
       <Navbar>
-        <Navbar.Header>
-          <Navbar.Brand>
-            <a href="#home">{this.type}</a>
-          </Navbar.Brand>
-        </Navbar.Header>
         <Nav>
           <NavItem eventKey={1} href="#">
-	    <Button bsStyle="primary" onClick={ (e) => this.resetMLMACD(e, this.props) } >Reset MLMACD</Button>
+	    <Button bsStyle="primary" onClick={ (e) => resetMLMACD(e, props) } >Reset MLMACD</Button>
           </NavItem>
           <NavItem eventKey={2} href="#">
-	    <Button bsStyle="primary" onClick={ (e) => this.evolveMLMACD(e, this.props) } >Evolve MLMACD</Button>
+	    <Button bsStyle="primary" onClick={ (e) => evolveMLMACD(e, props) } >Evolve MLMACD</Button>
           </NavItem>
           <NavItem eventKey={3} href="#">
-            <Button bsStyle="primary" onClick={ (e) => this.evolveAndSetMLMACD(e, this.props) } >Evolve MLMACD and set</Button>
+            <Button bsStyle="primary" onClick={ (e) => evolveAndSetMLMACD(e, props) } >Evolve MLMACD and set</Button>
           </NavItem>
         </Nav>
       </Navbar>
       <Navbar>
-        <Navbar.Header>
-          <Navbar.Brand>
-            <a href="#home">{this.type}</a>
-          </Navbar.Brand>
-        </Navbar.Header>
         <Nav>
           <NavItem eventKey={1} href="#">
-	    <Button bsStyle="primary" onClick={ (e) => this.resetMlindicator(e, this.props) } >Reset mlindicator</Button>
+	    <Button bsStyle="primary" onClick={ (e) => resetMlindicator(e, props) } >Reset mlindicator</Button>
           </NavItem>
           <NavItem eventKey={2} href="#">
-	    <Button bsStyle="primary" onClick={ (e) => this.evolveMlindicator(e, this.props) } >Evolve mlindicator</Button>
+	    <Button bsStyle="primary" onClick={ (e) => evolveMlindicator(e, props) } >Evolve mlindicator</Button>
           </NavItem>
           <NavItem eventKey={3} href="#">
-            <Button bsStyle="primary" onClick={ (e) => this.evolveAndSetMlindicator(e, this.props) } >Evolve mlindicator and set</Button>
+            <Button bsStyle="primary" onClick={ (e) => evolveAndSetMlindicator(e, props) } >Evolve mlindicator and set</Button>
           </NavItem>
         </Nav>
       </Navbar>
       <Navbar>
-        <Navbar.Header>
-          <Navbar.Brand>
-            <a href="#home">{this.type}</a>
-          </Navbar.Brand>
-        </Navbar.Header>
         <Nav>
           <NavItem eventKey={1} href="#">
-	    <Button bsStyle="primary" onClick={ (e) => this.resetPredictorLSTM(e, this.props) } >Reset predictor lstm</Button>
+	    <Button bsStyle="primary" onClick={ (e) => resetPredictorLSTM(e, props) } >Reset predictor lstm</Button>
           </NavItem>
           <NavItem eventKey={2} href="#">
-	    <Button bsStyle="primary" onClick={ (e) => this.evolvePredictorLSTM(e, this.props) } >Evolve predictor lstm</Button>
+	    <Button bsStyle="primary" onClick={ (e) => evolvePredictorLSTM(e, props) } >Evolve predictor lstm</Button>
           </NavItem>
           <NavItem eventKey={3} href="#">
-            <Button bsStyle="primary" onClick={ (e) => this.evolveAndSetPredictorLSTM(e, this.props) } >Evolve predictor lstm and set</Button>
+            <Button bsStyle="primary" onClick={ (e) => evolveAndSetPredictorLSTM(e, props) } >Evolve predictor lstm and set</Button>
           </NavItem>
         </Nav>
        </Navbar>
       </div>
     );
   }
-}
 
 export default EvolveBar;

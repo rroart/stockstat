@@ -6,98 +6,79 @@ import { DropdownButton, MenuItem, ButtonToolbar, Button, Nav, Navbar, NavItem, 
 import { ServiceParam, ServiceResult } from '../../types/main'
 import DatePicker from 'react-datepicker';
 
-class MarketBar extends PureComponent {
-  type;
-  constructor(props) {
-    super(props);
-    console.log("here");
-    console.log(props);
-    console.log(this.props);
-      var value = new Date().toISOString();
-      console.log(this.props);
-      this.props.setenddate(value);
-    console.log("here");
-    //console.log(this.state.markets);
-}
+function MarketBar( { props }) {
 
-/*
-  componentDidMount() {
-    this.props.getMarkets();
-  }
-  */
-
-handleYearChange = (e) => {
+function handleYearChange() {
   console.log(e);
   console.log(this);
   const value = e.value;
   var result;
 }
 
-    handleChange(event, props) {
+    function handleChange(event, props) {
     console.log(event);
     console.log(event.value);
     console.log(props);
-    //this.props.setmarket({market: event.value});
+    //props.setmarket({market: event.value});
     props.setmarket(event.value);
     //props.setconfigvalue([ 'market', event.value ]);
     props.setconfigvalue([ 'market', event.value ]);
   }
-  
-    handleChangeML(event, props) {
+
+    function handleChangeML(event, props) {
     console.log(event);
     console.log(event.value);
     console.log(props);
-    //this.props.setmarket({market: event.value});
+    //props.setmarket({market: event.value});
     props.setmarket(event.value);
     //props.setconfigvalue([ 'market', event.value ]);
     props.setconfigvalue([ 'mlmarket', event.value ]);
   }
-  
-    resetML(event, props) {
+
+    function resetML(event, props) {
     console.log(event);
     console.log(event.value);
     console.log(props);
-    //this.props.setmarket({market: event.value});
+    //props.setmarket({market: event.value});
     props.setmlmarket(null);
     //props.setconfigvalue([ 'market', event.value ]);
     props.setconfigvalue([ 'mlmarket', null ]);
   }
-  
-    handleStartDateChange(event, props) {
+
+    function handleStartDateChange(event, props) {
     console.log(event);
     console.log(props);
     props.setstartdate(event);
   }
-  
-    handleEndDateChange(event, props) {
+
+    function handleEndDateChange(event, props) {
     console.log(event);
     console.log(props);
     props.setenddate(event);
     props.setconfigvalue([ 'enddate', event ]);
   }
-  
-    resetStartDate(event, props) {
+
+    function resetStartDate(event, props) {
     console.log(event);
     console.log(props);
     props.setstartdate(null);
   }
-  
-    resetEndDate(event, props) {
+
+    function resetEndDate(event, props) {
     console.log(event);
     console.log(props);
     props.setenddate(null);
     props.setconfigvalue([ 'enddate', null ]);
   }
-  
-    getMarketData(event, props) {
+
+    function getMarketData(event, props) {
     console.log(event);
     console.log(props);
     console.log(props.main.market);
     props.getcontent(props.main.config, props.main.market, props);
   }
-  
-  render() {
-    const { main } = this.props;
+
+   const { main } = props;
     console.log(main);
     const markets = main && main.markets ? main.markets : null;
     const startdate = main && main.startdate ? main.startdate : null;
@@ -108,50 +89,45 @@ handleYearChange = (e) => {
   console.log(markets);
   console.log(startdate);
   console.log(enddate);
-  var markets2 = ConvertToSelect.convert2(markets);
+  var markets2 = ConvertToSelect.convert3(markets);
   console.log(markets2);
     return (
       <div>
       <Navbar>
-        <Navbar.Header>
-          <Navbar.Brand>
-            <a href="#home">{this.type}</a>
-          </Navbar.Brand>
-        </Navbar.Header>
-        <Nav>
+          <Nav>
           <NavItem eventKey={1} href="#">
             Name
             <Select options="[{size:'5'}]"
-        onChange={e => this.handleChange(e, this.props)}
+        onChange={e => handleChange(e, props)}
         options={markets2}
       />
     </NavItem>
           <NavItem eventKey={1} href="#">
             Name
             <Select options="[{size:'5'}]"
-        onChange={e => this.handleChangeML(e, this.props)}
+        onChange={e => handleChangeML(e, props)}
         options={markets2}
       />
     </NavItem>
           <NavItem eventKey={1} href="#">
             Name
             <Select options="[{size:'5'}]"
-        onChange={e => this.resetML(e, this.props)}
+        onChange={e => resetML(e, props)}
         options={markets2}
       />
     </NavItem>
           <NavItem eventKey={2} href="#">
             Start date
-	    <DatePicker id="startdatepicker" value={startdate} onChange={e => this.handleStartDateChange(e, this.props)}/>
+	    <DatePicker id="startdatepicker" value={startdate} onChange={e => handleStartDateChange(e, props)}/>
 	    </NavItem>
           <NavItem eventKey={3} href="#">
             End date
-	    <DatePicker id="enddatepicker" value={enddate} onChange={e => this.handleEndDateChange(e, this.props)}/>
+	    <DatePicker id="enddatepicker" value={enddate} onChange={e => handleEndDateChange(e, props)}/>
 	    </NavItem>
           <NavItem eventKey={4} href="#">
         <Button
        bsStyle="primary"
-       onClick={ (e) => this.resetStartDate(e, this.props) }
+       onClick={ (e) => resetStartDate(e, props) }
      >
      Reset start date
      </Button>
@@ -159,7 +135,7 @@ handleYearChange = (e) => {
           <NavItem eventKey={5} href="#">
         <Button
        bsStyle="primary"
-       onClick={ (e) => this.resetEndDate(e, this.props) }
+       onClick={ (e) => resetEndDate(e, props) }
      >
      Reset end date
      </Button>
@@ -168,7 +144,7 @@ handleYearChange = (e) => {
         <Button
        bsStyle="primary"
        onClick={
-         (e) => this.getMarketData(e, this.props)
+         (e) => getMarketData(e, props)
        }
      >
      Get market data
@@ -179,6 +155,5 @@ handleYearChange = (e) => {
       </div>
     );
   }
-}
 
 export default MarketBar;

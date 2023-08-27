@@ -7,19 +7,13 @@ import { DropdownButton, MenuItem, ButtonToolbar, Nav, Navbar, NavItem, FormCont
 import MarketBar from './MarketBar';
 import EvolveBar from './EvolveBar';
 
-class Market extends PureComponent {
-  constructor() {
-    super();
-  }
-
-  render() {
-    return (
+function Market( { props } ) {
+   return (
       <div>
-    <MarketBar {...this.props}/>
-    <EvolveBar {...this.props}/>
+    <MarketBar props = { props }/>
+    <EvolveBar props = { props }/>
       </div>
     );
   }
-}
 
 export default Market;

@@ -17,6 +17,7 @@ class Configuration extends PureComponent {
 }
 
   render() {
+    if (true) return;
   return(
   <div>
   <p>Empty</p>
