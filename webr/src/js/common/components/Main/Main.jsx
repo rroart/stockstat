@@ -99,7 +99,7 @@ var nums = [ [ '1' , '2'], ['3' , '4'], ['5', '6']];
           </Tab>
           <Tab eventKey={2} title="Configuration">
             <h2>Configuration</h2>
-	    <Configuration props = { props }/>
+	    <Configuration props = { props } config = {main.config} configname = "config"/>
           </Tab>
           <Tab eventKey={3} title="Market">
             <h2>Iclij Market</h2>
@@ -107,7 +107,7 @@ var nums = [ [ '1' , '2'], ['3' , '4'], ['5', '6']];
           </Tab>
           <Tab eventKey={4} title="Configuration">
             <h2>Iclij Configuration</h2>
-	    <IclijConfiguration props = { props }/>
+	    <Configuration props = { props } config = {main.iconfig} configname = "iconfig"/>
           </Tab>
           <Tab eventKey={5} title="Control Panel">
               <h2>Control Panel</h2>

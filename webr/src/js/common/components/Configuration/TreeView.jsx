@@ -1,93 +1,75 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 
-import { ServiceParam, ServiceResult } from '../../types/main'
-import { Client, ConvertToSelect } from '../util'
-import Select from 'react-select';
-import { DropdownButton, MenuItem, ButtonToolbar, Nav, Navbar, NavItem, FormControl } from 'react-bootstrap';
+import { MyMap } from '../util'
 
-class TreeView extends PureComponent {
-  constructor(props) {
-    super(props);
-  }
-
-  getinput(type, key, value) {
+function TreeView( { props, config, map, configname } ) {
+  function getinput(type, key, value) {
     if (type == "java.lang.Boolean") {
-        return (<input type="checkbox" defaultChecked={value} onChange={e => this.handleCheckChange(e, key, this.props)}/>);
-  }
-  if (value != null) {
-  return (<input type="text" onChange={e => this.handleChange(e, key, this.props)} defaultValue={value}/>);
-  }
-}
-
-    handleCheckChange(event, key, props) {
-    console.log(key)
-    console.log(event);
-    console.log(event.target.checked);
-    console.log(props);
-    //this.props.setmarket({market: event.value});
-    props.setconfigvaluemap([ key, event.target.checked ]);
-  }
-  
-    handleChange(event, key, props) {
-    console.log(event);
-    console.log(event.target.value);
-    console.log(event.value);
-    console.log(props);
-    //this.props.setmarket({market: event.value});
-    props.setconfigvaluemap([ key, event.target.value ]);
-    //props.setconfigvaluemap({ key: event.target.value });
-  }
-  
-  getview(value, key, date) {
-  //console.log(this.props);
-  //console.log(value);
-  //console.log(key);
-  const mykey = date + key;
-  return(
-  <li key={mykey}>
-  <TreeView {...this.props} map={value}/>
-  </li>
-  )
-  }
-
-  render() {
-    //console.log(this);
-    const { main } = this.props;
-    //console.log(main);
-    const map = this.props.map
-  //console.log(map);
-  const config = main.config;
-  //console.log(config);
-  const textMap = config.get('configMaps').get('text');
-  const typeMap = config.get('configMaps').get('map');
-  const valueMap = config.get('configValueMap');
-  //console.log(typeMap);
-  //console.log(textMap);
-  const name = map.get('name');
-  const text = textMap.get(name);
-  const value = valueMap.get(name);
-  const type = typeMap.get(name);
-  //console.log(name);
-  //console.log(value);
-  //console.log(type);
-  const myinput = this.getinput(type, name, value);
-  //console.log(myinput);
-    const confMap = map.get('configTreeMap');
-    const now = Date.now();
-    const map2 = confMap.map((i, j) => this.getview(i, j, now));
-    const map3 = Array.from(map2.values());
-    if (name == "predictors[@enable]") {
-    console.log(valueMap.get("predictors[@enable]"));
-    console.log(valueMap.get("predictors.lstm.horizon"));
+      return (<input type="checkbox" defaultChecked={value} onChange={e => handleCheckChange(e, key, props)}/>);
     }
-  return(
-  <div>{myinput}{text}({name})
-	<ul>
-	   { map3 }
-	</ul>
-  </div>
-  )
+    if (value != null) {
+      return (<input type="text" onChange={e => handleChange(e, key, props)} defaultValue={value}/>);
+    }
   }
+
+  function handleCheckChange(event, key, props) {
+    if (config == "config") {
+      props.setconfigvaluemap([configname, key, event.target.checked]);
+    } else {
+      props.seticonfigvaluemap([configname, key, event.target.checked]);
+    }
+  }
+
+  function handleChange(event, key, props) {
+    if (config == "config") {
+      props.setconfigvaluemap([ configname, key, event.target.value ]);
+    } else {
+      props.seticonfigvaluemap([configname, key, event.target.checked]);
+    }
+  }
+
+  function getview(value, key, date) {
+    const mykey = date + key;
+    return(
+      <li key={mykey}>
+        <TreeView props = {props} config = {config} map={value} configname = { configname } />
+      </li>
+    )
+  }
+
+  console.log(props);
+  console.log(config);
+  console.log(Object.keys(config));
+  const configMaps = MyMap.myget(config, 'configMaps');
+  console.log(Object.keys(configMaps));
+  const textMap = MyMap.myget(configMaps, 'text');
+  const typeMap = MyMap.myget(configMaps, 'map');
+  const valueMap = MyMap.myget(config, 'configValueMap');
+  const name =  MyMap.myget(map, 'name');
+  const text =  MyMap.myget(textMap, name);
+  const value =  MyMap.myget(valueMap, name);
+  const type =  MyMap.myget(typeMap, name);
+  const myinput = getinput(type, name, value);
+  const confMap =  MyMap.myget(map, 'configTreeMap');
+  if (confMap === undefined) {
+    console.log("ccccc" + Object.keys(map));
+    console.log("ccccc" + (map));
+    return;
+  }
+  const now = Date.now();
+  const map2 = MyMap.mymap(confMap);
+  const itemlist = [];
+  for (let [key, value] of map2) {
+    itemlist.push(getview(value, key, now));
+  }
+  const map3 = itemlist; // Array.from(itemlist);
+  return(
+    <div>{myinput}{text}({name})
+      <ul>
+        { map3 }
+      </ul>
+    </div>
+  )
 }
 
 export default TreeView;

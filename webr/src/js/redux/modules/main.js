@@ -3,6 +3,7 @@ import { Map } from 'immutable';
 
 import { Tabs, Tab } from 'react-bootstrap';
 import Immutable from 'immutable'
+import { MyMap } from '../../common/components/util'
 
 const GET_MAIN = 'app/main/GET_MAIN';
 const GET_R3 = 'app/main/GET_R3';
@@ -28,6 +29,7 @@ const SETCONFIG2 = 'app/main/SETCONFIG2';
 const SETCONFIGVALUE = 'app/main/SETCONFIGVALUE';
 const SETCONFIGVALUE2 = 'app/main/SETCONFIGVALUE2';
 const SETCONFIGVALUEMAP = 'app/main/SETCONFIGVALUEMAP';
+const SETICONFIGVALUEMAP = 'app/main/SETICONFIGVALUEMAP';
 const GETCONFIG = 'app/main/GETCONFIG';
 const GETCONTENT = 'app/main/GETCONTENT';
 const GETCONTENT2 = 'app/main/GETCONTENT2';
@@ -72,6 +74,7 @@ export const constants = {
     SETCONFIGVALUE,
     SETCONFIGVALUE2,
     SETCONFIGVALUEMAP,
+    SETICONFIGVALUEMAP,
     GETCONFIG,
     GETCONTENT,
     GETCONTENT2,
@@ -120,6 +123,7 @@ export const setconfig2 = createAction(SETCONFIG2, (iconfig) => ( { iconfig } ) 
 export const setconfigvalue = createAction(SETCONFIGVALUE, ( array ) => ( array ) );
 export const seticonfigvalue = createAction(SETCONFIGVALUE2, ( array ) => ( array ) );
 export const setconfigvaluemap = createAction(SETCONFIGVALUEMAP, ( array ) => ( array ) );
+export const seticonfigvaluemap = createAction(SETICONFIGVALUEMAP, ( array ) => ( array ) );
 export const getConfig = createAction(GETCONFIG, () => ( {} ) );
 export const getcontent = createAction(GETCONTENT, (config, market, props) => ( { config, market, props } ) );
 export const getcontent2 = createAction(GETCONTENT2, (config, market, props) => ( { config, market, props } ) );
@@ -138,7 +142,7 @@ export const getsinglemarket = createAction(GETSINGLEMARKET, (config, market, pr
 export const getimproveprofit = createAction(GETIMPROVEPROFIT, (config, market, props) => ( { config, market, props } ) );
 export const getimproveabovebelow = createAction(GETIMPROVEABOVEBELOW, (config, market, props) => ( { config, market, props } ) );
 export const getverify = createAction(GETVERIFY, (config, market, props, loop) => ( { config, market, props, loop } ) );
-				      
+
 export const actions = {
   getAwesomeCode,
   getAwesomeR3,
@@ -163,6 +167,7 @@ export const actions = {
     setconfigvalue,
     seticonfigvalue,
     setconfigvaluemap,
+    seticonfigvaluemap,
     getConfig,
     getMarkets,
     getcontent,
@@ -207,10 +212,10 @@ export const reducers = {
 	state.set({
 	    'tabs': gettabs4(state, payload)
 	})
-	
+
 	//console.log('ppp')
 	//console.log(payload)
-	//const newArr = state.get('tabs').concat([payload])  
+	//const newArr = state.get('tabs').concat([payload])
         //const idPositions = newArr.map(el => el.id)
         //const newPayload = newArr.filter((item, pos, arr) => {
         //return idPositions.indexOf(item.id) == pos;
@@ -278,6 +283,10 @@ export const reducers = {
 	state.merge({
 	    config: getConfigValueMapAfterSet(state, payload)
     }),
+  [SETICONFIGVALUEMAP]: (state, { payload }) =>
+  state.merge({
+    iconfig: getConfigValueMapAfterSet(state, payload)
+  }),
 }
 
 function gettabs(state) {
@@ -338,9 +347,9 @@ function getConfigAfterSet(state, payload) {
 }
 
 function getConfigValueMapAfterSet(state, payload) {
-    var config = state.get('config');
-    const valueMap = config.get('configValueMap');
-    return config.set('configValueMap', valueMap.set(payload[0], payload[1]));
+  var config = state.get(payload[0]);
+  const valueMap = MyMap.myget(config, 'configValueMap');
+  return MyMap.myset(config, 'configValueMap', MyMap.myset(valueMap, payload[1], payload[2]));
 }
 
 export const initialState = () =>
