@@ -8,8 +8,8 @@ import TreeView from './TreeView';
 import { MyMap } from '../util'
 
 function ConfigTree( { props, config, configname } ) {
-  function  getview(value, key, date) {
-    const mykey = date + key;
+  function getview(value, key) {
+    const mykey = key + value;
     return(
       <li key={mykey}>
         <TreeView props = {props} config = {config} map={value} configname = { configname } />
@@ -25,11 +25,10 @@ function ConfigTree( { props, config, configname } ) {
   }
   //console.log(configTreeMap);
   const confMap = MyMap.myhas(configTreeMap, 'configTreeMap') ? MyMap.myget(configTreeMap, 'configTreeMap') : [];
-  const now = Date.now();
   const map2 = MyMap.mymap(confMap);
   const itemlist = [];
   for (let [key, value] of map2) {
-    itemlist.push(getview(value, key, now));
+    itemlist.push(getview(value, key));
   }
   const map3 = itemlist; // Array.from(itemlist);
   return(
