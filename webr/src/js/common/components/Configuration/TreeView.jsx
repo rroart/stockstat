@@ -29,7 +29,7 @@ function TreeView( { props, config, map, configname } ) {
   }
 
   function getview(value, key) {
-    const mykey = key +_ value;
+    const mykey = key + value;
     return(
       <li key={mykey}>
         <TreeView props = {props} config = {config} map={value} configname = { configname } />
