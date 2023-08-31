@@ -1,12 +1,14 @@
 import React, { PureComponent } from 'react';
 
-import { Client, ConvertToSelect } from '../util'
+import { Client, Config, ConvertToSelect } from '../util'
 import Select from 'react-select';
 import { DropdownButton, MenuItem, ButtonToolbar, Button, Nav, Navbar, NavItem, FormControl } from 'react-bootstrap';
 import { ServiceParam, ServiceResult } from '../../types/main'
 import DatePicker from 'react-date-picker';
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 function IclijEvolveBar( { props } ) {
+  const [ param, setParam ] = useState(null);
 
   function resetRecommender(event, props) {
 
@@ -56,7 +58,26 @@ function IclijEvolveBar( { props } ) {
     props.getevolve(['getevolvenn', true, props.main.config, 'predictorlstm']);
   }
 
-    const { main } = props;
+  useEffect(() => {
+    if (param === undefined || param == null) {
+      return;
+    }
+    const result = Client.fetchApi.search("/" + param.webpath, param);
+    result.then(function(result) {
+      const list = result.list;
+      console.log(result);
+      console.log(list);
+      const baseurl = Client.geturl("/");
+      if (param.async === true) {
+        callbackAsync(result.uuid);
+      } else {
+        const tables = MyTable.getTabNew(result.list, Date.now(), callbackNewTab, props);
+        callbackNewTab(tables);
+      }
+    });
+  }, [param]);
+
+  const { main } = props;
     console.log(main);
     const markets = main && main.markets ? main.markets : null;
     const startdate = main && main.startdate ? main.startdate : null;
@@ -125,4 +146,4 @@ function IclijEvolveBar( { props } ) {
   }
 }
 
-export default IclijEvolveBar;
+export default memo(IclijEvolveBar);

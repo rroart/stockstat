@@ -1,19 +1,12 @@
-import React, { PureComponent } from 'react';
-
-import { ServiceParam, ServiceResult } from '../../types/main'
-import { Client, ConvertToSelect } from '../util'
-import Select from 'react-select';
-import { DropdownButton, MenuItem, ButtonToolbar, Nav, Navbar, NavItem, FormControl } from 'react-bootstrap';
+import React, {memo} from 'react';
 import MarketBar from './MarketBar';
-import EvolveBar from './EvolveBar';
 
-function Market( { props } ) {
-   return (
-      <div>
-    <MarketBar props = { props }/>
-    <EvolveBar props = { props }/>
-      </div>
-    );
-  }
+function Market( { props, callbackNewTab } ) {
+  return (
+    <div>
+      <MarketBar props = { props } callbackNewTab = { callbackNewTab } />
+    </div>
+  );
+}
 
-export default Market;
+export default memo(Market);

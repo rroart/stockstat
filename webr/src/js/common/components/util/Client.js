@@ -24,7 +24,7 @@ function getIPort() {
     if (typeof env.REACT_APP_MYIPORT !== 'undefined') {
         return env.REACT_APP_MYIPORT;
     }
-    return 12345; // 80;
+    return 12346; // 80;
 }
 
 function getIHost() {
