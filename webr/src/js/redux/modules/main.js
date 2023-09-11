@@ -315,7 +315,7 @@ function gettabs4(state, payload) {
 }
 
  function gettabs2(state, payload) {
-    var tabs = []
+    var tabs = [];
     console.log("state0");
     console.log(state);
     var arr = (state.get('tabs'));
@@ -343,7 +343,7 @@ function gettabs3(state) {
 
 function getConfigAfterSet(state, payload) {
     var config = state.get('config');
-    return config.set(payload[0], payload[1]);
+    return MyMap.myset(config, payload[0], payload[1]);
 }
 
 function getConfigValueMapAfterSet(state, payload) {

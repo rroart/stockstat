@@ -159,13 +159,13 @@ function IclijMarketBar( { props, callbackNewTab } ) {
     }
     const result = Client.fetchApi.search2("/" + param.webpath, param);
     result.then(function(result) {
-      const list = result.list;
+      const list = result.lists;
       console.log(result);
       console.log(list);
       if (param.async === true) {
         callbackAsync(result.uuid);
       } else {
-        const tables = MyTable.getTabNew(result.list, Date.now(), callbackNewTab, props);
+        const tables = MyTable.getTabNew(result.lists, Date.now(), callbackNewTab, props);
         callbackNewTab(tables);
       }
     });

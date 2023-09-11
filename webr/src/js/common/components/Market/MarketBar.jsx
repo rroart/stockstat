@@ -1,15 +1,18 @@
 import React, { PureComponent } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 import { Client, Config, ConvertToSelect } from '../util'
 import Select from 'react-select';
 import { DropdownButton, MenuItem, ButtonToolbar, Button, Nav, Navbar, NavItem, FormControl } from 'react-bootstrap';
-import { ServiceParam, ServiceResult } from '../../types/main'
 import DatePicker from 'react-datepicker';
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { ServiceParam, ServiceResult, NeuralNetCommand, IclijServiceParam, IclijServiceResult, GuiSize } from '../../types/main'
+import MyTable from "../MyTable/MyTable";
+import MyMap from "../util/MyMap";
 
 function MarketBar( { props, callbackNewTab }) {
   const [ param, setParam ] = useState(null);
   const [ uuids, setUuids ] = useState( new Set() );
+  const [ graphid, setGraphid ] = useState(null);
 
   function handleChange(event, props) {
     console.log(event);
@@ -68,7 +71,8 @@ function MarketBar( { props, callbackNewTab }) {
   }
 
   function getMarketData(event, props) {
-    const param = Config.getParam(main.props.config, "/getcontent");
+    console.log(props);
+    const param = Config.getParam(props.main.config, "getcontent");
     var neuralnetcommand = new NeuralNetCommand();
     neuralnetcommand.mllearn = false;
     neuralnetcommand.mlclassify = true;
@@ -89,7 +93,7 @@ function MarketBar( { props, callbackNewTab }) {
       if (param.async === true) {
         callbackAsync(result.uuid);
       } else {
-        const tables = MyTable.getTabNew(result.list, Date.now(), callbackNewTab, props);
+        const tables = MyTable.getTabNewOld(result.list, Date.now(), callbackGraph, props);
         callbackNewTab(tables);
       }
     });
@@ -99,6 +103,30 @@ function MarketBar( { props, callbackNewTab }) {
     uuids.push(uuid);
     setUuids([...uuids]);
   }, [uuids]);
+
+  const callbackGraph = useCallback( (value) => {
+    setGraphid(value);
+  }, [graphid]);
+
+  useEffect(() => {
+    if (graphid === null) {
+      return;
+    }
+    const param = Config.getParam(props.main.iconfig, "getcontentgraph2");
+
+    const id = graphid;
+    const ids = new Set([param.market + "," + id]);
+    param.ids = ids;
+
+    var guisize = new GuiSize();
+    guisize.x=600;
+    guisize.y=400;
+
+    param.guiSize = guisize;
+
+    setParam(param);
+  }, [graphid]);
+
 
   const { main } = props;
   console.log(main);
