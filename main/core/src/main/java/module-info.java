@@ -22,7 +22,7 @@ open module core {
     requires common.cache;
     requires common.filesystem.client;
     //requires common.util;
-    requires commons.lang;
+    //requires commons.lang;
     requires commons.math3;
     requires db;
     //requires guava;
@@ -83,4 +83,5 @@ open module core {
     requires springdata;
     requires iclij.common.config;
     requires iclij.common.service;
+    requires ml.spark;
 }
