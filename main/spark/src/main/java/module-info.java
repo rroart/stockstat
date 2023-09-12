@@ -17,7 +17,7 @@ open module core {
     requires common.service;
     requires common.cache;
     //requires common.util;
-    requires commons.lang;
+    //requires commons.lang;
     requires commons.math3;
     requires db;
     //requires guava;
