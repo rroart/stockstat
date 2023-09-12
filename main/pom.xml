@@ -20,6 +20,8 @@
     <module>dbdao</module>
     <module>etl</module>
     <module>evolution</module>
+    <!--module>evolve</module-->
+    <module>machinelearning</module>
     <module>ml</module>
     <module>mldao</module>
     <module>model</module>
