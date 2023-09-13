@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras.layers import Dense, Activation, Dropout, GRU, TimeDistributed
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.optimizers import Adam, RMSprop
+from tensorflow.keras.optimizers.legacy import Adam, RMSprop
 
 from .model import MyModel
 
@@ -13,7 +13,7 @@ class Model(MyModel):
     if classify:
       loss = 'sparse_categorical_crossentropy'
       activation = 'softmax'
-      optimizer = Adam(lr = config.lr)
+      optimizer = Adam(learning_rate = config.lr)
     else:
       loss = 'mean_squared_error'
       activation = 'linear'

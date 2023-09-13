@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras.layers import Dense, Activation, Dropout, Conv2D, MaxPooling2D, Flatten, Convolution2D, BatchNormalization, LeakyReLU, Dropout
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers.legacy import Adam
 
 from .model import MyModel
 
@@ -87,7 +87,7 @@ class Model(MyModel):
     self.dense_3 = Dense(32, activation='relu')
     #self.dense_4 = Dense(myobj.classes, activation='sigmoid')
     self.dense_4 = Dense(myobj.classes, activation='softmax')
-    #adam = tf.keras.optimizers.Adam(lr=1)
+    #adam = tf.keras.optimizers.Adam(learning_rate=1)
     self.model.compile(optimizer='adadelta',
                        loss=loss,
                        metrics=['accuracy'])

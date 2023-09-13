@@ -3,7 +3,7 @@ import keras
 #from tensorflow.keras import layers
 from keras.layers import Dense, Activation, Dropout
 #from keras.models import Sequential
-from tensorflow.keras.optimizers import Adam, RMSprop
+from tensorflow.keras.optimizers.legacy import Adam, RMSprop
 
 #from .mymodelseq import MyModelSeq
 from .model import MyModel
@@ -16,7 +16,7 @@ class Model(MyModel):
     if classify:
       loss = 'sparse_categorical_crossentropy'
       activation = 'softmax'
-      optimizer = Adam(lr = config.lr)
+      optimizer = Adam(learning_rate = config.lr)
     else:
       loss = 'mean_squared_error'
       activation = 'linear'
@@ -39,7 +39,7 @@ class Model(MyModel):
     self.dense_3 = Dense(32, activation='relu')
     #self.dense_4 = Dense(myobj.classes, activation='sigmoid')
     self.dense_4 = Dense(myobj.classes, activation='softmax')
-    #adam = tf.keras.optimizers.Adam(lr=1)
+    #adam = tf.keras.optimizers.Adam(learning_rate=1)
     self.model.compile(optimizer = optimizer,
                        loss=loss,
                        metrics=['accuracy'])
