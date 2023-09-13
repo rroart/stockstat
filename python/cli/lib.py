@@ -7,7 +7,7 @@ import pandas as pd
 #import tensorflow as tf
 import numpy as np
 import scipy.stats
-import psycopg2
+#import psycopg2
 import matplotlib.pyplot as plt
 
 from datetime import datetime, timedelta
@@ -37,7 +37,8 @@ import const
 
 from collections import OrderedDict
 
-#from sqlalchemy import create_engine
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
 
 doprint = False
 
@@ -51,11 +52,11 @@ filterweekend = True
 
 dovalidate = False
 
-def getmetas(conn):
-    return pd.read_sql_query('select * from meta', con=conn)
+def getmetas(session):
+    return pd.read_sql_query('select * from meta', session.bind)
 
-def getstocks(conn):
-    return pd.read_sql_query('select * from stock', con=conn)
+def getstocks(session):
+    return pd.read_sql_query('select * from stock', session.bind)
 
 def getmarketmeta(metas, market):
     return metas.loc[(metas.marketid == market)]
@@ -133,9 +134,10 @@ class MyDates:
             startoffset = start
             start = None
         if isinstance(start, str):
-            pdstart = np.datetime64(start)
-            startdateindex = np.where(listdates == pdstart)
+            pdstart = pd.Timestamp(start) #np.datetime64(start)
+            startdateindex = np.where(np.asarray(listdates) == pdstart)
             #print(startdateindex, pdstart, listdates)
+            #print("d", start, pdstart, type(pdstart), type(start), type(listdates), type(listdates[0]), type(startdateindex), startdateindex)
             startdateindex = startdateindex[0][0]
         if end is None:
             enddateindex = len(listdates) - 1
@@ -146,8 +148,8 @@ class MyDates:
             endoffset = end
             end = None
         if isinstance(end, str):
-            pdend = np.datetime64(end)
-            enddateindex = np.where(listdates == pdend)
+            pdend = pd.Timestamp(end) #np.datetime64(end)
+            enddateindex = np.where(np.asarray(listdates) == pdend)
             enddateindex = enddateindex[0][0]
         print(start)
         print(end)
@@ -214,6 +216,7 @@ class StockData:
         self.listid = split(self.stocks, self.stocks.id)
         self.periodtexts = getperiodtexts(market)
         self.dates = MyDates.getdates(self.listdates, start, end)
+        print("d", self.dates)
         self.datedstocklists = getdatedstocklists(self.listdate, self.listdates, self.dates, numberdays, tableintervaldays)
         self.days = self.dates.endindex - self.dates.startindex + 1
         if numberdays is not None:
@@ -2524,8 +2527,9 @@ def improvesimulateinvestGwrap(market, startdate, enddate, ga, adviser, indicato
 def improvesimulateinvestG(market, startdate = None, enddate = None, ga = 0, adviser = None, indicatorPure = None, delay = 1, intervalwhole = True, stocks = None, volumelimits = None, filters = None, futurecount = 0, futuretime = 0, improvefilters = False):
     mp.Process(target=improvesimulateinvestGwrap, args=(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole, stocks, volumelimits, filters, futurecount, futuretime, improvefilters)).start()
 
-#engine = create_engine('postgresql://stockread@localhost:5432/stockstat')
-conn = psycopg2.connect("host=localhost dbname=stockstat user=stockread password=password")
+engine = create_engine('postgresql://stockread:password@localhost:5432/stockstat')
+session = Session(bind=engine)
+#conn = psycopg2.connect("host=localhost dbname=stockstat user=stockread password=password")
 
 LUCKY=[ { 'lucky' : 0.0, 'stable' : 0.0, 'correlation' : 0.0 } ] * 10
 ZERO=[ { 'lucky' : 0.0, 'stable' : 0.0 } ] * 10
@@ -2698,11 +2702,11 @@ def copydb(indb, outdb):
     
 if not 'allstocks' in globals():
     print("Loadings stocks")
-    allstocks = getstocks(conn)
+    allstocks = getstocks(session)
     print("Stocks loaded");
     if filterweekend:
         allstocks = etl.filterweekend(allstocks)
-    allmetas = getmetas(conn)
+    allmetas = getmetas(session)
 
 plt.close('all')
 
