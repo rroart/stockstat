@@ -5,7 +5,7 @@ from keras import backend as K
 
 def getdataset(myobj, config, classifier):
     if myobj.dataset == 'mnist':
-        return getmnist(config)
+        return getmnist(myobj, config)
     if myobj.dataset == 'cifar10':
         return getcifar10(config)
     if myobj.dataset == 'dailymintemperatures':
@@ -15,9 +15,14 @@ def getdataset(myobj, config, classifier):
     if myobj.dataset == 'number':
         return getnumber(myobj, config)
 
-def getmnist(config):
+def getmnist(myobj, config):
     #load mnist data
     (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data("/tmp/datasets/mnist.npz")
+    if hasattr(myobj, 'normalizevalue'):
+        from quantum import mydatasets as q
+        q.getmnist(myobj, config)
+        return
+
     #print(tf.keras.backend.image_data_format())
     def create_mnist_dataset(data, labels, batch_size):
         def gen():
@@ -159,3 +164,4 @@ def getnumber(myobj, config):
     data = [ data, data1 ]
 
     return data, None, data, None, myobj.size, myobj.classes, False
+
