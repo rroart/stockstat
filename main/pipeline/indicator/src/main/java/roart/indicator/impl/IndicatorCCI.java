@@ -95,7 +95,7 @@ public class IndicatorCCI extends Indicator {
         Map<String, Object> map = new HashMap<>();
         map.put(PipelineConstants.INDICATORCCIRESULT, calculatedMap);
         map.put(PipelineConstants.INDICATORCCIOBJECT, objectMap);
-        map.put(PipelineConstants.INDICATORCCILIST, listMap);
+        map.put(PipelineConstants.INDICATORCCILIST, getListMap());
         return map;
     }
 

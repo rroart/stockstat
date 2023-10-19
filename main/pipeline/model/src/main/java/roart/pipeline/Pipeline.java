@@ -20,6 +20,5 @@ public abstract class Pipeline {
     }
 
     public abstract Map<String, Object> getLocalResultMap();
-    public abstract Map<Integer, Map<String, Object>> getResultMap();
     public abstract String pipelineName();
 }

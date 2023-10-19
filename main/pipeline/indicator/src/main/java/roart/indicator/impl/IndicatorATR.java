@@ -96,7 +96,7 @@ public class IndicatorATR extends Indicator {
         Map<String, Object> map = new HashMap<>();
         map.put(PipelineConstants.INDICATORATRRESULT, calculatedMap);
         map.put(PipelineConstants.INDICATORATROBJECT, objectMap);
-        map.put(PipelineConstants.INDICATORATRLIST, listMap);
+        map.put(PipelineConstants.INDICATORATRLIST, getListMap());
         return map;
     }
 

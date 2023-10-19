@@ -36,6 +36,8 @@ public abstract class AbstractIndicator extends Calculatable {
     public int fieldSize = 0;
     protected Object[] emptyField;
 
+    protected Pipeline datareader;
+    /*
     protected Map<String, Double[][]> listMap;
     protected Map<String, Double[][]> fillListMap;
 
@@ -47,6 +49,7 @@ public abstract class AbstractIndicator extends Calculatable {
     
     protected Map<String, double[][]> truncBase100ListMap;
     protected Map<String, double[][]> truncBase100FillListMap;
+    */
     // save and return this map
     // need getters for this and not? buy/sell
     protected Map<String, Object[]> objectMap;
@@ -196,7 +199,8 @@ public abstract class AbstractIndicator extends Calculatable {
 
     protected Map<String, Object[]> getResultMap(IclijConfig conf, Map<String, Object[]> objectMap, Map<String, Double[]> momMap) {
         Map<String, Object[]> result = new HashMap<>();
-        if (listMap == null) {
+        Map<String, Double[][]> listMap = getListMap();
+        if (getListMap() == null) {
             return result;
         }
         for (String id : listMap.keySet()) {
@@ -228,5 +232,9 @@ public abstract class AbstractIndicator extends Calculatable {
         return result;
     }
 
+    protected Map<String, Double[][]> getListMap() {
+        return (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
+    }
+    
 }
 

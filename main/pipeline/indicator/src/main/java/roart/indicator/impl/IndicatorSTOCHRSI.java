@@ -113,7 +113,7 @@ public class IndicatorSTOCHRSI extends Indicator {
     public Map<String, Object> getResultMap() {
         Map<String, Object> map = new HashMap<>();
         map.put(PipelineConstants.INDICATORSTOCHRSIRESULT, calculatedMap);
-        map.put(PipelineConstants.INDICATORSTOCHRSILIST, listMap);
+        map.put(PipelineConstants.INDICATORSTOCHRSILIST, getListMap());
         map.put(PipelineConstants.INDICATORSTOCHRSIOBJECT, objectMap);
         return map;
     }

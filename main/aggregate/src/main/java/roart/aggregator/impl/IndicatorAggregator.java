@@ -148,7 +148,7 @@ public abstract class IndicatorAggregator extends Aggregator {
             eventTableRows = new ArrayList<>();
         }
         if (isEnabled()) {
-            calculateMe(conf, category, categories, datareaders, neuralnetcommand);    
+            calculateMe(conf, categories, datareaders, neuralnetcommand);    
             cleanMLDaos();
         }
     }
@@ -158,7 +158,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     protected abstract AfterBeforeLimit getAfterBefore();
 
     private void calculateMe(IclijConfig conf,
-            int category2, AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+            AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         AbstractCategory cat = StockUtil.getWantedCategory(categories, category);
         if (cat == null) {
             return;

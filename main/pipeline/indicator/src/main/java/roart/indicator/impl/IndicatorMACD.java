@@ -115,7 +115,7 @@ public class IndicatorMACD extends Indicator {
         Map<String, Object> map = new HashMap<>();
         map.put(PipelineConstants.INDICATORMACDRESULT, calculatedMap);
         map.put(PipelineConstants.INDICATORMACDOBJECT, objectMap);
-        map.put(PipelineConstants.INDICATORMACDLIST, listMap);
+        map.put(PipelineConstants.INDICATORMACDLIST, getListMap());
         return map;
     }
 

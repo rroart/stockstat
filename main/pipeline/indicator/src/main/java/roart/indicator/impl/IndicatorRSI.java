@@ -94,7 +94,7 @@ public class IndicatorRSI extends Indicator {
     public Map<String, Object> getResultMap() {
         Map<String, Object> map = new HashMap<>();
         map.put(PipelineConstants.INDICATORRSIRESULT, calculatedMap);
-        map.put(PipelineConstants.INDICATORRSILIST, listMap);
+        map.put(PipelineConstants.INDICATORRSILIST, getListMap());
         map.put(PipelineConstants.INDICATORRSIOBJECT, objectMap);
         return map;
     }

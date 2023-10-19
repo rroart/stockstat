@@ -104,7 +104,7 @@ public class IndicatorSTOCH extends Indicator {
         Map<String, Object> map = new HashMap<>();
         map.put(PipelineConstants.INDICATORSTOCHRESULT, calculatedMap);
         map.put(PipelineConstants.INDICATORSTOCHOBJECT, objectMap);
-        map.put(PipelineConstants.INDICATORSTOCHLIST, listMap);
+        map.put(PipelineConstants.INDICATORSTOCHLIST, getListMap());
         return map;
     }
 

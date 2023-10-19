@@ -48,16 +48,6 @@ public class DataReader extends Pipeline {
     private Map<String, Object[][]> volumeMap;
     
     @Override
-    public Map<Integer, Map<String, Object>> getResultMap() {
-        Map<Integer, Map<String, Object>> resultMap = new HashMap<>();
-        Map<String, Object> map = new HashMap<>();
-        map.put(PipelineConstants.LIST, listMap);
-        map.put(PipelineConstants.VOLUME, volumeMap);
-        resultMap.put(category, map);
-        return resultMap;
-    }
-    
-    @Override
     public Map<String, Object> getLocalResultMap() {
         Map<String, Object> map = new HashMap<>();
         map.put(PipelineConstants.LIST, listMap);

@@ -232,11 +232,6 @@ public class ExtraReader extends Pipeline {
     }
     
     @Override
-    public Map<Integer, Map<String, Object>> getResultMap() {
-        return null;
-    }
-
-    @Override
     public String pipelineName() {
         return PipelineConstants.EXTRAREADER;
     }
