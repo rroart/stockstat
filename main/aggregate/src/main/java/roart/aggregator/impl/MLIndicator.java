@@ -58,8 +58,8 @@ import roart.ml.common.MLMeta;
 import roart.pipeline.Pipeline;
 import roart.result.model.ResultItemTableRow;
 import roart.result.model.ResultMeta;
+import roart.stockutil.StockDao;
 import roart.stockutil.StockUtil;
-import roart.model.data.MarketData;
 import roart.talib.Ta;
 import roart.talib.impl.TalibMACD;
 import roart.talib.util.TaUtil;
@@ -113,8 +113,8 @@ public class MLIndicator extends Aggregator {
 
     List<MLClassifyDao> mldaos = new ArrayList<>();
 
-    public MLIndicator(IclijConfig conf, String string, Map<String, MarketData> marketdatamap, String title, 
-            int category, AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+    public MLIndicator(IclijConfig conf, String string, String title, int category, 
+            AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         super(conf, string, category);
         this.key = title;
         makeMapTypes();
@@ -144,7 +144,7 @@ public class MLIndicator extends Aggregator {
             eventTableRows = new ArrayList<>();
         }
         if (isEnabled()) {
-            calculateMomentums(conf, marketdatamap, categories, datareaders, neuralnetcommand);
+            calculateMomentums(conf, categories, datareaders, neuralnetcommand);
             cleanMLDaos();
         }
     }
@@ -264,8 +264,8 @@ public class MLIndicator extends Aggregator {
             }
     }
 
-    private void calculateMomentums(IclijConfig conf, Map<String, MarketData> marketdatamap,
-            AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+    private void calculateMomentums(IclijConfig conf, AbstractCategory[] categories,
+            Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         AbstractCategory cat = StockUtil.getWantedCategory(categories, category);
         if (cat == null) {
             return;
@@ -285,6 +285,7 @@ public class MLIndicator extends Aggregator {
         Map<Pair<String, String>, String> pairCatMap = null; // (Map<Pair<String, String>, String>) localResults.get(PipelineConstants.PAIRCAT);
         */
         List<String> dateList = (List<String>) pipelineMap.get("" + this.category).getLocalResultMap().get(PipelineConstants.DATELIST);
+	List<String> dateList2 = new ArrayList<>(dateList); // StockDao.getDateList(conf.getConfigData().getMarket(), marketdatamap);
         if (!((ExtraReader)extrareader).allMarketStocks.isEmpty()) {
             dateList = new ArrayList<>(((ExtraReader)extrareader).commonDates);
             Collections.sort(dateList);
@@ -299,8 +300,8 @@ public class MLIndicator extends Aggregator {
         Map<String, Double[][]> list0 = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
         ids.addAll(list0.keySet());
         TaUtil tu = new TaUtil();
-        List<AbstractIndicator> indicators = getIndicators(marketdatamap, datareaders, cat, newIndicatorMap, usedIndicatorMap,
-                usedIndicators, ids);
+        List<AbstractIndicator> indicators = getIndicators(datareaders, cat, newIndicatorMap, usedIndicatorMap, usedIndicators,
+                ids);
 
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse
@@ -329,9 +330,10 @@ public class MLIndicator extends Aggregator {
         if (days == 0) {
             days = dateList.size();
         }
+        // TODO datelist
         ExtraData extraData = new ExtraData(dateList, cat.getPeriod(), categories, datareaders, extrareader);
         int tableDays = Math.min(days, dateList.size());
-        Object[] retObj2 = IndicatorUtils.getDayIndicatorMap(conf, indicators, 0, tableDays, 1, extraData, datareaders, marketdatamap);
+        Object[] retObj2 = IndicatorUtils.getDayIndicatorMap(conf, indicators, 0, tableDays, 1, extraData, datareaders, dateList2);
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj2[0];
         //Map<Double, Pair> thresholdMap = new HashMap<>();
         Map<Double, Map<String, Map<String, Double[]>>> mapResult0 = new HashMap<>();
@@ -790,9 +792,9 @@ public class MLIndicator extends Aggregator {
         }
     }
 
-    private List<AbstractIndicator> getIndicators(Map<String, MarketData> marketdatamap, Pipeline[] datareaders, AbstractCategory cat,
-            Map<String, AbstractIndicator> newIndicatorMap, Map<String, AbstractIndicator> usedIndicatorMap,
-            Map<String, List<AggregatorMLIndicator>> usedIndicators, Set<String> ids) throws Exception {
+    private List<AbstractIndicator> getIndicators(Pipeline[] datareaders, AbstractCategory cat, Map<String, AbstractIndicator> newIndicatorMap,
+            Map<String, AbstractIndicator> usedIndicatorMap, Map<String, List<AggregatorMLIndicator>> usedIndicators,
+            Set<String> ids) throws Exception {
         Map<String, AbstractIndicator> indicatorMap = new HashMap<>();
         Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
         Map<String, Map<String, Object>> localResultMap = cat.getIndicatorLocalResultMap();
@@ -801,7 +803,7 @@ public class MLIndicator extends Aggregator {
             for (AggregatorMLIndicator ind : list) {
                 String indicator = ind.indicator();
                 if (indicator != null) {
-                    indicatorMap.put(indicator, ind.getIndicator(marketdatamap, category, newIndicatorMap, usedIndicatorMap, datareaders));
+                    indicatorMap.put(indicator, ind.getIndicator(category, newIndicatorMap, usedIndicatorMap, datareaders));
                 }
                 Map<String, Object> indicatorResult = localResultMap.get(indicator);
                 if (indicatorResult != null) {

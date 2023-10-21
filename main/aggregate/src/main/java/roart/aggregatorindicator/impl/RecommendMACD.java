@@ -9,7 +9,6 @@ import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.impl.IndicatorMACD;
-import roart.model.data.MarketData;
 
 public abstract class RecommendMACD extends Recommend {
 
@@ -18,7 +17,7 @@ public abstract class RecommendMACD extends Recommend {
     }
 
     @Override
-    public AbstractIndicator getIndicator(Map<String, MarketData> marketdatamap, int category, Map<String, AbstractIndicator> newIndicatorMap, Map<String, AbstractIndicator> usedIndicatorMap, Pipeline[] datareaders) throws Exception {
+    public AbstractIndicator getIndicator(int category, Map<String, AbstractIndicator> newIndicatorMap, Map<String, AbstractIndicator> usedIndicatorMap, Pipeline[] datareaders) throws Exception {
         if (usedIndicatorMap != null && usedIndicatorMap.containsKey(indicator())) {
             return usedIndicatorMap.get(indicator());
         }

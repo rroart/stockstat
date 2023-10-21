@@ -224,7 +224,7 @@ public class EvolutionService {
             List<Recommend> list = entry.getValue();
             for (Recommend recommend : list) {
                 String indicator = recommend.indicator();
-                indicatorMap.put(indicator, recommend.getIndicator(marketdatamap, category, newIndicatorMap, null, datareaders));
+                indicatorMap.put(indicator, recommend.getIndicator(category, newIndicatorMap, null, datareaders));
             }
         }
     }

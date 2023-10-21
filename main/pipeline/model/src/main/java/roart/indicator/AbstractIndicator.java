@@ -199,8 +199,11 @@ public abstract class AbstractIndicator extends Calculatable {
 
     protected Map<String, Object[]> getResultMap(IclijConfig conf, Map<String, Object[]> objectMap, Map<String, Double[]> momMap) {
         Map<String, Object[]> result = new HashMap<>();
-        Map<String, Double[][]> listMap = getListMap();
-        if (getListMap() == null) {
+        Map<String, Double[][]> listMap = null;
+        if (datareader != null) {
+            listMap = getListMap();
+        }
+        if (listMap == null) {
             return result;
         }
         for (String id : listMap.keySet()) {

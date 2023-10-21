@@ -123,21 +123,7 @@ public class StockDao {
         return retMap;
     }
 
-    public static List<String> getDateList(IclijConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
-            Map<String, MarketData> marketdataMap, boolean currentyear) throws Exception {
-        List<String> retList = new ArrayList<>();
-        List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
-        for (int i = datedstocklists.length - 1; i >= 0; i--) {
-            List<StockItem> list = datedstocklists[i];
-            if (!list.isEmpty()) {
-                retList.add(TimeUtil.convertDate3(list.get(0).getDate()));
-            }
-        }
-        return retList;
-    }
-
-    public static List<String> getDateList(String market,
-            Map<String, MarketData> marketdataMap) throws Exception {
+    public static List<String> getDateList(String market, Map<String, MarketData> marketdataMap) throws Exception {
         List<String> retList = new ArrayList<>();
         List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
         for (int i = datedstocklists.length - 1; i >= 0; i--) {

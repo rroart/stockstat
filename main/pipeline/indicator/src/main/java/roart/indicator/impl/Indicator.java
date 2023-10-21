@@ -151,6 +151,7 @@ public abstract class Indicator extends AbstractIndicator {
         this.truncBase100ListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100LIST);       
         this.truncBase100FillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100FILLLIST);
         */
+        this.datareader = datareader;
         if (!anythingHere(getListMap())) {
             log.info("empty {}", key);
             return;

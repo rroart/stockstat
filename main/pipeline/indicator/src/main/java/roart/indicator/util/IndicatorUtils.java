@@ -44,7 +44,6 @@ import roart.pipeline.data.ExtraData;
 import roart.pipeline.impl.DataReader;
 import roart.pipeline.impl.ExtraReader;
 import roart.stockutil.StockDao;
-import roart.model.data.MarketData;
 import roart.model.data.StockData;
 import roart.talib.util.TaUtil;
 import java.util.Objects;
@@ -260,7 +259,7 @@ public class IndicatorUtils {
 
     // TODO return stockdate based on date
 
-    public static Object[] getDayIndicatorMap(IclijConfig conf, List<AbstractIndicator> indicators, int futureDays, int tableDays, int intervalDays, ExtraData extraData, Pipeline[] datareaders, Map<String, MarketData> marketdatamap) throws Exception {
+    public static Object[] getDayIndicatorMap(IclijConfig conf, List<AbstractIndicator> indicators, int futureDays, int tableDays, int intervalDays, ExtraData extraData, Pipeline[] datareaders, List<String> dateList) throws Exception {
         List<Map<String, Object[]>> objectMapsList = new ArrayList<>();
         List<Map<String, Double[][]>> listList = new ArrayList<>();
         int arraySize = getCommonArraySizeAndObjectMap(indicators, objectMapsList, listList, datareaders);
@@ -293,7 +292,6 @@ public class IndicatorUtils {
         if (tableDays < deltas) {
             deltas = 0;
         }
-        List<String> dateList = StockDao.getDateList(conf.getConfigData().getMarket(), marketdatamap);
         for (int j = futureDays; j < tableDays - deltas; j += intervalDays) {
             String commonDate = commonDates.get(commonDates.size() - 1 - j);
             Map<String, Double[]> indicatorMap = new HashMap<>();
@@ -690,15 +688,6 @@ public class IndicatorUtils {
     }
 
     public static void addToLists(List<Double> macdLists[], Double[] momentum) throws Exception {
-        for (int i = 0; i < macdLists.length; i ++) {
-            List<Double> macdList = macdLists[i];
-            if (momentum[i] != null) {
-                macdList.add(momentum[i]);
-            }
-        }
-    }
-
-    public static void addToLists(Map<String, MarketData> marketdatamap, int category, List<Double> macdLists[], String market, Double[] momentum) throws Exception {
         for (int i = 0; i < macdLists.length; i ++) {
             List<Double> macdList = macdLists[i];
             if (momentum[i] != null) {

@@ -95,7 +95,7 @@ public class FitnessNeuralNet extends Fitness {
         aggregate = future.get();
         */
         try {
-        pipelineData = new PipelineFactory().myfactory(conf, ml, dataReaders, categories, catName, cat, neuralnetcommand, ((NeuralNetChromosome2) chromosome), key, marketdatamap);
+        pipelineData = new PipelineFactory().myfactory(conf, ml, dataReaders, categories, catName, cat, neuralnetcommand, ((NeuralNetChromosome2) chromosome), key);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -144,7 +144,7 @@ public class FitnessNeuralNet extends Fitness {
 
         @Override
         public PipelineResultData call() throws Exception {
-            return new PipelineFactory().myfactory(conf, ml, dataReaders, categories, catName, cat, neuralnetcommand, chromosome, key, marketdatamap);
+            return new PipelineFactory().myfactory(conf, ml, dataReaders, categories, catName, cat, neuralnetcommand, chromosome, key);
         }
     }
 

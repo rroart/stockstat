@@ -59,7 +59,7 @@ public class RecommenderRSI extends Aggregator {
                 String market = null;
                 Double[] rsiA = (Double[]) rsiMap.get(id);
                 if (rsiA != null) {
-                    IndicatorUtils.addToLists(marketdatamap, category, rsiLists, market, rsiA);
+                    IndicatorUtils.addToLists(rsiLists, rsiA);
                 }
             }
         }

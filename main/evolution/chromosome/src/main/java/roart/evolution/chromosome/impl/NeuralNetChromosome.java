@@ -147,7 +147,7 @@ public class NeuralNetChromosome extends AbstractChromosome {
         aggregate = future.get();
         */
         try {
-        pipelineData = new MyFactory().myfactory(conf, ml, dataReaders, categories, catName, cat, neuralnetcommand, marketdatamap);
+        pipelineData = new MyFactory().myfactory(conf, ml, dataReaders, categories, catName, cat, neuralnetcommand);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -174,7 +174,7 @@ public class NeuralNetChromosome extends AbstractChromosome {
     }
 
     class MyFactory {
-        public PipelineResultData myfactory(IclijConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, MarketData> marketdatamap) throws Exception {
+        public PipelineResultData myfactory(IclijConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
             NeuralNetConfigs nnConfigs = new NeuralNetConfigs();
             nnConfigs.set(key, nnConfigGene.getConfig());
             ObjectMapper mapper = new ObjectMapper();
@@ -206,7 +206,7 @@ public class NeuralNetChromosome extends AbstractChromosome {
             } 
             if (ml.equals(PipelineConstants.MLINDICATOR)) {
                 conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, value);
-                pipelineData = new MLIndicator(conf, catName, marketdatamap, catName, cat, categories, dataReaders, neuralnetcommand);
+                pipelineData = new MLIndicator(conf, catName, catName, cat, categories, dataReaders, neuralnetcommand);
             }
             if (ml.equals(PipelineConstants.DATASET)) {
                 conf.getConfigData().getConfigValueMap().put(ConfigConstants.DATASETMLCONFIG, value);
@@ -285,7 +285,7 @@ public class NeuralNetChromosome extends AbstractChromosome {
 
         @Override
         public PipelineResultData call() throws Exception {
-            return new MyFactory().myfactory(conf, ml, dataReaders, categories, catName, cat, neuralnetcommand, marketdatamap);
+            return new MyFactory().myfactory(conf, ml, dataReaders, categories, catName, cat, neuralnetcommand);
         }
     }
 

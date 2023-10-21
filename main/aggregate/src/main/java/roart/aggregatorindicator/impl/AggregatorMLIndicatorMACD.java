@@ -7,7 +7,6 @@ import roart.common.pipeline.PipelineConstants;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.impl.IndicatorMACD;
 import roart.pipeline.Pipeline;
-import roart.model.data.MarketData;
 
 public class AggregatorMLIndicatorMACD extends AggregatorMLIndicator {
 
@@ -27,8 +26,8 @@ public class AggregatorMLIndicatorMACD extends AggregatorMLIndicator {
 
     // this is duplicated
     @Override
-    public AbstractIndicator getIndicator(Map<String, MarketData> marketdatamap, int category,
-            Map<String, AbstractIndicator> newIndicatorMap, Map<String, AbstractIndicator> usedIndicatorMap, Pipeline[] datareaders) throws Exception {
+    public AbstractIndicator getIndicator(int category, Map<String, AbstractIndicator> newIndicatorMap,
+            Map<String, AbstractIndicator> usedIndicatorMap, Pipeline[] datareaders) throws Exception {
         if (usedIndicatorMap != null && usedIndicatorMap.containsKey(indicator())) {
             return usedIndicatorMap.get(indicator());
         }

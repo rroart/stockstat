@@ -151,7 +151,7 @@ public class ExtraReader extends Pipeline {
                     stockData.marketdatamap, market);
             dataReaderMap.put(market, datareaders);
         }
-        List<String> dateList = StockDao.getDateList(conf, conf.getConfigData().getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
+        List<String> dateList = StockDao.getDateList(conf.getConfigData().getMarket(), marketdatamap);
         commonDates = new HashSet<>(dateList);
         for (MarketStock ms : marketStocks) {
             String market = ms.getMarket();

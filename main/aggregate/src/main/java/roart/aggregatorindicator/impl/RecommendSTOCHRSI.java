@@ -10,7 +10,6 @@ import roart.common.pipeline.PipelineConstants;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.impl.IndicatorRSI;
 import roart.indicator.impl.IndicatorSTOCHRSI;
-import roart.model.data.MarketData;
 
 public abstract class RecommendSTOCHRSI extends Recommend {
 
@@ -21,7 +20,7 @@ public abstract class RecommendSTOCHRSI extends Recommend {
     }
 
     @Override
-    public AbstractIndicator getIndicator(Map<String, MarketData> marketdatamap, int category, Map<String, AbstractIndicator> newIndicatorMap, Map<String, AbstractIndicator> usedIndicatorMap, Pipeline[] datareaders) throws Exception {
+    public AbstractIndicator getIndicator(int category, Map<String, AbstractIndicator> newIndicatorMap, Map<String, AbstractIndicator> usedIndicatorMap, Pipeline[] datareaders) throws Exception {
         if (usedIndicatorMap != null && usedIndicatorMap.containsKey(indicator())) {
             return usedIndicatorMap.get(indicator());
         }

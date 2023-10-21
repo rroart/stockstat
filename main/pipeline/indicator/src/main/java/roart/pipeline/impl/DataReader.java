@@ -98,7 +98,7 @@ public class DataReader extends Pipeline {
         if (category == Constants.PRICECOLUMN) {
             categoryTitle = Constants.PRICE;
         }
-        this.dateList = StockDao.getDateList(conf, market, dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
+        this.dateList = StockDao.getDateList(market, marketdatamap);
         //this.dateStringList = StockDao.getDateList(conf, market, dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         this.nameMap = StockDao.getNameMap(conf, market, dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         if (category == Constants.PRICECOLUMN) {
