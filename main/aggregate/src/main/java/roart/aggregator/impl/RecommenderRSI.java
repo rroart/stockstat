@@ -46,7 +46,7 @@ public class RecommenderRSI extends Aggregator {
         for (int i = 0; i < 2; i ++) {
             rsiLists[i] = new ArrayList<>();
         }
-        Object rsi = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORRSI).get(PipelineConstants.RESULT);
+        Object rsi = cat.putData().get(PipelineConstants.INDICATORRSI).get(PipelineConstants.RESULT);
         if (rsi == null) {
             return;
         }

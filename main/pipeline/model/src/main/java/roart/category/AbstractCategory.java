@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import roart.iclij.config.IclijConfig;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.indicator.AbstractIndicator;
 import roart.pipeline.Pipeline;
 import roart.result.model.ResultItemTableRow;
@@ -95,11 +96,11 @@ public abstract class AbstractCategory {
         return map;
     }
     
-    public Map<String, Map<String, Object>> getIndicatorLocalResultMap() {
-        Map<String, Map<String, Object>> map = new HashMap<>();
+    public Map<String, PipelineData> putData() {
+        Map<String, PipelineData> map = new HashMap<>();
         for (AbstractIndicator indicator : indicators) {
             if (indicator.isEnabled()) {
-                Map<String, Object> tmpMap = indicator.getLocalResultMap();
+                PipelineData tmpMap = indicator.putData();
                 if (tmpMap != null) {
                     log.debug("Adding indicator {}", indicator.indicatorName());
                     log.debug("exist {}", map.containsKey(indicator.indicatorName()));
@@ -122,7 +123,8 @@ public abstract class AbstractCategory {
     
     public abstract boolean hasContent() throws Exception;
     
-    public Map<String, Object> getLocalResultMap() {
+    @Deprecated
+    public Map<String, Object> getLocalResultMapNot() {
         Map<String, Object> map = new HashMap<>();
         map.put(PipelineConstants.RESULT, resultMap);
         return map;

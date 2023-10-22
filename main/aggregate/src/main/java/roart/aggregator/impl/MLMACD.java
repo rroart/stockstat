@@ -170,7 +170,7 @@ public class MLMACD extends IndicatorAggregator {
         List<SubType> wantedSubTypesList = new ArrayList<>();
         Object list = cat.getResultMap().get(PipelineConstants.INDICATORMACDLIST);
         Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORMACDOBJECT);
-        Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORMACD).get(PipelineConstants.RESULT);
+        Object resultObject = cat.putData().get(PipelineConstants.INDICATORMACD).get(PipelineConstants.RESULT);
         if (conf.wantMLHist()) {
             wantedSubTypesList.add(new MacdSubTypeHist(list, taObject, resultObject, afterbefore, TaConstants.THREERANGE));
         }

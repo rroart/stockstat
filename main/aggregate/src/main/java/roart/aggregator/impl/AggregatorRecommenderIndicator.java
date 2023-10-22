@@ -21,6 +21,7 @@ import roart.category.AbstractCategory;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.gene.CalcGene;
 import roart.gene.impl.CalcComplexGene;
 import roart.gene.impl.CalcDoubleGene;
@@ -59,8 +60,8 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
         DataReader datareader = (DataReader) pipelineMap.get("" + cat.getPeriod());
         Map<String, AbstractIndicator> usedIndicatorMap = cat.getIndicatorMap();
-        Map<String, Map<String, Object>> localResultMap = cat.getIndicatorLocalResultMap();
-        Map<String, Double[][]> list0 = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
+        Map<String, PipelineData> localResultMap = cat.putData();
+        Map<String, Double[][]> list0 = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);
  
         usedRecommenders = Recommend.getUsedRecommenders(conf);
         Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders, usedIndicatorMap, conf);
@@ -82,7 +83,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                     }
                 }
                 // fix
-                Map<String, Object> indicatorResultMap = cat.getIndicatorLocalResultMap().get(indicator);
+                PipelineData indicatorResultMap = cat.putData().get(indicator);
                 if (indicatorResultMap != null) {
                     Map<String, Object[]> aResult = (Map<String, Object[]>) indicatorResultMap.get(PipelineConstants.LIST);
                     ids.retainAll(aResult.keySet());
@@ -226,8 +227,8 @@ public class AggregatorRecommenderIndicator extends Aggregator {
     }
 
     @Override
-    public Map<String, Object> getLocalResultMap() {
-        Map<String, Object> map = new HashMap<>();
+    public PipelineData putData() {
+        PipelineData map = new PipelineData();
         map.put(PipelineConstants.CATEGORY, category);
         map.put(PipelineConstants.CATEGORYTITLE, title);
         map.put(PipelineConstants.RESULT, resultMap);

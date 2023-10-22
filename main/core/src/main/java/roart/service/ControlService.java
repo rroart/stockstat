@@ -186,12 +186,12 @@ public class ControlService {
                 maps.put(PipelineConstants.META, aMap);
                 
                 for (int i = 0; i < datareaders.length; i++) {
-                    Map map = datareaders[i].getLocalResultMap();
+                    Map map = datareaders[i].putData().getMap();
                     maps.put(datareaders[i].pipelineName(), map);
                     log.debug("pi {}", datareaders[i].pipelineName());
                 }
                 for (int i = 0; i < Constants.ALLPERIODS; i++) {
-                    Map map = categories[i].getIndicatorLocalResultMap();
+                    Map map = categories[i].putData();
                     maps.put(categories[i].getTitle(), map);
                     log.debug("ca {}", categories[i].getTitle());
                 }
@@ -199,7 +199,7 @@ public class ControlService {
                     if (predictors[i] == null) {
                         continue;
                     }
-                    Map map = predictors[i].getLocalResultMap();
+                    Map map = predictors[i].putData().getMap();
                     maps.put(predictors[i].getName(), map);
                     log.debug("ca {}", predictors[i].getName());
                 }
@@ -208,7 +208,7 @@ public class ControlService {
                         continue;
                     }
                     log.debug("ag {}", aggregates[i].getName());
-                    Map map = aggregates[i].getLocalResultMap();
+                    Map map = aggregates[i].putData().getMap();
                     maps.put(aggregates[i].getName(), map);
                 }
             }

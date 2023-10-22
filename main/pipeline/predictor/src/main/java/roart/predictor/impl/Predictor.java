@@ -165,14 +165,14 @@ public abstract class Predictor extends AbstractPredictor {
             log.info("empty {}", category);
             return;
         }
-        this.listMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
-        this.fillListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.FILLLIST);
-        this.truncListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCLIST);       
-        this.truncFillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCFILLLIST);       
-        this.base100ListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.BASE100LIST);
-        this.base100FillListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.BASE100FILLLIST);
-        this.truncBase100ListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100LIST);       
-        this.truncBase100FillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100FILLLIST);       
+        this.listMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);
+        this.fillListMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.FILLLIST);
+        this.truncListMap = (Map<String, double[][]>) datareader.putData().get(PipelineConstants.TRUNCLIST);       
+        this.truncFillListMap = (Map<String, double[][]>) datareader.putData().get(PipelineConstants.TRUNCFILLLIST);       
+        this.base100ListMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.BASE100LIST);
+        this.base100FillListMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.BASE100FILLLIST);
+        this.truncBase100ListMap = (Map<String, double[][]>) datareader.putData().get(PipelineConstants.TRUNCBASE100LIST);       
+        this.truncBase100FillListMap = (Map<String, double[][]>) datareader.putData().get(PipelineConstants.TRUNCBASE100FILLLIST);       
 
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse
@@ -189,7 +189,7 @@ public abstract class Predictor extends AbstractPredictor {
         lossMap = new HashMap<>();
         resultMetaArray = new ArrayList<>();
 
-        List<String> dateList = (List<String>) pipelineMap.get("" + this.category).getLocalResultMap().get(PipelineConstants.DATELIST);
+        List<String> dateList = (List<String>) pipelineMap.get("" + this.category).putData().get(PipelineConstants.DATELIST);
         Integer days = conf.getDays();
         if (days == 0) {
             days = dateList.size();
@@ -529,7 +529,7 @@ public abstract class Predictor extends AbstractPredictor {
     public boolean hasValue() {
         Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
         Pipeline datareader = pipelineMap.get("" + category);
-        return anythingHere((Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST));
+        return anythingHere((Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST));
     }
     
     @Override

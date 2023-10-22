@@ -151,7 +151,7 @@ public class NeuralNetChromosome extends AbstractChromosome {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        Map<String, Object> accuracyMap = (Map<String, Object>) pipelineData.getLocalResultMap().get(PipelineConstants.ACCURACY);
+        Map<String, Object> accuracyMap = (Map<String, Object>) pipelineData.putData().get(PipelineConstants.ACCURACY);
         if (accuracyMap == null) {
             int jj = 0;
         }

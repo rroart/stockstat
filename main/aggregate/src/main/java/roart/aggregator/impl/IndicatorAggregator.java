@@ -172,9 +172,9 @@ public abstract class IndicatorAggregator extends Aggregator {
             log.info("empty {}", category);
             return;
         }
-        Map<String, Double[][]> aListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
-        Map<String, double[][]> fillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCFILLLIST);
-        Map<String, double[][]>  base100FillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100FILLLIST);
+        Map<String, Double[][]> aListMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);
+        Map<String, double[][]> fillListMap = (Map<String, double[][]>) datareader.putData().get(PipelineConstants.TRUNCFILLLIST);
+        Map<String, double[][]>  base100FillListMap = (Map<String, double[][]>) datareader.putData().get(PipelineConstants.TRUNCBASE100FILLLIST);
         this.listMap = conf.wantPercentizedPriceIndex() ? base100FillListMap : fillListMap;
 
         long time0 = System.currentTimeMillis();

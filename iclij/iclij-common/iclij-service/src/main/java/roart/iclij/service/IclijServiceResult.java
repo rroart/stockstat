@@ -5,6 +5,7 @@ import java.util.Map;
 
 import roart.common.config.ConfigData;
 import roart.common.model.MetaItem;
+import roart.common.pipeline.data.PipelineData;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.model.WebData;
 import roart.iclij.model.WebDataJson;
@@ -30,6 +31,8 @@ public class IclijServiceResult {
     private WebDataJson webdatajson;
 
     private List<ResultItem> list;
+    
+    private PipelineData pipelineData;
     
     public IclijServiceResult() {
         super();
@@ -105,6 +108,14 @@ public class IclijServiceResult {
 
     public void setList(List<ResultItem> list) {
         this.list = list;
+    }
+
+    public PipelineData getPipelineData() {
+        return pipelineData;
+    }
+
+    public void setPipelineData(PipelineData pipelineData) {
+        this.pipelineData = pipelineData;
     }
     
     

@@ -8,6 +8,7 @@
 module common.model {
     exports roart.common.model;
     exports roart.common.pipeline.model;
+    exports roart.common.pipeline.data;
     exports roart.result.model;
     requires common.constants;
     //requires jackson.annotations;

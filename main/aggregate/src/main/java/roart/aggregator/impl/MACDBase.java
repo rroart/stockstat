@@ -9,6 +9,7 @@ import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.indicator.util.IndicatorUtils;
 import roart.pipeline.Pipeline;
 import roart.pipeline.common.aggregate.Aggregator;
@@ -36,7 +37,7 @@ public class MACDBase extends Aggregator {
             return;
         }
         Object taObject = cat2.getResultMap().get(PipelineConstants.INDICATORMACDOBJECT);
-        Map<String, Object> macdmap = cat2.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORMACD);
+        PipelineData macdmap = cat2.putData().get(PipelineConstants.INDICATORMACD);
         if (macdmap == null) {
             return;
         }
@@ -50,9 +51,9 @@ public class MACDBase extends Aggregator {
             log.info("empty {}", category);
             return;
         }
-        Map<String, Double[][]> aListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
-        Map<String, double[][]> fillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCFILLLIST);
-        Map<String, double[][]>  base100FillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100FILLLIST);
+        Map<String, Double[][]> aListMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);
+        Map<String, double[][]> fillListMap = (Map<String, double[][]>) datareader.putData().get(PipelineConstants.TRUNCFILLLIST);
+        Map<String, double[][]>  base100FillListMap = (Map<String, double[][]>) datareader.putData().get(PipelineConstants.TRUNCBASE100FILLLIST);
         this.listMap = fillListMap;
         
         /*
@@ -76,6 +77,9 @@ public class MACDBase extends Aggregator {
         if (resultObject != null) {
         String id = stock.getId();
         Double[] result = resultObject.get(id);
+        if (listMap.get(id) == null) {
+            log.info("LM" + listMap.size() + " " + id);
+        }
         double[] vals = listMap.get(id)[0];
         Double val = null;
         if (vals.length > 0) {
@@ -116,8 +120,8 @@ public class MACDBase extends Aggregator {
     }
 
     @Override
-    public Map<String, Object> getLocalResultMap() {
-        Map<String, Object> map = new HashMap<>();
+    public PipelineData putData() {
+        PipelineData map = new PipelineData();
         map.put(PipelineConstants.CATEGORY, category);
         map.put(PipelineConstants.CATEGORYTITLE, title);
         map.put(PipelineConstants.RESULT, resultMap);

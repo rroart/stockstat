@@ -80,7 +80,7 @@ public class MLSTOCH extends IndicatorAggregator {
         List<SubType> wantedSubTypesList = new ArrayList<>();
         Object list = cat.getResultMap().get(PipelineConstants.INDICATORSTOCHLIST);
         Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORSTOCHOBJECT);
-        Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORSTOCH).get(PipelineConstants.RESULT);
+        Object resultObject = cat.putData().get(PipelineConstants.INDICATORSTOCH).get(PipelineConstants.RESULT);
         wantedSubTypesList.add(new STOCHSubTypeSTOCH(list, taObject, resultObject, afterbefore, TaConstants.TWORANGE));
         return wantedSubTypesList;
     }

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import roart.iclij.config.IclijConfig;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.model.PipelineResultData;
 import roart.common.util.MathUtil;
 import roart.pipeline.Pipeline;
@@ -91,8 +92,8 @@ public abstract class Aggregator extends PipelineResultData {
     
     public abstract String getName();
 
-    public Map<String, Object> getLocalResultMap() {
-        Map<String, Object> map = new HashMap<>();
+    public PipelineData putData() {
+        PipelineData map = getData();
         map.put(PipelineConstants.CATEGORY, category);
         map.put(PipelineConstants.CATEGORYTITLE, title);
         map.put(PipelineConstants.RESULT, resultMap);

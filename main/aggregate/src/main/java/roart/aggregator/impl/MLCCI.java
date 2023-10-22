@@ -81,7 +81,7 @@ public class MLCCI extends IndicatorAggregator {
         List<SubType> wantedSubTypesList = new ArrayList<>();
         Object list = cat.getResultMap().get(PipelineConstants.INDICATORCCILIST);
         Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORCCIOBJECT);
-        Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORCCI).get(PipelineConstants.RESULT);
+        Object resultObject = cat.putData().get(PipelineConstants.INDICATORCCI).get(PipelineConstants.RESULT);
         wantedSubTypesList.add(new CCISubTypeCCI(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE));
         return wantedSubTypesList;
     }

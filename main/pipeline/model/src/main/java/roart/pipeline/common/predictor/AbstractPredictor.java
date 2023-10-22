@@ -12,6 +12,7 @@ import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.model.PipelineResultData;
 import roart.result.model.ResultItemTableRow;
 import roart.result.model.ResultMeta;
@@ -86,8 +87,8 @@ public abstract class AbstractPredictor extends PipelineResultData {
     }
 
     @Override
-    public Map<String, Object> getLocalResultMap() {
-        Map<String, Object> map = new HashMap<>();
+    public PipelineData putData() {
+        PipelineData map = getData();
         map.put(PipelineConstants.CATEGORY, category);
         map.put(PipelineConstants.CATEGORYTITLE, title);
         map.put(PipelineConstants.RESULT, resultMap);

@@ -10,6 +10,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.ArraysUtil;
 import roart.common.util.TimeUtil;
 import roart.common.constants.CategoryConstants;
@@ -48,8 +49,8 @@ public class DataReader extends Pipeline {
     private Map<String, Object[][]> volumeMap;
     
     @Override
-    public Map<String, Object> getLocalResultMap() {
-        Map<String, Object> map = new HashMap<>();
+    public PipelineData putData() {
+        PipelineData map = getData();
         map.put(PipelineConstants.LIST, listMap);
         map.put(PipelineConstants.VOLUME, volumeMap);
         map.put(PipelineConstants.FILLLIST, fillListMap);

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import roart.aggregatorindicator.AggregatorIndicator;
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.indicator.AbstractIndicator;
 
 public abstract class Recommend extends AggregatorIndicator {
@@ -62,7 +63,7 @@ public abstract class Recommend extends AggregatorIndicator {
                     log.error("Indicator null for {} {}", recommend.indicator(), complexity);
                     continue;
                 }
-                Map<String, Object> resultMap = indicator.getLocalResultMap();
+                PipelineData resultMap = indicator.putData();
                 Map<String, Object[]> objMap = (Map<String, Object[]>) resultMap.get(PipelineConstants.OBJECT);
                 if (objMap != null) { 
                     List<Pair<String, String>> aBuyList = recommend.getBuyList();

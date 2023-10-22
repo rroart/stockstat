@@ -1,0 +1,50 @@
+package roart.common.pipeline.data;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.HashMap;
+
+public class PipelineData {
+
+    private String id;
+    
+    private String name;
+
+    private Map<String, Object> map = new HashMap<>();
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Map<String, Object> getMap() {
+        return map;
+    }
+
+    public void setMap(Map<String, Object> map) {
+        this.map = map;
+    }
+
+    public void put(String key, Object object) {
+        map.put(key, object);
+    }
+    
+    public Object get(String key) {
+        return map.get(key);
+    }
+
+    public Set<String> keySet() {
+        return map.keySet();
+    }
+}

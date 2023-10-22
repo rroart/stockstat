@@ -15,6 +15,7 @@ import roart.common.config.MarketStock;
 import roart.iclij.config.IclijConfig;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.ArraysUtil;
 import roart.db.common.DbAccess;
 import roart.db.dao.DbDao;
@@ -66,7 +67,7 @@ public abstract class Indicator extends AbstractIndicator {
 
     public Map<String, Map<String, double[][]>> getMarketListMap(Pipeline extrareader) {
         Map<String, Map<String, double[][]>> marketListMap = new HashMap<>();
-        Map<String, Object> localResults =  extrareader.getLocalResultMap();
+        PipelineData localResults =  extrareader.putData();
         /*
         Map<Pair<String, String>, List<StockItem>> pairStockMap = null; // (Map<Pair<String, String>, List<StockItem>>) localResults.get(PipelineConstants.PAIRSTOCK);
         //Map<Pair<String, String>, Map<Date, StockItem>> pairDateMap = (Map<Pair<String, String>, Map<Date, StockItem>>) localResults.get(PipelineConstants.PAIRDATE);
@@ -103,8 +104,8 @@ public abstract class Indicator extends AbstractIndicator {
             Map<String, Pipeline> mypipelineMap = IndicatorUtils.getPipelineMap(mydatareaders);
             Pipeline datareader = mypipelineMap.get("" + mycat);
             //Pipeline datareader = pipelineMap.get("" + category);
-            Map<String, Double[][]> fillListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.FILLLIST);
-            Map<String, double[][]> truncFillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCFILLLIST);
+            Map<String, Double[][]> fillListMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.FILLLIST);
+            Map<String, double[][]> truncFillListMap = (Map<String, double[][]>) datareader.putData().get(PipelineConstants.TRUNCFILLLIST);
             Object[] arr = null;
             Double[][] fillList0 = fillListMap.get(ms.getId());
             double[][] fillList = truncFillListMap.get(ms.getId());
@@ -161,8 +162,8 @@ public abstract class Indicator extends AbstractIndicator {
         if (wantPercentizedPriceIndex() != null) {
             //wantPercentizedPriceIndex = wantPercentizedPriceIndex();
         }
-        Map<String, double[][]> truncFillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCFILLLIST);       
-        Map<String, double[][]> truncBase100FillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100FILLLIST);
+        Map<String, double[][]> truncFillListMap = (Map<String, double[][]>) datareader.putData().get(PipelineConstants.TRUNCFILLLIST);       
+        Map<String, double[][]> truncBase100FillListMap = (Map<String, double[][]>) datareader.putData().get(PipelineConstants.TRUNCBASE100FILLLIST);
         List<Map> resultList = getMarketCalcResults(wantPercentizedPriceIndex ? truncBase100FillListMap : truncFillListMap);
         objectMap = resultList.get(0);
         calculatedMap = resultList.get(1);

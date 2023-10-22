@@ -19,6 +19,7 @@ import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.MathUtil;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
@@ -125,8 +126,8 @@ public abstract class AbstractIndicator extends Calculatable {
         return null;
     }
 
-    public Map<String, Object> getLocalResultMap() {
-        Map<String, Object> map = new HashMap<>();
+    public PipelineData putData() {
+        PipelineData map = getData();
         map.put(PipelineConstants.RESULT, calculatedMap);
         map.put(PipelineConstants.OBJECT, objectMap);
         map.put(PipelineConstants.OBJECTFIXED, objectFixedMap);
@@ -236,7 +237,7 @@ public abstract class AbstractIndicator extends Calculatable {
     }
 
     protected Map<String, Double[][]> getListMap() {
-        return (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
+        return (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);
     }
     
 }

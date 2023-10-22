@@ -1,9 +1,14 @@
 package roart.common.pipeline.model;
 
-import java.util.Map;
+import roart.common.pipeline.data.PipelineData;
 
 public abstract class PipelineResultData {
 
-    public abstract Map<String, Object> getLocalResultMap();
+    private PipelineData data;
+    
+    public abstract PipelineData putData();
 
+    public PipelineData getData() {
+        return data;
+    }
 }

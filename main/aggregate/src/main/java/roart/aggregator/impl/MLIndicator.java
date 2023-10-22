@@ -43,6 +43,7 @@ import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
 import roart.executor.MyExecutors;
@@ -270,6 +271,7 @@ public class MLIndicator extends Aggregator {
         if (cat == null) {
             return;
         }
+        // all true here
         log.info("checkthis {}", category == cat.getPeriod());
         log.info("checkthis {}", title.equals(cat.getTitle()));
         log.info("checkthis {}", key.equals(title));
@@ -278,29 +280,25 @@ public class MLIndicator extends Aggregator {
             pipelineMap.put(datareader.pipelineName(), datareader);
         }
         Pipeline extrareader = pipelineMap.get(PipelineConstants.EXTRAREADER);
-        Map<String, Object> localResults =  extrareader.getLocalResultMap();
         /*
         Map<Pair<String, String>, List<StockItem>> pairStockMap = null; // (Map<Pair<String, String>, List<StockItem>>) localResults.get(PipelineConstants.PAIRSTOCK);
         Map<Pair<String, String>, Map<Date, StockItem>> pairDateMap = null; // (Map<Pair<String, String>, Map<Date, StockItem>>) localResults.get(PipelineConstants.PAIRDATE);
         Map<Pair<String, String>, String> pairCatMap = null; // (Map<Pair<String, String>, String>) localResults.get(PipelineConstants.PAIRCAT);
         */
-        List<String> dateList = (List<String>) pipelineMap.get("" + this.category).getLocalResultMap().get(PipelineConstants.DATELIST);
+        List<String> dateList = (List<String>) pipelineMap.get("" + this.category).putData().get(PipelineConstants.DATELIST);
 	List<String> dateList2 = new ArrayList<>(dateList); // StockDao.getDateList(conf.getConfigData().getMarket(), marketdatamap);
         if (!((ExtraReader)extrareader).allMarketStocks.isEmpty()) {
             dateList = new ArrayList<>(((ExtraReader)extrareader).commonDates);
             Collections.sort(dateList);
         }
-        Map<String, AbstractIndicator> newIndicatorMap = new HashMap<>();
         Map<String, AbstractIndicator> usedIndicatorMap = cat.getIndicatorMap();
 
         Map<String, List<AggregatorMLIndicator>> usedIndicators = AggregatorMLIndicator.getUsedAggregatorMLIndicators(conf);
         Set<String> ids = new HashSet<>();
-        Map<String, Map<String, Object>> localResultMap = cat.getIndicatorLocalResultMap();
         DataReader datareader = (DataReader) pipelineMap.get("" + this.category);
-        Map<String, Double[][]> list0 = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
+        Map<String, Double[][]> list0 = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);
         ids.addAll(list0.keySet());
-        TaUtil tu = new TaUtil();
-        List<AbstractIndicator> indicators = getIndicators(datareaders, cat, newIndicatorMap, usedIndicatorMap, usedIndicators,
+        List<AbstractIndicator> indicators = getIndicators(datareaders, cat, null, usedIndicatorMap, usedIndicators,
                 ids);
 
         long time0 = System.currentTimeMillis();
@@ -706,14 +704,14 @@ public class MLIndicator extends Aggregator {
         Map<String, Object[]> result = new HashMap<>();
         Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
         DataReader datareader = (DataReader) pipelineMap.get("" + cat.getPeriod());
-        Map<String, Map<String, Object>> localResultMap = cat.getIndicatorLocalResultMap();
+        Map<String, PipelineData> localResultMap = cat.putData();
         for (String id : ids) {
             Object[] arrayResult = new Object[0];
             for (AbstractIndicator indicator : indicators) {
                 String indicatorName = indicator.indicatorName();
-                Map<String, Object> indicatorResult = localResultMap.get(indicatorName);
+                PipelineData indicatorResult = localResultMap.get(indicatorName);
                 if (indicatorResult != null) {
-                    Map<String, Double[][]> aListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
+                    Map<String, Double[][]> aListMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);
                     Double[][] aResult = aListMap.get(id);
                     arrayResult = ArrayUtils.addAll(arrayResult, aResult[0]);
                 }
@@ -797,18 +795,19 @@ public class MLIndicator extends Aggregator {
             Set<String> ids) throws Exception {
         Map<String, AbstractIndicator> indicatorMap = new HashMap<>();
         Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-        Map<String, Map<String, Object>> localResultMap = cat.getIndicatorLocalResultMap();
+        Map<String, PipelineData> localResultMap = cat.putData();
         for (Entry<String, List<AggregatorMLIndicator>> entry : usedIndicators.entrySet()) {
             List<AggregatorMLIndicator> list = entry.getValue();
             for (AggregatorMLIndicator ind : list) {
                 String indicator = ind.indicator();
                 if (indicator != null) {
+                    // TODO newIndicatorMap not used
                     indicatorMap.put(indicator, ind.getIndicator(category, newIndicatorMap, usedIndicatorMap, datareaders));
                 }
-                Map<String, Object> indicatorResult = localResultMap.get(indicator);
+                PipelineData indicatorResult = localResultMap.get(indicator);
                 if (indicatorResult != null) {
                     DataReader datareader = (DataReader) pipelineMap.get("" + this.category);
-                    Map<String, Double[][]> aResult = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
+                    Map<String, Double[][]> aResult = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);
                     //Map<String, Object[]> aResult = (Map<String, Object[]>) indicatorResult.get(PipelineConstants. LIST);
                     ids.retainAll(aResult.keySet());
                 }

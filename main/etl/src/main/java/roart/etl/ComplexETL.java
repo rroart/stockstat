@@ -42,9 +42,9 @@ public class ComplexETL {
                 Map<String, Pipeline> pipelineMap = getPipelineMap(datareaders);
                 Pipeline datareader = pipelineMap.get("" + cat);
                 // interpolation does not work yet
-                List<String> datelist = (List<String>) datareader.getLocalResultMap().get(PipelineConstants.DATELIST);
-                Map<String, Double[][]> listMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
-                Map<String, Double[][]> fillListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.FILLLIST);
+                List<String> datelist = (List<String>) datareader.putData().get(PipelineConstants.DATELIST);
+                Map<String, Double[][]> listMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);
+                Map<String, Double[][]> fillListMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.FILLLIST);
                 Double[][] fillList = fillListMap.get(id);
                 try {
                     int dateIndex = datelist.size() - datelist.indexOf(date);

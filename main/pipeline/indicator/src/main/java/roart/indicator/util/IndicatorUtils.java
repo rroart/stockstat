@@ -24,6 +24,7 @@ import roart.common.config.MarketStock;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.db.common.DbAccess;
 import roart.db.dao.DbDao;
 import roart.indicator.AbstractIndicator;
@@ -174,7 +175,7 @@ public class IndicatorUtils {
         List<Map<String, Double[][]>> listList = new ArrayList<>();
         int arraySize = 0;
         for (AbstractIndicator indicator : indicators) {
-            Map<String, Object> resultMap = indicator.getLocalResultMap();
+            PipelineData resultMap = indicator.putData();
             Map<String, Object[]> objMap = (Map<String, Object[]>) resultMap.get(PipelineConstants.OBJECT);
             if (objMap != null) {
                 objectMapsList.add(objMap);
@@ -304,7 +305,7 @@ public class IndicatorUtils {
                     result = ExtraReader.getExtraData(conf, extraData, j, id, result, commonDate);
                     // for extrareader data end
                     // for more extrareader data
-                    result = getExtraIndicatorsResult(extraData.categories, j, result, extraData.dateList, (LinkedHashSet<MarketStock>) extraData.extrareader.getLocalResultMap().get(PipelineConstants.MARKETSTOCKS), extraData.datareaders, allIndicators, commonDate, extraData);
+                    result = getExtraIndicatorsResult(extraData.categories, j, result, extraData.dateList, (LinkedHashSet<MarketStock>) extraData.extrareader.putData().get(PipelineConstants.MARKETSTOCKS), extraData.datareaders, allIndicators, commonDate, extraData);
                     // for more extrareader data end
                 }
                 if (result.length == arraySize && Arrays.stream(result).allMatch(i -> !Double.isNaN(i))) {
@@ -375,7 +376,7 @@ public class IndicatorUtils {
                     result = ExtraReader.getExtraData(conf, extraData, j, id, result);
                     // for extrareader data end
                     // for more extrareader data
-                    result = getExtraIndicatorsResult(extraData.categories, j, result, extraData.dateList, (LinkedHashSet<MarketStock>) extraData.extrareader.getLocalResultMap().get(PipelineConstants.MARKETSTOCKS), extraData.datareaders, allIndicators);
+                    result = getExtraIndicatorsResult(extraData.categories, j, result, extraData.dateList, (LinkedHashSet<MarketStock>) extraData.extrareader.putData().get(PipelineConstants.MARKETSTOCKS), extraData.datareaders, allIndicators);
                     // for more extrareader data end
                 }
                 if (result.length == arraySize && Arrays.stream(result).allMatch(i -> !Double.isNaN(i))) {
@@ -441,7 +442,7 @@ public class IndicatorUtils {
             int cat = ind.getCategory();
             Map<String, Pipeline> pipelineMap = getPipelineMap(datareaders);
             Pipeline pipeline = pipelineMap.get("" + cat);
-            List<String> dateList2 = (List<String>) pipeline.getLocalResultMap().get(PipelineConstants.DATELIST);
+            List<String> dateList2 = (List<String>) pipeline.putData().get(PipelineConstants.DATELIST);
             j = dateList2.size() - 1 - dateList2.indexOf(commonDate);
             Object[] objsIndicator = objectMap.get(id);
             result = appendDayResult(j, result, ind, objsIndicator);
@@ -455,11 +456,11 @@ public class IndicatorUtils {
         Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
         for (AbstractIndicator indicator : indicators) {
             DataReader datareader = (DataReader) pipelineMap.get("" + indicator.getCategory());
-            Map<String, Object> resultMap = indicator.getLocalResultMap();
+            PipelineData resultMap = indicator.putData();
             Map<String, Object[]> objMap = (Map<String, Object[]>) resultMap.get(PipelineConstants.OBJECT);
             if (objMap != null) { 
                 objectMapsList.add(objMap);
-                Map<String, Double[][]> list0 = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
+                Map<String, Double[][]> list0 = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);
                 listList.add(list0);
                 arraySize += indicator.getResultSize();
                 log.info("sizes {}", listList.get(listList.size() - 1).size());
@@ -474,16 +475,16 @@ public class IndicatorUtils {
             if (!extraData.dateList.isEmpty()) {
                 int jj = 0;
             }
-            arraySize += 2 * ((Set) extraData.extrareader.getLocalResultMap().get(PipelineConstants.MARKETSTOCKS)).size();
+            arraySize += 2 * ((Set) extraData.extrareader.putData().get(PipelineConstants.MARKETSTOCKS)).size();
             System.out.println("sizes " + arraySize);
         }
         // for extrareader data end
         // for more extra
-        Map<String, StockData>  stockDataMap = (Map<String, StockData>) extraData.extrareader.getLocalResultMap().get(PipelineConstants.STOCKDATA);
-        getAllIndicators(allIndicators, conf, extraData.categories, (LinkedHashSet<MarketStock>) extraData.extrareader.getLocalResultMap().get(PipelineConstants.MARKETSTOCKS), extraData.datareaders, stockDataMap);
+        Map<String, StockData>  stockDataMap = (Map<String, StockData>) extraData.extrareader.putData().get(PipelineConstants.STOCKDATA);
+        getAllIndicators(allIndicators, conf, extraData.categories, (LinkedHashSet<MarketStock>) extraData.extrareader.putData().get(PipelineConstants.MARKETSTOCKS), extraData.datareaders, stockDataMap);
         for (AbstractIndicator indicator : allIndicators) {
             int aSize = indicator.getResultSize();
-            arraySize += ((Set) extraData.extrareader.getLocalResultMap().get(PipelineConstants.MARKETSTOCKS)).size() * aSize;
+            arraySize += ((Set) extraData.extrareader.putData().get(PipelineConstants.MARKETSTOCKS)).size() * aSize;
         }
         log.info("listsize {}", extraData.dateList.size());
         return arraySize;
@@ -495,9 +496,9 @@ public class IndicatorUtils {
             if (!extraData.dateList.isEmpty()) {
                 int jj = 0;
             }
-            Map<String, Pipeline[]> dataReaderMap = (Map<String, Pipeline[]>) extraData.extrareader.getLocalResultMap().get(PipelineConstants.DATAREADER);
-            Map<String, StockData>  stockDataMap = (Map<String, StockData>) extraData.extrareader.getLocalResultMap().get(PipelineConstants.STOCKDATA);
-            Set<MarketStock> marketStocks = (Set<MarketStock>) extraData.extrareader.getLocalResultMap().get(PipelineConstants.MARKETSTOCKS);
+            Map<String, Pipeline[]> dataReaderMap = (Map<String, Pipeline[]>) extraData.extrareader.putData().get(PipelineConstants.DATAREADER);
+            Map<String, StockData>  stockDataMap = (Map<String, StockData>) extraData.extrareader.putData().get(PipelineConstants.STOCKDATA);
+            Set<MarketStock> marketStocks = (Set<MarketStock>) extraData.extrareader.putData().get(PipelineConstants.MARKETSTOCKS);
             for (MarketStock entry : marketStocks) {
                 String market = entry.getMarket();
                 Pipeline[] datareaders = dataReaderMap.get(market);
@@ -510,7 +511,7 @@ public class IndicatorUtils {
                 }
                 int mycat = stockData.cat;
                 Pipeline datareader = pipelineMap.get("" + mycat);
-                Map<String, Double[][]> fillListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.FILLLIST);
+                Map<String, Double[][]> fillListMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.FILLLIST);
                 Double[][] fillList = fillListMap.get(entry.getId());
                 // null
                 if (fillList == null || fillList[0] == null) {
@@ -527,8 +528,8 @@ public class IndicatorUtils {
         }
         // for extrareader data end
         // for more extra
-        Map<String, StockData>  stockDataMap = (Map<String, StockData>) extraData.extrareader.getLocalResultMap().get(PipelineConstants.STOCKDATA);
-        getAllIndicators(allIndicators, conf, extraData.categories, (LinkedHashSet<MarketStock>) extraData.extrareader.getLocalResultMap().get(PipelineConstants.MARKETSTOCKS), extraData.datareaders, stockDataMap);
+        Map<String, StockData>  stockDataMap = (Map<String, StockData>) extraData.extrareader.putData().get(PipelineConstants.STOCKDATA);
+        getAllIndicators(allIndicators, conf, extraData.categories, (LinkedHashSet<MarketStock>) extraData.extrareader.putData().get(PipelineConstants.MARKETSTOCKS), extraData.datareaders, stockDataMap);
         int extraSize = getExtraIndicatorsSize(allIndicators, extraData);
         arraySize += extraSize;
         log.info("listsize {}", extraData.dateList.size());
@@ -552,7 +553,7 @@ public class IndicatorUtils {
     private static Double[] getExtraIndicatorsResult(AbstractCategory[] categories, int j, Double[] result, List<String> dateList, LinkedHashSet<MarketStock> linkedHashSet, Pipeline[] datareaders, List<AbstractIndicator> allIndicators) throws Exception {
         for (AbstractIndicator indicator : allIndicators) {
             if (indicator.wantForExtras()) {
-                Map<String, Object> localIndicatorResults =  indicator.getLocalResultMap();
+                PipelineData localIndicatorResults =  indicator.putData();
                 Map<String, Map<String, Object[]>> marketObjectMap = (Map<String, Map<String, Object[]>>) localIndicatorResults.get(PipelineConstants.MARKETOBJECT);
                 for (Entry<String, Map<String, Object[]>> marketEntry : marketObjectMap.entrySet()) {
                     Map<String, Object[]> objectMap = marketEntry.getValue();
@@ -567,11 +568,11 @@ public class IndicatorUtils {
     }
 
     private static Double[] getExtraIndicatorsResult(AbstractCategory[] categories, int j, Double[] result, List<String> dateList, LinkedHashSet<MarketStock> linkedHashSet, Pipeline[] datareaders, List<AbstractIndicator> allIndicators, String commonDate, ExtraData extraData) throws Exception {
-        Map<String, Object> localResults =  extraData.extrareader.getLocalResultMap();
+        PipelineData localResults =  extraData.extrareader.putData();
         for (AbstractIndicator indicator : allIndicators) {
             if (indicator.wantForExtras()) {
                 Map<String, Map<String, double[][]>> marketListMap = ((Indicator)indicator).getMarketListMap(extraData.extrareader);
-                Map<String, Object> localIndicatorResults =  indicator.getLocalResultMap();
+                PipelineData localIndicatorResults =  indicator.putData();
                 LinkedHashSet<MarketStock> marketStocks = (LinkedHashSet<MarketStock>) localResults.get(PipelineConstants.MARKETSTOCKS);
                 Map<String, Pipeline[]> dataReaderMap = (Map<String, Pipeline[]>) localResults.get(PipelineConstants.DATAREADER);
                 Map<String, StockData>  stockDataMap = (Map<String, StockData>) localResults.get(PipelineConstants.STOCKDATA);
@@ -588,7 +589,7 @@ public class IndicatorUtils {
                     Pipeline[] mydatareaders = dataReaderMap.get(market);
                     Map<String, Pipeline> mypipelineMap = getPipelineMap(mydatareaders);
                     Pipeline pipeline = mypipelineMap.get("" + mycat);
-                    List<String> dateList2 = (List<String>) pipeline.getLocalResultMap().get(PipelineConstants.DATELIST);
+                    List<String> dateList2 = (List<String>) pipeline.putData().get(PipelineConstants.DATELIST);
                     j = dateList2.size() - 1 - dateList2.indexOf(commonDate);
                     Map<String, Object[]> objectMap = marketEntry.getValue();
                     for (Entry<String, Object[]> entry2 : objectMap.entrySet()) {
@@ -604,7 +605,7 @@ public class IndicatorUtils {
     private static int getExtraIndicatorsSize(List<AbstractIndicator> allIndicators, ExtraData extraData) throws Exception {
         //DbAccess dbDao = DbDao.instance(conf);
         int size = 0;
-        Set<MarketStock> allMarketStocks = (Set<MarketStock>) extraData.extrareader.getLocalResultMap().get(PipelineConstants.MARKETSTOCKS);
+        Set<MarketStock> allMarketStocks = (Set<MarketStock>) extraData.extrareader.putData().get(PipelineConstants.MARKETSTOCKS);
         for (AbstractIndicator indicator : allIndicators) {
             Map<String, Map<String, double[][]>> marketListMap = ((Indicator)indicator).getMarketListMap(extraData.extrareader);
             if (indicator.wantForExtras()) {

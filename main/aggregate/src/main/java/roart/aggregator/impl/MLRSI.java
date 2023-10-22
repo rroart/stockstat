@@ -131,13 +131,13 @@ public class MLRSI extends IndicatorAggregator {
             if (conf.isRSIEnabled()) {
                 Object list = cat.getResultMap().get(PipelineConstants.INDICATORRSILIST);
                 Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORRSIOBJECT);
-                Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORRSI).get(PipelineConstants.RESULT);
+                Object resultObject = cat.putData().get(PipelineConstants.INDICATORRSI).get(PipelineConstants.RESULT);
                 wantedSubTypesList.add(new SubTypeRSI(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf));
             }
             if (conf.isSTOCHRSIEnabled()) {
                 Object list = cat.getResultMap().get(PipelineConstants.INDICATORSTOCHRSILIST);
                 Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORSTOCHRSIOBJECT);
-                Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORSTOCHRSI).get(PipelineConstants.RESULT);
+                Object resultObject = cat.putData().get(PipelineConstants.INDICATORSTOCHRSI).get(PipelineConstants.RESULT);
                 wantedSubTypesList.add(new SubTypeSRSI(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf));
             }
         }

@@ -81,7 +81,7 @@ public class MLATR extends IndicatorAggregator {
         List<SubType> wantedSubTypesList = new ArrayList<>();
         Object list = cat.getResultMap().get(PipelineConstants.INDICATORATRLIST);
         Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORATROBJECT);
-        Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORATR).get(PipelineConstants.RESULT);
+        Object resultObject = cat.putData().get(PipelineConstants.INDICATORATR).get(PipelineConstants.RESULT);
         wantedSubTypesList.add(new ATRSubTypeATR(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE));
         return wantedSubTypesList;
     }
