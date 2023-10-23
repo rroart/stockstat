@@ -5,6 +5,7 @@ import java.util.List;
 import roart.category.AbstractCategory;
 import roart.iclij.config.IclijConfig;
 import roart.common.model.StockItem;
+import roart.common.pipeline.data.PipelineData;
 import roart.pipeline.Pipeline;
 import roart.result.model.ResultItemTableRow;
 import roart.stockutil.StockDao;
@@ -12,7 +13,7 @@ import roart.stockutil.StockUtil;
 
 public class Category extends AbstractCategory {
 
-    public Category(IclijConfig conf, String periodText, List<StockItem> stocks, Pipeline[] datareaders) {
+    public Category(IclijConfig conf, String periodText, List<StockItem> stocks, PipelineData[] datareaders) {
         super(conf, periodText, stocks, datareaders);
     }
 

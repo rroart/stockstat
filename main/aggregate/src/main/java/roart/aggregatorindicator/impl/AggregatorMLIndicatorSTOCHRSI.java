@@ -4,6 +4,7 @@ import java.util.Map;
 
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.impl.IndicatorSTOCHRSI;
 import roart.pipeline.Pipeline;
@@ -27,7 +28,7 @@ public class AggregatorMLIndicatorSTOCHRSI extends AggregatorMLIndicator {
     // this is duplicated
     @Override
     public AbstractIndicator getIndicator(int category, Map<String, AbstractIndicator> newIndicatorMap,
-            Map<String, AbstractIndicator> usedIndicatorMap, Pipeline[] datareaders) throws Exception {
+            Map<String, AbstractIndicator> usedIndicatorMap, PipelineData[] datareaders) throws Exception {
         if (usedIndicatorMap != null && usedIndicatorMap.containsKey(indicator())) {
             return usedIndicatorMap.get(indicator());
         }

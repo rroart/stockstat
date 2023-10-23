@@ -24,15 +24,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import roart.aggregator.impl.IndicatorAggregator.MergeSubType;
 import roart.aggregator.impl.IndicatorAggregator.MySubType;
 import roart.aggregator.impl.IndicatorAggregator.SubType;
-import roart.category.AbstractCategory;
 import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.ArraysUtil;
+import roart.common.util.PipelineUtils;
 import roart.db.dao.DbDao;
 import roart.executor.MyExecutors;
-import roart.pipeline.Pipeline;
 import roart.indicator.util.IndicatorUtils;
 import roart.common.constants.Constants;
 import roart.ml.dao.MLClassifyDao;
@@ -60,8 +60,8 @@ public class MLMACD extends IndicatorAggregator {
     }
 
     public MLMACD(IclijConfig conf, String string, String title, int category, 
-            AbstractCategory[] categories, Map<String, String> idNameMap, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
-        super(conf, string, category, title, idNameMap, categories, datareaders, neuralnetcommand);
+            Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+        super(conf, string, category, title, idNameMap, datareaders, neuralnetcommand);
     }
 
     private abstract class MacdSubType extends MergeSubType {
@@ -166,11 +166,12 @@ public class MLMACD extends IndicatorAggregator {
     }
 
     @Override
-    protected List<SubType> getWantedSubTypes(AbstractCategory cat, AfterBeforeLimit afterbefore) {
+    protected List<SubType> getWantedSubTypes(AfterBeforeLimit afterbefore) {
         List<SubType> wantedSubTypesList = new ArrayList<>();
-        Object list = cat.getResultMap().get(PipelineConstants.INDICATORMACDLIST);
-        Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORMACDOBJECT);
-        Object resultObject = cat.putData().get(PipelineConstants.INDICATORMACD).get(PipelineConstants.RESULT);
+        PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORMACD);
+        Object list = null;
+        Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+        Object resultObject = pipelineData.get(PipelineConstants.RESULT);
         if (conf.wantMLHist()) {
             wantedSubTypesList.add(new MacdSubTypeHist(list, taObject, resultObject, afterbefore, TaConstants.THREERANGE));
         }

@@ -227,7 +227,9 @@ public class ExtraReader extends Pipeline {
         //map.put(PipelineConstants.PAIRTRUNCLIST, pairTruncListMap);
         map.put(PipelineConstants.DATELIST, commonDates);
         map.put(PipelineConstants.DATAREADER, dataReaderMap);
-        map.put(PipelineConstants.MARKETSTOCKS, allMarketStocks);
+        if (!allMarketStocks.isEmpty()) {
+            map.put(PipelineConstants.MARKETSTOCKS, allMarketStocks);
+        }
         map.put(PipelineConstants.STOCKDATA, stockDataMap);
         return map;
     }
@@ -316,13 +318,13 @@ public class ExtraReader extends Pipeline {
         }
         String date = extraData.dateList.get(size - j);
         String prevDate = extraData.dateList.get(size - (j + (deltas - 1)));
-        Map<String, Pipeline[]> dataReaderMap = (Map<String, Pipeline[]>) extraData.extrareader.putData().get(PipelineConstants.DATAREADER);
-        Map<String, StockData>  stockDataMap = (Map<String, StockData>) extraData.extrareader.putData().get(PipelineConstants.STOCKDATA);
-        LinkedHashSet<MarketStock> allMarketStocks = (LinkedHashSet<MarketStock>) extraData.extrareader.putData().get(PipelineConstants.MARKETSTOCKS);
+        Map<String, PipelineData[]> dataReaderMap = (Map<String, PipelineData[]>) extraData.extrareader.get(PipelineConstants.DATAREADER);
+        Map<String, StockData>  stockDataMap = (Map<String, StockData>) extraData.extrareader.get(PipelineConstants.STOCKDATA);
+        LinkedHashSet<MarketStock> allMarketStocks = (LinkedHashSet<MarketStock>) extraData.extrareader.get(PipelineConstants.MARKETSTOCKS);
         for (MarketStock entry : allMarketStocks) {
             String market = entry.getMarket();
-            Pipeline[] datareaders = dataReaderMap.get(market);
-            Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
+            PipelineData[] datareaders = dataReaderMap.get(market);
+            Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
             int category = extraData.category;
             String cat = entry.getCategory();
             StockData stockData = stockDataMap.get(market);
@@ -330,11 +332,11 @@ public class ExtraReader extends Pipeline {
                 cat = stockData.catName;
             }
             int mycat = stockData.cat;
-            Pipeline datareader = pipelineMap.get("" + mycat);
-            List<String> dateList = (List<String>) datareader.putData().get(PipelineConstants.DATELIST);
+            PipelineData datareader = pipelineMap.get("" + mycat);
+            List<String> dateList = (List<String>) datareader.get(PipelineConstants.DATELIST);
             int dateIndex = dateList.indexOf(date);
             int prevDateIndex = dateList.indexOf(prevDate);
-            Map<String, Double[][]> fillListMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.FILLLIST);
+            Map<String, Double[][]> fillListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.FILLLIST);
             Object[] arr = null;
             Double[][] fillList = fillListMap.get(entry.getId());
             Double value = fillList[0][dateIndex];
@@ -364,13 +366,13 @@ public class ExtraReader extends Pipeline {
         }
         String date = extraData.dateList.get(size - j);
         String prevDate = extraData.dateList.get(size - (j + (deltas - 1)));
-        Map<String, Pipeline[]> dataReaderMap = (Map<String, Pipeline[]>) extraData.extrareader.putData().get(PipelineConstants.DATAREADER);
-        Map<String, StockData>  stockDataMap = (Map<String, StockData>) extraData.extrareader.putData().get(PipelineConstants.STOCKDATA);
-        LinkedHashSet<MarketStock> allMarketStocks = (LinkedHashSet<MarketStock>) extraData.extrareader.putData().get(PipelineConstants.MARKETSTOCKS);
+        Map<String, PipelineData[]> dataReaderMap = (Map<String, PipelineData[]>) extraData.extrareader.get(PipelineConstants.DATAREADER);
+        Map<String, StockData>  stockDataMap = (Map<String, StockData>) extraData.extrareader.get(PipelineConstants.STOCKDATA);
+        LinkedHashSet<MarketStock> allMarketStocks = (LinkedHashSet<MarketStock>) extraData.extrareader.get(PipelineConstants.MARKETSTOCKS);
         for (MarketStock entry : allMarketStocks) {
             String market = entry.getMarket();
-            Pipeline[] datareaders = dataReaderMap.get(market);
-            Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
+            PipelineData[] datareaders = dataReaderMap.get(market);
+            Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
             int category = extraData.category;
             String cat = entry.getCategory();
             StockData stockData = stockDataMap.get(market);
@@ -378,11 +380,11 @@ public class ExtraReader extends Pipeline {
                 cat = stockData.catName;
             }
             int mycat = stockData.cat;
-            Pipeline datareader = pipelineMap.get("" + mycat);
-            List<String> dateList = (List<String>) datareader.putData().get(PipelineConstants.DATELIST);
+            PipelineData datareader = pipelineMap.get("" + mycat);
+            List<String> dateList = (List<String>) datareader.get(PipelineConstants.DATELIST);
             int dateIndex = dateList.size() - dateList.indexOf(commonDate);
             int prevDateIndex = dateList.indexOf(prevDate);
-            Map<String, Double[][]> fillListMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.FILLLIST);
+            Map<String, Double[][]> fillListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.FILLLIST);
             Object[] arr = null;
             Double[][] fillList = fillListMap.get(entry.getId());
             dateIndex = fillList[0].length - dateIndex;

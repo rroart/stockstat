@@ -37,7 +37,7 @@ public abstract class AbstractIndicator extends Calculatable {
     public int fieldSize = 0;
     protected Object[] emptyField;
 
-    protected Pipeline datareader;
+    protected PipelineData datareader;
     /*
     protected Map<String, Double[][]> listMap;
     protected Map<String, Double[][]> fillListMap;
@@ -128,6 +128,7 @@ public abstract class AbstractIndicator extends Calculatable {
 
     public PipelineData putData() {
         PipelineData map = getData();
+        map.setName(getName());
         map.put(PipelineConstants.RESULT, calculatedMap);
         map.put(PipelineConstants.OBJECT, objectMap);
         map.put(PipelineConstants.OBJECTFIXED, objectFixedMap);
@@ -237,7 +238,7 @@ public abstract class AbstractIndicator extends Calculatable {
     }
 
     protected Map<String, Double[][]> getListMap() {
-        return (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);
+        return (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
     }
     
 }

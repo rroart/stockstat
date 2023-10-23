@@ -28,7 +28,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.aggregator.impl.IndicatorAggregator.AfterBeforeLimit;
 import roart.aggregator.impl.IndicatorAggregator.SubType;
-import roart.category.AbstractCategory;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.iclij.config.IclijConfig;
@@ -39,8 +38,10 @@ import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
+import roart.common.util.PipelineUtils;
 import roart.executor.MyExecutors;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
@@ -100,9 +101,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     private Map<String, String> idNameMap;
 
-    private AbstractCategory[] categories;
-
-    private Pipeline[] datareaders;
+    protected PipelineData[] datareaders;
 
     private Map<MLClassifyModel, Long> mapTime = new HashMap<>();
 
@@ -115,11 +114,10 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     protected List<SubType> wantedSubTypes = new ArrayList<>();
 
-    public IndicatorAggregator(IclijConfig conf, String string, int category, String title, Map<String, String> idNameMap, AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+    public IndicatorAggregator(IclijConfig conf, String string, int category, String title, Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         super(conf, string, category);
         this.key = title;
         this.idNameMap = idNameMap;
-        this.categories = categories;
         this.datareaders = datareaders;
 
         makeMapTypes();
@@ -148,7 +146,7 @@ public abstract class IndicatorAggregator extends Aggregator {
             eventTableRows = new ArrayList<>();
         }
         if (isEnabled()) {
-            calculateMe(conf, categories, datareaders, neuralnetcommand);    
+            calculateMe(conf, datareaders, neuralnetcommand);    
             cleanMLDaos();
         }
     }
@@ -158,23 +156,17 @@ public abstract class IndicatorAggregator extends Aggregator {
     protected abstract AfterBeforeLimit getAfterBefore();
 
     private void calculateMe(IclijConfig conf,
-            AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
-        AbstractCategory cat = StockUtil.getWantedCategory(categories, category);
-        if (cat == null) {
-            return;
-        }
-        log.info("checkthis {}", category == cat.getPeriod());
-        log.info("checkthis {}", title.equals(cat.getTitle()));
+            PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         log.info("checkthis {}", key.equals(title));
-        Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-        Pipeline datareader = pipelineMap.get("" + category);
+        Map<String, PipelineData> pipelineMap = PipelineUtils.getPipelineMap(datareaders);
+        PipelineData datareader = pipelineMap.get(key);
         if (datareader == null) {
             log.info("empty {}", category);
             return;
         }
-        Map<String, Double[][]> aListMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);
-        Map<String, double[][]> fillListMap = (Map<String, double[][]>) datareader.putData().get(PipelineConstants.TRUNCFILLLIST);
-        Map<String, double[][]>  base100FillListMap = (Map<String, double[][]>) datareader.putData().get(PipelineConstants.TRUNCBASE100FILLLIST);
+        Map<String, Double[][]> aListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
+        Map<String, double[][]> fillListMap = (Map<String, double[][]>) datareader.get(PipelineConstants.TRUNCFILLLIST);
+        Map<String, double[][]>  base100FillListMap = (Map<String, double[][]>) datareader.get(PipelineConstants.TRUNCBASE100FILLLIST);
         this.listMap = conf.wantPercentizedPriceIndex() ? base100FillListMap : fillListMap;
 
         long time0 = System.currentTimeMillis();
@@ -192,7 +184,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         resultMetaArray = new ArrayList<>();
         long time2 = System.currentTimeMillis();
         AfterBeforeLimit afterbefore = getAfterBefore();
-        makeWantedSubTypes(cat, afterbefore);
+        makeWantedSubTypes(afterbefore);
         //makeWantedSubTypesMap(wantedSubTypes());
         //log.debug("imap " + objectMap.size());
         log.info("time2 {}", (System.currentTimeMillis() - time2));
@@ -207,7 +199,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         // a map from subtype h/m + maptype com/neg/pos to a map<values, label>
         Map<SubType, MLMeta> metaMap = new HashMap<>();
         Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = createPosNegMaps(conf, metaMap, threshold);
-        doMergeLearn(conf, mapMap, cat, afterbefore, metaMap, threshold);
+        doMergeLearn(conf, mapMap, afterbefore, metaMap, threshold);
         
         usedSubTypes = new ArrayList<>(mapMap.keySet());
         fieldSize = fieldSize() * thresholds.length;
@@ -1080,15 +1072,15 @@ public abstract class IndicatorAggregator extends Aggregator {
         return list;
     }
 
-    protected void makeWantedSubTypes(AbstractCategory cat, AfterBeforeLimit afterbefore) {
-        this.wantedSubTypes = getWantedSubTypes(cat, afterbefore);
+    protected void makeWantedSubTypes(AfterBeforeLimit afterbefore) {
+        this.wantedSubTypes = getWantedSubTypes(afterbefore);
     }
     
     protected List<SubType> wantedSubTypes() {
         return wantedSubTypes;
     }
 
-    protected abstract List<SubType> getWantedSubTypes(AbstractCategory cat, AfterBeforeLimit afterbefore);
+    protected abstract List<SubType> getWantedSubTypes(AfterBeforeLimit afterbefore);
 
     private Map<String, SubType> subTypeMap = new HashMap<>();
 
@@ -1561,11 +1553,11 @@ public abstract class IndicatorAggregator extends Aggregator {
     }
 
     private void doMergeLearn(IclijConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
-            AbstractCategory cat,
-            AfterBeforeLimit afterbefore, Map<SubType, MLMeta> metaMap, Double threshold) {
+            AfterBeforeLimit afterbefore,
+            Map<SubType, MLMeta> metaMap, Double threshold) {
         Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> newMapMap = new HashMap<>();
         Map<String, Double> labelMap2 = createShortLabelMap2();
-        List<SubType> subTypes = getWantedSubTypes(cat, afterbefore);
+        List<SubType> subTypes = getWantedSubTypes(afterbefore);
         List<SubType> mergelist = wantedMergeSubTypes();
         // for each wanted merge trigger
         for (SubType mergeSubType : mergelist) {

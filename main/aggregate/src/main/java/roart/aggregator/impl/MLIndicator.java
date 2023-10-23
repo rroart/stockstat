@@ -46,6 +46,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
+import roart.common.util.PipelineUtils;
 import roart.executor.MyExecutors;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
@@ -115,7 +116,7 @@ public class MLIndicator extends Aggregator {
     List<MLClassifyDao> mldaos = new ArrayList<>();
 
     public MLIndicator(IclijConfig conf, String string, String title, int category, 
-            AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+            AbstractCategory[] categories, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         super(conf, string, category);
         this.key = title;
         makeMapTypes();
@@ -266,7 +267,7 @@ public class MLIndicator extends Aggregator {
     }
 
     private void calculateMomentums(IclijConfig conf, AbstractCategory[] categories,
-            Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+            PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         AbstractCategory cat = StockUtil.getWantedCategory(categories, category);
         if (cat == null) {
             return;
@@ -275,28 +276,25 @@ public class MLIndicator extends Aggregator {
         log.info("checkthis {}", category == cat.getPeriod());
         log.info("checkthis {}", title.equals(cat.getTitle()));
         log.info("checkthis {}", key.equals(title));
-        Map<String, Pipeline> pipelineMap = new HashMap<>();
-        for (Pipeline datareader : datareaders) {
-            pipelineMap.put(datareader.pipelineName(), datareader);
-        }
-        Pipeline extrareader = pipelineMap.get(PipelineConstants.EXTRAREADER);
+        Map<String, PipelineData> pipelineMap = PipelineUtils.getPipelineMap(datareaders);
+        PipelineData datareader = pipelineMap.get(key);
+        PipelineData extrareader = pipelineMap.get(PipelineConstants.EXTRAREADER);
         /*
         Map<Pair<String, String>, List<StockItem>> pairStockMap = null; // (Map<Pair<String, String>, List<StockItem>>) localResults.get(PipelineConstants.PAIRSTOCK);
         Map<Pair<String, String>, Map<Date, StockItem>> pairDateMap = null; // (Map<Pair<String, String>, Map<Date, StockItem>>) localResults.get(PipelineConstants.PAIRDATE);
         Map<Pair<String, String>, String> pairCatMap = null; // (Map<Pair<String, String>, String>) localResults.get(PipelineConstants.PAIRCAT);
         */
-        List<String> dateList = (List<String>) pipelineMap.get("" + this.category).putData().get(PipelineConstants.DATELIST);
+        List<String> dateList = (List<String>) pipelineMap.get("" + this.category).get(PipelineConstants.DATELIST);
 	List<String> dateList2 = new ArrayList<>(dateList); // StockDao.getDateList(conf.getConfigData().getMarket(), marketdatamap);
-        if (!((ExtraReader)extrareader).allMarketStocks.isEmpty()) {
-            dateList = new ArrayList<>(((ExtraReader)extrareader).commonDates);
+        if (extrareader.get(PipelineConstants.MARKETSTOCKS) != null) {
+            dateList = new ArrayList<>((List) extrareader.get(PipelineConstants.DATELIST));
             Collections.sort(dateList);
         }
         Map<String, AbstractIndicator> usedIndicatorMap = cat.getIndicatorMap();
 
         Map<String, List<AggregatorMLIndicator>> usedIndicators = AggregatorMLIndicator.getUsedAggregatorMLIndicators(conf);
         Set<String> ids = new HashSet<>();
-        DataReader datareader = (DataReader) pipelineMap.get("" + this.category);
-        Map<String, Double[][]> list0 = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);
+        Map<String, Double[][]> list0 = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
         ids.addAll(list0.keySet());
         List<AbstractIndicator> indicators = getIndicators(datareaders, cat, null, usedIndicatorMap, usedIndicators,
                 ids);
@@ -700,10 +698,10 @@ public class MLIndicator extends Aggregator {
         return mlMap;
     }
 
-    private void getMergedLists(AbstractCategory cat, Set<String> ids, List<AbstractIndicator> indicators, Pipeline[] datareaders) {
+    private void getMergedLists(AbstractCategory cat, Set<String> ids, List<AbstractIndicator> indicators, PipelineData[] datareaders) {
         Map<String, Object[]> result = new HashMap<>();
-        Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-        DataReader datareader = (DataReader) pipelineMap.get("" + cat.getPeriod());
+        Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
+        PipelineData datareader = pipelineMap.get("" + cat.getPeriod());
         Map<String, PipelineData> localResultMap = cat.putData();
         for (String id : ids) {
             Object[] arrayResult = new Object[0];
@@ -711,7 +709,7 @@ public class MLIndicator extends Aggregator {
                 String indicatorName = indicator.indicatorName();
                 PipelineData indicatorResult = localResultMap.get(indicatorName);
                 if (indicatorResult != null) {
-                    Map<String, Double[][]> aListMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);
+                    Map<String, Double[][]> aListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
                     Double[][] aResult = aListMap.get(id);
                     arrayResult = ArrayUtils.addAll(arrayResult, aResult[0]);
                 }
@@ -790,11 +788,12 @@ public class MLIndicator extends Aggregator {
         }
     }
 
-    private List<AbstractIndicator> getIndicators(Pipeline[] datareaders, AbstractCategory cat, Map<String, AbstractIndicator> newIndicatorMap,
+    private List<AbstractIndicator> getIndicators(PipelineData[] datareaders, AbstractCategory cat, Map<String, AbstractIndicator> newIndicatorMap,
             Map<String, AbstractIndicator> usedIndicatorMap, Map<String, List<AggregatorMLIndicator>> usedIndicators,
             Set<String> ids) throws Exception {
         Map<String, AbstractIndicator> indicatorMap = new HashMap<>();
-        Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
+        Map<String, PipelineData> pipelineMap = PipelineUtils.getPipelineMap(datareaders);
+        // TODO
         Map<String, PipelineData> localResultMap = cat.putData();
         for (Entry<String, List<AggregatorMLIndicator>> entry : usedIndicators.entrySet()) {
             List<AggregatorMLIndicator> list = entry.getValue();
@@ -806,8 +805,8 @@ public class MLIndicator extends Aggregator {
                 }
                 PipelineData indicatorResult = localResultMap.get(indicator);
                 if (indicatorResult != null) {
-                    DataReader datareader = (DataReader) pipelineMap.get("" + this.category);
-                    Map<String, Double[][]> aResult = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);
+                    PipelineData datareader = pipelineMap.get("" + this.category);
+                    Map<String, Double[][]> aResult = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
                     //Map<String, Object[]> aResult = (Map<String, Object[]>) indicatorResult.get(PipelineConstants. LIST);
                     ids.retainAll(aResult.keySet());
                 }

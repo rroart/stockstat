@@ -7,21 +7,21 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.category.AbstractCategory;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
+import roart.common.util.PipelineUtils;
 import roart.ml.dao.MLClassifyDao;
-import roart.pipeline.Pipeline;
 import roart.talib.util.TaConstants;
 
 public class MLMulti extends IndicatorAggregator {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public MLMulti(IclijConfig conf, String string, String title, int category, 
-            AbstractCategory[] categories, Map<String, String> idNameMap, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
-        super(conf, string, category, title, idNameMap, categories, datareaders, neuralnetcommand);
+            Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+        super(conf, string, category, title, idNameMap, datareaders, neuralnetcommand);
 /*
         if (isEnabled()) {
             calculateMe(conf, periodDataMap, category, categories, datareaders);    
@@ -51,58 +51,64 @@ public class MLMulti extends IndicatorAggregator {
     }
 
     @Override
-    protected List<SubType> getWantedSubTypes(AbstractCategory cat, AfterBeforeLimit afterbefore) {
+    protected List<SubType> getWantedSubTypes(AfterBeforeLimit afterbefore) {
         List<SubType> wantedSubTypesList = new ArrayList<>();
         if (conf.wantAggregatorsMlmultiML()) {
             if (conf.wantAggregatorsMlmultiMACD()) {
-                Object list = cat.getResultMap().get(PipelineConstants.INDICATORMACDLIST);
-                Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORMACDOBJECT);
-                Object resultObject = cat.putData().get(PipelineConstants.INDICATORMACD).get(PipelineConstants.RESULT);
+                PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORMACD);
+                Object list = null;
+                Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+                Object resultObject = pipelineData.get(PipelineConstants.RESULT);
                 Filter[] filter = new Filter[] { new Filter(true, 0, shortneg), new Filter(false, 0, shortpos) };
                 if (taObject != null) {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.THREERANGE, conf, filter, Constants.MACD, MySubType.MACDHIST));
                 }
             }
             if (conf.wantAggregatorsMlmultiRSI()) {
-                Object list = cat.getResultMap().get(PipelineConstants.INDICATORRSILIST);
-                Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORRSIOBJECT);
-                Object resultObject = cat.putData().get(PipelineConstants.INDICATORRSI).get(PipelineConstants.RESULT);
+                PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORRSI);
+                Object list = null;
+                Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+                Object resultObject = pipelineData.get(PipelineConstants.RESULT);
                 Filter[] filter = new Filter[] { new Filter(true, conf.getMLRSIBuyRSILimit(), shortpos), new Filter(false, conf.getMLRSISellRSILimit(), shortneg) };
                 if (taObject != null) {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, Constants.RSI, MySubType.RSI));
                 }
             }
             if (conf.wantAggregatorsMlmultiATR()) {
-                Object list = cat.getResultMap().get(PipelineConstants.INDICATORATRLIST);
-                Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORATROBJECT);
-                Object resultObject = cat.putData().get(PipelineConstants.INDICATORATR).get(PipelineConstants.RESULT);
+                PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORATR);
+                Object list = null;
+                Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+                Object resultObject = pipelineData.get(PipelineConstants.RESULT);
                 Filter[] filter = new Filter[] { new Filter(true, conf.getMLATRBuyLimit(), shortpos), new Filter(false, conf.getMLATRSellLimit(), shortneg) };
                 if (taObject != null) {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, Constants.ATR, MySubType.ATR));
                 }
             }
             if (conf.wantAggregatorsMlmultiCCI()) {
-                Object list = cat.getResultMap().get(PipelineConstants.INDICATORCCILIST);
-                Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORCCIOBJECT);
-                Object resultObject = cat.putData().get(PipelineConstants.INDICATORCCI).get(PipelineConstants.RESULT);
+                PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORCCI);
+                Object list = null;
+                Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+                Object resultObject = pipelineData.get(PipelineConstants.RESULT);
                 Filter[] filter = new Filter[] { new Filter(true, conf.getMLCCIBuyLimit(), shortpos), new Filter(false, conf.getMLCCISellLimit(), shortneg) };
                 if (taObject != null) {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, Constants.CCI, MySubType.CCI));
                 }
             }
             if (conf.wantAggregatorsMlmultiSTOCH()) {
-                Object list = cat.getResultMap().get(PipelineConstants.INDICATORSTOCHLIST);
-                Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORSTOCHOBJECT);
-                Object resultObject = cat.putData().get(PipelineConstants.INDICATORSTOCH).get(PipelineConstants.RESULT);
+                PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCH);
+                Object list = null;
+                Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+                Object resultObject = pipelineData.get(PipelineConstants.RESULT);
                 Filter[] filter = new Filter[] { new Filter(true, conf.getMLSTOCHBuyLimit(), shortpos), new Filter(false, conf.getMLSTOCHSellLimit(), shortneg) };
                 if (taObject != null) {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.TWORANGE, conf, filter, Constants.STOCH, MySubType.STOCH));
                 }
             }
             if (conf.wantAggregatorsMlmultiSTOCHRSI()) {
-                Object list = cat.getResultMap().get(PipelineConstants.INDICATORSTOCHRSILIST);
-                Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORSTOCHRSIOBJECT);
-                Object resultObject = cat.putData().get(PipelineConstants.INDICATORSTOCHRSI).get(PipelineConstants.RESULT);
+                PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCHRSI);
+                Object list = null;
+                Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+                Object resultObject = pipelineData.get(PipelineConstants.RESULT);
                 Filter[] filter = new Filter[] { new Filter(true, conf.getMLRSIBuySRSILimit(), shortpos), new Filter(false, conf.getMLRSISellSRSILimit(), shortneg) };
                 if (taObject != null) {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, Constants.STOCHRSI, MySubType.STOCHRSI));

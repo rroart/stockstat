@@ -47,7 +47,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
     public List<String> disableList;
  
     public AggregatorRecommenderIndicator(IclijConfig conf, String index, Map<String, MarketData> marketdatamap, AbstractCategory[] categories,
-            Pipeline[] datareaders, List<String> disableList) throws Exception {
+            PipelineData[] datareaders, List<String> disableList) throws Exception {
         super(conf, index, 0);
         this.disableList = disableList;
         if (!isEnabled()) {
@@ -57,11 +57,11 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         if (cat == null) {
             return;
         }
-        Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-        DataReader datareader = (DataReader) pipelineMap.get("" + cat.getPeriod());
+        Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
+        PipelineData datareader = pipelineMap.get("" + cat.getPeriod());
         Map<String, AbstractIndicator> usedIndicatorMap = cat.getIndicatorMap();
         Map<String, PipelineData> localResultMap = cat.putData();
-        Map<String, Double[][]> list0 = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);
+        Map<String, Double[][]> list0 = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
  
         usedRecommenders = Recommend.getUsedRecommenders(conf);
         Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders, usedIndicatorMap, conf);

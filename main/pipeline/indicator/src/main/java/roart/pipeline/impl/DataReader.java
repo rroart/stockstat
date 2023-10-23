@@ -91,7 +91,7 @@ public class DataReader extends Pipeline {
         boolean currentYear = false;
         if (category >= 0) {
             categoryTitle = marketData.periodtext[category];
-            currentYear = MetaUtil.currentYear(marketData, categoryTitle);
+            currentYear = MetaUtil.currentYear(marketData.meta, categoryTitle);
         }
         if (category == Constants.INDEXVALUECOLUMN) {
             categoryTitle = CategoryConstants.INDEX;

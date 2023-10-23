@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.pipeline.common.aggregate.Aggregator;
-import roart.category.AbstractCategory;
 import roart.common.config.MLConstants;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
@@ -40,7 +39,6 @@ import roart.ml.dao.MLClassifyDao;
 import roart.ml.dao.MLClassifyDatasetCallable;
 import roart.ml.dao.MLClassifyLearnTestPredictCallable;
 import roart.ml.model.LearnTestClassifyResult;
-import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.pipeline.Pipeline;
 import roart.pipeline.data.ExtraData;
@@ -95,8 +93,8 @@ public class MLDataset extends Aggregator {
 
     List<MLClassifyDao> mldaos = new ArrayList<>();
 
-    public MLDataset(IclijConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, 
-            String title, int category, AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+    public MLDataset(IclijConfig conf, String string, Map<String, PeriodData> periodDataMap, String title, 
+            int category, NeuralNetCommand neuralnetcommand) throws Exception {
         super(conf, string, category);
         this.periodDataMap = periodDataMap;
         this.key = title;
@@ -127,7 +125,7 @@ public class MLDataset extends Aggregator {
             eventTableRows = new ArrayList<>();
         }
         if (isEnabled()) {
-            calculate(conf, marketdatamap, categories, datareaders, neuralnetcommand);
+            calculate(conf, neuralnetcommand);
             cleanMLDaos();
         }
     }
@@ -156,8 +154,7 @@ public class MLDataset extends Aggregator {
 
     private Map<Integer, String> mapTypes = new HashMap<>();
 
-    private void calculate(IclijConfig conf, Map<String, MarketData> marketdatamap,
-            AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+    private void calculate(IclijConfig conf, NeuralNetCommand neuralnetcommand) throws Exception {
         Map<String, Pipeline> pipelineMap = new HashMap<>();
         long time0 = System.currentTimeMillis();
         log.info("time0 {}", (System.currentTimeMillis() - time0));

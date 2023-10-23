@@ -9,13 +9,13 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.category.AbstractCategory;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
+import roart.common.util.PipelineUtils;
 import roart.ml.dao.MLClassifyDao;
-import roart.pipeline.Pipeline;
 import roart.talib.util.TaConstants;
 
 public class MLSTOCH extends IndicatorAggregator {
@@ -32,8 +32,8 @@ public class MLSTOCH extends IndicatorAggregator {
     }
 
     public MLSTOCH(IclijConfig conf, String string, String title, int category, 
-            AbstractCategory[] categories, Map<String, String> idNameMap, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
-        super(conf, string, category, title, idNameMap, categories, datareaders, neuralnetcommand);
+            Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+        super(conf, string, category, title, idNameMap, datareaders, neuralnetcommand);
     }
 
     private abstract class STOCHSubType extends SubType {
@@ -76,11 +76,12 @@ public class MLSTOCH extends IndicatorAggregator {
     }
 
     @Override
-    protected List<SubType> getWantedSubTypes(AbstractCategory cat, AfterBeforeLimit afterbefore) {
+    protected List<SubType> getWantedSubTypes(AfterBeforeLimit afterbefore) {
         List<SubType> wantedSubTypesList = new ArrayList<>();
-        Object list = cat.getResultMap().get(PipelineConstants.INDICATORSTOCHLIST);
-        Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORSTOCHOBJECT);
-        Object resultObject = cat.putData().get(PipelineConstants.INDICATORSTOCH).get(PipelineConstants.RESULT);
+        PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCH);
+        Object list = null;
+        Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+        Object resultObject = pipelineData.get(PipelineConstants.RESULT);
         wantedSubTypesList.add(new STOCHSubTypeSTOCH(list, taObject, resultObject, afterbefore, TaConstants.TWORANGE));
         return wantedSubTypesList;
     }

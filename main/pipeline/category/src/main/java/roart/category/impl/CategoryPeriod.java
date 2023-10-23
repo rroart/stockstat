@@ -5,7 +5,10 @@ import java.util.Map;
 
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
+import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.MathUtil;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.impl.IndicatorATR;
@@ -26,23 +29,25 @@ import roart.stockutil.StockUtil;
 
 public class CategoryPeriod extends Category {
 
-    public CategoryPeriod(IclijConfig conf, int i, String periodText, List<StockItem> stocks,             Pipeline[] datareaders) throws Exception {
+    public CategoryPeriod(IclijConfig conf, int i, String periodText, List<StockItem> stocks,PipelineData[] datareaders) throws Exception {
         super(conf, periodText, stocks, datareaders);
         period = i;
         createResultMap(conf, stocks);
-        Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-        DataReader datareader = (DataReader) pipelineMap.get("" + i);
+        Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
+        PipelineData datareader = pipelineMap.get("" + i);
         if (datareader == null) {
             log.info("empty {}", i);
             createIndicatorMap(periodText);
             return;
         }
-        Map<String, MarketData> marketdatamap = datareader.getMarketdatamap();
+        //Map<String, MarketData> marketdatamap = datareader.getMarketdatamap();
         String market = conf.getConfigData().getMarket();
-        MarketData marketData = marketdatamap.get(market);
-        List<StockItem>[] datedstocklists = marketData.datedstocklists;
-        indicators.add(new IndicatorMove(conf, "Δ" + getTitle(), datedstocklists, period));
-        if (MetaUtil.currentYear(marketData, periodText)) {
+        //MarketData marketData = marketdatamap.get(market);
+        //List<StockItem>[] datedstocklists = marketData.datedstocklists;
+        //indicators.add(new IndicatorMove(conf, "Δ" + getTitle(), datedstocklists, period));
+        PipelineData metadata = pipelineMap.get(PipelineConstants.META);
+        MetaItem meta = (MetaItem) metadata.get(PipelineConstants.META);
+        if (MetaUtil.currentYear(meta, periodText)) {
             indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", getTitle(), i, datareaders, false));
             indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", getTitle(), i, datareaders, false));
             indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", getTitle(), i, datareaders, false));

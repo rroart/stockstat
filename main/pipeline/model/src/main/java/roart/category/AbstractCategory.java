@@ -26,12 +26,12 @@ public abstract class AbstractCategory {
     protected List<StockItem> stocks;
     protected List<AbstractIndicator> indicators = new ArrayList<>();
     private Map<String, AbstractIndicator> indicatorMap = new HashMap<>();
-    protected Pipeline[] datareaders;
+    protected PipelineData[] datareaders;
     protected int period;
     protected Map<String, Object[]> resultMap;
     protected int dataArraySize;
    
-    public AbstractCategory(IclijConfig conf, String periodText, List<StockItem> stocks, Pipeline[] datareaders) {
+    public AbstractCategory(IclijConfig conf, String periodText, List<StockItem> stocks, PipelineData[] datareaders) {
         this.conf = conf;
         setTitle(periodText);
         this.stocks = stocks;

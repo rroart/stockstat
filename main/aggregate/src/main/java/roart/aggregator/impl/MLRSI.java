@@ -8,13 +8,13 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.category.AbstractCategory;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
+import roart.common.util.PipelineUtils;
 import roart.ml.dao.MLClassifyDao;
-import roart.pipeline.Pipeline;
 import roart.talib.util.TaConstants;
 
 public class MLRSI extends IndicatorAggregator {
@@ -33,8 +33,8 @@ public class MLRSI extends IndicatorAggregator {
     }
 
     public MLRSI(IclijConfig conf, String string, String title, int category, 
-            AbstractCategory[] categories, Map<String, String> idNameMap, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
-        super(conf, string, category, title, idNameMap, categories, datareaders, neuralnetcommand);
+            Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+        super(conf, string, category, title, idNameMap, datareaders, neuralnetcommand);
     }
 
     private abstract class RsiSubType extends MergeSubType {
@@ -125,19 +125,21 @@ public class MLRSI extends IndicatorAggregator {
     }
 
     @Override
-    protected List<SubType> getWantedSubTypes(AbstractCategory cat, AfterBeforeLimit afterbefore) {
+    protected List<SubType> getWantedSubTypes(AfterBeforeLimit afterbefore) {
         List<SubType> wantedSubTypesList = new ArrayList<>();
         if (conf.wantMLRSI()) {
             if (conf.isRSIEnabled()) {
-                Object list = cat.getResultMap().get(PipelineConstants.INDICATORRSILIST);
-                Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORRSIOBJECT);
-                Object resultObject = cat.putData().get(PipelineConstants.INDICATORRSI).get(PipelineConstants.RESULT);
+                PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORRSI);
+                Object list = null;
+                Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+                Object resultObject = pipelineData.get(PipelineConstants.RESULT);
                 wantedSubTypesList.add(new SubTypeRSI(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf));
             }
             if (conf.isSTOCHRSIEnabled()) {
-                Object list = cat.getResultMap().get(PipelineConstants.INDICATORSTOCHRSILIST);
-                Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORSTOCHRSIOBJECT);
-                Object resultObject = cat.putData().get(PipelineConstants.INDICATORSTOCHRSI).get(PipelineConstants.RESULT);
+                PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCH);
+                Object list = null;
+                Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+                Object resultObject = pipelineData.get(PipelineConstants.RESULT);
                 wantedSubTypesList.add(new SubTypeSRSI(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf));
             }
         }

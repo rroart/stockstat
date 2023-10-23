@@ -94,6 +94,7 @@ public abstract class Aggregator extends PipelineResultData {
 
     public PipelineData putData() {
         PipelineData map = getData();
+        map.setName(getName());
         map.put(PipelineConstants.CATEGORY, category);
         map.put(PipelineConstants.CATEGORYTITLE, title);
         map.put(PipelineConstants.RESULT, resultMap);

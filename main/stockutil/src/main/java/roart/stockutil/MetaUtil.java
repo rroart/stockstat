@@ -6,8 +6,7 @@ import roart.model.data.MarketData;
 
 public class MetaUtil {
 
-    public static boolean currentYear(MarketData marketData, String categoryTitle) {
-        MetaItem meta = marketData.meta;
+    public static boolean currentYear(MetaItem meta, String categoryTitle) {
         if (meta == null) {
             return false;
         }
@@ -38,6 +37,6 @@ public class MetaUtil {
         if (CategoryConstants.INDEX.equals(title) || CategoryConstants.PRICE.equals(title)) {
             return true;
         }
-        return currentYear(marketdata, title);
+        return currentYear(marketdata.meta, title);
     }
 }

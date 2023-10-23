@@ -32,6 +32,7 @@ import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.model.PipelineResultData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.NeuralNetChromosome2;
@@ -58,7 +59,7 @@ public class FitnessNeuralNet extends Fitness {
     
     private String ml;
 
-    private Pipeline[] dataReaders;
+    private PipelineData[] dataReaders;
 
     private AbstractCategory[] categories;
 
@@ -74,7 +75,7 @@ public class FitnessNeuralNet extends Fitness {
     
     protected String titletext;
     
-    public FitnessNeuralNet(IclijConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String key, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, MarketData> marketdatamap) {
+    public FitnessNeuralNet(IclijConfig conf, String ml, PipelineData[] dataReaders, AbstractCategory[] categories, String key, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, MarketData> marketdatamap) {
         this.conf = conf.copy();
         this.ml = ml;
         this.dataReaders = dataReaders;
@@ -124,14 +125,14 @@ public class FitnessNeuralNet extends Fitness {
     class MyCallable implements Callable {
         private IclijConfig conf;
         private String ml;
-        private Pipeline[] dataReaders;
+        private PipelineData[] dataReaders;
         private AbstractCategory[] categories;
         private String catName;
         private Integer cat;
         private NeuralNetCommand neuralnetcommand;
         private NeuralNetChromosome2 chromosome;
         
-        public MyCallable(IclijConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, NeuralNetChromosome2 chromosome) {
+        public MyCallable(IclijConfig conf, String ml, PipelineData[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, NeuralNetChromosome2 chromosome) {
             this.conf = conf;
             this.ml = ml;
             this.dataReaders = dataReaders;

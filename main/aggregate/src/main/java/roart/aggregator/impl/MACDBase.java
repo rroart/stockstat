@@ -25,7 +25,7 @@ public class MACDBase extends Aggregator {
     private Map<String, Double[]> resultObject;
 
     public MACDBase(IclijConfig conf, String catName, String catName2, Integer cat, AbstractCategory[] categories,
-            Map<String, String> idNameMap, Pipeline[] datareaders) {
+            Map<String, String> idNameMap, PipelineData[] datareaders) {
         super(conf, "macdb", cat);
         AbstractCategory cat2 = null;
         try {
@@ -45,15 +45,15 @@ public class MACDBase extends Aggregator {
 
         this.resultObject = (Map<String, Double[]>) resultObject2;
         
-        Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-        Pipeline datareader = pipelineMap.get("" + category);
+        Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
+        PipelineData datareader = pipelineMap.get("" + category);
         if (datareader == null) {
             log.info("empty {}", category);
             return;
         }
-        Map<String, Double[][]> aListMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);
-        Map<String, double[][]> fillListMap = (Map<String, double[][]>) datareader.putData().get(PipelineConstants.TRUNCFILLLIST);
-        Map<String, double[][]>  base100FillListMap = (Map<String, double[][]>) datareader.putData().get(PipelineConstants.TRUNCBASE100FILLLIST);
+        Map<String, Double[][]> aListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
+        Map<String, double[][]> fillListMap = (Map<String, double[][]>) datareader.get(PipelineConstants.TRUNCFILLLIST);
+        Map<String, double[][]>  base100FillListMap = (Map<String, double[][]>) datareader.get(PipelineConstants.TRUNCBASE100FILLLIST);
         this.listMap = fillListMap;
         
         /*

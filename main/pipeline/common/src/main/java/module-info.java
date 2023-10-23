@@ -23,4 +23,5 @@ module pipeline.common {
     requires stockutil;
     requires talib;
     requires pipeline.indicator;
+    requires common.model;
 }

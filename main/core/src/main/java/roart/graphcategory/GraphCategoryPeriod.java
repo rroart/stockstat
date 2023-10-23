@@ -39,7 +39,7 @@ public class GraphCategoryPeriod extends GraphCategory {
         this.periodDataMap = periodDataMap;
         String market = conf.getConfigData().getMarket();
         MarketData marketData = marketdatamap.get(market);
-        if (MetaUtil.currentYear(marketData, periodText)) {
+        if (MetaUtil.currentYear(marketData.meta, periodText)) {
             indicators.add(new GraphIndicatorMACD(conf, title + " mom", marketdatamap, periodDataMap, title));
             indicators.add(new GraphIndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, title));
         }

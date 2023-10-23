@@ -21,7 +21,6 @@ import org.apache.commons.lang3.tuple.Triple;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import roart.category.AbstractCategory;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.iclij.config.IclijConfig;
@@ -33,6 +32,7 @@ import roart.common.ml.NeuralNetTensorflowConfig;
 import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.MathUtil;
 import roart.common.util.JsonUtil;
 import roart.indicator.util.IndicatorUtils;
@@ -40,7 +40,6 @@ import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
 import roart.ml.dao.MLClassifyDao;
 import roart.ml.model.LearnTestClassifyResult;
-import roart.model.data.MarketData;
 import roart.pipeline.Pipeline;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.result.model.ResultItemTableRow;
@@ -50,14 +49,12 @@ import roart.ml.model.LearnClassify;
 
 public abstract class Predictor extends AbstractPredictor {
 
-    public Predictor(IclijConfig conf, String string, int category, NeuralNetCommand neuralnetcommand, Map<String, MarketData> marketdatamap, AbstractCategory[] categories, Pipeline[] datareaders) {
+    public Predictor(IclijConfig conf, String string, int category, NeuralNetCommand neuralnetcommand, PipelineData[] datareaders) {
         super(conf, string, category, neuralnetcommand);
         if (!isEnabled()) {
             return;
         }
-        this.marketdatamap = marketdatamap;
         this.key = title;
-        this.categories = categories;
         this.datareaders = datareaders;
         makeMapTypes();
         if (conf.wantML()) {
@@ -83,7 +80,6 @@ public abstract class Predictor extends AbstractPredictor {
         }
     }
 
-    Map<String, MarketData> marketdatamap;
     String key;
     protected Map<String, Double[][]> listMap;
     protected Map<String, Double[][]> fillListMap;
@@ -120,8 +116,7 @@ public abstract class Predictor extends AbstractPredictor {
 
     List<MLClassifyDao> mldaos = new ArrayList<>();
 
-    private AbstractCategory[] categories;
-    private Pipeline[] datareaders;
+    private PipelineData[] datareaders;
 
     @Override
     public Map<Integer, String> getMapTypes() {
@@ -152,27 +147,21 @@ public abstract class Predictor extends AbstractPredictor {
             return;
         }
 
-        AbstractCategory cat = StockUtil.getWantedCategory(categories, category);
-        if (cat == null) {
-            return;
-        }
-        log.info("checkthis {}", category == cat.getPeriod());
-        log.info("checkthis {}", title.equals(cat.getTitle()));
         log.info("checkthis {}", key.equals(title));
-        Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-        Pipeline datareader = pipelineMap.get("" + category);
+        Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
+        PipelineData datareader = pipelineMap.get("" + category);
         if (datareader == null) {
             log.info("empty {}", category);
             return;
         }
-        this.listMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);
-        this.fillListMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.FILLLIST);
-        this.truncListMap = (Map<String, double[][]>) datareader.putData().get(PipelineConstants.TRUNCLIST);       
-        this.truncFillListMap = (Map<String, double[][]>) datareader.putData().get(PipelineConstants.TRUNCFILLLIST);       
-        this.base100ListMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.BASE100LIST);
-        this.base100FillListMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.BASE100FILLLIST);
-        this.truncBase100ListMap = (Map<String, double[][]>) datareader.putData().get(PipelineConstants.TRUNCBASE100LIST);       
-        this.truncBase100FillListMap = (Map<String, double[][]>) datareader.putData().get(PipelineConstants.TRUNCBASE100FILLLIST);       
+        this.listMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
+        this.fillListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.FILLLIST);
+        this.truncListMap = (Map<String, double[][]>) datareader.get(PipelineConstants.TRUNCLIST);       
+        this.truncFillListMap = (Map<String, double[][]>) datareader.get(PipelineConstants.TRUNCFILLLIST);       
+        this.base100ListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.BASE100LIST);
+        this.base100FillListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.BASE100FILLLIST);
+        this.truncBase100ListMap = (Map<String, double[][]>) datareader.get(PipelineConstants.TRUNCBASE100LIST);       
+        this.truncBase100FillListMap = (Map<String, double[][]>) datareader.get(PipelineConstants.TRUNCBASE100FILLLIST);       
 
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse
@@ -189,7 +178,7 @@ public abstract class Predictor extends AbstractPredictor {
         lossMap = new HashMap<>();
         resultMetaArray = new ArrayList<>();
 
-        List<String> dateList = (List<String>) pipelineMap.get("" + this.category).putData().get(PipelineConstants.DATELIST);
+        List<String> dateList = (List<String>) pipelineMap.get("" + this.category).get(PipelineConstants.DATELIST);
         Integer days = conf.getDays();
         if (days == 0) {
             days = dateList.size();
@@ -527,9 +516,9 @@ public abstract class Predictor extends AbstractPredictor {
 
     @Override
     public boolean hasValue() {
-        Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-        Pipeline datareader = pipelineMap.get("" + category);
-        return anythingHere((Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST));
+        Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
+        PipelineData datareader = pipelineMap.get("" + category);
+        return anythingHere((Map<String, Double[][]>) datareader.get(PipelineConstants.LIST));
     }
     
     @Override

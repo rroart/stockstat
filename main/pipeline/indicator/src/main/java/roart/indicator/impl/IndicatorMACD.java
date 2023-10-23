@@ -5,6 +5,7 @@ import java.util.Map;
 
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.constants.Constants;
 import roart.ml.common.MLClassifyModel;
 import roart.pipeline.Pipeline;
@@ -16,7 +17,7 @@ public class IndicatorMACD extends Indicator {
 
     Map<MLClassifyModel, Long> mapTime = new HashMap<>();
     
-    public IndicatorMACD(IclijConfig conf, String string, String title, int category, Pipeline[] datareaders, boolean onlyExtra) throws Exception {
+    public IndicatorMACD(IclijConfig conf, String string, String title, int category, PipelineData[] datareaders, boolean onlyExtra) throws Exception {
         super(conf, string, category);
         this.key = title;
         if (isEnabled() && !onlyExtra) {

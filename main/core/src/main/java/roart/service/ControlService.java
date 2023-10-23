@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
@@ -37,12 +38,14 @@ import roart.category.impl.CategoryPeriod;
 import roart.category.impl.CategoryPrice;
 import roart.common.config.ConfigConstants;
 import roart.iclij.config.IclijConfig;
+import roart.indicator.AbstractIndicator;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.TimeUtil;
 import roart.db.dao.DbDao;
 import roart.etl.CleanETL;
@@ -155,15 +158,21 @@ public class ControlService {
                 mydate = stockData.stockdates.get(dateIndex);
             }
             List<StockItem> dayStocks = stockData.stockdatemap.get(mydate);
+            PipelineData[] pipelinedata = new PipelineData[0]; // TODO
+            
+            for (Pipeline datareader : datareaders) {
+                pipelinedata = ArrayUtils.add(pipelinedata, datareader.putData());
+            }
+
             AbstractCategory[] categories = new ServiceUtil().getCategories(conf, dayStocks,
-                    stockData.periodText, datareaders);
-            AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, stockData.periodText,
-                    stockData.marketdatamap, stockData.datedstocklists, datareaders, categories, neuralnetcommand);
+                    stockData.periodText, pipelinedata);
+            AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, stockData.marketdatamap,
+                    pipelinedata, categories, neuralnetcommand);
             //new ServiceUtil().createPredictors(categories);
             new ServiceUtil().calculatePredictors(predictors);
             
             Aggregator[] aggregates = getAggregates(conf, stockData.periodText,
-                    stockData.marketdatamap, categories, datareaders, disableList, stockData.idNameMap, stockData.catName, stockData.cat, neuralnetcommand);
+                    stockData.marketdatamap, categories, pipelinedata , disableList, stockData.idNameMap, stockData.catName, stockData.cat, neuralnetcommand);
 
             ResultItemTableRow headrow = createHeadRow(categories, predictors, aggregates);
             table.add(headrow);
@@ -183,6 +192,7 @@ public class ControlService {
             if (maps != null) {
                 Map<String, Object> aMap = new HashMap<>();
                 aMap.put(PipelineConstants.WANTEDCAT, stockData.cat);
+                aMap.put(PipelineConstants.META, stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta);
                 maps.put(PipelineConstants.META, aMap);
                 
                 for (int i = 0; i < datareaders.length; i++) {
@@ -194,6 +204,12 @@ public class ControlService {
                     Map map = categories[i].putData();
                     maps.put(categories[i].getTitle(), map);
                     log.debug("ca {}", categories[i].getTitle());
+                    if (stockData.catName.equals(categories[i].getTitle())) {
+                        for (Entry<String, AbstractIndicator> entry : categories[i].getIndicatorMap().entrySet()) {
+                            PipelineData singlePipelinedata = entry.getValue().putData();
+                            pipelinedata = ArrayUtils.add(pipelinedata, singlePipelinedata);
+                        }
+                    }
                 }
                 for (int i = 0; i < Constants.ALLPERIODS; i++) {
                     if (predictors[i] == null) {
@@ -202,6 +218,8 @@ public class ControlService {
                     Map map = predictors[i].putData().getMap();
                     maps.put(predictors[i].getName(), map);
                     log.debug("ca {}", predictors[i].getName());
+                    PipelineData singlePipelinedata = predictors[i].putData();
+                    pipelinedata = ArrayUtils.add(pipelinedata, singlePipelinedata);
                 }
                 for (int i = 0; i < aggregates.length; i++) {
                     if (!aggregates[i].isEnabled()) {
@@ -210,6 +228,8 @@ public class ControlService {
                     log.debug("ag {}", aggregates[i].getName());
                     Map map = aggregates[i].putData().getMap();
                     maps.put(aggregates[i].getName(), map);
+                    PipelineData singlePipelinedata = aggregates[i].putData();
+                    pipelinedata = ArrayUtils.add(pipelinedata, singlePipelinedata);
                 }
             }
         } catch (Exception e) {
@@ -420,17 +440,17 @@ public class ControlService {
     private Aggregator[] getAggregates(IclijConfig conf, String[] periodText,
             Map<String, MarketData> marketdatamap,
             AbstractCategory[] categories,
-            Pipeline[] datareaders, List<String> disableList, Map<String, String> idNameMap, String catName, Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
+            PipelineData[] datareaders, List<String> disableList, Map<String, String> idNameMap, String catName, Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
         Aggregator[] aggregates = new Aggregator[10];
         aggregates[0] = new MACDBase(conf, catName, catName, cat, categories, idNameMap, datareaders);
         aggregates[1] = new AggregatorRecommenderIndicator(conf, catName, marketdatamap, categories, datareaders, disableList);
         aggregates[2] = new RecommenderRSI(conf, catName, marketdatamap, categories);
-        aggregates[3] = new MLMACD(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[4] = new MLRSI(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[5] = new MLATR(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[6] = new MLCCI(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[7] = new MLSTOCH(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[8] = new MLMulti(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
+        aggregates[3] = new MLMACD(conf, catName, catName, cat, idNameMap, datareaders, neuralnetcommand);
+        aggregates[4] = new MLRSI(conf, catName, catName, cat, idNameMap, datareaders, neuralnetcommand);
+        aggregates[5] = new MLATR(conf, catName, catName, cat, idNameMap, datareaders, neuralnetcommand);
+        aggregates[6] = new MLCCI(conf, catName, catName, cat, idNameMap, datareaders, neuralnetcommand);
+        aggregates[7] = new MLSTOCH(conf, catName, catName, cat, idNameMap, datareaders, neuralnetcommand);
+        aggregates[8] = new MLMulti(conf, catName, catName, cat, idNameMap, datareaders, neuralnetcommand);
         aggregates[9] = new MLIndicator(conf, catName, catName, cat, categories, datareaders, neuralnetcommand);
         log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.MACHINELEARNING));
         log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.AGGREGATORSMLMACD));

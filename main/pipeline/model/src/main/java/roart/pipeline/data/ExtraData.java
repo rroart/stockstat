@@ -8,6 +8,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import roart.category.AbstractCategory;
 import roart.common.model.StockItem;
+import roart.common.pipeline.data.PipelineData;
 import roart.pipeline.Pipeline;
 
 public class ExtraData {
@@ -17,12 +18,12 @@ public class ExtraData {
     public int category;
     //public Map<Pair<String, String>, String> pairCatMap;
     public AbstractCategory[] categories;
-    public Pipeline[] datareaders;
-    public Pipeline extrareader;
+    public PipelineData[] datareaders;
+    public PipelineData extrareader;
     
     public ExtraData(List<String> dateList,
             int period,
-            AbstractCategory[] categories, Pipeline[] datareaders, Pipeline extrareader) {
+            AbstractCategory[] categories, PipelineData[] datareaders, PipelineData extrareader) {
         this.dateList = dateList;
         this.category = period;
         this.categories = categories;

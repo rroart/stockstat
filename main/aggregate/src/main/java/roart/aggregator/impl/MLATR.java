@@ -10,13 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.aggregator.impl.IndicatorAggregator.Filter;
-import roart.category.AbstractCategory;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
+import roart.common.util.PipelineUtils;
 import roart.ml.dao.MLClassifyDao;
-import roart.pipeline.Pipeline;
 import roart.talib.util.TaConstants;
 
 public class MLATR extends IndicatorAggregator {
@@ -33,8 +33,8 @@ public class MLATR extends IndicatorAggregator {
     }
 
     public MLATR(IclijConfig conf, String string, String title, int category, 
-            AbstractCategory[] categories, Map<String, String> idNameMap, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
-        super(conf, string, category, title, idNameMap, categories, datareaders, neuralnetcommand);
+            Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+        super(conf, string, category, title, idNameMap, datareaders, neuralnetcommand);
     }
 
     private abstract class ATRSubType extends SubType {
@@ -77,12 +77,12 @@ public class MLATR extends IndicatorAggregator {
     }
 
     @Override
-    protected List<SubType> getWantedSubTypes(AbstractCategory cat, AfterBeforeLimit afterbefore) {
+    protected List<SubType> getWantedSubTypes(AfterBeforeLimit afterbefore) {
         List<SubType> wantedSubTypesList = new ArrayList<>();
-        Object list = cat.getResultMap().get(PipelineConstants.INDICATORATRLIST);
-        Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORATROBJECT);
-        Object resultObject = cat.putData().get(PipelineConstants.INDICATORATR).get(PipelineConstants.RESULT);
-        wantedSubTypesList.add(new ATRSubTypeATR(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE));
+        PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORATR);
+        Object list = null;
+        Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+        Object resultObject = pipelineData.get(PipelineConstants.RESULT);
         return wantedSubTypesList;
     }
 

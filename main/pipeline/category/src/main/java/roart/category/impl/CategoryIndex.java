@@ -7,6 +7,7 @@ import roart.category.AbstractCategory;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.StockItem;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.MathUtil;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.impl.IndicatorATR;
@@ -25,7 +26,7 @@ import roart.stockutil.StockUtil;
 public class CategoryIndex extends Category {
 
     public CategoryIndex(IclijConfig conf, String string, List<StockItem> stocks,
-            Pipeline[] datareaders) throws Exception {
+            PipelineData[] datareaders) throws Exception {
         super(conf, string, stocks, datareaders);
         period = Constants.INDEXVALUECOLUMN;
         createResultMap(conf, stocks);
