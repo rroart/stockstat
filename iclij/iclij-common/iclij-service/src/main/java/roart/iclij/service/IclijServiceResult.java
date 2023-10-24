@@ -32,7 +32,7 @@ public class IclijServiceResult {
 
     private List<ResultItem> list;
     
-    private PipelineData pipelineData;
+    private PipelineData[] pipelineData;
     
     public IclijServiceResult() {
         super();
@@ -110,11 +110,11 @@ public class IclijServiceResult {
         this.list = list;
     }
 
-    public PipelineData getPipelineData() {
+    public PipelineData[] getPipelineData() {
         return pipelineData;
     }
 
-    public void setPipelineData(PipelineData pipelineData) {
+    public void setPipelineData(PipelineData[] pipelineData) {
         this.pipelineData = pipelineData;
     }
     

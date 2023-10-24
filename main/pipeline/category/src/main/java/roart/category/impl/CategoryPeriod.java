@@ -34,7 +34,7 @@ public class CategoryPeriod extends Category {
         period = i;
         createResultMap(conf, stocks);
         Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-        PipelineData datareader = pipelineMap.get("" + i);
+        PipelineData datareader = pipelineMap.get(periodText);
         if (datareader == null) {
             log.info("empty {}", i);
             createIndicatorMap(periodText);

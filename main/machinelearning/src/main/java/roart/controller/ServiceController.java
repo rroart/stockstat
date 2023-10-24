@@ -134,6 +134,7 @@ public class ServiceController implements CommandLineRunner {
         return result;
     }
 
+    // TODO Mono etc
     @RequestMapping(value = "/" + EurekaConstants.GETCONTENT,
             method = RequestMethod.POST)
     public IclijServiceResult getContent(@RequestBody IclijServiceParam param)
@@ -151,7 +152,9 @@ public class ServiceController implements CommandLineRunner {
                 disableList = new ArrayList<>();
             }
             NeuralNetCommand neuralnetcommand = param.getNeuralnetcommand();
-            result.setList(getInstance().getContent( new IclijConfig(param.getConfigData()), maps, disableList, neuralnetcommand));
+            // TODO get core content
+            IclijServiceResult resultCore = null;
+            result.setList(getInstance().getContent( new IclijConfig(param.getConfigData()), maps, disableList, neuralnetcommand, resultCore.getPipelineData()));
             result.setMaps(maps);
             long[] mem1 = MemUtil.mem();
             long[] memdiff = MemUtil.diff(mem1, mem0);
@@ -189,7 +192,8 @@ public class ServiceController implements CommandLineRunner {
             maps.put("score", scoreMap);
             maps.put("result", resultMap);
             NeuralNetCommand neuralnetcommand = param.getNeuralnetcommand();
-            result.setList(new EvolutionService(dao).getEvolveML( aConfig, disableList, updateMap, ml, neuralnetcommand, scoreMap, resultMap));
+            IclijServiceResult resultCore = null;
+            result.setList(new EvolutionService(dao).getEvolveML( aConfig, disableList, updateMap, ml, neuralnetcommand, scoreMap, resultMap, resultCore.getPipelineData()));
             result.setMaps(maps);
             result.setConfigData(aConfig.getConfigData());
         } catch (Exception e) {

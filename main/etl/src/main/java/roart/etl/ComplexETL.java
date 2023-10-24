@@ -40,7 +40,7 @@ public class ComplexETL {
                 int cat = stockData.cat;
                 Pipeline[] datareaders = dataReaderMap.get(market);
                 Map<String, Pipeline> pipelineMap = getPipelineMap(datareaders);
-                Pipeline datareader = pipelineMap.get("" + cat);
+                Pipeline datareader = pipelineMap.get(catName);
                 // interpolation does not work yet
                 List<String> datelist = (List<String>) datareader.putData().get(PipelineConstants.DATELIST);
                 Map<String, Double[][]> listMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);

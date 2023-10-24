@@ -51,6 +51,7 @@ public class DataReader extends Pipeline {
     @Override
     public PipelineData putData() {
         PipelineData map = getData();
+        map.setName(categoryTitle);
         map.put(PipelineConstants.LIST, listMap);
         map.put(PipelineConstants.VOLUME, volumeMap);
         map.put(PipelineConstants.FILLLIST, fillListMap);

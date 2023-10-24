@@ -225,6 +225,7 @@ public class ExtraReader extends Pipeline {
         //map.put(PipelineConstants.PAIRSTOCK, new HashMap() /*pairStockMap*/);
         //map.put(PipelineConstants.PAIRDATELIST, pairDateListMap);
         //map.put(PipelineConstants.PAIRTRUNCLIST, pairTruncListMap);
+        map.setName(PipelineConstants.EXTRAREADER);
         map.put(PipelineConstants.DATELIST, commonDates);
         map.put(PipelineConstants.DATAREADER, dataReaderMap);
         if (!allMarketStocks.isEmpty()) {
@@ -332,7 +333,7 @@ public class ExtraReader extends Pipeline {
                 cat = stockData.catName;
             }
             int mycat = stockData.cat;
-            PipelineData datareader = pipelineMap.get("" + mycat);
+            PipelineData datareader = pipelineMap.get(cat);
             List<String> dateList = (List<String>) datareader.get(PipelineConstants.DATELIST);
             int dateIndex = dateList.indexOf(date);
             int prevDateIndex = dateList.indexOf(prevDate);
@@ -380,7 +381,7 @@ public class ExtraReader extends Pipeline {
                 cat = stockData.catName;
             }
             int mycat = stockData.cat;
-            PipelineData datareader = pipelineMap.get("" + mycat);
+            PipelineData datareader = pipelineMap.get(cat);
             List<String> dateList = (List<String>) datareader.get(PipelineConstants.DATELIST);
             int dateIndex = dateList.size() - dateList.indexOf(commonDate);
             int prevDateIndex = dateList.indexOf(prevDate);

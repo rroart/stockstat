@@ -71,6 +71,7 @@ import roart.stockutil.StockUtil;
 import roart.talib.util.TaUtil;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
+import roart.common.pipeline.data.PipelineData;
 
 public class EvolutionService {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -86,7 +87,7 @@ public class EvolutionService {
         this.dao = dao;
     }
 
-    public List<ResultItem> getEvolveRecommender(IclijConfig conf, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws JsonParseException, JsonMappingException, IOException {
+    public List<ResultItem> getEvolveRecommender(IclijConfig conf, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, Map<String, Object> resultMap, PipelineData[] pipelineData) throws JsonParseException, JsonMappingException, IOException {
         log.info("mydate {}", conf.getConfigData().getDate());
         log.info("mydate {}", conf.getDays());
         String market = conf.getConfigData().getMarket();
@@ -112,9 +113,7 @@ public class EvolutionService {
         table.add(headrow);
     
         try {
-            DataReader dataReader = new DataReader(conf, stockData.marketdatamap, stockData.cat, conf.getConfigData().getMarket());
-            Pipeline[] datareaders = new Pipeline[1];
-            datareaders[0] = dataReader;
+            PipelineData[] datareaders = pipelineData;
     
             // no...get this from the category
             // make oo of this
@@ -151,7 +150,7 @@ public class EvolutionService {
 
     private void findRecommendSettings(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
             Map<String, List<Recommend>> usedRecommenders, Map<String, List<String>[]> recommendKeyMap,
-            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, int days, Pipeline[] datareaders, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws Exception {
+            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, int days, PipelineData[] datareaders, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws Exception {
         TaUtil tu = new TaUtil();
         String thresholdString = conf.getTestIndicatorRecommenderComplexThreshold();
         Double[] thresholds = getThresholds(conf, thresholdString);
@@ -217,21 +216,21 @@ public class EvolutionService {
         }
     }
 
-    private void createRecommendIndicatorMap(Map<String, MarketData> marketdatamap, Pipeline[] datareaders,
+    private void createRecommendIndicatorMap(Map<String, MarketData> marketdatamap, PipelineData[] datareaders,
             Map<String, List<Recommend>> usedRecommenders, Map<String, AbstractIndicator> indicatorMap, int category,
             Map<String, AbstractIndicator> newIndicatorMap) throws Exception {
         for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {
             List<Recommend> list = entry.getValue();
             for (Recommend recommend : list) {
                 String indicator = recommend.indicator();
-                indicatorMap.put(indicator, recommend.getIndicator(marketdatamap, category, newIndicatorMap, null, datareaders));
+                indicatorMap.put(indicator, recommend.getIndicator(category, newIndicatorMap, null, datareaders));
             }
         }
     }
 
     private void findRecommendSettingsNew(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
             Map<String, List<Recommend>> usedRecommenders, Map<String, List<String>[]> recommendKeyMap,
-            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, Pipeline[] datareaders) throws Exception {
+            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, PipelineData[] datareaders) throws Exception {
         TaUtil tu = new TaUtil();
         for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {
             List<AbstractIndicator> indicators = Recommend.getIndicators(entry.getKey(), usedRecommenders, indicatorMap);
@@ -275,7 +274,7 @@ public class EvolutionService {
         }
     }
 
-    public List<ResultItem> getEvolveML(IclijConfig conf, List<String> disableList, Map<String, Object> updateMap, String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws JsonParseException, JsonMappingException, IOException {
+    public List<ResultItem> getEvolveML(IclijConfig conf, List<String> disableList, Map<String, Object> updateMap, String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap, PipelineData[] pipelineData) throws JsonParseException, JsonMappingException, IOException {
         log.info("mydate {}", conf.getConfigData().getDate());
         log.info("mydate {}", conf.getDays());
         if (conf.getConfigData().isDataset()) {
@@ -329,9 +328,8 @@ public class EvolutionService {
         try {
 
             DataReader dataReader = new DataReader(conf, stockData.marketdatamap, stockData.cat, conf.getConfigData().getMarket());
-            //Pipeline[] datareaders = new Pipeline[1];
-            Pipeline[] datareaders = new ServiceUtil().getDataReaders(conf, stockData.periodText,
-                    stockData.marketdatamap, stockData, dao);
+            //PipelineData[] datareaders = new PipelineData[1];
+            PipelineData[] datareaders = pipelineData;
     
             //datareaders[0] = dataReader;
     
@@ -339,8 +337,8 @@ public class EvolutionService {
             List<StockItem> dayStocks = stockData.stockdatemap.get(mydate);
             AbstractCategory[] categories = new ServiceUtil().getCategories(conf, dayStocks,
                     stockData.periodText, datareaders);
-            AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, stockData.periodText,
-                    stockData.marketdatamap, stockData.datedstocklists, datareaders, categories, neuralnetcommand);
+            AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, stockData.marketdatamap,
+                    datareaders, categories, neuralnetcommand);
             //new ServiceUtil().createPredictors(categories);
             new ServiceUtil().calculatePredictors(predictors);
 
@@ -356,13 +354,13 @@ public class EvolutionService {
     }
 
     private void findMLSettings(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
-            Map<String, Object> updateMap, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap, Map<String, MarketData> marketdatamap) throws Exception {
+            Map<String, Object> updateMap, String ml, PipelineData[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap, Map<String, MarketData> marketdatamap) throws Exception {
         TaUtil tu = new TaUtil();
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
         NeuralNetConfigs nnConfigs = null;
         String nnconfigString = null;
         /*
-        if (ml.equals(PipelineConstants.MLINDICATOR)) {
+        if (ml.equals(PipelineDataConstants.MLINDICATOR)) {
             nnconfigString = conf.getAggregatorsMLIndicatorMLConfig();
             if (nnconfigString != null) {
                 log.info("NNConfig {}", nnconfigString);

@@ -4,7 +4,7 @@ import roart.common.pipeline.data.PipelineData;
 
 public abstract class PipelineResultData {
 
-    private PipelineData data;
+    private PipelineData data = new PipelineData();
     
     public abstract PipelineData putData();
 

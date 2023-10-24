@@ -103,7 +103,7 @@ public abstract class Indicator extends AbstractIndicator {
             int mycat = stockData.cat;
             PipelineData[] mydatareaders = dataReaderMap.get(market);
             Map<String, PipelineData> mypipelineMap = IndicatorUtils.getPipelineMap(mydatareaders);
-            PipelineData datareader = mypipelineMap.get("" + mycat);
+            PipelineData datareader = mypipelineMap.get(catName);
             //Pipeline datareader = pipelineMap.get("" + category);
             Map<String, Double[][]> fillListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.FILLLIST);
             Map<String, double[][]> truncFillListMap = (Map<String, double[][]>) datareader.get(PipelineConstants.TRUNCFILLLIST);
@@ -138,7 +138,7 @@ public abstract class Indicator extends AbstractIndicator {
 
     protected void calculateAll(int category, PipelineData[] datareaders) throws Exception {
         Map<String, PipelineData> pipelineMap = PipelineUtils.getPipelineMap(datareaders);
-        PipelineData datareader = pipelineMap.get("" + category);
+        PipelineData datareader = pipelineMap.get(key);
         log.info("preempty {}", category);
         if (datareader == null) {
             log.info("empty {}", category);

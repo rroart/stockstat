@@ -29,4 +29,5 @@ module iclij.common.service {
     requires common.webflux;
     requires curator.client;
     requires curator.framework;
+    requires pipeline.model;
 }

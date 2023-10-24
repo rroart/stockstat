@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -336,10 +337,20 @@ public class EvolutionService {
                     stockData.marketdatamap, stockData, dao);
             PipelineData[] pipelinedata = new PipelineData[0];
             
+            PipelineData singlePipelineData = new PipelineData();
+            singlePipelineData.setName(PipelineConstants.META);
+            singlePipelineData.put(PipelineConstants.META, stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta);
+            singlePipelineData.put(PipelineConstants.CATEGORY, stockData.catName);
+            singlePipelineData.put(PipelineConstants.WANTEDCAT, stockData.cat);
+            pipelinedata = ArrayUtils.add(pipelinedata, singlePipelineData);
             //datareaders[0] = dataReader;
     
             String mydate = TimeUtil.format(conf.getConfigData().getDate());
             List<StockItem> dayStocks = stockData.stockdatemap.get(mydate);
+            for (Pipeline datareader : datareaders) {
+                pipelinedata = ArrayUtils.add(pipelinedata, datareader.putData());
+            }
+
             AbstractCategory[] categories = new ServiceUtil().getCategories(conf, dayStocks,
                     stockData.periodText, pipelinedata);
             AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, stockData.marketdatamap,

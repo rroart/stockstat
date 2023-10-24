@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
@@ -43,6 +44,8 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
+import roart.common.util.PipelineUtils;
 import roart.common.util.TimeUtil;
 import roart.db.dao.DbDao;
 import roart.etl.CleanETL;
@@ -57,9 +60,6 @@ import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.pipeline.impl.DataReader;
 import roart.pipeline.impl.ExtraReader;
 import roart.result.model.GUISize;
-import roart.result.model.ResultItem;
-import roart.result.model.ResultItemTable;
-import roart.result.model.ResultItemTableRow;
 import roart.service.util.ServiceUtil;
 import roart.stockutil.StockUtil;
 
@@ -111,63 +111,53 @@ public class ControlService {
         }
     }
 
-    Map<Integer, ResultItemTable> otherTableMap = new HashMap<>();
-
-    ResultItemTable mlTimesTable = ServiceUtil.createMLTimesTable(otherTableMap);
-    ResultItemTable eventTable = ServiceUtil.createEventTable(otherTableMap);
-
     //protected static int[] otherTableNames = { Constants.EVENT, Constants.MLTIMES }; 
 
     /**
      * Create result lists
      * @param maps 
      * @param neuralnetcommand TODO
+     * @param datareaders 
      * @return the tabular result lists
      */
 
-    public List<ResultItem> getContent(IclijConfig conf, Map<String, Map<String, Object>> maps, List<String> disableList, NeuralNetCommand neuralnetcommand) {
+    public List getContent(IclijConfig conf, Map<String, Map<String, Object>> maps, List<String> disableList, NeuralNetCommand neuralnetcommand, PipelineData[] pipelineData) {
         log.info("mydate {}", conf.getConfigData().getDate());
         log.info("mydate {}", conf.getDays());
         //createOtherTables();
+        /*
         StockData stockData = new Extract(dbDao).getStockData(conf);
         if (stockData == null) {
             return new ArrayList<>();
         }
-        
-        ResultItemTable table = new ResultItemTable();
-        List<ResultItemTable> otherTables = new ArrayList<>();
-        otherTables.add(mlTimesTable);
-        otherTables.add(eventTable);
+        */
+        PipelineData pipelineDatum = PipelineUtils.getPipeline(pipelineData, PipelineConstants.META);
+        MyStockData stockData = getStockData(conf, "market", pipelineData);
 
+        stockData.cat = (Integer) pipelineDatum.get(PipelineConstants.WANTEDCAT);
         try {
+            /*
             Pipeline[] datareaders = new ServiceUtil().getDataReaders(conf, stockData.periodText,
                     stockData.marketdatamap, stockData, dbDao);
-
+*/
+            
             String mydate = TimeUtil.format(conf.getConfigData().getDate());
             int dateIndex = TimeUtil.getIndexEqualBefore(stockData.stockdates, mydate);
             if (dateIndex >= 0) {
                 mydate = stockData.stockdates.get(dateIndex);
             }
             List<StockItem> dayStocks = stockData.stockdatemap.get(mydate);
+            
             AbstractCategory[] categories = new ServiceUtil().getCategories(conf, dayStocks,
-                    stockData.periodText, datareaders);
-            AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, stockData.periodText,
-                    stockData.marketdatamap, stockData.datedstocklists, datareaders, categories, neuralnetcommand);
+                    stockData.periodText, pipelineData);
+            AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, stockData.marketdatamap,
+                    pipelineData, categories, neuralnetcommand);
             //new ServiceUtil().createPredictors(categories);
             new ServiceUtil().calculatePredictors(predictors);
             
-            Aggregator[] aggregates = getAggregates(conf, stockData.periodText,
-                    stockData.marketdatamap, categories, datareaders, disableList, stockData.idNameMap, stockData.catName, stockData.cat, neuralnetcommand);
+            Aggregator[] aggregates = getAggregates(conf, categories,
+                    pipelineData, disableList, stockData.idNameMap, stockData.catName, stockData.cat, neuralnetcommand);
 
-            ResultItemTableRow headrow = createHeadRow(categories, predictors, aggregates);
-            table.add(headrow);
-            //log.info("sizes " + stocks.size() + " " + datedstocks.size() + " " + datedstocksoffset.size());
-            createRows(conf, table, stockData.datedstocks, categories, predictors, aggregates);
-            log.info("retlist2 {}",table.size());
-            cleanRows(headrow, table);
-            addOtherTables(categories);
-            addOtherTables(predictors);
-            addOtherTables(aggregates);
             /*
             for (AbstractCategory category : categories) {
                 List<AbstractPredictor> predictors = category.getPredictors();
@@ -178,45 +168,40 @@ public class ControlService {
                 Map<String, Object> aMap = new HashMap<>();
                 aMap.put(PipelineConstants.WANTEDCAT, stockData.cat);
                 maps.put(PipelineConstants.META, aMap);
-                
-                for (int i = 0; i < datareaders.length; i++) {
-                    Map map = datareaders[i].getLocalResultMap();
-                    maps.put(datareaders[i].pipelineName(), map);
-                    log.debug("pi {}", datareaders[i].pipelineName());
-                }
+                /*
                 for (int i = 0; i < Constants.ALLPERIODS; i++) {
                     Map map = categories[i].getIndicatorLocalResultMap();
                     maps.put(categories[i].getTitle(), map);
                     log.debug("ca {}", categories[i].getTitle());
                 }
+                */
                 for (int i = 0; i < Constants.ALLPERIODS; i++) {
                     if (predictors[i] == null) {
                         continue;
                     }
-                    Map map = predictors[i].getLocalResultMap();
+                    Map map = predictors[i].putData().getMap();
                     maps.put(predictors[i].getName(), map);
                     log.debug("ca {}", predictors[i].getName());
+                    PipelineData singlePipelinedata = predictors[i].putData();
+                    pipelineData = ArrayUtils.add(pipelineData, singlePipelinedata);
                 }
                 for (int i = 0; i < aggregates.length; i++) {
                     if (!aggregates[i].isEnabled()) {
                         continue;
                     }
                     log.debug("ag {}", aggregates[i].getName());
-                    Map map = aggregates[i].getLocalResultMap();
+                    Map map = aggregates[i].putData().getMap();
                     maps.put(aggregates[i].getName(), map);
+                    PipelineData singlePipelinedata = aggregates[i].putData();
+                    pipelineData = ArrayUtils.add(pipelineData, singlePipelinedata);
                 }
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        List<ResultItem> retlist = new ArrayList<>();
-        retlist.add(table);
-        for (ResultItemTable list : otherTables) {
-            retlist.add(list);
-        }
         new CleanETL().fixmap((Map) maps);
         printmap(maps, 0);
-        return retlist;
+        return new ArrayList<>();
     }
     
     public void printmap(Object o, int i) {
@@ -239,193 +224,21 @@ public class ControlService {
         }
     }
 
-    private void cleanRows(ResultItemTableRow headrow, ResultItemTable table) {
-        ResultItemTableRow sum = null;
-        if (table.rows.size() > 1) {
-            sum = table.rows.get(1);
-            log.info("Cols {}", sum.cols.size());
-        } else {
-            return;
-        }
-        for (int j = 2; j < table.rows.size(); j++) {
-            ResultItemTableRow row = table.rows.get(j);
-            for (int i = 0; i < sum.cols.size(); i++) {
-                if (sum.cols.get(i) == null) {
-                    sum.cols.set(i, row.cols.get(i));
-                }
-            }
-        }
-        for (int i = sum.cols.size() - 1; i >= 0; i--) {
-            if (sum.cols.get(i) == null) {
-                //headrow.cols.remove(i);
-                for (ResultItemTableRow row : table.rows) {
-                    row.cols.remove(i);
-                }
-            }
-        }
-        if (table.rows.size() > 0) {
-            log.info("Cols new {}",table.rows.get(0).cols.size());
-        }
-    }
-
-    private void addOtherTables(Aggregator[] aggregates) {
-        for (int i = 0; i < aggregates.length; i++) {
-            Map<Integer, List<ResultItemTableRow>> tableMap = aggregates[i].otherTables();
-            if (tableMap == null) {
-                continue;
-            }
-            for (Entry<Integer, List<ResultItemTableRow>> entry : tableMap.entrySet()) {
-                List<ResultItemTableRow> resultItems = entry.getValue();
-                ResultItemTable otherTable = otherTableMap.get(entry.getKey());
-                for (ResultItemTableRow row : resultItems) {
-                    otherTable.add(row);
-                }
-            }
-        }
-    }
-
-    private void addOtherTables(List<AbstractPredictor> predictors) {
-        for (AbstractPredictor predictor : predictors) {
-            if (predictor == null) {
-                continue;
-            }
-            Map<Integer, List<ResultItemTableRow>> tableMap = predictor.otherTables();
-            if (tableMap == null) {
-                continue;
-            }
-            for (Entry<Integer, List<ResultItemTableRow>> entry : tableMap.entrySet()) {
-                List<ResultItemTableRow> resultItems = entry.getValue();
-                ResultItemTable otherTable = otherTableMap.get(entry.getKey());
-                for (ResultItemTableRow row : resultItems) {
-                    otherTable.add(row);
-                }
-            }
-        }
-    }
-
-    private void createRows(IclijConfig conf, ResultItemTable table, List<StockItem> datedstocks, AbstractCategory[] categories,
-            AbstractPredictor[] predictors, Aggregator[] aggregates) {
-        if (conf.getConfigData().getMarket() == null) {
-            return;
-        }
-        int cols = table.get(0).cols.size();
-        Set set = new HashSet<>();
-        set.addAll(table.get(0).cols);
-        int cols2 = set.size();
-        List list = table.get(0).cols;
-        /*
-        for (int i = 0; i < list.size(); i++) {
-            for (int j = i+1; j <list.size() ; j++) {
-                if(list.get(i).equals(list.get(j))){
-                    System.out.println(list.get(i));
-                }
-            }
-        }
-        */
-        for (StockItem stock : datedstocks) {
-            ResultItemTableRow row = new ResultItemTableRow();
-            row.add(stock.getId());
-            row.add(stock.getIsin());
-            row.add(stock.getName());
-            row.add(TimeUtil.format(stock.getDate()));
-            try {
-                for (int i = 0; i < Constants.ALLPERIODS; i++) {
-                    categories[i].addResultItem(row, stock);
-                }
-                for (AbstractPredictor predictor : predictors) {
-                    if (predictor != null) {
-                        row.addarr(predictor.getResultItem(stock));
-                    }
-                }
-                for (int i = 0; i < aggregates.length; i++) {
-                    if (aggregates[i].isEnabled()) {
-                        aggregates[i].addResultItem(row, stock);
-                    }
-                }
-            } catch (Exception e) {
-                log.error(Constants.EXCEPTION, e);
-            }
-            if (cols == row.cols.size()) {
-                table.add(row);
-            } else {
-                int jj = 0;
-            }
-        }
-    }
-
-    private void addOtherTables(AbstractCategory[] categories) {
-        for (int i = 0; i < Constants.ALLPERIODS; i++) {
-            Map<Integer, List<ResultItemTableRow>> tableMap = categories[i].otherTables();
-            for (Entry<Integer, List<ResultItemTableRow>> entry : tableMap.entrySet()) {
-                List<ResultItemTableRow> resultItems = entry.getValue();
-                ResultItemTable otherTable = otherTableMap.get(entry.getKey());
-                for (ResultItemTableRow row : resultItems) {
-                    otherTable.add(row);
-                }
-            }
-        }
-    }
-
-    private void addOtherTables(AbstractPredictor[] predictors) {
-        for (int i = 0; i < Constants.ALLPERIODS; i++) {
-            if (predictors[i] == null) {
-                continue;
-            }
-            Map<Integer, List<ResultItemTableRow>> tableMap = predictors[i].otherTables();
-            for (Entry<Integer, List<ResultItemTableRow>> entry : tableMap.entrySet()) {
-                List<ResultItemTableRow> resultItems = entry.getValue();
-                ResultItemTable otherTable = otherTableMap.get(entry.getKey());
-                for (ResultItemTableRow row : resultItems) {
-                    otherTable.add(row);
-                }
-            }
-        }
-    }
-
-    private ResultItemTableRow createHeadRow(AbstractCategory[] categories, AbstractPredictor[] predictors, Aggregator[] aggregates) {
-        ResultItemTableRow headrow = new ResultItemTableRow();
-        headrow.add(Constants.IMG);
-        headrow.add("ISIN");
-        headrow.add("Name");
-        headrow.add("Date");
-        for (int i = 0; i < Constants.ALLPERIODS; i++) {
-            categories[i].addResultItemTitle(headrow);
-        }
-        for (AbstractPredictor predictor : predictors) {
-            if (predictor != null) {
-                headrow.addarr(predictor.getResultItemTitle());
-            }
-        }
-        for (int i = 0; i < aggregates.length; i++) {
-            if (aggregates[i].isEnabled()) {
-                aggregates[i].addResultItemTitle(headrow);
-            }
-        }
-        List<Object> duplicates = headrow.cols.stream()
-                .filter(e -> Collections.frequency(headrow.cols, e) > 1)
-                .distinct()
-                .collect(Collectors.toList());
-        if (duplicates.size() > 0) {
-            log.error("Duplicates {}", duplicates);
-        }
-        return headrow;
-    }
-
-    private Aggregator[] getAggregates(IclijConfig conf, String[] periodText,
-            Map<String, MarketData> marketdatamap,
-            AbstractCategory[] categories,
-            Pipeline[] datareaders, List<String> disableList, Map<String, String> idNameMap, String catName, Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
+    private Aggregator[] getAggregates(IclijConfig conf, AbstractCategory[] categories,
+            PipelineData[] pipelineData,
+            List<String> disableList,
+            Map<String, String> idNameMap, String catName, Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
         Aggregator[] aggregates = new Aggregator[10];
-        aggregates[0] = new MACDBase(conf, catName, catName, cat, categories, idNameMap, datareaders);
-        aggregates[1] = new AggregatorRecommenderIndicator(conf, catName, marketdatamap, categories, datareaders, disableList);
-        aggregates[2] = new RecommenderRSI(conf, catName, marketdatamap, categories);
-        aggregates[3] = new MLMACD(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[4] = new MLRSI(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[5] = new MLATR(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[6] = new MLCCI(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[7] = new MLSTOCH(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[8] = new MLMulti(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[9] = new MLIndicator(conf, catName, marketdatamap, catName, cat, categories, datareaders, neuralnetcommand);
+        aggregates[0] = new MACDBase(conf, catName, catName, cat, categories, idNameMap, pipelineData);
+        //aggregates[1] = new AggregatorRecommenderIndicator(conf, catName, marketdatamap, categories, pipelineData, disableList);
+        //aggregates[2] = new RecommenderRSI(conf, catName, marketdatamap, categories);
+        aggregates[3] = new MLMACD(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand);
+        aggregates[4] = new MLRSI(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand);
+        aggregates[5] = new MLATR(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand);
+        aggregates[6] = new MLCCI(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand);
+        aggregates[7] = new MLSTOCH(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand);
+        aggregates[8] = new MLMulti(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand);
+        aggregates[9] = new MLIndicator(conf, catName, catName, cat, categories, pipelineData, neuralnetcommand);
         log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.MACHINELEARNING));
         log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.AGGREGATORSMLMACD));
         log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.INDICATORSMACD));
@@ -443,6 +256,26 @@ public class ControlService {
                 curatorClient.start();
             }
         }
+    }
+    
+    class MyStockData {
+
+        public String[] periodText;
+        public Map<String, MarketData> marketdatamap;
+        public List<StockItem>[] datedstocklists;
+        public List<String> stockdates;
+        public Map<String, List<StockItem>> stockdatemap;
+        public Map<String, String> idNameMap;
+        public Integer cat;
+        public String catName;
+        public List<StockItem> datedstocks;
+        public Integer days;
+        public Map<String, List<StockItem>> stockidmap;
+
+    }
+    public MyStockData getStockData(IclijConfig conf, String market, PipelineData[] pipelineData) {
+        MyStockData stockData = new MyStockData();
+        return stockData;
     }
 
 }

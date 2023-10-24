@@ -149,7 +149,7 @@ public abstract class Predictor extends AbstractPredictor {
 
         log.info("checkthis {}", key.equals(title));
         Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-        PipelineData datareader = pipelineMap.get("" + category);
+        PipelineData datareader = pipelineMap.get(key);
         if (datareader == null) {
             log.info("empty {}", category);
             return;
@@ -178,7 +178,7 @@ public abstract class Predictor extends AbstractPredictor {
         lossMap = new HashMap<>();
         resultMetaArray = new ArrayList<>();
 
-        List<String> dateList = (List<String>) pipelineMap.get("" + this.category).get(PipelineConstants.DATELIST);
+        List<String> dateList = (List<String>) pipelineMap.get(key).get(PipelineConstants.DATELIST);
         Integer days = conf.getDays();
         if (days == 0) {
             days = dateList.size();
@@ -517,7 +517,7 @@ public abstract class Predictor extends AbstractPredictor {
     @Override
     public boolean hasValue() {
         Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-        PipelineData datareader = pipelineMap.get("" + category);
+        PipelineData datareader = pipelineMap.get(key);
         return anythingHere((Map<String, Double[][]>) datareader.get(PipelineConstants.LIST));
     }
     

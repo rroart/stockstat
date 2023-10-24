@@ -131,10 +131,11 @@ public class ControlService {
      * Create result lists
      * @param maps 
      * @param neuralnetcommand TODO
+     * @param pipelinedata TODO
      * @return the tabular result lists
      */
 
-    public List<ResultItem> getContent(IclijConfig conf, Map<String, Map<String, Object>> maps, List<String> disableList, NeuralNetCommand neuralnetcommand) {
+    public List<ResultItem> getContent(IclijConfig conf, Map<String, Map<String, Object>> maps, List<String> disableList, NeuralNetCommand neuralnetcommand, PipelineData[] pipelinedata) {
         log.info("mydate {}", conf.getConfigData().getDate());
         log.info("mydate {}", conf.getDays());
         //createOtherTables();
@@ -143,6 +144,12 @@ public class ControlService {
             return new ArrayList<>();
         }
         
+        PipelineData singlePipelineData = new PipelineData();
+        singlePipelineData.setName(PipelineConstants.META);
+        singlePipelineData.put(PipelineConstants.META, stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta);
+        singlePipelineData.put(PipelineConstants.CATEGORY, stockData.catName);
+        singlePipelineData.put(PipelineConstants.WANTEDCAT, stockData.cat);
+        pipelinedata = ArrayUtils.add(pipelinedata, singlePipelineData);
         ResultItemTable table = new ResultItemTable();
         List<ResultItemTable> otherTables = new ArrayList<>();
         otherTables.add(mlTimesTable);
@@ -158,7 +165,6 @@ public class ControlService {
                 mydate = stockData.stockdates.get(dateIndex);
             }
             List<StockItem> dayStocks = stockData.stockdatemap.get(mydate);
-            PipelineData[] pipelinedata = new PipelineData[0]; // TODO
             
             for (Pipeline datareader : datareaders) {
                 pipelinedata = ArrayUtils.add(pipelinedata, datareader.putData());

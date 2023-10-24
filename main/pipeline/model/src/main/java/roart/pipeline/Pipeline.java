@@ -15,7 +15,7 @@ public abstract class Pipeline {
     protected IclijConfig conf;
     protected int category;
 
-    private PipelineData data;
+    private PipelineData data = new PipelineData();
         
     public Pipeline(IclijConfig conf, int category) {
         this.conf = conf;

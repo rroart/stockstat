@@ -51,6 +51,7 @@ import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.ml.NeuralNetCommand;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
 import roart.common.util.JsonUtil;
@@ -214,8 +215,10 @@ public class ServiceController implements CommandLineRunner {
                 disableList = new ArrayList<>();
             }
             NeuralNetCommand neuralnetcommand = param.getNeuralnetcommand();
-            result.setList(getInstance().getContent( new IclijConfig(param.getConfigData()), maps, disableList, neuralnetcommand));
+            PipelineData[] pipelinedata = new PipelineData[0];
+            result.setList(getInstance().getContent( new IclijConfig(param.getConfigData()), maps, disableList, neuralnetcommand,  pipelinedata));
             result.setMaps(maps);
+            result.setPipelineData(pipelinedata);
             long[] mem1 = MemUtil.mem();
             long[] memdiff = MemUtil.diff(mem1, mem0);
             log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
