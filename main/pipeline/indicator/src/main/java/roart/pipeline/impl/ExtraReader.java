@@ -227,7 +227,16 @@ public class ExtraReader extends Pipeline {
         //map.put(PipelineConstants.PAIRTRUNCLIST, pairTruncListMap);
         map.setName(PipelineConstants.EXTRAREADER);
         map.put(PipelineConstants.DATELIST, commonDates);
-        map.put(PipelineConstants.DATAREADER, dataReaderMap);
+        Map<String, PipelineData[]> dataReaderMap2 = new HashMap<>();
+        for (Entry<String, Pipeline[]> entry : dataReaderMap.entrySet()) {
+            Pipeline[] pipeline = entry.getValue();
+            PipelineData[] pipelinedata = new PipelineData[pipeline.length];
+            for (int i = 0; i < pipeline.length; i++) {
+                pipelinedata[i] = pipeline[i].putData();
+            }
+            dataReaderMap2.put(entry.getKey(), pipelinedata );
+        }
+        map.put(PipelineConstants.DATAREADER, dataReaderMap2);
         if (!allMarketStocks.isEmpty()) {
             map.put(PipelineConstants.MARKETSTOCKS, allMarketStocks);
         }

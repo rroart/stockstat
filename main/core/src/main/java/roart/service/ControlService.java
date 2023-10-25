@@ -172,6 +172,16 @@ public class ControlService {
 
             AbstractCategory[] categories = new ServiceUtil().getCategories(conf, dayStocks,
                     stockData.periodText, pipelinedata);
+
+            for (int i = 0; i < Constants.ALLPERIODS; i++) {
+                if (stockData.catName.equals(categories[i].getTitle())) {
+                    for (Entry<String, AbstractIndicator> entry : categories[i].getIndicatorMap().entrySet()) {
+                        PipelineData singlePipelinedata = entry.getValue().putData();
+                        pipelinedata = ArrayUtils.add(pipelinedata, singlePipelinedata);
+                    }
+                }
+            }
+                        
             AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, stockData.marketdatamap,
                     pipelinedata, categories, neuralnetcommand);
             //new ServiceUtil().createPredictors(categories);
@@ -210,12 +220,6 @@ public class ControlService {
                     Map map = categories[i].putData();
                     maps.put(categories[i].getTitle(), map);
                     log.debug("ca {}", categories[i].getTitle());
-                    if (stockData.catName.equals(categories[i].getTitle())) {
-                        for (Entry<String, AbstractIndicator> entry : categories[i].getIndicatorMap().entrySet()) {
-                            PipelineData singlePipelinedata = entry.getValue().putData();
-                            pipelinedata = ArrayUtils.add(pipelinedata, singlePipelinedata);
-                        }
-                    }
                 }
                 for (int i = 0; i < Constants.ALLPERIODS; i++) {
                     if (predictors[i] == null) {

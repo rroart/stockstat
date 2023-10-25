@@ -87,18 +87,6 @@ public class ServiceUtil {
         return eventTable;
     }
 
-    public Pipeline[] getDataReaders(IclijConfig conf, String[] periodText,
-            Map<String, MarketData> marketdatamap, StockData stockData, DbDao dbDao) throws Exception {
-        Pipeline[] datareaders = new Pipeline[Constants.PERIODS + 3];
-        datareaders[0] = new DataReader(conf, marketdatamap, Constants.INDEXVALUECOLUMN, conf.getConfigData().getMarket());
-        datareaders[1] = new DataReader(conf, marketdatamap, Constants.PRICECOLUMN, conf.getConfigData().getMarket());
-        datareaders[2] = new ExtraReader(conf, marketdatamap, 0, stockData, dbDao);
-        for (int i = 0; i < Constants.PERIODS; i++) {
-            datareaders[i + 3] = new DataReader(conf, marketdatamap, i, conf.getConfigData().getMarket());
-        }
-        return datareaders;
-    }
-
     public AbstractCategory[] getCategories(IclijConfig conf, List<StockItem> stocks,
             String[] periodText,
             PipelineData[] datareaders) throws Exception {

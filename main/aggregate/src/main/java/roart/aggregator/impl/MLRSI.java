@@ -136,7 +136,7 @@ public class MLRSI extends IndicatorAggregator {
                 wantedSubTypesList.add(new SubTypeRSI(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf));
             }
             if (conf.isSTOCHRSIEnabled()) {
-                PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCH);
+                PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCHRSI);
                 Object list = null;
                 Object taObject = pipelineData.get(PipelineConstants.OBJECT);
                 Object resultObject = pipelineData.get(PipelineConstants.RESULT);

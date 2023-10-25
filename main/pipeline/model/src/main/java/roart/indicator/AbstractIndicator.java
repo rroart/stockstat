@@ -128,7 +128,7 @@ public abstract class AbstractIndicator extends Calculatable {
 
     public PipelineData putData() {
         PipelineData map = getData();
-        map.setName(getName());
+        map.setName(indicatorName());
         map.put(PipelineConstants.RESULT, calculatedMap);
         map.put(PipelineConstants.OBJECT, objectMap);
         map.put(PipelineConstants.OBJECTFIXED, objectFixedMap);

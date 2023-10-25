@@ -46,7 +46,7 @@ public class MACDBase extends Aggregator {
         this.resultObject = (Map<String, Double[]>) resultObject2;
         
         Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-        PipelineData datareader = pipelineMap.get("" + category);
+        PipelineData datareader = pipelineMap.get(catName);
         if (datareader == null) {
             log.info("empty {}", category);
             return;

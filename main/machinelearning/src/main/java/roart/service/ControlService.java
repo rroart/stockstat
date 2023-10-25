@@ -136,11 +136,6 @@ public class ControlService {
 
         stockData.cat = (Integer) pipelineDatum.get(PipelineConstants.WANTEDCAT);
         try {
-            /*
-            Pipeline[] datareaders = new ServiceUtil().getDataReaders(conf, stockData.periodText,
-                    stockData.marketdatamap, stockData, dbDao);
-*/
-            
             String mydate = TimeUtil.format(conf.getConfigData().getDate());
             int dateIndex = TimeUtil.getIndexEqualBefore(stockData.stockdates, mydate);
             if (dateIndex >= 0) {

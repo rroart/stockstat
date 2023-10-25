@@ -40,7 +40,7 @@ public class ComplexETL {
                 int cat = stockData.cat;
                 Pipeline[] datareaders = dataReaderMap.get(market);
                 Map<String, Pipeline> pipelineMap = getPipelineMap(datareaders);
-                Pipeline datareader = pipelineMap.get(catName);
+                Pipeline datareader = pipelineMap.get("" + cat); // used id 0-9
                 // interpolation does not work yet
                 List<String> datelist = (List<String>) datareader.putData().get(PipelineConstants.DATELIST);
                 Map<String, Double[][]> listMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);
@@ -86,6 +86,12 @@ public class ComplexETL {
     }
     
     // dup
+    /**
+     * Used id 0-9
+     * 
+     * @param datareaders
+     * @return 
+     */
     public static Map<String, Pipeline> getPipelineMap(Pipeline[] datareaders) {
         Map<String, Pipeline> pipelineMap = new HashMap<>();
         for (Pipeline datareader : datareaders) {

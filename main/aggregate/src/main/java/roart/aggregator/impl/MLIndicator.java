@@ -288,7 +288,7 @@ public class MLIndicator extends Aggregator {
         List<String> dateList = (List<String>) pipelineMap.get(this.key).get(PipelineConstants.DATELIST);
 	List<String> dateList2 = new ArrayList<>(dateList); // StockDao.getDateList(conf.getConfigData().getMarket(), marketdatamap);
         if (extrareader.get(PipelineConstants.MARKETSTOCKS) != null) {
-            dateList = new ArrayList<>((List) extrareader.get(PipelineConstants.DATELIST));
+            dateList = new ArrayList<>((Set) extrareader.get(PipelineConstants.DATELIST));
             Collections.sort(dateList);
         }
         Map<String, AbstractIndicator> usedIndicatorMap = cat.getIndicatorMap();
