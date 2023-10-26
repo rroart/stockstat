@@ -11,6 +11,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.util.MathUtil;
 import roart.indicator.AbstractIndicator;
+import roart.indicator.impl.Indicator;
 import roart.indicator.impl.IndicatorATR;
 import roart.indicator.impl.IndicatorCCI;
 import roart.indicator.impl.IndicatorMACD;
@@ -54,6 +55,9 @@ public class CategoryPeriod extends Category {
             indicators.add(new IndicatorSTOCH(conf, getTitle() + " STOCH", getTitle(), i, datareaders, false));
             indicators.add(new IndicatorATR(conf, getTitle() + " ATR", getTitle(), i, datareaders, false));
             indicators.add(new IndicatorCCI(conf, getTitle() + " CCI", getTitle(), i, datareaders, false));
+            for (AbstractIndicator indicator : indicators) {
+                ((Indicator) indicator).calculate();
+            }
         }
         createIndicatorMap(periodText);
     }

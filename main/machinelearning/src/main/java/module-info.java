@@ -80,4 +80,5 @@ module machinelearning {
     requires iclij.common.config;
     requires iclij.common.service;
     requires ml.spark;
+    requires common.webflux;
 }

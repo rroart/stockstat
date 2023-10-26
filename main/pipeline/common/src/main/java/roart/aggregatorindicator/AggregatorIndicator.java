@@ -14,6 +14,7 @@ public abstract class AggregatorIndicator {
 
     public abstract String indicator();
     public abstract boolean isEnabled();
+    @Deprecated
     public abstract AbstractIndicator getIndicator(int category, Map<String, AbstractIndicator> newIndicatorMap, Map<String, AbstractIndicator> usedIndicatorMap, PipelineData[] datareaders) throws Exception;
 
 }

@@ -215,10 +215,7 @@ public class ServiceController implements CommandLineRunner {
                 disableList = new ArrayList<>();
             }
             NeuralNetCommand neuralnetcommand = param.getNeuralnetcommand();
-            PipelineData[] pipelinedata = new PipelineData[0];
-            result.setList(getInstance().getContent( new IclijConfig(param.getConfigData()), maps, disableList, neuralnetcommand,  pipelinedata));
-            result.setMaps(maps);
-            result.setPipelineData(pipelinedata);
+            getInstance().getContent( new IclijConfig(param.getConfigData()), disableList, neuralnetcommand, result);
             long[] mem1 = MemUtil.mem();
             long[] memdiff = MemUtil.diff(mem1, mem0);
             log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));

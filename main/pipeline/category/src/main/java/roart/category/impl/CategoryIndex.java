@@ -10,6 +10,7 @@ import roart.common.model.StockItem;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.util.MathUtil;
 import roart.indicator.AbstractIndicator;
+import roart.indicator.impl.Indicator;
 import roart.indicator.impl.IndicatorATR;
 import roart.indicator.impl.IndicatorCCI;
 import roart.indicator.impl.IndicatorMACD;
@@ -36,6 +37,9 @@ public class CategoryIndex extends Category {
         indicators.add(new IndicatorSTOCH(conf, getTitle() + " STOCH", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false));
         indicators.add(new IndicatorATR(conf, getTitle() + " ATR", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false));
         indicators.add(new IndicatorCCI(conf, getTitle() + " CCI", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false));
+        for (AbstractIndicator indicator : indicators) {
+            ((Indicator) indicator).calculate();
+        }
         createIndicatorMap(Constants.INDEX);
     }
 

@@ -17,7 +17,7 @@ public class IndicatorMove extends Indicator {
     int period;
 
     public IndicatorMove(IclijConfig conf, String string, List<StockItem>[] datedstocklists, int period) throws Exception {
-        super(conf, string, period);
+        super(conf, string, period, null, false);
         List<StockItem>[] stocklistPeriod = StockUtil.getListSorted(datedstocklists, 2, period);
         Map<String, Integer>[] periodmapArray = StockUtil.getListMove(2, stocklistPeriod, period);
 

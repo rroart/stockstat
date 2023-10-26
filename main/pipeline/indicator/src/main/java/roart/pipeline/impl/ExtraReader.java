@@ -335,7 +335,6 @@ public class ExtraReader extends Pipeline {
             String market = entry.getMarket();
             PipelineData[] datareaders = dataReaderMap.get(market);
             Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-            int category = extraData.category;
             String cat = entry.getCategory();
             StockData stockData = stockDataMap.get(market);
             if (cat == null) {
@@ -383,7 +382,6 @@ public class ExtraReader extends Pipeline {
             String market = entry.getMarket();
             PipelineData[] datareaders = dataReaderMap.get(market);
             Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-            int category = extraData.category;
             String cat = entry.getCategory();
             StockData stockData = stockDataMap.get(market);
             if (cat == null) {

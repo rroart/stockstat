@@ -13,7 +13,6 @@ import roart.aggregator.impl.MLMACD;
 import roart.aggregator.impl.MLMulti;
 import roart.aggregator.impl.MLRSI;
 import roart.aggregator.impl.MLSTOCH;
-import roart.category.AbstractCategory;
 import roart.common.config.ConfigConstants;
 import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetCommand;
@@ -35,7 +34,7 @@ import roart.predictor.impl.PredictorTensorflowMLP;
 import roart.predictor.impl.PredictorTensorflowRNN;
 
 public class PipelineFactory {
-    public PipelineResultData myfactory(IclijConfig conf, String ml, PipelineData[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, NeuralNetChromosome2 chromosome, String key) throws Exception {
+    public PipelineResultData myfactory(IclijConfig conf, String ml, PipelineData[] dataReaders, String catName, Integer cat, NeuralNetCommand neuralnetcommand, NeuralNetChromosome2 chromosome, String key) throws Exception {
         NeuralNetConfigGene nnConfigGene = ((NeuralNetChromosome2) chromosome).getNnConfig();
         NeuralNetConfigs nnConfigs = new NeuralNetConfigs();
         nnConfigs.set(key, nnConfigGene.getConfig());
@@ -68,7 +67,7 @@ public class PipelineFactory {
         } 
         if (ml.equals(PipelineConstants.MLINDICATOR)) {
             conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, value);
-            pipelineData = new MLIndicator(conf, catName, catName, cat, categories, dataReaders, neuralnetcommand);
+            pipelineData = new MLIndicator(conf, catName, catName, cat, dataReaders, neuralnetcommand);
         }
         if (ml.equals(PipelineConstants.DATASET)) {
             conf.getConfigData().getConfigValueMap().put(ConfigConstants.DATASETMLCONFIG, value);

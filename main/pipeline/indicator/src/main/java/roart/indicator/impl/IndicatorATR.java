@@ -15,15 +15,9 @@ import roart.talib.util.TaUtil;
 public class IndicatorATR extends Indicator {
 
     // extend to three cats
-    public IndicatorATR(IclijConfig conf, String string, String title, int category, PipelineData[] datareaders, boolean onlyExtra) throws Exception {
-        super(conf, string, category);
+    public IndicatorATR(IclijConfig conf, String string, String title, int category, PipelineData[] datareaders, boolean onlyExtra) {
+        super(conf, string, category, datareaders, onlyExtra);
         this.key = title;
-        if (isEnabled() && !onlyExtra) {
-            calculateAll(category, datareaders);
-        }
-        if (wantForExtras()) {
-            calculateForExtras(datareaders);
-        }
     }
 
     @Override

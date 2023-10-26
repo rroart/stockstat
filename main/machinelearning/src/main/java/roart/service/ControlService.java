@@ -1,20 +1,12 @@
 package roart.service;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -22,7 +14,6 @@ import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.aggregator.impl.AggregatorRecommenderIndicator;
 import roart.aggregator.impl.MACDBase;
 import roart.aggregator.impl.MLATR;
 import roart.aggregator.impl.MLCCI;
@@ -31,15 +22,9 @@ import roart.aggregator.impl.MLMACD;
 import roart.aggregator.impl.MLMulti;
 import roart.aggregator.impl.MLRSI;
 import roart.aggregator.impl.MLSTOCH;
-import roart.aggregator.impl.RecommenderRSI;
-import roart.category.AbstractCategory;
-import roart.category.impl.CategoryIndex;
-import roart.category.impl.CategoryPeriod;
-import roart.category.impl.CategoryPrice;
 import roart.common.config.ConfigConstants;
-import roart.iclij.config.IclijConfig;
-import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
+import roart.common.constants.EurekaConstants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
@@ -47,21 +32,16 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.util.PipelineUtils;
 import roart.common.util.TimeUtil;
+import roart.common.webflux.WebFluxUtil;
 import roart.db.dao.DbDao;
 import roart.etl.CleanETL;
-import roart.etl.PeriodDataETL;
-import roart.etl.db.Extract;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.service.IclijServiceParam;
+import roart.iclij.service.IclijServiceResult;
 import roart.model.data.MarketData;
-import roart.model.data.PeriodData;
-import roart.model.data.StockData;
-import roart.pipeline.Pipeline;
 import roart.pipeline.common.aggregate.Aggregator;
 import roart.pipeline.common.predictor.AbstractPredictor;
-import roart.pipeline.impl.DataReader;
-import roart.pipeline.impl.ExtraReader;
-import roart.result.model.GUISize;
 import roart.service.util.ServiceUtil;
-import roart.stockutil.StockUtil;
 
 public class ControlService {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -131,6 +111,21 @@ public class ControlService {
             return new ArrayList<>();
         }
         */
+        
+        // call
+        IclijServiceParam param = new IclijServiceParam();
+        param.setConfigData(conf.getConfigData());
+        param.setWantMaps(true);
+        param.setConfList(disableList);
+        NeuralNetCommand neuralnetcommand2 = new NeuralNetCommand();
+        neuralnetcommand.setMllearn(conf.wantMLLearn());
+        neuralnetcommand.setMlclassify(conf.wantMLClassify());
+        neuralnetcommand.setMldynamic(conf.wantMLDynamic());
+        neuralnetcommand.setMlcross(conf.wantMLCross());
+        param.setNeuralnetcommand(neuralnetcommand2);
+        IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
+        // call
+        
         PipelineData pipelineDatum = PipelineUtils.getPipeline(pipelineData, PipelineConstants.META);
         MyStockData stockData = getStockData(conf, "market", pipelineData);
 
@@ -143,15 +138,13 @@ public class ControlService {
             }
             List<StockItem> dayStocks = stockData.stockdatemap.get(mydate);
             
-            AbstractCategory[] categories = new ServiceUtil().getCategories(conf, dayStocks,
-                    stockData.periodText, pipelineData);
             AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, stockData.marketdatamap,
-                    pipelineData, categories, neuralnetcommand);
+                    pipelineData, stockData.catName, stockData.cat, neuralnetcommand);
             //new ServiceUtil().createPredictors(categories);
             new ServiceUtil().calculatePredictors(predictors);
             
-            Aggregator[] aggregates = getAggregates(conf, categories,
-                    pipelineData, disableList, stockData.idNameMap, stockData.catName, stockData.cat, neuralnetcommand);
+            Aggregator[] aggregates = getAggregates(conf, pipelineData,
+                    disableList, stockData.idNameMap, stockData.catName, stockData.cat, neuralnetcommand);
 
             /*
             for (AbstractCategory category : categories) {
@@ -219,12 +212,12 @@ public class ControlService {
         }
     }
 
-    private Aggregator[] getAggregates(IclijConfig conf, AbstractCategory[] categories,
-            PipelineData[] pipelineData,
+    private Aggregator[] getAggregates(IclijConfig conf, PipelineData[] pipelineData,
             List<String> disableList,
-            Map<String, String> idNameMap, String catName, Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
+            Map<String, String> idNameMap,
+            String catName, Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
         Aggregator[] aggregates = new Aggregator[10];
-        aggregates[0] = new MACDBase(conf, catName, catName, cat, categories, idNameMap, pipelineData);
+        aggregates[0] = new MACDBase(conf, catName, catName, cat, idNameMap, pipelineData);
         //aggregates[1] = new AggregatorRecommenderIndicator(conf, catName, marketdatamap, categories, pipelineData, disableList);
         //aggregates[2] = new RecommenderRSI(conf, catName, marketdatamap, categories);
         aggregates[3] = new MLMACD(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand);
@@ -233,7 +226,7 @@ public class ControlService {
         aggregates[6] = new MLCCI(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand);
         aggregates[7] = new MLSTOCH(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand);
         aggregates[8] = new MLMulti(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand);
-        aggregates[9] = new MLIndicator(conf, catName, catName, cat, categories, pipelineData, neuralnetcommand);
+        aggregates[9] = new MLIndicator(conf, catName, catName, cat, pipelineData, neuralnetcommand);
         log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.MACHINELEARNING));
         log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.AGGREGATORSMLMACD));
         log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.INDICATORSMACD));

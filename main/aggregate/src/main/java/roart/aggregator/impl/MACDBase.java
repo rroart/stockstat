@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import roart.category.AbstractCategory;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.util.PipelineUtils;
 import roart.indicator.util.IndicatorUtils;
 import roart.pipeline.Pipeline;
 import roart.pipeline.common.aggregate.Aggregator;
@@ -24,20 +24,10 @@ public class MACDBase extends Aggregator {
 
     private Map<String, Double[]> resultObject;
 
-    public MACDBase(IclijConfig conf, String catName, String catName2, Integer cat, AbstractCategory[] categories,
-            Map<String, String> idNameMap, PipelineData[] datareaders) {
+    public MACDBase(IclijConfig conf, String catName, String catName2, Integer cat, Map<String, String> idNameMap,
+            PipelineData[] datareaders) {
         super(conf, "macdb", cat);
-        AbstractCategory cat2 = null;
-        try {
-            cat2 = StockUtil.getWantedCategory(categories, cat);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        if (cat2 == null) {
-            return;
-        }
-        Object taObject = cat2.getResultMap().get(PipelineConstants.INDICATORMACDOBJECT);
-        PipelineData macdmap = cat2.putData().get(PipelineConstants.INDICATORMACD);
+        PipelineData macdmap = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORMACD);
         if (macdmap == null) {
             return;
         }
@@ -55,15 +45,6 @@ public class MACDBase extends Aggregator {
         Map<String, double[][]> fillListMap = (Map<String, double[][]>) datareader.get(PipelineConstants.TRUNCFILLLIST);
         Map<String, double[][]>  base100FillListMap = (Map<String, double[][]>) datareader.get(PipelineConstants.TRUNCBASE100FILLLIST);
         this.listMap = fillListMap;
-        
-        /*
-        Map<String, Object> resultMaps = maps.get(catName);
-        if (resultMaps != null) {
-            Map<String, Object> macdMaps = (Map<String, Object>) resultMaps.get(getPipeline());
-            //System.out.println("macd"+ macdMaps.keySet());
-            this.objectMap = (Map<String, List<Object>>) macdMaps.get(PipelineConstants.OBJECT);
-        }
-        */
     }
 
     @Override

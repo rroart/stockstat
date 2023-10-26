@@ -37,6 +37,7 @@ public class PipelineConstants {
     public static final String MARKETCALCULATED = "marketcalculated";
     public static final String MARKETRESULT = "marketresult";
     
+    public static final String INDICATOR = "indicator";
     public static final String INDICATORMACDOBJECT = "indicatormacdobject";
     public static final String INDICATORMACDLIST = "indicatormacdlist";
     public static final String INDICATORMACDRESULT = "indicatormacdresult";

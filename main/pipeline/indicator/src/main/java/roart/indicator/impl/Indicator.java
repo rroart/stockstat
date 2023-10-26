@@ -27,8 +27,13 @@ import roart.pipeline.Pipeline;
 
 public abstract class Indicator extends AbstractIndicator {
 
-    public Indicator(IclijConfig conf, String string, int category) {
+    private PipelineData[] datareaders;
+    private boolean onlyExtra;
+
+    public Indicator(IclijConfig conf, String string, int category, PipelineData[] datareaders, boolean onlyExtra) {
         super(conf, string, category);
+        this.datareaders = datareaders;
+        this.onlyExtra = onlyExtra;
     }
 
     protected void calculateForExtras(PipelineData[] datareaders) {
@@ -136,6 +141,15 @@ public abstract class Indicator extends AbstractIndicator {
         return newMyTruncListMap;
     }
 
+    public void calculate() throws Exception {
+        if (isEnabled() && !onlyExtra) {
+            calculateAll(category, datareaders);
+        }
+        if (wantForExtras()) {
+            calculateForExtras(datareaders);
+        }
+    }
+    
     protected void calculateAll(int category, PipelineData[] datareaders) throws Exception {
         Map<String, PipelineData> pipelineMap = PipelineUtils.getPipelineMap(datareaders);
         PipelineData datareader = pipelineMap.get(key);

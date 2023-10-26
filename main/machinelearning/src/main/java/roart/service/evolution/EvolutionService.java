@@ -1,11 +1,6 @@
 package roart.service.evolution;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.Files;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,30 +18,24 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import roart.aggregatorindicator.impl.Recommend;
-import roart.category.AbstractCategory;
 import roart.common.config.ConfigConstants;
-import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
+import roart.common.constants.EurekaConstants;
 import roart.common.constants.EvolveConstants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
-import roart.common.ml.NeuralNetTensorflowConfig;
-import roart.common.ml.TensorflowPredictorLSTMConfig;
-import roart.common.model.FileObject;
-import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
+import roart.common.util.JsonUtil;
+import roart.common.util.TimeUtil;
+import roart.common.webflux.WebFluxUtil;
 import roart.db.dao.DbDao;
-import roart.db.dao.util.DbDaoUtil;
-import roart.etl.MarketDataETL;
-import roart.etl.PeriodDataETL;
 import roart.etl.db.Extract;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.IndicatorChromosome;
-import roart.evolution.chromosome.impl.IndicatorEvaluationNew;
 import roart.evolution.chromosome.impl.NeuralNetChromosome2;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.impl.ProportionScore;
@@ -54,24 +43,18 @@ import roart.evolution.species.Individual;
 import roart.filesystem.FileSystemDao;
 import roart.gene.NeuralNetConfigGene;
 import roart.gene.NeuralNetConfigGeneFactory;
-import roart.indicator.AbstractIndicator;
-import roart.indicator.util.IndicatorUtils;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.service.IclijServiceParam;
+import roart.iclij.service.IclijServiceResult;
 import roart.model.data.MarketData;
-import roart.model.data.PeriodData;
 import roart.model.data.StockData;
-import roart.pipeline.Pipeline;
 import roart.pipeline.common.predictor.AbstractPredictor;
-import roart.pipeline.impl.DataReader;
 import roart.result.model.ResultItem;
 import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
 import roart.service.ControlService;
 import roart.service.util.ServiceUtil;
-import roart.stockutil.StockUtil;
 import roart.talib.util.TaUtil;
-import roart.common.util.JsonUtil;
-import roart.common.util.TimeUtil;
-import roart.common.pipeline.data.PipelineData;
 
 public class EvolutionService {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -87,57 +70,6 @@ public class EvolutionService {
         this.dao = dao;
     }
 
-    public List<ResultItem> getEvolveRecommender(IclijConfig conf, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, Map<String, Object> resultMap, PipelineData[] pipelineData) throws JsonParseException, JsonMappingException, IOException {
-        log.info("mydate {}", conf.getConfigData().getDate());
-        log.info("mydate {}", conf.getDays());
-        String market = conf.getConfigData().getMarket();
-        ObjectMapper mapper = new ObjectMapper();
-        EvolutionConfig evolutionConfig = mapper.readValue(conf.getEvolveIndicatorrecommenderEvolutionConfig(), EvolutionConfig.class);
-    
-        //createOtherTables();
-        StockData stockData = new Extract(dao).getStockData(conf);
-        if (stockData == null) {
-            return new ArrayList<>();
-        }
-        
-    
-        List<ResultItemTable> otherTables = new ArrayList<>();
-        otherTables.add(mlTimesTable);
-        otherTables.add(eventTable);
-    
-        ResultItemTable table = new ResultItemTable();
-        ResultItemTableRow headrow = new ResultItemTableRow();
-        headrow.add("Config");
-        headrow.add("Old value");
-        headrow.add("New value");
-        table.add(headrow);
-    
-        try {
-            PipelineData[] datareaders = pipelineData;
-    
-            // no...get this from the category
-            // make oo of this
-            // optimize with constructors, no need for duplicate
-            // map from type (complex/simple) to recommender and keysets
-            Map<String, List<Recommend>> usedRecommenders = Recommend.getUsedRecommenders(conf);
-            Map<String, AbstractIndicator> indicatorMap = new HashMap<>();
-            int category = stockData.cat;
-            Map<String, AbstractIndicator> newIndicatorMap = new HashMap<>();
-            createRecommendIndicatorMap(stockData.marketdatamap, datareaders, usedRecommenders, indicatorMap, category,
-                    newIndicatorMap);
-            Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders, indicatorMap, conf);
-    
-            findRecommendSettings(conf, evolutionConfig, disableList, table, usedRecommenders, recommendKeyMap, indicatorMap, updateMap, stockData.days, datareaders, scoreMap, resultMap);
-            List<ResultItem> retlist = new ArrayList<>();
-            retlist.add(table);
-            return retlist;
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-            log.info("Market {}", conf.getConfigData().getMarket());
-            return new ArrayList<>();
-        }
-    }
-    
     private Double[] getThresholds(IclijConfig conf, String thresholdString) {
         try {
             Double.valueOf(thresholdString);
@@ -146,132 +78,6 @@ public class EvolutionService {
         } catch (Exception e) {            
         }
         return JsonUtil.convert(thresholdString, Double[].class);
-    }
-
-    private void findRecommendSettings(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
-            Map<String, List<Recommend>> usedRecommenders, Map<String, List<String>[]> recommendKeyMap,
-            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, int days, PipelineData[] datareaders, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws Exception {
-        TaUtil tu = new TaUtil();
-        String thresholdString = conf.getTestIndicatorRecommenderComplexThreshold();
-        Double[] thresholds = getThresholds(conf, thresholdString);
-        double threshold = thresholds[0];
-        for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {
-            List<AbstractIndicator> indicators = Recommend.getIndicators(entry.getKey(), usedRecommenders, indicatorMap);
-            List<String>[] recommendList = recommendKeyMap.get(entry.getKey());
-            Recommend recommend = entry.getValue().get(0);
-            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, recommend.getFutureDays(), conf.getTableDays(), recommend.getIntervalDays(), null, datareaders);
-            List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
-            if (macdrsiMinMax == null || macdrsiMinMax.length == 1) {
-                int jj = 0;
-            }
-    
-            for (int i = 0; i < 2; i++) {
-                List<String> scoreList = recommendList[i];
-                ////scoreList.removeAll(disableList);
-                IndicatorChromosome indicatorEval0 = new IndicatorChromosome(conf, scoreList, retObj, true, disableList, new ProportionScore(i == 0), days, threshold);
-                indicatorEval0.setAscending(i == 0);
-                
-                OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
-                evolution.setParallel(false);
-    
-                List<String> individuals = new ArrayList<>();
-                Individual fittestIndividual = null;
-                try {
-                	fittestIndividual = evolution.getFittest(evolutionConfig, indicatorEval0, individuals, null);
-                } catch (InterruptedException e) {
-                    resultMap.put(EvolveConstants.ID, "interrupted");
-                    return;
-                }
-                String text = evolution.printtext(conf.getConfigData().getMarket() + " " + "recommend" + " " + i, "recommend", individuals);
-                String node = conf.getEvolveSaveLocation();
-                String mypath = conf.getEvolveSavePath();
-                ControlService.configCurator(conf);
-                String filename = new FileSystemDao(conf, ControlService.curatorClient).writeFile(node, mypath, null, text);
-    
-                for (String id : scoreList) {
-                    ResultItemTableRow row = new ResultItemTableRow();
-                    row.add(id);
-                    row.add("" + conf.getConfigData().getConfigValueMap().get(id));
-                    //log.info("Buy {} {}", id, buy.getConf().getConfigValueMap().get(id));
-                    //log.info("Buy {}", buy.getConf().getConfigValueMap().get(id).getClass().getName());
-                    IndicatorChromosome newEval = (IndicatorChromosome) fittestIndividual.getEvaluation();
-                    row.add("" + newEval.getConf().getConfigData().getConfigValueMap().get(id));
-                    table.add(row);
-                }
-                // have a boolean here
-                for (String id : scoreList) {
-                    IndicatorChromosome newEval = (IndicatorChromosome) fittestIndividual.getEvaluation();
-                    updateMap.put(id, newEval.getConf().getConfigData().getConfigValueMap().get(id));
-                }
-                if (i == 0) {
-                    List<Double> scorelist2 = new ArrayList<>();
-                    Double fitness = fittestIndividual.getFitness();
-                    if (!fitness.isNaN()) {
-                        scorelist2.add(fitness);                    
-                        scoreMap.put("score", fitness);
-                        scoreMap.put("scores", scorelist2);            
-                    }
-                }
-            }
-        }
-    }
-
-    private void createRecommendIndicatorMap(Map<String, MarketData> marketdatamap, PipelineData[] datareaders,
-            Map<String, List<Recommend>> usedRecommenders, Map<String, AbstractIndicator> indicatorMap, int category,
-            Map<String, AbstractIndicator> newIndicatorMap) throws Exception {
-        for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {
-            List<Recommend> list = entry.getValue();
-            for (Recommend recommend : list) {
-                String indicator = recommend.indicator();
-                indicatorMap.put(indicator, recommend.getIndicator(category, newIndicatorMap, null, datareaders));
-            }
-        }
-    }
-
-    private void findRecommendSettingsNew(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
-            Map<String, List<Recommend>> usedRecommenders, Map<String, List<String>[]> recommendKeyMap,
-            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, PipelineData[] datareaders) throws Exception {
-        TaUtil tu = new TaUtil();
-        for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {
-            List<AbstractIndicator> indicators = Recommend.getIndicators(entry.getKey(), usedRecommenders, indicatorMap);
-            List<String>[] recommendList = recommendKeyMap.get(entry.getKey());
-            Recommend recommend = entry.getValue().get(0);
-            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, recommend.getFutureDays(), conf.getTableDays(), recommend.getIntervalDays(), null, datareaders);
-            List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
-            if (macdrsiMinMax.length == 1) {
-                int jj = 0;
-            }
-    
-            List<String> buyList = recommendList[0];
-            List<String> sellList = recommendList[1];
-            findRecommendSettingsNew(conf, evolutionConfig, disableList, table, updateMap, retObj, buyList, true);
-            findRecommendSettingsNew(conf, evolutionConfig, disableList, table, updateMap, retObj, sellList, false);
-        }
-    }
-
-    private void findRecommendSettingsNew(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList,
-            ResultItemTable table, Map<String, Object> updateMap, Object[] retObj, List<String> keyList, boolean doBuy) throws Exception {
-        for (String id : keyList) {
-            if (disableList.contains(id)) {
-                continue;
-            }
-            IndicatorEvaluationNew recommend = new IndicatorEvaluationNew(conf, id, retObj, doBuy, keyList.indexOf(id));
-    
-            OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
-    
-            Individual buysell = evolution.getFittest(evolutionConfig, recommend, null, null);
-    
-            ResultItemTableRow row = new ResultItemTableRow();
-            row.add(id);
-            row.add("" + conf.getConfigData().getConfigValueMap().get(id));
-            //log.info("Buy {} {}", id, buy.getConf().getConfigValueMap().get(id));
-            //log.info("Buy {}", buy.getConf().getConfigValueMap().get(id).getClass().getName());
-            IndicatorEvaluationNew newEval = (IndicatorEvaluationNew) buysell.getEvaluation();
-         
-            row.add("" + newEval.getConf().getConfigData().getConfigValueMap().get(id));
-            table.add(row);
-            updateMap.put(id, newEval.getConf().getConfigData().getConfigValueMap().get(id));
-        }
     }
 
     public List<ResultItem> getEvolveML(IclijConfig conf, List<String> disableList, Map<String, Object> updateMap, String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap, PipelineData[] pipelineData) throws JsonParseException, JsonMappingException, IOException {
@@ -325,24 +131,33 @@ public class EvolutionService {
         headrow.add("New value");
         table.add(headrow);
     
+        // call
+        IclijServiceParam param = new IclijServiceParam();
+        param.setConfigData(conf.getConfigData());
+        param.setWantMaps(true);
+        param.setConfList(disableList);
+        NeuralNetCommand neuralnetcommand2 = new NeuralNetCommand();
+        neuralnetcommand.setMllearn(conf.wantMLLearn());
+        neuralnetcommand.setMlclassify(conf.wantMLClassify());
+        neuralnetcommand.setMldynamic(conf.wantMLDynamic());
+        neuralnetcommand.setMlcross(conf.wantMLCross());
+        param.setNeuralnetcommand(neuralnetcommand2);
+        IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
+        // call
         try {
 
-            DataReader dataReader = new DataReader(conf, stockData.marketdatamap, stockData.cat, conf.getConfigData().getMarket());
-            //PipelineData[] datareaders = new PipelineData[1];
             PipelineData[] datareaders = pipelineData;
     
             //datareaders[0] = dataReader;
     
             String mydate = TimeUtil.format(conf.getConfigData().getDate());
             List<StockItem> dayStocks = stockData.stockdatemap.get(mydate);
-            AbstractCategory[] categories = new ServiceUtil().getCategories(conf, dayStocks,
-                    stockData.periodText, datareaders);
             AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, stockData.marketdatamap,
-                    datareaders, categories, neuralnetcommand);
+                    datareaders, stockData.catName, stockData.cat, neuralnetcommand);
             //new ServiceUtil().createPredictors(categories);
             new ServiceUtil().calculatePredictors(predictors);
 
-            findMLSettings(conf, evolutionConfig, disableList, table, updateMap, ml, datareaders, categories, stockData.catName, stockData.cat, neuralnetcommand, scoreMap, resultMap, stockData.marketdatamap);
+            findMLSettings(conf, evolutionConfig, disableList, table, updateMap, ml, datareaders, stockData.catName, stockData.cat, neuralnetcommand, scoreMap, resultMap, stockData.marketdatamap);
     
             List<ResultItem> retlist = new ArrayList<>();
             retlist.add(table);
@@ -354,7 +169,7 @@ public class EvolutionService {
     }
 
     private void findMLSettings(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
-            Map<String, Object> updateMap, String ml, PipelineData[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap, Map<String, MarketData> marketdatamap) throws Exception {
+            Map<String, Object> updateMap, String ml, PipelineData[] dataReaders, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap, Map<String, MarketData> marketdatamap) throws Exception {
         TaUtil tu = new TaUtil();
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
         NeuralNetConfigs nnConfigs = null;
@@ -454,7 +269,7 @@ public class EvolutionService {
                 //chromosome.setAscending(false);
             }
 
-            FitnessNeuralNet fitness = new FitnessNeuralNet(conf, ml, dataReaders, categories, key, catName, cat, neuralnetcommand, marketdatamap);
+            FitnessNeuralNet fitness = new FitnessNeuralNet(conf, ml, dataReaders, key, catName, cat, neuralnetcommand, marketdatamap);
     
             OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
             evolution.setParallel(false);
@@ -545,7 +360,7 @@ public class EvolutionService {
                 chromosome.setAscending(false);
             }
     
-            FitnessNeuralNet fitness = new FitnessNeuralNet(conf, ml, null, null, key, null, 0, neuralnetcommand, marketdatamap);
+            FitnessNeuralNet fitness = new FitnessNeuralNet(conf, ml, null, key, null, 0, neuralnetcommand, marketdatamap);
 
             OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
             evolution.setParallel(false);

@@ -25,7 +25,6 @@ import roart.aggregator.impl.MLMACD;
 import roart.aggregator.impl.MLMulti;
 import roart.aggregator.impl.MLRSI;
 import roart.aggregator.impl.MLSTOCH;
-import roart.category.AbstractCategory;
 import roart.common.config.ConfigConstants;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
@@ -61,8 +60,6 @@ public class FitnessNeuralNet extends Fitness {
 
     private PipelineData[] dataReaders;
 
-    private AbstractCategory[] categories;
-
     private String key;
     
     private String catName;
@@ -75,11 +72,10 @@ public class FitnessNeuralNet extends Fitness {
     
     protected String titletext;
     
-    public FitnessNeuralNet(IclijConfig conf, String ml, PipelineData[] dataReaders, AbstractCategory[] categories, String key, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, MarketData> marketdatamap) {
+    public FitnessNeuralNet(IclijConfig conf, String ml, PipelineData[] dataReaders, String key, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, MarketData> marketdatamap) {
         this.conf = conf.copy();
         this.ml = ml;
         this.dataReaders = dataReaders;
-        this.categories = categories;
         this.key = key;
         this.catName = catName;
         this.cat = cat;
@@ -96,7 +92,7 @@ public class FitnessNeuralNet extends Fitness {
         aggregate = future.get();
         */
         try {
-        pipelineData = new PipelineFactory().myfactory(conf, ml, dataReaders, categories, catName, cat, neuralnetcommand, ((NeuralNetChromosome2) chromosome), key);
+        pipelineData = new PipelineFactory().myfactory(conf, ml, dataReaders, catName, cat, neuralnetcommand, ((NeuralNetChromosome2) chromosome), key);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -126,17 +122,15 @@ public class FitnessNeuralNet extends Fitness {
         private IclijConfig conf;
         private String ml;
         private PipelineData[] dataReaders;
-        private AbstractCategory[] categories;
         private String catName;
         private Integer cat;
         private NeuralNetCommand neuralnetcommand;
         private NeuralNetChromosome2 chromosome;
         
-        public MyCallable(IclijConfig conf, String ml, PipelineData[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, NeuralNetChromosome2 chromosome) {
+        public MyCallable(IclijConfig conf, String ml, PipelineData[] dataReaders, String catName, Integer cat, NeuralNetCommand neuralnetcommand, NeuralNetChromosome2 chromosome) {
             this.conf = conf;
             this.ml = ml;
             this.dataReaders = dataReaders;
-            this.categories = categories;
             this.catName = catName;
             this.cat = cat;
             this.neuralnetcommand = neuralnetcommand;
@@ -145,7 +139,7 @@ public class FitnessNeuralNet extends Fitness {
 
         @Override
         public PipelineResultData call() throws Exception {
-            return new PipelineFactory().myfactory(conf, ml, dataReaders, categories, catName, cat, neuralnetcommand, chromosome, key);
+            return new PipelineFactory().myfactory(conf, ml, dataReaders, catName, cat, neuralnetcommand, chromosome, key);
         }
     }
 

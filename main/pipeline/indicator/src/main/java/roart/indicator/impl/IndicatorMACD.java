@@ -17,15 +17,9 @@ public class IndicatorMACD extends Indicator {
 
     Map<MLClassifyModel, Long> mapTime = new HashMap<>();
     
-    public IndicatorMACD(IclijConfig conf, String string, String title, int category, PipelineData[] datareaders, boolean onlyExtra) throws Exception {
-        super(conf, string, category);
+    public IndicatorMACD(IclijConfig conf, String string, String title, int category, PipelineData[] datareaders, boolean onlyExtra) {
+        super(conf, string, category, datareaders, onlyExtra);
         this.key = title;
-        if (isEnabled() && !onlyExtra) {
-            calculateAll(category, datareaders);
-        }
-        if (wantForExtras()) {
-            calculateForExtras(datareaders);
-        }
     }
 
     @Override

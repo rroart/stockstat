@@ -38,6 +38,7 @@ import roart.category.impl.CategoryPeriod;
 import roart.category.impl.CategoryPrice;
 import roart.common.config.ConfigConstants;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.service.IclijServiceResult;
 import roart.indicator.AbstractIndicator;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
@@ -135,7 +136,8 @@ public class ControlService {
      * @return the tabular result lists
      */
 
-    public List<ResultItem> getContent(IclijConfig conf, Map<String, Map<String, Object>> maps, List<String> disableList, NeuralNetCommand neuralnetcommand, PipelineData[] pipelinedata) {
+    public List<ResultItem> getContent(IclijConfig conf, List<String> disableList, NeuralNetCommand neuralnetcommand, IclijServiceResult result) {
+        Map<String, Map<String, Object>> maps = new HashMap<>();
         log.info("mydate {}", conf.getConfigData().getDate());
         log.info("mydate {}", conf.getDays());
         //createOtherTables();
@@ -149,6 +151,7 @@ public class ControlService {
         singlePipelineData.put(PipelineConstants.META, stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta);
         singlePipelineData.put(PipelineConstants.CATEGORY, stockData.catName);
         singlePipelineData.put(PipelineConstants.WANTEDCAT, stockData.cat);
+        PipelineData[] pipelinedata = new PipelineData[0];
         pipelinedata = ArrayUtils.add(pipelinedata, singlePipelineData);
         ResultItemTable table = new ResultItemTable();
         List<ResultItemTable> otherTables = new ArrayList<>();
@@ -252,6 +255,9 @@ public class ControlService {
         }
         new CleanETL().fixmap((Map) maps);
         printmap(maps, 0);
+        result.setMaps(maps);
+        result.setList(retlist);
+        result.setPipelineData(pipelinedata);
         return retlist;
     }
     
@@ -452,7 +458,7 @@ public class ControlService {
             AbstractCategory[] categories,
             PipelineData[] datareaders, List<String> disableList, Map<String, String> idNameMap, String catName, Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
         Aggregator[] aggregates = new Aggregator[10];
-        aggregates[0] = new MACDBase(conf, catName, catName, cat, categories, idNameMap, datareaders);
+        aggregates[0] = new MACDBase(conf, catName, catName, cat, idNameMap, datareaders);
         aggregates[1] = new AggregatorRecommenderIndicator(conf, catName, marketdatamap, categories, datareaders, disableList);
         aggregates[2] = new RecommenderRSI(conf, catName, marketdatamap, categories);
         aggregates[3] = new MLMACD(conf, catName, catName, cat, idNameMap, datareaders, neuralnetcommand);
@@ -461,7 +467,7 @@ public class ControlService {
         aggregates[6] = new MLCCI(conf, catName, catName, cat, idNameMap, datareaders, neuralnetcommand);
         aggregates[7] = new MLSTOCH(conf, catName, catName, cat, idNameMap, datareaders, neuralnetcommand);
         aggregates[8] = new MLMulti(conf, catName, catName, cat, idNameMap, datareaders, neuralnetcommand);
-        aggregates[9] = new MLIndicator(conf, catName, catName, cat, categories, datareaders, neuralnetcommand);
+        aggregates[9] = new MLIndicator(conf, catName, catName, cat, datareaders, neuralnetcommand);
         log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.MACHINELEARNING));
         log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.AGGREGATORSMLMACD));
         log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.INDICATORSMACD));

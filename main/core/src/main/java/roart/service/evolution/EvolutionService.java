@@ -163,7 +163,7 @@ public class EvolutionService {
             List<AbstractIndicator> indicators = Recommend.getIndicators(entry.getKey(), usedRecommenders, indicatorMap);
             List<String>[] recommendList = recommendKeyMap.get(entry.getKey());
             Recommend recommend = entry.getValue().get(0);
-            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, recommend.getFutureDays(), conf.getTableDays(), recommend.getIntervalDays(), null, datareaders);
+            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators.stream().map(AbstractIndicator::indicatorName).toList(), recommend.getFutureDays(), conf.getTableDays(), recommend.getIntervalDays(), null, datareaders);
             List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
             if (macdrsiMinMax == null || macdrsiMinMax.length == 1) {
                 int jj = 0;
@@ -240,7 +240,7 @@ public class EvolutionService {
             List<AbstractIndicator> indicators = Recommend.getIndicators(entry.getKey(), usedRecommenders, indicatorMap);
             List<String>[] recommendList = recommendKeyMap.get(entry.getKey());
             Recommend recommend = entry.getValue().get(0);
-            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, recommend.getFutureDays(), conf.getTableDays(), recommend.getIntervalDays(), null, datareaders);
+            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators.stream().map(AbstractIndicator::indicatorName).toList(), recommend.getFutureDays(), conf.getTableDays(), recommend.getIntervalDays(), null, datareaders);
             List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
             if (macdrsiMinMax.length == 1) {
                 int jj = 0;

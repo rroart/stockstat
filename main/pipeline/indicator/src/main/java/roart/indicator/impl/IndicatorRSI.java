@@ -14,15 +14,9 @@ import roart.talib.util.TaUtil;
 
 public class IndicatorRSI extends Indicator {
 
-    public IndicatorRSI(IclijConfig conf, String string, String title, int category, PipelineData[] datareaders, boolean onlyExtra) throws Exception {
-        super(conf, string, category);
+    public IndicatorRSI(IclijConfig conf, String string, String title, int category, PipelineData[] datareaders, boolean onlyExtra) {
+        super(conf, string, category, datareaders, onlyExtra);
         this.key = title;
-        if (isEnabled() && !onlyExtra) {
-            calculateAll(category, datareaders);
-        }
-        if (wantForExtras()) {
-            calculateForExtras(datareaders);
-        }
     }
 
     @Override

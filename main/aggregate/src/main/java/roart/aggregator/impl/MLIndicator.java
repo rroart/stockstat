@@ -32,7 +32,6 @@ import roart.pipeline.common.aggregate.Aggregator;
 import roart.pipeline.data.ExtraData;
 import roart.pipeline.impl.DataReader;
 import roart.aggregatorindicator.impl.AggregatorMLIndicator;
-import roart.category.AbstractCategory;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.iclij.config.IclijConfig;
@@ -116,7 +115,7 @@ public class MLIndicator extends Aggregator {
     List<MLClassifyDao> mldaos = new ArrayList<>();
 
     public MLIndicator(IclijConfig conf, String string, String title, int category, 
-            AbstractCategory[] categories, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+            PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         super(conf, string, category);
         this.key = title;
         makeMapTypes();
@@ -146,7 +145,7 @@ public class MLIndicator extends Aggregator {
             eventTableRows = new ArrayList<>();
         }
         if (isEnabled()) {
-            calculateMomentums(conf, categories, datareaders, neuralnetcommand);
+            calculateMomentums(conf, datareaders, neuralnetcommand);
             cleanMLDaos();
         }
     }
@@ -266,15 +265,8 @@ public class MLIndicator extends Aggregator {
             }
     }
 
-    private void calculateMomentums(IclijConfig conf, AbstractCategory[] categories,
-            PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
-        AbstractCategory cat = StockUtil.getWantedCategory(categories, category);
-        if (cat == null) {
-            return;
-        }
-        // all true here
-        log.info("checkthis {}", category == cat.getPeriod());
-        log.info("checkthis {}", title.equals(cat.getTitle()));
+    private void calculateMomentums(IclijConfig conf, PipelineData[] datareaders,
+            NeuralNetCommand neuralnetcommand) throws Exception {
         log.info("checkthis {}", key.equals(title));
         Map<String, PipelineData> pipelineMap = PipelineUtils.getPipelineMap(datareaders);
         PipelineData datareader = pipelineMap.get(key);
@@ -291,15 +283,15 @@ public class MLIndicator extends Aggregator {
             dateList = new ArrayList<>((Set) extrareader.get(PipelineConstants.DATELIST));
             Collections.sort(dateList);
         }
-        Map<String, AbstractIndicator> usedIndicatorMap = cat.getIndicatorMap();
+        Map<String, PipelineData> usedIndicatorMap = PipelineUtils.getPipelineMapStartsWith(datareaders, PipelineConstants.INDICATOR);
 
         Map<String, List<AggregatorMLIndicator>> usedIndicators = AggregatorMLIndicator.getUsedAggregatorMLIndicators(conf);
         Set<String> ids = new HashSet<>();
         Map<String, Double[][]> list0 = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
         ids.addAll(list0.keySet());
-        List<AbstractIndicator> indicators = getIndicators(datareaders, null, usedIndicatorMap, usedIndicators, ids);
+        List<String> indicators = getIndicators(datareaders, usedIndicators, ids);
         log.info("INDIC" + usedIndicators.values().iterator().next().stream().map(AggregatorMLIndicator::indicator).toList());
-        log.info("INDIC" + indicators.stream().map(AbstractIndicator::indicatorName).toList());
+        log.info("INDIC" + indicators);
         
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse
@@ -322,17 +314,16 @@ public class MLIndicator extends Aggregator {
 
         Map<String, Map<Object, Double>> mapMap = new HashMap<>();
         ids.addAll(list0.keySet());
-        getMergedLists(ids, indicators.stream().map(AbstractIndicator::indicatorName).toList(), datareaders);
+        getMergedLists(ids, indicators, datareaders);
 
         int days = conf.getTableDays();
         if (days == 0) {
             days = dateList.size();
         }
         // TODO datelist
-        ExtraData extraData = new ExtraData(dateList, cat.getPeriod(), categories, datareaders, extrareader);
+        ExtraData extraData = new ExtraData(dateList, datareaders, extrareader);
         int tableDays = Math.min(days, dateList.size());
         Object[] retObj2 = IndicatorUtils.getDayIndicatorMap(conf, indicators, 0, tableDays, 1, extraData, datareaders, dateList2);
-        Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj2[0];
         //Map<Double, Pair> thresholdMap = new HashMap<>();
         Map<Double, Map<String, Map<String, Double[]>>> mapResult0 = new HashMap<>();
         Double[] thresholds = getThresholds(conf);
@@ -380,9 +371,9 @@ public class MLIndicator extends Aggregator {
             mlmeta.features = true;
             boolean multi = neuralnetcommand.isMldynamic() || (neuralnetcommand.isMlclassify() && !neuralnetcommand.isMllearn());
             if (false /*multi*/ /*conf.wantMLMP()*/) {
-                doLearnTestClassifyFuture(nnConfigs, conf, dayIndicatorMap, mergedCatMap, mapResult, arrayLength, labelMapShort, indicators, mlmeta, neuralnetcommand, threshold);
+                doLearnTestClassifyFuture(nnConfigs, conf, mergedCatMap, mapResult, arrayLength, labelMapShort, indicators, mlmeta, neuralnetcommand, threshold);
             } else {
-                doLearnTestClassify(nnConfigs, conf, dayIndicatorMap, mergedCatMap, mapResult, arrayLength, labelMapShort, indicators, mlmeta, neuralnetcommand, threshold);
+                doLearnTestClassify(nnConfigs, conf, mergedCatMap, mapResult, arrayLength, labelMapShort, indicators, mlmeta, neuralnetcommand, threshold);
             }
             MLMeta mlmeta1 = new MLMeta();
             mlmeta1.dim1 = arrayLength;
@@ -391,9 +382,9 @@ public class MLIndicator extends Aggregator {
             mlmeta1.classify = true;
             mlmeta1.features = true;
             if (false /*multi*/ /*conf.wantMLMP()*/) {
-                doLearnTestClassifyFuture(nnConfigs, conf, dayIndicatorMap, mergedCatArrayMap, mapResult, arrayLength, labelMapShort, indicators, mlmeta1, neuralnetcommand, threshold);
+                doLearnTestClassifyFuture(nnConfigs, conf, mergedCatArrayMap, mapResult, arrayLength, labelMapShort, indicators, mlmeta1, neuralnetcommand, threshold);
             } else {
-                doLearnTestClassify(nnConfigs, conf, dayIndicatorMap, mergedCatArrayMap, mapResult, arrayLength, labelMapShort, indicators, mlmeta1, neuralnetcommand, threshold);
+                doLearnTestClassify(nnConfigs, conf, mergedCatArrayMap, mapResult, arrayLength, labelMapShort, indicators, mlmeta1, neuralnetcommand, threshold);
             }
         }
         // and others done with println
@@ -421,9 +412,9 @@ public class MLIndicator extends Aggregator {
         return JsonUtil.convert(thresholdString, Double[].class);
     }
 
-    private void doLearnTestClassify(NeuralNetConfigs nnconfigs, IclijConfig conf, Map<Integer, Map<String, Double[]>> dayIndicatorMap,
-            Map<String, List<Pair<Object, Double>>> mergedCatMap, Map<String, Map<String, Double[]>> mapResult, int arrayLength,
-            Map<Double, String> labelMapShort, List<AbstractIndicator> indicators, MLMeta mlmeta, NeuralNetCommand neuralnetcommand, Double threshold) {
+    private void doLearnTestClassify(NeuralNetConfigs nnconfigs, IclijConfig conf, Map<String, List<Pair<Object, Double>>> mergedCatMap,
+            Map<String, Map<String, Double[]>> mapResult, int arrayLength, Map<Double, String> labelMapShort,
+            List<String> indicators, MLMeta mlmeta, NeuralNetCommand neuralnetcommand, Double threshold) {
         try {
             int testCount = 0;   
             // calculate sections and do ML
@@ -564,9 +555,9 @@ public class MLIndicator extends Aggregator {
         }
     }
 
-    private void doLearnTestClassifyFuture(NeuralNetConfigs nnconfigs, IclijConfig conf, Map<Integer, Map<String, Double[]>> dayIndicatorMap,
-            Map<String, List<Pair<Object, Double>>> mergedCatMap, Map<String, Map<String, Double[]>> mapResult, int arrayLength,
-            Map<Double, String> labelMapShort, List<AbstractIndicator> indicators, MLMeta mlmeta, NeuralNetCommand neuralnetcommand, Double threshold) {
+    private void doLearnTestClassifyFuture(NeuralNetConfigs nnconfigs, IclijConfig conf, Map<String, List<Pair<Object, Double>>> mergedCatMap,
+            Map<String, Map<String, Double[]>> mapResult, int arrayLength, Map<Double, String> labelMapShort,
+            List<String> indicators, MLMeta mlmeta, NeuralNetCommand neuralnetcommand, Double threshold) {
         try {
             // calculate sections and do ML
             /*
@@ -789,6 +780,7 @@ public class MLIndicator extends Aggregator {
         }
     }
 
+    @Deprecated
     private List<AbstractIndicator> getIndicators(PipelineData[] datareaders, Map<String, AbstractIndicator> newIndicatorMap, Map<String, AbstractIndicator> usedIndicatorMap,
             Map<String, List<AggregatorMLIndicator>> usedIndicators, Set<String> ids) throws Exception {
         Map<String, AbstractIndicator> indicatorMap = new HashMap<>();
@@ -807,7 +799,7 @@ public class MLIndicator extends Aggregator {
                 }
                 PipelineData indicatorResult = PipelineUtils.getPipeline(datareaders, indicator);
                 if (indicatorResult != null) {
-                    PipelineData datareader = pipelineMap.get("" + this.category);
+                    PipelineData datareader = pipelineMap.get(this.key);
                     Map<String, Double[][]> aResult = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
                     //Map<String, Object[]> aResult = (Map<String, Object[]>) indicatorResult.get(PipelineConstants. LIST);
                     ids.retainAll(aResult.keySet());
@@ -815,6 +807,30 @@ public class MLIndicator extends Aggregator {
             }
         }
         return new ArrayList<>(indicatorMap.values());
+    }
+
+    private List<String> getIndicators(PipelineData[] datareaders, Map<String, List<AggregatorMLIndicator>> usedIndicators,
+            Set<String> ids) throws Exception {
+        List<String> indicators = new ArrayList<>();
+        Map<String, PipelineData> pipelineMap = PipelineUtils.getPipelineMap(datareaders);
+        // TODO
+        for (Entry<String, List<AggregatorMLIndicator>> entry : usedIndicators.entrySet()) {
+            List<AggregatorMLIndicator> list = entry.getValue();
+            for (AggregatorMLIndicator ind : list) {
+                String indicator = ind.indicator();
+                PipelineData indicatorResult = PipelineUtils.getPipeline(datareaders, indicator);
+                if (indicatorResult != null) {
+                    indicators.add(indicator);
+                    PipelineData datareader = pipelineMap.get(this.key);
+                    Map<String, Double[][]> aResult = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
+                    //Map<String, Object[]> aResult = (Map<String, Object[]>) indicatorResult.get(PipelineConstants. LIST);
+                    ids.retainAll(aResult.keySet());
+                } else {
+                    log.error("Indicator missing: {}", indicator);
+                }
+            }
+        }
+        return indicators;
     }
 
     private boolean anythingHere(Map<String, Double[][]> listMap2) {
@@ -1026,9 +1042,10 @@ public class MLIndicator extends Aggregator {
         }
     }
     
-    public String getFilenamePart(List<AbstractIndicator> indicators) {
+    public String getFilenamePart(List<String> indicators) {
         String ret = "";
-        for (AbstractIndicator indicator : indicators) {
+        for (String indicatorName : indicators) {
+            AbstractIndicator indicator = IndicatorUtils.dummyfactory(conf, indicatorName);
             ret = ret + indicator.getName() + "_";
             if (indicator.wantForExtras()) {
                 ret = ret + "d" + "_";
@@ -1062,7 +1079,7 @@ public class MLIndicator extends Aggregator {
         return ret;
     }
     
-    public String getFilename(MLClassifyDao dao, MLClassifyModel model, String in, String out, String market, List<AbstractIndicator> indicators, Double threshold) {
+    public String getFilename(MLClassifyDao dao, MLClassifyModel model, String in, String out, String market, List<String> indicators, Double threshold) {
         String testmarket = conf.getConfigData().getMlmarket();
         if (testmarket != null) {
             market = testmarket;
