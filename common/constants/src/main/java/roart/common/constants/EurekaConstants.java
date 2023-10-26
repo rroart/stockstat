@@ -4,12 +4,12 @@ public class EurekaConstants {
     public static final String MYSERVER = "myserver";
     public static final String MYASERVER = "myaserver";
     public static final String MYISERVER = "myiserver";
-    public static final String MYMSERVER = "mymserver";
-    public static final String MYESERVER = "mymeserver";
+    public static final String MYSSERVER = "mysserver";
+    public static final String MYESERVER = "myeserver";
     public static final String MYPORT = "myport";
     public static final String MYIPORT = "myiport";
     public static final String MYAPORT = "myaport";
-    public static final String MYMPORT = "mymport";
+    public static final String MYSPORT = "mysport";
     public static final String MYEPORT = "myeport";
     public static final String LOCALHOST = "localhost";
     public static final String HTTP = "80";

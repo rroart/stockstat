@@ -80,7 +80,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         param.mlmeta = mlmeta;
         param.classify = classify;
         //param.modelid.setConf(null);
-        return WebFluxUtil.sendMMe(LearnTestClassifyResult.class, param, EurekaConstants.LEARNTESTCLASSIFY);
+        return WebFluxUtil.sendSMe(LearnTestClassifyResult.class, param, EurekaConstants.LEARNTESTCLASSIFY);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
 
     @Override
     public void clean() {
-        LearnTestClassifyResult result = WebFluxUtil.sendMMe(LearnTestClassifyResult.class, new LearnTestClassifyAccess(), EurekaConstants.CLEAN);
+        LearnTestClassifyResult result = WebFluxUtil.sendSMe(LearnTestClassifyResult.class, new LearnTestClassifyAccess(), EurekaConstants.CLEAN);
     }
 
     @Override
