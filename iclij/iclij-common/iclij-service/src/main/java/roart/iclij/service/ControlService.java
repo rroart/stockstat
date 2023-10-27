@@ -234,7 +234,7 @@ public class ControlService {
         neuralnetcommand.setMldynamic(conf.wantMLDynamic());
         neuralnetcommand.setMlcross(conf.wantMLCross());
         param.setNeuralnetcommand(neuralnetcommand);
-        IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
+        IclijServiceResult result = WebFluxUtil.sendMMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
         //log.info("blblbl" + JsonUtil.convert(result).length());
         list = result.getMaps();
         Map list2 = list;
@@ -361,7 +361,7 @@ public class ControlService {
         // where is this reset?
         neuralnetcommand.setMldynamic(true);
         param.setNeuralnetcommand(neuralnetcommand);
-        IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVENN);
+        IclijServiceResult result = WebFluxUtil.sendMMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVENN);
         if (doSet) {
             updateMap.putAll(result.getMaps().get("update"));
             scoreMap.putAll(result.getMaps().get("score"));
