@@ -1,37 +1,21 @@
 package roart.service.util;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import roart.category.AbstractCategory;
-import roart.category.impl.CategoryIndex;
-import roart.category.impl.CategoryPeriod;
-import roart.category.impl.CategoryPrice;
-import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
-import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
 import roart.common.pipeline.data.PipelineData;
-import roart.db.dao.DbDao;
-import roart.db.dao.util.DbDaoUtil;
 import roart.iclij.config.IclijConfig;
-import roart.model.data.MarketData;
-import roart.model.data.StockData;
-import roart.pipeline.Pipeline;
 import roart.pipeline.common.predictor.AbstractPredictor;
-import roart.pipeline.impl.DataReader;
-import roart.pipeline.impl.ExtraReader;
 import roart.predictor.impl.PredictorPytorchGRU;
 import roart.predictor.impl.PredictorPytorchLSTM;
 import roart.predictor.impl.PredictorPytorchMLP;
@@ -43,11 +27,6 @@ import roart.predictor.impl.PredictorTensorflowMLP;
 import roart.predictor.impl.PredictorTensorflowRNN;
 import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
-import roart.stockutil.MetaUtil;
-import roart.stockutil.StockUtil;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ServiceUtil {
 
@@ -87,26 +66,12 @@ public class ServiceUtil {
         return eventTable;
     }
 
-    public AbstractCategory[] getCategories(IclijConfig conf, List<StockItem> stocks,
-            String[] periodText,
-            PipelineData[] datareaders) throws Exception {
-        AbstractCategory[] categories = new AbstractCategory[Constants.PERIODS + 2];
-        categories[0] = new CategoryIndex(conf, Constants.INDEX, stocks, datareaders);
-        categories[1] = new CategoryPrice(conf, Constants.PRICE, stocks, datareaders);
-        for (int i = 0; i < Constants.PERIODS; i++) {
-            categories[i + 2] = new CategoryPeriod(conf, i, periodText[i], stocks, datareaders);
-        }
-        return categories;
-    }
-
-    public AbstractPredictor[] getPredictors(IclijConfig conf, Map<String, MarketData> marketdatamap,
-            PipelineData[] datareaders,
-            String catName, Integer cat,
-            NeuralNetCommand neuralnetcommand) throws Exception {
+    public AbstractPredictor[] getPredictors(IclijConfig conf, PipelineData[] datareaders,
+            String catName,
+            Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
         AbstractPredictor[] predictors = new AbstractPredictor[9];
         //predictors[0] = new PredictorLSTM(conf, Constants.INDEX, stocks, marketdatamap, periodDataMap, datareaders, categories);
         //predictors[1] = new PredictorLSTM(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, datareaders, categories);
-        MarketData marketdata = marketdatamap.get(conf.getConfigData().getMarket());
         //AbstractPredictor predictor = new PredictorGRU(conf, categories[i].getTitle() + " LSTM", marketdatamap, periodDataMap, categories[i].getTitle(), categories[i].getPeriod(), categories, datareaders);
         List<AbstractPredictor> allpredictors = new ArrayList<>();
         allpredictors.add(new PredictorTensorflowLIR(conf, catName + " LIR", catName, cat, datareaders, neuralnetcommand));
@@ -121,10 +86,8 @@ public class ServiceUtil {
         int i = 0;
         for (AbstractPredictor predictor : allpredictors) {
             if (predictor.isEnabled()) {
-                if (MetaUtil.normalPeriod(marketdata, cat, catName)) {
-                    if (predictor.hasValue()) {
-                        predictors[i++] = predictor;
-                    }
+                if (predictor.hasValue()) {
+                    predictors[i++] = predictor;
                 }
             }
         }

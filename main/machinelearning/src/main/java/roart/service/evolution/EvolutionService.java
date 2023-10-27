@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,20 +24,16 @@ import roart.common.constants.EvolveConstants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
-import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.util.JsonUtil;
+import roart.common.util.PipelineUtils;
 import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
-import roart.db.dao.DbDao;
-import roart.etl.db.Extract;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
 import roart.evolution.chromosome.AbstractChromosome;
-import roart.evolution.chromosome.impl.IndicatorChromosome;
 import roart.evolution.chromosome.impl.NeuralNetChromosome2;
 import roart.evolution.config.EvolutionConfig;
-import roart.evolution.fitness.impl.ProportionScore;
 import roart.evolution.species.Individual;
 import roart.filesystem.FileSystemDao;
 import roart.gene.NeuralNetConfigGene;
@@ -46,7 +41,6 @@ import roart.gene.NeuralNetConfigGeneFactory;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
-import roart.model.data.MarketData;
 import roart.model.data.StockData;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.result.model.ResultItem;
@@ -64,10 +58,8 @@ public class EvolutionService {
 
     ResultItemTable mlTimesTable = ServiceUtil.createMLTimesTable(otherTableMap);
     ResultItemTable eventTable = ServiceUtil.createEventTable(otherTableMap);
-    private DbDao dao;
 
-    public EvolutionService(DbDao dao) {
-        this.dao = dao;
+    public EvolutionService() {
     }
 
     private Double[] getThresholds(IclijConfig conf, String thresholdString) {
@@ -80,7 +72,9 @@ public class EvolutionService {
         return JsonUtil.convert(thresholdString, Double[].class);
     }
 
-    public List<ResultItem> getEvolveML(IclijConfig conf, List<String> disableList, Map<String, Object> updateMap, String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap, PipelineData[] pipelineData) throws JsonParseException, JsonMappingException, IOException {
+    public IclijServiceResult getEvolveML(List<String> disableList, Map<String, Object> updateMap, String ml, Map<String, Object> scoreMap, Map<String, Object> resultMap, IclijServiceParam origparam) throws JsonParseException, JsonMappingException, IOException {
+        IclijConfig conf = new IclijConfig(origparam.getConfigData());
+        NeuralNetCommand neuralnetcommand = origparam.getNeuralnetcommand();
         log.info("mydate {}", conf.getConfigData().getDate());
         log.info("mydate {}", conf.getDays());
         if (conf.getConfigData().isDataset()) {
@@ -100,20 +94,19 @@ public class EvolutionService {
             headrow.add("New value");
             table.add(headrow);
         
+            IclijServiceResult result = new IclijServiceResult();
             try {
-                findMLSettings(conf, evolutionConfig, table, updateMap, ml, neuralnetcommand, scoreMap, resultMap, null);
+                findMLSettings(conf, evolutionConfig, table, updateMap, ml, neuralnetcommand, scoreMap, resultMap);
         
                 List<ResultItem> retlist = new ArrayList<>();
                 retlist.add(table);
-                return retlist;
+                result.setList(retlist);
+                result.setConfigData(conf.getConfigData());
+                return result;
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
-                return new ArrayList<>();
+                return result;
             }
-        }
-        StockData stockData = new Extract(dao).getStockData(conf);
-        if (stockData == null) {
-            return new ArrayList<>();
         }
         String market = conf.getConfigData().getMarket();
         ObjectMapper mapper = new ObjectMapper();
@@ -144,32 +137,41 @@ public class EvolutionService {
         param.setNeuralnetcommand(neuralnetcommand2);
         IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
         // call
+        
+        Map<String, Map<String, Object>> maps = result.getMaps();
+        List<ResultItem> retlist = result.getList();
+        PipelineData[] pipelineData = result.getPipelineData();
+
         try {
 
             PipelineData[] datareaders = pipelineData;
     
+            StockData stockData = getStockData(conf, pipelineData);
+            
             //datareaders[0] = dataReader;
     
             String mydate = TimeUtil.format(conf.getConfigData().getDate());
-            List<StockItem> dayStocks = stockData.stockdatemap.get(mydate);
-            AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, stockData.marketdatamap,
-                    datareaders, stockData.catName, stockData.cat, neuralnetcommand);
+            AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, datareaders,
+                    stockData.catName, stockData.cat, neuralnetcommand);
             //new ServiceUtil().createPredictors(categories);
             new ServiceUtil().calculatePredictors(predictors);
 
-            findMLSettings(conf, evolutionConfig, disableList, table, updateMap, ml, datareaders, stockData.catName, stockData.cat, neuralnetcommand, scoreMap, resultMap, stockData.marketdatamap);
+            findMLSettings(conf, evolutionConfig, disableList, table, updateMap, ml, datareaders, stockData.catName, stockData.cat, neuralnetcommand, scoreMap, resultMap);
     
-            List<ResultItem> retlist = new ArrayList<>();
             retlist.add(table);
-            return retlist;
+            result.setMaps(maps);
+            result.setList(retlist);
+            result.setPipelineData(pipelineData);
+            result.setConfigData(conf.getConfigData());
+           return result;
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
-            return new ArrayList<>();
+            return result;
         }
     }
 
     private void findMLSettings(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
-            Map<String, Object> updateMap, String ml, PipelineData[] dataReaders, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap, Map<String, MarketData> marketdatamap) throws Exception {
+            Map<String, Object> updateMap, String ml, PipelineData[] dataReaders, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws Exception {
         TaUtil tu = new TaUtil();
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
         NeuralNetConfigs nnConfigs = null;
@@ -269,7 +271,7 @@ public class EvolutionService {
                 //chromosome.setAscending(false);
             }
 
-            FitnessNeuralNet fitness = new FitnessNeuralNet(conf, ml, dataReaders, key, catName, cat, neuralnetcommand, marketdatamap);
+            FitnessNeuralNet fitness = new FitnessNeuralNet(conf, ml, dataReaders, key, catName, cat, neuralnetcommand);
     
             OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
             evolution.setParallel(false);
@@ -341,7 +343,7 @@ public class EvolutionService {
     }
 
     private void findMLSettings(IclijConfig conf, EvolutionConfig evolutionConfig, ResultItemTable table, Map<String, Object> updateMap,
-            String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap, Map<String, MarketData> marketdatamap) throws Exception {
+            String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws Exception {
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
         NeuralNetConfigs nnConfigs = null;
         String nnconfigString = null;
@@ -360,7 +362,7 @@ public class EvolutionService {
                 chromosome.setAscending(false);
             }
     
-            FitnessNeuralNet fitness = new FitnessNeuralNet(conf, ml, null, key, null, 0, neuralnetcommand, marketdatamap);
+            FitnessNeuralNet fitness = new FitnessNeuralNet(conf, ml, null, key, null, 0, neuralnetcommand);
 
             OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
             evolution.setParallel(false);
@@ -465,6 +467,14 @@ public class EvolutionService {
         keys.add(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRU);
         keys.add(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTM);
         return keys;
+    }
+
+    public StockData getStockData(IclijConfig conf, PipelineData[] pipelineData) {
+        StockData stockData = new StockData();
+        PipelineData pipelineDatum = PipelineUtils.getPipeline(pipelineData, PipelineConstants.META);
+        stockData.cat = (Integer) pipelineDatum.get(PipelineConstants.WANTEDCAT);
+        stockData.catName = (String) pipelineDatum.get(PipelineConstants.CATEGORY);
+        return stockData;
     }
 
 }

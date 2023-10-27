@@ -81,17 +81,17 @@ public abstract class Predictor extends AbstractPredictor {
     }
 
     String key;
-    protected Map<String, Double[][]> listMap;
-    protected Map<String, Double[][]> fillListMap;
+    protected Map<String, List<List<Double>>> listMap;
+    protected Map<String, List<List<Double>>> fillListMap;
 
-    protected Map<String, double[][]> truncListMap;
-    protected Map<String, double[][]> truncFillListMap;
+    protected Map<String, List<List<Double>>> truncListMap;
+    protected Map<String, List<List<Double>>> truncFillListMap;
 
-    protected Map<String, Double[][]> base100ListMap;
-    protected Map<String, Double[][]> base100FillListMap;
+    protected Map<String, List<List<Double>>> base100ListMap;
+    protected Map<String, List<List<Double>>> base100FillListMap;
 
-    protected Map<String, double[][]> truncBase100ListMap;
-    protected Map<String, double[][]> truncBase100FillListMap;
+    protected Map<String, List<List<Double>>> truncBase100ListMap;
+    protected Map<String, List<List<Double>>> truncBase100FillListMap;
     Object[] emptyField = new Object[1];
     Map<MLClassifyModel, Long> mapTime = new HashMap<>();
 
@@ -154,14 +154,14 @@ public abstract class Predictor extends AbstractPredictor {
             log.info("empty {}", category);
             return;
         }
-        this.listMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
-        this.fillListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.FILLLIST);
-        this.truncListMap = (Map<String, double[][]>) datareader.get(PipelineConstants.TRUNCLIST);       
-        this.truncFillListMap = (Map<String, double[][]>) datareader.get(PipelineConstants.TRUNCFILLLIST);       
-        this.base100ListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.BASE100LIST);
-        this.base100FillListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.BASE100FILLLIST);
-        this.truncBase100ListMap = (Map<String, double[][]>) datareader.get(PipelineConstants.TRUNCBASE100LIST);       
-        this.truncBase100FillListMap = (Map<String, double[][]>) datareader.get(PipelineConstants.TRUNCBASE100FILLLIST);       
+        this.listMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.LIST);
+        this.fillListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.FILLLIST);
+        this.truncListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.TRUNCLIST);       
+        this.truncFillListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.TRUNCFILLLIST);       
+        this.base100ListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.BASE100LIST);
+        this.base100FillListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.BASE100FILLLIST);
+        this.truncBase100ListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.TRUNCBASE100LIST);       
+        this.truncBase100FillListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.TRUNCBASE100FILLLIST);       
 
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse
@@ -197,9 +197,9 @@ public abstract class Predictor extends AbstractPredictor {
         long time1 = System.currentTimeMillis();
         log.info("listmap {} {}", listMap.size(), listMap.keySet());
         for (String id : listMap.keySet()) {
-            double[][] list0 = truncListMap.get(id);
-            double[] list = list0[0];
-            log.info("list {} {}", list.length, Arrays.asList(list));
+            List<List<Double>> list0 = truncListMap.get(id);
+            List<Double> list = list0.get(0);
+            log.info("list {} {}", list.size(), list);
         }
         Map<Double, Map<MLClassifyModel, Map<String, Double[]>>> mapResult0 = new HashMap<>();
         Double[] thresholds = getThresholds();
@@ -209,13 +209,13 @@ public abstract class Predictor extends AbstractPredictor {
         mapResult0.put(threshold, mapResult);
         if (conf.wantML()) {
             if (false && conf.wantPercentizedPriceIndex()) {
-                doPredictions(conf, mapResult, base100FillListMap, truncBase100FillListMap, nnConfigs, days, threshold);
+                // TODO doPredictions(conf, mapResult, base100FillListMap, truncBase100FillListMap, nnConfigs, days, threshold);
             } else {
-                doPredictions(conf, mapResult, fillListMap, truncFillListMap, nnConfigs, days, threshold);                
+                // TODO doPredictions(conf, mapResult, fillListMap, truncFillListMap, nnConfigs, days, threshold);                
             }
         }
         }
-        createResultMap(conf, mapResult0, false && conf.wantPercentizedPriceIndex() ? base100FillListMap : fillListMap);
+        // TODO createResultMap(conf, mapResult0, false && conf.wantPercentizedPriceIndex() ? base100FillListMap : fillListMap);
         log.info("time1 {}", (System.currentTimeMillis() - time1));
         handleSpentTime(conf);
 
@@ -424,10 +424,21 @@ public abstract class Predictor extends AbstractPredictor {
         }
     }
 
-    protected boolean anythingHere(Map<String, Double[][]> myListMap) {
+    protected boolean anythingHereA(Map<String, Double[][]> myListMap) {
         for (Double[][] array : myListMap.values()) {
             for (int i = 0; i < array[0].length; i++) {
                 if (array[0][i] != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    protected boolean anythingHere(Map<String, List<List<Double>>> listMap2) {
+        for (List<List<Double>> array : listMap2.values()) {
+            for (int i = 0; i < array.get(0).size(); i++) {
+                if (array.get(0).get(i) != null) {
                     return true;
                 }
             }
@@ -518,7 +529,7 @@ public abstract class Predictor extends AbstractPredictor {
     public boolean hasValue() {
         Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
         PipelineData datareader = pipelineMap.get(key);
-        return anythingHere((Map<String, Double[][]>) datareader.get(PipelineConstants.LIST));
+        return anythingHere((Map<String, List<List<Double>>>) datareader.get(PipelineConstants.LIST));
     }
     
     @Override

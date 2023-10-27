@@ -153,7 +153,7 @@ public class MLSTOCH extends IndicatorAggregator {
     }
 
     @Override
-    protected boolean anythingHere(Map<String, Double[][]> listMap) {
+    protected boolean anythingHere(Map<String, List<List<Double>>> listMap) {
         return anythingHere3(listMap);
     }
 

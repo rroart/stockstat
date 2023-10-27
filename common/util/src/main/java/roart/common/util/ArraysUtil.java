@@ -600,6 +600,14 @@ public class ArraysUtil {
         return ret;
     }
 
+    public static double[][] convert(List<List<Double>> listOfList) {
+        return listOfList.stream()
+        .map(l -> l.stream()
+                .mapToDouble(Double::doubleValue)
+                .toArray()
+                )
+        .toArray(double[][]::new);
+    }
     /**
      * Goes through the array, smoothes out missing values (by using the previous),
      * or nulls out, depending or whether a max number was passed

@@ -91,7 +91,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     public static final int MULTILAYERPERCEPTRONCLASSIFIER = 1;
     public static final int LOGISTICREGRESSION = 2;
 
-    protected Map<String, double[][]> listMap;
+    protected Map<String, List<List<Double>>> listMap;
 
     protected int fieldSize = 0;
 
@@ -164,9 +164,9 @@ public abstract class IndicatorAggregator extends Aggregator {
             log.info("empty {}", category);
             return;
         }
-        Map<String, Double[][]> aListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
-        Map<String, double[][]> fillListMap = (Map<String, double[][]>) datareader.get(PipelineConstants.TRUNCFILLLIST);
-        Map<String, double[][]>  base100FillListMap = (Map<String, double[][]>) datareader.get(PipelineConstants.TRUNCBASE100FILLLIST);
+        Map<String, List<List<Double>>> aListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.LIST);
+        Map<String, List<List<Double>>> fillListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.TRUNCFILLLIST);
+        Map<String, List<List<Double>>>  base100FillListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.TRUNCBASE100FILLLIST);
         this.listMap = conf.wantPercentizedPriceIndex() ? base100FillListMap : fillListMap;
 
         long time0 = System.currentTimeMillis();
@@ -246,7 +246,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         return JsonUtil.convert(thresholdString, Double[].class);
     }
 
-    protected boolean anythingHere(Map<String, Double[][]> listMap2) {
+    protected boolean anythingHereA(Map<String, Double[][]> listMap2) {
         for (Double[][] array : listMap2.values()) {
             for (int i = 0; i < array[0].length; i++) {
                 if (array[0][i] != null) {
@@ -257,7 +257,36 @@ public abstract class IndicatorAggregator extends Aggregator {
         return false;
     }
 
-    protected boolean anythingHere3(Map<String, Double[][]> listMap2) {
+    protected boolean anythingHere(Map<String, List<List<Double>>> listMap2) {
+        for (List<List<Double>> array : listMap2.values()) {
+            for (int i = 0; i < array.get(0).size(); i++) {
+                if (array.get(0).get(i) != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    protected boolean anythingHere3(Map<String, List<List<Double>>> listMap2) {
+        for (List<List<Double>> array : listMap2.values()) {
+            if (array.size() != Constants.OHLC) {
+                return false;
+            }
+            out:
+            for (int i = 0; i < array.get(0).size(); i++) {
+                for (int j = 0; j < array.size() - 1; j++) {
+                    if (array.get(j).get(i) == null) {
+                        continue out;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean anythingHere3A(Map<String, Double[][]> listMap2) {
         for (Double[][] array : listMap2.values()) {
             if (array.length != Constants.OHLC) {
                 return false;
@@ -978,7 +1007,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         return mapType != CMNTYPE;
     }
     
-    protected Map<String, double[][]> getListMap() {
+    protected Map<String, List<List<Double>>> getListMap() {
         return listMap;
     }
 
@@ -1049,7 +1078,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     }
 
     protected String getName(String id) {
-        if (idNameMap == null) {
+        if (idNameMap ==  null) {
             return id;
         }
         String name = idNameMap.get(id);
@@ -1444,7 +1473,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     private Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> createPosNegMaps(IclijConfig conf, Map<SubType, MLMeta> metaMap, Double threshold) {
         Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = new HashMap<>();
         for (String id : getListMap().keySet()) {
-            double[][] list = getListMap().get(id);
+            double[][] list = ArraysUtil.convert(getListMap().get(id));
             log.debug("t {}", Arrays.toString(list[0]));
             log.debug("listsize {}", list.length);
             /*
@@ -1599,7 +1628,7 @@ public abstract class IndicatorAggregator extends Aggregator {
             }
            // map from h/m + posnegcom to map<model, results>
             for (String id : getListMap().keySet()) {
-                double[][] list = getListMap().get(id);
+                double[][] list = ArraysUtil.convert(getListMap().get(id));
                 log.debug("t {}", Arrays.toString(list[0]));
                 log.debug("listsize {}", list.length);
                 log.debug("list {} {} ", list.length, Arrays.asList(list));

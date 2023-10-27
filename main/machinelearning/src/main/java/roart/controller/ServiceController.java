@@ -9,10 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.sql.DataSource;
-
-//import javax.sql.DataSource;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -60,7 +56,6 @@ import roart.executor.MyExecutors;
 import roart.service.ControlService;
 import roart.service.evolution.EvolutionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import roart.db.dao.DbDao;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 import roart.iclij.config.IclijConfig;
@@ -87,12 +82,9 @@ public class ServiceController implements CommandLineRunner {
     @Autowired
     IclijConfig iclijConfig;
     
-    @Autowired
-    DbDao dao;
-
     private ControlService getInstance() {
         if (instance == null) {
-            instance = new ControlService(dao);
+            instance = new ControlService();
         }
         return instance;
     }
@@ -151,11 +143,10 @@ public class ServiceController implements CommandLineRunner {
             if (disableList == null) {
                 disableList = new ArrayList<>();
             }
-            NeuralNetCommand neuralnetcommand = param.getNeuralnetcommand();
-            // TODO get core content
-            IclijServiceResult resultCore = null;
-            result.setList(getInstance().getContent( new IclijConfig(param.getConfigData()), maps, disableList, neuralnetcommand, resultCore.getPipelineData()));
-            result.setMaps(maps);
+            result = getInstance().getContent( disableList, param);
+            if (!param.isWantMaps()) {
+                result.setMaps(null);
+            }
             long[] mem1 = MemUtil.mem();
             long[] memdiff = MemUtil.diff(mem1, mem0);
             log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
@@ -177,7 +168,6 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            IclijConfig aConfig = new IclijConfig(param.getConfigData());
             List<String> disableList = param.getConfList();
             if (disableList == null) {
                 disableList = new ArrayList<>();
@@ -191,11 +181,10 @@ public class ServiceController implements CommandLineRunner {
             maps.put("update", updateMap);
             maps.put("score", scoreMap);
             maps.put("result", resultMap);
-            NeuralNetCommand neuralnetcommand = param.getNeuralnetcommand();
-            IclijServiceResult resultCore = null;
-            result.setList(new EvolutionService(dao).getEvolveML( aConfig, disableList, updateMap, ml, neuralnetcommand, scoreMap, resultMap, resultCore.getPipelineData()));
-            result.setMaps(maps);
-            result.setConfigData(aConfig.getConfigData());
+            result = new EvolutionService().getEvolveML( disableList, updateMap, ml, scoreMap, resultMap, param);
+            if (!param.isWantMaps()) {
+                result.setMaps(null);
+            }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -221,7 +210,7 @@ public class ServiceController implements CommandLineRunner {
         String myservices = instance.getMyservices();
         String services = instance.getServices();
         String communications = instance.getCommunications();
-        new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig.copy(), dao).start();
+        new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig.copy(), null).start();
         if (iclijConfig.wantDbHibernate()) {
             new DatabaseThread().start();
         }
@@ -282,7 +271,6 @@ public class ServiceController implements CommandLineRunner {
     public List<String> dbMigrate()
             throws Exception {
         try {
-            DbDao daoout = new DbDao(iclijConfig, null);
             return null;
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

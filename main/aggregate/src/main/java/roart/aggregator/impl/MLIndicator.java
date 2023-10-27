@@ -69,7 +69,7 @@ import roart.pipeline.impl.ExtraReader;
 public class MLIndicator extends Aggregator {
 
     String key;
-    Map<String, Double[][]> listMap;
+    Map<String, List<List<Double>>> listMap;
     Object[] emptyField;
     Map<MLClassifyModel, Long> mapTime = new HashMap<>();
 
@@ -91,7 +91,7 @@ public class MLIndicator extends Aggregator {
         return objectMap;
     }
 
-    public Map<String, Double[][]> getListMap() {
+    public Map<String, List<List<Double>>> getListMap() {
         return listMap;
     }
 
@@ -287,7 +287,7 @@ public class MLIndicator extends Aggregator {
 
         Map<String, List<AggregatorMLIndicator>> usedIndicators = AggregatorMLIndicator.getUsedAggregatorMLIndicators(conf);
         Set<String> ids = new HashSet<>();
-        Map<String, Double[][]> list0 = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
+        Map<String, List<List<Double>>> list0 = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.LIST);
         ids.addAll(list0.keySet());
         List<String> indicators = getIndicators(datareaders, usedIndicators, ids);
         log.info("INDIC" + usedIndicators.values().iterator().next().stream().map(AggregatorMLIndicator::indicator).toList());
@@ -701,9 +701,9 @@ public class MLIndicator extends Aggregator {
                 String indicatorName = indicator;
                 PipelineData indicatorResult = PipelineUtils.getPipeline(datareaders, indicatorName);
                 if (indicatorResult != null) {
-                    Map<String, Double[][]> aListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
-                    Double[][] aResult = aListMap.get(id);
-                    arrayResult = ArrayUtils.addAll(arrayResult, aResult[0]);
+                    Map<String, List<List<Double>>> aListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.LIST);
+                    List<List<Double>> aResult = aListMap.get(id);
+                    arrayResult = ArrayUtils.addAll(arrayResult, aResult.get(0).toArray());
                 }
             }
             result.put(id, arrayResult);
@@ -800,7 +800,7 @@ public class MLIndicator extends Aggregator {
                 PipelineData indicatorResult = PipelineUtils.getPipeline(datareaders, indicator);
                 if (indicatorResult != null) {
                     PipelineData datareader = pipelineMap.get(this.key);
-                    Map<String, Double[][]> aResult = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
+                    Map<String, List<List<Double>>> aResult = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.LIST);
                     //Map<String, Object[]> aResult = (Map<String, Object[]>) indicatorResult.get(PipelineConstants. LIST);
                     ids.retainAll(aResult.keySet());
                 }
@@ -822,7 +822,7 @@ public class MLIndicator extends Aggregator {
                 if (indicatorResult != null) {
                     indicators.add(indicator);
                     PipelineData datareader = pipelineMap.get(this.key);
-                    Map<String, Double[][]> aResult = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
+                    Map<String, List<List<Double>>> aResult = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.LIST);
                     //Map<String, Object[]> aResult = (Map<String, Object[]>) indicatorResult.get(PipelineConstants. LIST);
                     ids.retainAll(aResult.keySet());
                 } else {
@@ -833,7 +833,7 @@ public class MLIndicator extends Aggregator {
         return indicators;
     }
 
-    private boolean anythingHere(Map<String, Double[][]> listMap2) {
+    private boolean anythingHereA(Map<String, Double[][]> listMap2) {
         for (Double[][] array : listMap2.values()) {
             for (int i = 0; i < array.length; i++) {
                 int len = array[i].length;
@@ -841,6 +841,17 @@ public class MLIndicator extends Aggregator {
                     return true;
                 }
                 if (array[i][0] != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    protected boolean anythingHere(Map<String, List<List<Double>>> listMap2) {
+        for (List<List<Double>> array : listMap2.values()) {
+            for (int i = 0; i < array.get(0).size(); i++) {
+                if (array.get(0).get(i) != null) {
                     return true;
                 }
             }

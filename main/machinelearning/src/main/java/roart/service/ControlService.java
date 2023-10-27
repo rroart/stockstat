@@ -26,14 +26,11 @@ import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.ml.NeuralNetCommand;
-import roart.common.model.MetaItem;
-import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.util.PipelineUtils;
 import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
-import roart.db.dao.DbDao;
 import roart.etl.CleanETL;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.IclijServiceParam;
@@ -41,105 +38,66 @@ import roart.iclij.service.IclijServiceResult;
 import roart.model.data.MarketData;
 import roart.pipeline.common.aggregate.Aggregator;
 import roart.pipeline.common.predictor.AbstractPredictor;
+import roart.result.model.ResultItem;
 import roart.service.util.ServiceUtil;
+import roart.model.data.StockData;
 
 public class ControlService {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public static CuratorFramework curatorClient;
 
-    public List<String> getMarkets() {
-        try {
-            return dbDao.getMarkets();
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        return new ArrayList<>();
-    }
-
-    public List<MetaItem> getMetas() {
-        try {
-            return dbDao.getMetas();
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        return new ArrayList<>();
-    }
-
-    private DbDao dbDao;
-
-    public ControlService(DbDao dbDao) {
+    public ControlService() {
         super();
-        this.dbDao = dbDao;
     }
 
-    public Map<String, String> getStocks(String market, IclijConfig conf) {
-        try {
-            Map<String, String> stockMap = new HashMap<>();
-            List<StockItem> stocks = dbDao.getAll(market, conf);
-            stocks.remove(null);
-            for (StockItem stock : stocks) {
-                String name = stock.getName();
-                if (name != null && !name.isEmpty() && !name.isBlank()) {
-                    stockMap.put(stock.getId(), stock.getName());
-                }
-            }
-            return stockMap;
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-            return null;
-        }
-    }
+    
 
     //protected static int[] otherTableNames = { Constants.EVENT, Constants.MLTIMES }; 
 
     /**
      * Create result lists
-     * @param maps 
-     * @param neuralnetcommand TODO
+     * @param param2 
      * @param datareaders 
      * @return the tabular result lists
      */
 
-    public List getContent(IclijConfig conf, Map<String, Map<String, Object>> maps, List<String> disableList, NeuralNetCommand neuralnetcommand, PipelineData[] pipelineData) {
+    public IclijServiceResult getContent(List<String> disableList, IclijServiceParam origparam) {
+        IclijConfig conf = new IclijConfig(origparam.getConfigData());
+        NeuralNetCommand neuralnetcommand = origparam.getNeuralnetcommand();
         log.info("mydate {}", conf.getConfigData().getDate());
         log.info("mydate {}", conf.getDays());
         //createOtherTables();
-        /*
-        StockData stockData = new Extract(dbDao).getStockData(conf);
-        if (stockData == null) {
-            return new ArrayList<>();
-        }
-        */
         
         // call
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(conf.getConfigData());
-        param.setWantMaps(true);
+        param.setWantMaps(origparam.isWantMaps());
         param.setConfList(disableList);
         NeuralNetCommand neuralnetcommand2 = new NeuralNetCommand();
-        neuralnetcommand.setMllearn(conf.wantMLLearn());
-        neuralnetcommand.setMlclassify(conf.wantMLClassify());
-        neuralnetcommand.setMldynamic(conf.wantMLDynamic());
-        neuralnetcommand.setMlcross(conf.wantMLCross());
+        neuralnetcommand2.setMllearn(conf.wantMLLearn());
+        neuralnetcommand2.setMlclassify(conf.wantMLClassify());
+        neuralnetcommand2.setMldynamic(conf.wantMLDynamic());
+        neuralnetcommand2.setMlcross(conf.wantMLCross());
         param.setNeuralnetcommand(neuralnetcommand2);
         IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
         // call
         
-        PipelineData pipelineDatum = PipelineUtils.getPipeline(pipelineData, PipelineConstants.META);
-        MyStockData stockData = getStockData(conf, "market", pipelineData);
+        Map<String, Map<String, Object>> maps = result.getMaps();
+        List<ResultItem> retlist = result.getList();
+        PipelineData[] pipelineData = result.getPipelineData();
+        
+        StockData stockData = getStockData(conf, pipelineData);
 
-        stockData.cat = (Integer) pipelineDatum.get(PipelineConstants.WANTEDCAT);
         try {
             String mydate = TimeUtil.format(conf.getConfigData().getDate());
             int dateIndex = TimeUtil.getIndexEqualBefore(stockData.stockdates, mydate);
             if (dateIndex >= 0) {
                 mydate = stockData.stockdates.get(dateIndex);
             }
-            List<StockItem> dayStocks = stockData.stockdatemap.get(mydate);
             
-            AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, stockData.marketdatamap,
-                    pipelineData, stockData.catName, stockData.cat, neuralnetcommand);
+            AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, pipelineData,
+                    stockData.catName, stockData.cat, neuralnetcommand);
             //new ServiceUtil().createPredictors(categories);
             new ServiceUtil().calculatePredictors(predictors);
             
@@ -152,6 +110,9 @@ public class ControlService {
                 addOtherTables(predictors);
             }
             */
+            
+            // TODO rows
+            
             if (maps != null) {
                 Map<String, Object> aMap = new HashMap<>();
                 aMap.put(PipelineConstants.WANTEDCAT, stockData.cat);
@@ -163,7 +124,7 @@ public class ControlService {
                     log.debug("ca {}", categories[i].getTitle());
                 }
                 */
-                for (int i = 0; i < Constants.ALLPERIODS; i++) {
+                for (int i = 0; i < predictors.length; i++) {
                     if (predictors[i] == null) {
                         continue;
                     }
@@ -174,6 +135,9 @@ public class ControlService {
                     pipelineData = ArrayUtils.add(pipelineData, singlePipelinedata);
                 }
                 for (int i = 0; i < aggregates.length; i++) {
+                    if (aggregates[i] == null) {
+                        continue;
+                    }
                     if (!aggregates[i].isEnabled()) {
                         continue;
                     }
@@ -189,7 +153,11 @@ public class ControlService {
         }
         new CleanETL().fixmap((Map) maps);
         printmap(maps, 0);
-        return new ArrayList<>();
+        result.setMaps(maps);
+        result.setList(retlist);
+        result.setPipelineData(pipelineData);
+        result.setConfigData(conf.getConfigData());
+        return result;
     }
     
     public void printmap(Object o, int i) {
@@ -217,7 +185,7 @@ public class ControlService {
             Map<String, String> idNameMap,
             String catName, Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
         Aggregator[] aggregates = new Aggregator[10];
-        aggregates[0] = new MACDBase(conf, catName, catName, cat, idNameMap, pipelineData);
+        aggregates[0] = new MACDBase(conf, catName, catName, cat, pipelineData);
         //aggregates[1] = new AggregatorRecommenderIndicator(conf, catName, marketdatamap, categories, pipelineData, disableList);
         //aggregates[2] = new RecommenderRSI(conf, catName, marketdatamap, categories);
         aggregates[3] = new MLMACD(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand);
@@ -246,24 +214,14 @@ public class ControlService {
         }
     }
     
-    class MyStockData {
-
-        public String[] periodText;
-        public Map<String, MarketData> marketdatamap;
-        public List<StockItem>[] datedstocklists;
-        public List<String> stockdates;
-        public Map<String, List<StockItem>> stockdatemap;
-        public Map<String, String> idNameMap;
-        public Integer cat;
-        public String catName;
-        public List<StockItem> datedstocks;
-        public Integer days;
-        public Map<String, List<StockItem>> stockidmap;
-
-    }
-    public MyStockData getStockData(IclijConfig conf, String market, PipelineData[] pipelineData) {
-        MyStockData stockData = new MyStockData();
-        return stockData;
+    public StockData getStockData(IclijConfig conf, PipelineData[] pipelineData) {
+        StockData stockData = new StockData();
+        PipelineData pipelineDatum = PipelineUtils.getPipeline(pipelineData, PipelineConstants.META);
+        stockData.cat = (Integer) pipelineDatum.get(PipelineConstants.WANTEDCAT);
+        stockData.catName = (String) pipelineDatum.get(PipelineConstants.CATEGORY);
+        stockData.idNameMap = (Map<String, String>) pipelineDatum.get(PipelineConstants.NAME);
+        stockData.stockdates = (List<String>) pipelineDatum.get(PipelineConstants.DATELIST);
+         return stockData;
     }
 
 }
