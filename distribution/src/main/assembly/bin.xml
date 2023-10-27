@@ -37,6 +37,13 @@
       <outputDirectory>lib</outputDirectory>
     </fileSet>
     <fileSet>
+      <directory>${project.basedir}/../main/machinelearning/target</directory>
+      <includes>
+	<include>stockstat*.jar</include>
+      </includes>
+      <outputDirectory>lib</outputDirectory>
+    </fileSet>
+    <fileSet>
       <directory>${project.basedir}/../eureka/target</directory>
       <includes>
 	<include>stockstat*.jar</include>
