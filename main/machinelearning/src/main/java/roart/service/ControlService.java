@@ -22,12 +22,15 @@ import roart.aggregator.impl.MLMACD;
 import roart.aggregator.impl.MLMulti;
 import roart.aggregator.impl.MLRSI;
 import roart.aggregator.impl.MLSTOCH;
+import roart.common.cache.MyCache;
+import roart.common.config.CacheConstants;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.util.ImmutabilityUtil;
 import roart.common.util.PipelineUtils;
 import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
@@ -69,21 +72,22 @@ public class ControlService {
         log.info("mydate {}", conf.getDays());
         //createOtherTables();
         
-        // call
-        IclijServiceParam param = new IclijServiceParam();
-        param.setConfigData(conf.getConfigData());
-        param.setWantMaps(origparam.isWantMaps());
-        param.setConfList(disableList);
-        NeuralNetCommand neuralnetcommand2 = new NeuralNetCommand();
-        neuralnetcommand2.setMllearn(conf.wantMLLearn());
-        neuralnetcommand2.setMlclassify(conf.wantMLClassify());
-        neuralnetcommand2.setMldynamic(conf.wantMLDynamic());
-        neuralnetcommand2.setMlcross(conf.wantMLCross());
-        param.setNeuralnetcommand(neuralnetcommand2);
-        IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
-        // call
+        /*
+        String key = CacheConstants.CONTENT + conf.getConfigData().getMarket() + conf.getConfigData().getMlmarket() + conf.getConfigData().getDate() + conf.getConfigData().getConfigValueMap();
+        Map<String, Map<String, Object>> list = (Map<String, Map<String, Object>>) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
+        */
+
+        IclijServiceResult result = getContent(conf, origparam, disableList);
         
-        Map<String, Map<String, Object>> maps = result.getMaps();
+        /*
+        PipelineData[] list2 = result.getPipelineData();
+        list2 = ImmutabilityUtil.immute(list2);
+        MyCache.getInstance().put(key, list2);
+*/
+        
         List<ResultItem> retlist = result.getList();
         PipelineData[] pipelineData = result.getPipelineData();
         
@@ -113,51 +117,51 @@ public class ControlService {
             
             // TODO rows
             
-            if (maps != null) {
-                Map<String, Object> aMap = new HashMap<>();
-                aMap.put(PipelineConstants.WANTEDCAT, stockData.cat);
-                maps.put(PipelineConstants.META, aMap);
-                /*
+            /*
                 for (int i = 0; i < Constants.ALLPERIODS; i++) {
                     Map map = categories[i].getIndicatorLocalResultMap();
                     maps.put(categories[i].getTitle(), map);
                     log.debug("ca {}", categories[i].getTitle());
                 }
-                */
-                for (int i = 0; i < predictors.length; i++) {
-                    if (predictors[i] == null) {
-                        continue;
-                    }
-                    Map map = predictors[i].putData().getMap();
-                    maps.put(predictors[i].getName(), map);
-                    log.debug("ca {}", predictors[i].getName());
-                    PipelineData singlePipelinedata = predictors[i].putData();
-                    pipelineData = ArrayUtils.add(pipelineData, singlePipelinedata);
+             */
+            for (int i = 0; i < predictors.length; i++) {
+                if (predictors[i] == null) {
+                    continue;
                 }
-                for (int i = 0; i < aggregates.length; i++) {
-                    if (aggregates[i] == null) {
-                        continue;
-                    }
-                    if (!aggregates[i].isEnabled()) {
-                        continue;
-                    }
-                    log.debug("ag {}", aggregates[i].getName());
-                    Map map = aggregates[i].putData().getMap();
-                    maps.put(aggregates[i].getName(), map);
-                    PipelineData singlePipelinedata = aggregates[i].putData();
-                    pipelineData = ArrayUtils.add(pipelineData, singlePipelinedata);
+                Map map = predictors[i].putData().getMap();
+                log.debug("ca {}", predictors[i].getName());
+                PipelineData singlePipelinedata = predictors[i].putData();
+                pipelineData = ArrayUtils.add(pipelineData, singlePipelinedata);
+            }
+            for (int i = 0; i < aggregates.length; i++) {
+                if (aggregates[i] == null) {
+                    continue;
                 }
+                if (!aggregates[i].isEnabled()) {
+                    continue;
+                }
+                log.debug("ag {}", aggregates[i].getName());
+                Map map = aggregates[i].putData().getMap();
+                PipelineData singlePipelinedata = aggregates[i].putData();
+                pipelineData = ArrayUtils.add(pipelineData, singlePipelinedata);
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        new CleanETL().fixmap((Map) maps);
-        printmap(maps, 0);
-        result.setMaps(maps);
+        //new CleanETL().fixmap((Map) maps);
+        //printmap(maps, 0);
         result.setList(retlist);
         result.setPipelineData(pipelineData);
         result.setConfigData(conf.getConfigData());
         return result;
+    }
+
+    public static IclijServiceResult getContent(IclijConfig conf, IclijServiceParam origparam, List<String> disableList) {
+        IclijServiceParam param = new IclijServiceParam();
+        param.setConfigData(conf.getConfigData());
+        param.setWantMaps(origparam.isWantMaps());
+        param.setConfList(disableList);
+        return WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
     }
     
     public void printmap(Object o, int i) {

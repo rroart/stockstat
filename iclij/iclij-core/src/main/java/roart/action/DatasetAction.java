@@ -19,6 +19,7 @@ import roart.common.model.ActionComponentItem;
 import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
+import roart.common.pipeline.data.PipelineData;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
 import roart.db.dao.IclijDbDao;
@@ -120,7 +121,7 @@ public class DatasetAction extends MarketAction {
     }
 
     @Override
-    protected Map<String, String> getNameMap(Map<String, Map<String, Object>> maps) {
+    protected Map<String, String> getNameMap(PipelineData[] maps) {
         return null;
     }
 

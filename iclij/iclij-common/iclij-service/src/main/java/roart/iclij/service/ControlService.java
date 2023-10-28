@@ -35,8 +35,10 @@ import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.ImmutabilityUtil;
 import roart.common.util.MemUtil;
+import roart.common.util.PipelineUtils;
 import roart.common.util.ServiceConnectionUtil;
 import roart.common.webflux.WebFluxUtil;
 import roart.iclij.config.IclijConfig;
@@ -200,7 +202,7 @@ public class ControlService {
         param.setWantMaps(true);
         param.setMarket(market);
         IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETDATES);
-        list = (List<String>) result.getMaps().get(PipelineConstants.DATELIST).get(PipelineConstants.DATELIST);      
+        list = (List<String>) PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.DATELIST).get(PipelineConstants.DATELIST);      
         MyCache.getInstance().put(key, list);
         return list;
     }
@@ -210,17 +212,17 @@ public class ControlService {
      * @return the tabular result lists
      */
 
-    public Map<String, Map<String, Object>> getContent() {
+    public PipelineData[] getContent() {
         return getContent(new ArrayList<>());
     }
     
-    public Map<String, Map<String, Object>> getContent(List<String> disableList) {
+    public PipelineData[] getContent(List<String> disableList) {
         
         long[] mem0 = MemUtil.mem();
         log.info("MEM {}", MemUtil.print(mem0));
 
         String key = CacheConstants.CONTENT + conf.getConfigData().getMarket() + conf.getConfigData().getMlmarket() + conf.getConfigData().getDate() + conf.getConfigData().getConfigValueMap();
-        Map<String, Map<String, Object>> list = (Map<String, Map<String, Object>>) MyCache.getInstance().get(key);
+        PipelineData[] list = (PipelineData[]) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
@@ -236,9 +238,9 @@ public class ControlService {
         param.setNeuralnetcommand(neuralnetcommand);
         IclijServiceResult result = WebFluxUtil.sendMMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
         //log.info("blblbl" + JsonUtil.convert(result).length());
-        list = result.getMaps();
-        Map list2 = list;
-        list = ImmutabilityUtil.immute(list2);
+        list = result.getPipelineData();
+        PipelineData[] list2 = list;
+        // TODO list = ImmutabilityUtil.immute(list2);
         MyCache.getInstance().put(key, list);
 
         long[] mem1 = MemUtil.mem();
@@ -294,7 +296,8 @@ public class ControlService {
         return result.getList();
     }
 
-    public Map<String, Map<String, Object>> getRerun(List<String> disableList) {
+    @Deprecated
+    public PipelineData[] getRerun(List<String> disableList) {
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(conf.getConfigData());
         param.setWantMaps(true);
@@ -306,7 +309,7 @@ public class ControlService {
         neuralnetcommand.setMlcross(conf.wantMLCross());
         param.setNeuralnetcommand(neuralnetcommand);
         IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, "/findprofit");
-        return result.getMaps();
+        return result.getPipelineData();
     }
 
     public String getAppName() {
@@ -340,9 +343,10 @@ public class ControlService {
         IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVERECOMMENDER);
         if (doSet) {
             //conf = new MyMyConfig(result.getConfig());
-            updateMap.putAll(result.getMaps().get("update"));
-            scoreMap.putAll(result.getMaps().get("score"));
-            resultMap.putAll(result.getMaps().get("result"));
+            PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE);  
+            updateMap.putAll(datum.getMap(PipelineConstants.UPDATE));
+            scoreMap.putAll(datum.getMap(PipelineConstants.SCORE));
+            resultMap.putAll(datum.getMap(PipelineConstants.RESULT));
         }
         return result.getList();
         //return result.getMaps().get("update");
@@ -363,9 +367,10 @@ public class ControlService {
         param.setNeuralnetcommand(neuralnetcommand);
         IclijServiceResult result = WebFluxUtil.sendMMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVENN);
         if (doSet) {
-            updateMap.putAll(result.getMaps().get("update"));
-            scoreMap.putAll(result.getMaps().get("score"));
-            resultMap.putAll(result.getMaps().get("result"));
+            PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE);  
+            updateMap.putAll(datum.getMap(PipelineConstants.UPDATE));
+            scoreMap.putAll(datum.getMap(PipelineConstants.SCORE));
+            resultMap.putAll(datum.getMap(PipelineConstants.RESULT));
             //Map<String, Object> updateMap = result.getMaps().get("update");
             //conf.getConfigValueMap().putAll(updateMap);
             //return updateMap;

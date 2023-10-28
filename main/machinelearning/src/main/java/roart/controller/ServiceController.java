@@ -174,14 +174,7 @@ public class ServiceController implements CommandLineRunner {
             }
             Set<String> ids = param.getIds();
             String ml = ids.iterator().next();
-            Map<String, Map<String, Object>> maps = new HashMap<>();
-            Map<String, Object> updateMap = new HashMap<>();
-            Map<String, Object> scoreMap = new HashMap<>();
-            Map<String, Object> resultMap = new HashMap<>();
-            maps.put("update", updateMap);
-            maps.put("score", scoreMap);
-            maps.put("result", resultMap);
-            result = new EvolutionService().getEvolveML( disableList, updateMap, ml, scoreMap, resultMap, param);
+            result = new EvolutionService().getEvolveML( disableList, ml, param);
             if (!param.isWantMaps()) {
                 result.setMaps(null);
             }

@@ -44,6 +44,10 @@ public class PipelineData {
         return map.get(key);
     }
 
+    public Map<String, Object> getMap(String key) {
+        return (Map<String, Object>) map.get(key);
+    }
+
     public Set<String> keySet() {
         return map.keySet();
     }

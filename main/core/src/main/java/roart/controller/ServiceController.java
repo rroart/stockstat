@@ -170,13 +170,10 @@ public class ServiceController implements CommandLineRunner {
     public IclijServiceResult getDates(@RequestBody IclijServiceParam param)
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
-        Map<String, Map<String, Object>> maps = null;
-        if (param.isWantMaps()) {
-            maps = new HashMap<>();
-        }
         try {
-            getInstance().getDates( new IclijConfig(param.getConfigData()), maps);
-            result.setMaps(maps);
+            PipelineData[] pipelineData = new PipelineData[0];
+            result.setPipelineData(pipelineData);
+            getInstance().getDates( new IclijConfig(param.getConfigData()), pipelineData);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -214,8 +211,7 @@ public class ServiceController implements CommandLineRunner {
             if (disableList == null) {
                 disableList = new ArrayList<>();
             }
-            NeuralNetCommand neuralnetcommand = param.getNeuralnetcommand();
-            getInstance().getContent( new IclijConfig(param.getConfigData()), disableList, neuralnetcommand, result);
+            getInstance().getContent( new IclijConfig(param.getConfigData()), disableList, result);
             long[] mem1 = MemUtil.mem();
             long[] memdiff = MemUtil.diff(mem1, mem0);
             log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
@@ -290,47 +286,7 @@ public class ServiceController implements CommandLineRunner {
             if (disableList == null) {
                 disableList = new ArrayList<>();
             }
-            Map<String, Map<String, Object>> maps = new HashMap<>();
-            Map<String, Object> updateMap = new HashMap<>();
-            Map<String, Object> scoreMap = new HashMap<>();
-            Map<String, Object> resultMap = new HashMap<>();
-            maps.put("update", updateMap);
-            maps.put("score", scoreMap);
-            maps.put("result", resultMap);
-            result.setList(new EvolutionService(dao).getEvolveRecommender( aConfig, disableList, updateMap, scoreMap, resultMap));
-            result.setMaps(maps);
-            result.setConfigData(aConfig.getConfigData());
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-            result.setError(e.getMessage());
-        }
-        return result;
-    }
-
-    @RequestMapping(value = "/" + EurekaConstants.GETEVOLVENN,
-            method = RequestMethod.POST)
-    public IclijServiceResult getTestML(@RequestBody IclijServiceParam param)
-            throws Exception {
-        IclijServiceResult result = new IclijServiceResult();
-        try {
-            IclijConfig aConfig = new IclijConfig(param.getConfigData());
-            List<String> disableList = param.getConfList();
-            if (disableList == null) {
-                disableList = new ArrayList<>();
-            }
-            Set<String> ids = param.getIds();
-            String ml = ids.iterator().next();
-            Map<String, Map<String, Object>> maps = new HashMap<>();
-            Map<String, Object> updateMap = new HashMap<>();
-            Map<String, Object> scoreMap = new HashMap<>();
-            Map<String, Object> resultMap = new HashMap<>();
-            maps.put("update", updateMap);
-            maps.put("score", scoreMap);
-            maps.put("result", resultMap);
-            NeuralNetCommand neuralnetcommand = param.getNeuralnetcommand();
-            result.setList(new EvolutionService(dao).getEvolveML( aConfig, disableList, updateMap, ml, neuralnetcommand, scoreMap, resultMap));
-            result.setMaps(maps);
-            result.setConfigData(aConfig.getConfigData());
+            result = new EvolutionService(dao).getEvolveRecommender( aConfig, disableList);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());

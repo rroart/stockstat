@@ -49,6 +49,7 @@ import roart.common.model.MemoryItem;
 import roart.common.model.MetaItem;
 import roart.common.model.TimingItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.JsonUtil;
 import roart.common.util.MathUtil;
 import roart.common.util.MetaUtil;
@@ -242,9 +243,6 @@ public class ServiceUtil {
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
         //getUpdateMarkets(componentInput, param, updateMarketMap, updateMap, findProfitActionData);
-        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
-        mapmaps.put("ml", updateMap);
-        result.setMaps(mapmaps);
         getContentMemoriesUpdates(componentInput, lists, updateMarketMap, findProfitActionData, true);
 
         IclijServiceList trends = convert(trendMap);
@@ -315,9 +313,6 @@ public class ServiceUtil {
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
         getUpdateMarkets(updateMarketMap, updateMap, improveProfitActionData, param);
-        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
-        mapmaps.put("ml", updateMap);
-        result.setMaps(mapmaps);
         getContentMemoriesUpdates(componentInput, lists, updateMarketMap, improveProfitActionData, false);
         new MiscUtil().print(result);
         return result;
@@ -347,9 +342,6 @@ public class ServiceUtil {
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
         getUpdateMarkets(updateMarketMap, updateMap, improveFilterActionData, param);
-        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
-        mapmaps.put("ml", updateMap);
-        result.setMaps(mapmaps);
         getContentMemoriesUpdates(componentInput, lists, updateMarketMap, improveFilterActionData, false);
         new MiscUtil().print(result);
         return result;
@@ -379,9 +371,6 @@ public class ServiceUtil {
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
         getUpdateMarkets(updateMarketMap, updateMap, improveAboveBelowActionData, param);
-        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
-        mapmaps.put("ml", updateMap);
-        result.setMaps(mapmaps);
         getContentMemoriesUpdates(componentInput, lists, updateMarketMap, improveAboveBelowActionData, false);
         new MiscUtil().print(result);
         return result;
@@ -460,9 +449,6 @@ public class ServiceUtil {
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
         getUpdateMarkets(updateMarketMap, updateMap, evolveActionData, param);
-        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
-        mapmaps.put("ml", updateMap);
-        result.setMaps(mapmaps);
         getContentMemoriesUpdates(componentInput, lists, updateMarketMap, evolveActionData, false);
         new MiscUtil().print(result);
         return result;
@@ -491,9 +477,6 @@ public class ServiceUtil {
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
         getUpdateMarkets(updateMarketMap, updateMap, datasetActionData, param);
-        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
-        mapmaps.put("ml", updateMap);
-        result.setMaps(mapmaps);
         getContentMemoriesUpdates(componentInput, lists, updateMarketMap, datasetActionData, false);
         new MiscUtil().print(result);
         return result;
@@ -522,9 +505,6 @@ public class ServiceUtil {
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
         getUpdateMarkets(updateMarketMap, updateMap, crossTestActionData, param);
-        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
-        mapmaps.put("ml", updateMap);
-        result.setMaps(mapmaps);
         getContentMemoriesUpdates(componentInput, lists, updateMarketMap, crossTestActionData, false);
         new MiscUtil().print(result);
         return result;
@@ -574,9 +554,6 @@ public class ServiceUtil {
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
         //getUpdateMarkets(componentInput, param, updateMarketMap, updateMap, mlActionData);
-        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
-        mapmaps.put("ml", updateMap);
-        result.setMaps(mapmaps);
         getContentMemoriesUpdates(componentInput, lists, updateMarketMap, mlActionData, false);
         new MiscUtil().print(result);
         return result;
@@ -800,9 +777,6 @@ public class ServiceUtil {
                 retLists.addAll(subLists2);
             }
         }
-        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
-        mapmaps.put("ml", updateMap);
-        result.setMaps(mapmaps);
         IclijServiceList updates = convert(market.getConfig().getMarket(), updateMap);
         retLists.add(updates);
 
@@ -930,9 +904,6 @@ public class ServiceUtil {
                 retLists.addAll(subLists2);
             }
         }
-        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
-        mapmaps.put("ml", updateMap);
-        result.setMaps(mapmaps);
         IclijServiceList updates = convert(market.getConfig().getMarket(), updateMap);
         retLists.add(updates);
 
@@ -998,20 +969,6 @@ public class ServiceUtil {
         return srv;
     }
 
-    private static Map<String, List<List<Double>>> getSimpleContent(IclijConfig iclijConfig, String market) throws Exception {
-        ControlService srv = new ControlService(iclijConfig);
-        srv.getConfig();
-        if (market != null) {
-            srv.conf.getConfigData().setMarket(market);
-        }
-        new MLUtil().disabler(srv.conf.getConfigData().getConfigValueMap());
-        srv.conf.getConfigData().getConfigValueMap().put(ConfigConstants.MISCTHRESHOLD, null);
-        Map<String, Map<String, Object>> result = srv.getContent();
-        Integer cat = (Integer) result.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
-        Map<String, List<List<Double>>> listMap = (Map<String, List<List<Double>>>) result.get("" + cat).get(PipelineConstants.LIST);
-        return listMap;
-    }
-
     @Deprecated
     private static boolean anythingHere3(Map<String, List<List<Double>>> listMap2, int size) {
         for (List<List<Double>> array : listMap2.values()) {
@@ -1031,16 +988,7 @@ public class ServiceUtil {
         return false;
     }
 
-    @Deprecated
-    private static boolean wantThree(IclijConfig iclijConfig, String market) {
-        try {
-            Map<String, List<List<Double>>> listMap = getSimpleContent(iclijConfig, market);
-            return anythingHere3(listMap, Constants.OHLC);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-            return false;
-        }
-    }
+    
 
     /*
     if (config.wantsImproveProfit()) {
@@ -1161,9 +1109,6 @@ public class ServiceUtil {
             result.setLists(lists);
 
             updateMap = webData.getUpdateMap();
-            Map<String, Map<String, Object>> mapmaps = new HashMap<>();
-            mapmaps.put("ml", updateMap);
-            result.setMaps(mapmaps);
             IclijServiceList updates = convert(null, updateMap);
             lists.add(updates);
 

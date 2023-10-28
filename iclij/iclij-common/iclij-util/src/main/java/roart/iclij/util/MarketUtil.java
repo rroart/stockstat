@@ -15,6 +15,8 @@ import roart.common.constants.Constants;
 import roart.common.model.IncDecItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
+import roart.common.util.PipelineUtils;
 import roart.component.model.ComponentData;
 import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijXMLConfig;
@@ -97,7 +99,7 @@ public class MarketUtil {
     }
 
     public void filterIncDecs(ComponentData param, Market market, ProfitData profitdata,
-            Map<String, Map<String, Object>> maps, boolean inc, List<String> mydates) {
+            PipelineData[] maps, boolean inc, List<String> mydates) {
         List<String> dates;
         if (mydates == null) {
             dates = param.getService().getDates(param.getService().conf.getConfigData().getMarket());        
@@ -111,7 +113,7 @@ public class MarketUtil {
             category = market.getFilter().getDeccategory();
         }
         if (category != null) {
-            Map<String, Object> categoryMap = maps.get(category);
+            PipelineData categoryMap = PipelineUtils.getPipeline(maps, category);
             if (categoryMap != null) {
                 Integer offsetDays = null;
                 Integer days;
@@ -158,7 +160,7 @@ public class MarketUtil {
     }
     
     public Map<String, IncDecItem> incdecFilterOnIncreaseValue(Market market, Map<String, IncDecItem> incdecs,
-            Map<String, Map<String, Object>> maps, Double threshold, Map<String, Object> categoryMap,
+            PipelineData[] maps, Double threshold, PipelineData categoryMap,
             Map<String, List<List>> listMap3, Integer offsetDays, boolean inc) {
         Map<String, IncDecItem> incdecsFilter = new HashMap<>();
         for(IncDecItem item : incdecs.values()) {
@@ -168,7 +170,7 @@ public class MarketUtil {
                     System.out.println(categoryMap.keySet());
                 }
                 if (maps != null) {
-                    System.out.println(maps.keySet());
+                    //System.out.println(maps.keySet());
                 }
                 System.out.println("market" + market.getConfig().getMarket() + "null map");
                 continue;
@@ -205,7 +207,7 @@ public class MarketUtil {
         return incdecsFilter;
     }
 
-    public Map<String, List<List>> getCategoryList(Map<String, Map<String, Object>> maps, String category) {
+    public Map<String, List<List>> getCategoryList(PipelineData[] maps, String category) {
         String newCategory = null;
         if (Constants.PRICE.equals(category)) {
             newCategory = "" + Constants.PRICECOLUMN;
@@ -214,12 +216,12 @@ public class MarketUtil {
             newCategory = "" + Constants.INDEXVALUECOLUMN;
         }
         if (newCategory != null) {
-            Map<String, Object> map = maps.get(newCategory);
+            PipelineData map = PipelineUtils.getPipeline(maps, newCategory);
             return (Map<String, List<List>>) map.get(PipelineConstants.LIST);
         }
         Map<String, List<List>> listMap3 = null;
-        for (Entry<String, Map<String, Object>> entry : maps.entrySet()) {
-            Map<String, Object> map = entry.getValue();
+        for (Entry<String, PipelineData> entry : PipelineUtils.getPipelineMap(maps).entrySet()) {
+            PipelineData map = entry.getValue();
             if (category.equals(map.get(PipelineConstants.CATEGORYTITLE))) {
                 listMap3 = (Map<String, List<List>>) map.get(PipelineConstants.LIST);
             }

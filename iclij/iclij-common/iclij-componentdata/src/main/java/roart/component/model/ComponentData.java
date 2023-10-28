@@ -16,6 +16,8 @@ import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.model.TimingItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
+import roart.common.util.PipelineUtils;
 import roart.common.util.TimeUtil;
 import roart.constants.IclijConstants;
 import roart.iclij.config.IclijConfig;
@@ -43,7 +45,7 @@ public class ComponentData {
     
     private ComponentTime componentTime = new ComponentTime();
     
-    protected Map<String, Map<String, Object>> resultMaps;
+    protected PipelineData[] resultMaps;
 
     protected Map<String, Object> resultMap;
 
@@ -229,11 +231,11 @@ public class ComponentData {
         getComponentTime().setFuturedays(futuredays);
     }
 
-    public Map<String, Map<String, Object>> getResultMaps() {
+    public PipelineData[] getResultMaps() {
         return resultMaps;
     }
 
-    public void setResultMaps(Map<String, Map<String, Object>> resultMaps) {
+    public void setResultMaps(PipelineData[] resultMaps) {
         this.resultMaps = resultMaps;
     }
 
@@ -365,16 +367,16 @@ public class ComponentData {
         setValueMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
         service.conf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
         service.conf.getConfigData().getConfigValueMap().putAll(setValueMap);
-        Map<String, Map<String, Object>> result = getService().getContent();
+        PipelineData[] result = getService().getContent();
         this.resultMaps = result;
         try {
-            List<String> stockdates = (List<String>) result.get("" + this.getCategory()).get(PipelineConstants.DATELIST);
+            List<String> stockdates = (List<String>) PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.DATELIST);
             this.setStockDates(stockdates);
-            Map<String, List<List<Double>>> aCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + this.getCategory()).get(PipelineConstants.LIST);
+            Map<String, List<List<Double>>> aCategoryValueMap = (Map<String, List<List<Double>>>) PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.LIST);
             this.setCategoryValueMap(aCategoryValueMap);
-            Map<String, List<List<Double>>> aFillCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + this.getCategory()).get(PipelineConstants.FILLLIST);
+            Map<String, List<List<Double>>> aFillCategoryValueMap = (Map<String, List<List<Double>>>) PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.FILLLIST);
             this.setFillCategoryValueMap(aFillCategoryValueMap);
-            Map<String, List<List<Object>>> aVolumeMap = (Map<String, List<List<Object>>>) result.get("" + this.getCategory()).get(PipelineConstants.VOLUME);
+            Map<String, List<List<Object>>> aVolumeMap = (Map<String, List<List<Object>>>) PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.VOLUME);
             this.setVolumeMap(aVolumeMap);
         } catch (Exception e) {
             int jj = 0;
@@ -396,19 +398,19 @@ public class ComponentData {
         setValueMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
         service.conf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
         service.conf.getConfigData().getConfigValueMap().putAll(setValueMap);
-        Map<String, Map<String, Object>> result = getService().getContent();
+        PipelineData[] result = getService().getContent();
         this.resultMaps = result;
         try {
-            log.info("" + result.keySet());
-            log.info("" + result.get(PipelineConstants.META).keySet());
-            Integer cat = (Integer) result.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
-            List<String> stockdates = (List<String>) result.get("" + cat).get(PipelineConstants.DATELIST);
+            //log.info("" + result.keySet());
+            //log.info("" + result.get(PipelineConstants.META).keySet());
+            String cat = (String) PipelineUtils.getPipeline(result, PipelineConstants.META).get(PipelineConstants.CATEGORY);
+            List<String> stockdates = (List<String>) PipelineUtils.getPipeline(result, cat).get(PipelineConstants.DATELIST);
             this.setStockDates(stockdates);
-            Map<String, List<List<Double>>> aCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + cat).get(PipelineConstants.LIST);
+            Map<String, List<List<Double>>> aCategoryValueMap = (Map<String, List<List<Double>>>) PipelineUtils.getPipeline(result, cat).get(PipelineConstants.LIST);
             this.setCategoryValueMap(aCategoryValueMap);
-            Map<String, List<List<Double>>> aFillCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + cat).get(PipelineConstants.FILLLIST);
+            Map<String, List<List<Double>>> aFillCategoryValueMap = (Map<String, List<List<Double>>>) PipelineUtils.getPipeline(result, cat).get(PipelineConstants.FILLLIST);
             this.setFillCategoryValueMap(aFillCategoryValueMap);
-            Map<String, List<List<Object>>> aVolumeMap = (Map<String, List<List<Object>>>) result.get("" + cat).get(PipelineConstants.VOLUME);
+            Map<String, List<List<Object>>> aVolumeMap = (Map<String, List<List<Object>>>) PipelineUtils.getPipeline(result, cat).get(PipelineConstants.VOLUME);
             this.setVolumeMap(aVolumeMap);
         } catch (Exception e) {
             int jj = 0;
@@ -426,10 +428,10 @@ public class ComponentData {
             service.conf.getConfigData().getConfigValueMap().putAll(updateMap);
         }
         service.conf.getConfigData().setDate(getBaseDate());
-        Map<String, Map<String, Object>> maps = service.getContent(getDisableList());
+        PipelineData[] maps = service.getContent(getDisableList());
         this.resultMaps = maps;
-        System.out.println(maps.keySet());
-        Map<String, Object> aMap = (Map) maps.get(mapName);
+        //System.out.println(maps.keySet());
+        Map<String, Object> aMap = (Map) PipelineUtils.getPipeline(maps, mapName);
         this.resultMap = aMap;
         return aMap;  
     }

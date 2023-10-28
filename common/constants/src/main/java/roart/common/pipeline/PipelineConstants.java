@@ -94,4 +94,8 @@ public class PipelineConstants {
     public static final String CATEGORYTITLE = "categorytitle";
     public static final String META = "meta";
     public static final String WANTEDCAT = "wantedcat";
+    
+    public static final String EVOLVE = "evolve";
+    public static final String UPDATE = "update";
+    public static final String SCORE = "score";
 }

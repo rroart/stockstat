@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +73,10 @@ public class EvolutionService {
         return JsonUtil.convert(thresholdString, Double[].class);
     }
 
-    public IclijServiceResult getEvolveML(List<String> disableList, Map<String, Object> updateMap, String ml, Map<String, Object> scoreMap, Map<String, Object> resultMap, IclijServiceParam origparam) throws JsonParseException, JsonMappingException, IOException {
+    public IclijServiceResult getEvolveML(List<String> disableList, String ml, IclijServiceParam origparam) throws JsonParseException, JsonMappingException, IOException {
+        Map<String, Object> updateMap = new HashMap<>();
+        Map<String, Object> scoreMap = new HashMap<>();
+        Map<String, Object> resultMap = new HashMap<>();
         IclijConfig conf = new IclijConfig(origparam.getConfigData());
         NeuralNetCommand neuralnetcommand = origparam.getNeuralnetcommand();
         log.info("mydate {}", conf.getConfigData().getDate());
@@ -124,21 +128,8 @@ public class EvolutionService {
         headrow.add("New value");
         table.add(headrow);
     
-        // call
-        IclijServiceParam param = new IclijServiceParam();
-        param.setConfigData(conf.getConfigData());
-        param.setWantMaps(true);
-        param.setConfList(disableList);
-        NeuralNetCommand neuralnetcommand2 = new NeuralNetCommand();
-        neuralnetcommand.setMllearn(conf.wantMLLearn());
-        neuralnetcommand.setMlclassify(conf.wantMLClassify());
-        neuralnetcommand.setMldynamic(conf.wantMLDynamic());
-        neuralnetcommand.setMlcross(conf.wantMLCross());
-        param.setNeuralnetcommand(neuralnetcommand2);
-        IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
-        // call
+        IclijServiceResult result = ControlService.getContent(conf, origparam, disableList);
         
-        Map<String, Map<String, Object>> maps = result.getMaps();
         List<ResultItem> retlist = result.getList();
         PipelineData[] pipelineData = result.getPipelineData();
 
@@ -159,8 +150,9 @@ public class EvolutionService {
             findMLSettings(conf, evolutionConfig, disableList, table, updateMap, ml, datareaders, stockData.catName, stockData.cat, neuralnetcommand, scoreMap, resultMap);
     
             retlist.add(table);
-            result.setMaps(maps);
             result.setList(retlist);
+            PipelineData datum = getEvolveData(updateMap, scoreMap, resultMap);
+            pipelineData = ArrayUtils.add(pipelineData, datum);
             result.setPipelineData(pipelineData);
             result.setConfigData(conf.getConfigData());
            return result;
@@ -168,6 +160,16 @@ public class EvolutionService {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
+    }
+
+    private PipelineData getEvolveData(Map<String, Object> updateMap, Map<String, Object> scoreMap,
+            Map<String, Object> resultMap) {
+        PipelineData maps = new PipelineData();
+        maps.setName(PipelineConstants.EVOLVE);
+        maps.put(PipelineConstants.UPDATE, updateMap);
+        maps.put(PipelineConstants.SCORE, scoreMap);
+        maps.put(PipelineConstants.RESULT, resultMap);
+        return maps;
     }
 
     private void findMLSettings(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,

@@ -42,7 +42,6 @@ import roart.iclij.service.IclijServiceResult;
 import roart.indicator.AbstractIndicator;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
-import roart.common.ml.NeuralNetCommand;
 import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
@@ -131,12 +130,11 @@ public class ControlService {
     /**
      * Create result lists
      * @param maps 
-     * @param neuralnetcommand TODO
      * @param pipelinedata TODO
      * @return the tabular result lists
      */
 
-    public List<ResultItem> getContent(IclijConfig conf, List<String> disableList, NeuralNetCommand neuralnetcommand, IclijServiceResult result) {
+    public List<ResultItem> getContent(IclijConfig conf, List<String> disableList, IclijServiceResult result) {
         Map<String, Map<String, Object>> maps = new HashMap<>();
         log.info("mydate {}", conf.getConfigData().getDate());
         log.info("mydate {}", conf.getDays());
@@ -259,9 +257,9 @@ public class ControlService {
         for (ResultItemTable list : otherTables) {
             retlist.add(list);
         }
-        new CleanETL().fixmap((Map) maps);
-        printmap(maps, 0);
-        result.setMaps(maps);
+        //new CleanETL().fixmap((Map) maps);
+        //printmap(maps, 0);
+        //result.setMaps(maps);
         result.setList(retlist);
         result.setPipelineData(pipelinedata);
         return retlist;
@@ -644,7 +642,7 @@ public class ControlService {
         return retList;
     }
 
-    public void getDates(IclijConfig conf, Map<String, Map<String, Object>> maps) {
+    public void getDates(IclijConfig conf, PipelineData[] pipelineData) {
         Map<String, Object> aMap = new HashMap<>();
         /*
         aMap.put(ConfigConstants.MACHINELEARNING, false);
@@ -664,9 +662,9 @@ public class ControlService {
         conf.getConfigData().getConfigValueMap().putAll(aMap);
         StockData stockData = new Extract(dbDao).getStockData(conf);
         if (stockData != null) {
-            Map<String, Object> map = new HashMap<>();
+            PipelineData map = new PipelineData();
+            map.setName(PipelineConstants.DATELIST);
             map.put(PipelineConstants.DATELIST, stockData.stockdates);
-            maps.put(PipelineConstants.DATELIST, map);
             return;
         }
         
@@ -690,7 +688,6 @@ public class ControlService {
             Collections.sort(dates);
             Map<String, Object> map = new HashMap<>();
             map.put(PipelineConstants.DATELIST, dates);
-            maps.put(PipelineConstants.DATELIST, map);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return;

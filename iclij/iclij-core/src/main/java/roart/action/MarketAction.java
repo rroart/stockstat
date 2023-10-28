@@ -36,8 +36,10 @@ import roart.common.model.MemoryItem;
 import roart.common.model.MetaItem;
 import roart.common.model.TimingItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.JsonUtil;
 import roart.common.util.MetaUtil;
+import roart.common.util.PipelineUtils;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
 import roart.iclij.component.factory.ComponentFactory;
@@ -565,7 +567,7 @@ public abstract class MarketAction extends Action {
         componentMap.put(marketTime.getComponent(), acomponent);
 
         setValMap(param);
-        Map<String, Map<String, Object>> maps = param.getResultMaps();
+        PipelineData[] maps = param.getResultMaps();
         Map<String, String> nameMap = getNameMap(maps);
         inputdata.setNameMap(nameMap);
 
@@ -783,10 +785,10 @@ public abstract class MarketAction extends Action {
         return s != null ? "" + s : "";
     }
 
-    protected Map<String, String> getNameMap(Map<String, Map<String, Object>> maps) {
+    protected Map<String, String> getNameMap(PipelineData[] maps) {
         Map<String, String> nameMap = null;
-        for (Entry<String, Map<String, Object>> entry : maps.entrySet()) {
-            Map<String, Object> map = entry.getValue();
+        for (Entry<String, PipelineData> entry : PipelineUtils.getPipelineMap(maps).entrySet()) {
+            PipelineData map = entry.getValue();
             nameMap = (Map<String, String>) map.get(PipelineConstants.NAME);
             if (nameMap != null) {
                 break;

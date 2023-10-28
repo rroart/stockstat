@@ -23,6 +23,7 @@ import roart.common.model.ActionComponentItem;
 import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
@@ -271,7 +272,7 @@ public class FindProfitAction extends MarketAction {
         new MarketUtil().fillProfitdata(profitdata, incdecitems);
         
         setValMap(param);
-        Map<String, Map<String, Object>> maps = param.getResultMaps();
+        PipelineData[] maps = param.getResultMaps();
         new MarketUtil().filterIncDecs(param, market, profitdata, maps, true, null);
         new MarketUtil().filterIncDecs(param, market, profitdata, maps, false, null);
         myData.getIncs().addAll(profitdata.getBuys().values());
