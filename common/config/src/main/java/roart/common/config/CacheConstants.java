@@ -15,6 +15,10 @@ public class CacheConstants {
 
     public static final String CONFIG = "config";
 
+    public static final String CORECONTENT = "corecontent";
+
+    public static final String CORECONFIG = "coreconfig";
+
     public static final String INCDEC = "incdec";
     
     public static final String SIMULATEINVESTVOLUMELIMITS = "simulateinvestvolumelimits";

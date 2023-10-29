@@ -167,7 +167,7 @@ public class ComponentData {
 
     public void setService(ControlService service) {
         this.service = service;
-        service.getConfig();
+        service.getAndSetCoreConfig();
         this.configValueMap = new HashMap<>(service.conf.getConfigData().getConfigValueMap());
     }
 

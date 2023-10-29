@@ -1,47 +1,28 @@
 package roart.controller;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import roart.common.config.ConfigConstants;
-import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
-import roart.common.model.IncDecItem;
-import roart.common.pipeline.PipelineConstants;
-import roart.common.service.ServiceParam;
-import roart.iclij.config.IclijXMLConfig;
+import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.ControlService;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 import roart.util.ServiceUtil;
-import roart.db.dao.IclijDbDao;
 
 @CrossOrigin
 @RestController
@@ -73,7 +54,28 @@ public class ServiceController {
             method = RequestMethod.POST)
     public IclijServiceResult getConfig(/*@PathVariable String market*/)
             throws Exception {
-        return ServiceUtil.getConfig(iclijConfig);
+        return ServiceUtil.getConfig(instance.getConfig());
+    }
+
+    @RequestMapping(value = "/core/" + EurekaConstants.GETCONFIG,
+            method = RequestMethod.POST)
+    public IclijServiceResult getCoreConfig(/*@PathVariable String market*/)
+            throws Exception {
+        return ServiceUtil.getConfig(instance.getCoreConfig());
+    }
+
+    @RequestMapping(value = "/core/" + EurekaConstants.GETCONTENT,
+            method = RequestMethod.POST)
+    public IclijServiceResult getCoreContent(@RequestBody IclijServiceParam param/*@PathVariable String market*/)
+            throws Exception {
+        return instance.getCoreContent(param);
+    }
+
+    @RequestMapping(value = "/core/" + EurekaConstants.GETCONTENTGRAPH,
+            method = RequestMethod.POST)
+    public IclijServiceResult getCoreGraphContent(@RequestBody IclijServiceParam param/*@PathVariable String market*/)
+            throws Exception {
+        return instance.getCoreContentGraph(param);
     }
 
     @RequestMapping(value = "/" + EurekaConstants.GETCONTENT,

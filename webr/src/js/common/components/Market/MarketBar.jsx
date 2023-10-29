@@ -85,7 +85,7 @@ function MarketBar( { props, callbackNewTab }) {
     if (param === undefined || param == null) {
       return;
     }
-    const result = Client.fetchApi.search("/" + param.webpath, param);
+    const result = Client.fetchApi.search2("/core/" + param.webpath, param);
     result.then(function(result) {
       const list = result.list;
       console.log(result);

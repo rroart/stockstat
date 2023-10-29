@@ -40,6 +40,7 @@ import roart.service.model.ProfitInputData;
 import roart.iclij.verifyprofit.TrendUtil;
 import roart.iclij.filter.Memories;
 import roart.common.config.ConfigConstants;
+import roart.common.config.ConfigData;
 import roart.common.config.MyConfig;
 import roart.common.constants.Constants;
 import roart.common.model.ConfigItem;
@@ -165,6 +166,12 @@ public class ServiceUtil {
         IclijConfig instance = iclijConfig;
         IclijServiceResult result = new IclijServiceResult();
         result.setConfigData(instance.getConfigData());
+        return result;
+    }
+
+    public static IclijServiceResult getConfig(ConfigData data) throws Exception {
+        IclijServiceResult result = new IclijServiceResult();
+        result.setConfigData(data);
         return result;
     }
 
@@ -961,7 +968,7 @@ public class ServiceUtil {
          */
         //LocalDate date = input.getConfig().getDate();
         ControlService srv = new ControlService(null);
-        srv.getConfig();
+        srv.getAndSetCoreConfig();
         if (market != null) {
             srv.conf.getConfigData().setMarket(market);
             srv.conf.getConfigData().setMlmarket(mlmarket);

@@ -78,13 +78,13 @@ export class MainEffects {
       debounceTime(debounce, scheduler),
       switchMap((action: ActionGetmarkets) => {
         console.log(action);
-        const res = this.service.retrieve('/getmarkets', {});
+        const res = this.service.retrieve2('/core/getmarkets', {});
 	// action.payload.url
 	//console.log(res);
 	//const res3 = res.pipe(map(res => { console.log(res); return res; } ));
 	//const res2 = res.pipe(map(res => { return res.json(); } ));
 	//console.log(res2);
-        return this.service.retrieve('/getmarkets', {}).pipe(
+        return this.service.retrieve2('/core/getmarkets', {}).pipe(
           map(res => new ActionSetmarkets({ markets: res['markets'] })),
           catchError(error => of(new ActionError({ error })))
         )
@@ -102,13 +102,13 @@ export class MainEffects {
       debounceTime(debounce, scheduler),
       switchMap((action: ActionGetconfig) => {
         console.log(action);
-        const res = this.service.retrieve('/getconfig', {});
+        const res = this.service.retrieve2('/core/getconfig', {});
 	// action.payload.url
 	//console.log(res);
 	//const res3 = res.pipe(map(res => { console.log(res); return res; } ));
 	//const res2 = res.pipe(map(res => { return res.json(); } ));
 	//console.log(res2);
-        return this.service.retrieve('/getconfig', {}).pipe(
+        return this.service.retrieve2('/core/getconfig', {}).pipe(
           map(res => new ActionSetconfig({ config: res['configData'] })),
           catchError(error => of(new ActionError({ error })))
         )
@@ -160,7 +160,7 @@ export class MainEffects {
 	neuralnetcommand['mlclassify'] = true;
 	neuralnetcommand['mldynamic'] = false;
 	param['neuralnetcommand'] = neuralnetcommand;
-        return this.service.retrieve('/getcontent', param).pipe(
+        return this.service.retrieve2('/core/getcontent', param).pipe(
           map(res => new ActionNewtab(res.list)),
           catchError(error => of(new ActionError({ error })))
         )
@@ -192,7 +192,7 @@ export class MainEffects {
 	guisize['x']=600;
     	guisize['y']=400;
         param['guiSize'] = guisize;
-        return this.service.retrieve('/getcontentgraph2', param).pipe(
+        return this.service.retrieve2('/core/getcontentgraph2', param).pipe(
           map(res => new ActionNewtab(res.list)),
           catchError(error => of(new ActionError({ error })))
         )

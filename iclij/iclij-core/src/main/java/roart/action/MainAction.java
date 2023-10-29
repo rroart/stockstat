@@ -40,7 +40,7 @@ public class MainAction extends Action {
         boolean noException = false;
         while (noException == false) {
             try {
-                srv.getConfig();
+                srv.getAndSetCoreConfig();
                 noException = true;
             } catch (Exception e) {
                 System.out.println("Ex, sleep 15");

@@ -65,16 +65,8 @@ public class ControlService {
         objectMapper = jsonObjectMapper();
     }
   
-    public void getConfig() {
-        String key = CacheConstants.CONFIG;
-        ConfigData list = (ConfigData) MyCache.getInstance().get(key);
-        if (list == null) {
-        IclijServiceParam param = new IclijServiceParam();
-        param.setConfigData(iclijConfig.getConfigData());
-        IclijServiceResult result = sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG);
-        list = result.getConfigData();
-        MyCache.getInstance().put(key, list);
-        }
+    public void getAndSetCoreConfig() {
+        ConfigData list = getCoreConfig();
         /*
         IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(EurekaConstants.GETCONFIG, iclijConfig.getServices(), iclijConfig.getCommunications());
@@ -82,10 +74,10 @@ public class ControlService {
         Communication c = CommunicationFactory.get(sc.getLeft(), ServiceResult.class, EurekaConstants.GETCONFIG, objectMapper, true, true, true, sc.getRight());
         param.setWebpath(c.getReturnService());
         result = (ServiceResult) c.sendReceive(param);
-        */
+         */
         //ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONFIG);
-        conf = new IclijConfig(list.copy());
-        Map<String, Object> map = conf.getConfigData().getConfigValueMap();
+        this.conf = new IclijConfig(list.copy());
+        Map<String, Object> map = this.conf.getConfigData().getConfigValueMap();
         for (String akey : map.keySet()) {
             Object value = map.get(akey);
             //System.out.println("k " + key + " " + value + " " + value.getClass().getName());
@@ -96,9 +88,43 @@ public class ControlService {
         }
         ConfigTreeMap map2 = conf.getConfigData().getConfigTreeMap();
         print(map2, 0);
-       
+
     }
-    
+
+    public ConfigData getCoreConfig() {
+        String key = CacheConstants.CORECONFIG;
+        ConfigData list = (ConfigData) MyCache.getInstance().get(key);
+        if (list == null) {
+            IclijServiceParam param = new IclijServiceParam();
+            param.setConfigData(iclijConfig.getConfigData());
+            IclijServiceResult result = sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG);
+            list = result.getConfigData();
+            MyCache.getInstance().put(key, list);
+        }
+        return list;
+    }
+
+    public IclijServiceResult getCoreContent(IclijServiceParam param) {
+        return sendCMe(IclijServiceResult.class, param, "core/" + EurekaConstants.GETCONTENT);
+    }
+
+    public IclijServiceResult getCoreContentGraph(IclijServiceParam param) {
+        return sendCMe(IclijServiceResult.class, param, "core/" + EurekaConstants.GETCONTENTGRAPH);
+    }
+
+    public ConfigData getConfig() {
+        String key = CacheConstants.CONFIG;
+        ConfigData list = (ConfigData) MyCache.getInstance().get(key);
+        if (list == null) {
+            IclijServiceParam param = new IclijServiceParam();
+            param.setConfigData(iclijConfig.getConfigData());
+            IclijServiceResult result = sendAMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG, objectMapper);
+            list = result.getConfigData();
+            MyCache.getInstance().put(key, list);
+        }
+        return list;
+    }
+
     private <T> T sendCMe(Class<T> myclass, IclijServiceParam param, String service) {
         //IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
@@ -333,7 +359,7 @@ public class ControlService {
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(conf.getConfigData());
         IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.SETCONFIG);
-        getConfig();
+        getAndSetCoreConfig();
     }
 
     public List<ResultItem> getEvolveRecommender(boolean doSet, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, Map<String, Object> resultMap) {

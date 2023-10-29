@@ -24,7 +24,7 @@ export function* fetchConfig() {
     var serviceparam = new IclijServiceParam();
     //serviceparam.market = '0';
     console.log("hereconfig");
-    let config = yield call(Client.fetchApi.search, "/getconfig", serviceparam);
+    let config = yield call(Client.fetchApi.search2, "/core/getconfig", serviceparam);
     console.log("hereconfig2");
     console.log(config);
     const config2 = config;
@@ -36,7 +36,7 @@ export function* fetchConfig2() {
     var serviceparam = new IclijServiceParam();
     //serviceparam.market = '0';
     console.log("hereconfig");
-    let config = yield call(Client.fetchApi.search3, "/getconfig", serviceparam);
+    let config = yield call(Client.fetchApi.search2, "/getconfig", serviceparam);
     console.log("hereconfig2");
     console.log(config);
     const config2 = config;
