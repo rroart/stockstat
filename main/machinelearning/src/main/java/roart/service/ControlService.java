@@ -30,6 +30,7 @@ import roart.common.constants.EurekaConstants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.util.ArraysUtil;
 import roart.common.util.ImmutabilityUtil;
 import roart.common.util.PipelineUtils;
 import roart.common.util.TimeUtil;
@@ -72,21 +73,8 @@ public class ControlService {
         log.info("mydate {}", conf.getDays());
         //createOtherTables();
         
-        /*
-        String key = CacheConstants.CONTENT + conf.getConfigData().getMarket() + conf.getConfigData().getMlmarket() + conf.getConfigData().getDate() + conf.getConfigData().getConfigValueMap();
-        Map<String, Map<String, Object>> list = (Map<String, Map<String, Object>>) MyCache.getInstance().get(key);
-        if (list != null) {
-            return list;
-        }
-        */
 
         IclijServiceResult result = getContent(conf, origparam, disableList);
-        
-        /*
-        PipelineData[] list2 = result.getPipelineData();
-        list2 = ImmutabilityUtil.immute(list2);
-        MyCache.getInstance().put(key, list2);
-*/
         
         List<ResultItem> retlist = result.getList();
         PipelineData[] pipelineData = result.getPipelineData();
@@ -157,13 +145,54 @@ public class ControlService {
     }
 
     public static IclijServiceResult getContent(IclijConfig conf, IclijServiceParam origparam, List<String> disableList) {
+        String key = CacheConstants.CONTENT + conf.getConfigData().getMarket() + conf.getConfigData().getMlmarket() + conf.getConfigData().getDate() + conf.getConfigData().getConfigValueMap();
+        IclijServiceResult list = (IclijServiceResult) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
+
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(conf.getConfigData());
         param.setWantMaps(origparam.isWantMaps());
         param.setConfList(disableList);
-        return WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
+        IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
+
+        /// TODO list2 = ImmutabilityUtil.immute(list2);
+        MyCache.getInstance().put(key, result);
+
+        fixPipeline(result.getPipelineData());
+        
+        return result;
+        
     }
     
+    private static void fixPipeline(PipelineData[] pipelineData) {
+        for (PipelineData data : pipelineData) {
+            for (Entry<String, Object> entry : data.getMap().entrySet()) {
+                Object newData = transformListList(entry.getValue());
+                data.getMap().put(entry.getKey(), newData);
+            }
+        }
+    }
+
+
+
+    private static Object transform(Object data) {
+        if (data instanceof List list) {
+            return list.stream().map(e -> transform(e)).toArray();
+        }
+        return data;
+    }
+
+    private static Object transformListList(Object data) {
+        if (data instanceof List list) {
+            if (!list.isEmpty() && list.get(0) instanceof List) {
+                return ArraysUtil.convert((List<List<Double>>) data);
+            }
+        }
+        return data;
+    }
+
     public void printmap(Object o, int i) {
         if (o == null) {
             return;
