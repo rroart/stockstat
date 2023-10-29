@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import roart.iclij.model.action.MarketActionData;
 import roart.common.constants.Constants;
 import roart.common.model.IncDecItem;
+import roart.common.pipeline.data.PipelineData;
 import roart.component.model.ComponentData;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
@@ -43,7 +44,7 @@ public class FitnessMarketFilterCommon {
         myData.setTimingMap(new HashMap<>());
         
         List<IncDecItem> myincdecs = new ArrayList<>(incdecs);
-        Map<String, Map<String, Object>> maps = param.getResultMaps();
+        PipelineData[] maps = param.getResultMaps();
         new MarketUtil().fillProfitdata(profitdata, myincdecs);
         new MarketUtil().filterIncDecs(param, market, profitdata, maps, true, stockDates);
         new MarketUtil().filterIncDecs(param, market, profitdata, maps, false, stockDates);

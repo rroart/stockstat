@@ -19,7 +19,9 @@ import roart.common.config.ConfigConstants;
 import roart.common.model.IncDecItem;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.MetaUtil;
+import roart.common.util.PipelineUtils;
 import roart.component.model.ComponentData;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
@@ -53,11 +55,16 @@ public class PeriodAdviser extends Adviser {
             aMap.put(ConfigConstants.MISCMERGECY, false);
             Integer cat = period; //new MetaUtil().getCategory(meta, period);
             //Map<String, Object> resultMaps = param.getResultMap(""+ cat, aMap);
-            Map<String, Map<String, Object>> resultMaps = param.getResultMaps();
+            PipelineData[] resultMaps = param.getResultMaps();
             if (resultMaps == null) {
                 int jj = 0;
             }
-            Map<String, Object> objectMaps = resultMaps.get("" + cat);
+            //List<MetaItem> metas = param.getService().getMetas();
+            PipelineData metaData = PipelineUtils.getPipeline(resultMaps, PipelineConstants.META);
+            MetaItem meta = (MetaItem) metaData.get(PipelineConstants.META);
+            String catName = new MetaUtil().getCategory(meta, cat);
+
+            PipelineData objectMaps = PipelineUtils.getPipeline(resultMaps, catName);
             if (objectMaps == null) {
                 categoryValueMap = new HashMap<>();
                 return;

@@ -171,9 +171,7 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            PipelineData[] pipelineData = new PipelineData[0];
-            result.setPipelineData(pipelineData);
-            getInstance().getDates( new IclijConfig(param.getConfigData()), pipelineData);
+            getInstance().getDates( new IclijConfig(param.getConfigData()), result);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());

@@ -642,7 +642,8 @@ public class ControlService {
         return retList;
     }
 
-    public void getDates(IclijConfig conf, PipelineData[] pipelineData) {
+    public void getDates(IclijConfig conf, IclijServiceResult result) {
+        PipelineData[] pipelineData = new PipelineData[0];
         Map<String, Object> aMap = new HashMap<>();
         /*
         aMap.put(ConfigConstants.MACHINELEARNING, false);
@@ -665,6 +666,8 @@ public class ControlService {
             PipelineData map = new PipelineData();
             map.setName(PipelineConstants.DATELIST);
             map.put(PipelineConstants.DATELIST, stockData.stockdates);
+            pipelineData = ArrayUtils.add(pipelineData, map);
+            result.setPipelineData(pipelineData);
             return;
         }
         
@@ -686,8 +689,11 @@ public class ControlService {
 
         try {
             Collections.sort(dates);
-            Map<String, Object> map = new HashMap<>();
+            PipelineData map = new PipelineData();
+            map.setName(PipelineConstants.DATELIST);
             map.put(PipelineConstants.DATELIST, dates);
+            pipelineData = ArrayUtils.add(pipelineData, map);
+            result.setPipelineData(pipelineData);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return;

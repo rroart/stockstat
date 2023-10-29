@@ -18,6 +18,8 @@ import roart.common.config.CacheConstants;
 import roart.common.config.ConfigConstants;
 import roart.common.model.IncDecItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
+import roart.common.util.PipelineUtils;
 import roart.component.model.ComponentData;
 import roart.iclij.config.Market;
 import roart.iclij.config.SimulateInvestConfig;
@@ -50,8 +52,8 @@ public class DayAdviser extends Adviser {
             Integer cat = period; //new MetaUtil().getCategory(meta, period);
             //Integer cat = (Integer) result.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
             //Map<String, Object> resultMaps = param.getResultMap(""+ cat, aMap);
-            Map<String, Map<String, Object>> resultMaps = param.getResultMaps();
-            Map<String, Object> objectMaps = resultMaps.get("" + cat);
+            PipelineData[] resultMaps = param.getResultMaps();
+            Map<String, Object> objectMaps = null; //PipelineUtils.getPipeline(resultMaps, cat);
             Map<String, List<List<Double>>> aCategoryValueMap;
             if (simulateConfig.getInterpolate()) {
                 aCategoryValueMap = (Map<String, List<List<Double>>>) objectMaps.get(PipelineConstants.FILLLIST);

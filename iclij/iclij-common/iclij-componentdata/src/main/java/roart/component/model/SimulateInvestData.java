@@ -3,6 +3,7 @@ package roart.component.model;
 import java.util.List;
 import java.util.Map;
 
+import roart.common.pipeline.data.PipelineData;
 import roart.iclij.config.SimulateInvestConfig;
 
 public class SimulateInvestData extends ComponentData {
@@ -15,7 +16,7 @@ public class SimulateInvestData extends ComponentData {
     
     private Map<String, List<List<Double>>> categoryValueRebaseMap;
     
-    private Map<String, Map<String, Object>> resultRebaseMaps;
+    private PipelineData[] resultRebaseMaps;
     
     private SimulateInvestConfig config;
     
@@ -55,12 +56,12 @@ public class SimulateInvestData extends ComponentData {
         this.categoryValueRebaseMap = categoryValueRebaseMap;
     }
 
-    public Map<String, Map<String, Object>> getResultRebaseMaps() {
+    public PipelineData[] getResultRebaseMaps() {
         return resultRebaseMaps;
     }
 
-    public void setResultRebaseMaps(Map<String, Map<String, Object>> resultRebaseMaps) {
-        this.resultRebaseMaps = resultRebaseMaps;
+    public void setResultRebaseMaps(PipelineData[] mapsRebase) {
+        this.resultRebaseMaps = mapsRebase;
     }
 
     public SimulateInvestConfig getSimConfig() {

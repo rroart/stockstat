@@ -16,6 +16,7 @@ import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
@@ -197,7 +198,7 @@ public class ImproveSimulateInvestComponent extends ComponentML {
         aMap.put(ConfigConstants.MISCMERGECY, false);
         // different line
         param.getResultMap(null, aMap);
-        Map<String, Map<String, Object>> mapsRebase = param.getResultMaps();
+        PipelineData[] mapsRebase = param.getResultMaps();
         param.setResultRebaseMaps(mapsRebase);
 
         aMap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, false);

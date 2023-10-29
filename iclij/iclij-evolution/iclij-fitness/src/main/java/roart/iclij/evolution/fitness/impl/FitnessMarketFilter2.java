@@ -24,6 +24,7 @@ import roart.common.constants.Constants;
 import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
+import roart.common.pipeline.data.PipelineData;
 import roart.iclij.component.Component;
 import roart.iclij.component.factory.ComponentFactory;
 import roart.component.model.ComponentData;
@@ -107,7 +108,7 @@ public class FitnessMarketFilter2 {
         Set<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec);
         Trend incProp = null;
         incProp = extracted(chromosome, myData, listInc, listDec, mlTests);
-        Map<String, Map<String, Object>> maps = param.getResultMaps();
+        PipelineData[] maps = param.getResultMaps();
         new MarketUtil().filterIncDecs(param, market, profitdata, maps, true, null);
         new MarketUtil().filterIncDecs(param, market, profitdata, maps, false, null);
 
