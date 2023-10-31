@@ -592,6 +592,17 @@ public class ArraysUtil {
         return ret;
     }
 
+    public static double[][] convert(Double[][] doubles) {
+        double[][] ret = new double[doubles.length][];
+        for (int i = 0; i < doubles.length; i ++) {
+            ret[i] = new double[doubles[i].length];
+            for (int j = 0; i < doubles[i].length; i ++) {
+                ret[i][j] = doubles[i][j];
+            }
+        }
+        return ret;
+    }
+
     public static Double[] convert(double[] doubles) {
         Double[] ret = new Double[doubles.length];
         for (int i = 0; i < doubles.length; i ++) {
@@ -600,15 +611,32 @@ public class ArraysUtil {
         return ret;
     }
 
-    public static double[][] convert(List<List<Double>> listOfList) {
+    public static Double[][] convertNot(List<List> listOfList) {
         return listOfList.stream()
         .map(l -> l.stream()
-                .mapToDouble(Double::doubleValue)
-                .toArray()
+                //.mapToDouble(Double::doubleValue)
+                .toArray(Double[]::new)
                 )
-        .toArray(double[][]::new);
+        .toArray(Double[][]::new);
     }
-    /**
+
+    public static Double[][] convert(List<List<Double>> listOfList) {
+        //listOfList.stream().forEach(l -> l.stream().forEach(e -> System.out.print(e != null ? e.getClass().getName() : "")));
+        /*
+        for (Object obj : listOfList) {
+            if (obj instanceof List list) {
+                list.stream().forEach(e -> System.out.print(e != null ? e.getClass().getName() : ""));
+            } else {
+                System.out.println("other" + obj);
+            }
+        }
+        */
+        return listOfList.stream()
+                .map(l -> l.toArray(Double[]::new)
+                        )
+                .toArray(Double[][]::new);
+    }
+/**
      * Goes through the array, smoothes out missing values (by using the previous),
      * or nulls out, depending or whether a max number was passed
      * @param maxHoleNumber

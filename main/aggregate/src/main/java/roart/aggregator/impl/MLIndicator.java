@@ -69,7 +69,7 @@ import roart.pipeline.impl.ExtraReader;
 public class MLIndicator extends Aggregator {
 
     String key;
-    Map<String, List<List<Double>>> listMap;
+    Map<String, Double[][]> listMap;
     Object[] emptyField;
     Map<MLClassifyModel, Long> mapTime = new HashMap<>();
 
@@ -91,7 +91,7 @@ public class MLIndicator extends Aggregator {
         return objectMap;
     }
 
-    public Map<String, List<List<Double>>> getListMap() {
+    public Map<String, Double[][]> getListMap() {
         return listMap;
     }
 
@@ -287,7 +287,7 @@ public class MLIndicator extends Aggregator {
 
         Map<String, List<AggregatorMLIndicator>> usedIndicators = AggregatorMLIndicator.getUsedAggregatorMLIndicators(conf);
         Set<String> ids = new HashSet<>();
-        Map<String, List<List<Double>>> list0 = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.LIST);
+        Map<String, Double[][]> list0 = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
         ids.addAll(list0.keySet());
         List<String> indicators = getIndicators(datareaders, usedIndicators, ids);
         log.info("INDIC" + usedIndicators.values().iterator().next().stream().map(AggregatorMLIndicator::indicator).toList());
@@ -296,7 +296,7 @@ public class MLIndicator extends Aggregator {
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse
         this.listMap = list0;
-        if (!anythingHere(listMap)) {
+        if (!anythingHereA(listMap)) {
             log.info("empty {}", key);
             return;
         }

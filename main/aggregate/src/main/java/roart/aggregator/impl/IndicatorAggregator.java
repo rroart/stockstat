@@ -91,7 +91,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     public static final int MULTILAYERPERCEPTRONCLASSIFIER = 1;
     public static final int LOGISTICREGRESSION = 2;
 
-    protected Map<String, List<List<Double>>> listMap;
+    protected Map<String, Double[][]> listMap;
 
     protected int fieldSize = 0;
 
@@ -164,14 +164,14 @@ public abstract class IndicatorAggregator extends Aggregator {
             log.info("empty {}", category);
             return;
         }
-        Map<String, List<List<Double>>> aListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.LIST);
-        Map<String, List<List<Double>>> fillListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.TRUNCFILLLIST);
-        Map<String, List<List<Double>>>  base100FillListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.TRUNCBASE100FILLLIST);
+        Map<String, Double[][]> aListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
+        Map<String, Double[][]> fillListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.TRUNCFILLLIST);
+        Map<String, Double[][]>  base100FillListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.TRUNCBASE100FILLLIST);
         this.listMap = conf.wantPercentizedPriceIndex() ? base100FillListMap : fillListMap;
 
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse
-        if (!anythingHere(aListMap)) {
+        if (!anythingHereA(aListMap)) {
             log.debug("empty {}", key);
             return;
         }
@@ -1007,7 +1007,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         return mapType != CMNTYPE;
     }
     
-    protected Map<String, List<List<Double>>> getListMap() {
+    protected Map<String, Double[][]> getListMap() {
         return listMap;
     }
 

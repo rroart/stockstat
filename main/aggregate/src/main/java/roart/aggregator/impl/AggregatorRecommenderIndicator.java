@@ -229,6 +229,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
     @Override
     public PipelineData putData() {
         PipelineData map = new PipelineData();
+        map.setName(getName());
         map.put(PipelineConstants.CATEGORY, category);
         map.put(PipelineConstants.CATEGORYTITLE, title);
         map.put(PipelineConstants.RESULT, resultMap);

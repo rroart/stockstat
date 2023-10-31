@@ -258,7 +258,7 @@ public class ControlService {
             retlist.add(list);
         }
         //new CleanETL().fixmap((Map) maps);
-        //printmap(maps, 0);
+        printmap(pipelinedata);
         //result.setMaps(maps);
         result.setList(retlist);
         result.setPipelineData(pipelinedata);
@@ -282,6 +282,14 @@ public class ControlService {
                     //System.out.println(" v " + null);
                 }
             }
+        }
+    }
+
+    public void printmap(PipelineData[] data) {
+        //System.out.println("" + i + " " + o.hashCode());
+        for (PipelineData datum : data) {
+            Set<String> keys = datum.keySet();
+            log.info("Data {} {}", datum.getName(), keys);
         }
     }
 

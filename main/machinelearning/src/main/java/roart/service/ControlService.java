@@ -32,6 +32,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.util.ArraysUtil;
 import roart.common.util.ImmutabilityUtil;
+import roart.common.util.MemUtil;
 import roart.common.util.PipelineUtils;
 import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
@@ -48,6 +49,7 @@ import roart.model.data.StockData;
 
 public class ControlService {
     private Logger log = LoggerFactory.getLogger(this.getClass());
+    private static Logger Log = LoggerFactory.getLogger(ControlService.class);
 
     public static CuratorFramework curatorClient;
 
@@ -159,8 +161,15 @@ public class ControlService {
 
         /// TODO list2 = ImmutabilityUtil.immute(list2);
         MyCache.getInstance().put(key, result);
-
+        {
+        long[] mem0 = MemUtil.mem();
+        Log.info("MEM {}", MemUtil.print(mem0));
+        }
         fixPipeline(result.getPipelineData());
+        {
+        long[] mem0 = MemUtil.mem();
+        Log.info("MEM {}", MemUtil.print(mem0));
+        }
         
         return result;
         
@@ -169,8 +178,25 @@ public class ControlService {
     private static void fixPipeline(PipelineData[] pipelineData) {
         for (PipelineData data : pipelineData) {
             for (Entry<String, Object> entry : data.getMap().entrySet()) {
-                Object newData = transformListList(entry.getValue());
-                data.getMap().put(entry.getKey(), newData);
+                if (PipelineConstants.VOLUME.equals(entry.getKey())) {
+                    continue;
+                }
+                Object value = entry.getValue();
+                if (value instanceof Map map2) {
+                    Map<String, Object> map = map2;
+                    Map newMap = new HashMap<>();
+                    for (Entry mapEntry : map.entrySet()) {
+                        try {
+                        Object newData = transformListList(mapEntry.getValue());
+                        newMap.put(mapEntry.getKey(), newData);
+                        } catch (Exception e) {
+                            Log.info("key" + mapEntry.getKey());
+                            Log.info("key" + mapEntry.getValue());
+
+                        }
+                    }
+                    map.putAll(newMap);
+                }
             }
         }
     }
@@ -186,9 +212,12 @@ public class ControlService {
 
     private static Object transformListList(Object data) {
         if (data instanceof List list) {
-            if (!list.isEmpty() && list.get(0) instanceof List) {
-                return ArraysUtil.convert((List<List<Double>>) data);
+            for (Object object : list) {
+                if (!(object instanceof List)) {
+                    return data;
+                }
             }
+            return ArraysUtil.convert((List<List<Double>>) data);
         }
         return data;
     }
