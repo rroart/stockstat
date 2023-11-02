@@ -596,7 +596,7 @@ public class ArraysUtil {
         double[][] ret = new double[doubles.length][];
         for (int i = 0; i < doubles.length; i ++) {
             ret[i] = new double[doubles[i].length];
-            for (int j = 0; i < doubles[i].length; i ++) {
+            for (int j = 0; j < doubles[i].length; j ++) {
                 ret[i][j] = doubles[i][j];
             }
         }
@@ -635,6 +635,27 @@ public class ArraysUtil {
                 .map(l -> l.toArray(Double[]::new)
                         )
                 .toArray(Double[][]::new);
+    }
+    
+    public static Double[] convert1(List<Double> list) {
+        for (int i = 0; i < list.size(); i++) {
+            Object object = list.get(i);
+            if (object instanceof String string && string.equals("NaN")) {
+                list.set(i, Double.NaN);
+            }
+        }
+        return list.toArray(Double[]::new);
+    }
+    
+    public static Object[] convert2(List list) {
+        for (int i = 0; i < list.size(); i++) {
+            Object object = list.get(i);
+            if (object instanceof List anotherlist) {
+                Double[] array = convert1(anotherlist);
+                list.set(i, convert(array));
+            }
+        }
+        return list.toArray(Object[]::new);
     }
 /**
      * Goes through the array, smoothes out missing values (by using the previous),

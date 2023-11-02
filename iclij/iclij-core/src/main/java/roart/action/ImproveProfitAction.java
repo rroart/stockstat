@@ -24,6 +24,7 @@ import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.model.TimingItem;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
@@ -106,7 +107,7 @@ public class ImproveProfitAction extends MarketAction {
                 Object value = myConfig.get(key);
                 defaults.put(key, value);
             }
-            Map<String, Object> results = componentData.getResultMap();
+            PipelineData results = componentData.getResultMap();
             // if not interrupted
             if (results != null) {
             	results.put(EvolveConstants.DEFAULT, defaults);

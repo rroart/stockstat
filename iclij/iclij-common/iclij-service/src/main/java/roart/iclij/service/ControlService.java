@@ -362,7 +362,7 @@ public class ControlService {
         getAndSetCoreConfig();
     }
 
-    public List<ResultItem> getEvolveRecommender(boolean doSet, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, Map<String, Object> resultMap) {
+    public List<ResultItem> getEvolveRecommender(boolean doSet, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, PipelineData resultMap) {
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(conf.getConfigData());
         param.setConfList(disableList);
@@ -372,13 +372,13 @@ public class ControlService {
             PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE);  
             updateMap.putAll(datum.getMap(PipelineConstants.UPDATE));
             scoreMap.putAll(datum.getMap(PipelineConstants.SCORE));
-            resultMap.putAll(datum.getMap(PipelineConstants.RESULT));
+            resultMap.getMap().putAll(datum.getMap(PipelineConstants.RESULT));
         }
         return result.getList();
         //return result.getMaps().get("update");
     }
 
-    public List<ResultItem> getEvolveML(boolean doSet, List<String> disableList, String ml,  IclijConfig conf, Map<String, Object> updateMap, Map<String, Object> scoreMap, Map<String, Object> resultMap) {
+    public List<ResultItem> getEvolveML(boolean doSet, List<String> disableList, String ml,  IclijConfig conf, Map<String, Object> updateMap, Map<String, Object> scoreMap, PipelineData resultMap) {
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(conf.getConfigData());
         Set<String> ids = new HashSet<>();
@@ -396,7 +396,7 @@ public class ControlService {
             PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE);  
             updateMap.putAll(datum.getMap(PipelineConstants.UPDATE));
             scoreMap.putAll(datum.getMap(PipelineConstants.SCORE));
-            resultMap.putAll(datum.getMap(PipelineConstants.RESULT));
+            resultMap.getMap().putAll(datum.getMap(PipelineConstants.RESULT));
             //Map<String, Object> updateMap = result.getMaps().get("update");
             //conf.getConfigValueMap().putAll(updateMap);
             //return updateMap;

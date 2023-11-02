@@ -66,7 +66,7 @@ public class FitnessIclijConfigMapCommon {
             Object[] result = component.calculateAccuracy(componentData2);
             score = (Double) result[0];
             if (resultMap != null) {
-                resultMap.putAll(componentData2.getResultMap());
+                resultMap.putAll(componentData2.getResultMap().getMap());
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

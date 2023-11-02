@@ -17,6 +17,7 @@ import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
@@ -66,7 +67,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
         if (memories == null) {
             //return;
         }
-        Map<String, Object> resultMap = param.getResultMap();
+        PipelineData resultMap = param.getResultMap();
         Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
         if (aResultMap == null) {
             int jj = 0;
@@ -163,7 +164,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
     @Override
     public List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters) throws Exception {
         ComponentMLData param = (ComponentMLData) componentparam;
-        Map<String, Object> resultMap = param.getResultMap();
+        PipelineData resultMap = param.getResultMap();
         Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
         List<MemoryItem> memoryList = new ArrayList<>();
         int resultIndex = 0;

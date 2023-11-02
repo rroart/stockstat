@@ -21,6 +21,7 @@ import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
@@ -126,7 +127,7 @@ public class ComponentPredictor extends ComponentML {
 
         handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent);
         
-        Map<String, Object> maps = param.getResultMap();
+        PipelineData maps = param.getResultMap();
         
         return param;
     }
@@ -189,7 +190,7 @@ public class ComponentPredictor extends ComponentML {
         if (positions == null) {
             //return;
         }
-        Map<String, Object> resultMap = param.getResultMap();
+        PipelineData resultMap = param.getResultMap();
         Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
         int resultIndex = 0;
         int count = 0;

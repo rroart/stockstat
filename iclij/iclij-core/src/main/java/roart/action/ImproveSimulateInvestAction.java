@@ -18,6 +18,7 @@ import roart.common.model.ActionComponentItem;
 import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
@@ -128,7 +129,7 @@ public class ImproveSimulateInvestAction extends MarketAction {
             EvolutionConfig evolutionConfig = JsonUtil.convert(evolutionConfigString, EvolutionConfig.class);
             Map<String, Object> confMap = new HashMap<>();
             ComponentData e = evolve.evolve(action.getActionData(), param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap , evolutionConfig, component.getPipeline(), component, confList);
-            Map<String, Object> results = (Map<String, Object>) e.getResultMap();
+            PipelineData results = e.getResultMap();
             Object filters = param.getConfigValueMap().remove(IclijConfigConstants.SIMULATEINVESTFILTERS);
             filters = param.getInput().getValuemap().get(IclijConfigConstants.SIMULATEINVESTFILTERS);
             results.put(SimConstants.FILTER, filters);

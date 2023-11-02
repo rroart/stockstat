@@ -2,6 +2,7 @@ package roart.common.pipeline;
 
 public class PipelineConstants {
     public static final String OBJECT = "object";
+    // not used
     public static final String OBJECTFIXED = "objectfixed";
     public static final String LIST = "list";
     public static final String FILLLIST = "filllist";
@@ -35,6 +36,7 @@ public class PipelineConstants {
     
     public static final String MARKETOBJECT = "marketobject";
     public static final String MARKETCALCULATED = "marketcalculated";
+    // not used
     public static final String MARKETRESULT = "marketresult";
     
     public static final String INDICATOR = "indicator";

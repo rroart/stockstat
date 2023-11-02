@@ -23,6 +23,7 @@ import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.MLIndicatorData;
@@ -126,7 +127,7 @@ public class ComponentMLIndicator extends ComponentML {
         if (positions == null) {
             //return;
         }
-        Map<String, Object> resultMap = param.getResultMap();
+        PipelineData resultMap = param.getResultMap();
         if (resultMap == null) {
             return;
         }
@@ -242,7 +243,7 @@ public class ComponentMLIndicator extends ComponentML {
     public List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters) throws Exception {
         MLIndicatorData param = (MLIndicatorData) componentparam;
         List<MemoryItem> memoryList = new ArrayList<>();
-        Map<String, Object> resultMap = param.getResultMap();
+        PipelineData resultMap = param.getResultMap();
         Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
         int resultIndex = 0;
         int newResultIndex = 0;

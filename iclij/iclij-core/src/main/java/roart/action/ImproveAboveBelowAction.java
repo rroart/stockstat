@@ -27,6 +27,7 @@ import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
@@ -294,7 +295,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                 }
             }
 
-            Map<String, Object> results = param.getResultMap();
+            PipelineData results = param.getResultMap();
             if (results != null) {
                 param.getService().send(ServiceConstants.EVOLVEFILTERABOVEBELOW, results, param.getConfig());
             }

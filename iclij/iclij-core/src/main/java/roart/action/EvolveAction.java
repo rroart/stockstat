@@ -24,6 +24,7 @@ import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.model.TimingItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
@@ -90,7 +91,7 @@ public class EvolveAction extends MarketAction {
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
             }
-            Map<String, Object> results = componentData.getResultMap();
+            PipelineData results = componentData.getResultMap();
             if (PipelineConstants.AGGREGATORRECOMMENDERINDICATOR.equals(component.getPipeline()) ) {
                 return;
             }

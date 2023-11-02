@@ -47,7 +47,7 @@ public class ComponentData {
     
     protected PipelineData[] resultMaps;
 
-    protected Map<String, Object> resultMap;
+    protected PipelineData resultMap;
 
     private List<String> stockDates;
     
@@ -239,11 +239,11 @@ public class ComponentData {
         this.resultMaps = resultMaps;
     }
 
-    public Map<String, Object> getResultMap() {
+    public PipelineData getResultMap() {
         return resultMap;
     }
 
-    public void setResultMap(Map<String, Object> resultMap) {
+    public void setResultMap(PipelineData resultMap) {
         this.resultMap = resultMap;
     }
 
@@ -418,7 +418,7 @@ public class ComponentData {
         }
     }
 
-    public Map<String, Object> getResultMap(String mapName, Map<String, Object> setValueMap) {
+    public PipelineData getResultMap(String mapName, Map<String, Object> setValueMap) {
         zerokey(configValueMap);
         service.conf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
         zerokey(setValueMap);
@@ -431,12 +431,15 @@ public class ComponentData {
         PipelineData[] maps = service.getContent(getDisableList());
         this.resultMaps = maps;
         //System.out.println(maps.keySet());
-        Map<String, Object> aMap = (Map) PipelineUtils.getPipeline(maps, mapName);
+        PipelineData aMap = null;
+        if (mapName != null) {
+            aMap = PipelineUtils.getPipeline(maps, mapName);
+        }
         this.resultMap = aMap;
         return aMap;  
     }
 
-    public void setCategory(Map aMap) {
+    public void setCategory(PipelineData aMap) {
         if (aMap == null) {
             int jj = 0;
             return;

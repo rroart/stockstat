@@ -174,12 +174,19 @@ public class ControlService {
         return result;
         
     }
+
+    private static final List<String> other = List.of(PipelineConstants.OBJECT);
+    
+    private static final List<String> onedim = List.of(PipelineConstants.RESULT);
+
+    private static final List<String> twodim = List.of(PipelineConstants.LIST, PipelineConstants.FILLLIST, PipelineConstants.TRUNCLIST, PipelineConstants.TRUNCFILLLIST, PipelineConstants.BASE100LIST, PipelineConstants.BASE100FILLLIST, PipelineConstants.TRUNCBASE100LIST, PipelineConstants.TRUNCBASE100FILLLIST);
+    // , PipelineConstants.MARKETOBJECT
     
     private static void fixPipeline(PipelineData[] pipelineData) {
         for (PipelineData data : pipelineData) {
             for (Entry<String, Object> entry : data.getMap().entrySet()) {
                 if (PipelineConstants.VOLUME.equals(entry.getKey())) {
-                    continue;
+                    //continue;
                 }
                 Object value = entry.getValue();
                 if (value instanceof Map map2) {
@@ -187,10 +194,21 @@ public class ControlService {
                     Map newMap = new HashMap<>();
                     for (Entry mapEntry : map.entrySet()) {
                         try {
-                        Object newData = transformListList(mapEntry.getValue());
+                        Object newData = null;
+                        if (twodim.contains(entry.getKey())) {
+                            newData = transformListList(mapEntry.getValue());
+                        }
+                        if (onedim.contains(entry.getKey())) {
+                            newData = transformList(mapEntry.getValue());
+                        }
+                        if (other.contains(entry.getKey())) {
+                            newData = transformListObject(mapEntry.getValue());
+                        }
                         newMap.put(mapEntry.getKey(), newData);
                         } catch (Exception e) {
                             Log.info("key" + mapEntry.getKey());
+                            Log.info("key" + mapEntry.getValue().getClass().getName());
+                            Log.info("key" + mapEntry.getValue());
                             Log.info("key" + mapEntry.getValue());
 
                         }
@@ -218,6 +236,28 @@ public class ControlService {
                 }
             }
             return ArraysUtil.convert((List<List<Double>>) data);
+        }
+        return data;
+    }
+
+    private static Object transformList(Object data) {
+        if (data instanceof List list) {
+            List l = (List) data;
+            for (Object o : l) {
+                //Log.info("ob" + o + " " + o.getClass().getName());
+            }
+            return ArraysUtil.convert1((List<Double>) data);
+        }
+        return data;
+    }
+
+    private static Object transformListObject(Object data) {
+        if (data instanceof List list) {
+            List l = (List) data;
+            for (Object o : l) {
+                //Log.info("ob" + o + " " + o.getClass().getName());
+            }
+            return ArraysUtil.convert2((List) data);
         }
         return data;
     }

@@ -25,6 +25,7 @@ import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.model.TimingItem;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
@@ -89,7 +90,7 @@ public abstract class Component {
     
     public abstract ComponentData improve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save);
 
-    public abstract void handleMLMeta(ComponentData param, Map<String, List<Object>> mlMaps);
+    public abstract void handleMLMeta(ComponentData param, PipelineData mlMaps);
 
     /*
      * We need to handle 11 actions
@@ -333,7 +334,8 @@ public abstract class Component {
             scoreMap2.put("score", score);
             scoreMap2.put("scores", results.stream().map(Pair::getLeft).collect(Collectors.toList()));            
             param.setScoreMap(scoreMap);
-            Map<String, Object> resultMap = new HashMap<>();
+            PipelineData resultMap = new PipelineData();
+            resultMap.setName(getPipeline());
             resultMap.put(filename, results);
             resultMap.put(EvolveConstants.TITLETEXT, title + nullString(fitness.titleText()));
             resultMap.put(EvolveConstants.SUBTITLETEXT, subtitle);
@@ -555,7 +557,7 @@ public abstract class Component {
         if (param.getResultMap() == null) {
             return;
         }
-        Map<String, Object> results = param.getResultMap();
+        PipelineData results = param.getResultMap();
         String id = (String) results.get(EvolveConstants.ID);
         List<LinkedHashMap> myList = (List<LinkedHashMap>) results.get(id);
         if (myList == null) {
@@ -635,10 +637,10 @@ public abstract class Component {
     }
 
     protected void handleMLMetaCommon(ComponentData param, Map<String, Object> valueMap) {
-        Map<String, Object> resultMaps = param.getResultMap(getPipeline(), valueMap);
+        PipelineData resultMaps = param.getResultMap(getPipeline(), valueMap);
         param.setCategory(resultMaps);
         param.getAndSetCategoryValueMap();
-        Map resultMaps2 = param.getResultMap();
+        PipelineData resultMaps2 = param.getResultMap();
         handleMLMeta(param, resultMaps2);        
     }
     

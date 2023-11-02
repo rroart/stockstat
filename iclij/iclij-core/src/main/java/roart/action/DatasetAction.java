@@ -73,7 +73,7 @@ public class DatasetAction extends MarketAction {
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
             }
-            Map<String, Object> results = componentData.getResultMap();
+            PipelineData results = componentData.getResultMap();
             if (results != null) {
             	componentData.getService().send(ServiceConstants.EVOLVEFILTEREVOLVE, results, param.getConfig());
             }

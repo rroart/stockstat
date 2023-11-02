@@ -44,6 +44,7 @@ import roart.common.model.MemoryItem;
 import roart.common.model.MetaItem;
 import roart.common.model.SimDataItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
 import roart.common.util.MapUtil;
@@ -213,7 +214,9 @@ public class SimulateInvestComponent extends ComponentML {
             map.put(EvolveConstants.TITLETEXT, emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + ("any"));
                      componentData.getUpdateMap().putAll(map);
             if (evolving) {
-                componentData.setResultMap(new HashMap<>());
+                PipelineData result = new PipelineData();
+                result.setName(getPipeline());
+                componentData.setResultMap(result);
             }
             Double score = 0.0;
             Map<String, Double> scoreMap = new HashMap<>();
@@ -305,7 +308,7 @@ public class SimulateInvestComponent extends ComponentML {
             setDataVolumeAndTrend(market, param, simConfig, data, investStart, investEnd, lastInvestEnd, evolving);
 
             long time0 = System.currentTimeMillis();
-            Map<String, Object> resultMap = new HashMap<>();
+            PipelineData resultMap = new PipelineData();
             for (int offset = 0; offset < end; offset++) {
                 Integer origAdviserId = (Integer) param.getInput().getValuemap().get(IclijConfigConstants.SIMULATEINVESTADVISER);
                 Mydate mydate = new Mydate();

@@ -25,6 +25,7 @@ import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
@@ -118,7 +119,7 @@ public class ComponentRecommender extends ComponentNoML {
         handle2(action, market, param, profitdata, positions, evolve && param.getConfig().wantEvolveRecommender(), aMap, subcomponent, mlmarket, parameters, hasParent);
 
         if (!evolve) {
-        Map<String, Object> resultMap = param.getResultMap();
+        PipelineData resultMap = param.getResultMap();
         if (resultMap != null) {
         Map<String, Object> resultMap2 = (Map<String, Object>) resultMap.get(PipelineConstants.RESULT);
         Map<String, List<Double>> recommendBuySell = (Map<String, List<Double>>) resultMap2.get(RecommendConstants.COMPLEX);
@@ -140,7 +141,7 @@ public class ComponentRecommender extends ComponentNoML {
     public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories position, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
         RecommenderData param = (RecommenderData) componentparam;
         //Map resultMaps = (Map) param.getResultMap(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, new HashMap<>());
-        Map resultMaps = (Map) param.getResultMap();
+        PipelineData resultMaps = param.getResultMap();
         for (int i = 0; i < 2; i++) {
         Pair<String, Integer> keyPair = new ImmutablePair(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, i);
         //keyPair = ComponentMLAggregator.getRealKeys(keyPair, profitdata.getInputdata().getConfMap().keySet());
