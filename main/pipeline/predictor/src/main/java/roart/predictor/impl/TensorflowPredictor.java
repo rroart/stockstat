@@ -8,8 +8,8 @@ import roart.pipeline.Pipeline;
 
 public abstract class TensorflowPredictor extends Predictor {
 
-    public TensorflowPredictor(IclijConfig conf, String string, int category, NeuralNetCommand neuralnetcommand, PipelineData[] datareaders) {
-        super(conf, string, category, neuralnetcommand, datareaders);
+    public TensorflowPredictor(IclijConfig conf, String string, String title, int category, NeuralNetCommand neuralnetcommand, PipelineData[] datareaders) {
+        super(conf, string, title, category, neuralnetcommand, datareaders);
     }
     
     @Override

@@ -204,7 +204,9 @@ public class ControlService {
                         if (other.contains(entry.getKey())) {
                             newData = transformListObject(mapEntry.getValue());
                         }
-                        newMap.put(mapEntry.getKey(), newData);
+                        if (newData != null) {
+                            newMap.put(mapEntry.getKey(), newData);
+                        }
                         } catch (Exception e) {
                             Log.info("key" + mapEntry.getKey());
                             Log.info("key" + mapEntry.getValue().getClass().getName());

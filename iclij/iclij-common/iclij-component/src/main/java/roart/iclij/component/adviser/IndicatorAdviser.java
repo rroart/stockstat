@@ -79,11 +79,11 @@ public abstract class IndicatorAdviser extends Adviser {
             }
             Integer cat = (Integer) PipelineUtils.getPipeline(resultMaps, PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
             String catName = new MetaUtil().getCategory(meta, cat);
-            PipelineData objectMaps = PipelineUtils.getPipeline(resultMaps, catName);
+            PipelineData objectMaps = PipelineUtils.getPipeline(resultMaps, getPipeline());
             if (objectMaps != null) {
                 Map<String, Object> indicatorMaps = (Map<String, Object>) objectMaps.get(getPipeline());
                 //System.out.println("macd"+ macdMaps.keySet());
-                objectMap = (Map<String, List<Object>>) indicatorMaps.get(PipelineConstants.OBJECT);
+                objectMap = (Map<String, List<Object>>) objectMaps.get(PipelineConstants.OBJECT);
             }
             return;
         }

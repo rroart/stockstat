@@ -9,7 +9,7 @@ import roart.pipeline.Pipeline;
 public class PredictorPytorchMLP extends PytorchPredictor {
 
     public PredictorPytorchMLP(IclijConfig conf, String string, String title, int category, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
-        super(conf, string, category, neuralnetcommand, datareaders);
+        super(conf, string, title, category, neuralnetcommand, datareaders);
     }
 
     @Override

@@ -7,8 +7,8 @@ import roart.common.pipeline.data.PipelineData;
 import roart.pipeline.Pipeline;
 
 public abstract class PytorchPredictor extends Predictor {
-    public PytorchPredictor(IclijConfig conf, String string, int category, NeuralNetCommand neuralnetcommand, PipelineData[] datareaders) {
-        super(conf, string, category, neuralnetcommand, datareaders);
+    public PytorchPredictor(IclijConfig conf, String string, String title, int category, NeuralNetCommand neuralnetcommand, PipelineData[] datareaders) {
+        super(conf, string, title, category, neuralnetcommand, datareaders);
     }
     
     @Override

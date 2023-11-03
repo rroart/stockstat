@@ -666,6 +666,7 @@ public class Sim {
         if (res0 == null) {
             return map;
         }
+        res0 = (Map<String, Object>) res0.get("map");
         for (Entry<String, Object> entry : res0.entrySet()) {
             //System.out.println(entry.getKey() + " " + entry.getValue().getClass().getName());
             String key = entry.getKey();

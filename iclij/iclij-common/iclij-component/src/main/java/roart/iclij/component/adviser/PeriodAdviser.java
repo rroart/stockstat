@@ -20,6 +20,7 @@ import roart.common.model.IncDecItem;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.util.JsonUtil;
 import roart.common.util.MetaUtil;
 import roart.common.util.PipelineUtils;
 import roart.component.model.ComponentData;
@@ -61,8 +62,8 @@ public class PeriodAdviser extends Adviser {
             }
             //List<MetaItem> metas = param.getService().getMetas();
             PipelineData metaData = PipelineUtils.getPipeline(resultMaps, PipelineConstants.META);
-            MetaItem meta = (MetaItem) metaData.get(PipelineConstants.META);
-            String catName = new MetaUtil().getCategory(meta, cat);
+            MetaItem meta = JsonUtil.convert(metaData.get(PipelineConstants.META), MetaItem.class);
+            String catName = new MetaUtil().getCategory(meta, cat - 1);
 
             PipelineData objectMaps = PipelineUtils.getPipeline(resultMaps, catName);
             if (objectMaps == null) {

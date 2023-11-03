@@ -50,6 +50,18 @@ public class JsonUtil {
         return null;
     }
 
+    public static <T> T convert(Object object, Class<T> clazz) {
+        ObjectMapper mapper = new ObjectMapper();
+        if (object != null) {
+            try {
+                return mapper.convertValue(object, clazz);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
+        return null;
+    }
+
     public static <T> T convert(String text, Class<T> myclass, ObjectMapper mapper) {
         if (text != null) {
             try {

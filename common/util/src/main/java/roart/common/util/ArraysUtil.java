@@ -643,6 +643,12 @@ public class ArraysUtil {
             if (object instanceof String string && string.equals("NaN")) {
                 list.set(i, Double.NaN);
             }
+            if (object instanceof String string && string.equals("-Infinity")) {
+                list.set(i, Double.NEGATIVE_INFINITY);
+            }
+            if (object instanceof String string && string.equals("Infinity")) {
+                list.set(i, Double.POSITIVE_INFINITY);
+            }
         }
         return list.toArray(Double[]::new);
     }

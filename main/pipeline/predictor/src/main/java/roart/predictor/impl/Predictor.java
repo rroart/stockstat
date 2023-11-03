@@ -49,11 +49,12 @@ import roart.ml.model.LearnClassify;
 
 public abstract class Predictor extends AbstractPredictor {
 
-    public Predictor(IclijConfig conf, String string, int category, NeuralNetCommand neuralnetcommand, PipelineData[] datareaders) {
+    public Predictor(IclijConfig conf, String string, String title, int category, NeuralNetCommand neuralnetcommand, PipelineData[] datareaders) {
         super(conf, string, category, neuralnetcommand);
         if (!isEnabled()) {
             return;
         }
+        this.title = title;
         this.key = title;
         this.datareaders = datareaders;
         makeMapTypes();

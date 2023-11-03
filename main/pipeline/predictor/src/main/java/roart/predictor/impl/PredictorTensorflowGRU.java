@@ -9,7 +9,7 @@ import roart.pipeline.Pipeline;
 public class PredictorTensorflowGRU extends TensorflowPredictor {
 
     public PredictorTensorflowGRU(IclijConfig conf, String string, String title, int category, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
-        super(conf, string, category, neuralnetcommand, datareaders);
+        super(conf, string, title, category, neuralnetcommand, datareaders);
     }
 
     @Override

@@ -12,6 +12,10 @@ public class PipelineData {
 
     private Map<String, Object> map = new HashMap<>();
 
+    public PipelineData() {
+        super();
+    }
+
     public String getId() {
         return id;
     }
