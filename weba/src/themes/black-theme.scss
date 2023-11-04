@@ -1,9 +1,12 @@
-$anms-black-primary: mat-palette($mat-grey, 700, 300, 900);
-$anms-black-accent: mat-palette($mat-blue-grey, 400);
-$anms-black-warn: mat-palette($mat-red, 500);
+$anms-black-primary: mat.define-palette(mat.$grey-palette, 700, 300, 900);
+$anms-black-accent: mat.define-palette(mat.$blue-grey-palette, 400);
+$anms-black-warn: mat.define-palette(mat.$red-palette, 500);
 
-$anms-black-theme: mat-dark-theme(
-  $anms-black-primary,
-  $anms-black-accent,
-  $anms-black-warn
-);
+$anms-black-theme: mat.define-dark-theme((
+    color: (
+    primary: $anms-black-primary,
+    accent: $anms-black-accent,
+    warn: $anms-black-warn
+),
+    density: 0
+));

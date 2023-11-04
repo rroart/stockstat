@@ -101,17 +101,4 @@ export class IclijMarketComponent implements OnInit, OnDestroy {
   this.store.dispatch(new ActionIncrement({incCount: 2}));
   //this.increment.focus();
   }
-  incrementAsync($event) {
-  console.log('incremnentas');
-  console.log($event);
-  //this.increment.focus();
-  //tick(1000);
-  this.delay(10000).then( () =>
-  //setTimeout( () => { this.router.navigate(['/']); }, 5000);
-  this.store.dispatch(new ActionIncrement({incCount: 2})));
-  }
-
-async delay(ms: number) {
-    await new Promise(resolve => setTimeout(()=>resolve(), ms)).then(()=>console.log("fired"));
-}
 }

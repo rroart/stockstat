@@ -76,10 +76,12 @@ export class MainService {
     //;
   }
 
+/*
     static handleError(error: Response) {
         console.log("Error " + error);
         return Observable.throw(error || 'Server error');
     }
+*/
 
   static getPort() {
     if (typeof myenv.MYPORT !== 'undefined' && myenv.MYPORT !== '') {

@@ -21,11 +21,10 @@
       </div>
       <div class="icon-form-field">
          <mat-icon color="accent"><fa-icon icon="bars" color="accent"></fa-icon></mat-icon>
-         <mat-placeholder>{{ 'anms.settings.themes.sticky-header' | translate }}
-         </mat-placeholder>
          <mat-slide-toggle
            [checked]="settings?.stickyHeader"
            (change)="onStickyHeaderToggle($event)">
+           [placeholder]="'anms.settings.themes.sticky-header' | translate"
          </mat-slide-toggle>
        </div>
     </div>
@@ -48,11 +47,10 @@
       </div>
       <div class="icon-form-field">
         <mat-icon color="accent"><fa-icon icon="lightbulb" color="accent"></fa-icon></mat-icon>
-        <mat-placeholder>{{ 'anms.settings.themes.night-mode' | translate }}
-        </mat-placeholder>
         <mat-slide-toggle
           [checked]="settings?.autoNightMode"
           (change)="onAutoNightModeToggle($event)">
+          [placeholder]="'anms.settings.themes.night-mode' | translate"
         </mat-slide-toggle>
       </div>
     </div>
@@ -60,10 +58,9 @@
       <h2>{{ 'anms.settings.animations.title' | translate }}</h2>
       <div class="icon-form-field">
         <mat-icon color="accent"><mat-icon color="accent"><fa-icon icon="window-maximize"></fa-icon></mat-icon></mat-icon>
-        <mat-placeholder>{{ 'anms.settings.animations.page' | translate }}
-        </mat-placeholder>
         <mat-slide-toggle
           matTooltip="Sorry, this feature is disabled in IE, EDGE and Safari"
+          [placeholder]="'anms.settings.animations.page' | translate"
           matTooltipPosition="before"
           *ngIf="settings?.pageAnimationsDisabled"
           disabled>
@@ -76,11 +73,10 @@
       </div>
       <div class="icon-form-field">
         <mat-icon color="accent"><fa-icon icon="stream" color="accent"></fa-icon></mat-icon>
-        <mat-placeholder>{{ 'anms.settings.animations.elements' | translate }}
-        </mat-placeholder>
         <mat-slide-toggle
           [checked]="settings?.elementsAnimations"
           (change)="onElementsAnimationsToggle($event)">
+          [placeholder]="'anms.settings.animations.elements' | translate"
         </mat-slide-toggle>
       </div>
     </div>

@@ -139,7 +139,4 @@ export class MyIclijtableComponent implements OnInit, OnDestroy {
 
 @ViewChild(MatSort, { static: false }) sort: MatSort;
 
-async delay(ms: number) {
-    await new Promise(resolve => setTimeout(()=>resolve(), ms)).then(()=>console.log("fired"));
-}
 }

@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 
-import { ActionIncrement, ActionSetconfigvaluemap } from '../main.actions';
+import { ActionIncrement, ActionSetconfigvaluemap, ActionSetconfigvaluemap2 } from '../main.actions';
 
 import { routeAnimations, TitleService } from '@app/core';
 //import { tick } from '@angular/core';
@@ -40,6 +40,8 @@ export class TreeviewComponent implements OnInit, OnDestroy {
 @Input() configMaps : any;
 @Input() elem : any; //ConfigTreeMap;
 @Input() configValueMap : Map<String, String>;
+@Input() config: any;
+
 values2: Array<any>;
     textname: String;
 myvalue: String;
@@ -137,23 +139,17 @@ checkboxvalue: any; //boolean;
   this.store.dispatch(new ActionIncrement({incCount: 2}));
   //this.increment.focus();
   }
-  incrementAsync($event) {
-  console.log('incremnentas');
-  console.log($event);
-  //this.increment.focus();
-  //tick(1000);
-  this.delay(10000).then( () =>
-  //setTimeout( () => { this.router.navigate(['/']); }, 5000);
-  this.store.dispatch(new ActionIncrement({incCount: 2})));
-  }
-
         switchMe(event) {
         console.log(event.checked);
         console.log("switched2"+event.checked);
     console.log("va3 " + this.elem.name + " " + event.checked);
     //this.configValueMap.set(this.elem.name, event.target.checked);
     // TODO same
+    if (this.config == "config") {
     this.store.dispatch(new ActionSetconfigvaluemap([this.elem.name, event.checked]));
+    } else {
+    this.store.dispatch(new ActionSetconfigvaluemap2([this.elem.name, event.checked]));
+    }
         }
 
     onSubmit($event) {
@@ -161,10 +157,11 @@ checkboxvalue: any; //boolean;
     console.log("va " + this.elem.name + " " +$event.target.value);
     //this.configValueMap.set(this.elem.name, value);
     // TODO same
+    if (this.config == "config") {
     this.store.dispatch(new ActionSetconfigvaluemap([this.elem.name, $event.target.value]));
+    } else {
+    this.store.dispatch(new ActionSetconfigvaluemap2([this.elem.name, $event.target.value]));
+    }
 }
 
-async delay(ms: number) {
-    await new Promise(resolve => setTimeout(()=>resolve(), ms)).then(()=>console.log("fired"));
-}
 }

@@ -114,8 +114,4 @@ export class MyimageComponent implements OnInit, OnDestroy {
         //this.setCount(main);
       });
   }
-
-async delay(ms: number) {
-    await new Promise(resolve => setTimeout(()=>resolve(), ms)).then(()=>console.log("fired"));
-}
 }

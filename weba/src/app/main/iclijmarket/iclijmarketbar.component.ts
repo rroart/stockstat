@@ -130,17 +130,6 @@ export class IclijMarketbarComponent implements OnInit, OnDestroy {
     this.store.dispatch(new ActionSetconfigvalue(['market', $event.value]));
     //this.increment.focus();
   }
-  incrementAsync($event) {
-    console.log('incremnentas');
-    console.log($event);
-    //this.increment.focus();
-    //tick(1000);
-    this.delay(10000).then(() =>
-      //setTimeout( () => { this.router.navigate(['/']); }, 5000);
-      this.store.dispatch(new ActionIncrement({ incCount: 2 }))
-    );
-  }
-
   changemlmarket($event) {
     console.log('market');
     console.log($event);
@@ -263,9 +252,4 @@ export class IclijMarketbarComponent implements OnInit, OnDestroy {
     this.store.dispatch(new ActionGetImproveProfit(this.main.config2));
   }
 
-  async delay(ms: number) {
-    await new Promise(resolve => setTimeout(() => resolve(), ms)).then(() =>
-      console.log('fired')
-    );
-  }
 }

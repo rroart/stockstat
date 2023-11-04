@@ -120,16 +120,6 @@ changemlmarket($event) {
   //this.increment.focus();
   }
 
-incrementAsync($event) {
-  console.log('incremnentas');
-  console.log($event);
-  //this.increment.focus();
-  //tick(1000);
-  this.delay(10000).then( () =>
-  //setTimeout( () => { this.router.navigate(['/']); }, 5000);
-  this.store.dispatch(new ActionIncrement({incCount: 2})));
-  }
-
   resetmlmarket($event) {
   console.log('market');
   console.log($event);
@@ -166,7 +156,4 @@ incrementAsync($event) {
     this.store.dispatch(new ActionGetcontent(this.main.config));
   }
 
-async delay(ms: number) {
-    await new Promise(resolve => setTimeout(()=>resolve(), ms)).then(()=>console.log("fired"));
-}
 }

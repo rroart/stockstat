@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { LocalStorageService } from '@app/core';
-import { Actions, Effect, ofType } from '@ngrx/effects';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { asyncScheduler, interval, of } from 'rxjs';
 import { MytableComponent } from './table/mytable.component';
@@ -71,8 +71,7 @@ export class MainEffects {
     private service: MainService
   ) {}
 
-  @Effect()
-  getmarkets = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+  getmarkets$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGetmarkets>(MainActionTypes.GETMARKETS),
       debounceTime(debounce, scheduler),
@@ -93,10 +92,10 @@ export class MainEffects {
 	//return res['markets'];
 	}
       )
-    );
+    )
+  );
 
-  @Effect()
-  getconfiguration = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+  getconfiguration$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGetconfig>(MainActionTypes.GETCONFIG),
       debounceTime(debounce, scheduler),
@@ -117,10 +116,10 @@ export class MainEffects {
 	//return res['markets'];
 	}
       )
-    );
+    )
+  );
 
-  @Effect()
-  getconfiguration2 = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+  getconfiguration2$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGetconfig2>(MainActionTypes.GETCONFIG2),
       debounceTime(debounce, scheduler),
@@ -141,10 +140,10 @@ export class MainEffects {
 	//return res['markets'];
 	}
       )
-    );
+    )
+  );
 
-  @Effect()
-  getcontent = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+  getcontent$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGetcontent>(MainActionTypes.GETCONTENT),
       debounceTime(debounce, scheduler),
@@ -169,10 +168,10 @@ export class MainEffects {
 	//return res['markets'];
 	}
       )
-    );
+    )
+  );
 
-  @Effect()
-  getcontentgraph = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+  getcontentgraph$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGetcontentGraph>(MainActionTypes.GETCONTENTGRAPH),
       debounceTime(debounce, scheduler),
@@ -201,10 +200,10 @@ export class MainEffects {
 	//return res['markets'];
 	}
       )
-    );
+    )
+  );
 
-  @Effect()
-  getevolve = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+  getevolve$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGetevolve>(MainActionTypes.GETEVOLVE),
       debounceTime(debounce, scheduler),
@@ -253,9 +252,10 @@ export class MainEffects {
 	//return res['markets'];
 	}
       )
-    );
-  @Effect()
-  getcontent2 = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+    )
+  );
+
+  getcontent2$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGetcontent>(MainActionTypes.GETCONTENT2),
       debounceTime(debounce, scheduler),
@@ -272,10 +272,10 @@ export class MainEffects {
           catchError(error => of(new ActionError({ error })))
         );
       })
-    );
+    )
+  );
 
-  @Effect()
-  getcontentevolve = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+  getcontentevolve$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGetcontentEvolve>(MainActionTypes.GETCONTENTEVOLVE),
       debounceTime(debounce, scheduler),
@@ -291,10 +291,10 @@ export class MainEffects {
           catchError(error => of(new ActionError({ error })))
         );
       })
-    );
+    )
+  );
 
-  @Effect()
-  getcontentdataset = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+  getcontentdataset$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGetcontentDataset>(MainActionTypes.GETCONTENTDATASET),
       debounceTime(debounce, scheduler),
@@ -310,10 +310,10 @@ export class MainEffects {
           catchError(error => of(new ActionError({ error })))
         );
       })
-    );
+    )
+  );
 
-  @Effect()
-  getcontentcrosstest = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+  getcontentcrosstest$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGetcontentCrosstest>(MainActionTypes.GETCONTENTCROSSTEST),
       debounceTime(debounce, scheduler),
@@ -329,10 +329,10 @@ export class MainEffects {
           catchError(error => of(new ActionError({ error })))
         );
       })
-    );
+    )
+  );
 
-  @Effect()
-  getcontentfilter = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+  getcontentfilter$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGetcontentFilter>(MainActionTypes.GETCONTENTFILTER),
       debounceTime(debounce, scheduler),
@@ -348,10 +348,10 @@ export class MainEffects {
           catchError(error => of(new ActionError({ error })))
         );
       })
-    );
+    )
+  );
 
-  @Effect()
-  getcontentabovebelow = ({
+  getcontentabovebelow$ = createEffect(() => ({
     debounce = 500,
     scheduler = asyncScheduler
   } = {}) =>
@@ -370,10 +370,10 @@ export class MainEffects {
           catchError(error => of(new ActionError({ error })))
         );
       })
-    );
+    )
+  );
 
-  @Effect()
-  getcontentmachinelearning = ({
+  getcontentmachinelearning$ = createEffect(() => ({
     debounce = 500,
     scheduler = asyncScheduler
   } = {}) =>
@@ -394,10 +394,10 @@ export class MainEffects {
           catchError(error => of(new ActionError({ error })))
         );
       })
-    );
+    )
+  );
 
-  @Effect()
-  getcontentimprove = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+  getcontentimprove$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGetcontentImprove>(MainActionTypes.GETCONTENTIMPROVE),
       debounceTime(debounce, scheduler),
@@ -413,10 +413,10 @@ export class MainEffects {
           catchError(error => of(new ActionError({ error })))
         );
       })
-    );
+    )
+  );
 
-  @Effect()
-  getsinglemarket = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+  getsinglemarket$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGetSingleMarket>(MainActionTypes.GETSINGLEMARKET),
       debounceTime(debounce, scheduler),
@@ -432,10 +432,10 @@ export class MainEffects {
           catchError(error => of(new ActionError({ error })))
         );
       })
-    );
+    )
+  );
 
-  @Effect()
-  getsinglemarketloop = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+  getsinglemarketloop$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGetSingleMarketLoop>(MainActionTypes.GETSINGLEMARKETLOOP),
       debounceTime(debounce, scheduler),
@@ -459,10 +459,10 @@ export class MainEffects {
           );
         }
       })
-    );
+    )
+  );
 
-  @Effect()
-  getverify = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+  getverify$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGetVerify>(MainActionTypes.GETVERIFY),
       debounceTime(debounce, scheduler),
@@ -478,10 +478,10 @@ export class MainEffects {
           catchError(error => of(new ActionError({ error })))
         );
       })
-    );
+    )
+  );
 
-  @Effect()
-  getverifyloop = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+  getverifyloop$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGetVerifyLoop>(MainActionTypes.GETVERIFYLOOP),
       debounceTime(debounce, scheduler),
@@ -507,10 +507,10 @@ export class MainEffects {
           );
         }
       })
-    );
+    )
+  );
 
-  @Effect()
-  getimprove = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+  getimprove$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGetImproveProfit>(MainActionTypes.GETIMPROVEPROFIT),
       debounceTime(debounce, scheduler),
@@ -526,10 +526,10 @@ export class MainEffects {
           catchError(error => of(new ActionError({ error })))
         );
       })
-    );
+    )
+  );
 
-  @Effect()
-  getimproveabovebelow = ({
+  getimproveabovebelow$ = createEffect(() => ({
     debounce = 500,
     scheduler = asyncScheduler
   } = {}) =>
@@ -548,10 +548,10 @@ export class MainEffects {
           catchError(error => of(new ActionError({ error })))
         );
       })
-    );
+    )
+  );
 
-  @Effect()
-  getevolve2 = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+  getevolve2$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGetevolve>(MainActionTypes.GETEVOLVE),
       debounceTime(debounce, scheduler),
@@ -603,10 +603,10 @@ export class MainEffects {
         //return new ActionSetmarkets({ markets: res['markets']});
         //return res['markets'];
       })
-    );
+    )
+  );
     
-  @Effect()
-  gettasks = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+  gettasks$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGettasks>(MainActionTypes.GETTASKS),
       debounceTime(debounce, scheduler),
@@ -627,10 +627,10 @@ export class MainEffects {
         //return new ActionSetmarkets({ markets: res['markets']});
         //return res['markets'];
       })
-    );
+    )
+  );
 
-  @Effect()
-  gettasksinterval$ = interval(60000).pipe(
+  gettasksinterval$ = createEffect(() => interval(60000).pipe(
       switchMap(() => {
         //const res = this.service.retrieve0('/gettasks', {});
         // action.payload.url
@@ -647,6 +647,7 @@ export class MainEffects {
         //return new ActionSetmarkets({ markets: res['markets']});
         //return res['markets'];
       })
-    );
+    )
+  );
 
 }

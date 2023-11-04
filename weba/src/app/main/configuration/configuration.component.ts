@@ -1,5 +1,5 @@
 import { Store, select } from '@ngrx/store';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, Input } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivationEnd, Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
@@ -34,6 +34,9 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   private isAuthenticated$: Observable<boolean>;
 
   main: MainState;
+
+  @Input()
+  config: any;
 
   constructor(
     private store: Store<State>,
@@ -100,17 +103,4 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   this.store.dispatch(new ActionIncrement({incCount: 2}));
   //this.increment.focus();
   }
-  incrementAsync($event) {
-  console.log('incremnentas');
-  console.log($event);
-  //this.increment.focus();
-  //tick(1000);
-  this.delay(10000).then( () =>
-  //setTimeout( () => { this.router.navigate(['/']); }, 5000);
-  this.store.dispatch(new ActionIncrement({incCount: 2})));
-  }
-
-async delay(ms: number) {
-    await new Promise(resolve => setTimeout(()=>resolve(), ms)).then(()=>console.log("fired"));
-}
 }

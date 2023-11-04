@@ -19,7 +19,7 @@
       <!--mat-icon>thumb_down</mat-icon-->
       Configuration
     </ng-template>
-    <configuration bla='bla'>bla</configuration>
+    <configuration bla='bla'>bla config="config" configname="config"</configuration>
     <p>...</p>
   </mat-tab>
   <mat-tab>
@@ -35,7 +35,7 @@
       <!--mat-icon>thumb_down</mat-icon-->
       Configuration
     </ng-template>
-    <iclijconfiguration bla='bla'>bla</iclijconfiguration>
+    <configuration bla='bla' config="iconfig" configname="iconfig">bla</configuration>
     <p>...</p>
   </mat-tab>
   <mat-tab>
@@ -68,10 +68,6 @@
 </mat-tab-group>
 </nav>
 <br/>
-<div>
-  <button class="mat-raised-button" (click)="increment($event)">increment</button>
-  <button class="mat-raised-button" (click)="incrementAsync($event)">increment async</button>
-</div>
 <div [@routeAnimations]="o.isActivated && o.activatedRoute.routeConfig.path">
   <router-outlet #o="outlet"></router-outlet>
 </div>

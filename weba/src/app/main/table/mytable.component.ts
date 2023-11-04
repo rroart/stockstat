@@ -137,7 +137,4 @@ handleButtonClick(config, value) {
     this.store.dispatch(new ActionGetcontentGraph({ config, value }));
 }
 
-async delay(ms: number) {
-    await new Promise(resolve => setTimeout(()=>resolve(), ms)).then(()=>console.log("fired"));
-}
 }

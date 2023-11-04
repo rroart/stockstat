@@ -1,4 +1,6 @@
-@import '~@angular/material/theming';
+@use '@angular/material' as mat;
+
+@include mat.core();
 
 $toolbar-breakpoint: 600px;
 
@@ -14,5 +16,5 @@ $grid-breakpoints: (
   xl: 1200px
 );
 
-$success-colors: mat-palette($mat-green, 400);
-$warning-colors: mat-palette($mat-amber, 400);
+$success-colors: mat.define-palette(mat.$green-palette, 400);
+$warning-colors: mat.define-palette(mat.$amber-palette, 400);
