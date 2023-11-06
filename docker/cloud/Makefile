@@ -49,6 +49,10 @@ ifneq ($(IEVOLVETMPL),)
 	rsync -a $$IEVOLVETMPL iclij/ievolve.xml.tmpl
 endif
 	$(MAKE) -C $@ -f ../Makefile ievolve.xml
+ifneq ($(STOCKSTATTMPL),)
+	rsync -a $$STOCKSTATTMPL iclij/stockstat.xml.tmpl
+endif
+	$(MAKE) -C $@ -f ../Makefile stockstat.xml
 #	$(MAKE) -C $@ -f ../Makefile stockstat-$@-${VERSION}.jar
 
 %.xml: %.xml.tmpl

@@ -4,10 +4,12 @@ ARG distlib
 ARG distjar
 ARG myaserver
 ARG myiserver
+ARG mymserver
 ARG myserver
 ARG myport
 ARG myaport
 ARG myiport
+ARG mymport
 ARG mywebport
 ARG myconfig
 ARG mydbserver
@@ -23,10 +25,12 @@ ENV DISTLIB ${distlib}
 ENV DISTJAR ${distjar}
 ENV MYASERVER ${myaserver}
 ENV MYISERVER ${myiserver}
+ENV MYMSERVER ${mymserver}
 ENV MYSERVER ${myserver}
 ENV MYPORT ${myport}
 ENV MYAPORT ${myaport}
 ENV MYIPORT ${myiport}
+ENV MYMPORT ${mymport}
 ENV MYWEBPORT ${mywebport}
 ENV MYCONFIG ${myconfig}
 ENV MYDBSERVER ${mydbserver}

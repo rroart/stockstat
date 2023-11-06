@@ -49,10 +49,12 @@ build:
   - image: stockstat-machinelearning$IMGID
     context: ../../..
     docker:
-      dockerfile: docker/cloud/core/Dockerfile
+      dockerfile: docker/cloud/iclij/Dockerfile
       buildArgs:
         distlib: '{{.DISTLIB}}'
         distjar: '{{.MLJAR}}'
+        myserver: '{{.CORESERVER}}'
+        myport: "80"
         mywebport: "80"
         mydbserver: '{{.MYDBSERVER}}'
         mydbserverport: '{{.MYDBSERVERPORT}}'
@@ -72,9 +74,11 @@ build:
         distlib: '{{.DISTLIB}}'
         distjar: '{{.ICOREJAR}}'
         myserver: '{{.CORESERVER}}'
+        mymserver: '{{.MLSERVER}}'
         myport: "80"
         myaport: "80"
         myiport: "80"
+        mymport: "80"
         mywebport: "80"
         mydbserver: '{{.MYDBSERVER}}'
         mydbserverport: '{{.MYDBSERVERPORT}}'
