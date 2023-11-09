@@ -16,7 +16,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.model.PipelineResultData;
 import roart.evolution.chromosome.AbstractChromosome;
-import roart.evolution.chromosome.impl.NeuralNetChromosome2;
+import roart.evolution.chromosome.impl.NeuralNetChromosome;
 import roart.evolution.fitness.Fitness;
 import roart.iclij.config.IclijConfig;
 
@@ -59,7 +59,7 @@ public class FitnessNeuralNet extends Fitness {
         aggregate = future.get();
         */
         try {
-        pipelineData = new PipelineFactory().myfactory(conf, ml, dataReaders, catName, cat, neuralnetcommand, ((NeuralNetChromosome2) chromosome), key);
+        pipelineData = new PipelineFactory().myfactory(conf, ml, dataReaders, catName, cat, neuralnetcommand, ((NeuralNetChromosome) chromosome), key);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -92,9 +92,9 @@ public class FitnessNeuralNet extends Fitness {
         private String catName;
         private Integer cat;
         private NeuralNetCommand neuralnetcommand;
-        private NeuralNetChromosome2 chromosome;
+        private NeuralNetChromosome chromosome;
         
-        public MyCallable(IclijConfig conf, String ml, PipelineData[] dataReaders, String catName, Integer cat, NeuralNetCommand neuralnetcommand, NeuralNetChromosome2 chromosome) {
+        public MyCallable(IclijConfig conf, String ml, PipelineData[] dataReaders, String catName, Integer cat, NeuralNetCommand neuralnetcommand, NeuralNetChromosome chromosome) {
             this.conf = conf;
             this.ml = ml;
             this.dataReaders = dataReaders;
