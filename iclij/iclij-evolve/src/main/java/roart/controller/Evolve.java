@@ -61,7 +61,7 @@ import roart.common.util.MathUtil;
 import roart.common.util.TimeUtil;
 import roart.db.dao.IclijDbDao;
 import roart.evolution.chromosome.AbstractChromosome;
-import roart.evolution.chromosome.impl.NeuralNetChromosome2;
+import roart.evolution.chromosome.impl.NeuralNetChromosome;
 import roart.filesystem.FileSystemDao;
 import roart.gene.NeuralNetConfigGene;
 import roart.iclij.evolution.marketfilter.chromosome.impl.AboveBelowChromosome;
@@ -104,7 +104,7 @@ public class Evolve {
         param = getParam(param);
         List<String> output = new ArrayList<>();
         TypeReference ref = new TypeReference<List<LinkedHashMap<Double, AbstractChromosome>>>(){};
-        Map<String, Object> myMap = convert(param, new TypeReference<List<LinkedHashMap<Double, NeuralNetChromosome2>>>(){});
+        Map<String, Object> myMap = convert(param, new TypeReference<List<LinkedHashMap<Double, NeuralNetChromosome>>>(){});
         String id = (String) myMap.get(EvolveConstants.ID);
         List<Pair<Double, AbstractChromosome>> myList = (List<Pair<Double, AbstractChromosome>>) myMap.get(id);
         if (myList == null) {
@@ -155,7 +155,7 @@ public class Evolve {
         String text = printtext(ServiceConstants.EVOLVEFILTEREVOLVE + " " + title, "File " + id, output);
         print(text);
         if (better) {
-            NeuralNetChromosome2 c = (NeuralNetChromosome2) myList.get(0).getRight();
+            NeuralNetChromosome c = (NeuralNetChromosome) myList.get(0).getRight();
             NeuralNetConfigGene conf2 = c.getNnConfig();
             String ml = new MLMapsML().getMap().get(subcomponent);
             String key = new NeuralNetConfigs().getConfigMap().get(ml);
