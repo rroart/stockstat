@@ -100,7 +100,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
             List<String>[] buysell = recommendKeyMap.get(recommender);
             List<AbstractIndicator> indicators = Recommend.getIndicators(recommender, usedRecommenders, indicatorMap);
             // We just want the config, any in the list will do
-            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators.stream().map(AbstractIndicator::indicatorName).toList(), 0 /*recommend.getFutureDays()*/, 1 /*conf.getTableDays()*/, 1 /*recommend.getIntervalDays()*/, null, datareaders);
+            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, indicators.stream().map(AbstractIndicator::indicatorName).toList(), 0 /*recommend.getFutureDays()*/, 1 /*conf.getTableDays()*/, 1 /*recommend.getIntervalDays()*/, null, datareaders);
             Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
             result = dayIndicatorMap.get(0);
             List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];

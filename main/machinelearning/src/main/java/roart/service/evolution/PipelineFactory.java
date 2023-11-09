@@ -20,7 +20,7 @@ import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.model.PipelineResultData;
-import roart.evolution.chromosome.impl.NeuralNetChromosome2;
+import roart.evolution.chromosome.impl.NeuralNetChromosome;
 import roart.gene.NeuralNetConfigGene;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.predictor.impl.PredictorPytorchGRU;
@@ -34,8 +34,8 @@ import roart.predictor.impl.PredictorTensorflowMLP;
 import roart.predictor.impl.PredictorTensorflowRNN;
 
 public class PipelineFactory {
-    public PipelineResultData myfactory(IclijConfig conf, String ml, PipelineData[] dataReaders, String catName, Integer cat, NeuralNetCommand neuralnetcommand, NeuralNetChromosome2 chromosome, String key) throws Exception {
-        NeuralNetConfigGene nnConfigGene = ((NeuralNetChromosome2) chromosome).getNnConfig();
+    public PipelineResultData myfactory(IclijConfig conf, String ml, PipelineData[] dataReaders, String catName, Integer cat, NeuralNetCommand neuralnetcommand, NeuralNetChromosome chromosome, String key) throws Exception {
+        NeuralNetConfigGene nnConfigGene = ((NeuralNetChromosome) chromosome).getNnConfig();
         NeuralNetConfigs nnConfigs = new NeuralNetConfigs();
         nnConfigs.set(key, nnConfigGene.getConfig());
         ObjectMapper mapper = new ObjectMapper();

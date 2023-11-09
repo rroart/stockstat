@@ -1,22 +1,13 @@
 package roart.service.evolution;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.Files;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,55 +16,32 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.aggregatorindicator.impl.Recommend;
-import roart.category.AbstractCategory;
-import roart.common.config.ConfigConstants;
-import roart.iclij.config.IclijConfig;
-import roart.iclij.service.IclijServiceResult;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
-import roart.common.ml.NeuralNetCommand;
-import roart.common.ml.NeuralNetConfig;
-import roart.common.ml.NeuralNetConfigs;
-import roart.common.ml.NeuralNetTensorflowConfig;
-import roart.common.ml.TensorflowPredictorLSTMConfig;
-import roart.common.model.FileObject;
-import roart.common.model.MetaItem;
-import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.util.JsonUtil;
 import roart.db.dao.DbDao;
-import roart.db.dao.util.DbDaoUtil;
-import roart.etl.MarketDataETL;
-import roart.etl.PeriodDataETL;
 import roart.etl.db.Extract;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
-import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.IndicatorChromosome;
-import roart.evolution.chromosome.impl.IndicatorEvaluationNew;
-import roart.evolution.chromosome.impl.NeuralNetChromosome2;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.impl.ProportionScore;
 import roart.evolution.species.Individual;
 import roart.filesystem.FileSystemDao;
-import roart.gene.NeuralNetConfigGene;
-import roart.gene.NeuralNetConfigGeneFactory;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.service.IclijServiceResult;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
 import roart.model.data.MarketData;
-import roart.model.data.PeriodData;
 import roart.model.data.StockData;
 import roart.pipeline.Pipeline;
-import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.pipeline.impl.DataReader;
 import roart.result.model.ResultItem;
 import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
 import roart.service.ControlService;
 import roart.service.util.ServiceUtil;
-import roart.stockutil.StockUtil;
-import roart.talib.util.TaUtil;
-import roart.common.util.JsonUtil;
-import roart.common.util.TimeUtil;
 
 public class EvolutionService {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -96,11 +64,9 @@ public class EvolutionService {
         Map<String, Object> resultMap = new HashMap<>();
         log.info("mydate {}", conf.getConfigData().getDate());
         log.info("mydate {}", conf.getDays());
-        String market = conf.getConfigData().getMarket();
         ObjectMapper mapper = new ObjectMapper();
         EvolutionConfig evolutionConfig = mapper.readValue(conf.getEvolveIndicatorrecommenderEvolutionConfig(), EvolutionConfig.class);
     
-        //createOtherTables();
         StockData stockData = new Extract(dao).getStockData(conf);
         if (stockData == null) {
             return result;
@@ -177,7 +143,6 @@ public class EvolutionService {
     private void findRecommendSettings(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
             Map<String, List<Recommend>> usedRecommenders, Map<String, List<String>[]> recommendKeyMap,
             Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, int days, PipelineData[] datareaders, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws Exception {
-        TaUtil tu = new TaUtil();
         String thresholdString = conf.getTestIndicatorRecommenderComplexThreshold();
         Double[] thresholds = getThresholds(conf, thresholdString);
         double threshold = thresholds[0];
@@ -185,7 +150,7 @@ public class EvolutionService {
             List<AbstractIndicator> indicators = Recommend.getIndicators(entry.getKey(), usedRecommenders, indicatorMap);
             List<String>[] recommendList = recommendKeyMap.get(entry.getKey());
             Recommend recommend = entry.getValue().get(0);
-            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators.stream().map(AbstractIndicator::indicatorName).toList(), recommend.getFutureDays(), conf.getTableDays(), recommend.getIntervalDays(), null, datareaders);
+            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, indicators.stream().map(AbstractIndicator::indicatorName).toList(), recommend.getFutureDays(), conf.getTableDays(), recommend.getIntervalDays(), null, datareaders);
             List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
             if (macdrsiMinMax == null || macdrsiMinMax.length == 1) {
                 int jj = 0;
@@ -251,52 +216,6 @@ public class EvolutionService {
                 String indicator = recommend.indicator();
                 indicatorMap.put(indicator, recommend.getIndicator(category, newIndicatorMap, null, datareaders));
             }
-        }
-    }
-
-    private void findRecommendSettingsNew(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
-            Map<String, List<Recommend>> usedRecommenders, Map<String, List<String>[]> recommendKeyMap,
-            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, PipelineData[] datareaders) throws Exception {
-        TaUtil tu = new TaUtil();
-        for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {
-            List<AbstractIndicator> indicators = Recommend.getIndicators(entry.getKey(), usedRecommenders, indicatorMap);
-            List<String>[] recommendList = recommendKeyMap.get(entry.getKey());
-            Recommend recommend = entry.getValue().get(0);
-            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators.stream().map(AbstractIndicator::indicatorName).toList(), recommend.getFutureDays(), conf.getTableDays(), recommend.getIntervalDays(), null, datareaders);
-            List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
-            if (macdrsiMinMax.length == 1) {
-                int jj = 0;
-            }
-    
-            List<String> buyList = recommendList[0];
-            List<String> sellList = recommendList[1];
-            findRecommendSettingsNew(conf, evolutionConfig, disableList, table, updateMap, retObj, buyList, true);
-            findRecommendSettingsNew(conf, evolutionConfig, disableList, table, updateMap, retObj, sellList, false);
-        }
-    }
-
-    private void findRecommendSettingsNew(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList,
-            ResultItemTable table, Map<String, Object> updateMap, Object[] retObj, List<String> keyList, boolean doBuy) throws Exception {
-        for (String id : keyList) {
-            if (disableList.contains(id)) {
-                continue;
-            }
-            IndicatorEvaluationNew recommend = new IndicatorEvaluationNew(conf, id, retObj, doBuy, keyList.indexOf(id));
-    
-            OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
-    
-            Individual buysell = evolution.getFittest(evolutionConfig, recommend, null, null);
-    
-            ResultItemTableRow row = new ResultItemTableRow();
-            row.add(id);
-            row.add("" + conf.getConfigData().getConfigValueMap().get(id));
-            //log.info("Buy {} {}", id, buy.getConf().getConfigValueMap().get(id));
-            //log.info("Buy {}", buy.getConf().getConfigValueMap().get(id).getClass().getName());
-            IndicatorEvaluationNew newEval = (IndicatorEvaluationNew) buysell.getEvaluation();
-         
-            row.add("" + newEval.getConf().getConfigData().getConfigValueMap().get(id));
-            table.add(row);
-            updateMap.put(id, newEval.getConf().getConfigData().getConfigValueMap().get(id));
         }
     }
 
