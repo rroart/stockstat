@@ -637,9 +637,9 @@ public abstract class Component {
     }
 
     protected void handleMLMetaCommon(ComponentData param, Map<String, Object> valueMap) {
-        PipelineData resultMaps = param.getResultMap(getPipeline(), valueMap);
+        PipelineData resultMaps = param.getResultMap(getPipeline(), valueMap, true);
         param.setCategory(resultMaps);
-        param.getAndSetCategoryValueMap();
+        param.getAndSetCategoryValueMap(true);
         PipelineData resultMaps2 = param.getResultMap();
         handleMLMeta(param, resultMaps2);        
     }

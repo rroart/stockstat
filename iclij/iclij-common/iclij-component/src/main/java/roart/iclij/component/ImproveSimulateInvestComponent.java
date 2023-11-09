@@ -197,13 +197,13 @@ public class ImproveSimulateInvestComponent extends ComponentML {
         aMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
         aMap.put(ConfigConstants.MISCMERGECY, false);
         // different line
-        param.getResultMap(null, aMap);
+        param.getResultMap(null, aMap, false);
         PipelineData[] mapsRebase = param.getResultMaps();
         param.setResultRebaseMaps(mapsRebase);
 
         aMap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, false);
         // different line
-        param.getResultMap(null, aMap);
+        param.getResultMap(null, aMap, false);
         //Map<String, Map<String, Object>> maps = param.getResultMaps();
         //param.getAndSetWantedCategoryValueMap();
         /*

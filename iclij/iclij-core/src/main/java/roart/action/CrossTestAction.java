@@ -131,7 +131,7 @@ public class CrossTestAction extends MarketAction {
 
     @Override
     public void setValMap(ComponentData param) {
-        param.getAndSetWantedCategoryValueMap();
+        param.getAndSetWantedCategoryValueMap(false);
     }
 
     @Override

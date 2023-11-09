@@ -119,7 +119,7 @@ public class MachineLearningAction extends MarketAction {
 
     @Override
     public void setValMap(ComponentData param) {
-        param.getAndSetCategoryValueMap();
+        param.getAndSetCategoryValueMap(true);
     }
     
     @Override

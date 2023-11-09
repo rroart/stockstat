@@ -138,7 +138,7 @@ public class EvolveAction extends MarketAction {
 
     @Override
     public void setValMap(ComponentData param) {
-        param.getAndSetWantedCategoryValueMap();
+        param.getAndSetWantedCategoryValueMap(true);
     }
 
     @Override

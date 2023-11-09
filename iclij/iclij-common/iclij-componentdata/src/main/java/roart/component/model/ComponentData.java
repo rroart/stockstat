@@ -354,7 +354,7 @@ public class ComponentData {
         this.usedsec = (int) ((System.currentTimeMillis() - time0) / 1000);
     }
     
-    public void getAndSetCategoryValueMap() {
+    public void getAndSetCategoryValueMap(boolean useMl) {
         getService().conf.getConfigData().setDate(getFutureDate());
         Map<String, Object> setValueMap = new HashMap<>();
         setValueMap.put(ConfigConstants.AGGREGATORS, Boolean.FALSE);
@@ -367,7 +367,7 @@ public class ComponentData {
         setValueMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
         service.conf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
         service.conf.getConfigData().getConfigValueMap().putAll(setValueMap);
-        PipelineData[] result = getService().getContent();
+        PipelineData[] result = getService().getContent(useMl);
         this.resultMaps = result;
         try {
             List<String> stockdates = (List<String>) PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.DATELIST);
@@ -383,7 +383,7 @@ public class ComponentData {
         }        
     }
 
-    public void getAndSetWantedCategoryValueMap() {
+    public void getAndSetWantedCategoryValueMap(boolean useMl) {
         getService().conf.getConfigData().setDate(getFutureDate());
         Map<String, Object> setValueMap = new HashMap<>();
         setValueMap.put(ConfigConstants.AGGREGATORS, Boolean.FALSE);
@@ -398,7 +398,7 @@ public class ComponentData {
         setValueMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
         service.conf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
         service.conf.getConfigData().getConfigValueMap().putAll(setValueMap);
-        PipelineData[] result = getService().getContent();
+        PipelineData[] result = getService().getContent(useMl);
         this.resultMaps = result;
         try {
             //log.info("" + result.keySet());
@@ -418,7 +418,7 @@ public class ComponentData {
         }
     }
 
-    public PipelineData getResultMap(String mapName, Map<String, Object> setValueMap) {
+    public PipelineData getResultMap(String mapName, Map<String, Object> setValueMap, boolean useMl) {
         zerokey(configValueMap);
         service.conf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
         zerokey(setValueMap);
@@ -428,7 +428,7 @@ public class ComponentData {
             service.conf.getConfigData().getConfigValueMap().putAll(updateMap);
         }
         service.conf.getConfigData().setDate(getBaseDate());
-        PipelineData[] maps = service.getContent(getDisableList());
+        PipelineData[] maps = service.getContent(useMl, getDisableList());
         this.resultMaps = maps;
         //System.out.println(maps.keySet());
         PipelineData aMap = null;

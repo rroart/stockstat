@@ -89,7 +89,7 @@ public class ImproveSimulateInvestAction extends MarketAction {
 
     @Override
     public void setValMap(ComponentData param) {
-        param.getAndSetWantedCategoryValueMap();
+        param.getAndSetWantedCategoryValueMap(false);
     }
 
     @Override

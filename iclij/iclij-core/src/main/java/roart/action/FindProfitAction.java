@@ -222,7 +222,7 @@ public class FindProfitAction extends MarketAction {
     
     @Override
     public void setValMap(ComponentData param) {
-        param.getAndSetCategoryValueMap();
+        param.getAndSetCategoryValueMap(false);
     }
 
     public WebData getVerifyMarket(ComponentInput componentInput, ComponentData param,

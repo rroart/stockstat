@@ -234,15 +234,16 @@ public class ControlService {
     }
    /**
      * Create result lists
+ * @param useMl TODO
      * 
      * @return the tabular result lists
      */
 
-    public PipelineData[] getContent() {
-        return getContent(new ArrayList<>());
+    public PipelineData[] getContent(boolean useMl) {
+        return getContent(useMl, new ArrayList<>());
     }
     
-    public PipelineData[] getContent(List<String> disableList) {
+    public PipelineData[] getContent(boolean useMl, List<String> disableList) {
         
         long[] mem0 = MemUtil.mem();
         log.info("MEM {}", MemUtil.print(mem0));
@@ -262,7 +263,12 @@ public class ControlService {
         neuralnetcommand.setMldynamic(conf.wantMLDynamic());
         neuralnetcommand.setMlcross(conf.wantMLCross());
         param.setNeuralnetcommand(neuralnetcommand);
-        IclijServiceResult result = WebFluxUtil.sendMMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
+        IclijServiceResult result;
+        if (useMl) {
+            result = WebFluxUtil.sendMMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
+        } else {
+            result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
+        }
         //log.info("blblbl" + JsonUtil.convert(result).length());
         list = result.getPipelineData();
         PipelineData[] list2 = list;

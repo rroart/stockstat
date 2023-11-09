@@ -107,7 +107,7 @@ public abstract class IndicatorAdviser extends Adviser {
         aMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
         aMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
         aMap.put(ConfigConstants.MISCMERGECY, false);
-        param.getResultMap(null, aMap);
+        param.getResultMap(null, aMap, false);
         PipelineData[] maps = param.getResultMaps();
         /*
         for (Entry<String, Map<String, Object>> entry : maps.entrySet()) {

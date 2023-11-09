@@ -254,7 +254,7 @@ public class FitnessMarketFilter2 {
 
             short startoffset = new MarketUtil().getStartoffset(market);
             //action.setValMap(param);
-            param.getAndSetWantedCategoryValueMap();
+            param.getAndSetWantedCategoryValueMap(false);
             VerifyProfit verify = new VerifyProfit();
             incProp = verify.getTrend(verificationdays, param.getCategoryValueMap(), startoffset, null);
             //Trend incProp = new FindProfitAction().getTrend(verificationdays, param.getFutureDate(), param.getService());

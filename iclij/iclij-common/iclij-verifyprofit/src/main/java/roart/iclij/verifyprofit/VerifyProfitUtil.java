@@ -30,7 +30,7 @@ public class VerifyProfitUtil {
         } catch (ParseException e) {
             log.error(Constants.EXCEPTION, e);
         }
-        componentData.getAndSetWantedCategoryValueMap();
+        componentData.getAndSetWantedCategoryValueMap(false);
         Map<String, List<List<Double>>> categoryValueMap = componentData.getCategoryValueMap();
         
         VerifyProfit verify = new VerifyProfit();
@@ -51,7 +51,7 @@ public class VerifyProfitUtil {
         }
         log.info("Verify compare date {} with {} threshold {}", componentData.getComponentTime().getFutureDate(), days, threshold);
         LocalDate mydate = componentData.getFutureDate();
-        componentData.getAndSetWantedCategoryValueMap();
+        componentData.getAndSetWantedCategoryValueMap(false);
         Map<String, List<List<Double>>> categoryValueMap = componentData.getCategoryValueMap();
     
         VerifyProfit verify = new VerifyProfit();

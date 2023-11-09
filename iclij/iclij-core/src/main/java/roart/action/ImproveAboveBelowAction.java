@@ -95,7 +95,7 @@ public class ImproveAboveBelowAction extends MarketAction {
 
     @Override
     public void setValMap(ComponentData param) {
-        param.getAndSetWantedCategoryValueMap();
+        param.getAndSetWantedCategoryValueMap(false);
     }
 
     @Override
@@ -152,7 +152,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                 Parameters realParameters = JsonUtil.convert(aParameter, Parameters.class);
                 Double threshold = realParameters.getThreshold();
 
-                param.getAndSetCategoryValueMap();
+                param.getAndSetCategoryValueMap(false);
 
                 //FitnessAboveBelow fit = new FitnessAboveBelow(action, new ArrayList<>(), param, profitdata, market, null, this.getPipeline(), null, subcomponent, realParameters, null, incdecsP, components, subcomponents, stockDates);
                 FitnessAboveBelowCommon fitCommon = new FitnessAboveBelowCommon();
