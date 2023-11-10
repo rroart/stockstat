@@ -159,5 +159,9 @@ export const geturl = (query) => {
     return "http://" + getAHost() + ":" + getAPort() + query;
 }
 
-const Client = { search, searchsynch, fetchApi, geturl };
+export const geturl2 = (query) => {
+    return "http://" + getIHost() + ":" + getIPort() + query;
+}
+
+const Client = { search, searchsynch, fetchApi, geturl, geturl2 };
 export default Client;

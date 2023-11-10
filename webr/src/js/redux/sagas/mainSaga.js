@@ -515,7 +515,7 @@ export function* fetchMarkets() {
     const serviceparam = new IclijServiceParam();
     //serviceparam.market = '0';
     console.log("heremarkets1");
-    let markets = yield call(Client.fetchApi.search, "/getmarkets", serviceparam);
+    let markets = yield call(Client.fetchApi.search2, "/getmarkets", serviceparam);
     console.log("heremarkets2");
     //const markets = Client.searchsynch("/getmarkets", serviceparam, () => {});
     console.log(markets);

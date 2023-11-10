@@ -65,6 +65,15 @@ public class ControlService {
         objectMapper = jsonObjectMapper();
     }
   
+    public List<String> getTasks() {
+        try {
+            return sendAMe(List.class, null, EurekaConstants.GETTASKS, null);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return new ArrayList<>();
+    }
+
     public void getAndSetCoreConfig() {
         ConfigData list = getCoreConfig();
         /*
@@ -118,7 +127,7 @@ public class ControlService {
         if (list == null) {
             IclijServiceParam param = new IclijServiceParam();
             param.setConfigData(iclijConfig.getConfigData());
-            IclijServiceResult result = sendAMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG, objectMapper);
+            IclijServiceResult result = sendAMe(IclijServiceResult.class, param, "i" + EurekaConstants.GETCONFIG, objectMapper);
             list = result.getConfigData();
             MyCache.getInstance().put(key, list);
         }
@@ -188,7 +197,7 @@ public class ControlService {
 
     public List<String> getMarkets() {
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfigData(conf.getConfigData());
+        //param.setConfigData(conf.getConfigData());
         IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETMARKETS);
         return result.getMarkets();    	
     }

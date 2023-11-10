@@ -2,6 +2,7 @@ package roart.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
@@ -50,32 +52,61 @@ public class ServiceController {
         return new ResponseEntity(HttpStatus.OK);
     }
     
+    @RequestMapping(value = "/" + EurekaConstants.GETMARKETS,
+            method = RequestMethod.POST)
+    public IclijServiceResult getMarkets(@RequestBody IclijServiceParam param)
+            throws Exception {
+        IclijServiceResult result = new IclijServiceResult();
+        try {
+            result.setMarkets(getInstance().getMarkets());
+            log.info("Marketsize {}", result.getMarkets().size());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            result.setError(e.getMessage());
+        }
+        return result;
+    }
+
+    @RequestMapping(value = EurekaConstants.GETTASKS,
+            method = RequestMethod.POST)
+    public List<String> getTasks(/*@PathVariable String market*/)
+            throws Exception {
+        return getInstance().getTasks();
+    }
+
     @RequestMapping(value = "/" + EurekaConstants.GETCONFIG,
             method = RequestMethod.POST)
     public IclijServiceResult getConfig(/*@PathVariable String market*/)
             throws Exception {
-        return ServiceUtil.getConfig(instance.getConfig());
+        return ServiceUtil.getConfig(getInstance().getConfig());
+    }
+
+    @RequestMapping(value = "/" + "i" + EurekaConstants.GETCONFIG,
+            method = RequestMethod.POST)
+    public IclijServiceResult getIConfig(/*@PathVariable String market*/)
+            throws Exception {
+        return ServiceUtil.getConfig(getInstance().getConfig());
     }
 
     @RequestMapping(value = "/core/" + EurekaConstants.GETCONFIG,
             method = RequestMethod.POST)
     public IclijServiceResult getCoreConfig(/*@PathVariable String market*/)
             throws Exception {
-        return ServiceUtil.getConfig(instance.getCoreConfig());
+        return ServiceUtil.getConfig(getInstance().getCoreConfig());
     }
 
     @RequestMapping(value = "/core/" + EurekaConstants.GETCONTENT,
             method = RequestMethod.POST)
     public IclijServiceResult getCoreContent(@RequestBody IclijServiceParam param/*@PathVariable String market*/)
             throws Exception {
-        return instance.getCoreContent(param);
+        return getInstance().getCoreContent(param);
     }
 
     @RequestMapping(value = "/core/" + EurekaConstants.GETCONTENTGRAPH,
             method = RequestMethod.POST)
     public IclijServiceResult getCoreGraphContent(@RequestBody IclijServiceParam param/*@PathVariable String market*/)
             throws Exception {
-        return instance.getCoreContentGraph(param);
+        return getInstance().getCoreContentGraph(param);
     }
 
     @RequestMapping(value = "/" + EurekaConstants.GETCONTENT,

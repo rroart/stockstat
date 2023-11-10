@@ -5,7 +5,7 @@ export default function TaskList() {
     const [answer, setAnswer] = useState([]);
 
     const getAnswer = async () => {
-	const url = Client.geturl("/gettasks")
+	const url = Client.geturl2("/gettasks")
 	const settings = {
             method: 'POST',
         };
