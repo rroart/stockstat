@@ -88,6 +88,21 @@ public class ServiceController {
         return result;
     }
 
+    @RequestMapping(value = "/" + "i" + EurekaConstants.GETCONFIG,
+            method = RequestMethod.POST)
+    public IclijServiceResult getIConfig(@RequestBody IclijServiceParam param)
+            throws Exception {
+        IclijServiceResult result = new IclijServiceResult();
+        try {
+            result.setConfigData(iclijConfig.getConfigData());
+            System.out.println("configs " + result.getConfigData());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            result.setError(e.getMessage());
+        }
+        return result;
+    }
+
     @RequestMapping(value = "/" + EurekaConstants.GETVERIFY,
             method = RequestMethod.POST)
     public IclijServiceResult getVerify(@RequestBody IclijServiceParam param)

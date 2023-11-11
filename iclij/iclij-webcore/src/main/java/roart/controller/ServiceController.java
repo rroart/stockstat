@@ -81,13 +81,6 @@ public class ServiceController {
         return ServiceUtil.getConfig(getInstance().getConfig());
     }
 
-    @RequestMapping(value = "/" + "i" + EurekaConstants.GETCONFIG,
-            method = RequestMethod.POST)
-    public IclijServiceResult getIConfig(/*@PathVariable String market*/)
-            throws Exception {
-        return ServiceUtil.getConfig(getInstance().getConfig());
-    }
-
     @RequestMapping(value = "/core/" + EurekaConstants.GETCONFIG,
             method = RequestMethod.POST)
     public IclijServiceResult getCoreConfig(/*@PathVariable String market*/)
