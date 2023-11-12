@@ -701,9 +701,9 @@ public class MLIndicator extends Aggregator {
                 String indicatorName = indicator;
                 PipelineData indicatorResult = PipelineUtils.getPipeline(datareaders, indicatorName);
                 if (indicatorResult != null) {
-                    Map<String, List<List<Double>>> aListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.LIST);
-                    List<List<Double>> aResult = aListMap.get(id);
-                    arrayResult = ArrayUtils.addAll(arrayResult, aResult.get(0).toArray());
+                    Map<String, Double[][]> aListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
+                    Double[][] aResult = aListMap.get(id);
+                    arrayResult = ArrayUtils.addAll(arrayResult, aResult[0]);
                 }
             }
             result.put(id, arrayResult);
@@ -800,7 +800,7 @@ public class MLIndicator extends Aggregator {
                 PipelineData indicatorResult = PipelineUtils.getPipeline(datareaders, indicator);
                 if (indicatorResult != null) {
                     PipelineData datareader = pipelineMap.get(this.key);
-                    Map<String, List<List<Double>>> aResult = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.LIST);
+                    Map<String, Double[][]> aResult = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
                     //Map<String, Object[]> aResult = (Map<String, Object[]>) indicatorResult.get(PipelineConstants. LIST);
                     ids.retainAll(aResult.keySet());
                 }
@@ -822,7 +822,7 @@ public class MLIndicator extends Aggregator {
                 if (indicatorResult != null) {
                     indicators.add(indicator);
                     PipelineData datareader = pipelineMap.get(this.key);
-                    Map<String, List<List<Double>>> aResult = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.LIST);
+                    Map<String, Double[][]> aResult = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
                     //Map<String, Object[]> aResult = (Map<String, Object[]>) indicatorResult.get(PipelineConstants. LIST);
                     ids.retainAll(aResult.keySet());
                 } else {
