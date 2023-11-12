@@ -45,10 +45,12 @@ public class ProportionScore extends AbstractScore {
         Double diffChange = maxChange - minChange;
         Optional<Double> buyMaxOpt = scoreSet.parallelStream().reduce(Double::max);
         if (!buyMaxOpt.isPresent()) {
+            int jj = 0;
         }
         Double buyMax = buyMaxOpt.get();
         Optional<Double> buyMinOpt = scoreSet.parallelStream().reduce(Double::min);
         if (!buyMinOpt.isPresent()) {
+            int jj = 0;
         }
         Double scoreMin = buyMinOpt.get();
         Double diffScore = buyMax - scoreMin;

@@ -80,7 +80,7 @@ public class ServiceController {
         IclijServiceResult result = new IclijServiceResult();
         try {
             result.setConfigData(iclijConfig.getConfigData());
-            System.out.println("configs " + result.getConfigData());
+            log.debug("configs {}", result.getConfigData());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -95,7 +95,7 @@ public class ServiceController {
         IclijServiceResult result = new IclijServiceResult();
         try {
             result.setConfigData(iclijConfig.getConfigData());
-            System.out.println("configs " + result.getConfigData());
+            log.debug("configs {}", result.getConfigData());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());

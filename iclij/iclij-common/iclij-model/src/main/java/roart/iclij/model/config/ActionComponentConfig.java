@@ -3,6 +3,9 @@ package roart.iclij.model.config;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import roart.common.ml.MLMaps;
 import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
@@ -10,6 +13,8 @@ import roart.iclij.config.Market;
 
 public abstract class ActionComponentConfig {
     
+    protected static Logger log = LoggerFactory.getLogger(ActionComponentConfig.class);
+
     public abstract List<String> getSubComponents(Market market, IclijConfig config, String mlmarket, String actionML);
 
     public abstract String getLocalEvolutionConfig(IclijConfig config);

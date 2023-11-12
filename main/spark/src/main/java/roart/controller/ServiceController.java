@@ -149,7 +149,6 @@ public class ServiceController implements CommandLineRunner {
         //DbDao.instance("hibernate");
         //DbDao.instance("spark");
         applicationContext = SpringApplication.run(ServiceController.class, args);
-        displayAllBeans();
     }
 
     private static ApplicationContext applicationContext;
@@ -166,10 +165,10 @@ public class ServiceController implements CommandLineRunner {
         //new MemRunner().run();
     }
 
-    public static void displayAllBeans() {
+    public void displayAllBeans() {
         String[] allBeanNames = applicationContext.getBeanDefinitionNames();
         for(String beanName : allBeanNames) {
-            System.out.println(beanName);
+            log.debug(beanName);
         }
     }
 

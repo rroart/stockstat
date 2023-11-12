@@ -167,12 +167,12 @@ public class MarketUtil {
             String key = item.getId();
             if (listMap3 == null) {
                 if (categoryMap != null) {
-                    System.out.println(categoryMap.keySet());
+                    log.debug("" + categoryMap.keySet());
                 }
                 if (maps != null) {
                     //System.out.println(maps.keySet());
                 }
-                System.out.println("market" + market.getConfig().getMarket() + "null map");
+                log.debug("market null map {}", market.getConfig().getMarket());
                 continue;
             }
             List<List> list = listMap3.get(key);

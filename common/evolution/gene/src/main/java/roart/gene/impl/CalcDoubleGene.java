@@ -31,7 +31,7 @@ public class CalcDoubleGene extends CalcGene {
             getWeight(random);
             break;
         default:
-            System.out.println("Too many");
+            log.error("Too many");
             break;
         }
 

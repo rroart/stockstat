@@ -281,7 +281,7 @@ public class ComponentPredictor extends ComponentML {
                     }
                     Double predFuture = predFutureList.get(0);
                     if (valFuture != null && valNow != null && predFuture != null) {
-                        System.out.println("vals " + valNow + " " + valFuture + " " + predFuture);
+                        log.debug("Vals {} {} {}", valNow, valFuture, predFuture);
                         total++;
                         //boolean aboveThreshold = (predFuture / valNow) >= parameters.getThreshold();
                         if (predFuture > valNow * parameters.getThreshold()) {
@@ -341,8 +341,8 @@ public class ComponentPredictor extends ComponentML {
                 actionData.getDbDao().save(decMemory);
             }
             if (param.isDoPrint()) {
-                System.out.println(incMemory);
-                System.out.println(decMemory);
+                log.debug("" + incMemory);
+                log.debug("" + decMemory);
             }
             memoryList.add(incMemory);
             memoryList.add(decMemory);

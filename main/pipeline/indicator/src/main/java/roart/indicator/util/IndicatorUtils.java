@@ -181,7 +181,7 @@ public class IndicatorUtils {
                 objectMapsList.add(objMap);
                 listList.add((Map<String, Double[][]>) resultMap.get(PipelineConstants.LIST));
                 arraySize += 0; // indicator.getResultSize();
-                System.out.println("sizes " + listList.get(listList.size() - 1).size());
+                log.debug("Sizes {}", listList.get(listList.size() - 1).size());
             }
         }
         Object[] retobj = new Object[3];
@@ -442,7 +442,7 @@ public class IndicatorUtils {
                 int jj = 0;
             }
             arraySize += 2 * ((Set) extraData.extrareader.get(PipelineConstants.MARKETSTOCKS)).size();
-            System.out.println("sizes " + arraySize);
+            log.debug("Sizes {}", arraySize);
         }
         // for extrareader data end
         // for more extra
@@ -489,7 +489,7 @@ public class IndicatorUtils {
                 }
             }
             //arraySize += 2 * ((Set) extraData.extrareader.getLocalResultMap().get(PipelineConstants.MARKETSTOCKS)).size();
-            System.out.println("sizes " + arraySize);
+            log.debug("Sizes {}", arraySize);
         }
         // for extrareader data end
         // for more extra

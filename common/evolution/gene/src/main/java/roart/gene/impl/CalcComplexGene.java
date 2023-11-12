@@ -211,7 +211,7 @@ public class CalcComplexGene extends CalcGene {
             break;
             */
         default:
-            System.out.println("Too many");
+            log.error("Too many");
             break;
         }
 

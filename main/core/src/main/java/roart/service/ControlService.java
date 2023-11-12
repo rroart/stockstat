@@ -274,11 +274,11 @@ public class ControlService {
         for (Entry<String, Object> e : m.entrySet()) {
             Object value = e.getValue();
             if (value instanceof Map) {
-                System.out.println("" + i + " " + e.getKey() + " " + value.hashCode());
+                log.debug("{} {} {}", i, e.getKey(), value.hashCode());
                 printmap((Map<String, Object>) value, i + 1);
             } else {
                 if (value == null) {
-                    System.out.println("" + i + " " + e.getKey() + " " + null);
+                    log.debug("Kv {} {} {}", i, e.getKey(), null);
                     //System.out.println(" v " + null);
                 }
             }

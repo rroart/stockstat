@@ -252,7 +252,6 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
             address = ip;
         }
         String whereami = address + ":" + port;
-        System.out.println("Whereami " + whereami);
         log.info("Whereami {}", whereami);
         byte[] bytes = whereami.getBytes();
         for (String aPath : paths) {

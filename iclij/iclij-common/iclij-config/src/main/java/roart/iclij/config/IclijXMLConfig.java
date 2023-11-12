@@ -89,7 +89,6 @@ public class IclijXMLConfig {
             e.printStackTrace();
             log.error(Constants.EXCEPTION, e); 
             log.error("Config file not found, can not continue");
-            System.out.println("Config file not found, can not continue");
             System.exit(1);
         }
         Document doc = configxml.getDocument();
@@ -235,13 +234,13 @@ public class IclijXMLConfig {
                 //System.out.println(configxml.getProperties(s));
                 //System.out.println(j);
                 //o = configxml.getString(s);
-                log.info("Unknown " + text);
+                log.info("Unknown {}", text);
                 //continue;
                 String pri = (String) elem2.getProperty("[@priority]");
                 if (pri != null) {
                     Integer priority = Integer.valueOf(pri);
                     configInstance.getConfigData().getConfigValueMap().put(node0 + "[@priority]", priority);
-                    System.out.println("pri " + node0 + " " + pri);
+                    log.debug("Pri {} {}", node0, pri);
                 }
             } else {
                 String s2 = "";

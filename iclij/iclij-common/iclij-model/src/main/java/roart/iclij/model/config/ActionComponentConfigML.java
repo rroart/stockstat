@@ -19,7 +19,7 @@ public abstract class ActionComponentConfigML extends ActionComponentConfig {
 
     @Override
     public Map<String, EvolveMLConfig> getMLConfig(Market market, IclijConfig config, String mlmarket, String actionML) {
-        System.out.println(config.getEvolveMLMLConfig());
+        log.debug(config.getEvolveMLMLConfig());
         // more merge
         String localMl = getLocalMLConfig(config);
         String ml = config.getEvolveMLMLConfig();

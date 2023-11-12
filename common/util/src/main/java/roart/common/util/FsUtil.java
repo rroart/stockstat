@@ -43,8 +43,9 @@ public class FsUtil {
         return null;
     }
     
+    // TODO deprecated?
+    @Deprecated
     public static FileSystemType getFilenameType(String filename) {
-        System.out.println("FN "+ filename);
         /*
         if (filename.indexOf(':') < 0) {
            //return FileSystemType.LOCAL; 

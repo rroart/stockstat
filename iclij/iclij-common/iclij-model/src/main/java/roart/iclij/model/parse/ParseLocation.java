@@ -1,6 +1,11 @@
 package roart.iclij.model.parse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ParseLocation {
+    protected static Logger log = LoggerFactory.getLogger(ParseLocation.class);
+
     private String country;
 
     public String getCountry() {
@@ -12,7 +17,7 @@ public class ParseLocation {
     }
 
     public void show() {
-        System.out.println("Location " + getCountry());
+        log.debug("Location {}", getCountry());
     }
 
 }

@@ -1,12 +1,17 @@
 package roart.etl;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import roart.common.pipeline.PipelineConstants;
 
 public class CleanETL {
+
+    protected static Logger log = LoggerFactory.getLogger(CleanETL.class);
 
     public void fixmap(Object o) {
         if (o == null) {
@@ -38,7 +43,7 @@ public class CleanETL {
                 }
             }
         }
-        System.out.println("Removed");
+        log.debug("Removed");
     }
 
 }

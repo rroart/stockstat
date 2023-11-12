@@ -310,7 +310,6 @@ public class ImproveAboveBelowAction extends MarketAction {
         List<MemoryItem> allMemories = new ArrayList<>();
         Short startOffset = market.getConfig().getStartoffset();
         if (startOffset != null) {
-            System.out.println("Using offset " + startOffset);
             log.info("Using offset {}", startOffset);
             days += startOffset;
         }
@@ -352,7 +351,6 @@ public class ImproveAboveBelowAction extends MarketAction {
         List<MemoryItem> allMemories = new ArrayList<>();
         Short startOffset = market.getConfig().getStartoffset();
         if (startOffset != null) {
-            System.out.println("Using offset " + startOffset);
             log.info("Using offset {}", startOffset);
             days += startOffset;
         }

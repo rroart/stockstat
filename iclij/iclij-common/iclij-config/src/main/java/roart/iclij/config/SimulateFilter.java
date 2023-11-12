@@ -146,7 +146,6 @@ public class SimulateFilter {
     
     @Override
     public boolean equals(Object o) {
-        System.out.println("eee");
         if (o == null) {
             return false;
         }

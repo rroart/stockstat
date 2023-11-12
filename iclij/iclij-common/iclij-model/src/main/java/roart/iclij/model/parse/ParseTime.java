@@ -85,14 +85,14 @@ public class ParseTime extends ParseObject {
     }
 
     public void show() {
-        System.out.print("Time " + unit);
-        System.out.print(" number " + getNumber());
-        System.out.print(" when " + when);
-        System.out.print(" now " + isNow());
-        System.out.print(" plural " + isPlural());
-        System.out.print(" timeunit " + getTimeunit());
-        System.out.print(" date " + getDate());
-        System.out.println(" period " + period);
+        log.debug("Time {}", unit);
+        log.debug(" number {}", getNumber());
+        log.debug(" when {}", when);
+        log.debug(" now {}", isNow());
+        log.debug(" plural {}", isPlural());
+        log.debug(" timeunit {}", getTimeunit());
+        log.debug(" date {}", getDate());
+        log.debug(" period {}", period);
     }
 
 }

@@ -97,12 +97,12 @@ public class S3 extends FileSystemOperations {
         ListObjectsResponse listing = conf.s3client.listObjects(req);
         try {
             for (S3Object summary: listing.contents()) {
-                System.out.println(summary.key());
+                log.debug(summary.key());
                 FileObject fo = new FileObject(f.location, formatBack(summary.key()));
                 foList.add(fo);
             }
             for (CommonPrefix commonPrefix : listing.commonPrefixes()) {
-                System.out.println(commonPrefix);
+                log.debug("" + commonPrefix);
             }
             FileSystemFileObjectResult result = new FileSystemFileObjectResult();
             result.setFileObject(foList.toArray(new FileObject[0]));
@@ -123,7 +123,7 @@ public class S3 extends FileSystemOperations {
         ListObjectsResponse listing = conf.s3client.listObjects(req);
         try {
             for (S3Object summary: listing.contents()) {
-                System.out.println(summary.key());
+                log.debug(summary.key());
                 FileObject[] fo = new FileObject[1];
                 fo[0] = new FileObject(f.location, formatBack(summary.key()));
                 MyFile my = getMyFile(fo, false);
@@ -132,7 +132,7 @@ public class S3 extends FileSystemOperations {
                 }
             }
             for (CommonPrefix commonPrefix : listing.commonPrefixes()) {
-                System.out.println(commonPrefix);
+                log.debug("" + commonPrefix);
                 FileObject[] fo = new FileObject[1];
                 fo[0] = new FileObject(f.location, formatBack(commonPrefix.prefix()));
                 MyFile my = getMyFile(fo, false);

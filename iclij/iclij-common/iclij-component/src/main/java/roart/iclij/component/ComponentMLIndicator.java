@@ -447,7 +447,7 @@ public class ComponentMLIndicator extends ComponentML {
                 actionData.getDbDao().save(memory);
             }
             if (param.isDoPrint()) {
-                System.out.println(memory);
+                log.debug("" + memory);
             }
             memoryList.add(memory);
         }

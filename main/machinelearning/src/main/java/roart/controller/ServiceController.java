@@ -3,31 +3,23 @@ package roart.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,34 +28,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import roart.common.cache.MyCache;
-import roart.common.config.ConfigConstantMaps;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
-import roart.common.ml.NeuralNetCommand;
-import roart.common.service.ServiceParam;
-import roart.common.service.ServiceResult;
-import roart.common.util.JsonUtil;
 import roart.common.util.MemUtil;
-import roart.db.thread.DatabaseThread;
 import roart.executor.MyExecutors;
-import roart.service.ControlService;
-import roart.service.evolution.EvolutionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import roart.iclij.config.IclijConfig;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
-import roart.iclij.config.IclijConfig;
-import roart.iclij.config.IclijConfigConstants;
-import roart.iclij.config.IclijXMLConfig;
+import roart.service.ControlService;
+import roart.service.evolution.EvolutionService;
 
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.common.config,roart.iclij.config")
-@EnableJdbcRepositories("roart.common.springdata.repository")
 @CrossOrigin
 @RestController
 @EnableDiscoveryClient
@@ -100,9 +81,9 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            System.out.println("new market" + param.getConfigData().getMarket());
-            System.out.println("new market" + param.getConfigData());
-            System.out.println("new some " + param.getConfigData().getConfigValueMap().get(ConfigConstants.DATABASESPARKSPARKMASTER));
+            log.debug("New market {}", param.getConfigData().getMarket());
+            log.debug("New market {} ", param.getConfigData());
+            log.debug("New some {}", param.getConfigData().getConfigValueMap().get(ConfigConstants.DATABASESPARKSPARKMASTER));
             //getInstance().config(param.config);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -118,7 +99,7 @@ public class ServiceController implements CommandLineRunner {
         IclijServiceResult result = new IclijServiceResult();
         try {
             result.setConfigData(iclijConfig.getConfigData());
-            System.out.println("configs " + result.getConfigData());
+            log.debug("Configs {}", result.getConfigData());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -186,10 +167,7 @@ public class ServiceController implements CommandLineRunner {
     }
 
     public static void main(String[] args) throws Exception {
-        //DbDao.instance("hibernate");
-        //DbDao.instance("spark");
         applicationContext = SpringApplication.run(ServiceController.class, args);
-        displayAllBeans();
     }
 
     private static ApplicationContext applicationContext;
@@ -204,18 +182,15 @@ public class ServiceController implements CommandLineRunner {
         String services = instance.getServices();
         String communications = instance.getCommunications();
         new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig.copy(), null).start();
-        if (iclijConfig.wantDbHibernate()) {
-            new DatabaseThread().start();
-        }
         MyCache.setCache(instance.wantCache());
         MyCache.setCacheTTL(instance.getCacheTTL());
         //new MemRunner().run();
     }
 
-    public static void displayAllBeans() {
+    public void displayAllBeans() {
         String[] allBeanNames = applicationContext.getBeanDefinitionNames();
         for(String beanName : allBeanNames) {
-            System.out.println(beanName);
+            log.debug("Bean: {}", beanName);
         }
     }
 

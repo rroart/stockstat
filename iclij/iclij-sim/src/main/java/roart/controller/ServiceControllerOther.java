@@ -40,7 +40,7 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
 
     public void get(Object param, Communication c) { 
         IclijServiceResult r = null;
-        System.out.println("Cserv"+c.getService());
+        log.debug("Cserv {}", c.getService());
         if (serviceMatch(ServiceConstants.SIMFILTER, c)) {
             new Sim(iclijConfig, dbDao).method((String) param, "sim", true);
         }

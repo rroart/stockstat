@@ -319,7 +319,6 @@ public class ArraysUtil {
             if (list[0] == 100.0) {
                 return true;
             } else {
-                System.out.println("Not rescaled");
                 log.error("Not rescaled");
                 return false;
             }

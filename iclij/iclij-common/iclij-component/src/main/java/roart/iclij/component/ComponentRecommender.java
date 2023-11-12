@@ -499,7 +499,7 @@ public class ComponentRecommender extends ComponentNoML {
             actionData.getDbDao().save(memory);
         }
         if (param.isDoPrint()) {
-            System.out.println(memory);
+            log.debug("" + memory);
         }
         memoryList.add(memory);
     }
@@ -634,8 +634,8 @@ public class ComponentRecommender extends ComponentNoML {
         //System.out.println("k3 " + categoryValueMap.get("VIX"));
         //System.out.println(result.get("Index").keySet());
         if (doPrint) {
-        System.out.println(buyMemory);
-        System.out.println(sellMemory);
+        log.debug("" + buyMemory);
+        log.debug("" + sellMemory);
         }
         memoryList.add(buyMemory);
         memoryList.add(sellMemory);
@@ -780,8 +780,8 @@ public class ComponentRecommender extends ComponentNoML {
         //System.out.println("k3 " + categoryValueMap.get("VIX"));
         //System.out.println(result.get("Index").keySet());
         if (doPrint) {
-        System.out.println(buyMemory);
-        System.out.println(sellMemory);
+        log.debug("" + buyMemory);
+        log.debug("" + sellMemory);
         }
         memoryList.add(buyMemory);
         memoryList.add(sellMemory);

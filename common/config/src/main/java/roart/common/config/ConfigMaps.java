@@ -5,9 +5,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 
 public class ConfigMaps {
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
     public Map<String, Class> map = new HashMap();
     public Map<String, Object> deflt = new HashMap();
     public Map<String, String> text = new HashMap();
@@ -44,16 +48,16 @@ public class ConfigMaps {
 
     private void intersect(Set<String> setA, Set<String> setB) {
         setA.retainAll(setB);
-        System.out.println("diff " + setA);
+        log.debug("Diff {}", setA);
     }
 
     public void keys(Set<String> mykeys) {
-        System.out.println("" + mykeys);
-        System.out.println("" + deflt.keySet());
+        log.debug("Keys: {}", mykeys);
+        log.debug("Deflt keys {}", deflt.keySet());
         map.keySet().retainAll(mykeys);
         deflt.keySet().retainAll(mykeys);
         text.keySet().retainAll(mykeys);
-        System.out.println("" + deflt.keySet());
+        log.debug("Deflt keys {}", deflt.keySet());
         if (true) return;
         retain(map.keySet(), mykeys);
         retain(deflt.keySet(), mykeys);

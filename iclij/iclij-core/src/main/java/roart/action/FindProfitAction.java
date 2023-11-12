@@ -109,12 +109,12 @@ public class FindProfitAction extends MarketAction {
                     for (IncDecItem item : profitdata.getBuys().values()) {
                         myitem = item;
                         getActionData().getDbDao().save(item);
-                        System.out.println(item);
+                        log.debug("" + item);
                     }
                     for (IncDecItem item : profitdata.getSells().values()) {
                         myitem = item;
                         getActionData().getDbDao().save(item);
-                        System.out.println(item);
+                        log.debug("" + item);
                     }
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
@@ -133,7 +133,7 @@ public class FindProfitAction extends MarketAction {
         Market market = new MarketUtil().findMarket(marketTime.getMarket(), getActionData().getIclijConfig());
         Short startOffset = market.getConfig().getStartoffset();
         if (startOffset != null) {
-            System.out.println("Using offset " + startOffset);
+            log.debug("Using offset {}", startOffset);
             log.info("Using offset {}", startOffset);
             days += startOffset;
         }

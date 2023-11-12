@@ -32,7 +32,7 @@ public class ParseData extends ParseObject {
     }
 
     public void show() {
-        System.out.println("MyData show");
+        log.debug("MyData show");
         if (getTime() != null) {
             getTime().show();
         }

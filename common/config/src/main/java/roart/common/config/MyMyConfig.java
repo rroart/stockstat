@@ -1,18 +1,14 @@
 package roart.common.config;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.type.TypeReference;
 
 import roart.common.util.JsonUtil;
-
-import java.util.Optional;
 
 public abstract class MyMyConfig extends MyConfig {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
@@ -1650,7 +1646,7 @@ public abstract class MyMyConfig extends MyConfig {
      @JsonIgnore
      public Object getNotEmptyValueOrDefault(String key) {
          Object retVal = getConfigData().getConfigValueMap().get(key);
-         System.out.println("r " + retVal + " " + getConfigData().getConfigMaps().deflt.get(key));
+         log.debug("Keys {} {}", retVal, getConfigData().getConfigMaps().deflt.get(key));
          if (retVal instanceof String) {
              String str = (String) retVal;
              if (str.isEmpty()) {

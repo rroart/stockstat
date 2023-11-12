@@ -1326,9 +1326,9 @@ public class IclijConfig extends MyMyConfig {
     @JsonIgnore
     public Object getNotEmptyValueOrDefault(String key) {
         Object retVal = getConfigData().getConfigValueMap().get(key);
-        System.out.println("r " + getConfigData().getConfigValueMap().keySet());
-        System.out.println("r " + getConfigData().getConfigMaps().deflt.keySet());
-        System.out.println("r " + retVal + " " + getConfigData().getConfigMaps().deflt.get(key));
+        log.debug("Keys {}", getConfigData().getConfigValueMap().keySet());
+        log.debug("Keys {}", getConfigData().getConfigMaps().deflt.keySet());
+        log.debug("Keys {} {}", retVal, getConfigData().getConfigMaps().deflt.get(key));
         //System.out.println("r " + retVal + " " + deflt.get(key));
         if (retVal instanceof String) {
             String str = (String) retVal;

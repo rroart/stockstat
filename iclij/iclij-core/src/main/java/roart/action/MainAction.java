@@ -35,7 +35,7 @@ public class MainAction extends Action {
         if (!config.wantsIclijSchedule()) {
             return;
         }
-        System.out.println("Start");
+        log.debug("Start");
         ControlService srv = new ControlService(iclijConfig);
         boolean noException = false;
         while (noException == false) {
@@ -43,11 +43,11 @@ public class MainAction extends Action {
                 srv.getAndSetCoreConfig();
                 noException = true;
             } catch (Exception e) {
-                System.out.println("Ex, sleep 15");
+                log.debug("Ex, sleep 15");
                 Thread.sleep(15000);
             }
         }
-        System.out.println("Got config");
+        log.debug("Got config");
         String updateDB = System.getProperty("updatedata");
         boolean doUpdateDB = !"false".equals(updateDB);
         boolean firstRun = true;

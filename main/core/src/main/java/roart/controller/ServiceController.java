@@ -109,9 +109,9 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            System.out.println("new market" + param.getConfigData().getMarket());
-            System.out.println("new market" + param.getConfigData());
-            System.out.println("new some " + param.getConfigData().getConfigValueMap().get(ConfigConstants.DATABASESPARKSPARKMASTER));
+            log.debug("New market {}", param.getConfigData().getMarket());
+            log.debug("New market {}", param.getConfigData());
+            log.debug("New some {}", param.getConfigData().getConfigValueMap().get(ConfigConstants.DATABASESPARKSPARKMASTER));
             //getInstance().config(param.config);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -127,7 +127,7 @@ public class ServiceController implements CommandLineRunner {
         IclijServiceResult result = new IclijServiceResult();
         try {
             result.setConfigData(iclijConfig.getConfigData());
-            System.out.println("configs " + result.getConfigData());
+            log.debug("configs " + result.getConfigData());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -296,7 +296,6 @@ public class ServiceController implements CommandLineRunner {
         //DbDao.instance("hibernate");
         //DbDao.instance("spark");
         applicationContext = SpringApplication.run(ServiceController.class, args);
-        displayAllBeans();
     }
 
     private static ApplicationContext applicationContext;
@@ -319,10 +318,10 @@ public class ServiceController implements CommandLineRunner {
         //new MemRunner().run();
     }
 
-    public static void displayAllBeans() {
+    public void displayAllBeans() {
         String[] allBeanNames = applicationContext.getBeanDefinitionNames();
         for(String beanName : allBeanNames) {
-            System.out.println(beanName);
+            log.debug(beanName);
         }
     }
 

@@ -80,11 +80,11 @@ public class ParseUnit extends ParseObject {
     }
 
     public void show() {
-        System.out.print("Unit " + getUnit());
-        System.out.print(" Plural" + isPlural());
-        System.out.print(" Number " + getNumber());
-        System.out.print(" Low " + isLow());
-        System.out.println(" High " + isHigh());
+        log.debug("Unit {}", getUnit());
+        log.debug(" Plural {}", isPlural());
+        log.debug(" Number {}", getNumber());
+        log.debug(" Low {}", isLow());
+        log.debug(" High {}", isHigh());
     }
 
 }

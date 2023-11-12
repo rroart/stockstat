@@ -208,7 +208,6 @@ public class FileSystemDao {
                 if (time < 20000) {
                     return new String(curatorClient.getData().forPath(zPath));
                 } else {
-                    System.out.println("timeout");
                     log.error("Timeout");
                     return null;
                 }
