@@ -14,13 +14,11 @@ module pipeline.indicator {
     requires common.config;
     requires common.constants;
     requires commons.math3;
-    requires dbdao;
     requires model;
     requires pipeline.model;
     requires org.apache.commons.lang3;
     requires org.slf4j;
     requires talib;
-    requires coredb;
     requires stockutil;
     requires stocketl;
     requires ml.common;

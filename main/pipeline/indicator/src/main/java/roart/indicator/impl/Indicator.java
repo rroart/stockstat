@@ -1,7 +1,6 @@
 package roart.indicator.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -9,21 +8,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import roart.common.config.MarketStock;
-import roart.iclij.config.IclijConfig;
-import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.util.ArraysUtil;
 import roart.common.util.PipelineUtils;
-import roart.db.common.DbAccess;
-import roart.db.dao.DbDao;
+import roart.iclij.config.IclijConfig;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
 import roart.model.data.StockData;
-import roart.pipeline.Pipeline;
 
 public abstract class Indicator extends AbstractIndicator {
 

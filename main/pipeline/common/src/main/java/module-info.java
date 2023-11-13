@@ -15,7 +15,6 @@ module pipeline.common {
     requires common.constants;
     requires common.util;
     requires commons.math3;
-    requires dbdao;
     requires model;
     requires org.apache.commons.lang3;
     requires pipeline.model;

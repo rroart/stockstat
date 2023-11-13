@@ -530,7 +530,7 @@ public abstract class Predictor extends AbstractPredictor {
     public boolean hasValue() {
         Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
         PipelineData datareader = pipelineMap.get(key);
-        return anythingHere((Map<String, List<List<Double>>>) datareader.get(PipelineConstants.LIST));
+        return anythingHereA((Map<String, Double[][]>) datareader.get(PipelineConstants.LIST));
     }
     
     @Override

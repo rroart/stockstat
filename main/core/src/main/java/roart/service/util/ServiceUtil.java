@@ -25,6 +25,7 @@ import roart.common.model.StockItem;
 import roart.common.pipeline.data.PipelineData;
 import roart.db.dao.DbDao;
 import roart.db.dao.util.DbDaoUtil;
+import roart.etl.db.Extract;
 import roart.iclij.config.IclijConfig;
 import roart.model.data.MarketData;
 import roart.model.data.StockData;
@@ -87,16 +88,34 @@ public class ServiceUtil {
         return eventTable;
     }
 
-    public Pipeline[] getDataReaders(IclijConfig conf, String[] periodText,
-            Map<String, MarketData> marketdatamap, StockData stockData, DbDao dbDao) throws Exception {
+    public Pipeline[] getDataReaders(IclijConfig conf, DbDao dbDao,
+            String[] periodText, Map<String, MarketData> marketdatamap, StockData stockData) throws Exception {
         Pipeline[] datareaders = new Pipeline[Constants.PERIODS + 3];
         datareaders[0] = new DataReader(conf, marketdatamap, Constants.INDEXVALUECOLUMN, conf.getConfigData().getMarket());
         datareaders[1] = new DataReader(conf, marketdatamap, Constants.PRICECOLUMN, conf.getConfigData().getMarket());
-        datareaders[2] = new ExtraReader(conf, marketdatamap, 0, stockData, dbDao);
+        ExtraReader extraReader = new ExtraReader(conf, marketdatamap, 0, stockData);
+        extraDataReadData(conf, dbDao, marketdatamap, stockData, extraReader);
+        datareaders[2] = extraReader;
         for (int i = 0; i < Constants.PERIODS; i++) {
             datareaders[i + 3] = new DataReader(conf, marketdatamap, i, conf.getConfigData().getMarket());
         }
         return datareaders;
+    }
+
+    private void extraDataReadData(IclijConfig conf, DbDao dbDao, Map<String, MarketData> marketdatamap,
+            StockData stockData, ExtraReader extraReader) throws Exception {
+        Map<String, Pipeline[]> dataReaderMap;
+        dataReaderMap = new HashMap<>();
+        Map<String, StockData> stockDataMap;
+        stockDataMap = new HashMap<>();
+        for (String market : extraReader.getMarkets()) {
+            StockData stockData2 = new Extract(dbDao).getStockData(conf, market);
+            stockDataMap.put(market, stockData2);
+            Pipeline[] datareaders2 = extraReader.getDataReaders(conf, stockData.periodText,
+                    stockData2.marketdatamap, market);
+            dataReaderMap.put(market, datareaders2);
+        }
+        extraReader.readData(conf, marketdatamap, 0, stockData, stockDataMap, dataReaderMap);
     }
 
     public AbstractCategory[] getCategories(IclijConfig conf, List<StockItem> stocks,

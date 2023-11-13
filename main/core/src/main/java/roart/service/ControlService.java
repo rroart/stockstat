@@ -144,6 +144,7 @@ public class ControlService {
             return new ArrayList<>();
         }
         
+        
         PipelineData singlePipelineData = new PipelineData();
         singlePipelineData.setName(PipelineConstants.META);
         singlePipelineData.put(PipelineConstants.META, stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta);
@@ -159,8 +160,8 @@ public class ControlService {
         otherTables.add(eventTable);
 
         try {
-            Pipeline[] datareaders = new ServiceUtil().getDataReaders(conf, stockData.periodText,
-                    stockData.marketdatamap, stockData, dbDao);
+            Pipeline[] datareaders = new ServiceUtil().getDataReaders(conf, dbDao,
+                    stockData.periodText, stockData.marketdatamap, stockData);
 
             String mydate = TimeUtil.format(conf.getConfigData().getDate());
             int dateIndex = TimeUtil.getIndexEqualBefore(stockData.stockdates, mydate);

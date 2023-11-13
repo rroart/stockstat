@@ -3,30 +3,27 @@ package roart.indicator.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.MarketStock;
-import roart.iclij.config.IclijConfig;
-import roart.iclij.config.IclijConfig;
+import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.util.JsonUtil;
 import roart.common.util.PipelineUtils;
-import roart.db.common.DbAccess;
-import roart.db.dao.DbDao;
+import roart.iclij.config.IclijConfig;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.impl.Indicator;
 import roart.indicator.impl.IndicatorATR;
@@ -35,20 +32,12 @@ import roart.indicator.impl.IndicatorMACD;
 import roart.indicator.impl.IndicatorRSI;
 import roart.indicator.impl.IndicatorSTOCH;
 import roart.indicator.impl.IndicatorSTOCHRSI;
-import roart.ml.common.MLClassifyAccess;
-import roart.common.constants.CategoryConstants;
-import roart.common.constants.Constants;
-import roart.common.model.StockItem;
-import roart.pipeline.Pipeline;
+import roart.ml.model.LearnClassify;
+import roart.model.data.StockData;
 import roart.pipeline.common.Calculatable;
 import roart.pipeline.data.ExtraData;
-import roart.pipeline.impl.DataReader;
 import roart.pipeline.impl.ExtraReader;
-import roart.stockutil.StockDao;
-import roart.model.data.StockData;
 import roart.talib.util.TaUtil;
-import java.util.Objects;
-import roart.ml.model.LearnClassify;
 
 public class IndicatorUtils {
 
@@ -462,12 +451,16 @@ public class IndicatorUtils {
             if (!extraData.dateList.isEmpty()) {
                 int jj = 0;
             }
-            Map<String, PipelineData[]> dataReaderMap = (Map<String, PipelineData[]>) extraData.extrareader.get(PipelineConstants.DATAREADER);
+            Map<String, List<PipelineData>> dataReaderMap = (Map<String, List<PipelineData>>) extraData.extrareader.get(PipelineConstants.DATAREADER);
             Map<String, StockData>  stockDataMap = (Map<String, StockData>) extraData.extrareader.get(PipelineConstants.STOCKDATA);
-            Set<MarketStock> marketStocks = (Set<MarketStock>) extraData.extrareader.get(PipelineConstants.MARKETSTOCKS);
+            List marketStocksPre = (List) extraData.extrareader.get(PipelineConstants.MARKETSTOCKS);
+            List<MarketStock> marketStocks = new ArrayList<>();
+            for (Object object : marketStocksPre) {
+                marketStocks.add(JsonUtil.convert(object, MarketStock.class));
+            }
             for (MarketStock entry : marketStocks) {
                 String market = entry.getMarket();
-                PipelineData[] datareaders = dataReaderMap.get(market);
+                PipelineData[] datareaders = dataReaderMap.get(market).toArray(new PipelineData[0]);
                 Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
                 String cat = entry.getCategory();
                 StockData stockData = stockDataMap.get(market);

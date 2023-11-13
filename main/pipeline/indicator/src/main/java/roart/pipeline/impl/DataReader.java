@@ -121,6 +121,8 @@ public class DataReader extends Pipeline {
             this.base100FillListMap = ValueETL.getBase100D(this.fillListMap);
             this.truncBase100ListMap = ValueETL.getBase100(this.truncListMap);
             this.truncBase100FillListMap = ValueETL.getBase100(this.truncFillListMap);
+        } else {
+            int jj = 0;
         }
     }
 

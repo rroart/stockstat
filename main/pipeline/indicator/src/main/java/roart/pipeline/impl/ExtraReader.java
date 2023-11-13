@@ -1,55 +1,41 @@
 package roart.pipeline.impl;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Collections;
+import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.config.Extra;
 import roart.common.config.MarketStock;
 import roart.common.config.MarketStockExpression;
-import roart.iclij.config.IclijConfig;
-import roart.iclij.config.IclijConfig;
+import roart.common.constants.Constants;
+import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
-import roart.db.dao.DbDao;
-import roart.db.dao.util.DbDaoUtil;
 import roart.etl.ComplexETL;
 import roart.etl.ValueETL;
-import roart.etl.db.Extract;
+import roart.iclij.config.IclijConfig;
 import roart.indicator.util.IndicatorUtils;
-import roart.common.constants.Constants;
-import roart.common.model.StockItem;
-import roart.pipeline.Pipeline;
-import roart.pipeline.data.ExtraData;
-import roart.stockutil.MetaUtil;
-import roart.stockutil.StockDao;
 import roart.model.data.MarketData;
 import roart.model.data.StockData;
-import roart.stockutil.StockUtil;
+import roart.pipeline.Pipeline;
+import roart.pipeline.data.ExtraData;
+import roart.stockutil.StockDao;
 
 public class ExtraReader extends Pipeline {
 
-    private DbDao dbDao;
-    
     //Map<MarketStock, List<StockItem>> pairStockMap;
     //Map<MarketStock, Map<Date, StockItem>> pairDateMap;
     //Map<Pair<String, String>, String> pairCatMap;
@@ -57,16 +43,30 @@ public class ExtraReader extends Pipeline {
     //Map<Pair<String, String>, List<Date>> pairDateListMap;
     //Map<Pair<String, String>, double[][]> pairTruncListMap;
     public Set<String> commonDates;
-    Map<String, StockData> stockDataMap;
-    Map<String, Pipeline[]> dataReaderMap;
     public Set<MarketStock> allMarketStocks;
-    
-    public ExtraReader(IclijConfig conf, Map<String, MarketData> marketdatamap, int category, StockData stockData, DbDao dbDao) throws Exception {
+    private Set<String> markets = new HashSet<>();
+    private Set<MarketStock> marketStocks = new HashSet<>();
+    private Extra extra;
+    private Map<String, Pipeline[]> dataReaderMap;
+    private Map<String, StockData> stockDataMap;
+
+    public ExtraReader(IclijConfig conf, Map<String, MarketData> marketdatamap, int category, StockData stockData) throws Exception {
         super(conf, category);
-        this.dbDao = dbDao;
-        readData(conf, marketdatamap, category, stockData);        
+        setMarkets(conf, marketdatamap, category, stockData);        
     }
-    private void readData(IclijConfig conf, Map<String, MarketData> marketdatamap, int category, StockData stockData2) throws Exception {
+    
+    
+    public Set<String> getMarkets() {
+        return markets;
+    }
+
+
+    public void setMarkets(Set<String> markets) {
+        this.markets = markets;
+    }
+
+
+    private void setMarkets(IclijConfig conf, Map<String, MarketData> marketdatamap, int category, StockData stockData2) throws Exception {
         String dateme = TimeUtil.format(conf.getConfigData().getDate());
         //pairListMap = new HashMap<>();
         //pairDateMap = new HashMap<>();
@@ -88,7 +88,7 @@ public class ExtraReader extends Pipeline {
         }
         String date = TimeUtil.convertDate2(conf.getConfigData().getDate());
         MarketData marketdata = marketdatamap.get(conf.getConfigData().getMarket());
-        Extra extra = JsonUtil.convert(str, Extra.class);
+        extra = JsonUtil.convert(str, Extra.class);
         if (extras.length > 0) {
             extra.getSimple().clear();
             extra.getComplex().clear();
@@ -107,8 +107,6 @@ public class ExtraReader extends Pipeline {
         //List<LinkedHashMap> list = (List<LinkedHashMap>) mapper.readValue(str, List.class);
         //List<Pair<String, String>> pairs = new ArrayList<>();
         allMarketStocks = new LinkedHashSet<>();
-        Set<MarketStock> marketStocks = new HashSet<>();
-        Set<String> markets = new HashSet<>();
         if (!extra.getSimple().isEmpty()) {
             for (MarketStock ms : extra.getSimple()) {
                 if (conf.getConfigData().getMarket().equals(ms.getMarket())) {
@@ -142,16 +140,12 @@ public class ExtraReader extends Pipeline {
                 //pairCatMap.put(pair, cat);
             }
         }
+    }
 
-        stockDataMap = new HashMap<>();
-        dataReaderMap = new HashMap<>();
-        for (String market : markets) {
-            StockData stockData = new Extract(dbDao).getStockData(conf, market);
-            stockDataMap.put(market, stockData);
-            Pipeline[] datareaders = getDataReaders(conf, stockData.periodText,
-                    stockData.marketdatamap, market);
-            dataReaderMap.put(market, datareaders);
-        }
+    public void readData(IclijConfig conf, Map<String, MarketData> marketdatamap, int category, StockData stockData2, Map<String, StockData> stockDataMap, Map<String, Pipeline[]> dataReaderMap) throws Exception {
+        this.dataReaderMap = dataReaderMap;
+        this.stockDataMap = stockDataMap;
+        
         List<String> dateList = StockDao.getDateList(conf.getConfigData().getMarket(), marketdatamap);
         commonDates = new HashSet<>(dateList);
         for (MarketStock ms : marketStocks) {
@@ -249,6 +243,7 @@ public class ExtraReader extends Pipeline {
         return PipelineConstants.EXTRAREADER;
     }
 
+    /*
     private Map<String, MarketData> getMarketdatamap(int days,
             String market, IclijConfig conf, List<StockItem> stocksId) throws Exception {
         Map<String, MarketData> marketdatamap = new HashMap();
@@ -266,11 +261,6 @@ public class ExtraReader extends Pipeline {
         }
         // the main list, based on freshest or specific date.
 
-        /*
-         * For all days with intervals
-         * Make stock lists based on the intervals
-         */
-
         List<StockItem> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, conf.getConfigData().getDate(), days, conf.getTableIntervalDays());
         marketdata.datedstocklists = datedstocklists;
 
@@ -278,6 +268,7 @@ public class ExtraReader extends Pipeline {
 
         return marketdatamap;
     }
+    */
 
     public static Double[] getExtraData3(IclijConfig conf, List<Date> dateList,
             Map<Pair<String, String>, Map<Date, StockItem>> pairDateMap, Map<Pair<String, String>, String> pairCatMap, int j, String id,
@@ -492,7 +483,7 @@ public class ExtraReader extends Pipeline {
         return retMap;
     }
 
-    private Pipeline[] getDataReaders(IclijConfig conf, String[] periodText,
+    public Pipeline[] getDataReaders(IclijConfig conf, String[] periodText,
             Map<String, MarketData> marketdatamap, String market) throws Exception {
         Pipeline[] datareaders = new Pipeline[Constants.PERIODS + 2];
         datareaders[0] = new DataReader(conf, marketdatamap, Constants.INDEXVALUECOLUMN, market);

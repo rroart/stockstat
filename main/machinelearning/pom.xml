@@ -216,16 +216,6 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-db</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-dbdao</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
       <artifactId>stockstat-mldao</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
@@ -332,6 +322,11 @@
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-filesystem-client</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-springdata</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
