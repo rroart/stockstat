@@ -7,6 +7,7 @@
  */
 module common.util {
     exports roart.common.util;
+    opens roart.common.util;
     requires org.slf4j;
     requires commons.math3;
     requires org.apache.commons.lang3;
@@ -16,5 +17,6 @@ module common.util {
     requires com.fasterxml.jackson.core;
     requires guava;
     requires java.sql;
+    requires com.fasterxml.jackson.annotation;
     //requires org.slf4j;
 }

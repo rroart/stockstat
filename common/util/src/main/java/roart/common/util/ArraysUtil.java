@@ -662,6 +662,16 @@ public class ArraysUtil {
         }
         return list.toArray(Object[]::new);
     }
+    
+    public static List<List<Double>> convertA2L(Double[][] doubles) {
+        List<List<Double>> ret = new ArrayList<>();
+        for (int i = 0; i < doubles.length; i ++) {
+            ret.add(Arrays.asList(doubles[i]));
+        }
+        return ret;
+    }
+
+    
 /**
      * Goes through the array, smoothes out missing values (by using the previous),
      * or nulls out, depending or whether a max number was passed

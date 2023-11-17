@@ -2,8 +2,15 @@ package roart.common.pipeline.data;
 
 import java.util.Map;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.util.HashMap;
 
+@JsonTypeInfo(  
+        use = JsonTypeInfo.Id.NAME,  
+        include = JsonTypeInfo.As.PROPERTY,  
+        property = "_class")  
 public class PipelineData {
 
     private String id;

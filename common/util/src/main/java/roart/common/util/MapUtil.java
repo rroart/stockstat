@@ -1,8 +1,12 @@
 package roart.common.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import roart.common.pipeline.PipelineConstants;
 
 public class MapUtil {
 
@@ -58,6 +62,22 @@ public class MapUtil {
     public static <K, V> void mapAddMe(Map<K, List<V>> aMap, K id, V value) {
         List<V> aList = aMap.computeIfAbsent(id, k -> new ArrayList<>());
         aList.add(value);
+    }
+
+    public static Map<String, Double[][]> convert(Map<String, List<List<Double>>> map) {
+        Map newMap = new HashMap<>();
+        for (Entry<String, List<List<Double>>> entry : map.entrySet()) {
+            newMap.put(entry.getKey(), ArraysUtil.convert(entry.getValue()));
+        }
+        return newMap;
+    }
+
+    public static Map<String, List<List<Double>>> convertA2L(Map<String, Double[][]> map) {
+        Map<String, List<List<Double>>> newMap = new HashMap<>();
+        for (Entry<String, Double[][]> entry : map.entrySet()) {
+            newMap.put(entry.getKey(), ArraysUtil.convertA2L(entry.getValue()));
+        }
+        return newMap;
     }
 
 }

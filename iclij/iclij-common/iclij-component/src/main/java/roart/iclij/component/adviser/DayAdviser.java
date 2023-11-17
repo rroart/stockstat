@@ -19,6 +19,8 @@ import roart.common.config.ConfigConstants;
 import roart.common.model.IncDecItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.TwoDimD;
+import roart.common.util.MapUtil;
 import roart.common.util.PipelineUtils;
 import roart.component.model.ComponentData;
 import roart.iclij.config.Market;
@@ -56,9 +58,9 @@ public class DayAdviser extends Adviser {
             Map<String, Object> objectMaps = null; //PipelineUtils.getPipeline(resultMaps, cat);
             Map<String, List<List<Double>>> aCategoryValueMap;
             if (simulateConfig.getInterpolate()) {
-                aCategoryValueMap = (Map<String, List<List<Double>>>) objectMaps.get(PipelineConstants.FILLLIST);
+                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) objectMaps.get(PipelineConstants.FILLLIST)));
             } else {
-                aCategoryValueMap = (Map<String, List<List<Double>>>) objectMaps.get(PipelineConstants.LIST);
+                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) objectMaps.get(PipelineConstants.LIST)));
             }
             categoryValueMap = aCategoryValueMap;
         } else {

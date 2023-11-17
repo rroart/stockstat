@@ -20,7 +20,9 @@ import roart.common.model.IncDecItem;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.TwoDimD;
 import roart.common.util.JsonUtil;
+import roart.common.util.MapUtil;
 import roart.common.util.MetaUtil;
 import roart.common.util.PipelineUtils;
 import roart.component.model.ComponentData;
@@ -65,16 +67,16 @@ public class PeriodAdviser extends Adviser {
             MetaItem meta = JsonUtil.convert(metaData.get(PipelineConstants.META), MetaItem.class);
             String catName = new MetaUtil().getCategory(meta, cat - 1);
 
-            PipelineData objectMaps = PipelineUtils.getPipeline(resultMaps, catName);
-            if (objectMaps == null) {
+            PipelineData datareader = PipelineUtils.getPipeline(resultMaps, catName);
+            if (datareader == null) {
                 categoryValueMap = new HashMap<>();
                 return;
             }
             Map<String, List<List<Double>>> aCategoryValueMap;
             if (getInterpolate(simulateConfig.getInterpolate())) {
-                aCategoryValueMap = (Map<String, List<List<Double>>>) objectMaps.get(PipelineConstants.FILLLIST);
+                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST)));
             } else {
-                aCategoryValueMap = (Map<String, List<List<Double>>>) objectMaps.get(PipelineConstants.LIST);
+                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST)));
             }
             categoryValueMap = aCategoryValueMap;
         } else {

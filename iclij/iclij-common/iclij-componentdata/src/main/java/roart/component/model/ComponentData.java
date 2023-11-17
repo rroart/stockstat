@@ -17,6 +17,8 @@ import roart.common.constants.Constants;
 import roart.common.model.TimingItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.TwoDimD;
+import roart.common.util.MapUtil;
 import roart.common.util.PipelineUtils;
 import roart.common.util.TimeUtil;
 import roart.constants.IclijConstants;
@@ -372,9 +374,9 @@ public class ComponentData {
         try {
             List<String> stockdates = (List<String>) PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.DATELIST);
             this.setStockDates(stockdates);
-            Map<String, List<List<Double>>> aCategoryValueMap = (Map<String, List<List<Double>>>) PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.LIST);
+            Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.LIST)));
             this.setCategoryValueMap(aCategoryValueMap);
-            Map<String, List<List<Double>>> aFillCategoryValueMap = (Map<String, List<List<Double>>>) PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.FILLLIST);
+            Map<String, List<List<Double>>> aFillCategoryValueMap = MapUtil.convertA2L(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.FILLLIST)));
             this.setFillCategoryValueMap(aFillCategoryValueMap);
             Map<String, List<List<Object>>> aVolumeMap = (Map<String, List<List<Object>>>) PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.VOLUME);
             this.setVolumeMap(aVolumeMap);
@@ -406,9 +408,9 @@ public class ComponentData {
             String cat = (String) PipelineUtils.getPipeline(result, PipelineConstants.META).get(PipelineConstants.CATEGORY);
             List<String> stockdates = (List<String>) PipelineUtils.getPipeline(result, cat).get(PipelineConstants.DATELIST);
             this.setStockDates(stockdates);
-            Map<String, List<List<Double>>> aCategoryValueMap = (Map<String, List<List<Double>>>) PipelineUtils.getPipeline(result, cat).get(PipelineConstants.LIST);
+            Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) PipelineUtils.getPipeline(result, cat).get(PipelineConstants.LIST)));
             this.setCategoryValueMap(aCategoryValueMap);
-            Map<String, List<List<Double>>> aFillCategoryValueMap = (Map<String, List<List<Double>>>) PipelineUtils.getPipeline(result, cat).get(PipelineConstants.FILLLIST);
+            Map<String, List<List<Double>>> aFillCategoryValueMap = MapUtil.convertA2L(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) PipelineUtils.getPipeline(result, cat).get(PipelineConstants.FILLLIST)));
             this.setFillCategoryValueMap(aFillCategoryValueMap);
             Map<String, List<List<Object>>> aVolumeMap = (Map<String, List<List<Object>>>) PipelineUtils.getPipeline(result, cat).get(PipelineConstants.VOLUME);
             this.setVolumeMap(aVolumeMap);

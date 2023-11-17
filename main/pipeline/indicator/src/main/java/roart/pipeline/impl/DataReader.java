@@ -12,6 +12,7 @@ import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.util.ArraysUtil;
+import roart.common.util.PipelineUtils;
 import roart.common.util.TimeUtil;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
@@ -52,15 +53,15 @@ public class DataReader extends Pipeline {
     public PipelineData putData() {
         PipelineData map = getData();
         map.setName(categoryTitle);
-        map.put(PipelineConstants.LIST, listMap);
+        map.put(PipelineConstants.LIST, PipelineUtils.convertDD(listMap));
         map.put(PipelineConstants.VOLUME, volumeMap);
-        map.put(PipelineConstants.FILLLIST, fillListMap);
-        map.put(PipelineConstants.BASE100LIST, base100ListMap);
-        map.put(PipelineConstants.BASE100FILLLIST, base100FillListMap);
-        map.put(PipelineConstants.TRUNCLIST, truncListMap);
-        map.put(PipelineConstants.TRUNCFILLLIST, truncFillListMap);
-        map.put(PipelineConstants.TRUNCBASE100LIST, truncBase100ListMap);
-        map.put(PipelineConstants.TRUNCBASE100FILLLIST, truncBase100FillListMap);
+        map.put(PipelineConstants.FILLLIST, PipelineUtils.convertDD(fillListMap));
+        map.put(PipelineConstants.BASE100LIST, PipelineUtils.convertDD(base100ListMap));
+        map.put(PipelineConstants.BASE100FILLLIST, PipelineUtils.convertDD(base100FillListMap));
+        map.put(PipelineConstants.TRUNCLIST, PipelineUtils.convertdd(truncListMap));
+        map.put(PipelineConstants.TRUNCFILLLIST, PipelineUtils.convertdd(truncFillListMap));
+        map.put(PipelineConstants.TRUNCBASE100LIST, PipelineUtils.convertdd(truncBase100ListMap));
+        map.put(PipelineConstants.TRUNCBASE100FILLLIST, PipelineUtils.convertdd(truncBase100FillListMap));
         map.put(PipelineConstants.NAME, nameMap);
         map.put(PipelineConstants.DATELIST, dateList);
         map.put(PipelineConstants.CATEGORYTITLE, categoryTitle);
@@ -99,6 +100,9 @@ public class DataReader extends Pipeline {
         }
         if (category == Constants.PRICECOLUMN) {
             categoryTitle = Constants.PRICE;
+        }
+        if (category == Constants.EXTRACOLUMN) {
+            categoryTitle = Constants.EXTRA;
         }
         this.dateList = StockDao.getDateList(market, marketdatamap);
         //this.dateStringList = StockDao.getDateList(conf, market, dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);

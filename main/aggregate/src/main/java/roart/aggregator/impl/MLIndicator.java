@@ -43,6 +43,7 @@ import roart.common.ml.NeuralNetConfigs;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.TwoDimD;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
 import roart.common.util.PipelineUtils;
@@ -287,7 +288,7 @@ public class MLIndicator extends Aggregator {
 
         Map<String, List<AggregatorMLIndicator>> usedIndicators = AggregatorMLIndicator.getUsedAggregatorMLIndicators(conf);
         Set<String> ids = new HashSet<>();
-        Map<String, Double[][]> list0 = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
+        Map<String, Double[][]> list0 = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST));
         ids.addAll(list0.keySet());
         List<String> indicators = getIndicators(datareaders, usedIndicators, ids);
         log.info("INDIC" + usedIndicators.values().iterator().next().stream().map(AggregatorMLIndicator::indicator).toList());
@@ -701,7 +702,7 @@ public class MLIndicator extends Aggregator {
                 String indicatorName = indicator;
                 PipelineData indicatorResult = PipelineUtils.getPipeline(datareaders, indicatorName);
                 if (indicatorResult != null) {
-                    Map<String, Double[][]> aListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
+                    Map<String, Double[][]> aListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST));
                     Double[][] aResult = aListMap.get(id);
                     arrayResult = ArrayUtils.addAll(arrayResult, aResult[0]);
                 }
@@ -822,7 +823,7 @@ public class MLIndicator extends Aggregator {
                 if (indicatorResult != null) {
                     indicators.add(indicator);
                     PipelineData datareader = pipelineMap.get(this.key);
-                    Map<String, Double[][]> aResult = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
+                    Map<String, Double[][]> aResult = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST));
                     //Map<String, Object[]> aResult = (Map<String, Object[]>) indicatorResult.get(PipelineConstants. LIST);
                     ids.retainAll(aResult.keySet());
                 } else {

@@ -17,4 +17,5 @@ module common.config {
     requires commons.configuration2;
     requires common.constants;
     requires spring.context;
+    requires org.apache.commons.lang3;
 }

@@ -3,8 +3,16 @@ package roart.model.data;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import roart.common.model.StockItem;
 
+/*
+@JsonTypeInfo(  
+        use = JsonTypeInfo.Id.NAME,  
+        include = JsonTypeInfo.As.PROPERTY,  
+        property = "_class")  
+        */
 public class StockData {
 
     public String[] periodText;
@@ -19,4 +27,7 @@ public class StockData {
     public Integer days;
     public Map<String, List<StockItem>> stockidmap;
 
+    public StockData() {
+        super();
+    }
 }

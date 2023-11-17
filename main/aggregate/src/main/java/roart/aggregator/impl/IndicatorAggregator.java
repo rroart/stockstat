@@ -39,6 +39,8 @@ import roart.common.ml.NeuralNetConfigs;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.TwoDimD;
+import roart.common.pipeline.data.TwoDimd;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
 import roart.common.util.PipelineUtils;
@@ -91,7 +93,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     public static final int MULTILAYERPERCEPTRONCLASSIFIER = 1;
     public static final int LOGISTICREGRESSION = 2;
 
-    protected Map<String, Double[][]> listMap;
+    protected Map<String, double[][]> listMap;
 
     protected int fieldSize = 0;
 
@@ -164,9 +166,9 @@ public abstract class IndicatorAggregator extends Aggregator {
             log.info("empty {}", category);
             return;
         }
-        Map<String, Double[][]> aListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
-        Map<String, Double[][]> fillListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.TRUNCFILLLIST);
-        Map<String, Double[][]>  base100FillListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.TRUNCBASE100FILLLIST);
+        Map<String, Double[][]> aListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST));
+        Map<String, double[][]> fillListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCFILLLIST));
+        Map<String, double[][]>  base100FillListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCBASE100FILLLIST)) ;
         this.listMap = conf.wantPercentizedPriceIndex() ? base100FillListMap : fillListMap;
 
         long time0 = System.currentTimeMillis();
@@ -1007,7 +1009,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         return mapType != CMNTYPE;
     }
     
-    protected Map<String, Double[][]> getListMap() {
+    protected Map<String, double[][]> getListMap() {
         return listMap;
     }
 
@@ -1473,7 +1475,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     private Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> createPosNegMaps(IclijConfig conf, Map<SubType, MLMeta> metaMap, Double threshold) {
         Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = new HashMap<>();
         for (String id : getListMap().keySet()) {
-            double[][] list = ArraysUtil.convert(getListMap().get(id));
+            double[][] list = getListMap().get(id);
             log.debug("t {}", Arrays.toString(list[0]));
             log.debug("listsize {}", list.length);
             /*
@@ -1628,7 +1630,7 @@ public abstract class IndicatorAggregator extends Aggregator {
             }
            // map from h/m + posnegcom to map<model, results>
             for (String id : getListMap().keySet()) {
-                double[][] list = ArraysUtil.convert(getListMap().get(id));
+                double[][] list = getListMap().get(id);
                 log.debug("t {}", Arrays.toString(list[0]));
                 log.debug("listsize {}", list.length);
                 log.debug("list {} {} ", list.length, Arrays.asList(list));

@@ -30,4 +30,5 @@ module iclij.common.service {
     requires curator.client;
     requires curator.framework;
     requires pipeline.model;
+    requires model;
 }

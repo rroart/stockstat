@@ -27,6 +27,7 @@ import roart.common.communication.model.Communication;
 import roart.common.config.CacheConstants;
 import roart.common.config.ConfigData;
 import roart.common.config.ConfigTreeMap;
+import roart.common.config.MarketStock;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.inmemory.factory.InmemoryFactory;
@@ -45,6 +46,8 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.model.WebData;
 import roart.iclij.model.WebDataJson;
 import roart.iclij.model.component.ComponentInput;
+import roart.model.data.MarketData;
+import roart.model.data.StockData;
 import roart.result.model.ResultItem;
 
 public class ControlService {
@@ -287,6 +290,7 @@ public class ControlService {
         long[] mem1 = MemUtil.mem();
         long[] memdiff = MemUtil.diff(mem1, mem0);
         log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
+        PipelineUtils.fixPipeline(result.getPipelineData(), MarketStock.class, StockData.class);
         return list;
         //return result.getMaps();
         //ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONTENT);

@@ -122,7 +122,7 @@ public class EvolutionService {
         headrow.add("New value");
         table.add(headrow);
     
-        IclijServiceResult result = ControlService.getContent(conf, origparam, disableList);
+        IclijServiceResult result = new ControlService().getContent(conf, origparam, disableList);
         
         List<ResultItem> retlist = result.getList();
         PipelineData[] pipelineData = result.getPipelineData();

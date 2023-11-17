@@ -16,6 +16,8 @@ import roart.common.model.IncDecItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.TwoDimD;
+import roart.common.util.MapUtil;
 import roart.common.util.PipelineUtils;
 import roart.component.model.ComponentData;
 import roart.db.dao.IclijDbDao;
@@ -217,7 +219,7 @@ public class MarketUtil {
         }
         if (newCategory != null) {
             PipelineData map = PipelineUtils.getPipeline(maps, newCategory);
-            return (Map<String, List<List>>) map.get(PipelineConstants.LIST);
+            return (Map) MapUtil.convertA2L(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) map.get(PipelineConstants.LIST)));
         }
         Map<String, List<List>> listMap3 = null;
         for (Entry<String, PipelineData> entry : PipelineUtils.getPipelineMap(maps).entrySet()) {

@@ -2,6 +2,8 @@ package roart.common.model;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class StockItem {
 
     private String dbid;
@@ -133,10 +135,12 @@ public class StockItem {
         this.indexvalueopen = indexvalueopen;
     }
 
+    @JsonIgnore
     public Double[] getIndexvalues() {
         return new Double[] { indexvalue, indexvaluelow, indexvaluehigh, indexvalueopen };
     }
 
+    @JsonIgnore
     public OHLC getIndexvalueOHLC() {
         return new OHLC(indexvalueopen, indexvaluehigh, indexvaluelow, indexvalue);
     }
@@ -173,10 +177,12 @@ public class StockItem {
         this.priceopen = priceopen;
     }
 
+    @JsonIgnore
     public Double[] getPrices() {
         return new Double[] { price, pricelow, pricehigh, priceopen };
     }
 
+    @JsonIgnore
     public OHLC getPriceOHLC() {
         return new OHLC(priceopen, pricehigh, pricelow, price);
     }

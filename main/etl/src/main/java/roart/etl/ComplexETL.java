@@ -14,7 +14,9 @@ import org.apache.commons.lang3.math.NumberUtils;
 import roart.common.config.MarketStock;
 import roart.common.config.MarketStockExpression;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.TwoDimD;
 import roart.common.util.MetaUtil;
+import roart.common.util.PipelineUtils;
 import roart.model.data.StockData;
 import roart.pipeline.Pipeline;
 
@@ -43,8 +45,8 @@ public class ComplexETL {
                 Pipeline datareader = pipelineMap.get("" + cat); // used id 0-9
                 // interpolation does not work yet
                 List<String> datelist = (List<String>) datareader.putData().get(PipelineConstants.DATELIST);
-                Map<String, Double[][]> listMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.LIST);
-                Map<String, Double[][]> fillListMap = (Map<String, Double[][]>) datareader.putData().get(PipelineConstants.FILLLIST);
+                Map<String, Double[][]> listMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.putData().get(PipelineConstants.LIST));
+                Map<String, Double[][]> fillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.putData().get(PipelineConstants.FILLLIST));
                 Double[][] fillList = fillListMap.get(id);
                 try {
                     int dateIndex = datelist.size() - datelist.indexOf(date);

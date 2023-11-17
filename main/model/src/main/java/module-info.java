@@ -15,4 +15,5 @@ open module model {
     requires org.slf4j;
     requires common.config;
     requires org.apache.commons.lang3;
+    requires com.fasterxml.jackson.annotation;
 }

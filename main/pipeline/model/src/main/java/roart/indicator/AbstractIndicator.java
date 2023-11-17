@@ -20,7 +20,9 @@ import roart.common.constants.Constants;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.TwoDimD;
 import roart.common.util.MathUtil;
+import roart.common.util.PipelineUtils;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.pipeline.Pipeline;
@@ -154,6 +156,15 @@ public abstract class AbstractIndicator extends Calculatable {
     }
 
 
+    public boolean anythingHereA(Map<String, double[][]> listMap) {
+        for (double[][] array : listMap.values()) {
+            if (array[0].length > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean anythingHere(Map<String, Double[][]> listMap2) {
         for (Double[][] array : listMap2.values()) {
             for (int i = 0; i < array[0].length; i++) {
@@ -238,7 +249,7 @@ public abstract class AbstractIndicator extends Calculatable {
     }
 
     protected Map<String, Double[][]> getListMap() {
-        return (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
+        return PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST));
     }
 
     public String getKey() {

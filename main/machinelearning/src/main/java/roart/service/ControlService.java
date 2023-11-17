@@ -25,13 +25,17 @@ import roart.aggregator.impl.MLSTOCH;
 import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
 import roart.common.config.ConfigConstants;
+import roart.common.config.MarketStock;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.TwoDimD;
+import roart.common.pipeline.data.TwoDimd;
 import roart.common.util.ArraysUtil;
 import roart.common.util.ImmutabilityUtil;
+import roart.common.util.JsonUtil;
 import roart.common.util.MemUtil;
 import roart.common.util.PipelineUtils;
 import roart.common.util.TimeUtil;
@@ -49,7 +53,6 @@ import roart.model.data.StockData;
 
 public class ControlService {
     private Logger log = LoggerFactory.getLogger(this.getClass());
-    private static Logger Log = LoggerFactory.getLogger(ControlService.class);
 
     public static CuratorFramework curatorClient;
 
@@ -146,7 +149,7 @@ public class ControlService {
         return result;
     }
 
-    public static IclijServiceResult getContent(IclijConfig conf, IclijServiceParam origparam, List<String> disableList) {
+    public IclijServiceResult getContent(IclijConfig conf, IclijServiceParam origparam, List<String> disableList) {
         String key = CacheConstants.CONTENT + conf.getConfigData().getMarket() + conf.getConfigData().getMlmarket() + conf.getConfigData().getDate() + conf.getConfigData().getConfigValueMap();
         IclijServiceResult list = (IclijServiceResult) MyCache.getInstance().get(key);
         if (list != null) {
@@ -163,105 +166,16 @@ public class ControlService {
         MyCache.getInstance().put(key, result);
         {
         long[] mem0 = MemUtil.mem();
-        Log.info("MEM {}", MemUtil.print(mem0));
+        log.info("MEM {}", MemUtil.print(mem0));
         }
-        fixPipeline(result.getPipelineData());
+        PipelineUtils.fixPipeline(result.getPipelineData(), MarketStock.class, StockData.class);
         {
         long[] mem0 = MemUtil.mem();
-        Log.info("MEM {}", MemUtil.print(mem0));
+        log.info("MEM {}", MemUtil.print(mem0));
         }
         
         return result;
         
-    }
-
-    private static final List<String> other = List.of(PipelineConstants.OBJECT);
-    
-    private static final List<String> onedim = List.of(PipelineConstants.RESULT);
-
-    private static final List<String> twodim = List.of(PipelineConstants.LIST, PipelineConstants.FILLLIST, PipelineConstants.TRUNCLIST, PipelineConstants.TRUNCFILLLIST, PipelineConstants.BASE100LIST, PipelineConstants.BASE100FILLLIST, PipelineConstants.TRUNCBASE100LIST, PipelineConstants.TRUNCBASE100FILLLIST);
-    // , PipelineConstants.MARKETOBJECT
-    
-    private static void fixPipeline(PipelineData[] pipelineData) {
-        for (PipelineData data : pipelineData) {
-            for (Entry<String, Object> entry : data.getMap().entrySet()) {
-                if (PipelineConstants.VOLUME.equals(entry.getKey())) {
-                    //continue;
-                }
-                Object value = entry.getValue();
-                if (value instanceof Map map2) {
-                    Map<String, Object> map = map2;
-                    Map newMap = new HashMap<>();
-                    for (Entry mapEntry : map.entrySet()) {
-                        try {
-                        Object newData = null;
-                        if (twodim.contains(entry.getKey())) {
-                            newData = transformListList(mapEntry.getValue());
-                        }
-                        if (onedim.contains(entry.getKey())) {
-                            newData = transformList(mapEntry.getValue());
-                        }
-                        if (other.contains(entry.getKey())) {
-                            newData = transformListObject(mapEntry.getValue());
-                        }
-                        if (newData != null) {
-                            newMap.put(mapEntry.getKey(), newData);
-                        }
-                        } catch (Exception e) {
-                            Log.info("key" + mapEntry.getKey());
-                            Log.info("key" + mapEntry.getValue().getClass().getName());
-                            Log.info("key" + mapEntry.getValue());
-                            Log.info("key" + mapEntry.getValue());
-
-                        }
-                    }
-                    map.putAll(newMap);
-                }
-            }
-        }
-    }
-
-
-
-    private static Object transform(Object data) {
-        if (data instanceof List list) {
-            return list.stream().map(e -> transform(e)).toArray();
-        }
-        return data;
-    }
-
-    private static Object transformListList(Object data) {
-        if (data instanceof List list) {
-            for (Object object : list) {
-                if (!(object instanceof List)) {
-                    return data;
-                }
-            }
-            return ArraysUtil.convert((List<List<Double>>) data);
-        }
-        return data;
-    }
-
-    private static Object transformList(Object data) {
-        if (data instanceof List list) {
-            List l = (List) data;
-            for (Object o : l) {
-                //Log.info("ob" + o + " " + o.getClass().getName());
-            }
-            return ArraysUtil.convert1((List<Double>) data);
-        }
-        return data;
-    }
-
-    private static Object transformListObject(Object data) {
-        if (data instanceof List list) {
-            List l = (List) data;
-            for (Object o : l) {
-                //Log.info("ob" + o + " " + o.getClass().getName());
-            }
-            return ArraysUtil.convert2((List) data);
-        }
-        return data;
     }
 
     public void printmap(Object o, int i) {

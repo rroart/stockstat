@@ -34,6 +34,7 @@ import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.util.MathUtil;
+import roart.common.util.PipelineUtils;
 import roart.common.util.JsonUtil;
 import roart.indicator.util.IndicatorUtils;
 import roart.ml.common.MLClassifyModel;
@@ -46,6 +47,8 @@ import roart.result.model.ResultItemTableRow;
 import roart.result.model.ResultMeta;
 import roart.stockutil.StockUtil;
 import roart.ml.model.LearnClassify;
+import roart.common.pipeline.data.TwoDimD;
+import roart.common.pipeline.data.TwoDimd;
 
 public abstract class Predictor extends AbstractPredictor {
 
@@ -82,17 +85,17 @@ public abstract class Predictor extends AbstractPredictor {
     }
 
     String key;
-    protected Map<String, List<List<Double>>> listMap;
-    protected Map<String, List<List<Double>>> fillListMap;
+    protected Map<String, Double[][]> listMap;
+    protected Map<String, Double[][]> fillListMap;
 
-    protected Map<String, List<List<Double>>> truncListMap;
-    protected Map<String, List<List<Double>>> truncFillListMap;
+    protected Map<String, double[][]> truncListMap;
+    protected Map<String, double[][]> truncFillListMap;
 
-    protected Map<String, List<List<Double>>> base100ListMap;
-    protected Map<String, List<List<Double>>> base100FillListMap;
+    protected Map<String, Double[][]> base100ListMap;
+    protected Map<String, Double[][]> base100FillListMap;
 
-    protected Map<String, List<List<Double>>> truncBase100ListMap;
-    protected Map<String, List<List<Double>>> truncBase100FillListMap;
+    protected Map<String, double[][]> truncBase100ListMap;
+    protected Map<String, double[][]> truncBase100FillListMap;
     Object[] emptyField = new Object[1];
     Map<MLClassifyModel, Long> mapTime = new HashMap<>();
 
@@ -155,21 +158,21 @@ public abstract class Predictor extends AbstractPredictor {
             log.info("empty {}", category);
             return;
         }
-        this.listMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.LIST);
-        this.fillListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.FILLLIST);
-        this.truncListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.TRUNCLIST);       
-        this.truncFillListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.TRUNCFILLLIST);       
-        this.base100ListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.BASE100LIST);
-        this.base100FillListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.BASE100FILLLIST);
-        this.truncBase100ListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.TRUNCBASE100LIST);       
-        this.truncBase100FillListMap = (Map<String, List<List<Double>>>) datareader.get(PipelineConstants.TRUNCBASE100FILLLIST);       
+        this.listMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST));
+        this.fillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.FILLLIST));
+        this.truncListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCLIST));       
+        this.truncFillListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCFILLLIST));       
+        this.base100ListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.BASE100LIST));
+        this.base100FillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.BASE100FILLLIST));
+        this.truncBase100ListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCBASE100LIST));       
+        this.truncBase100FillListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCBASE100FILLLIST));       
 
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse
         //Map<String, Double[][]> retArray = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         //this.listMap = retArray;
         //this.truncListMap = ArraysUtil.getTruncListArr(this.listMap);
-        if (!anythingHere(listMap)) {
+        if (!anythingHereNot(listMap)) {
             log.info("empty {}", key);
             return;
         }
@@ -198,9 +201,9 @@ public abstract class Predictor extends AbstractPredictor {
         long time1 = System.currentTimeMillis();
         log.info("listmap {} {}", listMap.size(), listMap.keySet());
         for (String id : listMap.keySet()) {
-            List<List<Double>> list0 = truncListMap.get(id);
-            List<Double> list = list0.get(0);
-            log.info("list {} {}", list.size(), list);
+            double[][] list0 = truncListMap.get(id);
+            double[] list = list0[0];
+            log.info("list {} {}", list.length, list);
         }
         Map<Double, Map<MLClassifyModel, Map<String, Double[]>>> mapResult0 = new HashMap<>();
         Double[] thresholds = getThresholds();
@@ -530,7 +533,7 @@ public abstract class Predictor extends AbstractPredictor {
     public boolean hasValue() {
         Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
         PipelineData datareader = pipelineMap.get(key);
-        return anythingHereA((Map<String, Double[][]>) datareader.get(PipelineConstants.LIST));
+        return anythingHereA(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST)));
     }
     
     @Override

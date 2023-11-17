@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.Set;
 
@@ -21,7 +22,10 @@ import roart.common.config.MarketStock;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.TwoDimD;
+import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
+import roart.common.util.MapUtil;
 import roart.common.util.PipelineUtils;
 import roart.iclij.config.IclijConfig;
 import roart.indicator.AbstractIndicator;
@@ -168,7 +172,7 @@ public class IndicatorUtils {
             Map<String, Object[]> objMap = (Map<String, Object[]>) resultMap.get(PipelineConstants.OBJECT);
             if (objMap != null) {
                 objectMapsList.add(objMap);
-                listList.add((Map<String, Double[][]>) resultMap.get(PipelineConstants.LIST));
+                listList.add(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) resultMap.get(PipelineConstants.LIST)));
                 arraySize += 0; // indicator.getResultSize();
                 log.debug("Sizes {}", listList.get(listList.size() - 1).size());
             }
@@ -414,7 +418,7 @@ public class IndicatorUtils {
             Map<String, Object[]> objMap = (Map<String, Object[]>) resultMap.get(PipelineConstants.OBJECT);
             if (objMap != null) { 
                 objectMapsList.add(objMap);
-                Map<String, Double[][]> list0 = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
+                Map<String, Double[][]> list0 = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST));
                 listList.add(list0);
                 AbstractIndicator indicator = dummyfactory(conf, indicatorName);
                 arraySize += indicator.getResultSize();
@@ -451,16 +455,12 @@ public class IndicatorUtils {
             if (!extraData.dateList.isEmpty()) {
                 int jj = 0;
             }
-            Map<String, List<PipelineData>> dataReaderMap = (Map<String, List<PipelineData>>) extraData.extrareader.get(PipelineConstants.DATAREADER);
+            Map<String, PipelineData[]> dataReaderMap = (Map<String, PipelineData[]>) extraData.extrareader.get(PipelineConstants.DATAREADER);
             Map<String, StockData>  stockDataMap = (Map<String, StockData>) extraData.extrareader.get(PipelineConstants.STOCKDATA);
-            List marketStocksPre = (List) extraData.extrareader.get(PipelineConstants.MARKETSTOCKS);
-            List<MarketStock> marketStocks = new ArrayList<>();
-            for (Object object : marketStocksPre) {
-                marketStocks.add(JsonUtil.convert(object, MarketStock.class));
-            }
+            List<MarketStock> marketStocks = (List<MarketStock>) extraData.extrareader.get(PipelineConstants.MARKETSTOCKS);
             for (MarketStock entry : marketStocks) {
                 String market = entry.getMarket();
-                PipelineData[] datareaders = dataReaderMap.get(market).toArray(new PipelineData[0]);
+                PipelineData[] datareaders = dataReaderMap.get(market);
                 Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
                 String cat = entry.getCategory();
                 StockData stockData = stockDataMap.get(market);
@@ -469,7 +469,7 @@ public class IndicatorUtils {
                 }
                 int mycat = stockData.cat;
                 PipelineData datareader = pipelineMap.get(cat);
-                Map<String, Double[][]> fillListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.FILLLIST);
+                Map<String, Double[][]> fillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.FILLLIST));
                 Double[][] fillList = fillListMap.get(entry.getId());
                 // null
                 if (fillList == null || fillList[0] == null) {

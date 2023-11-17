@@ -9,6 +9,8 @@ import roart.common.constants.Constants;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.TwoDimD;
+import roart.common.pipeline.data.TwoDimd;
 import roart.common.util.PipelineUtils;
 import roart.indicator.util.IndicatorUtils;
 import roart.pipeline.Pipeline;
@@ -40,9 +42,9 @@ public class MACDBase extends Aggregator {
             log.info("empty {}", category);
             return;
         }
-        Map<String, Double[][]> aListMap = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
-        Map<String, double[][]> fillListMap = (Map<String, double[][]>) datareader.get(PipelineConstants.TRUNCFILLLIST);
-        Map<String, double[][]>  base100FillListMap = (Map<String, double[][]>) datareader.get(PipelineConstants.TRUNCBASE100FILLLIST);
+        Map<String, Double[][]> aListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST));
+        Map<String, double[][]> fillListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCFILLLIST));
+        Map<String, double[][]>  base100FillListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>)  datareader.get(PipelineConstants.TRUNCBASE100FILLLIST));
         this.listMap = fillListMap;
     }
 
