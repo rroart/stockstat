@@ -32,7 +32,7 @@ import roart.iclij.config.SimulateInvestConfig;
 
 public abstract class IndicatorAdviser extends Adviser {
 
-    protected Map<String, List<Object>> objectMap;
+    protected Map<String, Object[]> objectMap;
     
     protected boolean indicatorreverse;
     
@@ -83,7 +83,7 @@ public abstract class IndicatorAdviser extends Adviser {
             if (objectMaps != null) {
                 Map<String, Object> indicatorMaps = (Map<String, Object>) objectMaps.get(getPipeline());
                 //System.out.println("macd"+ macdMaps.keySet());
-                objectMap = (Map<String, List<Object>>) objectMaps.get(PipelineConstants.OBJECT);
+                objectMap = (Map<String, Object[]>) objectMaps.get(PipelineConstants.OBJECT);
             }
             return;
         }
@@ -122,7 +122,7 @@ public abstract class IndicatorAdviser extends Adviser {
         if (resultMaps != null) {
             Map<String, Object> indicatorMaps = (Map<String, Object>) resultMaps.get(getPipeline());
             //System.out.println("macd"+ macdMaps.keySet());
-            objectMap = (Map<String, List<Object>>) indicatorMaps.get(PipelineConstants.OBJECT);
+            objectMap = (Map<String, Object[]>) indicatorMaps.get(PipelineConstants.OBJECT);
         }
     }
 
@@ -182,12 +182,12 @@ public abstract class IndicatorAdviser extends Adviser {
             }
             List<Double> mainList = resultList.get(0);
             //Double[] macdList = calculatedMap.get(entry.getKey());
-            List<Object> indicatorList2 = objectMap.get(entry.getKey());
+            Object[] indicatorList2 = objectMap.get(entry.getKey());
             if (indicatorList2 == null) {
                 continue;
             }
-            List<Double> indicatorList = (List<Double>) indicatorList2.get(getOffset());
-            int end = (Integer) indicatorList2.get(getOffset2());
+            List<Double> indicatorList = (List<Double>) indicatorList2[getOffset()];
+            int end = (Integer) indicatorList2[getOffset2()];
             int indicatorIndex = indicatorList.size() - 1 - indexOffset - end;
             if (indicatorIndex < 0) {
                 continue;
@@ -245,22 +245,22 @@ public abstract class IndicatorAdviser extends Adviser {
                 }
                 List<Double> mainList = resultList.get(0);
                 //Double[] macdList = calculatedMap.get(entry.getKey());
-                List<Object> indicatorList2 = objectMap.get(entry.getKey());
+                Object[] indicatorList2 = objectMap.get(entry.getKey());
                 if (indicatorList2 == null) {
                     continue;
                 }
-                List<Double> indicatorList = (List<Double>) indicatorList2.get(getOffset());
-                int endbuf = (Integer) indicatorList2.get(getOffset2());
-                int indicatorIndex = indicatorList.size() - 1 - indexOffset - endbuf;
+                double[] indicatorList = (double[]) indicatorList2[getOffset()];
+                int endbuf = (Integer) indicatorList2[getOffset2()];
+                int indicatorIndex = indicatorList.length - 1 - indexOffset - endbuf;
                 if (indicatorIndex < 0) {
                     continue;
                 }
-                Double indicatorValue = indicatorList.get(indicatorIndex);
+                Double indicatorValue = indicatorList[indicatorIndex];
                 if (indicatordirection) {
                     if (indicatorIndex < 1) {
                         continue;
                     }
-                    Double indicatorPrevValue = indicatorList.get(indicatorIndex - 1);
+                    Double indicatorPrevValue = indicatorList[indicatorIndex - 1];
                     if (indicatorValue == null || indicatorPrevValue == null) {
                         continue;
                     }

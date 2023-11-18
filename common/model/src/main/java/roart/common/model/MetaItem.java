@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import roart.common.constants.Constants;
 
+/*
 @JsonTypeInfo(  
         use = JsonTypeInfo.Id.NAME,  
         include = JsonTypeInfo.As.PROPERTY,  
         property = "_class")  
+        */
 public class MetaItem {
 
     private String marketid;
