@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import roart.common.config.MarketStock;
+import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.TwoDimD;
@@ -33,7 +34,7 @@ public abstract class Indicator extends AbstractIndicator {
     }
 
     protected void calculateForExtras(PipelineData[] datareaders) {
-        if (category != 42 && fieldSize == 0) {
+        if (category != Constants.NOCOLUMN && fieldSize == 0) {
             return;
         }
         Map<String, PipelineData> pipelineMap = PipelineUtils.getPipelineMap(datareaders);
@@ -79,7 +80,7 @@ public abstract class Indicator extends AbstractIndicator {
         Map<Pair<String, String>, double[][]> pairTruncListMap = null; // (Map<Pair<String, String>, double[][]>) localResults.get(PipelineConstants.PAIRTRUNCLIST);
         */
         //Set<String> commonDates = (Set<String>) localResults.get(PipelineConstants.DATELIST);
-        Collection<MarketStock> marketStocks = (LinkedHashSet<MarketStock>) localResults.get(PipelineConstants.MARKETSTOCKS);
+        Collection<MarketStock> marketStocks = (Collection<MarketStock>) localResults.get(PipelineConstants.MARKETSTOCKS);
         Map<String, PipelineData[]> dataReaderMap = (Map<String, PipelineData[]>) localResults.get(PipelineConstants.DATAREADER);
         Map<String, StockData>  stockDataMap = (Map<String, StockData>) localResults.get(PipelineConstants.STOCKDATA);
         log.debug("lockeys {}", localResults.keySet());

@@ -35,6 +35,7 @@ public class Constants {
     public static final int PRICECOLUMN = -1;
     public static final int INDEXVALUECOLUMN = -2;
     public static final int EXTRACOLUMN = -3;
+    public static final int NOCOLUMN = 42;
 
     public static final int FULLSIZE = 100;
     public static final int INDICATORSIZE = 50;

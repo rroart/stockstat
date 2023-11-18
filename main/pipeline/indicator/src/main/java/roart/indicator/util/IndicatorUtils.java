@@ -217,6 +217,8 @@ public class IndicatorUtils {
 
     // TODO return stockdate based on date
 
+    // for MLI
+    
     public static Object[] getDayIndicatorMap(IclijConfig conf, List<String> indicators, int futureDays, int tableDays, int intervalDays, ExtraData extraData, PipelineData[] datareaders, List<String> dateList) throws Exception {
         List<Map<String, Object[]>> objectMapsList = new ArrayList<>();
         List<Map<String, Double[][]>> listList = new ArrayList<>();
@@ -292,6 +294,8 @@ public class IndicatorUtils {
         return retobj;
     }
 
+    // for ARI
+    
     public static Object[] getDayIndicatorMap(IclijConfig conf, List<String> indicators, int futureDays, int tableDays, int intervalDays, ExtraData extraData, PipelineData[] datareaders) throws Exception {
         List<Map<String, Object[]>> objectMapsList = new ArrayList<>();
         List<Map<String, Double[][]>> listList = new ArrayList<>();
@@ -379,6 +383,8 @@ public class IndicatorUtils {
             log.error(Constants.EXCEPTION, e);
         }
     }
+    
+    // for ARI
 
     private static Double[] getCommonResult(IclijConfig conf, List<String> indicators,
             List<Map<String, Object[]>> objectMapsList, int j, String id, Double[] result, PipelineData[] datareaders) {
@@ -391,6 +397,8 @@ public class IndicatorUtils {
         }
         return result;
     }
+    
+    // for MLI
 
     private static Double[] getCommonResult(IclijConfig conf, List<String> indicators,
             List<Map<String, Object[]>> objectMapsList, int j, String id, Double[] result, String commonDate, PipelineData[] datareaders) {
@@ -408,6 +416,8 @@ public class IndicatorUtils {
         return result;
     }
 
+    // shared
+    
     private static int getCommonArraySizeAndObjectMap(IclijConfig conf, List<String> indicators,
             List<Map<String, Object[]>> objectMapsList, List<Map<String, Double[][]>> listList, PipelineData[] datareaders) {
         int arraySize = 0;
@@ -429,6 +439,8 @@ public class IndicatorUtils {
         return arraySize;
     }
 
+    // for ARI
+    
     private static int getExtraDataSize(IclijConfig conf, ExtraData extraData, int arraySize,
             List<AbstractIndicator> allIndicators) throws Exception {
         if (extraData.dateList != null) {
@@ -450,6 +462,8 @@ public class IndicatorUtils {
         return arraySize;
     }
 
+    // for MLI
+    
     private static int getExtraDataSize2(IclijConfig conf, ExtraData extraData, int arraySize,
             List<AbstractIndicator> allIndicators) throws Exception {
         if (extraData.dateList != null) {
@@ -508,6 +522,8 @@ public class IndicatorUtils {
         }
         return category;
     }
+    
+    // for ARI
 
     private static Double[] getExtraIndicatorsResult(IclijConfig conf, int j, Double[] result, List<AbstractIndicator> allIndicators, PipelineData[] datareaders) throws Exception {
         for (AbstractIndicator indicator : allIndicators) {
@@ -526,6 +542,8 @@ public class IndicatorUtils {
         return result;
     }
 
+    // for MLI
+    
     private static Double[] getExtraIndicatorsResult(IclijConfig conf, int j, Double[] result, PipelineData[] datareaders, List<AbstractIndicator> allIndicators, String commonDate, ExtraData extraData) throws Exception {
         PipelineData localResults =  extraData.extrareader;
         for (AbstractIndicator indicator : allIndicators) {
@@ -596,6 +614,8 @@ public class IndicatorUtils {
         return result;
     }
 
+    // shared
+    
     private static void getAllIndicators(List<AbstractIndicator> allIndicators, IclijConfig conf, Collection<MarketStock> marketStocks,
             PipelineData[] datareaders, Map<String, StockData> stockDataMap) throws Exception {
         Set<String> indicatorSet = new HashSet<>();
@@ -623,43 +643,43 @@ public class IndicatorUtils {
         }
         // make indicator factory
         if (indicatorSet.add(PipelineConstants.INDICATORMACD) && conf.wantAggregatorsIndicatorExtrasMACD()) {
-            allIndicators.add(new IndicatorMACD(conf, null, null, 42, datareaders, true));       
+            allIndicators.add(new IndicatorMACD(conf, null, null, Constants.NOCOLUMN, datareaders, true));       
         }
         if (indicatorSet.add(PipelineConstants.INDICATORRSI) && conf.wantAggregatorsIndicatorExtrasRSI()) {
-            allIndicators.add(new IndicatorRSI(conf, null, null, 42, datareaders, true));       
+            allIndicators.add(new IndicatorRSI(conf, null, null, Constants.NOCOLUMN, datareaders, true));       
         }
         if (indicatorSet.add(PipelineConstants.INDICATORATR) && conf.wantAggregatorsIndicatorExtrasATR()) {
-            allIndicators.add(new IndicatorATR(conf, null, null, 42, datareaders, true));       
+            allIndicators.add(new IndicatorATR(conf, null, null, Constants.NOCOLUMN, datareaders, true));       
         }
         if (indicatorSet.add(PipelineConstants.INDICATORCCI) && conf.wantAggregatorsIndicatorExtrasCCI()) {
-            allIndicators.add(new IndicatorCCI(conf, null, null, 42, datareaders, true));       
+            allIndicators.add(new IndicatorCCI(conf, null, null, Constants.NOCOLUMN, datareaders, true));       
         }
         if (indicatorSet.add(PipelineConstants.INDICATORSTOCH) && conf.wantAggregatorsIndicatorExtrasSTOCH()) {
-            allIndicators.add(new IndicatorSTOCH(conf, null, null, 42, datareaders, true));       
+            allIndicators.add(new IndicatorSTOCH(conf, null, null, Constants.NOCOLUMN, datareaders, true));       
         }
         if (indicatorSet.add(PipelineConstants.INDICATORSTOCHRSI) && conf.wantAggregatorsIndicatorExtrasSTOCHRSI()) {
-            allIndicators.add(new IndicatorSTOCHRSI(conf, null, null, 42, datareaders, true));       
+            allIndicators.add(new IndicatorSTOCHRSI(conf, null, null, Constants.NOCOLUMN, datareaders, true));       
         }
     }
 
     public static AbstractIndicator dummyfactory(IclijConfig conf, String indicator) {
         if (indicator.equals(PipelineConstants.INDICATORMACD)) {
-            return new IndicatorMACD(conf, null, null, 42, null, true);       
+            return new IndicatorMACD(conf, null, null, Constants.NOCOLUMN, null, true);       
         }
         if (indicator.equals(PipelineConstants.INDICATORRSI)) {
-            return new IndicatorRSI(conf, null, null, 42, null, true);       
+            return new IndicatorRSI(conf, null, null, Constants.NOCOLUMN, null, true);       
         }
         if (indicator.equals(PipelineConstants.INDICATORATR)) {
-            return new IndicatorATR(conf, null, null, 42, null, true);       
+            return new IndicatorATR(conf, null, null, Constants.NOCOLUMN, null, true);       
         }
         if (indicator.equals(PipelineConstants.INDICATORCCI)) {
-            return new IndicatorCCI(conf, null, null, 42, null, true);       
+            return new IndicatorCCI(conf, null, null, Constants.NOCOLUMN, null, true);       
         }
         if (indicator.equals(PipelineConstants.INDICATORSTOCH)) {
-            return new IndicatorSTOCH(conf, null, null, 42, null, true);       
+            return new IndicatorSTOCH(conf, null, null, Constants.NOCOLUMN, null, true);       
         }
         if (indicator.equals(PipelineConstants.INDICATORSTOCHRSI)) {
-            return new IndicatorSTOCHRSI(conf, null, null, 42, null, true);       
+            return new IndicatorSTOCHRSI(conf, null, null, Constants.NOCOLUMN, null, true);       
         }
         return null;
 

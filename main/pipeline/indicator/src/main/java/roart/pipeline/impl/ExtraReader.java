@@ -1,6 +1,7 @@
 package roart.pipeline.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -308,6 +309,8 @@ public class ExtraReader extends Pipeline {
         return result;
     }
 
+    // for ARI
+    
     public static Double[] getExtraData(IclijConfig conf, ExtraData extraData,
             int j, String id,
             Double[] result) throws Exception {
@@ -355,6 +358,8 @@ public class ExtraReader extends Pipeline {
         return result;
     }
 
+    // for MLI
+    
     public static Double[] getExtraData(IclijConfig conf, ExtraData extraData,
             int j, String id,
             Double[] result, String commonDate) throws Exception {
@@ -370,7 +375,7 @@ public class ExtraReader extends Pipeline {
         String prevDate = extraData.dateList.get(size - (j + (deltas - 1)));
         Map<String, PipelineData[]> dataReaderMap = (Map<String, PipelineData[]>) extraData.extrareader.get(PipelineConstants.DATAREADER);
         Map<String, StockData>  stockDataMap = (Map<String, StockData>) extraData.extrareader.get(PipelineConstants.STOCKDATA);
-        LinkedHashSet<MarketStock> allMarketStocks = (LinkedHashSet<MarketStock>) extraData.extrareader.get(PipelineConstants.MARKETSTOCKS);
+        Collection<MarketStock> allMarketStocks = (Collection<MarketStock>) extraData.extrareader.get(PipelineConstants.MARKETSTOCKS);
         for (MarketStock entry : allMarketStocks) {
             String market = entry.getMarket();
             PipelineData[] datareaders = dataReaderMap.get(market);
