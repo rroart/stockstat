@@ -82,7 +82,6 @@ public abstract class Indicator extends AbstractIndicator {
         //Set<String> commonDates = (Set<String>) localResults.get(PipelineConstants.DATELIST);
         Collection<MarketStock> marketStocks = (Collection<MarketStock>) localResults.get(PipelineConstants.MARKETSTOCKS);
         Map<String, PipelineData[]> dataReaderMap = (Map<String, PipelineData[]>) localResults.get(PipelineConstants.DATAREADER);
-        Map<String, StockData>  stockDataMap = (Map<String, StockData>) localResults.get(PipelineConstants.STOCKDATA);
         log.debug("lockeys {}", localResults.keySet());
         //Map<Pair<String, String>, List<StockItem>> pairMap = pairStockMap;
         for(MarketStock ms : marketStocks) {
@@ -98,11 +97,9 @@ public abstract class Indicator extends AbstractIndicator {
             Map<String, PipelineData> pipelineMap2 = IndicatorUtils.getPipelineMap(datareaders2);
             int category = 0; // extraData.category;
             String cat = ms.getCategory();
-            StockData stockData = stockDataMap.get(market);
             if (cat == null) {
                 cat = Constants.EXTRA;
             }
-            int mycat = stockData.cat;
             PipelineData[] mydatareaders = dataReaderMap.get(market);
             Map<String, PipelineData> mypipelineMap = IndicatorUtils.getPipelineMap(mydatareaders);
             PipelineData datareader = mypipelineMap.get(cat);

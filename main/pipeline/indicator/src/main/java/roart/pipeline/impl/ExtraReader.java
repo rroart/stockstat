@@ -237,7 +237,6 @@ public class ExtraReader extends Pipeline {
         if (!allMarketStocks.isEmpty()) {
             map.put(PipelineConstants.MARKETSTOCKS, allMarketStocks);
         }
-        map.put(PipelineConstants.STOCKDATA, stockDataMap);
         return map;
     }
     
@@ -325,18 +324,15 @@ public class ExtraReader extends Pipeline {
         String date = extraData.dateList.get(size - j);
         String prevDate = extraData.dateList.get(size - (j + (deltas - 1)));
         Map<String, PipelineData[]> dataReaderMap = (Map<String, PipelineData[]>) extraData.extrareader.get(PipelineConstants.DATAREADER);
-        Map<String, StockData>  stockDataMap = (Map<String, StockData>) extraData.extrareader.get(PipelineConstants.STOCKDATA);
         LinkedHashSet<MarketStock> allMarketStocks = (LinkedHashSet<MarketStock>) extraData.extrareader.get(PipelineConstants.MARKETSTOCKS);
         for (MarketStock entry : allMarketStocks) {
             String market = entry.getMarket();
             PipelineData[] datareaders = dataReaderMap.get(market);
             Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
             String cat = entry.getCategory();
-            StockData stockData = stockDataMap.get(market);
             if (cat == null) {
                 cat = Constants.EXTRA;
             }
-            int mycat = stockData.cat;
             PipelineData datareader = pipelineMap.get(cat);
             List<String> dateList = (List<String>) datareader.get(PipelineConstants.DATELIST);
             int dateIndex = dateList.indexOf(date);
@@ -374,18 +370,15 @@ public class ExtraReader extends Pipeline {
         String date = extraData.dateList.get(size - j);
         String prevDate = extraData.dateList.get(size - (j + (deltas - 1)));
         Map<String, PipelineData[]> dataReaderMap = (Map<String, PipelineData[]>) extraData.extrareader.get(PipelineConstants.DATAREADER);
-        Map<String, StockData>  stockDataMap = (Map<String, StockData>) extraData.extrareader.get(PipelineConstants.STOCKDATA);
         Collection<MarketStock> allMarketStocks = (Collection<MarketStock>) extraData.extrareader.get(PipelineConstants.MARKETSTOCKS);
         for (MarketStock entry : allMarketStocks) {
             String market = entry.getMarket();
             PipelineData[] datareaders = dataReaderMap.get(market);
             Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
             String cat = entry.getCategory();
-            StockData stockData = stockDataMap.get(market);
-            if (cat == null) {
+             if (cat == null) {
                 cat = Constants.EXTRA;
             }
-            int mycat = stockData.cat;
             PipelineData datareader = pipelineMap.get(cat);
             List<String> dateList = (List<String>) datareader.get(PipelineConstants.DATELIST);
             int dateIndex = dateList.size() - dateList.indexOf(commonDate);

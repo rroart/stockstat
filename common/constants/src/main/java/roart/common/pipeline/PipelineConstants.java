@@ -32,6 +32,7 @@ public class PipelineConstants {
     //public static final String PAIRSTOCK = "pairstock";
     
     public static final String MARKETSTOCKS = "marketstocks";
+    // not used
     public static final String STOCKDATA = "stockdata";
     
     public static final String MARKETOBJECT = "marketobject";
