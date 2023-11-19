@@ -471,18 +471,15 @@ public class IndicatorUtils {
                 int jj = 0;
             }
             Map<String, PipelineData[]> dataReaderMap = (Map<String, PipelineData[]>) extraData.extrareader.get(PipelineConstants.DATAREADER);
-            Map<String, StockData>  stockDataMap = (Map<String, StockData>) extraData.extrareader.get(PipelineConstants.STOCKDATA);
             List<MarketStock> marketStocks = (List<MarketStock>) extraData.extrareader.get(PipelineConstants.MARKETSTOCKS);
             for (MarketStock entry : marketStocks) {
                 String market = entry.getMarket();
                 PipelineData[] datareaders = dataReaderMap.get(market);
                 Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
                 String cat = entry.getCategory();
-                StockData stockData = stockDataMap.get(market);
                 if (cat == null) {
                     cat = Constants.EXTRA;
                 }
-                int mycat = stockData.cat;
                 PipelineData datareader = pipelineMap.get(cat);
                 Map<String, Double[][]> fillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.FILLLIST));
                 Double[][] fillList = fillListMap.get(entry.getId());

@@ -158,11 +158,6 @@ public class PipelineUtils {
                     data.getMap().put(entry.getKey(), value);
                     continue;
                 }
-                if (PipelineConstants.STOCKDATA.equals(entry.getKey())) {
-                    Object value = transformListObject((Map) entry.getValue(), stockDataClass);
-                    data.getMap().put(entry.getKey(), value);
-                    continue;
-                }
                 if (PipelineConstants.DATAREADER.equals(entry.getKey())) {
                     Map<String, PipelineData[]> value = transformListObject((Map) entry.getValue(), PipelineData[].class);
                     for (Entry<String, PipelineData[]> anEntry : value.entrySet()) {

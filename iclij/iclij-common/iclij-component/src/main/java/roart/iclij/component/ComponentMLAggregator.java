@@ -230,7 +230,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                 if (mainList == null) {
                     continue;
                 }
-                OneDim list = aResultMap.get(key);
+                List<Object> list = aResultMap.get(key);
                 if (list == null) {
                     continue;
                 }
