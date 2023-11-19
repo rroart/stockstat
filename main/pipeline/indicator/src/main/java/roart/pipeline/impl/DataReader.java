@@ -52,6 +52,9 @@ public class DataReader extends Pipeline {
     @Override
     public PipelineData putData() {
         PipelineData map = getData();
+        if (categoryTitle == null) {
+            int jj = 0;
+        }
         map.setName(categoryTitle);
         map.put(PipelineConstants.LIST, PipelineUtils.convertDD(listMap));
         map.put(PipelineConstants.VOLUME, volumeMap);
@@ -70,6 +73,7 @@ public class DataReader extends Pipeline {
     
     public DataReader(IclijConfig conf, int category) {
         super(conf, category);
+        categoryTitle = Constants.EXTRA;
     }
     
     public DataReader(IclijConfig conf, Map<String, MarketData> marketdatamap, int category, String market) throws Exception {

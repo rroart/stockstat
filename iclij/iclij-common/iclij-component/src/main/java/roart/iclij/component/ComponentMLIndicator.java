@@ -23,8 +23,11 @@ import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.MapOneDim;
+import roart.common.pipeline.data.OneDim;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.util.JsonUtil;
+import roart.common.util.PipelineUtils;
 import roart.component.model.ComponentData;
 import roart.component.model.MLIndicatorData;
 import roart.evolution.fitness.Fitness;
@@ -131,7 +134,7 @@ public class ComponentMLIndicator extends ComponentML {
         if (resultMap == null) {
             return;
         }
-        Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
+        MapOneDim aResultMap = PipelineUtils.getMapOneDim(resultMap.get(PipelineConstants.RESULT));
         int resultIndex = 0;
         int count = 0;
         if (param.getResultMetaArray() == null) {
@@ -164,7 +167,7 @@ public class ComponentMLIndicator extends ComponentML {
                     if (mainList == null) {
                         continue;
                     }
-                    List<Object> list = (List<Object>) aResultMap.get(key);
+                    OneDim list = aResultMap.get(key);
                     if (list == null) {
                         continue;
                     }
@@ -244,7 +247,7 @@ public class ComponentMLIndicator extends ComponentML {
         MLIndicatorData param = (MLIndicatorData) componentparam;
         List<MemoryItem> memoryList = new ArrayList<>();
         PipelineData resultMap = param.getResultMap();
-        Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
+        MapOneDim aResultMap = PipelineUtils.getMapOneDim(resultMap.get(PipelineConstants.RESULT));
         int resultIndex = 0;
         int newResultIndex = 0;
         for (int count = 0; count < param.getResultMeta().size(); count++) {
@@ -313,7 +316,7 @@ public class ComponentMLIndicator extends ComponentML {
                     continue;
                 }
                 boolean aboveThreshold = (valFuture / valNow) >= meta.getThreshold();
-                List<Object> list = (List<Object>) aResultMap.get(key);
+                OneDim list = aResultMap.get(key);
                 if (list == null) {
                     continue;
                 }

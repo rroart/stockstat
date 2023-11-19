@@ -13,6 +13,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import roart.common.config.MarketStock;
 import roart.common.config.MarketStockExpression;
+import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.util.MetaUtil;
@@ -37,7 +38,7 @@ public class ComplexETL {
                 String catName = ms.getCategory();
                 StockData stockData = stockDataMap.get(market);
                 if (catName == null) {
-                    catName = stockData.catName;
+                    catName = Constants.EXTRA;
                 }
                 int cat = stockData.cat;
                 Pipeline[] datareaders = dataReaderMap.get(market);

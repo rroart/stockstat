@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.MapOneDim;
+import roart.common.pipeline.data.OneDim;
 import roart.common.pipeline.data.OneDimD;
 import roart.common.pipeline.data.OneDimd;
 import roart.common.pipeline.data.PipelineData;
@@ -134,6 +136,8 @@ public class PipelineUtils {
         return newMap;
     }
 
+    private static final List<String> othermap = List.of(PipelineConstants.MARKETOBJECT);
+    
     private static final List<String> other = List.of(PipelineConstants.OBJECT);
     
     private static final List<String> onedim = List.of(PipelineConstants.RESULT);
@@ -186,6 +190,9 @@ public class PipelineUtils {
                         if (other.contains(entry.getKey())) {
                             newData = transformListObject(mapEntry.getValue());
                         }
+                        if (othermap.contains(entry.getKey())) {
+                            newData = transformMap(mapEntry.getValue());
+                        }
                         if (newData != null) {
                             newMap.put(mapEntry.getKey(), newData);
                         }
@@ -204,6 +211,19 @@ public class PipelineUtils {
     }
 
 
+
+    private static Object transformMap(Object value) {
+        if (value instanceof Map map2) {
+            Map<String, Object> map = map2;
+            Map newMap = new HashMap<>();
+            for (Entry<String, Object> mapEntry : map.entrySet()) {
+                newMap.put(mapEntry.getKey(), transformListObject(mapEntry.getValue()));
+            }
+            return newMap;
+        } else {
+            return value;
+        }
+    }
 
     private static <T> List<T> transformListObject(List list, Class<T> clazz) {
         List<T> newList = new ArrayList<>();
@@ -260,6 +280,15 @@ public class PipelineUtils {
             return ArraysUtil.convert2((List) data);
         }
         return data;
+    }
+
+    public static MapOneDim getMapOneDim(Object object) {
+        Map<String, Object[]> map = (Map<String, Object[]>) object;
+        Map<String, OneDim> newMap = new HashMap<>();
+        for (Entry<String, Object[]> entry : map.entrySet()) {
+            newMap.put(entry.getKey(), new OneDim(entry.getValue()));
+        }
+        return new MapOneDim(newMap );
     }
 
 }

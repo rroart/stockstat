@@ -480,7 +480,7 @@ public class IndicatorUtils {
                 String cat = entry.getCategory();
                 StockData stockData = stockDataMap.get(market);
                 if (cat == null) {
-                    cat = stockData.catName;
+                    cat = Constants.EXTRA;
                 }
                 int mycat = stockData.cat;
                 PipelineData datareader = pipelineMap.get(cat);
@@ -545,6 +545,11 @@ public class IndicatorUtils {
     // for MLI
     
     private static Double[] getExtraIndicatorsResult(IclijConfig conf, int j, Double[] result, PipelineData[] datareaders, List<AbstractIndicator> allIndicators, String commonDate, ExtraData extraData) throws Exception {
+        List<MarketStock> marketStocks = (List<MarketStock>) extraData.extrareader.get(PipelineConstants.MARKETSTOCKS);
+        Map<String, MarketStock> marketStockMap = new HashMap<>();
+        for (MarketStock marketStock : marketStocks) {
+            marketStockMap.put(marketStock.getMarket(), marketStock);
+        }
         PipelineData localResults =  extraData.extrareader;
         for (AbstractIndicator indicator : allIndicators) {
             if (indicator.wantForExtras()) {
@@ -563,7 +568,15 @@ public class IndicatorUtils {
                     int mycat = stockData.cat;
                     PipelineData[] mydatareaders = dataReaderMap.get(market);
                     Map<String, PipelineData> mypipelineMap = getPipelineMap(mydatareaders);
-                    PipelineData pipeline = mypipelineMap.get(stockData.catName);
+
+                    MarketStock marketStock = marketStockMap.get(market);
+                    String cat = marketStock.getCategory();;
+                    if (cat == null) {
+                        cat = Constants.EXTRA;
+                    }
+
+                    PipelineData pipeline = mypipelineMap.get(cat);
+
                     List<String> dateList2 = (List<String>) pipeline.get(PipelineConstants.DATELIST);
                     j = dateList2.size() - 1 - dateList2.indexOf(commonDate);
                     Map<String, Object[]> objectMap = marketEntry.getValue();
@@ -625,7 +638,7 @@ public class IndicatorUtils {
             if (market.equals(conf.getConfigData().getMarket())) {
                 StockData stockData = stockDataMap.get(market);
                 if (cat == null) {
-                    cat = stockData.catName;
+                    cat = Constants.EXTRA;
                 }
                 if (cat == null) {
                     int jj = 0;

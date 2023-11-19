@@ -334,7 +334,7 @@ public class ExtraReader extends Pipeline {
             String cat = entry.getCategory();
             StockData stockData = stockDataMap.get(market);
             if (cat == null) {
-                cat = stockData.catName;
+                cat = Constants.EXTRA;
             }
             int mycat = stockData.cat;
             PipelineData datareader = pipelineMap.get(cat);
@@ -383,7 +383,7 @@ public class ExtraReader extends Pipeline {
             String cat = entry.getCategory();
             StockData stockData = stockDataMap.get(market);
             if (cat == null) {
-                cat = stockData.catName;
+                cat = Constants.EXTRA;
             }
             int mycat = stockData.cat;
             PipelineData datareader = pipelineMap.get(cat);

@@ -100,7 +100,7 @@ public abstract class Indicator extends AbstractIndicator {
             String cat = ms.getCategory();
             StockData stockData = stockDataMap.get(market);
             if (cat == null) {
-                cat = stockData.catName;
+                cat = Constants.EXTRA;
             }
             int mycat = stockData.cat;
             PipelineData[] mydatareaders = dataReaderMap.get(market);
