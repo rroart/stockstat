@@ -3,8 +3,6 @@ package roart.service.evolution;
 import java.util.HashMap;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import roart.aggregator.impl.MLATR;
 import roart.aggregator.impl.MLCCI;
 import roart.aggregator.impl.MLDataset;
@@ -14,14 +12,15 @@ import roart.aggregator.impl.MLMulti;
 import roart.aggregator.impl.MLRSI;
 import roart.aggregator.impl.MLSTOCH;
 import roart.common.config.ConfigConstants;
-import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.model.PipelineResultData;
+import roart.common.util.JsonUtil;
 import roart.evolution.chromosome.impl.NeuralNetChromosome;
 import roart.gene.NeuralNetConfigGene;
+import roart.iclij.config.IclijConfig;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.predictor.impl.PredictorPytorchGRU;
 import roart.predictor.impl.PredictorPytorchLSTM;
@@ -38,8 +37,7 @@ public class PipelineFactory {
         NeuralNetConfigGene nnConfigGene = ((NeuralNetChromosome) chromosome).getNnConfig();
         NeuralNetConfigs nnConfigs = new NeuralNetConfigs();
         nnConfigs.set(key, nnConfigGene.getConfig());
-        ObjectMapper mapper = new ObjectMapper();
-        String value = mapper.writeValueAsString(nnConfigs);
+        String value = JsonUtil.convert(nnConfigs);
         PipelineResultData pipelineData = null;
         if (ml.equals(PipelineConstants.MLMULTI)) {
             conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMULTIMLCONFIG, value);

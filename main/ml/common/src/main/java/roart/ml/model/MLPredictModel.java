@@ -1,6 +1,5 @@
 package roart.ml.model;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
@@ -8,12 +7,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
+import roart.common.util.JsonUtil;
+import roart.iclij.config.IclijConfig;
 import roart.pipeline.common.predictor.AbstractPredictor;
 
 public abstract class MLPredictModel {
@@ -90,7 +88,7 @@ public abstract class MLPredictModel {
 
     protected <T> T convert(Class<T> clazz) {
         try {
-            return new ObjectMapper().readValue((String) getConf().getConfigData().getConfigValueMap().get(getKey()), clazz);
+            return JsonUtil.convertnostrip((String) getConf().getConfigData().getConfigValueMap().get(getKey()), clazz);
         } catch (Exception e) {
             log.info(Constants.ERROR);
             return null;
@@ -99,8 +97,8 @@ public abstract class MLPredictModel {
 
     protected <T> T getDefault(Class<T> clazz) {
         try {
-            return new ObjectMapper().readValue((String) getConf().getConfigData().getConfigMaps().deflt.get(getKey()), clazz);
-        } catch (IOException e) {
+            return JsonUtil.convertnostrip((String) getConf().getConfigData().getConfigMaps().deflt.get(getKey()), clazz);
+        } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return null;
         }

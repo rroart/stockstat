@@ -64,8 +64,7 @@ public class EvolutionService {
         Map<String, Object> resultMap = new HashMap<>();
         log.info("mydate {}", conf.getConfigData().getDate());
         log.info("mydate {}", conf.getDays());
-        ObjectMapper mapper = new ObjectMapper();
-        EvolutionConfig evolutionConfig = mapper.readValue(conf.getEvolveIndicatorrecommenderEvolutionConfig(), EvolutionConfig.class);
+        EvolutionConfig evolutionConfig = JsonUtil.convertnostrip(conf.getEvolveIndicatorrecommenderEvolutionConfig(), EvolutionConfig.class);
     
         StockData stockData = new Extract(dao).getStockData(conf);
         if (stockData == null) {

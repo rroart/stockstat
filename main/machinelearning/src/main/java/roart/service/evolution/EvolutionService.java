@@ -78,8 +78,7 @@ public class EvolutionService {
         log.info("mydate {}", conf.getConfigData().getDate());
         log.info("mydate {}", conf.getDays());
         if (conf.getConfigData().isDataset()) {
-            ObjectMapper mapper = new ObjectMapper();
-            EvolutionConfig evolutionConfig = mapper.readValue(conf.getEvolveMLEvolutionConfig(), EvolutionConfig.class);
+            EvolutionConfig evolutionConfig = JsonUtil.convertnostrip(conf.getEvolveMLEvolutionConfig(), EvolutionConfig.class);
             Set<String> markets = new HashSet<>();
             markets.add(conf.getConfigData().getMarket());
         
@@ -108,8 +107,7 @@ public class EvolutionService {
                 return result;
             }
         }
-        ObjectMapper mapper = new ObjectMapper();
-        EvolutionConfig evolutionConfig = mapper.readValue(conf.getEvolveMLEvolutionConfig(), EvolutionConfig.class);
+        EvolutionConfig evolutionConfig = JsonUtil.convertnostrip(conf.getEvolveMLEvolutionConfig(), EvolutionConfig.class);
     
         List<ResultItemTable> otherTables = new ArrayList<>();
         otherTables.add(mlTimesTable);
@@ -212,8 +210,7 @@ public class EvolutionService {
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();
             NeuralNetConfig newnnconf = newnnconfgene.getConfig();
             //newNNConfigs.set(key, newnnconf);
-            ObjectMapper mapper = new ObjectMapper();
-            String newNNConfigstring = mapper.writeValueAsString(newnnconf);
+            String newNNConfigstring = JsonUtil.convert(newnnconf);
             String myKey = null;
             if (ml.equals(PipelineConstants.MLINDICATOR)) {
                 myKey = ConfigConstants.AGGREGATORSINDICATORMLCONFIG;
@@ -302,8 +299,7 @@ public class EvolutionService {
             NeuralNetChromosome bestEval2 = (NeuralNetChromosome) best.getEvaluation();
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();
             NeuralNetConfig newnnconf = newnnconfgene.getConfig();
-            ObjectMapper mapper = new ObjectMapper();
-            String newNNConfigstring = mapper.writeValueAsString(newnnconf);
+            String newNNConfigstring = JsonUtil.convert(newnnconf);
             String myKey = null;
             if (ml.equals(PipelineConstants.DATASET)) {
                 myKey = ConfigConstants.DATASETMLCONFIG;                

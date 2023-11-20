@@ -191,8 +191,7 @@ public abstract class Predictor extends AbstractPredictor {
         NeuralNetConfigs nnConfigs = new NeuralNetConfigs();
         String nnconfigString = getMyNeuralNetConfig();
         if (nnconfigString != null) {
-            ObjectMapper mapper = new ObjectMapper();
-            nnConfigs = mapper.readValue(nnconfigString, NeuralNetConfigs.class);
+            nnConfigs = JsonUtil.convertnostrip(nnconfigString, NeuralNetConfigs.class);
             //TensorflowPredictorLSTMConfig lstmConfig = mapper.readValue(nnconfigString, TensorflowPredictorLSTMConfig.class);
             //nnConfigs.setTensorflowConfig(new NeuralNetTensorflowConfig(null, null, null, null, null, null, null, null, null));
             //nnConfigs.getTensorflowConfig().setTensorflowPredictorLSTMConfig(lstmConfig);

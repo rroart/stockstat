@@ -16,4 +16,5 @@ module ml.common {
     requires org.slf4j;
     requires com.fasterxml.jackson.databind;
     requires org.apache.commons.lang3;
+    requires common.util;
 }

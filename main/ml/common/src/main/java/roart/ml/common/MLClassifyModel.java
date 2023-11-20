@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import roart.common.config.ConfigConstants;
 import roart.iclij.config.IclijConfig;
@@ -19,6 +20,7 @@ import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.SparkOVRConfig;
+import roart.common.util.JsonUtil;
 import roart.pipeline.common.aggregate.Aggregator;
 
 public abstract class MLClassifyModel {
@@ -26,6 +28,8 @@ public abstract class MLClassifyModel {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private IclijConfig conf;
+
+    private static final ObjectMapper mapper = JsonMapper.builder().configure(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL, true).build();
 
     public IclijConfig getConf() {
         return conf;
@@ -91,7 +95,7 @@ public abstract class MLClassifyModel {
 
     public <T> T convert(Class<T> clazz) {
         try {
-            return new ObjectMapper().readValue((String) getConf().getConfigData().getConfigValueMap().get(getKey()), clazz);
+            return JsonUtil.convertnostrip((String) getConf().getConfigData().getConfigValueMap().get(getKey()), clazz);
         } catch (Exception e) {
             log.info(Constants.ERROR);
             return null;
@@ -100,10 +104,8 @@ public abstract class MLClassifyModel {
 
     public <T> T getDefault(Class<T> clazz) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL, true);
-            return mapper.readValue((String) getConf().getConfigData().getConfigMaps().deflt.get(getKey()), clazz);
-        } catch (IOException e) {
+            return JsonUtil.convertnostrip((String) getConf().getConfigData().getConfigMaps().deflt.get(getKey()), clazz);
+        } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return null;
         }
