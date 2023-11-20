@@ -19,6 +19,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.common.cache.MyCache;
@@ -60,6 +61,8 @@ public class ControlService {
     private IclijConfig iclijConfig;
     
     public static CuratorFramework curatorClient;
+
+    private static final ObjectMapper mapper = new JsonMapper().builder().addModule(new JavaTimeModule()).build();
 
     public ControlService(IclijConfig iclijConfig) {
     	//conf = MyConfig.instance();
@@ -180,8 +183,6 @@ public class ControlService {
             log.error("Empty msg for {}", service);
             return;
         }
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
         send(service, object, mapper);
     }
 

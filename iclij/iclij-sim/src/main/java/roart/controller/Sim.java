@@ -31,6 +31,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
@@ -77,6 +78,8 @@ public class Sim {
 
     private IclijDbDao dbDao;
     
+    private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+
     public Sim(IclijConfig iclijConfig, IclijDbDao dbDao) {
         this.iclijConfig = iclijConfig;
         this.dbDao = dbDao;
@@ -647,20 +650,11 @@ public class Sim {
     private Map<String, Object> convert(String param) {
         Map<String, Object> map = new HashMap<>();
         List<Pair<Double, AbstractChromosome>> myList = new ArrayList<>();
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
         Map<String, Object> res0 = null;
         try {
             //res0 = mapper.readValue(param, new TypeReference<Map<String, List<LinkedHashMap<Double, IclijConfigMapChromosome>>>>(){});
-            res0 = mapper.readValue(param, new TypeReference<Map<String, Object>>(){});
-        } catch (JsonParseException e) {
-            // TODO Auto-generated catch block
-            log.error(Constants.EXCEPTION, e);
-        } catch (JsonMappingException e) {
-            // TODO Auto-generated catch block
-            log.error(Constants.EXCEPTION, e);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+            res0 = JsonUtil.convertnostrip(param, new TypeReference<Map<String, Object>>(){}, mapper);
+        } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
         if (res0 == null) {

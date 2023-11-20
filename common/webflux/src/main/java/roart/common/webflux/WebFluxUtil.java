@@ -23,32 +23,29 @@ import roart.common.util.MathUtil;
 public class WebFluxUtil {
     private static Logger log = LoggerFactory.getLogger(WebFluxUtil.class);
 
+    private static ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
     public static <T> T sendMe(Class<T> myclass, Object param, String host, String port, String path) {
-        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         String url = "http://" + host + ":" + port + "/" + path;
         return sendMeInner(myclass, param, url, objectMapper);
     }
     
     public static <T> T sendCMe(Class<T> myclass, Object param, String path) {
-        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         String url = "http://" + getHostname() + ":" + getPort() + "/" + path;
         return sendMeInner(myclass, param, url, objectMapper);
     }
     
     public static <T> T sendSMe(Class<T> myclass, Object param, String path) {
-        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         String url = "http://" + getSHostname() + ":" + getSPort() + "/" + path;
         return sendMeInner(myclass, param, url, objectMapper);
     }
     
     public static <T> T sendMMe(Class<T> myclass, Object param, String path) {
-        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         String url = "http://" + getMHostname() + ":" + getMPort() + "/" + path;
         return sendMeInner(myclass, param, url, objectMapper);
     }
     
     public static <T> T sendIMe(Class<T> myclass, Object param, String path) {
-        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         String url = "http://" + getIHostname() + ":" + getIPort() + "/" + path;
         return sendMeInner(myclass, param, url, objectMapper);
     }
@@ -59,7 +56,6 @@ public class WebFluxUtil {
     }
     
     public static <T> T sendAMe(Class<T> myclass, Object param, String path) {
-        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         String url = "http://" + getAHostname() + ":" + getAPort() + "/" + path;
         return sendMeInner(myclass, param, url, objectMapper);
     }
@@ -70,7 +66,6 @@ public class WebFluxUtil {
     }
 
     public static <T> T sendEMe(Class<T> clazz, Object param, String path) {
-        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         String url = "http://" + getEHostname() + ":" + getEPort() + "/" + path;
         return sendMeInner(clazz, param, url, objectMapper);
     }

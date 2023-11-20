@@ -5,12 +5,9 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.util.JsonUtil;
 import roart.gene.CalcGene;
-import roart.gene.impl.CalcComplexGene;
-import roart.gene.impl.CalcDoubleGene;
 
 public class CalcGeneFactory {
     public static CalcGene get(String name, String jsonValue, List<Double>[] macdrsiMinMax, int index, boolean useMax) throws JsonParseException, JsonMappingException, IOException {
@@ -21,7 +18,6 @@ public class CalcGeneFactory {
         if (jsonValue == null) {
             anode = new CalcComplexGene();
         } else {
-            ObjectMapper mapper = new ObjectMapper();
             /*
             CalcComplexGene cg = new CalcComplexGene();
             cg._class = "bla";

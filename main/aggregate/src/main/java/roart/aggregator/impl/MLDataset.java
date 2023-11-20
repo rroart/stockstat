@@ -1,52 +1,37 @@
 package roart.aggregator.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import roart.pipeline.common.aggregate.Aggregator;
 import roart.common.config.MLConstants;
-import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.util.ArraysUtil;
+import roart.common.util.JsonUtil;
 import roart.executor.MyExecutors;
-import roart.indicator.AbstractIndicator;
-import roart.indicator.util.IndicatorUtils;
+import roart.iclij.config.IclijConfig;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
 import roart.ml.dao.MLClassifyDao;
 import roart.ml.dao.MLClassifyDatasetCallable;
-import roart.ml.dao.MLClassifyLearnTestPredictCallable;
 import roart.ml.model.LearnTestClassifyResult;
 import roart.model.data.PeriodData;
 import roart.pipeline.Pipeline;
-import roart.pipeline.data.ExtraData;
+import roart.pipeline.common.aggregate.Aggregator;
 import roart.result.model.ResultItemTableRow;
-import roart.result.model.ResultMeta;
 import roart.talib.Ta;
 import roart.talib.impl.TalibMACD;
-import roart.talib.util.TaUtil;
 
 public class MLDataset extends Aggregator {
 
@@ -176,8 +161,7 @@ public class MLDataset extends Aggregator {
         String nnconfigString = conf.getDatasetMLConfig();
         NeuralNetConfigs nnConfigs = null;
         if (nnconfigString != null) {
-            ObjectMapper mapper = new ObjectMapper();
-            nnConfigs = mapper.readValue(nnconfigString, NeuralNetConfigs.class);
+            nnConfigs = JsonUtil.convertnostrip(nnconfigString, NeuralNetConfigs.class);
         }
         if (conf.wantML()) {
             // add a null check

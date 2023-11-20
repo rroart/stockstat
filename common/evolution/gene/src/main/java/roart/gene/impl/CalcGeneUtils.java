@@ -5,21 +5,20 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.config.MLConstants;
-import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.SparkLORConfig;
 import roart.common.ml.SparkMLPCConfig;
 import roart.common.ml.SparkOVRConfig;
 import roart.common.ml.TensorflowDNNConfig;
 import roart.common.ml.TensorflowLICConfig;
+import roart.common.util.JsonUtil;
 import roart.gene.CalcGene;
+import roart.iclij.config.IclijConfig;
 
 public class CalcGeneUtils {
     public static void transformToNode(IclijConfig conf, List<String> keys, boolean useMax, List<Double>[] minMax, List<String> disableList) throws JsonParseException, JsonMappingException, IOException {
-        ObjectMapper mapper = new ObjectMapper();
         for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
             if (disableList.contains(key)) {
@@ -59,7 +58,6 @@ public class CalcGeneUtils {
     }
 
     public static void transformToNode(IclijConfig conf, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
-        ObjectMapper mapper = new ObjectMapper();
         for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
             Object value = conf.getConfigData().getConfigValueMap().get(key);
@@ -69,7 +67,7 @@ public class CalcGeneUtils {
             }
             if (value instanceof String) {
                 Class classs = NeuralNetConfig.class;
-                NeuralNetConfig anode = mapper.readValue((String) value, NeuralNetConfig.class);
+                NeuralNetConfig anode = JsonUtil.convertnostrip((String) value, NeuralNetConfig.class);
                 switch (anode.getName()) {
                 case MLConstants.MLPC:
                     classs = SparkMLPCConfig.class;
@@ -88,7 +86,7 @@ public class CalcGeneUtils {
                     break;
                         
                 }
-                anode = (NeuralNetConfig) mapper.readValue((String) value, classs);
+                anode = (NeuralNetConfig) JsonUtil.convertnostrip((String) value, classs);
                 conf.getConfigData().getConfigValueMap().put(key, anode);
                 return;
             }
@@ -96,14 +94,13 @@ public class CalcGeneUtils {
     }
 
     public static void transformFromNode(IclijConfig conf, List<String> keys, List<String> disableList) throws JsonParseException, JsonMappingException, IOException {
-        ObjectMapper mapper = new ObjectMapper();
         for (String key : keys) {
             if (disableList.contains(key)) {
                 continue;
             }
             CalcGene node = (CalcGene) conf.getConfigData().getConfigValueMap().get(key);
             if (node instanceof CalcComplexGene) {
-                String string = mapper.writeValueAsString(node);
+                String string = JsonUtil.convert(node);
                 conf.getConfigData().getConfigValueMap().put(key, string);
             } else {
                 CalcDoubleGene anode = (CalcDoubleGene) node;
@@ -113,10 +110,9 @@ public class CalcGeneUtils {
     }
 
     public static void transformFromNode(IclijConfig conf, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
-        ObjectMapper mapper = new ObjectMapper();
         for (String key : keys) {
             NeuralNetConfig node = (NeuralNetConfig) conf.getConfigData().getConfigValueMap().get(key);
-            String string = mapper.writeValueAsString(node);
+            String string = JsonUtil.convert(node);
             conf.getConfigData().getConfigValueMap().put(key, string);
         }
     }

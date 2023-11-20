@@ -45,6 +45,7 @@ import roart.common.config.ConfigTreeMap;
 import roart.common.config.Extra;
 import roart.common.config.MarketStockExpression;
 import roart.common.constants.Constants;
+import roart.common.util.JsonUtil;
 
 public class IclijXMLConfig {
 
@@ -664,13 +665,11 @@ public class IclijXMLConfig {
 
     public List<MarketConfig> getMarkets() throws JsonParseException, JsonMappingException, IOException {
         String markets = IclijXMLConfig.getConfigXML().getString("markets.marketlist");
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(markets, new TypeReference<List<MarketConfig>>(){});
+        return JsonUtil.convertnostrip(markets, new TypeReference<List<MarketConfig>>(){});
     }
 
     public static List<Market> getMarkets(IclijConfig config) throws JsonParseException, JsonMappingException, IOException {
         List<Market> retList = new ArrayList<>();
-        ObjectMapper mapper = new ObjectMapper();
         ConfigTreeMap map = config.getConfigData().getConfigTreeMap().search("markets.marketlist");
         if (map == null) {
             return retList;
@@ -706,7 +705,6 @@ public class IclijXMLConfig {
 
     public static List<Extra> getMarketImportants(IclijConfig config) throws JsonParseException, JsonMappingException, IOException {
         List<Extra> retList = new ArrayList<>();
-        ObjectMapper mapper = new ObjectMapper();
         ConfigTreeMap map = config.getConfigData().getConfigTreeMap().search("markets.importants");
         if (map == null) {
             return retList;
@@ -731,7 +729,6 @@ public class IclijXMLConfig {
 
     public static List<SimulateFilter[]> getSimulate(IclijConfig config) throws JsonParseException, JsonMappingException, IOException {
         List<SimulateFilter[]> retList = new ArrayList<>();
-        ObjectMapper mapper = new ObjectMapper();
         ConfigTreeMap map = config.getConfigData().getConfigTreeMap().search("markets.simulate");
         if (map == null) {
             //return retList;
@@ -740,7 +737,7 @@ public class IclijXMLConfig {
         if (value != null) {
             SimulateFilter[] marketConfig = null;
             try {
-                marketConfig = mapper.readValue(value, SimulateFilter[].class);
+                marketConfig = JsonUtil.convertnostrip(value, SimulateFilter[].class);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
@@ -779,13 +776,12 @@ public class IclijXMLConfig {
     }
 
     public static <T> T getConfig(ConfigTreeMap configMap, String key, Class<T> myclass, IclijConfig config) {
-        ObjectMapper mapper = new ObjectMapper();
         ConfigTreeMap value = configMap.getConfigTreeMap().get(key);
         if (value != null) {
             String name = value.getName();
             String atext = (String) config.getConfigData().getConfigValueMap().get(name);
             try {
-                return mapper.readValue(atext, myclass);
+                return JsonUtil.convertnostrip(atext, myclass);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
@@ -796,13 +792,11 @@ public class IclijXMLConfig {
     @Deprecated
     public List<MarketFilter> getFilterMarkets() throws JsonParseException, JsonMappingException, IOException {
         String markets = IclijXMLConfig.getConfigXML().getString("filtermarkets.filtermarket");
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(markets, new TypeReference<List<MarketFilter>>(){});
+        return JsonUtil.convertnostrip(markets, new TypeReference<List<MarketFilter>>(){});
     }    
 
     public static List<MarketFilter> getFilterMarkets(IclijConfig config) throws JsonParseException, JsonMappingException, IOException {
         List<MarketFilter> retList = new ArrayList<>();
-        ObjectMapper mapper = new ObjectMapper();
         ConfigTreeMap map = config.getConfigData().getConfigTreeMap().search("markets.filtermarkets");
         log.info("Keyset {}", config.getConfigData().getConfigValueMap().keySet());
         for (Entry<String, ConfigTreeMap> entry : map.getConfigTreeMap().entrySet()) {
@@ -810,7 +804,7 @@ public class IclijXMLConfig {
             String text = entry.getValue().getName();
             String text2 = (String) config.getConfigData().getConfigValueMap().get(text);
             Map<String, ConfigTreeMap> aMap = entry.getValue().getConfigTreeMap();
-            MarketFilter market = mapper.readValue(text2, new TypeReference<MarketFilter>(){});
+            MarketFilter market = JsonUtil.convertnostrip(text2, new TypeReference<MarketFilter>(){});
             retList.add(market);
         }
         return retList;

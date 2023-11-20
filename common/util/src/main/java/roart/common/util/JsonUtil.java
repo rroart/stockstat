@@ -12,8 +12,20 @@ public class JsonUtil {
 
     private static Logger log = LoggerFactory.getLogger(JsonUtil.class);
 
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    public static <T> T convertnostrip(Object text, TypeReference<T> typeref) {
+        if (text != null) {
+            try {
+                return mapper.convertValue(text, typeref);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
+        return null;
+    }
+
     public static <T> T convert(String text, TypeReference<T> typeref) {
-        ObjectMapper mapper = new ObjectMapper();
         if (text != null) {
             try {
                 String strippedtext = strip(text);
@@ -25,8 +37,29 @@ public class JsonUtil {
         return null;
     }
 
+    public static <T> T convertnostrip(String text, TypeReference<T> typeref, ObjectMapper mapper) {
+        if (text != null) {
+            try {
+                return mapper.convertValue(text, typeref);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
+        return null;
+    }
+
     public static <T> T convertnostrip(String text, Class<T> myclass) {
-        ObjectMapper mapper = new ObjectMapper();
+        if (text != null) {
+            try {
+                return mapper.readValue(text, myclass);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
+        return null;
+    }
+
+    public static <T> T convertnostrip(String text, Class<T> myclass, ObjectMapper mapper) {
         if (text != null) {
             try {
                 return mapper.readValue(text, myclass);
@@ -38,7 +71,6 @@ public class JsonUtil {
     }
 
     public static <T> T convert(String text, Class<T> myclass) {
-        ObjectMapper mapper = new ObjectMapper();
         if (text != null) {
             try {
                 String strippedtext = strip(text);
@@ -51,7 +83,6 @@ public class JsonUtil {
     }
 
     public static <T> T convert(Object object, Class<T> clazz) {
-        ObjectMapper mapper = new ObjectMapper();
         if (object != null) {
             try {
                 return mapper.convertValue(object, clazz);
@@ -90,7 +121,6 @@ public class JsonUtil {
     }
 
     public static String convert(Object object) {
-        ObjectMapper mapper = new ObjectMapper();
         if (object != null) {
             try {
                 return mapper.writeValueAsString(object);

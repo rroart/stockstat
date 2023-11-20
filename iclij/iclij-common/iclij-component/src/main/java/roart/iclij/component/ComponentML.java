@@ -11,30 +11,23 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
-import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.ResultMetaConstants;
 import roart.common.ml.NeuralNetConfigs;
-import roart.common.ml.NeuralNetTensorflowConfig;
-import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.common.model.ConfigItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.util.JsonUtil;
-import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
-import roart.component.model.MLMACDData;
 import roart.constants.IclijConstants;
 import roart.evolution.config.EvolutionConfig;
 import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
-import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.Parameters;
@@ -43,7 +36,6 @@ import roart.iclij.util.MLUtil;
 import roart.iclij.util.MiscUtil;
 import roart.result.model.ResultItem;
 import roart.result.model.ResultMeta;
-import roart.service.model.ProfitData;
 
 public abstract class ComponentML extends Component {
 
@@ -200,7 +192,7 @@ public abstract class ComponentML extends Component {
         param.setResultMetaArray(resultMetaArray);
         //List<ResultMeta> resultMeta = (List<ResultMeta>) mlMACDMaps.get(PipelineConstants.RESULTMETA);
         List<Object> objectList = (List<Object>) mlMaps.get(PipelineConstants.RESULTMETA);
-        List<ResultMeta> resultMeta = new ObjectMapper().convertValue(objectList, new TypeReference<List<ResultMeta>>() { });
+        List<ResultMeta> resultMeta = JsonUtil.convertnostrip(objectList, new TypeReference<List<ResultMeta>>() { });
         param.setResultMeta(resultMeta);
     }
 

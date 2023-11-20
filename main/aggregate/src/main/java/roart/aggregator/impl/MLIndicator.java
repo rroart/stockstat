@@ -2,39 +2,28 @@ package roart.aggregator.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.type.TypeReference;
 
-import roart.pipeline.common.aggregate.Aggregator;
-import roart.pipeline.data.ExtraData;
-import roart.pipeline.impl.DataReader;
 import roart.aggregatorindicator.impl.AggregatorMLIndicator;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
-import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.ResultMetaConstants;
 import roart.common.ml.NeuralNetCommand;
@@ -48,24 +37,21 @@ import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
 import roart.common.util.PipelineUtils;
 import roart.executor.MyExecutors;
+import roart.iclij.config.IclijConfig;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
+import roart.ml.common.MLClassifyModel;
+import roart.ml.common.MLMeta;
 import roart.ml.dao.MLClassifyDao;
 import roart.ml.dao.MLClassifyLearnTestPredictCallable;
 import roart.ml.model.LearnClassify;
 import roart.ml.model.LearnTestClassifyResult;
-import roart.ml.common.MLClassifyAccess;
-import roart.ml.common.MLClassifyModel;
-import roart.ml.common.MLMeta;
-import roart.pipeline.Pipeline;
+import roart.pipeline.common.aggregate.Aggregator;
+import roart.pipeline.data.ExtraData;
 import roart.result.model.ResultItemTableRow;
 import roart.result.model.ResultMeta;
-import roart.stockutil.StockDao;
-import roart.stockutil.StockUtil;
 import roart.talib.Ta;
 import roart.talib.impl.TalibMACD;
-import roart.talib.util.TaUtil;
-import roart.pipeline.impl.ExtraReader;
 
 public class MLIndicator extends Aggregator {
 
@@ -350,8 +336,7 @@ public class MLIndicator extends Aggregator {
         String nnconfigString = conf.getAggregatorsMLIndicatorMLConfig();
         NeuralNetConfigs nnConfigs = null;
         if (nnconfigString != null) {
-            ObjectMapper mapper = new ObjectMapper();
-            nnConfigs = mapper.readValue(nnconfigString, NeuralNetConfigs.class);
+            nnConfigs = JsonUtil.convertnostrip(nnconfigString, NeuralNetConfigs.class);
         }
         if (conf.wantML() && !mergedCatMap.keySet().isEmpty()) {
             if (mergedCatMap.keySet().isEmpty()) {

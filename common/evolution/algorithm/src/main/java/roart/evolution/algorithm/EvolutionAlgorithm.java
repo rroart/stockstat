@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.executor.MyExecutors;
 import roart.common.constants.Constants;
+import roart.common.util.JsonUtil;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.species.Individual;
@@ -74,11 +75,10 @@ public abstract class EvolutionAlgorithm {
             Object obj = map.get(key);
             if (obj.getClass().getName().contains("Integer")) {
                 int tmpNum = (int) map.get(key);
-                System.out.print(" " + tmpNum);
+                log.info("{}", tmpNum);
             } else {
-                ObjectMapper mapper = new ObjectMapper();
-                String jsonInString = mapper.writeValueAsString(obj);
-                System.out.println(jsonInString);
+                String jsonInString = JsonUtil.convert(obj);
+                log.info("{}", jsonInString);
             }
         }
         System.out.println("");

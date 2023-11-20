@@ -8,12 +8,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import roart.common.constants.Constants;
+import roart.common.util.JsonUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import roart.common.constants.Constants;
 
 public class SimulateInvestConfig {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -647,10 +646,9 @@ public class SimulateInvestConfig {
     }
     
     private String convert(Object object) {
-        ObjectMapper mapper = new ObjectMapper();
         if (object != null) {
             try {
-                return mapper.writeValueAsString(object);
+                return JsonUtil.convert(object);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }

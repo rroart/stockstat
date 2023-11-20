@@ -212,8 +212,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         String nnconfigString = getNeuralNetConfig();
         NeuralNetConfigs nnConfigs = null;
         if (nnconfigString != null) {
-            ObjectMapper mapper = new ObjectMapper();
-            nnConfigs = mapper.readValue(nnconfigString, NeuralNetConfigs.class);
+            nnConfigs = JsonUtil.convertnostrip(nnconfigString, NeuralNetConfigs.class);
         }
         if (conf.wantML()) {
             Map<Double, String> labelMapShort = createLabelMapShort();

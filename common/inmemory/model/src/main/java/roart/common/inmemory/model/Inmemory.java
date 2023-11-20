@@ -1,16 +1,24 @@
 package roart.common.inmemory.model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.common.util.JsonUtil;
 
 public abstract class Inmemory {
     
+    private static Logger log = LoggerFactory.getLogger(Inmemory.class);
+
     protected abstract int getLimit();
     
     protected abstract String getServer();
-    
+
+    private static final ObjectMapper mapper = new JsonMapper().builder().addModule(new JavaTimeModule()).build();
+ 
     public Inmemory(String server) {
             
     }
@@ -24,8 +32,6 @@ public abstract class Inmemory {
     }
     
     public InmemoryMessage send(String id, Object data, String md5) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
         String string;
         if (data instanceof String) {
             string = (String) data;
@@ -35,6 +41,7 @@ public abstract class Inmemory {
         if (string == null) {
             string = "";
         }
+        log.info("MATCH {} {}", id, string.length());
         int count = 1;
         int limit = string.length();
         if (getLimit() > 0) {

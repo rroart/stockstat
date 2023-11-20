@@ -33,7 +33,9 @@ import java.util.List;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.common.config.ConfigConstants;
@@ -94,6 +96,8 @@ public class Evolve {
 
     private IclijDbDao dbDao;
     
+    private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+
     public Evolve(IclijDbDao dbDao, IclijConfig iclijConfig) {
         this.iclijConfig = iclijConfig;
         this.dbDao = dbDao;
@@ -461,22 +465,13 @@ public class Evolve {
         //Map<String, Object> map = JsonUtil.convert(param, Map.class);
         //map.keySet();
         List<Pair<Double, AbstractChromosome>> myList = new ArrayList<>();
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
         //List<Map<Double, AbstractChromosome>> res = null;
         Map<String, Object /*List<LinkedHashMap<Double, NeuralNetChromosome2>>*/> res0 = null;
         try {
             //res = mapper.readValue(param, new TypeReference<Map<String, List<LinkedHashMap<Double, NeuralNetChromosome2>>>>(){});
             //res0 = mapper.readValue(param, new TypeReference<Map<String, List<LinkedHashMap<Double, NeuralNetChromosome2>>>>(){});
-            res0 = mapper.readValue(param, new TypeReference<Map<String, Object>>(){});
-        } catch (JsonParseException e) {
-            // TODO Auto-generated catch block
-            log.error(Constants.EXCEPTION, e);
-        } catch (JsonMappingException e) {
-            // TODO Auto-generated catch block
-            log.error(Constants.EXCEPTION, e);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+            res0 = JsonUtil.convertnostrip(param, new TypeReference<Map<String, Object>>(){}, mapper);
+        } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
         if (res0 == null) {
@@ -661,8 +656,6 @@ public class Evolve {
             log.error("Empty msg for {}", service);
             return;
         }
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
         send(service, object, mapper);
     }
 

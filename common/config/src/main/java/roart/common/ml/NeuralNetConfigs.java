@@ -10,6 +10,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
@@ -23,6 +24,8 @@ public class NeuralNetConfigs {
     private NeuralNetPytorchConfig pytorchConfig = new NeuralNetPytorchConfig();
     
     private NeuralNetGemConfig gemConfig = new NeuralNetGemConfig();
+    
+    private static final ObjectMapper mapper = JsonMapper.builder().configure(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL, true).build();
     
     public NeuralNetConfigs(NeuralNetSparkConfig sparkConfig, NeuralNetTensorflowConfig tensorflowConfig,
             NeuralNetPytorchConfig pytorchConfig, NeuralNetGemConfig gemConfig) {
@@ -564,8 +567,6 @@ public class NeuralNetConfigs {
         NeuralNetConfig nnconfig = null;
         Map<String, Pair<Class<NeuralNetConfig>, String>> map = getMap();
         Pair<Class<NeuralNetConfig>, String> nnstring = map.get(key);
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL, true);
         nnconfig = JsonUtil.convert(nnstring.getRight(), nnstring.getLeft(), mapper);
         return nnconfig;
     }
@@ -574,8 +575,6 @@ public class NeuralNetConfigs {
         NeuralNetConfig nnconfig = null;
         Map<String, Pair<Class<NeuralNetConfig>, String>> map = getMap();
         Pair<Class<NeuralNetConfig>, String> nnstring = map.get(key);
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL, true);
         nnconfig = JsonUtil.convert(config, nnstring.getLeft(), mapper);
         return nnconfig;
     }
@@ -586,8 +585,6 @@ public class NeuralNetConfigs {
         Collection<Pair<Class<NeuralNetConfig>, String>> values = map.values();
         for (Pair<Class<NeuralNetConfig>, String> nnstring : values) {
             if (aclass.equals(nnstring.getLeft().getSimpleName())) {
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.configure(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL, true);
                 nnconfig = JsonUtil.convert(nnstring.getRight(), nnstring.getLeft(), mapper);
                 return nnconfig;                
             }
