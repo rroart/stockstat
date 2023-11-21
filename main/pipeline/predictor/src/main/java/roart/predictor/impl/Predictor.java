@@ -88,14 +88,14 @@ public abstract class Predictor extends AbstractPredictor {
     protected Map<String, Double[][]> listMap;
     protected Map<String, Double[][]> fillListMap;
 
-    protected Map<String, double[][]> truncListMap;
+    //protected Map<String, double[][]> truncListMap;
     protected Map<String, double[][]> truncFillListMap;
 
-    protected Map<String, Double[][]> base100ListMap;
-    protected Map<String, Double[][]> base100FillListMap;
+    //protected Map<String, Double[][]> base100ListMap;
+    //protected Map<String, Double[][]> base100FillListMap;
 
-    protected Map<String, double[][]> truncBase100ListMap;
-    protected Map<String, double[][]> truncBase100FillListMap;
+    //protected Map<String, double[][]> truncBase100ListMap;
+    //protected Map<String, double[][]> truncBase100FillListMap;
     Object[] emptyField = new Object[1];
     Map<MLClassifyModel, Long> mapTime = new HashMap<>();
 
@@ -160,12 +160,12 @@ public abstract class Predictor extends AbstractPredictor {
         }
         this.listMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST));
         this.fillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.FILLLIST));
-        this.truncListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCLIST));       
+        //this.truncListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCLIST));       
         this.truncFillListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCFILLLIST));       
-        this.base100ListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.BASE100LIST));
-        this.base100FillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.BASE100FILLLIST));
-        this.truncBase100ListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCBASE100LIST));       
-        this.truncBase100FillListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCBASE100FILLLIST));       
+        //this.base100ListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.BASE100LIST));
+        //this.base100FillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.BASE100FILLLIST));
+        //this.truncBase100ListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCBASE100LIST));       
+        //this.truncBase100FillListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCBASE100FILLLIST));       
 
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse
@@ -200,8 +200,8 @@ public abstract class Predictor extends AbstractPredictor {
         long time1 = System.currentTimeMillis();
         log.info("listmap {} {}", listMap.size(), listMap.keySet());
         for (String id : listMap.keySet()) {
-            double[][] list0 = truncListMap.get(id);
-            double[] list = list0[0];
+            Double[][] list0 = listMap.get(id);
+            Double[] list = list0[0];
             log.info("list {} {}", list.length, list);
         }
         Map<Double, Map<MLClassifyModel, Map<String, Double[]>>> mapResult0 = new HashMap<>();
@@ -212,9 +212,9 @@ public abstract class Predictor extends AbstractPredictor {
         mapResult0.put(threshold, mapResult);
         if (conf.wantML()) {
             if (false && conf.wantPercentizedPriceIndex()) {
-                // TODO doPredictions(conf, mapResult, base100FillListMap, truncBase100FillListMap, nnConfigs, days, threshold);
+                //doPredictions(conf, mapResult, base100FillListMap, truncBase100FillListMap, nnConfigs, days, threshold);
             } else {
-                // TODO doPredictions(conf, mapResult, fillListMap, truncFillListMap, nnConfigs, days, threshold);                
+                doPredictions(conf, mapResult, fillListMap, truncFillListMap, nnConfigs, days, threshold);                
             }
         }
         }
@@ -241,7 +241,7 @@ public abstract class Predictor extends AbstractPredictor {
                     // days find max
                     days = 0;
                     for (String id : aListMap.keySet()) {
-                        Double[] listl = aListMap.get(id)[0];
+                        //Double[] listl = aListMap.get(id)[0];
                         double[][] list0 = aTruncListMap.get(id);
                         double[] list = list0[0];
                         // check reverse. move up before if?
@@ -251,7 +251,7 @@ public abstract class Predictor extends AbstractPredictor {
                     }
                     log.info("list days {}", days);
                     for (String id : aListMap.keySet()) {
-                        Double[] listl = aListMap.get(id)[0];
+                        //Double[] listl = aListMap.get(id)[0];
                         double[][] list0 = aTruncListMap.get(id);
                         double[] list = list0[0];
                         // check reverse. move up before if?
@@ -263,7 +263,7 @@ public abstract class Predictor extends AbstractPredictor {
                     }
                     List<LearnClassify> classifylist = new ArrayList<>();
                     for (String id : aListMap.keySet()) {
-                        Double[] listl = aListMap.get(id)[0];
+                        //Double[] listl = aListMap.get(id)[0];
                         double[][] list0 = aTruncListMap.get(id);
                         double[] list = list0[0];
                         // check reverse. move up before if?

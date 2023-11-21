@@ -120,10 +120,17 @@ public class DataReader extends Pipeline {
 
     void calculateOtherListMaps(IclijConfig conf, int category, MarketData marketData) {
         ValueETL.zeroPrice(this.listMap, category);
+        if (!anythingHere(this.listMap)) {
+            this.volumeMap = null;
+            this.listMap = null;
+            return;
+        }
         this.listMap = ValueETL.abnormalChange(this.listMap, conf);
+        if (MetaUtil.normalPeriod(marketData, category, categoryTitle)) {
         this.fillListMap = ValueETL.getReverseArrSparseFillHolesArr(conf, listMap);
         this.truncListMap = ArraysUtil.getTruncListArr(this.listMap);
         this.truncFillListMap = ArraysUtil.getTruncListArr(this.fillListMap);
+        }
         if (conf.wantPercentizedPriceIndex() && MetaUtil.normalPeriod(marketData, category, categoryTitle)) {
             this.base100ListMap = ValueETL.getBase100D(this.listMap);
             this.base100FillListMap = ValueETL.getBase100D(this.fillListMap);
@@ -138,5 +145,17 @@ public class DataReader extends Pipeline {
     public String pipelineName() {
         return "" + this.category;
     }
+    
+    private boolean anythingHere(Map<String, Double[][]> listMap) {
+        for (Double[][] array : listMap.values()) {
+            for (int i = 0; i < array[0].length; i++) {
+                if (array[0][i] != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
 }

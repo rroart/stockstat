@@ -169,7 +169,8 @@ public abstract class IndicatorAggregator extends Aggregator {
         Map<String, Double[][]> aListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST));
         Map<String, double[][]> fillListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCFILLLIST));
         Map<String, double[][]>  base100FillListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCBASE100FILLLIST)) ;
-        this.listMap = conf.wantPercentizedPriceIndex() ? base100FillListMap : fillListMap;
+        // TODO
+        this.listMap = /*conf.wantPercentizedPriceIndex() ? base100FillListMap :*/ fillListMap;
 
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse

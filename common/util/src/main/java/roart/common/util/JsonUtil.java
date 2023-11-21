@@ -25,6 +25,17 @@ public class JsonUtil {
         return null;
     }
 
+    public static <T> T convertnostrip(String text, TypeReference<T> typeref) {
+        if (text != null) {
+            try {
+                return mapper.readValue(text, typeref);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
+        return null;
+    }
+
     public static <T> T convert(String text, TypeReference<T> typeref) {
         if (text != null) {
             try {
@@ -40,7 +51,7 @@ public class JsonUtil {
     public static <T> T convertnostrip(String text, TypeReference<T> typeref, ObjectMapper mapper) {
         if (text != null) {
             try {
-                return mapper.convertValue(text, typeref);
+                return mapper.readValue(text, typeref);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }

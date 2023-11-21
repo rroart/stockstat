@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.data.TwoDimd;
 
 public class PipelineUtils {
-    private static Logger Log = LoggerFactory.getLogger(PipelineUtils.class);
+    private static Logger log = LoggerFactory.getLogger(PipelineUtils.class);
     
     public static Map<String, PipelineData> getPipelineMap(PipelineData[] datareaders) {
         Map<String, PipelineData> pipelineMap = new HashMap<>();
@@ -192,10 +193,10 @@ public class PipelineUtils {
                             newMap.put(mapEntry.getKey(), newData);
                         }
                         } catch (Exception e) {
-                            Log.info("key" + mapEntry.getKey());
-                            Log.info("key" + mapEntry.getValue().getClass().getName());
-                            Log.info("key" + mapEntry.getValue());
-                            Log.info("key" + mapEntry.getValue());
+                            log.info("key {}", mapEntry.getKey());
+                            log.info("key {}", mapEntry.getValue().getClass().getName());
+                            log.info("key {}", mapEntry.getValue());
+                            log.info("key {}", mapEntry.getValue());
 
                         }
                     }
@@ -278,12 +279,56 @@ public class PipelineUtils {
     }
 
     public static MapOneDim getMapOneDim(Object object) {
-        Map<String, Object[]> map = (Map<String, Object[]>) object;
+        Map<String, Object> map = (Map<String, Object>) object;
         Map<String, OneDim> newMap = new HashMap<>();
-        for (Entry<String, Object[]> entry : map.entrySet()) {
-            newMap.put(entry.getKey(), new OneDim(entry.getValue()));
+        for (Entry<String, Object> entry : map.entrySet()) {
+            Object value = entry.getValue();
+            Object[] array;
+            if (value instanceof Object[] arr) {
+                array = arr;
+            } else {
+                array = ((List) value).toArray(new Object[0]);
+            }
+            newMap.put(entry.getKey(), new OneDim(array));
         }
         return new MapOneDim(newMap );
+    }
+
+    public static void printmap(Object o, int i) {
+        if (o == null) {
+            return;
+        }
+        //System.out.println("" + i + " " + o.hashCode());
+        Map<String, Object> m = (Map<String, Object>) o;
+        for (Entry<String, Object> e : m.entrySet()) {
+            Object value = e.getValue();
+            if (value instanceof Map) {
+                log.debug("{} {} {}", i, e.getKey(), value.hashCode());
+                printmap((Map<String, Object>) value, i + 1);
+            } else {
+                if (value == null) {
+                    log.debug("Kv {} {} {}", i, e.getKey(), null);
+                    //System.out.println(" v " + null);
+                }
+            }
+        }
+    }
+
+    public static void printmap(PipelineData[] data) {
+        long total = 0;
+        for (PipelineData datum : data) {
+            Set<String> keys = datum.keySet();
+            log.info("Data {} {}", datum.getName(), keys);
+            if (log.isDebugEnabled()) {
+                for (String key : keys) {
+                    String str = JsonUtil.convert(datum.get(key));
+                    long size = str != null ? str.length() : 0;
+                    total += size;
+                    log.debug("Size {} {}", key, size);
+                }
+            }
+        }
+        log.info("Total Size {}", total);
     }
 
 }

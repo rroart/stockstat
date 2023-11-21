@@ -46,6 +46,7 @@ import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.util.PipelineUtils;
 import roart.common.util.TimeUtil;
 import roart.db.dao.DbDao;
 import roart.etl.CleanETL;
@@ -259,41 +260,15 @@ public class ControlService {
             retlist.add(list);
         }
         //new CleanETL().fixmap((Map) maps);
-        printmap(pipelinedata);
-        //result.setMaps(maps);
+        PipelineUtils.printmap(pipelinedata);
+        new CleanETL().fixmap(pipelinedata);
+        PipelineUtils.printmap(pipelinedata);
+       //result.setMaps(maps);
         result.setList(retlist);
         result.setPipelineData(pipelinedata);
         return retlist;
     }
     
-    public void printmap(Object o, int i) {
-        if (o == null) {
-            return;
-        }
-        //System.out.println("" + i + " " + o.hashCode());
-        Map<String, Object> m = (Map<String, Object>) o;
-        for (Entry<String, Object> e : m.entrySet()) {
-            Object value = e.getValue();
-            if (value instanceof Map) {
-                log.debug("{} {} {}", i, e.getKey(), value.hashCode());
-                printmap((Map<String, Object>) value, i + 1);
-            } else {
-                if (value == null) {
-                    log.debug("Kv {} {} {}", i, e.getKey(), null);
-                    //System.out.println(" v " + null);
-                }
-            }
-        }
-    }
-
-    public void printmap(PipelineData[] data) {
-        //System.out.println("" + i + " " + o.hashCode());
-        for (PipelineData datum : data) {
-            Set<String> keys = datum.keySet();
-            log.info("Data {} {}", datum.getName(), keys);
-        }
-    }
-
     private void cleanRows(ResultItemTableRow headrow, ResultItemTable table) {
         ResultItemTableRow sum = null;
         if (table.rows.size() > 1) {
