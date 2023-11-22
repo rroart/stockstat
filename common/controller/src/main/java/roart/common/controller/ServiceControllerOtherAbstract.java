@@ -45,7 +45,12 @@ public abstract class ServiceControllerOtherAbstract {
         Thread t = new Thread(new Runnable() {
             public void run() {
                 for (;;) {
-                    Object[] params = c.receive();
+                    Object[] params = new Object[0];
+                    try {
+                        params = c.receive();
+                    } catch (Exception e) {
+                        log.error(Constants.EXCEPTION, e);
+                    }
                     for (Object param : params) {
                         Thread t2 = new Thread(new Runnable() {
                             public void run() { 
