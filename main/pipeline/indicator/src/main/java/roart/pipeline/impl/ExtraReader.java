@@ -234,9 +234,7 @@ public class ExtraReader extends Pipeline {
             dataReaderMap2.put(entry.getKey(), pipelinedata );
         }
         map.put(PipelineConstants.DATAREADER, dataReaderMap2);
-        if (!allMarketStocks.isEmpty()) {
-            map.put(PipelineConstants.MARKETSTOCKS, allMarketStocks);
-        }
+        map.put(PipelineConstants.MARKETSTOCKS, allMarketStocks);
         return map;
     }
     
