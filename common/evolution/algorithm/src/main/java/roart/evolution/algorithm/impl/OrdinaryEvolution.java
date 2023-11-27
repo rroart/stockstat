@@ -25,9 +25,9 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
     }
     
     @Override
-    public Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome chromosome, List<String> individuals, List<Pair<Double, AbstractChromosome>> results) throws Exception {
+    public Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome chromosome, List<String> individuals, List<Pair<Double, AbstractChromosome>> results, AbstractChromosome defaultChromosome) throws Exception {
         int selectionSize = getEvolutionConfig().getSelect();
-        Population population = new Population(selectionSize, evolutionConfig, chromosome, false);
+        Population population = new Population(selectionSize, evolutionConfig, chromosome, false, defaultChromosome);
         if (getEvolutionConfig().getUseoldelite() && !chromosome.isEmpty()) {
             population.getIndividuals().add(new Individual(chromosome).getNewWithValueCopyFactory());
         }
@@ -39,7 +39,7 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
         if (!chromosome.isAscending()) {
             Collections.reverse(population.getIndividuals());
         }
-        Individual parent = getBest(selectionSize, population, true, chromosome, individuals);
+        Individual parent = getBest(selectionSize, population, true, chromosome, individuals, defaultChromosome);
         parent.getEvaluation().transformFromNode();
         if (results != null) {
             for (Individual individual : population.getIndividuals()) {
@@ -51,7 +51,7 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
     }
 
     private Individual getBest(int selectionSize, Population population,
-            boolean useMax, AbstractChromosome chromosome, List<String> individuals) throws JsonParseException, JsonMappingException, IOException, InterruptedException, ExecutionException {
+            boolean useMax, AbstractChromosome chromosome, List<String> individuals, AbstractChromosome defaultChromosome) throws JsonParseException, JsonMappingException, IOException, InterruptedException, ExecutionException {
         //printmap(population.getFittest().getConf().getConfigValueMap());
         //printmap(population.getIndividuals().get(population.size() - 1).getConf().getConfigValueMap());
         
@@ -62,13 +62,13 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
             List<Individual> children = crossover(getEvolutionConfig().getCrossover(), population.getIndividuals(), useMax, chromosome);
             
             mutateList(population.getIndividuals(), getEvolutionConfig().getElite(), population.size(), getEvolutionConfig().getMutate(), false, useMax);
-            List<Individual> clonedmutated = clonedmutated(getEvolutionConfig().getElitecloneandmutate(), population.getIndividuals().get(0).getEvaluation());
+            List<Individual> clonedmutated = clonedmutated(getEvolutionConfig().getElitecloneandmutate(), population.getIndividuals().get(0).getEvaluation(), defaultChromosome);
             mutateList(children, 0, population.size(), getEvolutionConfig().getMutate(), true, useMax);
             
             population.getIndividuals().addAll(children);
             population.getIndividuals().addAll(clonedmutated);
             
-            List<Individual> created = created(getEvolutionConfig().getGenerationcreate(), chromosome);
+            List<Individual> created = created(getEvolutionConfig().getGenerationcreate(), chromosome, defaultChromosome);
             population.getIndividuals().addAll(created);
             boolean interrupted = calculate(population.getIndividuals());
             Collections.sort(population.getIndividuals());

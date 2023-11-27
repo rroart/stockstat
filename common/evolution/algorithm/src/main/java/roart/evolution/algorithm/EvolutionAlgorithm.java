@@ -68,7 +68,7 @@ public abstract class EvolutionAlgorithm {
         this.doParallel = doParallel;
     }
 
-    public abstract Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome recommender, List<String> individuals, List<Pair<Double, AbstractChromosome>> results) throws Exception;
+    public abstract Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome recommender, List<String> individuals, List<Pair<Double, AbstractChromosome>> results, AbstractChromosome defaultChromosome) throws Exception;
 
     protected void printmap(Map<String, Object> map) throws JsonProcessingException {
         for (String key : new ArrayList<String>()) {
@@ -115,13 +115,13 @@ public abstract class EvolutionAlgorithm {
         return children;
     }
 
-    protected List<Individual> created(Integer evolutionGenerationCreate, AbstractChromosome evaluation) throws JsonParseException, JsonMappingException, IOException {
-        Population population = new Population(evolutionGenerationCreate, evolutionConfig, evaluation, false);
+    protected List<Individual> created(Integer evolutionGenerationCreate, AbstractChromosome evaluation, AbstractChromosome defaultChromosome) throws JsonParseException, JsonMappingException, IOException {
+        Population population = new Population(evolutionGenerationCreate, evolutionConfig, evaluation, false, defaultChromosome);
         return population.getIndividuals();
     }
 
-    protected List<Individual> clonedmutated(Integer evolutionEliteCloneAndMutate, AbstractChromosome evaluation) throws JsonParseException, JsonMappingException, IOException {
-        Population population = new Population(evolutionEliteCloneAndMutate, evolutionConfig, evaluation, true);
+    protected List<Individual> clonedmutated(Integer evolutionEliteCloneAndMutate, AbstractChromosome evaluation, AbstractChromosome defaultChromosome) throws JsonParseException, JsonMappingException, IOException {
+        Population population = new Population(evolutionEliteCloneAndMutate, evolutionConfig, evaluation, true, defaultChromosome);
         List<Individual> list = population.getIndividuals();
         for (Individual individual : list) {
             individual.mutate();

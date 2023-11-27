@@ -112,7 +112,7 @@ public class ComponentMLMulti extends ComponentMLAggregator {
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
         ConfigMapChromosome2 chromosome = new MLMultiChromosome(gene);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
-        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fitness, save);
+        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fitness, save, null);
     }
 
     @Override

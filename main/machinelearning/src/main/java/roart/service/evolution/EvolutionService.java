@@ -194,7 +194,7 @@ public class EvolutionService {
             List<Pair<Double, AbstractChromosome>> results = new ArrayList<>();
             Individual best = null;
             try {
-            	best = evolution.getFittest(evolutionConfig, chromosome, individuals, results);
+            	best = evolution.getFittest(evolutionConfig, chromosome, individuals, results, null);
             } catch (InterruptedException e) {
                 resultMap.put(EvolveConstants.ID, "interrupted");
                 return;
@@ -284,7 +284,7 @@ public class EvolutionService {
             List<Pair<Double, AbstractChromosome>> results = new ArrayList<>();
             Individual best = null;
             try {
-            	best = evolution.getFittest(evolutionConfig, chromosome, individuals, results);
+            	best = evolution.getFittest(evolutionConfig, chromosome, individuals, results, null);
             } catch (InterruptedException e) {
                 resultMap.put(EvolveConstants.ID, "interrupted");
             	return;

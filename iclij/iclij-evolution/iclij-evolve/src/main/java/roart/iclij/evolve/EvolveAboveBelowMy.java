@@ -67,7 +67,7 @@ public class EvolveAboveBelowMy extends EvolveMy {
         compsub.addAll(subcomponents);
         
        boolean save = false;
-       ComponentData componentData = component.improve(action, param, chromosome, subcomponent, new AboveBelowChromosomeWinner(aParameter, compsub), null, fit, save);
+       ComponentData componentData = component.improve(action, param, chromosome, subcomponent, new AboveBelowChromosomeWinner(aParameter, compsub), null, fit, save, null);
 
         //ComponentData componentData2 = component.improve(action, param, chromosome2, subcomponent, new MarketFilterChromosomeWinner(), buy, fit);
         param = componentData;

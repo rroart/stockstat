@@ -57,7 +57,7 @@ public class EvolveFilterMy extends EvolveMy {
         MarketFilterChromosome2 chromosome2 = new MarketFilterChromosome2(new ArrayList<>(), gene);
         FitnessMarketFilter fit = new FitnessMarketFilter(action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, mlTests, stockDates, incdecsP);
         boolean save = false;
-        ComponentData componentData = component.improve(action, param, chromosome2, subcomponent, new MarketFilterChromosomeWinner(), buy, fit, save);
+        ComponentData componentData = component.improve(action, param, chromosome2, subcomponent, new MarketFilterChromosomeWinner(), buy, fit, save, null);
         param = componentData;
         }
         return param;

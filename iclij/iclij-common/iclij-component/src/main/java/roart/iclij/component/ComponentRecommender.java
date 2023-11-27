@@ -361,7 +361,7 @@ public class ComponentRecommender extends ComponentNoML {
 
         //chromosome.setConfList(confList);
 
-        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), chromosome.getBuy(), fitness, save);
+        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), chromosome.getBuy(), fitness, save, null);
         //return handleBuySell(param, market, profitdata, profitdata.getInputdata().getListMap(), list);
         //list = getSell();
         //retMap.putAll(handleBuySell(param, market, profitdata, conf, profitdata.getInputdata().getListMap(), list));

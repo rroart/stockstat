@@ -237,9 +237,11 @@ public class ComponentMLIndicator extends ComponentML {
         ConfigMapGene gene = new MLIndicatorConfigMapGene(confList, param.getService().conf);
         ConfigMapChromosome2 chromosome = new MLIndicatorChromosome(gene);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
-        gene.getMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST, JsonUtil.convert(mses));
-        gene.getMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRASBITS, "1".repeat(mses.size()));
-        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fitness, save);
+        ConfigMapGene defaultGene = new MLIndicatorConfigMapGene(confList, param.getService().conf);
+        ConfigMapChromosome2 defaultChromosome = new MLIndicatorChromosome(defaultGene);
+        defaultGene.getMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST, JsonUtil.convert(mses));
+        defaultGene.getMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRASBITS, "1".repeat(mses.size()));
+        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fitness, save, defaultChromosome);
     }
 
     @Override

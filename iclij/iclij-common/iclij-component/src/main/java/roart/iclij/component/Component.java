@@ -303,7 +303,7 @@ public abstract class Component {
     
     // the current implementation
     
-    public ComponentData improve(MarketActionData action, ComponentData param, AbstractChromosome chromosome, String subcomponent, ChromosomeWinner winner, Boolean buy, Fitness fitness, boolean save) {
+    public ComponentData improve(MarketActionData action, ComponentData param, AbstractChromosome chromosome, String subcomponent, ChromosomeWinner winner, Boolean buy, Fitness fitness, boolean save, AbstractChromosome defaultChromosome) {
         long time0 = System.currentTimeMillis();
         EvolutionConfig evolutionConfig = JsonUtil.convert(action.getEvolutionConfig(param.getConfig()), EvolutionConfig.class);
         EvolutionConfig evolveConfig = getEvolutionConfig(param, evolutionConfig);
@@ -318,7 +318,7 @@ public abstract class Component {
         try {
             List<String> individuals = new ArrayList<>();
             List<Pair<Double, AbstractChromosome>> results = new ArrayList<>();
-            Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals, results);
+            Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals, results, defaultChromosome);
             String mysubcomponent = nullString(subcomponent);
             String title = action.getName() + " " + param.getMarket() + " " + getPipeline() + mysubcomponent;
             String subtitle = fitness.subTitleText();

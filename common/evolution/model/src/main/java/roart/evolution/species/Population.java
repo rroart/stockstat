@@ -24,7 +24,7 @@ public class Population {
         this.population = new ArrayList<>();
     }
     
-    public Population(int populationSize, EvolutionConfig evolutionConfig, AbstractChromosome evaluation, boolean doClone) throws JsonParseException, JsonMappingException, IOException {
+    public Population(int populationSize, EvolutionConfig evolutionConfig, AbstractChromosome evaluation, boolean doClone, AbstractChromosome defaultChromosome) throws JsonParseException, JsonMappingException, IOException {
         this.evolutionConfig = evolutionConfig;
         this.population = new ArrayList<>();
 
@@ -34,7 +34,10 @@ public class Population {
             if (doClone) {
                 individual = new Individual(evaluation).getNewWithValueCopyFactory();
             } else {
-                individual = new Individual(evaluation).getNewWithValueCopyAndRandomFactory();
+                if (defaultChromosome == null) {
+                    defaultChromosome = evaluation;
+                }
+                individual = new Individual(defaultChromosome).getNewWithValueCopyAndRandomFactory();
             }
             this.population.add(individual);
         }

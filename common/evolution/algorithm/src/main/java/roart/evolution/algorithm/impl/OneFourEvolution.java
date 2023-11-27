@@ -23,7 +23,7 @@ public class OneFourEvolution extends EvolutionAlgorithm {
     }
     
     @Override
-    public Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome recommend, List<String> individuals, List<Pair<Double, AbstractChromosome>> results) throws Exception {
+    public Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome recommend, List<String> individuals, List<Pair<Double, AbstractChromosome>> results, AbstractChromosome defaultChromosome) throws Exception {
         int selectionSize = evolutionConfig.getSelect();
         int four = 4;
         int five = 5;

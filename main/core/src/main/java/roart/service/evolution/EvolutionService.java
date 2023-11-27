@@ -167,7 +167,7 @@ public class EvolutionService {
                 List<String> individuals = new ArrayList<>();
                 Individual fittestIndividual = null;
                 try {
-                	fittestIndividual = evolution.getFittest(evolutionConfig, indicatorEval0, individuals, null);
+                	fittestIndividual = evolution.getFittest(evolutionConfig, indicatorEval0, individuals, null, null);
                 } catch (InterruptedException e) {
                     resultMap.put(EvolveConstants.ID, "interrupted");
                     return;
