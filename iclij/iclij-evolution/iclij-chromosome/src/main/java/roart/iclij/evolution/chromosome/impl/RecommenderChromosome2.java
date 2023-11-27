@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -100,6 +101,7 @@ public class RecommenderChromosome2 extends ConfigMapChromosome2 {
         return sellList;
     }
     
+    @JsonIgnore
     public List<String> getConfListThreeBuy() {
         List<String> list = new ArrayList<>();
         list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATRBUYWEIGHTATRNODE);
@@ -111,6 +113,7 @@ public class RecommenderChromosome2 extends ConfigMapChromosome2 {
         return list;
     }
     
+    @JsonIgnore
     public List<String> getConfListThreeSell() {
         List<String> list = new ArrayList<>();
         list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATRSELLWEIGHTATRNODE);

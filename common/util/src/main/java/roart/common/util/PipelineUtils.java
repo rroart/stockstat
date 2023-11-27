@@ -10,6 +10,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.MapOneDim;
 import roart.common.pipeline.data.OneDim;
@@ -136,6 +137,8 @@ public class PipelineUtils {
         }
         return newMap;
     }
+    
+    private static final List<String> strings = List.of(PipelineConstants.MLINDICATOR);
 
     private static final List<String> othermap = List.of(PipelineConstants.MARKETOBJECT);
     
@@ -181,7 +184,11 @@ public class PipelineUtils {
                             newData = JsonUtil.convert(mapEntry.getValue(), TwoDimd.class);
                         }
                         if (onedim.contains(entry.getKey())) {
+                            if (!strings.contains(data.getName())) {
                             newData = transformList(mapEntry.getValue());
+                            } else {
+                                newData = transformList2(mapEntry.getValue());
+                            }
                         }
                         if (other.contains(entry.getKey())) {
                             newData = transformListObject(mapEntry.getValue());
@@ -193,6 +200,7 @@ public class PipelineUtils {
                             newMap.put(mapEntry.getKey(), newData);
                         }
                         } catch (Exception e) {
+                            log.error(Constants.EXCEPTION, e);
                             log.info("key {}", mapEntry.getKey());
                             log.info("key {}", mapEntry.getValue().getClass().getName());
                             log.info("key {}", mapEntry.getValue());
@@ -263,6 +271,17 @@ public class PipelineUtils {
                 //Log.info("ob" + o + " " + o.getClass().getName());
             }
             return ArraysUtil.convert1((List<Double>) data);
+        }
+        return data;
+    }
+
+    private static Object transformList2(Object data) {
+        if (data instanceof List list) {
+            List l = (List) data;
+            for (Object o : l) {
+                //Log.info("ob" + o + " " + o.getClass().getName());
+            }
+            return l.toArray(new String[0]);
         }
         return data;
     }

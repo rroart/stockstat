@@ -46,7 +46,7 @@ public class ExtraReader extends Pipeline {
     //Map<Pair<String, String>, List<Date>> pairDateListMap;
     //Map<Pair<String, String>, double[][]> pairTruncListMap;
     public Set<String> commonDates;
-    public Set<MarketStock> allMarketStocks;
+    public Set<MarketStock> allMarketStocks = new LinkedHashSet<>();
     private Set<String> markets = new HashSet<>();
     private Set<MarketStock> marketStocks = new HashSet<>();
     private Extra extra;
