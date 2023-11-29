@@ -138,7 +138,7 @@ public class PipelineUtils {
         return newMap;
     }
     
-    private static final List<String> strings = List.of(PipelineConstants.MLINDICATOR);
+    private static final List<String> strings = List.of(PipelineConstants.MLINDICATOR, PipelineConstants.MLATR, PipelineConstants.MLCCI, PipelineConstants.MLMACD, PipelineConstants.MLMULTI, PipelineConstants.MLRSI, PipelineConstants.MLSTOCH);
 
     private static final List<String> othermap = List.of(PipelineConstants.MARKETOBJECT);
     
