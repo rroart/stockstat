@@ -87,6 +87,13 @@ public class EvolutionService {
             DataReader dataReader = new DataReader(conf, stockData.marketdatamap, stockData.cat, conf.getConfigData().getMarket());
             Pipeline[] datareaders = new Pipeline[1];
             datareaders[0] = dataReader;
+            PipelineData singlePipelineData = new PipelineData();
+            singlePipelineData.setName(PipelineConstants.META);
+            singlePipelineData.put(PipelineConstants.META, stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta);
+            singlePipelineData.put(PipelineConstants.CATEGORY, stockData.catName);
+            singlePipelineData.put(PipelineConstants.WANTEDCAT, stockData.cat);
+            singlePipelineData.put(PipelineConstants.NAME, stockData.idNameMap);
+            singlePipelineData.put(PipelineConstants.DATELIST, stockData.stockdates);
             PipelineData[] pipelineData = new PipelineData[0];
             
             // no...get this from the category
