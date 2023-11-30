@@ -281,7 +281,7 @@ public class PipelineUtils {
             for (Object o : l) {
                 //Log.info("ob" + o + " " + o.getClass().getName());
             }
-            return l.toArray(new String[0]);
+            return l.toArray(new Object[0]);
         }
         return data;
     }
