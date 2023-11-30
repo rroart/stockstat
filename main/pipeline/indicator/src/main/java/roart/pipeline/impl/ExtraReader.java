@@ -206,6 +206,7 @@ public class ExtraReader extends Pipeline {
                 MarketStock complexMs = new MarketStock();
                 complexMs.setMarket(id);
                 complexMs.setId(id);
+                // TODO setcat extra?
                 //MarketStock aMs = new MarketStock(ms.getMarket(), null, ms.getCategory());
                 //.allMarketStocks..
                 allMarketStocks.add(complexMs);

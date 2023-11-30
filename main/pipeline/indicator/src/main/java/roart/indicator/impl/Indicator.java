@@ -107,6 +107,10 @@ public abstract class Indicator extends AbstractIndicator {
             if (datareader == null) {
                 int jj = 0;
             }
+            if (datareader == null) {
+                datareader = mypipelineMap.get("Price");
+                log.debug("TODO temp workaround");
+            }
             Map<String, Double[][]> fillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.FILLLIST));
             Map<String, double[][]> truncFillListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCFILLLIST));
             Object[] arr = null;
