@@ -28,4 +28,8 @@ public class TwoDimD {
     public void setArray(Double[][] array) {
         this.array = array;
     }
+    
+    public Double[] get(int index) {
+        return array[index];
+    }
 }
