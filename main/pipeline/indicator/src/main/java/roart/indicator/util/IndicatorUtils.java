@@ -480,7 +480,11 @@ public class IndicatorUtils {
                     cat = Constants.EXTRA;
                 }
                 PipelineData datareader = pipelineMap.get(cat);
-                Map<String, Double[][]> fillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.FILLLIST));
+                if (datareader == null) {
+                    datareader = pipelineMap.get(Constants.PRICE);
+                    log.debug("TODO temp workaround");
+                }
+            Map<String, Double[][]> fillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.FILLLIST));
                 Double[][] fillList = fillListMap.get(entry.getId());
                 // null
                 if (fillList == null || fillList[0] == null) {
@@ -568,6 +572,11 @@ public class IndicatorUtils {
                     }
 
                     PipelineData pipeline = mypipelineMap.get(cat);
+
+                    if (pipeline == null) {
+                        pipeline = mypipelineMap.get(Constants.PRICE);
+                        log.debug("TODO temp workaround");
+                    }
 
                     List<String> dateList2 = (List<String>) pipeline.get(PipelineConstants.DATELIST);
                     j = dateList2.size() - 1 - dateList2.indexOf(commonDate);

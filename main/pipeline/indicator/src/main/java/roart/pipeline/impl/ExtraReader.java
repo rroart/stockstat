@@ -333,6 +333,10 @@ public class ExtraReader extends Pipeline {
                 cat = Constants.EXTRA;
             }
             PipelineData datareader = pipelineMap.get(cat);
+            if (datareader == null) {
+                datareader = pipelineMap.get(Constants.PRICE);
+                log.debug("TODO temp workaround");
+            }
             List<String> dateList = (List<String>) datareader.get(PipelineConstants.DATELIST);
             int dateIndex = dateList.indexOf(date);
             int prevDateIndex = dateList.indexOf(prevDate);
@@ -379,6 +383,10 @@ public class ExtraReader extends Pipeline {
                 cat = Constants.EXTRA;
             }
             PipelineData datareader = pipelineMap.get(cat);
+            if (datareader == null) {
+                datareader = pipelineMap.get(Constants.PRICE);
+                log.debug("TODO temp workaround");
+            }
             List<String> dateList = (List<String>) datareader.get(PipelineConstants.DATELIST);
             int dateIndex = dateList.size() - dateList.indexOf(commonDate);
             int prevDateIndex = dateList.indexOf(prevDate);
