@@ -778,7 +778,7 @@ public class MLIndicator extends Aggregator {
                 String indicator = ind.indicator();
                 if (indicator != null) {
                     // TODO newIndicatorMap not used
-                    AbstractIndicator pres = indicatorMap.put(indicator, ind.getIndicator(category, newIndicatorMap, usedIndicatorMap, datareaders));
+                    AbstractIndicator pres = indicatorMap.put(indicator, ind.getIndicator(category, newIndicatorMap, usedIndicatorMap, datareaders, null));
                     log.error("INDIC" + (pres != null));
                 } else {
                     log.error("INDIC" + indicator);

@@ -32,6 +32,7 @@ import roart.filesystem.FileSystemDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.IclijServiceResult;
 import roart.indicator.AbstractIndicator;
+import roart.indicator.impl.Indicator;
 import roart.indicator.util.IndicatorUtils;
 import roart.model.data.MarketData;
 import roart.model.data.StockData;
@@ -95,7 +96,12 @@ public class EvolutionService {
             singlePipelineData.put(PipelineConstants.NAME, stockData.idNameMap);
             singlePipelineData.put(PipelineConstants.DATELIST, stockData.stockdates);
             PipelineData[] pipelineData = new PipelineData[0];
-            
+            pipelineData = ArrayUtils.add(pipelineData, singlePipelineData);
+   
+            for (Pipeline datareader : datareaders) {
+                pipelineData = ArrayUtils.add(pipelineData, datareader.putData());
+            }
+
             // no...get this from the category
             // make oo of this
             // optimize with constructors, no need for duplicate
@@ -105,9 +111,15 @@ public class EvolutionService {
             int category = stockData.cat;
             Map<String, AbstractIndicator> newIndicatorMap = new HashMap<>();
             createRecommendIndicatorMap(stockData.marketdatamap, pipelineData, usedRecommenders, indicatorMap, category,
-                    newIndicatorMap);
+                    newIndicatorMap, stockData.catName);
             Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders, indicatorMap, conf);
     
+            for (AbstractIndicator indicator : indicatorMap.values()) {
+                ((Indicator) indicator).calculate();
+                PipelineData datum = ((Indicator) indicator).putData();
+                pipelineData = ArrayUtils.add(pipelineData, datum);
+            }
+
             findRecommendSettings(conf, evolutionConfig, disableList, table, usedRecommenders, recommendKeyMap, indicatorMap, updateMap, stockData.days, pipelineData, scoreMap, resultMap);
             List<ResultItem> retlist = new ArrayList<>();
             retlist.add(table);
@@ -215,12 +227,12 @@ public class EvolutionService {
 
     private void createRecommendIndicatorMap(Map<String, MarketData> marketdatamap, PipelineData[] datareaders,
             Map<String, List<Recommend>> usedRecommenders, Map<String, AbstractIndicator> indicatorMap, int category,
-            Map<String, AbstractIndicator> newIndicatorMap) throws Exception {
+            Map<String, AbstractIndicator> newIndicatorMap, String catName) throws Exception {
         for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {
             List<Recommend> list = entry.getValue();
             for (Recommend recommend : list) {
                 String indicator = recommend.indicator();
-                indicatorMap.put(indicator, recommend.getIndicator(category, newIndicatorMap, null, datareaders));
+                indicatorMap.put(indicator, recommend.getIndicator(category, newIndicatorMap, null, datareaders, catName));
             }
         }
     }

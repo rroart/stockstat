@@ -20,12 +20,12 @@ public abstract class RecommendSTOCHRSI extends Recommend {
     }
 
     @Override
-    public AbstractIndicator getIndicator(int category, Map<String, AbstractIndicator> newIndicatorMap, Map<String, AbstractIndicator> usedIndicatorMap, PipelineData[] datareaders) throws Exception {
+    public AbstractIndicator getIndicator(int category, Map<String, AbstractIndicator> newIndicatorMap, Map<String, AbstractIndicator> usedIndicatorMap, PipelineData[] datareaders, String catName) throws Exception {
         if (usedIndicatorMap != null && usedIndicatorMap.containsKey(indicator())) {
             return usedIndicatorMap.get(indicator());
         }
 
-        AbstractIndicator indicator = new IndicatorSTOCHRSI(conf, null, null, category, datareaders, false);
+        AbstractIndicator indicator = new IndicatorSTOCHRSI(conf, null, catName, category, datareaders, false);
         
         if (newIndicatorMap != null) {
             newIndicatorMap.put(indicator(), indicator);

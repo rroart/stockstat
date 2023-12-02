@@ -27,7 +27,7 @@ public class AggregatorMLIndicatorMACD extends AggregatorMLIndicator {
     // this is duplicated
     @Override
     public AbstractIndicator getIndicator(int category, Map<String, AbstractIndicator> newIndicatorMap,
-            Map<String, AbstractIndicator> usedIndicatorMap, PipelineData[] datareaders) throws Exception {
+            Map<String, AbstractIndicator> usedIndicatorMap, PipelineData[] datareaders, String catName) throws Exception {
         if (usedIndicatorMap != null && usedIndicatorMap.containsKey(indicator())) {
             return usedIndicatorMap.get(indicator());
         }

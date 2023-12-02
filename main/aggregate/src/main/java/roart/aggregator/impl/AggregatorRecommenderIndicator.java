@@ -79,7 +79,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
             for (Recommend recommend : list) {
                 String indicator = recommend.indicator();
                 if (indicator != null) {
-                    AbstractIndicator newIndicator = recommend.getIndicator(category, newIndicatorMap, usedIndicatorMap, datareaders);
+                    AbstractIndicator newIndicator = recommend.getIndicator(category, newIndicatorMap, usedIndicatorMap, datareaders, cat.getTitle());
                     if (newIndicator != null) {
                         indicatorMap.put(indicator, newIndicator);
                     }
