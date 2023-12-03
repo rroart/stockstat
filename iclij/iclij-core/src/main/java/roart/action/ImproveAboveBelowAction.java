@@ -144,6 +144,9 @@ public class ImproveAboveBelowAction extends MarketAction {
             }
             List<IncDecItem> incdecs = allIncDecs; // new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
             List<String> parametersList = new MiscUtil().getParameters(incdecs);
+            if (parametersList.isEmpty()) {
+                component.saveTiming(action.getActionData(), param, true, System.currentTimeMillis(), Double.valueOf(0.0), null, subcomponent, null, null, null, true);
+            }
             for (String aParameter : parametersList) {
                 List<IncDecItem> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              
                 List<String> components = new ArrayList<>();
