@@ -66,9 +66,15 @@ public class PeriodAdviser extends Adviser {
             PipelineData metaData = PipelineUtils.getPipeline(resultMaps, PipelineConstants.META);
             MetaItem meta = JsonUtil.convert(metaData.get(PipelineConstants.META), MetaItem.class);
             String catName = new MetaUtil().getCategory(meta, cat - 1);
+            if (catName == null) {
+                categoryValueMap = new HashMap<>();
+                return;
+            }
 
             PipelineData datareader = PipelineUtils.getPipeline(resultMaps, catName);
             if (datareader == null) {
+                // TODO not needed, done above?
+                log.info("Not used?");
                 categoryValueMap = new HashMap<>();
                 return;
             }
