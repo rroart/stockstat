@@ -24,7 +24,7 @@ import roart.db.dao.DbDao;
 import roart.etl.db.Extract;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
 //import roart.evolution.chromosome.impl.IndicatorChromosome;
-import roart.evolution.chromosome.impl.IndicatorChromosome;
+import roart.evolution.chromosome.impl.IndicatorChromosome3;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.impl.ProportionScore;
 import roart.evolution.species.Individual;
@@ -167,16 +167,16 @@ public class EvolutionService {
             List<AbstractIndicator> indicators = Recommend.getIndicators(entry.getKey(), usedRecommenders, indicatorMap);
             List<String>[] recommendList = recommendKeyMap.get(entry.getKey());
             Recommend recommend = entry.getValue().get(0);
-            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, indicators.stream().map(AbstractIndicator::indicatorName).toList(), recommend.getFutureDays(), conf.getTableDays(), recommend.getIntervalDays(), null, datareaders);
+            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, indicators.stream().map(AbstractIndicator::indicatorName).toList(), 0, conf.getTableDays(), 1, null, datareaders);
             List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
             if (macdrsiMinMax == null || macdrsiMinMax.length == 1) {
                 int jj = 0;
             }
-
+            // TODO buy only
             for (int i = 0; i < 2; i++) {
                 List<String> scoreList = recommendList[i];
                 ////scoreList.removeAll(disableList);
-                IndicatorChromosome indicatorEval0 = new IndicatorChromosome(conf, scoreList, retObj, true, disableList, new ProportionScore(i == 0), days, threshold);
+                IndicatorChromosome3 indicatorEval0 = new IndicatorChromosome3(conf, scoreList, retObj, true, disableList, new ProportionScore(i == 0), days, threshold);
                 indicatorEval0.setAscending(i == 0);
                 
                 OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
@@ -202,13 +202,13 @@ public class EvolutionService {
                     row.add("" + conf.getConfigData().getConfigValueMap().get(id));
                     //log.info("Buy {} {}", id, buy.getConf().getConfigValueMap().get(id));
                     //log.info("Buy {}", buy.getConf().getConfigValueMap().get(id).getClass().getName());
-                    IndicatorChromosome newEval = (IndicatorChromosome) fittestIndividual.getEvaluation();
+                    IndicatorChromosome3 newEval = (IndicatorChromosome3) fittestIndividual.getEvaluation();
                     row.add("" + newEval.getConf().getConfigData().getConfigValueMap().get(id));
                     table.add(row);
                 }
                 // have a boolean here
                 for (String id : scoreList) {
-                    IndicatorChromosome newEval = (IndicatorChromosome) fittestIndividual.getEvaluation();
+                    IndicatorChromosome3 newEval = (IndicatorChromosome3) fittestIndividual.getEvaluation();
                     updateMap.put(id, newEval.getConf().getConfigData().getConfigValueMap().get(id));
                 }
                 if (i == 0) {
