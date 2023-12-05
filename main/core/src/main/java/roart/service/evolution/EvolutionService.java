@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.aggregatorindicator.impl.Recommend;
 import roart.common.constants.Constants;
@@ -24,6 +23,7 @@ import roart.common.util.JsonUtil;
 import roart.db.dao.DbDao;
 import roart.etl.db.Extract;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
+//import roart.evolution.chromosome.impl.IndicatorChromosome;
 import roart.evolution.chromosome.impl.IndicatorChromosome;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.impl.ProportionScore;
@@ -112,14 +112,13 @@ public class EvolutionService {
             Map<String, AbstractIndicator> newIndicatorMap = new HashMap<>();
             createRecommendIndicatorMap(stockData.marketdatamap, pipelineData, usedRecommenders, indicatorMap, category,
                     newIndicatorMap, stockData.catName);
-            Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders, indicatorMap, conf);
-    
             for (AbstractIndicator indicator : indicatorMap.values()) {
                 ((Indicator) indicator).calculate();
                 PipelineData datum = ((Indicator) indicator).putData();
                 pipelineData = ArrayUtils.add(pipelineData, datum);
             }
-
+            Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders, indicatorMap, conf);
+            
             findRecommendSettings(conf, evolutionConfig, disableList, table, usedRecommenders, recommendKeyMap, indicatorMap, updateMap, stockData.days, pipelineData, scoreMap, resultMap);
             List<ResultItem> retlist = new ArrayList<>();
             retlist.add(table);
@@ -173,7 +172,7 @@ public class EvolutionService {
             if (macdrsiMinMax == null || macdrsiMinMax.length == 1) {
                 int jj = 0;
             }
-    
+
             for (int i = 0; i < 2; i++) {
                 List<String> scoreList = recommendList[i];
                 ////scoreList.removeAll(disableList);
