@@ -17,6 +17,7 @@ module iclij.core {
     requires common.constants;
     requires common.controller;
     requires common.eureka;
+    requires common.leader;
     requires common.model;
     requires common.service;
     requires common.util;
@@ -77,4 +78,7 @@ module iclij.core {
     requires coredb.hibernate;
     requires coredb;
     requires coredb.spring;
+    requires curator.framework;
+    requires stockstat.shadow.zookeeper;
+    requires common.webflux;
 }

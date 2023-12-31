@@ -325,7 +325,6 @@ public abstract class Component {
             String text = evolution.printtext(title + nullString(fitness.titleText()), fitness.subTitleText(), individuals);
             String node = param.getService().conf.getEvolveSaveLocation();
             String mypath = param.getService().conf.getEvolveSavePath();
-            ControlService.configCurator(param.getService().conf);
             String filename = new FileSystemDao(param.getService().conf, ControlService.curatorClient).writeFile(node, mypath, null, text);
             Map<String, Object> confMap = new HashMap<>();
             double score = winner.handleWinner(param, best, confMap);

@@ -1,14 +1,19 @@
 package roart.action;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
+import roart.common.constants.Constants;
+import roart.common.leader.MyLeader;
+import roart.common.leader.impl.MyLeaderFactory;
 import roart.component.model.ComponentData;
 import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
@@ -23,9 +28,12 @@ public class MainAction extends Action {
 
     private IclijConfig iclijConfig;
 
+    private ControlService controlService;
+
     public MainAction(IclijConfig iclijConfig, IclijDbDao dbDao) {
         this.iclijConfig = iclijConfig;
         this.dbDao = dbDao;
+        this.controlService = new ControlService(iclijConfig);
     }
 
     @SuppressWarnings("squid:S2189")
@@ -51,6 +59,13 @@ public class MainAction extends Action {
         String updateDB = System.getProperty("updatedata");
         boolean doUpdateDB = !"false".equals(updateDB);
         boolean firstRun = true;
+        String hostname = "localhost";
+        try {
+            hostname = InetAddress.getLocalHost().getHostName();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        MyLeader leader = new MyLeaderFactory().create(hostname, iclijConfig, ControlService.curatorClient, null /*GetHazelcastInstance.instance(conf.getInmemoryHazelcast())*/);
         while (true) {
             if (firstRun) {
                 firstRun = false;
@@ -71,8 +86,14 @@ public class MainAction extends Action {
             } else {
                 for (int pri = 0; pri < 100; pri += 10) {
                     for (Action anAction : getGoals()) {
-                        MarketAction action = (MarketAction) anAction;
-                        action.goal(this, param, pri, iclijConfig);
+                        boolean leading = leader.await(1, TimeUnit.SECONDS);
+                        if (!leading) {
+                            log.info("I am not leader");
+                        } else {
+                            log.info("I am leader");
+                            MarketAction action = (MarketAction) anAction;
+                            action.goal(this, param, pri, iclijConfig);
+                        }
                     }
                 }
             }

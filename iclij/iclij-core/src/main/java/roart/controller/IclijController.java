@@ -14,6 +14,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.action.Action;
 import roart.action.ActionThread;
+import roart.action.LeaderRunner;
 import roart.action.MainAction;
 import roart.common.cache.MyCache;
 import roart.common.constants.Constants;
@@ -22,6 +23,7 @@ import roart.db.dao.IclijDbDao;
 import roart.db.thread.DatabaseThread;
 import roart.executor.MyExecutors;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.service.ControlService;
 import roart.iclij.service.IclijServiceParam;
 import roart.populate.PopulateThread;
 
@@ -57,6 +59,10 @@ public class IclijController implements CommandLineRunner {
 
     public static List<String> taskList = new ArrayList<>();
 
+    private LeaderRunner leaderRunnable = null;
+
+    private Thread leaderWorker = null;
+
     public static void main(String[] args) throws Exception {
         SpringApplication.run(IclijController.class, args);
     }
@@ -66,6 +72,7 @@ public class IclijController implements CommandLineRunner {
         log.info("Using profile {}", activeProfile);
         log.info("Using profile {}", iclijConfig);
         IclijConfig instance = iclijConfig;
+        ControlService.configCurator(iclijConfig);
         try {
             MyExecutors.initThreads("dev".equals(activeProfile));
             MyExecutors.init(new double[] { instance.mpServerCpu() } );
@@ -81,6 +88,7 @@ public class IclijController implements CommandLineRunner {
             new MemRunner().start();
             MyCache.setCache(instance.wantCache());
             MyCache.setCacheTTL(instance.getCacheTTL());
+            startLeaderWorker();
             if (MainAction.wantsGoals(iclijConfig)) {        
                 Action action = new MainAction(iclijConfig, dbDao);
                 action.goal(null, null, null, iclijConfig);
@@ -119,4 +127,13 @@ public class IclijController implements CommandLineRunner {
             }
         }
     }
+    
+    public void startLeaderWorker() {
+        leaderRunnable = new LeaderRunner(iclijConfig, null);
+        leaderWorker = new Thread(leaderRunnable);
+        leaderWorker.setName("LeaderWorker");
+        leaderWorker.start();
+        log.info("starting leader worker");
+    }
+
 }
