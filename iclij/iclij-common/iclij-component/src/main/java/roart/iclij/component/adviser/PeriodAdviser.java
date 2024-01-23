@@ -65,7 +65,7 @@ public class PeriodAdviser extends Adviser {
             //List<MetaItem> metas = param.getService().getMetas();
             PipelineData metaData = PipelineUtils.getPipeline(resultMaps, PipelineConstants.META);
             MetaItem meta = JsonUtil.convert(metaData.get(PipelineConstants.META), MetaItem.class);
-            String catName = new MetaUtil().getCategory(meta, cat - 1);
+            String catName = new MetaUtil().getCategory(meta, cat);
             if (catName == null) {
                 categoryValueMap = new HashMap<>();
                 return;
