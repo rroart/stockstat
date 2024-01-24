@@ -65,7 +65,13 @@ public class PeriodAdviser extends Adviser {
             //List<MetaItem> metas = param.getService().getMetas();
             PipelineData metaData = PipelineUtils.getPipeline(resultMaps, PipelineConstants.META);
             MetaItem meta = JsonUtil.convert(metaData.get(PipelineConstants.META), MetaItem.class);
-            String catName = new MetaUtil().getCategory(meta, cat);
+            if (cat >= 9) {
+                // from old stored data
+                log.error("Category too big {}", cat);
+                categoryValueMap = new HashMap<>();
+                return;
+            }
+            String catName = new MetaUtil().getCategory(meta,  cat);
             if (catName == null) {
                 categoryValueMap = new HashMap<>();
                 return;
