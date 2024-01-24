@@ -49,7 +49,9 @@ public class LeaderRunner implements Runnable {
                 while (true) {
                     try {
                         String path = "/" + Constants.STOCKSTAT + "/" + Constants.DB;
-                        deleteOld(curatorClient, path, 15 * 60 * 1000, false, false);
+                        if (curatorClient.checkExists().forPath(path) != null) {
+                            deleteOld(curatorClient, path, 15 * 60 * 1000, false, false);
+                        }
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
                         break;
@@ -57,7 +59,9 @@ public class LeaderRunner implements Runnable {
 
                     try {
                         String path = "/" + Constants.STOCKSTAT + "/" + Constants.DATA;
-                        deleteOld(curatorClient, path, 20 * 60 * 1000, true, true);
+                        if (curatorClient.checkExists().forPath(path) != null) {
+                            deleteOld(curatorClient, path, 20 * 60 * 1000, true, true);
+                        }
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
                         break;
