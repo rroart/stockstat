@@ -1528,7 +1528,12 @@ public class SimulateInvestComponent extends ComponentML {
                             incdec = " ( " + MathUtil.round2(list.get(len - 2), 3) + " -> " + MathUtil.round2(list.get(len - 1), 3) + " )";
                         }
                     }
-                    String lastDate = " " + results.plotDates.get(results.plotDates.size() - 1);
+                    String lastDate = null;
+                    if (!results.plotDates.isEmpty()) {
+                        lastDate = " " + results.plotDates.get(results.plotDates.size() - 1);
+                    } else {
+                        log.error("Empty date list");
+                    }
                     onerun.lastbuysell = "Buy: " + buyids + " Sell: " + sellids + " Stocks: " + ids + newids + " ( " + buytxt + " , " + selltxt + " , " + idstxt + " , " + idsnewtxt + " ) " + incdec + " " + adv + lastDate;
                }
             }
