@@ -21,7 +21,7 @@ public class MyCuratorLeader extends MyLeader {
     public MyCuratorLeader(String id, CuratorFramework curatorFramework, HazelcastInstance hz) {
         this.curatorFramework = curatorFramework;
         try {
-            latch = new LeaderLatch(curatorFramework, "/latch", id);
+            latch = new LeaderLatch(curatorFramework, "/" + Constants.STOCKSTAT + "/latch", id);
             latch.start();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
