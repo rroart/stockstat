@@ -34,6 +34,14 @@ public class MainAction extends Action {
         this.iclijConfig = iclijConfig;
         this.dbDao = dbDao;
         this.controlService = new ControlService(iclijConfig);
+        String updateDB = System.getProperty("updatedata");
+        boolean doUpdateDB = !"false".equals(updateDB);
+        if (doUpdateDB) {
+            // not yet addIfNotContaining(updateDBACtion);
+        }
+        if (getGoals().isEmpty()) {
+            addGoals();
+        }
     }
 
     @SuppressWarnings("squid:S2189")
@@ -43,6 +51,7 @@ public class MainAction extends Action {
         if (!config.wantsIclijSchedule()) {
             return;
         }
+        /*
         log.debug("Start");
         ControlService srv = new ControlService(iclijConfig);
         boolean noException = false;
@@ -56,51 +65,37 @@ public class MainAction extends Action {
             }
         }
         log.debug("Got config");
-        String updateDB = System.getProperty("updatedata");
-        boolean doUpdateDB = !"false".equals(updateDB);
-        boolean firstRun = true;
+        */
+        /*
         String hostname = "localhost";
         try {
             hostname = InetAddress.getLocalHost().getHostName();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        MyLeader leader = new MyLeaderFactory().create(hostname, iclijConfig, ControlService.curatorClient, null /*GetHazelcastInstance.instance(conf.getInmemoryHazelcast())*/);
-        while (true) {
-            if (firstRun) {
-                firstRun = false;
-                if (doUpdateDB) {
-                    // not yet addIfNotContaining(updateDBACtion);
-                }
-                if (getGoals().isEmpty()) {
-                    addGoals();
-                }
-            }
+        */
+        if (true) {
             if (getGoals().isEmpty()) {
                 try {
-                    Thread.sleep(3600 * 1000);
+                    //Thread.sleep(3600 * 1000);
                 } catch (Exception e) {
                 }
-                addGoals();
+                //addGoals();
                 //addIfNotContaining(updateDBACtion);
             } else {
                 for (int pri = 0; pri < 100; pri += 10) {
                     for (Action anAction : getGoals()) {
-                        boolean leading = leader.await(1, TimeUnit.SECONDS);
-                        if (!leading) {
-                            log.info("I am not leader");
-                        } else {
-                            log.info("I am leader");
-                            MarketAction action = (MarketAction) anAction;
-                            action.goal(this, param, pri, iclijConfig);
-                        }
+                        MarketAction action = (MarketAction) anAction;
+                        action.goal(this, param, pri, iclijConfig);
                     }
                 }
             }
+            /*
             try {
                 Thread.sleep(3600 * 1000);
             } catch (Exception e) {
             }
+            */
         }
     }
 

@@ -89,10 +89,6 @@ public class IclijController implements CommandLineRunner {
             MyCache.setCache(instance.wantCache());
             MyCache.setCacheTTL(instance.getCacheTTL());
             startLeaderWorker();
-            if (MainAction.wantsGoals(iclijConfig)) {        
-                Action action = new MainAction(iclijConfig, dbDao);
-                action.goal(null, null, null, iclijConfig);
-            }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -129,7 +125,7 @@ public class IclijController implements CommandLineRunner {
     }
     
     public void startLeaderWorker() {
-        leaderRunnable = new LeaderRunner(iclijConfig, null);
+        leaderRunnable = new LeaderRunner(iclijConfig, null, dbDao);
         leaderWorker = new Thread(leaderRunnable);
         leaderWorker.setName("LeaderWorker");
         leaderWorker.start();

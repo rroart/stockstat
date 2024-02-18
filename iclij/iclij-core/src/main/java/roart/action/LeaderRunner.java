@@ -24,10 +24,13 @@ public class LeaderRunner implements Runnable {
 
     private ControlService controlService;
     
-    public LeaderRunner(IclijConfig conf, ControlService controlService) {
+    private IclijDbDao dbDao;
+    
+    public LeaderRunner(IclijConfig conf, ControlService controlService, IclijDbDao dbDao) {
         super();
         this.iclijConfig = conf;
         this.controlService = controlService;
+        this.dbDao = dbDao;
     }
 
     @SuppressWarnings("squid:S2189")
@@ -38,6 +41,7 @@ public class LeaderRunner implements Runnable {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+        long lastMain = 0;
         MyLeader leader = new MyLeaderFactory().create(hostname, iclijConfig, ControlService.curatorClient, null /*GetHazelcastInstance.instance(conf.getInmemoryHazelcast())*/);
         while (true) {
             boolean leading = leader.await(1, TimeUnit.SECONDS);
@@ -46,6 +50,7 @@ public class LeaderRunner implements Runnable {
             } else {
                 log.info("I am leader");
                 CuratorFramework curatorClient = controlService.curatorClient;
+                Action action = new MainAction(iclijConfig, dbDao);
                 while (true) {
                     try {
                         String path = "/" + Constants.STOCKSTAT + "/" + Constants.DB;
@@ -67,6 +72,20 @@ public class LeaderRunner implements Runnable {
                         break;
                     }
 
+                    long time = System.currentTimeMillis();
+                    if (time - lastMain > 3600 * 1000) {
+                        if (MainAction.wantsGoals(iclijConfig)) {
+                            long time0 = System.currentTimeMillis();
+                            try {
+                                action.goal(null, null, null, iclijConfig);
+                            } catch (InterruptedException e) {
+                                log.error(Constants.EXCEPTION, e);
+                            }
+                            long newLastMain = System.currentTimeMillis();
+                            log.info("Goals time {}", (newLastMain - time0) / 1000);
+                            lastMain = newLastMain;
+                        }
+                    }
                 }
             }
             log.info("Leader status: {}", leader.isLeader());
