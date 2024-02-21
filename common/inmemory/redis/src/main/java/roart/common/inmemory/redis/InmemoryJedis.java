@@ -7,11 +7,12 @@ import roart.common.inmemory.model.Inmemory;
 
 public class InmemoryJedis extends Inmemory {
 
-    private JedisPool pool;
+    private String server;
 
     public InmemoryJedis(String server) {
         super(server);
-        pool = new JedisPool(server);
+        this.server = server;
+        JedisPools.get(server);
     }
 
     @Override
@@ -26,14 +27,14 @@ public class InmemoryJedis extends Inmemory {
 
     @Override
     protected void set(String key, String value) {
-        try (Jedis jedis = pool.getResource()) {
+        try (Jedis jedis = pool().getResource()) {
             jedis.set(key, value);
         }
     }
 
     @Override
     protected String get(String key) {
-        try (Jedis jedis = pool.getResource()) {
+        try (Jedis jedis = pool().getResource()) {
             String string = jedis.get(key);
             return string;
         }
@@ -41,8 +42,12 @@ public class InmemoryJedis extends Inmemory {
 
     @Override
     protected void del(String key) {
-        try (Jedis jedis = pool.getResource()) {
+        try (Jedis jedis = pool().getResource()) {
             jedis.del(key);
         }
+    }
+    
+    private JedisPool pool() {
+        return JedisPools.get(server);
     }
 }
