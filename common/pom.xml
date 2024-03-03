@@ -28,6 +28,7 @@
     <module>myexecutor</module>
     <module>evolution</module>
     <module>model</module>
+    <module>queue</module>
     <module>service</module>
     <module>util</module>
     <module>webflux</module>
