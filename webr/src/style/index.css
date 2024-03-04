@@ -15,3 +15,17 @@ h1, h2 {
   /* This is how you use custom fonts */
   font-family: YourFavoriteFont;
 }
+
+@media (prefers-color-scheme: light) {
+  body {
+    background: #FFF;
+    color: #333;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #333;
+    color: #FFF;
+  }
+}
