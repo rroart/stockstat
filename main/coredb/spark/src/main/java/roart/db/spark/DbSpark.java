@@ -32,7 +32,6 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.sql.types.ArrayType;
 import org.apache.spark.sql.types.StringType;
 import org.apache.spark.sql.types.DoubleType;
