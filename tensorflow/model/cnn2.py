@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras.layers import Dense, Activation, Dropout, Conv2D, MaxPooling2D, Flatten, Convolution2D, BatchNormalization, LeakyReLU, Dropout
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.optimizers.legacy import Adam
+from tensorflow.keras.optimizers import Adam
 
 from .model import MyModel
 

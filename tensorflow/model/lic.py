@@ -1,18 +1,22 @@
 import tensorflow as tf
 
-from .myestimator import MyEstimator
+from .model import MyModel
 
-class Model(MyEstimator):
+def create_sample_optimizer(tf_version):
+    optimizer = tf.keras.optimizers.Ftrl(
+        l1_regularization_strength=0.001,
+        learning_rate=tf.keras.optimizers.schedules.ExponentialDecay(
+            initial_learning_rate=0.1, decay_steps=10000, decay_rate=0.9))
+    return optimizer
+
+class Model(MyModel):
 
   def __init__(self, myobj, config, classify):
-    super(Model, self).__init__(myobj, config, classify)
-    feature_columns = [ tf.feature_column.numeric_column("features", shape=[myobj.size] ) ]
-    pu = '/cpu:0'
-    with tf.device(pu):
-        self.classifier = tf.estimator.LinearClassifier(
-            feature_columns = feature_columns,
-            model_dir = self.getModelDir(),
-            n_classes = myobj.classes, loss_reduction=tf.keras.losses.Reduction.SUM)
+    super(Model, self).__init__(config, classify, name='my_model')
+    self.model = tf.keras.models.Sequential()
+    # Define the model consisting of a single neuron.
+    self.model.add(tf.keras.layers.Dense(units=1)) #, input_shape=(myobj.size,)))
+    self.model.compile(loss='mse', optimizer=create_sample_optimizer('tf2'), metrics=['accuracy'])
 
   def call(self, inputs):
     # Define your forward pass here,

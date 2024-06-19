@@ -3,7 +3,7 @@ import keras
 #from tensorflow.keras import layers
 from keras.layers import Dense, Activation, Dropout
 #from keras.models import Sequential
-from tensorflow.keras.optimizers.legacy import Adam, RMSprop
+from tensorflow.keras.optimizers import Adam, RMSprop
 
 #from .mymodelseq import MyModelSeq
 from .model import MyModel

@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras.layers import Dense, Activation, Dropout, SimpleRNN, RNN, Flatten, TimeDistributed
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.optimizers.legacy import Adam, RMSprop
+from tensorflow.keras.optimizers import Adam, RMSprop
 
 from .model import MyModel
 

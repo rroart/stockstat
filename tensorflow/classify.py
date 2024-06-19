@@ -347,8 +347,9 @@ class Classify:
             #return None, loss.item()
 
         train_loss, train_accuracy_score = classifier.evaluate(train, traincat)
-
+        
         test_loss, accuracy_score = classifier.evaluate(test, testcat)
+
         if isinstance(classifier, tf.keras.Model):
             print(classifier.metrics_names)
             print(classifier.summary())
@@ -436,10 +437,9 @@ class Classify:
         if os.path.exists(self.getpath(myobj) + myobj.filename):
             return True
         return os.path.isfile(self.getpath(myobj) + myobj.filename + ".ckpt.index")
-    
+
     def do_learntestclassify(self, queue, request):
-      with tf.compat.v1.Session() as sess:
-      #with tf.compat.v1.get_default_session() as sess:
+        print("eager", tf.executing_eagerly())
         #tf.logging.set_verbosity(tf.logging.FATAL)
         dt = datetime.now()
         timestamp = dt.timestamp()
@@ -460,13 +460,11 @@ class Classify:
         exists = self.exists(myobj)
         # load model if:                                                               # exists and not dynamic and wantclassify
         if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
-            #with tf.get_default_session() as sess:
             if Model.Model.localsave():
                 # dummy variable to allow saver
                 model = Model.Model(myobj, config, classify)
-                saver = tf.compat.v1.train.Saver()
                 print("Restoring")
-                saver.restore(sess, self.getpath(myobj) + myobj.filename + ".ckpt")
+                model.model = tf.keras.models.load_model( self.getpath(myobj) + myobj.filename + ".keras")
                 print("Restoring done")
             else:
                 model = Model.Model(myobj, config, classify)
@@ -488,11 +486,9 @@ class Classify:
         #print(myobj.neuralnetcommand.mlclassify, myobj.neuralnetcommand.mllearn, myobj.neuralnetcommand.mldynamic)
         # save model if                                                                # not dynamic and wantlearn
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
-            #with tf.compat.v1.get_default_session() as sess:
             if Model.Model.localsave():
-                saver = tf.compat.v1.train.Saver()
                 print("Saving")
-                save_path = saver.save(sess, self.getpath(myobj) + myobj.filename + ".ckpt")
+                model.save(self.getpath(myobj) + myobj.filename + ".keras")
 
         (intlist, problist) = (None, None)
         if self.wantClassify(myobj):
@@ -583,4 +579,5 @@ class Classify:
         print("GPUs", gpus)
 
     def hasgpu(self):
-        return tf.test.is_gpu_available()
+        physical_devices = tf.config.list_physical_devices('GPU')
+        return len(physical_devices) > 0

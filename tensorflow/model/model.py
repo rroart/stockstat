@@ -12,6 +12,8 @@ class MyModel():
         #print("train")
         #print(train.shape)
         #print(traincat.shape)
+        #dataset = tf.data.Dataset.from_tensor_slices((train, traincat))
+        #self.model.fit(dataset, epochs = self.config.steps, verbose = 0)
         self.model.fit(train, traincat, epochs = self.config.steps, verbose = 0)
 
     def evaluate(self, array, cat):
@@ -46,3 +48,6 @@ class MyModel():
 
     def localsave():
         return True
+
+    def save(self, filename):
+        self.model.save(filename)
