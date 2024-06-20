@@ -5,7 +5,7 @@ import roart.common.ml.TensorflowLICConfig;
 import roart.gene.AbstractGene;
 import roart.gene.NeuralNetConfigGene;
 
-public class TensorflowLICConfigGene extends TensorflowEstimatorConfigGene {
+public class TensorflowLICConfigGene extends TensorflowFeedConfigGene {
 
     public TensorflowLICConfigGene(TensorflowLICConfig config) {
         super(config);

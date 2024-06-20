@@ -11,6 +11,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         property = "_class")  
 @JsonSubTypes({  
     @Type(value = TensorflowMLPConfig.class, name = "TensorflowMLPConfig"),
+    @Type(value = TensorflowDNNConfig.class, name = "TensorflowDNNConfig"),
+    @Type(value = TensorflowLICConfig.class, name = "TensorflowLICConfig"),
+    @Type(value = TensorflowLIRConfig.class, name = "TensorflowLIRConfig"),
     @Type(value = TensorflowRecurrentConfig.class, name = "TensorflowRecurrentConfig") })  
 public abstract class TensorflowFeedConfig extends TensorflowConfig {
 

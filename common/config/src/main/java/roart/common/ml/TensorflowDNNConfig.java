@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import roart.common.config.MLConstants;
 
-public class TensorflowDNNConfig extends TensorflowEstimatorConfig {
+public class TensorflowDNNConfig extends TensorflowFeedConfig {
 
     private int layers;
     
@@ -31,8 +31,9 @@ public class TensorflowDNNConfig extends TensorflowEstimatorConfig {
     public TensorflowDNNConfig(
             @JsonProperty("steps") int steps, 
             @JsonProperty("layers") int layers, 
-            @JsonProperty("hidden") int hidden) {
-        super(MLConstants.DNN, steps);
+            @JsonProperty("hidden") int hidden,
+            @JsonProperty("lr") double lr) {
+        super(MLConstants.DNN, steps, layers, hidden, lr);
         this.layers = layers;
         this.hidden = hidden;
     }
@@ -42,7 +43,7 @@ public class TensorflowDNNConfig extends TensorflowEstimatorConfig {
     }
 
     public TensorflowDNNConfig(TensorflowDNNConfig config) {
-        this(config.steps, config.layers, config.hidden);
+        this(config.steps, config.layers, config.hidden, config.lr);
     }
 
     @Override

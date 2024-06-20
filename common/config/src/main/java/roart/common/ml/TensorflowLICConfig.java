@@ -5,12 +5,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import roart.common.config.MLConstants;
 
-public class TensorflowLICConfig extends TensorflowEstimatorConfig {
+public class TensorflowLICConfig extends TensorflowFeedConfig {
 
     @JsonCreator
     public TensorflowLICConfig(
-            @JsonProperty("steps") Integer steps) {
-        super(MLConstants.LIC, steps);
+            @JsonProperty("steps") Integer steps,
+            @JsonProperty("lr") double lr) {
+        super(MLConstants.LIC, steps, 0, 0, lr);
      }
 
     public TensorflowLICConfig(String name) {
@@ -18,7 +19,7 @@ public class TensorflowLICConfig extends TensorflowEstimatorConfig {
     }
 
     public TensorflowLICConfig(TensorflowLICConfig config) {
-        this(config.steps);
+        this(config.steps, config.lr);
     }
 
 

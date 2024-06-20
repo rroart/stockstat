@@ -7,7 +7,7 @@ import roart.gene.AbstractGene;
 import roart.gene.NeuralNetConfigGene;
 import roart.common.constants.Constants;
 
-public class TensorflowDNNConfigGene extends TensorflowEstimatorConfigGene {
+public class TensorflowDNNConfigGene extends TensorflowFeedConfigGene {
 
     public TensorflowDNNConfigGene(TensorflowConfig config) {
         super(config);
