@@ -30,7 +30,8 @@ class Model(MyModel):
     #https://medium.com/@alexrachnog/neural-networks-for-algorithmic-trading-2-1-multivariate-time-series-ab016ce70f57
     modelm = Sequential()
     # input_shape = (WINDOW, EMB_SIZE),
-    modelm.add(Convolution1D(input_shape = myobj.size,
+    modelm.add(tf.keras.Input(shape = myobj.size))
+    modelm.add(Convolution1D(
                         filters=16,
                         kernel_size = config.kernelsize,
                         strides = config.stride,
@@ -84,7 +85,7 @@ class Model(MyModel):
     #end
     
     self.model = modelm
-    self.dense_1 = Dense(32, activation='relu', input_shape=(myobj.size,))
+    self.dense_1 = Dense(32, activation='relu')
     self.dense_2 = Dense(32, activation='relu')
     self.dense_3 = Dense(32, activation='relu')
     #self.dense_4 = Dense(myobj.classes, activation='sigmoid')

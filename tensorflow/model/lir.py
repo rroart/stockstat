@@ -9,8 +9,9 @@ class Model(MyModel):
     normalizer = tf.keras.layers.Normalization(input_shape=[1,], axis=None)
     #normalizer.adapt(
     self.model =  tf.keras.models.Sequential()
+    amodel.add(tf.keras.Input(shape = (myobj.size,)))
     # Define the model consisting of a single neuron.
-    self.model.add(tf.keras.layers.Dense(units=1)) #, input_shape=(myobj.size,)))
+    self.model.add(tf.keras.layers.Dense(units=1))
     self.model.compile(#optimizer=tf.keras.optimizers.RMSprop(lr=.005),
                        loss='mse')
         

@@ -24,14 +24,15 @@ class Model(MyModel):
     # Define your layers here.
     # https://subscription.packtpub.com/book/big_data_and_business_intelligence/9781788292061/7/ch07lvl1sec59/simple-rnn-with-keras
     amodel=Sequential()
+    # add Input
     #print("ooo",myobj.size)
-    amodel.add(Dropout(config.dropoutin, input_shape = myobj.size))
+    amodel.add(tf.keras.Input(shape = myobj.size))
+    amodel.add(Dropout(config.dropoutin))
     amodel.add(SimpleRNN(config.hidden, return_sequences = True))
-    # , time_major = False
     amodel.add(Dropout(config.dropout))
     for i in range(1, config.layers):
       print("Adding hidden layer", i)
-      amodel.add(SimpleRNN(config.hidden, return_sequences = i != config.layers - 1, time_major = False))
+      amodel.add(SimpleRNN(config.hidden, return_sequences = i != config.layers - 1))
       amodel.add(Dropout(config.dropout))
     amodel.add(Flatten())
     if classify:

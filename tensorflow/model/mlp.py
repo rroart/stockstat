@@ -24,7 +24,8 @@ class Model(MyModel):
     
     # Define your layers here.
     amodel=tf.keras.Sequential()
-    amodel.add(tf.keras.layers.Dense(config.hidden, activation='relu', input_shape=(myobj.size,)))
+    amodel.add(tf.keras.Input(shape = (myobj.size,)))
+    amodel.add(tf.keras.layers.Dense(config.hidden, activation='relu'))
     for i in range(0, config.layers):
       print("Adding hidden layer", i)
       amodel.add(tf.keras.layers.Dense(config.hidden, activation='relu'))
@@ -34,7 +35,7 @@ class Model(MyModel):
     else:
       amodel.add(tf.keras.layers.Dense(1, activation = activation))
     self.model = amodel
-    self.dense_1 = Dense(32, activation='relu', input_shape=(myobj.size,))
+    self.dense_1 = Dense(32, activation='relu')
     self.dense_2 = Dense(32, activation='relu')
     self.dense_3 = Dense(32, activation='relu')
     #self.dense_4 = Dense(myobj.classes, activation='sigmoid')

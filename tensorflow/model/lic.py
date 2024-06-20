@@ -14,8 +14,9 @@ class Model(MyModel):
   def __init__(self, myobj, config, classify):
     super(Model, self).__init__(config, classify, name='my_model')
     self.model = tf.keras.models.Sequential()
+    self.model.add(tf.keras.Input(shape = (myobj.size,)))
     # Define the model consisting of a single neuron.
-    self.model.add(tf.keras.layers.Dense(units=1)) #, input_shape=(myobj.size,)))
+    self.model.add(tf.keras.layers.Dense(units=1))
     self.model.compile(loss='mse', optimizer=create_sample_optimizer('tf2'), metrics=['accuracy'])
 
   def call(self, inputs):

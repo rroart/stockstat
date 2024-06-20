@@ -22,7 +22,8 @@ class Model(MyModel):
     #print("inputshape");
     #print(myobj.size);
     # input_shape = (WINDOW, EMB_SIZE),
-    modelm.add(Convolution2D(input_shape = myobj.size,
+    modelm.add(tf.keras.Input(shape = myobj.size))
+    modelm.add(Convolution2D(
                         filters=32,
                         kernel_size = config.kernelsize,
                         strides = config.stride,
@@ -82,7 +83,7 @@ class Model(MyModel):
     #end
     
     self.model = modelm
-    self.dense_1 = Dense(32, activation='relu', input_shape=(myobj.size,))
+    self.dense_1 = Dense(32, activation='relu')
     self.dense_2 = Dense(32, activation='relu')
     self.dense_3 = Dense(32, activation='relu')
     #self.dense_4 = Dense(myobj.classes, activation='sigmoid')

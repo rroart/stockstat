@@ -22,12 +22,13 @@ class Model(MyModel):
     # Define your layers here.
     amodel=Sequential()
     #print("ooo",myobj.size)
-    amodel.add(Dropout(config.dropoutin, input_shape = myobj.size))
-    amodel.add(LSTM(config.hidden, return_sequences = True, time_major = False))
+    amodel.add(tf.keras.Input(shape = myobj.size))
+    amodel.add(Dropout(config.dropoutin))
+    amodel.add(LSTM(config.hidden, return_sequences = True))
     amodel.add(Dropout(config.dropout))
     for i in range(1, config.layers):
       print("Adding hidden layer2", i)
-      amodel.add(LSTM(config.hidden, return_sequences = i != config.layers - 1, time_major = False))
+      amodel.add(LSTM(config.hidden, return_sequences = i != config.layers - 1))
       amodel.add(Dropout(config.dropout))
     amodel.add(Flatten())
     if classify:
