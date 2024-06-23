@@ -370,7 +370,7 @@ public class DbSpring {
         IncDec incdec = new IncDec();
         incdec.setComponent(item.getComponent());
         incdec.setDate(item.getDate());
-        incdec.setDescription(item.getDescription());
+        incdec.setDescription(item.getDescription() != null ? item.getDescription().substring(0, 250) : null);
         incdec.setId(item.getId());
         incdec.setIncrease(item.isIncrease());
         incdec.setLocalcomponent(item.getLocalcomponent());
@@ -553,7 +553,7 @@ public class DbSpring {
         timing.setBuy(item.getBuy());
         timing.setComponent(item.getComponent());
         timing.setDate(item.getDate());
-        timing.setDescription(item.getDescription());
+        timing.setDescription(item.getDescription() != null ? item.getDescription().substring(0, 250) : null);
         timing.setEvolve(item.isEvolve());
         timing.setMarket(item.getMarket());
         timing.setMlmarket(item.getMlmarket());
