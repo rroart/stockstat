@@ -1,5 +1,7 @@
 package roart.common.webflux;
 
+import java.time.Duration;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -17,6 +19,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 import roart.common.constants.EurekaConstants;
 import roart.common.util.MathUtil;
 
@@ -24,6 +27,10 @@ public class WebFluxUtil {
     private static Logger log = LoggerFactory.getLogger(WebFluxUtil.class);
 
     private static ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+    private static int retry = 3;
+    
+    private static int interval = 60;
 
     public static <T> T sendMe(Class<T> myclass, Object param, String host, String port, String path) {
         String url = "http://" + host + ":" + port + "/" + path;
@@ -103,10 +110,18 @@ public class WebFluxUtil {
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .body(BodyInserters.fromValue(param))
                 .retrieve();
-        T result = response
+        Mono<T> mono = response
                 .bodyToMono(myclass)
-                .onErrorMap(Exception::new)
-                .block();
+                .onErrorMap(Exception::new);
+        T result;
+        if (retry == 0) {
+            result = mono
+                    .block();
+        } else {
+            result = mono
+                    .retryWhen(Retry.fixedDelay(retry, Duration.ofSeconds(interval)))
+                    .block();
+        }
         //int len = response.bodyToMono(String.class).onErrorMap(Exception::new).block().length();
         
         webClient.delete();
