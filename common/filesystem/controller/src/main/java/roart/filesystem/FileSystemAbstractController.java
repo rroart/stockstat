@@ -291,6 +291,7 @@ public abstract class FileSystemAbstractController implements CommandLineRunner 
                 boolean success = false;
                 while (!success) {
                     try {
+                        curatorClient.create().creatingParentsIfNeeded().forPath(str, bytes);
                         curatorClient.setData().forPath(str, bytes);
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
