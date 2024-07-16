@@ -80,6 +80,9 @@ public class LeaderRunner implements Runnable {
                                 action.goal(null, null, null, iclijConfig);
                             } catch (InterruptedException e) {
                                 log.error(Constants.EXCEPTION, e);
+                            } catch (NullPointerException e) {
+                                // in case core not ready?
+                                log.error(Constants.EXCEPTION, e);
                             }
                             long newLastMain = System.currentTimeMillis();
                             log.info("Goals time {}", (newLastMain - time0) / 1000);
