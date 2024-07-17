@@ -16,9 +16,9 @@ public class MyHazelcastLeader extends MyLeader {
     
     private FencedLock lock;
     
-    public MyHazelcastLeader(String id, CuratorFramework curatorFramework, HazelcastInstance hz) {
+    public MyHazelcastLeader(String category, String id, CuratorFramework curatorFramework, HazelcastInstance hz) {
         this.hz = hz;
-        lock = hz.getCPSubsystem().getLock(LOCKNAME);
+        lock = hz.getCPSubsystem().getLock(category);
     }
     
     @Override

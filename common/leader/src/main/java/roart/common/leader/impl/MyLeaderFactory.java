@@ -9,11 +9,11 @@ import roart.common.leader.MyLeader;
 import roart.iclij.config.IclijConfig;
 
 public class MyLeaderFactory {
-    public MyLeader create(String id, IclijConfig conf, CuratorFramework curatorFramework, HazelcastInstance hz) {
+    public MyLeader create(String category, String id, IclijConfig conf, CuratorFramework curatorFramework, HazelcastInstance hz) {
         if (conf.getZookeeper() != null) {
-            return new MyCuratorLeader(id, curatorFramework, hz);
+            return new MyCuratorLeader(category, id, curatorFramework, hz);
         } else {
-            return new MyHazelcastLeader(id, curatorFramework, hz);
+            return new MyHazelcastLeader(category, id, curatorFramework, hz);
         }
     }
 

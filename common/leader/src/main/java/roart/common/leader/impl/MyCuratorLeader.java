@@ -18,7 +18,7 @@ public class MyCuratorLeader extends MyLeader {
 
     private LeaderLatch latch;
     
-    public MyCuratorLeader(String id, CuratorFramework curatorFramework, HazelcastInstance hz) {
+    public MyCuratorLeader(String category, String id, CuratorFramework curatorFramework, HazelcastInstance hz) {
         this.curatorFramework = curatorFramework;
         try {
             String appid = System.getenv(Constants.APPID);
@@ -26,7 +26,7 @@ public class MyCuratorLeader extends MyLeader {
             if (appid != null) {
                 extra = appid; // can not handle domain, only eureka
             }
-            latch = new LeaderLatch(curatorFramework, "/" + Constants.STOCKSTAT + "/latch" + extra, id);
+            latch = new LeaderLatch(curatorFramework, "/" + Constants.STOCKSTAT + "/latch" + extra + "/" + category, id);
             latch.start();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

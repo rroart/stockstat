@@ -42,7 +42,7 @@ public class LeaderRunner implements Runnable {
             log.error(Constants.EXCEPTION, e);
         }
         long lastMain = 0;
-        MyLeader leader = new MyLeaderFactory().create(hostname, iclijConfig, ControlService.curatorClient, null /*GetHazelcastInstance.instance(conf.getInmemoryHazelcast())*/);
+        MyLeader leader = new MyLeaderFactory().create("leader", hostname, iclijConfig, ControlService.curatorClient, null /*GetHazelcastInstance.instance(conf.getInmemoryHazelcast())*/);
         while (true) {
             boolean leading = leader.await(1, TimeUnit.SECONDS);
             if (!leading) {
