@@ -1,5 +1,6 @@
 package roart.action;
 
+import java.net.InetAddress;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import roart.common.constants.Constants;
+import roart.common.leader.MyLeader;
+import roart.common.leader.impl.MyLeaderFactory;
 import roart.common.model.AboveBelowItem;
 import roart.common.model.ActionComponentItem;
 import roart.common.model.IncDecItem;
@@ -42,6 +45,7 @@ import roart.iclij.config.Market;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
 import roart.iclij.model.component.ComponentInput;
+import roart.iclij.service.ControlService;
 import roart.iclij.util.MarketUtil;
 import roart.populate.PopulateThread;
 import roart.constants.IclijConstants;
@@ -103,6 +107,17 @@ public class ActionThread extends Thread {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+
+        // if leader
+        String hostname = "localhost";
+        try {
+            hostname = InetAddress.getLocalHost().getHostName();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        long lastMain = 0;
+        MyLeader leader = new MyLeaderFactory().create("action",  hostname, iclijConfig, ControlService.curatorClient, null /*GetHazelcastInstance.instance(conf.getInmemoryHazelcast())*/);
+
         while (true) {
             if (count != null && count-- < 0) {
                 return;
@@ -116,6 +131,11 @@ public class ActionThread extends Thread {
                 }
                 continue;
             }
+            boolean leading = leader.await(1, TimeUnit.SECONDS);
+            if (!leading) {
+                log.info("I am not action leader");
+            } else {
+            log.info("I am action leader");
             ActionComponentItem ac = null;
             List<ActionComponentItem> dblist = new ArrayList<>();
             try {
@@ -199,6 +219,8 @@ public class ActionThread extends Thread {
                     }
                 }
             }
+            }
+            log.info("Leader status action: {}", leader.isLeader());            
             try {
                 TimeUnit.SECONDS.sleep(3);
             } catch (InterruptedException e) {

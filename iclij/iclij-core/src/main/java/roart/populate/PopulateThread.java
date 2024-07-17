@@ -1,5 +1,6 @@
 package roart.populate;
 
+import java.net.InetAddress;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -16,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
+import roart.common.leader.MyLeader;
+import roart.common.leader.impl.MyLeaderFactory;
 import roart.common.model.TimingItem;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
@@ -25,6 +28,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.Market;
 import roart.iclij.model.component.ComponentInput;
+import roart.iclij.service.ControlService;
 import roart.iclij.util.MarketUtil;
 import roart.util.ServiceUtil;
 
@@ -51,12 +55,29 @@ public class PopulateThread extends Thread {
             log.error(Constants.EXCEPTION, e);
             Thread.currentThread().interrupt();
         }
+        
+        // if leader
+        String hostname = "localhost";
+        try {
+            hostname = InetAddress.getLocalHost().getHostName();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        long lastMain = 0;
+        MyLeader leader = new MyLeaderFactory().create("populate",  hostname, iclijConfig, ControlService.curatorClient, null /*GetHazelcastInstance.instance(conf.getInmemoryHazelcast())*/);
+
         IclijConfig instance = iclijConfig;
         List<Triple<Market, String, String>> markets = new ArrayList<>();
         if (instance.populate()) {
         	markets = new MarketUtil().getMarkets(false, iclijConfig).stream().map(e -> new ImmutableTriple<Market, String, String>(e, null, null)).collect(Collectors.toList());
         }
+
         while (true) {
+            boolean leading = leader.await(1, TimeUnit.SECONDS);
+            if (!leading) {
+                log.info("I am not populate leader");
+            } else {
+            log.info("I am populate leader");
             List<Triple<String, String, String>> copy = new ArrayList<>(queue);
             queue.removeAll(copy);
             if (markets.isEmpty()) {
@@ -164,6 +185,8 @@ public class PopulateThread extends Thread {
                 }
             }
             markets.clear();
+            }
+            log.info("Leader status populate: {}", leader.isLeader());
             try {
                 TimeUnit.SECONDS.sleep(300);
             } catch (InterruptedException e) {
