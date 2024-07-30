@@ -22,7 +22,9 @@ module iclij.core {
     requires common.service;
     requires common.util;
     requires common.cache;
+    requires common.queue;
     requires commons.math3;
+    requires common.queueutil;
     //requires guava;
     requires iclij.common.componentdata;
     requires iclij.common.component;
