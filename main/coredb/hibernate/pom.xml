@@ -13,6 +13,11 @@
   <name>Stock Statistics CoreDB Hibernate</name>
   <dependencies>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-logging</artifactId>
+      <version>${springboot.version}</version>
+    </dependency>
+    <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-db</artifactId>
       <version>${stockstat.version}</version>
@@ -51,16 +56,6 @@
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
       <version>${hibernate.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>          
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>${log4j.version}</version>
     </dependency>
   </dependencies>
 </project>

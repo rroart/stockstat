@@ -13,6 +13,11 @@
   <name>Stock Statistics Pipeline Indicator</name>
   <dependencies>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-logging</artifactId>
+      <version>${springboot.version}</version>
+    </dependency>
+    <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-config</artifactId>
       <version>${stockstat.version}</version>
@@ -57,11 +62,6 @@
       <artifactId>commons-lang3</artifactId>
       <version>${commons.lang3.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>	   
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>

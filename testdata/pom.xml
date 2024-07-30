@@ -30,6 +30,11 @@
   </build-->
   <dependencies>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <version>${springboot.version}</version>
+    </dependency>
+    <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-util</artifactId>
       <version>${stockstat.version}</version>

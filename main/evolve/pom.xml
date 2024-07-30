@@ -1,17 +1,40 @@
-<project>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>roart</groupId>
-    <artifactId>stockstat-iclij</artifactId>
+    <artifactId>stockstat-main</artifactId>
     <relativePath>../pom.xml</relativePath>
     <version>0.6-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
-  <artifactId>stockstat-iclij-core</artifactId>
+  <artifactId>stockstat-evolve</artifactId>
+  <version>0.6-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <name>Stock Statistics Iclij Core</name>
+  <name>Stock Statistics Evolve</name>
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+	<version>${mavencompiler.version}</version>
+        <configuration>
+          <source>${jdk.spark.version}</source>
+          <target>${jdk.spark.version}</target>
+	  <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+	<groupId>org.codehaus.mojo</groupId>
+	<artifactId>tomcat-maven-plugin</artifactId>
+	<version>1.2-SNAPSHOT</version>
+	<configuration>
+	  <!--url>http://192.168.1.7:8080/manager</url-->
+	  <server>mytomcat</server>
+	  <!--path>/mywebapp</path-->
+	</configuration>
+      </plugin>
       <!--plugin>
 	<groupId>org.mortbay.jetty</groupId>
 	<artifactId>jetty-maven-plugin</artifactId>
@@ -89,11 +112,6 @@
       <version>${jackson.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.fasterxml.jackson.datatype</groupId>
-      <artifactId>jackson-datatype-jsr310</artifactId>
-      <version>${jackson.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
       <!--exclusions>
@@ -123,12 +141,7 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-common-controller</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-common-eureka</artifactId>
+      <artifactId>stockstat-model</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
@@ -148,32 +161,7 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-common-util</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-common-communication-factory</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-common-cache</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-common-inmemory-factory</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-common-inmemory-model</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-common-leader</artifactId>
+      <artifactId>stockstat-common-controller</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
@@ -183,62 +171,32 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-dbdao</artifactId>
+      <artifactId>stockstat-common-evolution-algorithm</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-iclij-common-componentdata</artifactId>
+      <artifactId>stockstat-evolution-chromosome</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-iclij-common-component</artifactId>
+      <artifactId>stockstat-common-evolution-config</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-iclij-common-model</artifactId>
+      <artifactId>stockstat-common-evolution-fitness</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-iclij-common-constants</artifactId>
+      <artifactId>stockstat-common-evolution-gene</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-iclij-common-config</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-iclij-common-service</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-iclij-common-util</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-iclij-evolution-evolve</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-iclij-evolution-iclijconfigmap</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-iclij-common-filter</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-iclij-common-verifyprofit</artifactId>
+      <artifactId>stockstat-common-evolution-model</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
@@ -248,46 +206,53 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-common-queue</artifactId>
+      <artifactId>stockstat-common-cache</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-common-queueutil</artifactId>
+      <artifactId>stockstat-iclij-common-service</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
-      <groupId>commons-beanutils</groupId>
-      <artifactId>commons-beanutils</artifactId>
-      <version>${commons.beanutils.version}</version>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-db</artifactId>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.tweetyproject</groupId>
-      <artifactId>tweety-full</artifactId>
-      <version>${tweety.version}</version>
-      <scope>test</scope>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-mldao</artifactId>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.tweetyproject</groupId>
-      <artifactId>commons</artifactId>
-      <version>${tweety.version}</version>
-      <scope>test</scope>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-stockutil</artifactId>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
-      <groupId>io.springfox</groupId>
-      <artifactId>springfox-swagger2</artifactId>
-      <version>2.9.2</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>	   
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.17</version>
     </dependency>
     <dependency>
-      <groupId>io.springfox</groupId>
-      <artifactId>springfox-swagger-ui</artifactId>
-      <version>2.9.2</version>
-      <scope>compile</scope>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-transcoder</artifactId>
+      <version>${batik.version}</version>
     </dependency>
     <dependency>
-      <groupId>io.jenetics</groupId>
-      <artifactId>jenetics</artifactId>
-      <version>${jenetics.version}</version>
+      <groupId>org.jfree</groupId>
+      <artifactId>jfreesvg</artifactId>
+      <version>${jfreesvg.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jfree</groupId>
+      <artifactId>jfreechart</artifactId>
+      <version>${jfreechart.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -295,19 +260,104 @@
       <version>${commons.math3.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.google.collections</groupId>
-      <artifactId>google-collections</artifactId>
-      <version>1.0</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons.lang3.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <version>${commons.beanutils.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>${postgresql.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.10.19</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-eureka</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-util</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-pipeline-common</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-pipeline-predictor</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-pipeline-category</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-pipeline-indicator</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-ml-common</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-ml-spark</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-ml-tensorflow</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-ml-pytorch</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-ml-gem</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-aggregate</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-filesystem-client</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-springdata</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>redis.clients</groupId>
+      <artifactId>jedis</artifactId>
+      <version>${redisclient.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.kafka</groupId>
       <artifactId>kafka-clients</artifactId>
       <version>2.6.0</version>
-    </dependency>
-   	<dependency>
-      <groupId>redis.clients</groupId>
-      <artifactId>jedis</artifactId>
-      <version>${redisclient.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -320,6 +370,12 @@
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openjdk.jol</groupId>
+      <artifactId>jol-core</artifactId>
+      <version>0.16</version>
+      <scope>provided</scope>
     </dependency>
   <dependency>
     <groupId>jakarta.interceptor</groupId>
@@ -337,5 +393,12 @@
     <artifactId>jakarta.inject-api</artifactId>
     <version>2.0.1</version>
 </dependency>
+<dependency>
+	<groupId>org.apache.logging.log4j</groupId>
+	<artifactId>log4j-api</artifactId>
+	<version>2.11.0</version>
+	<scope>test</scope>
+</dependency>
   </dependencies>
 </project>
+

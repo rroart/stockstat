@@ -13,6 +13,11 @@
   <name>Stock Statistics Pipeline Model</name>
   <dependencies>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-logging</artifactId>
+      <version>${springboot.version}</version>
+    </dependency>
+    <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-model</artifactId>
       <version>${stockstat.version}</version>
@@ -58,10 +63,5 @@
       <artifactId>scala-reflect</artifactId>
       <version>2.13.8</version>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>          
   </dependencies>
 </project>

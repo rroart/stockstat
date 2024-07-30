@@ -13,6 +13,21 @@
   <name>Stock Statistics Common Communication Integration Camel</name>
   <dependencies>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-logging</artifactId>
+      <version>${springboot.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring-rabbitmq</artifactId>
+      <version>${camel.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.amqp</groupId>
+      <artifactId>spring-rabbit</artifactId>
+      <version>${springrabbit.version}</version>
+    </dependency>
+    <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-constants</artifactId>
       <version>${stockstat.version}</version>
@@ -57,11 +72,11 @@
       <artifactId>camel-amqp</artifactId>
       <version>${camel.version}</version>
     </dependency>
-	<dependency>
-    	<groupId>org.apache.activemq</groupId>
-    	<artifactId>activemq-camel</artifactId>
-    	<version>${camelactivemq.version}</version>
-	</dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-camel</artifactId>
+      <version>${camelactivemq.version}</version>
+    </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
@@ -103,20 +118,16 @@
 </dependency-->
 
     <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <version>${junit.version}</version>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <version>${springboot.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>          
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>${log4j.version}</version>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-testdata</artifactId>
+      <version>${stockstat.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

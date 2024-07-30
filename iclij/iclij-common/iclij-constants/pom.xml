@@ -13,20 +13,14 @@
   <name>Stock Statistics Iclij Common Constants</name>
   <dependencies>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>          
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>${log4j.version}</version>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-logging</artifactId>
+      <version>${springboot.version}</version>
     </dependency>
     <dependency>
-	<groupId>com.fasterxml.jackson.core</groupId>
-	<artifactId>jackson-annotations</artifactId>
-	<version>${jackson.version}</version>
-	</dependency>
-	
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
   </dependencies>
 </project>

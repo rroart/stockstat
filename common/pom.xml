@@ -29,9 +29,11 @@
     <module>evolution</module>
     <module>model</module>
     <module>queue</module>
+    <module>queueutil</module>
     <module>service</module>
     <module>util</module>
     <module>webflux</module>
+    <module>zookeeper</module>
   </modules>
   <build>
     <plugins>

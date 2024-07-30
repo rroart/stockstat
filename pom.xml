@@ -47,6 +47,11 @@
 		    --add-opens db/roart.db.model=org.hibernate.orm.core
 		    --add-opens iclij.core/roart.action=spring.core
 		    --add-opens java.base/sun.nio.ch=stockstat.shadow.spark
+		    --add-opens common.communication.integration.camel/roart=ALL-UNNAMED
+		    --add-opens common.communication.integration.spring/roart=ALL-UNNAMED
+		    --add-opens common.communication.message.pulsar/roart=ALL-UNNAMED
+		    --add-opens iclij.common.service/roart.iclij.service=spring.core
+		    --add-opens java.base/sun.net=ALL-UNNAMED
 		  </argLine>
 		</configuration>
          </plugin>

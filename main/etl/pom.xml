@@ -16,6 +16,11 @@
   <dependencies>
     <!-- https://mvnrepository.com/artifact/com.tictactec/ta-lib -->
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-logging</artifactId>
+      <version>${springboot.version}</version>
+    </dependency>
+    <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-constants</artifactId>
       <version>${stockstat.version}</version>
@@ -75,11 +80,6 @@
       <artifactId>jfreechart</artifactId>
       <version>${jfreechart.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>	   
   </dependencies>
 </project>
 
