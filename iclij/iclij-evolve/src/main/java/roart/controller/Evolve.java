@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -95,6 +96,8 @@ public class Evolve {
     private IclijConfig iclijConfig;
 
     private IclijDbDao dbDao;
+
+    private Function<String, Boolean> zkRegister;
     
     private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
 
@@ -105,7 +108,7 @@ public class Evolve {
     
     public void method(String param) {
         
-        param = getParam(param);
+        //param = getParam(param);
         List<String> output = new ArrayList<>();
         TypeReference ref = new TypeReference<List<LinkedHashMap<Double, AbstractChromosome>>>(){};
         Map<String, Object> myMap = convert(param, new TypeReference<List<LinkedHashMap<Double, NeuralNetChromosome>>>(){});
@@ -265,7 +268,7 @@ public class Evolve {
     }
 
     public void method2(String param) {
-        param = getParam(param);
+        //param = getParam(param);
         List<String> output = new ArrayList<>();
         Map<String, Object> myMap = convert(param, new TypeReference<List<LinkedHashMap<Double, ConfigMapChromosome2>>>(){});
         if (myMap.isEmpty()) {
@@ -372,14 +375,14 @@ public class Evolve {
     }
 
     public void method3(String param) {
-        param = getParam(param);
+        //param = getParam(param);
         Map<String, Object> myMap = convert(param, new TypeReference<List<LinkedHashMap<Double, MarketFilterChromosome2>>>(){});
         String id = (String) myMap.get(EvolveConstants.ID);
         List<Pair<Double, AbstractChromosome>> myList = (List<Pair<Double, AbstractChromosome>>) myMap.get(id);
     }
 
     public void method4(String param) {
-        param = getParam(param);
+        //param = getParam(param);
         List<String> output = new ArrayList<>();
         Map<String, Object> myMap = convert(param, new TypeReference<List<LinkedHashMap<Double, AboveBelowChromosome>>>(){});
         String id = (String) myMap.get(EvolveConstants.ID);
@@ -640,7 +643,7 @@ public class Evolve {
 
     public void send(String service, Object object, ObjectMapper objectMapper) {
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
-        Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight());
+        Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister);
         c.send(object);
     }
 

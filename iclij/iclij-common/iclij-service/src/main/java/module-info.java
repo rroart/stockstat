@@ -27,8 +27,12 @@ module iclij.common.service {
     requires common.inmemory.factory;
     requires common.inmemory.model;
     requires common.webflux;
+    requires common.queueutil;
     requires curator.client;
     requires curator.framework;
     requires pipeline.model;
     requires model;
+    requires spring.beans;
+    requires spring.context;
+    requires common.queue;
 }

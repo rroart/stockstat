@@ -17,4 +17,7 @@ module common.controller {
     requires guava;
     requires com.fasterxml.jackson.databind;
     requires dbdao;
+    requires curator.client;
+    requires common.queueutil;
+    requires curator.framework;
 }

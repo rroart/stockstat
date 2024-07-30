@@ -14,4 +14,10 @@ module common.communication.integration.camel {
     requires camel.amqp;
     requires com.fasterxml.jackson.databind;
     requires org.apache.commons.lang3;
+    requires spring.beans;
+    requires spring.context;
+    requires spring.rabbit;
+    requires camel.spring.rabbitmq;
+    requires common.constants;
+    requires org.slf4j;
 }

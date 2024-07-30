@@ -1,5 +1,6 @@
 package roart.controller;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,11 @@ import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 import roart.common.controller.ServiceControllerOtherAbstract;
+import roart.common.inmemory.factory.InmemoryFactory;
+import roart.common.inmemory.model.Inmemory;
+import roart.common.inmemory.model.InmemoryUtil;
+import roart.common.queue.QueueElement;
+import roart.common.queueutil.QueueUtils;
 
 public class ServiceControllerOther extends ServiceControllerOtherAbstract {
 
@@ -38,18 +44,25 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
         super(myservices, services, communications, replyclass, iclijConfig, dbDao);
     }
 
-    public void get(Object param, Communication c) { 
+    public void get(Object param, Communication c) {
+        log.info("param" + (String) param);
+        QueueElement element = JsonUtil.convert((String) param, QueueElement.class);
+        Inmemory inmemory = InmemoryFactory.get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        String content = inmemory.read(element.getMessage());
+        inmemory.delete(element.getMessage());
         IclijServiceResult r = null;
         log.debug("Cserv {}", c.getService());
         if (serviceMatch(ServiceConstants.SIMFILTER, c)) {
-            new Sim(iclijConfig, dbDao).method((String) param, "sim", true);
+            new Sim(iclijConfig, dbDao).method((String) content, "sim", true);
         }
         if (serviceMatch(ServiceConstants.SIMAUTO, c)) {
-            new Sim(iclijConfig, dbDao).method((String) param, "simauto", false);
+            new Sim(iclijConfig, dbDao).method((String) content, "simauto", false);
         }
+        new QueueUtils(Sim.curatorClient).zkUnregister((String) param);
         if (param instanceof IclijServiceParam) {
             sendReply(((IclijServiceParam) param).getWebpath(), c, r);
         }
+        // element ack
     }
 
 

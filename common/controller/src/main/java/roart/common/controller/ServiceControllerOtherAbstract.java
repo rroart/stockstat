@@ -4,8 +4,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.curator.RetryPolicy;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +20,7 @@ import roart.common.communication.factory.CommunicationFactory;
 import roart.common.communication.model.Communication;
 import roart.common.constants.CommunicationConstants;
 import roart.common.constants.Constants;
+import roart.common.queueutil.QueueUtils;
 import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
 import roart.db.dao.IclijDbDao;
@@ -30,6 +36,10 @@ public abstract class ServiceControllerOtherAbstract {
     private Class replyclass;
     protected IclijConfig iclijConfig;
     protected IclijDbDao dbDao;
+
+    private static CuratorFramework curatorClient;
+
+    private Function<String, Boolean> zkRegister;
     
     public ServiceControllerOtherAbstract(String myservices, String services, String communications, Class replyclass, IclijConfig iclijConfig, IclijDbDao dbDao) {
         this.myservices = myservices;
@@ -47,7 +57,7 @@ public abstract class ServiceControllerOtherAbstract {
                 for (;;) {
                     Object[] params = new Object[0];
                     try {
-                        params = c.receive();
+                        params = c.receiveAndStore();
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
                     }
@@ -103,7 +113,9 @@ public abstract class ServiceControllerOtherAbstract {
             if (appid != null) {
                 myservice = myservice + appid; // can not handle domain, only eureka
             }
-            Communication comm = CommunicationFactory.get(communication, myclass, myservice, objectMapper, false, true, false, connection);
+            configCurator(iclijConfig);
+            zkRegister = (new QueueUtils(curatorClient))::zkRegister;
+            Communication comm = CommunicationFactory.get(communication, myclass, myservice, objectMapper, false, true, false, connection, zkRegister);
             get(comm);
         }        
     }
@@ -115,7 +127,7 @@ public abstract class ServiceControllerOtherAbstract {
             String service = replypath;
             Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(c.getService(), services, communications);
             log.info("ServiceConnection {} {}", sc.getLeft(), sc.getRight());
-            Communication c2 = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight());
+            Communication c2 = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister);
             c2.send(r);
             c2.destroy();
         }
@@ -128,4 +140,16 @@ public abstract class ServiceControllerOtherAbstract {
         }
         return c.getService().equals(str + appid);
     }
+    
+    public static void configCurator(IclijConfig conf) {
+        if (true) {
+            RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);        
+            String zookeeperConnectionString = conf.getZookeeper();
+            if (curatorClient == null) {
+                curatorClient = CuratorFrameworkFactory.newClient(zookeeperConnectionString, retryPolicy);
+                curatorClient.start();
+            }
+        }
+    }
+
 }

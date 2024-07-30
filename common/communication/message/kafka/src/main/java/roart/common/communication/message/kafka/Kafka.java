@@ -33,6 +33,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.function.Function;
 
 public class Kafka extends MessageCommunication {
     //public static final int MSGSIZE = 5242880;
@@ -57,11 +58,12 @@ public class Kafka extends MessageCommunication {
     Producer<String, String> producer;
     KafkaConsumer<String, String> consumer;
     
-    public Kafka(String myname, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection) {
-        super(myname, myclass, service, mapper, send, receive, sendreceive, connection);
+    public Kafka(String myname, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection, Function<String, Boolean> storeMessage) {
+        super(myname, myclass, service, mapper, send, receive, sendreceive, connection, storeMessage);
         if (send) {
             Properties props = new Properties();
             props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, connection); // List of brokers that the producer asks to get the topic leader
+            // TODO
             props.put(ProducerConfig.ACKS_CONFIG, "all");
             props.put(ProducerConfig.RETRIES_CONFIG, 0);
             props.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
@@ -78,12 +80,13 @@ public class Kafka extends MessageCommunication {
             producer = new KafkaProducer<>(props);
 
         }
+        String auto_commit = storeMessage == null ? "true" : "false";
         if (receive) {
             Properties props = new Properties();
             
             props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, connection);
             props.put(ConsumerConfig.GROUP_ID_CONFIG, "test");
-            props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
+            props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, auto_commit);
             props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
             props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
             props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, 
@@ -114,6 +117,7 @@ public class Kafka extends MessageCommunication {
         producer.close();
     }
     
+    @Override
     public String[] receiveString() {
         Duration duration = Duration.ofSeconds(1);
 
@@ -130,6 +134,36 @@ public class Kafka extends MessageCommunication {
                 retRecord[count++] = record.value();
                 log.debug("offset = {}, key = {}, value = {}\n", 
                         record.offset(), record.key(), record.value());
+            }
+        }
+        return retRecord;
+    }
+
+    @Override
+    public String[] receiveStringAndStore() {
+        Duration duration = Duration.ofSeconds(1);
+
+        //print the topic name
+        log.debug("Subscribed to topic {}", getReceiveService());
+        String[] retRecord = null;
+        int returned = 0;
+        while (returned == 0) {
+            ConsumerRecords<String, String> records = consumer.poll(duration);
+            returned = records.count();
+            retRecord = new String[returned];
+            int count = 0;
+            boolean stored = true;
+            for (ConsumerRecord<String, String> record : records) {
+                retRecord[count++] = record.value();
+                stored &= storeMessage.apply(record.value());
+                log.debug("offset = {}, key = {}, value = {}\n", 
+                        record.offset(), record.key(), record.value());
+            }
+            if (stored && count > 0) {
+                consumer.commitAsync();
+                log.info("Commit async");
+            } else {
+                return new String[0];
             }
         }
         return retRecord;

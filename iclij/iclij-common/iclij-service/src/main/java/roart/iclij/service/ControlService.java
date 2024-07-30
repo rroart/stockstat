@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.curator.RetryPolicy;
@@ -38,6 +39,7 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.queue.QueueElement;
 import roart.common.util.ImmutabilityUtil;
 import roart.common.util.MemUtil;
 import roart.common.util.PipelineUtils;
@@ -50,6 +52,7 @@ import roart.iclij.model.component.ComponentInput;
 import roart.model.data.MarketData;
 import roart.model.data.StockData;
 import roart.result.model.ResultItem;
+import roart.common.queueutil.QueueUtils;
 
 public class ControlService {
     private static Logger log = LoggerFactory.getLogger(ControlService.class);
@@ -59,12 +62,14 @@ public class ControlService {
     ObjectMapper objectMapper;
 
     private IclijConfig iclijConfig;
+
+    private Function<String, Boolean> zkRegister;
     
     public static CuratorFramework curatorClient;
 
     private static final ObjectMapper mapper = new JsonMapper().builder().addModule(new JavaTimeModule()).build();
 
-    public ControlService(IclijConfig iclijConfig) {
+    public ControlService( IclijConfig iclijConfig) {
     	//conf = MyConfig.instance();
     	//getConfig();
         this.iclijConfig = iclijConfig;
@@ -144,7 +149,7 @@ public class ControlService {
         //IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
         T[] result;// = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG        
-        Communication c = CommunicationFactory.get(sc.getLeft(), myclass, service, objectMapper, true, true, true, sc.getRight());
+        Communication c = CommunicationFactory.get(sc.getLeft(), myclass, service, objectMapper, true, true, true, sc.getRight(), zkRegister);
         param.setWebpath(c.getReturnService());
         result = c.sendReceive(param);
         return result[0];
@@ -154,7 +159,8 @@ public class ControlService {
         //IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
         T[] result;// = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG        
-        Communication c = CommunicationFactory.get(sc.getLeft(), myclass, service, objectMapper, true, true, true, sc.getRight());
+        zkRegister = (new QueueUtils(this.curatorClient))::zkRegister;
+        Communication c = CommunicationFactory.get(sc.getLeft(), myclass, service, objectMapper, true, true, true, sc.getRight(), zkRegister);
         param.setWebpath(c.getReturnService());
         result = c.sendReceive(param);
         return result[0];
@@ -167,8 +173,13 @@ public class ControlService {
         if (appid != null) {
             service = service + appid; // can not handle domain, only eureka
         }
-        Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight());
+        zkRegister = (new QueueUtils(this.curatorClient))::zkRegister;
+        Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister);
         c.send(object);
+    }
+
+    public void send(String service, QueueElement element, IclijConfig config) {
+        send(service, element);
     }
 
     public void send(String service, Object object, IclijConfig config) {
@@ -277,11 +288,15 @@ public class ControlService {
         neuralnetcommand.setMlcross(conf.wantMLCross());
         param.setNeuralnetcommand(neuralnetcommand);
         IclijServiceResult result;
+        // TODO retry or queue
         if (useMl) {
+            // todo send queue ml
             result = WebFluxUtil.sendMMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
         } else {
+            // todo send queue core
             result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
         }
+        // todo icore queue listen
         //log.info("blblbl" + JsonUtil.convert(result).length());
         list = result.getPipelineData();
         PipelineData[] list2 = list;
@@ -411,6 +426,7 @@ public class ControlService {
         // where is this reset?
         neuralnetcommand.setMldynamic(true);
         param.setNeuralnetcommand(neuralnetcommand);
+        // TODO retry or queue
         IclijServiceResult result = WebFluxUtil.sendMMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVENN);
         if (doSet) {
             PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE);  
@@ -479,7 +495,7 @@ public class ControlService {
                 .build();
     }
     
-    public static void configCurator( IclijConfig conf) {
+    public static void configCurator(IclijConfig conf) {
         if (true) {
             RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);        
             String zookeeperConnectionString = conf.getZookeeper();

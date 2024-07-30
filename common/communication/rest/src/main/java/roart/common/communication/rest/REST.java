@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -30,8 +31,8 @@ public class REST extends Communication {
 
     private String postfix;
     
-    public REST(String myname, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection) {
-        super(myname, myclass, service, mapper, send, receive, sendreceive, connection);
+    public REST(String myname, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection, Function<String, Boolean> storeMessage) {
+        super(myname, myclass, service, mapper, send, receive, sendreceive, connection, storeMessage);
     }
     
     /*
@@ -204,6 +205,12 @@ public class REST extends Communication {
 
     @Override
     public String[] receiveString() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String[] receiveStringAndStore() {
         // TODO Auto-generated method stub
         return null;
     }

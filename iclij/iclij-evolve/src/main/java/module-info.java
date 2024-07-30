@@ -47,4 +47,6 @@ module iclij.evolve {
     requires common.model;
     requires dbdao;
     requires spring.data.jdbc;
+    requires common.queue;
+    requires common.queueutil;
 }

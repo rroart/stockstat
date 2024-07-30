@@ -11,4 +11,5 @@ module common.communication.model {
     requires com.fasterxml.jackson.databind;
     requires common.util;
     requires org.slf4j;
+    requires common.constants;
 }

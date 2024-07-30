@@ -28,6 +28,10 @@ import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 import roart.common.controller.ServiceControllerOtherAbstract;
+import roart.common.inmemory.factory.InmemoryFactory;
+import roart.common.inmemory.model.Inmemory;
+import roart.common.queue.QueueElement;
+import roart.common.queueutil.QueueUtils;
 
 public class ServiceControllerOther extends ServiceControllerOtherAbstract {
 
@@ -36,24 +40,30 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
     }
 
     public void get(Object param, Communication c) { 
+        QueueElement element = JsonUtil.convert((String) param, QueueElement.class);
+        Inmemory inmemory = InmemoryFactory.get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        String content = inmemory.read(element.getMessage());
+        inmemory.delete(element.getMessage());
         IclijServiceResult r = null;
         log.debug("Cserv {}", c.getService());
         if (serviceMatch(ServiceConstants.EVOLVEFILTEREVOLVE, c)) {
             r = new IclijServiceResult();
-            new Evolve(dbDao, iclijConfig).method((String) param);
+            new Evolve(dbDao, iclijConfig).method((String) content);
         }
         if (serviceMatch(ServiceConstants.EVOLVEFILTERPROFIT, c)) {
             r = new IclijServiceResult();
-            new Evolve(dbDao, iclijConfig).method2((String) param);
+            new Evolve(dbDao, iclijConfig).method2((String) content);
         }
         if (serviceMatch(ServiceConstants.EVOLVEFILTERFILTER, c)) {
             r = new IclijServiceResult();
-            new Evolve(dbDao, iclijConfig).method3((String) param);
+            new Evolve(dbDao, iclijConfig).method3((String) content);
         }
         if (serviceMatch(ServiceConstants.EVOLVEFILTERABOVEBELOW, c)) {
             r = new IclijServiceResult();
-            new Evolve(dbDao, iclijConfig).method4((String) param);
+            new Evolve(dbDao, iclijConfig).method4((String) content);
         }
+        new QueueUtils(Evolve.curatorClient).zkUnregister((String) param);
+
         if (param instanceof IclijServiceParam) {
             sendReply(((IclijServiceParam) param).getWebpath(), c, r);
         }

@@ -23,6 +23,7 @@ module iclij.sim {
     requires myexecutor;
     requires common.cache;
     requires common.controller;
+    requires common.queue;
     requires spring.context;
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.datatype.jsr310;
@@ -46,4 +47,5 @@ module iclij.sim {
     requires dbdao;
     requires common.model;
     requires spring.data.jdbc;
+    requires common.queueutil;
 }

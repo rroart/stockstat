@@ -11,6 +11,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.common.cache.MyCache;
 import roart.common.constants.Constants;
+import roart.common.queueutil.QueueLiveThread;
 import roart.db.dao.IclijDbDao;
 import roart.db.thread.DatabaseThread;
 import roart.executor.MyExecutors;
@@ -19,6 +20,10 @@ import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.service.ControlService;
 import roart.iclij.service.IclijServiceParam;
 
+import org.apache.curator.RetryPolicy;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +55,8 @@ public class IclijController implements CommandLineRunner {
     @Value("${spring.profiles.active:}")
     private String activeProfile;
 
+    private static CuratorFramework curatorClient;
+
     public static void main(String[] args) throws Exception {
         SpringApplication.run(IclijController.class, args);
     }
@@ -70,6 +77,8 @@ public class IclijController implements CommandLineRunner {
             }
             MyCache.setCache(instance.wantCache());
             MyCache.setCacheTTL(instance.getCacheTTL());
+            configCurator(iclijConfig);
+            new QueueLiveThread("evolve", curatorClient).start();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -82,6 +91,17 @@ public class IclijController implements CommandLineRunner {
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .modules(new JavaTimeModule())
                 .build();
+    }
+
+    public static void configCurator(IclijConfig conf) {
+        if (true) {
+            RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);        
+            String zookeeperConnectionString = conf.getZookeeper();
+            if (curatorClient == null) {
+                curatorClient = CuratorFrameworkFactory.newClient(zookeeperConnectionString, retryPolicy);
+                curatorClient.start();
+            }
+        }
     }
 
 }

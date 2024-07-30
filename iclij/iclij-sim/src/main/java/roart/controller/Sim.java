@@ -88,7 +88,7 @@ public class Sim {
     public static CuratorFramework curatorClient;
 
     public void method(String param, String string, boolean b) {
-        param = getParam(param);
+        //param = getParam(param);
         Map<String, Object> myMap = convert(param);
         if (myMap.isEmpty()) {
             return;
@@ -315,7 +315,7 @@ public class Sim {
     }
 
     public void method2(String param) {
-        param = getParam(param);
+        //param = getParam(param);
         Map<String, Object> myMap = convert(param);
         if (myMap.isEmpty()) {
             return;

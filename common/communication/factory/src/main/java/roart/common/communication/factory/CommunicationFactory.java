@@ -1,5 +1,7 @@
 package roart.common.communication.factory;
 
+import java.util.function.Function;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import roart.common.communication.model.Communication;
 import roart.common.communication.integration.camel.Camel;
@@ -10,18 +12,18 @@ import roart.common.communication.rest.REST;
 import roart.common.constants.CommunicationConstants;
 
 public class CommunicationFactory {
-    public static Communication get(String name, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection) {
+    public static Communication get(String name, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection, Function<String, Boolean> storeMessage) {
         switch (name) {
         case CommunicationConstants.REST:
-            return new REST(name, myclass, service, mapper, send, receive, sendreceive, connection);
+            return new REST(name, myclass, service, mapper, send, receive, sendreceive, connection, storeMessage);
         case CommunicationConstants.CAMEL:
-            return new Camel(name, myclass, service, mapper, send, receive, sendreceive, connection);
+            return new Camel(name, myclass, service, mapper, send, receive, sendreceive, connection, storeMessage);
         case CommunicationConstants.SPRING:
-            return new Spring(name, myclass, service, mapper, send, receive, sendreceive, connection);
+            return new Spring(name, myclass, service, mapper, send, receive, sendreceive, connection, storeMessage);
         case CommunicationConstants.PULSAR:
-            return new Pulsar(name, myclass, service, mapper, send, receive, sendreceive, connection);
+            return new Pulsar(name, myclass, service, mapper, send, receive, sendreceive, connection, storeMessage);
         case CommunicationConstants.KAFKA:
-            return new Kafka(name, myclass, service, mapper, send, receive, sendreceive, connection);
+            return new Kafka(name, myclass, service, mapper, send, receive, sendreceive, connection, storeMessage);
         }
         return null;
     }

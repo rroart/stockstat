@@ -16,6 +16,9 @@ import org.apache.pulsar.client.api.SubscriptionType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.communication.message.model.MessageCommunication;
+import roart.common.constants.Constants;
+
+import java.util.function.Function;
 
 public class Pulsar extends MessageCommunication {
 
@@ -26,15 +29,14 @@ public class Pulsar extends MessageCommunication {
     Consumer<byte[]> consumer;
     Producer<String> stringProducer = null;
 
-    public Pulsar(String myname, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection) {
-        super(myname, myclass, service, mapper, send, receive, sendreceive, connection);
+    public Pulsar(String myname, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection, Function<String, Boolean> storeMessage) {
+        super(myname, myclass, service, mapper, send, receive, sendreceive, connection, storeMessage);
         try {
             client = PulsarClient.builder()
                     .serviceUrl(connection)
                     .build();
         } catch (PulsarClientException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         }
         if (send) {
             /*
@@ -53,8 +55,7 @@ public class Pulsar extends MessageCommunication {
                         .topic(getSendService())
                         .create();
             } catch (PulsarClientException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error(Constants.EXCEPTION, e);
             }
         }
         if (receive) {
@@ -66,8 +67,7 @@ public class Pulsar extends MessageCommunication {
                         .subscribe();
                 //consumer.close();
             } catch (PulsarClientException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error(Constants.EXCEPTION, e);
             }
         }
 
@@ -87,8 +87,7 @@ public class Pulsar extends MessageCommunication {
         try {
             stringProducer.send(string);
         } catch (PulsarClientException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         }        
 
         /*
@@ -99,8 +98,7 @@ public class Pulsar extends MessageCommunication {
         try {
             stringProducer.close();
         } catch (PulsarClientException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         }
         /*
         try {
@@ -112,6 +110,7 @@ public class Pulsar extends MessageCommunication {
          */
     }
 
+    @Override
     public String[] receiveString() {
         String string = null;
         // Wait for a message
@@ -128,12 +127,54 @@ public class Pulsar extends MessageCommunication {
             } catch (Exception e) {
                 // Message failed to process, redeliver later
                 consumer.negativeAcknowledge(msg);
+                return new String[0];
             }
+        } catch (PulsarClientException e) {
+            log.error(Constants.EXCEPTION, e);
+            return new String[0];
+        }
+        /*
+        try {
+            client.close();
         } catch (PulsarClientException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        */
+        return new String[] { string };
 
+    }
+
+    @Override
+    public String[] receiveStringAndStore() {
+        String string = null;
+        // Wait for a message
+
+        try {
+            Message msg = consumer.receive();
+
+            try {
+                // Do something with the message
+                string = new String(msg.getData());
+                
+                boolean stored = storeMessage.apply(string);
+
+                // Acknowledge the message so that it can be deleted by the message broker
+                if (stored) {
+                    consumer.acknowledge(msg);
+                } else {
+                    consumer.negativeAcknowledge(msg);
+                    return new String[0];
+                }
+            } catch (Exception e) {
+                // Message failed to process, redeliver later
+                consumer.negativeAcknowledge(msg);
+                return new String[0];
+            }
+        } catch (PulsarClientException e) {
+            log.error(Constants.EXCEPTION, e);
+            return new String[0];
+        }
         /*
         try {
             client.close();
@@ -152,8 +193,7 @@ public class Pulsar extends MessageCommunication {
         try {
             client.close();
         } catch (PulsarClientException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         }
 
     }

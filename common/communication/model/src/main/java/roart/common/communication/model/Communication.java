@@ -3,6 +3,7 @@ package roart.common.communication.model;
 import java.lang.reflect.Array;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.util.JsonUtil;
 import roart.common.util.MathUtil;
+import roart.common.constants.Constants;
 
 public abstract class Communication {
 
@@ -25,7 +27,9 @@ public abstract class Communication {
     protected boolean receive;
     protected boolean sendreceive;
     protected String connection;
-    public Communication(String myname, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection) {
+    protected Function<String, Boolean> storeMessage;
+    
+    public Communication(String myname, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection, Function<String, Boolean> storeMessage) {
         this.myclass = myclass;
         this.service = service;
         this.mapper = mapper;
@@ -34,12 +38,12 @@ public abstract class Communication {
         this.receive = receive;
         this.sendreceive = sendreceive;
         this.connection = connection;
+        this.storeMessage = storeMessage;
         if (sendreceive) {
             try {
                 this.returnService = service + InetAddress.getLocalHost().getHostAddress() + System.currentTimeMillis();
             } catch (UnknownHostException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error(Constants.EXCEPTION, e);
             }
         }
     }
@@ -105,6 +109,8 @@ public abstract class Communication {
 
     public abstract String[] receiveString();
 
+    public abstract String[] receiveStringAndStore();
+    
     public <T> T[] sendReceive2(Object param) {
         long time = System.currentTimeMillis();
         send(param);
@@ -145,5 +151,25 @@ public abstract class Communication {
         return ts;
     }
 
+    public <T> T[] receiveAndStore() {
+        log.info("Receive service {}", getReceiveService());
+        Class<T> aclass = myclass;
+        String[] receives = receiveStringAndStore ();
+        //T[] ts = new T[receives.length];
+        T[] ts = (T[]) Array.newInstance(myclass, receives.length);
+        int count = 0;
+        for (String aReceive : receives) {
+            T t;
+            if (aclass == String.class) {
+                t = (T) aReceive;
+            } else {
+                t = JsonUtil.convertnostrip(aReceive, aclass);
+            }
+            ts[count++] = t;
+        }
+        return ts;
+    }
+
     public abstract void destroy();
+
 }
