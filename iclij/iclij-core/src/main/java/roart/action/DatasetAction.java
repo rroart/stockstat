@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -15,11 +16,15 @@ import org.apache.commons.lang3.tuple.Triple;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.ServiceConstants;
+import roart.common.inmemory.factory.InmemoryFactory;
+import roart.common.inmemory.model.Inmemory;
+import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.ActionComponentItem;
 import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.queue.QueueElement;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
 import roart.db.dao.IclijDbDao;
@@ -75,7 +80,12 @@ public class DatasetAction extends MarketAction {
             }
             PipelineData results = componentData.getResultMap();
             if (results != null) {
-            	componentData.getService().send(ServiceConstants.EVOLVEFILTEREVOLVE, results, param.getConfig());
+                Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
+                QueueElement element = new QueueElement();
+                InmemoryMessage msg = inmemory.send(ServiceConstants.EVOLVEFILTEREVOLVE + UUID.randomUUID(), results, null);
+                element.setOpid(ServiceConstants.EVOLVEFILTEREVOLVE);
+                element.setMessage(msg);
+            	componentData.getService().send(ServiceConstants.EVOLVEFILTEREVOLVE, element, param.getConfig());
             }
             //component.calculateIncDec(componentData, profitdata, positions);
             //System.out.println("Buys: " + market.getMarket() + buys);

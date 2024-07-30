@@ -1,5 +1,6 @@
 package roart.action;
 
+import java.io.InputStream;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -14,6 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
 import roart.common.constants.ServiceConstants;
+import roart.common.inmemory.factory.InmemoryFactory;
+import roart.common.inmemory.model.Inmemory;
+import roart.common.inmemory.model.InmemoryMessage;
+import roart.common.inmemory.model.InmemoryUtil;
 import roart.common.model.ActionComponentItem;
 import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
@@ -47,6 +53,7 @@ import roart.iclij.util.MarketUtil;
 import roart.iclij.util.MiscUtil;
 import roart.iclij.verifyprofit.TrendUtil;
 import roart.service.model.ProfitData;
+import roart.common.queue.QueueElement;
 
 public class ImproveSimulateInvestAction extends MarketAction {
 
@@ -111,6 +118,8 @@ public class ImproveSimulateInvestAction extends MarketAction {
         }
         //List<MemoryItem> memories = findAllMarketComponentsToCheckNew(myData, param, 0, config, false, dataMap, componentMap, subcomponent, parameters, market);
         
+        Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
+        
         for (Entry<String, Component> entry : componentMap.entrySet()) {
             Component component = entry.getValue();
             if (component == null) {
@@ -133,8 +142,12 @@ public class ImproveSimulateInvestAction extends MarketAction {
             Object filters = param.getConfigValueMap().remove(IclijConfigConstants.SIMULATEINVESTFILTERS);
             filters = param.getInput().getValuemap().get(IclijConfigConstants.SIMULATEINVESTFILTERS);
             results.put(SimConstants.FILTER, filters);
-            e.getService().send(ServiceConstants.SIMFILTER, results, param.getConfig());
- 
+            QueueElement element = new QueueElement();
+            InmemoryMessage msg = inmemory.send(ServiceConstants.SIMFILTER + UUID.randomUUID(), results, null);
+            element.setOpid(ServiceConstants.SIMFILTER);
+            element.setMessage(msg);
+            e.getService().send(ServiceConstants.SIMFILTER, element, param.getConfig());
+
             Map<String, Object> updateMap = e.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Map.Entry;
 
 import org.slf4j.Logger;
@@ -13,11 +14,15 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
 import roart.common.constants.ServiceConstants;
+import roart.common.inmemory.factory.InmemoryFactory;
+import roart.common.inmemory.model.Inmemory;
+import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.ActionComponentItem;
 import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.queue.QueueElement;
 import roart.common.util.JsonUtil;
 import roart.iclij.component.Component;
 import roart.iclij.component.ImproveAutoSimulateInvestComponent;
@@ -102,6 +107,8 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
         }
         //List<MemoryItem> memories = findAllMarketComponentsToCheckNew(myData, param, 0, config, false, dataMap, componentMap, subcomponent, parameters, market);
         
+        Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
+        
         for (Entry<String, Component> entry : componentMap.entrySet()) {
             Component component = entry.getValue();
             if (component == null) {
@@ -123,7 +130,11 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
             Object filters = param.getConfigValueMap().remove(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
             filters = param.getInput().getValuemap().get(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
             results.put(SimConstants.FILTER, filters);
-            e.getService().send(ServiceConstants.SIMAUTO, results, param.getConfig());
+            QueueElement element = new QueueElement();
+            InmemoryMessage msg = inmemory.send(ServiceConstants.SIMAUTO + UUID.randomUUID(), results, null);
+            element.setOpid(ServiceConstants.SIMAUTO);
+            element.setMessage(msg);
+            e.getService().send(ServiceConstants.SIMAUTO, element, param.getConfig());
             Map<String, Object> updateMap = e.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);

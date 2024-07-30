@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Map.Entry;
 
 import org.slf4j.Logger;
@@ -14,12 +15,16 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.ServiceConstants;
+import roart.common.inmemory.factory.InmemoryFactory;
+import roart.common.inmemory.model.Inmemory;
+import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.ActionComponentItem;
 import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.model.TimingItem;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.queue.QueueElement;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
@@ -72,6 +77,7 @@ public class ImproveFilterAction extends MarketAction {
         } catch (ParseException e) {
             log.error(Constants.EXCEPTION, e);
         }
+        Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
         for (Entry<String, Component> entry : componentMap.entrySet()) {
             Component component = entry.getValue();
             if (component == null) {
@@ -121,7 +127,11 @@ public class ImproveFilterAction extends MarketAction {
                 param.getUpdateMap().putAll(updateMap);
             }
             PipelineData results = componentData.getResultMap();
-            componentData.getService().send(ServiceConstants.EVOLVEFILTERFILTER, results, param.getConfig());
+            QueueElement element = new QueueElement();
+            InmemoryMessage msg = inmemory.send(ServiceConstants.EVOLVEFILTERFILTER + UUID.randomUUID(), results, null);
+            element.setOpid(ServiceConstants.EVOLVEFILTERFILTER);
+            element.setMessage(msg);
+            componentData.getService().send(ServiceConstants.EVOLVEFILTERFILTER, element, param.getConfig());
             //component.calculateIncDec(componentData, profitdata, positions);
             //System.out.println("Buys: " + market.getMarket() + buys);
             //System.out.println("Sells: " + market.getMarket() + sells);           
