@@ -84,4 +84,7 @@ open module core {
     requires iclij.common.config;
     requires iclij.common.service;
     requires ml.spark;
+    requires common.inmemory.factory;
+    requires common.inmemory.model;
+    requires com.fasterxml.jackson.datatype.jsr310;
 }

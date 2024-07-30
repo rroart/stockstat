@@ -1,18 +1,27 @@
 package roart.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.aggregator.impl.MACDBase;
 import roart.aggregator.impl.MLATR;
@@ -23,11 +32,16 @@ import roart.aggregator.impl.MLMulti;
 import roart.aggregator.impl.MLRSI;
 import roart.aggregator.impl.MLSTOCH;
 import roart.common.cache.MyCache;
+import roart.common.communication.factory.CommunicationFactory;
+import roart.common.communication.model.Communication;
 import roart.common.config.CacheConstants;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MarketStock;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
+import roart.common.inmemory.factory.InmemoryFactory;
+import roart.common.inmemory.model.Inmemory;
+import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
@@ -38,6 +52,7 @@ import roart.common.util.ImmutabilityUtil;
 import roart.common.util.JsonUtil;
 import roart.common.util.MemUtil;
 import roart.common.util.PipelineUtils;
+import roart.common.util.ServiceConnectionUtil;
 import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
 import roart.etl.CleanETL;
@@ -53,6 +68,10 @@ import roart.model.data.StockData;
 
 public class ControlService {
     private Logger log = LoggerFactory.getLogger(this.getClass());
+
+    private Function<String, Boolean> zkRegister;
+
+    private static final ObjectMapper mapper = new JsonMapper().builder().addModule(new JavaTimeModule()).build();
 
     public static CuratorFramework curatorClient;
 
@@ -146,6 +165,22 @@ public class ControlService {
         result.setList(retlist);
         result.setPipelineData(pipelineData);
         result.setConfigData(conf.getConfigData());
+        
+        Inmemory inmemory = InmemoryFactory.get(conf.getInmemoryServer(), conf.getInmemoryHazelcast(), conf.getInmemoryRedis());
+
+        if (true) return result;
+        for (PipelineData data : pipelineData) {
+            //data.
+            try (InputStream is = new ByteArrayInputStream(JsonUtil.convert(data).getBytes())) {
+                String md5 = null;
+                InmemoryMessage msg = inmemory.send(Constants.STOCKSTAT + data.getId() + data.getName(), is, md5);
+                //result.message = msg;
+                curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.DATA + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+
+        }
         return result;
     }
 
@@ -160,6 +195,7 @@ public class ControlService {
         param.setConfigData(conf.getConfigData());
         param.setWantMaps(origparam.isWantMaps());
         param.setConfList(disableList);
+        // TODO retry or queue
         IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
 
         /// TODO list2 = ImmutabilityUtil.immute(list2);
@@ -240,6 +276,34 @@ public class ControlService {
         stockData.idNameMap = (Map<String, String>) pipelineDatum.get(PipelineConstants.NAME);
         stockData.stockdates = (List<String>) pipelineDatum.get(PipelineConstants.DATELIST);
          return stockData;
+    }
+
+    public void send(String service, Object object, IclijConfig config) {
+        IclijConfig iclijConfig = config; // TODO check
+        Inmemory inmemory = InmemoryFactory.get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        String id = service + System.currentTimeMillis() + UUID.randomUUID();
+        InmemoryMessage message = inmemory.send(id, object);
+        send(service, message);
+    }
+
+    public void send(String service, Object object) {
+        if (object == null) {
+            log.error("Empty msg for {}", service);
+            return;
+        }
+        send(service, object, mapper);
+    }
+
+    public void send(String service, Object object, ObjectMapper objectMapper) {
+        //IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
+        IclijConfig iclijConfig = null;
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
+        String appid = System.getenv(Constants.APPID);
+        if (appid != null) {
+            service = service + appid; // can not handle domain, only eureka
+        }
+        Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister);
+        c.send(object);
     }
 
 }

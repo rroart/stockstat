@@ -1,5 +1,8 @@
 package roart.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +14,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -21,6 +26,10 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.aggregator.impl.AggregatorRecommenderIndicator;
 import roart.aggregator.impl.MACDBase;
@@ -36,17 +45,24 @@ import roart.category.AbstractCategory;
 import roart.category.impl.CategoryIndex;
 import roart.category.impl.CategoryPeriod;
 import roart.category.impl.CategoryPrice;
+import roart.common.communication.factory.CommunicationFactory;
+import roart.common.communication.model.Communication;
 import roart.common.config.ConfigConstants;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.IclijServiceResult;
 import roart.indicator.AbstractIndicator;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
+import roart.common.inmemory.factory.InmemoryFactory;
+import roart.common.inmemory.model.Inmemory;
+import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.util.JsonUtil;
 import roart.common.util.PipelineUtils;
+import roart.common.util.ServiceConnectionUtil;
 import roart.common.util.TimeUtil;
 import roart.db.dao.DbDao;
 import roart.etl.CleanETL;
@@ -77,6 +93,8 @@ public class ControlService {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public static CuratorFramework curatorClient;
+
+    private static final ObjectMapper mapper = new JsonMapper().builder().addModule(new JavaTimeModule()).build();
 
     public List<String> getMarkets() {
         try {
@@ -125,6 +143,8 @@ public class ControlService {
 
     ResultItemTable mlTimesTable = ServiceUtil.createMLTimesTable(otherTableMap);
     ResultItemTable eventTable = ServiceUtil.createEventTable(otherTableMap);
+
+    private Function<String, Boolean> zkRegister;
 
     //protected static int[] otherTableNames = { Constants.EVENT, Constants.MLTIMES }; 
 
@@ -266,6 +286,21 @@ public class ControlService {
        //result.setMaps(maps);
         result.setList(retlist);
         result.setPipelineData(pipelinedata);
+        Inmemory inmemory = InmemoryFactory.get(conf.getInmemoryServer(), conf.getInmemoryHazelcast(), conf.getInmemoryRedis());
+
+        if (true) return retlist;
+        for (PipelineData data : pipelinedata) {
+            //data.
+            try (InputStream is = new ByteArrayInputStream(JsonUtil.convert(data).getBytes())) {
+                String md5 = null;
+                InmemoryMessage msg = inmemory.send(Constants.STOCKSTAT + data.getId() + data.getName(), is, md5);
+                //result.message = msg;
+                curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.DATA + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+
+        }
         return retlist;
     }
     
@@ -693,6 +728,34 @@ public class ControlService {
                 curatorClient.start();
             }
         }
+    }
+
+    public void send(String service, Object object, IclijConfig config) {
+        IclijConfig iclijConfig = config; // TODO check
+        Inmemory inmemory = InmemoryFactory.get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        String id = service + System.currentTimeMillis() + UUID.randomUUID();
+        InmemoryMessage message = inmemory.send(id, object);
+        send(service, message);
+    }
+
+    public void send(String service, Object object) {
+        if (object == null) {
+            log.error("Empty msg for {}", service);
+            return;
+        }
+        send(service, object, mapper);
+    }
+
+    public void send(String service, Object object, ObjectMapper objectMapper) {
+        //IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
+        IclijConfig iclijConfig = null;
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
+        String appid = System.getenv(Constants.APPID);
+        if (appid != null) {
+            service = service + appid; // can not handle domain, only eureka
+        }
+        Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister);
+        c.send(object);
     }
 
 }
