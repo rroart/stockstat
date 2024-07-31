@@ -19,7 +19,9 @@ import roart.iclij.service.ControlService;
 
 public class LeaderRunner implements Runnable {
     static Logger log = LoggerFactory.getLogger(LeaderRunner.class);
-
+    
+    public static boolean commonleader = false;
+    
     private IclijConfig iclijConfig;
 
     private ControlService controlService;
@@ -45,6 +47,7 @@ public class LeaderRunner implements Runnable {
         MyLeader leader = new MyLeaderFactory().create("leader", hostname, iclijConfig, ControlService.curatorClient, null /*GetHazelcastInstance.instance(conf.getInmemoryHazelcast())*/);
         while (true) {
             boolean leading = leader.await(1, TimeUnit.SECONDS);
+            commonleader = leading;
             if (!leading) {
                 log.info("I am not leader");
             } else {

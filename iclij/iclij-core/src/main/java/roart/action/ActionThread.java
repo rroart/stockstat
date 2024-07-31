@@ -132,7 +132,7 @@ public class ActionThread extends Thread {
                 continue;
             }
             boolean leading = leader.await(1, TimeUnit.SECONDS);
-            if (!leading) {
+            if (!LeaderRunner.commonleader) {
                 log.info("I am not action leader");
             } else {
             log.info("I am action leader");
