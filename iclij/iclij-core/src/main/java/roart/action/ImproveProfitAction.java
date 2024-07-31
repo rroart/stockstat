@@ -120,7 +120,7 @@ public class ImproveProfitAction extends MarketAction {
                 Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 QueueElement element = new QueueElement();
                 InmemoryMessage msg = inmemory.send(ServiceConstants.EVOLVEFILTERPROFIT + UUID.randomUUID(), results, null);
-                element.setOpid(ServiceConstants.EVOLVEFILTERPROFIT);
+                element.setOpid(ServiceConstants.EVOLVE);
                 element.setMessage(msg);
             	componentData.getService().send(ServiceConstants.EVOLVEFILTERPROFIT, element, param.getConfig());
             }

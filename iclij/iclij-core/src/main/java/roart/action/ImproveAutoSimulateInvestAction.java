@@ -132,7 +132,7 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
             results.put(SimConstants.FILTER, filters);
             QueueElement element = new QueueElement();
             InmemoryMessage msg = inmemory.send(ServiceConstants.SIMAUTO + UUID.randomUUID(), results, null);
-            element.setOpid(ServiceConstants.SIMAUTO);
+            element.setOpid(ServiceConstants.SIM);
             element.setMessage(msg);
             e.getService().send(ServiceConstants.SIMAUTO, element, param.getConfig());
             Map<String, Object> updateMap = e.getUpdateMap();

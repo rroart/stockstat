@@ -97,16 +97,24 @@ public abstract class IndicatorAdviser extends Adviser {
         // don't need these both here and in getevolveml?
         aMap.put(ConfigConstants.MACHINELEARNING, false);
         aMap.put(ConfigConstants.AGGREGATORS, false);
+	// TODO only two indicators used
         aMap.put(ConfigConstants.INDICATORS, true);
         aMap.put(ConfigConstants.INDICATORSMACD, true);
         aMap.put(ConfigConstants.INDICATORSRSI, true);
-        aMap.put(ConfigConstants.MISCTHRESHOLD, null);        
+
+	aMap.put(ConfigConstants.MISCTHRESHOLD, null);        
         aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
         aMap.put(ConfigConstants.MISCMYDAYS, 0);
         aMap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, simulateConfig.getIndicatorRebase());
+
+	// common
         aMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
         aMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
-        aMap.put(ConfigConstants.MISCMERGECY, false);
+
+	// TODO why
+	aMap.put(ConfigConstants.MISCMERGECY, false);
+        // TODO todo
+	// TODO not calling when cached
         param.getResultMap(null, aMap, false);
         PipelineData[] maps = param.getResultMaps();
         /*

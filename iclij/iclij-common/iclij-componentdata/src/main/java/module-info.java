@@ -18,5 +18,7 @@ module iclij.common.componentdata {
     requires org.apache.commons.lang3;
     requires org.slf4j;
     requires common.constants;
+    requires common.inmemory.model;
+    requires common.inmemory.factory;
 }
 

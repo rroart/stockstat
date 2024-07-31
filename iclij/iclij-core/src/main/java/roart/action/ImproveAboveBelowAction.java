@@ -308,7 +308,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                 Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 QueueElement element = new QueueElement();
                 InmemoryMessage msg = inmemory.send(ServiceConstants.EVOLVEFILTERABOVEBELOW + UUID.randomUUID(), results, null);
-                element.setOpid(ServiceConstants.EVOLVEFILTERABOVEBELOW);
+                element.setOpid(ServiceConstants.EVOLVE);
                 element.setMessage(msg);
                 
                 param.getService().send(ServiceConstants.EVOLVEFILTERABOVEBELOW, element, param.getConfig());

@@ -129,7 +129,7 @@ public class ImproveFilterAction extends MarketAction {
             PipelineData results = componentData.getResultMap();
             QueueElement element = new QueueElement();
             InmemoryMessage msg = inmemory.send(ServiceConstants.EVOLVEFILTERFILTER + UUID.randomUUID(), results, null);
-            element.setOpid(ServiceConstants.EVOLVEFILTERFILTER);
+            element.setOpid(ServiceConstants.EVOLVE);
             element.setMessage(msg);
             componentData.getService().send(ServiceConstants.EVOLVEFILTERFILTER, element, param.getConfig());
             //component.calculateIncDec(componentData, profitdata, positions);

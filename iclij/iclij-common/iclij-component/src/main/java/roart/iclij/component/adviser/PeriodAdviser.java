@@ -48,6 +48,7 @@ public class PeriodAdviser extends Adviser {
             //List<MetaItem> metas = param.getService().getMetas();
             //MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
             //List<String> categories = new MetaUtil().getCategories(meta);
+            // TODO remove
             Map<String, Object> aMap = new HashMap<>();
             aMap.put(ConfigConstants.MACHINELEARNING, false);
             aMap.put(ConfigConstants.AGGREGATORS, false);

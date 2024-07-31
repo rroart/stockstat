@@ -12,6 +12,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import roart.common.cache.MyCache;
 import roart.common.config.ConfigConstantMaps;
 import roart.common.constants.Constants;
+import roart.common.constants.ServiceConstants;
 import roart.common.queueutil.QueueLiveThread;
 import roart.db.dao.IclijDbDao;
 import roart.db.thread.DatabaseThread;
@@ -80,7 +81,7 @@ public class IclijController implements CommandLineRunner {
             MyCache.setCache(instance.wantCache());
             MyCache.setCacheTTL(instance.getCacheTTL());
             configCurator(iclijConfig);
-            new QueueLiveThread("sim", curatorClient).start();
+            new QueueLiveThread(ServiceConstants.SIM, curatorClient).start();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

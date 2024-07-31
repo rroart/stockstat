@@ -179,6 +179,7 @@ public class ControlService {
     }
 
     public void send(String service, QueueElement element, IclijConfig config) {
+        element.setQueue(service);
         send(service, element);
     }
 

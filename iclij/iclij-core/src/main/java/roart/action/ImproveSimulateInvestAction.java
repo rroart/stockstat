@@ -144,7 +144,7 @@ public class ImproveSimulateInvestAction extends MarketAction {
             results.put(SimConstants.FILTER, filters);
             QueueElement element = new QueueElement();
             InmemoryMessage msg = inmemory.send(ServiceConstants.SIMFILTER + UUID.randomUUID(), results, null);
-            element.setOpid(ServiceConstants.SIMFILTER);
+            element.setOpid(ServiceConstants.SIM);
             element.setMessage(msg);
             e.getService().send(ServiceConstants.SIMFILTER, element, param.getConfig());
 

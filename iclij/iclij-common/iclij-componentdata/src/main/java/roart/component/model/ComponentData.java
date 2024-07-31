@@ -13,7 +13,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
+import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.inmemory.factory.InmemoryFactory;
+import roart.common.inmemory.model.Inmemory;
+import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.TimingItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
@@ -359,14 +363,19 @@ public class ComponentData {
     public void getAndSetCategoryValueMap(boolean useMl) {
         getService().conf.getConfigData().setDate(getFutureDate());
         Map<String, Object> setValueMap = new HashMap<>();
+	// common
+        setValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         setValueMap.put(ConfigConstants.AGGREGATORS, Boolean.FALSE);
+
         setValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
         setValueMap.put(ConfigConstants.MACHINELEARNINGPREDICTORS, Boolean.FALSE);
-        setValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         setValueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
         setValueMap.put(ConfigConstants.MISCTHRESHOLD, null);
+
+	// common
         setValueMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
         setValueMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
+
         service.conf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
         service.conf.getConfigData().getConfigValueMap().putAll(setValueMap);
         PipelineData[] result = getService().getContent(useMl);
@@ -382,27 +391,35 @@ public class ComponentData {
             this.setVolumeMap(aVolumeMap);
         } catch (Exception e) {
             int jj = 0;
+            log.error("Ex", e);
         }        
     }
 
     public void getAndSetWantedCategoryValueMap(boolean useMl) {
         getService().conf.getConfigData().setDate(getFutureDate());
         Map<String, Object> setValueMap = new HashMap<>();
+	// common
+        setValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         setValueMap.put(ConfigConstants.AGGREGATORS, Boolean.FALSE);
+
         setValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
         setValueMap.put(ConfigConstants.MACHINELEARNINGPREDICTORS, Boolean.FALSE);
-        setValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         setValueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
         setValueMap.put(ConfigConstants.MISCTHRESHOLD, null);
         setValueMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
         setValueMap.put(ConfigConstants.MISCMYDAYS, 0);
+
+	// common
         setValueMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
         setValueMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
+	
         service.conf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
         service.conf.getConfigData().getConfigValueMap().putAll(setValueMap);
         PipelineData[] result = getService().getContent(useMl);
         this.resultMaps = result;
         try {
+            MyMyConfig conf = null;
+            // NOT yet Inmemory inmemory = InmemoryFactory.get(conf .getInmemoryServer(), conf.getInmemoryHazelcast(), conf.getInmemoryRedis());
             //log.info("" + result.keySet());
             //log.info("" + result.get(PipelineConstants.META).keySet());
             String cat = (String) PipelineUtils.getPipeline(result, PipelineConstants.META).get(PipelineConstants.CATEGORY);
@@ -412,6 +429,7 @@ public class ComponentData {
             this.setCategoryValueMap(aCategoryValueMap);
             Map<String, List<List<Double>>> aFillCategoryValueMap = MapUtil.convertA2L(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) PipelineUtils.getPipeline(result, cat).get(PipelineConstants.FILLLIST)));
             this.setFillCategoryValueMap(aFillCategoryValueMap);
+            InmemoryMessage msg = null;
             Map<String, List<List<Object>>> aVolumeMap = (Map<String, List<List<Object>>>) PipelineUtils.getPipeline(result, cat).get(PipelineConstants.VOLUME);
             this.setVolumeMap(aVolumeMap);
         } catch (Exception e) {

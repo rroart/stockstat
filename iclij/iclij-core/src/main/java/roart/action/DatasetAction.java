@@ -83,7 +83,7 @@ public class DatasetAction extends MarketAction {
                 Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 QueueElement element = new QueueElement();
                 InmemoryMessage msg = inmemory.send(ServiceConstants.EVOLVEFILTEREVOLVE + UUID.randomUUID(), results, null);
-                element.setOpid(ServiceConstants.EVOLVEFILTEREVOLVE);
+                element.setOpid(ServiceConstants.EVOLVE);
                 element.setMessage(msg);
             	componentData.getService().send(ServiceConstants.EVOLVEFILTEREVOLVE, element, param.getConfig());
             }

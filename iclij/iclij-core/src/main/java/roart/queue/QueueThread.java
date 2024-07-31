@@ -122,11 +122,12 @@ public class QueueThread extends Thread {
         List<String> list = new ArrayList<>();
         Stat b = curatorClient.checkExists().forPath(path);
         if (b == null) {
-            log.debug("Empty path " + path);
+            log.error("Empty path " + path);
             return new ArrayList<>();
         }
         List<String> children = curatorClient.getChildren().forPath(path);
         log.debug("Children {}", children.size());
+        log.info("Children {}", children);
         for (String child : children) {
             Stat stat = curatorClient.checkExists().forPath(path + "/" + child);
             log.debug("Time {} {}", System.currentTimeMillis(), stat.getMtime());;
@@ -135,8 +136,8 @@ public class QueueThread extends Thread {
             byte[] data = curatorClient.getData().forPath(path + "/" + child);
             String str = new String(data);
             QueueElement element = JsonUtil.convert(str, QueueElement.class);
-            controlService.send(element.getOpid(), element, iclijConfig);
-            log.info("Element requeued " + element.getOpid() + " " + element.getId());
+            controlService.send(element.getQueue(), element, iclijConfig);
+            log.info("Element requeued " + element.getQueue() + " " + element.getId());
             curatorClient.delete().forPath(path + "/" + child);
             
         }

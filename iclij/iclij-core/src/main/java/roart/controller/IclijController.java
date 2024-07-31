@@ -26,6 +26,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.service.ControlService;
 import roart.iclij.service.IclijServiceParam;
 import roart.populate.PopulateThread;
+import roart.queue.QueueThread;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,8 @@ public class IclijController implements CommandLineRunner {
 
     private Thread leaderWorker = null;
 
+    private ControlService instanceC;
+
     public static void main(String[] args) throws Exception {
         SpringApplication.run(IclijController.class, args);
     }
@@ -89,6 +92,9 @@ public class IclijController implements CommandLineRunner {
             MyCache.setCache(instance.wantCache());
             MyCache.setCacheTTL(instance.getCacheTTL());
             startLeaderWorker();
+            
+            getInstance();
+            new QueueThread(iclijConfig, instanceC, dbDao).start();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -130,6 +136,13 @@ public class IclijController implements CommandLineRunner {
         leaderWorker.setName("LeaderWorker");
         leaderWorker.start();
         log.info("starting leader worker");
+    }
+
+    private ControlService getInstance() {
+        if (instanceC == null) {
+            instanceC = new ControlService(iclijConfig);
+        }
+        return instanceC;
     }
 
 }

@@ -70,16 +70,19 @@ public class QueueUtils {
     }
     
     public static String getLivePath() {
-        String path = "/" + Constants.STOCKSTAT + "/" + "queue" + "/" + "live";
+        String extra = getExtra();
+        String path = "/" + Constants.STOCKSTAT + "/" + "queue" + extra + "/" + "live";
         return path;
     }
     
     public static String getQueuePath(String path) {
-        return "/" + Constants.STOCKSTAT + "/" + "queue" + "/" + "run" + "/" + path;
+        String extra = getExtra();
+        return "/" + Constants.STOCKSTAT + "/" + "queue" + extra + "/" + "run" + "/" + path;
     }
     
     public static String getLivePath(String hostname, String name) {
-        String path = "/" + Constants.STOCKSTAT + "/" + "queue" + "/" + "live" + "/" + hostname + "/" + name;
+        String extra = getExtra();
+        String path = "/" + Constants.STOCKSTAT + "/" + "queue" + extra + "/" + "live" + "/" + hostname + "/" + name;
         return path;
     }
     
@@ -95,5 +98,14 @@ public class QueueUtils {
         //QueueElement element = get(str);
         String path = "/" + Constants.STOCKSTAT + "/" + "queue" + "/" + hostname + "/" + id;
         return path;
+    }
+    
+    private static String getExtra() {
+        String appid = System.getenv(Constants.APPID);
+        String extra = "";
+        if (appid != null) {
+            extra = appid; // can not handle domain, only eureka
+        }
+        return extra;
     }
 }
