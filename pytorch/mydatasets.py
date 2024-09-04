@@ -19,6 +19,25 @@ def getdataset(myobj, config, classifier):
     if myobj.dataset == 'number':
         return getnumber(myobj, config)
     
+def getdatasetdl(myobj, config, classifier):
+    if myobj.dataset == 'mnist':
+        return getmnistdl(config)
+    if myobj.dataset == 'cifar10':
+        return getcifar10(config)
+    if myobj.dataset == 'dailymintemperatures':
+        return getdailymintemperatures(myobj, config)
+    if myobj.dataset == 'nasdaq':
+        return getnasdaq(myobj, config)
+    if myobj.dataset == 'number':
+        return getnumber(myobj, config)
+    
+def getmnistdl(config):
+    transform = torchvision.transforms.Compose([torchvision.transforms.ToTensor()])
+    ds = torchvision.datasets.MNIST('/tmp/datasets/mnist', train=True, download=True, transform = transform)
+    return DataLoader(dataset=ds,
+                      shuffle=True,
+                      batch_size=64)
+
 def getmnist(config):
     dl = DataLoader(torchvision.datasets.MNIST('/tmp/datasets/mnist', train=True, download=True))
 

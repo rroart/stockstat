@@ -114,6 +114,32 @@ def do_dataset():
     process.join()
     return result
 
+@app.route('/datasetgen', methods=['POST'])
+def do_dataset_gen():
+    def classifyrunner(queue, request):
+        try:
+            import classify
+            cl = classify.Classify()
+            return cl.do_dataset_gen(queue, request)
+        except:
+            import sys,traceback
+            traceback.print_exc(file=sys.stdout)
+            print("\n")
+            import random
+            f = open("/tmp/outpt" + argstr() + str(random.randint(1000,9999)) + ".txt", "w")
+            f.write(request.get_data(as_text=True))
+            traceback.print_exc(file=f)
+            f.close()
+            memory = "CUDA out of memory" in traceback.format_exc()
+            return(Response(json.dumps({"accuracy": None, "loss": None, "gpu" : hasgpu, "memory" : memory, "exception" : True }), mimetype='application/json'))
+    return classifyrunner(None, request)
+    queue = Queue()
+    process = Process(target=classifyrunner, args=(queue, request))
+    process.start()
+    result = queue.get()
+    process.join()
+    return result
+
 @app.route('/filename', methods=['POST'])
 def do_filename():
     def filenamerunner(queue, request):

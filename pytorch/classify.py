@@ -625,6 +625,75 @@ class Classify:
         return(Response(json.dumps({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify" : classify, "gpu" : self.hasgpu() }), mimetype='application/json'))
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
         
+    def do_dataset_gen(self, queue, request):
+        import discriminator
+        import generator
+        import model.gan
+        torch.cuda.empty_cache()
+        dt = datetime.now()
+        timestamp = dt.timestamp()
+
+        dl = mydatasets.getmnistdl(None)
+
+        adiscriminator = discriminator.Discriminator(in_features=784, out_features=1)
+        agenerator = generator.Generator(in_features=100, out_features=784)
+        #agenerator = Generator(100, 32, 784)
+        print(adiscriminator)
+        print()
+        print(agenerator)
+
+        discriminator_optim = torch.optim.Adam(adiscriminator.parameters(), lr=0.002)
+        generator_optim = torch.optim.Adam(agenerator.parameters(), lr=0.002)
+
+        loss_fn = torch.nn.BCEWithLogitsLoss()
+
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+        n_epochs = 100
+        discriminator_losses, generator_losses = model.gan.train_mnist_gan(adiscriminator, agenerator, discriminator_optim, generator_optim,
+                                                                           loss_fn, dl, n_epochs, device,
+                                                                           verbose=False)
+
+        print("Losses", discriminator_losses, generator_losses)
+        
+        if True:
+            return (Response(json.dumps(
+                {"accuracy": 0, "trainaccuracy": 0, "loss": generator_losses, "classify": "",
+                 "gpu": self.hasgpu()}), mimetype='application/json'))
+
+        #print(request.get_data(as_text=True))
+        myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
+        (config, modelname) = self.getModel(myobj)
+        Model = importlib.import_module('model.' + modelname)
+        (train, traincat, test, testcat, size, classes, classify) = mydatasets.getdataset(myobj, config, self)
+        myobj.size = size
+        myobj.classes = classes
+        myobj.trainingarray = train
+        myobj.trainingcatarray = traincat
+        (train, traincat, test, testcat, size) = self.gettraintest(myobj, config, classify)
+        model = Model.Net(myobj, config, classify)
+        if torch.cuda.is_available():
+            model.cuda()
+            #cudnn.benchmark = True
+        #model.share_memory()
+        classifier = model
+        print("model", modelname)
+        (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, classifier, model, train, traincat, test, testcat, classify)
+        myobj.classifyarray = train
+        (intlist, problist) = self.do_classifyinner(myobj, model, classify)
+        if not accuracy_score is None:
+            accuracy_score = float(accuracy_score)
+        if not train_accuracy_score is None:
+            train_accuracy_score = float(train_accuracy_score)
+        if not loss is None:
+            loss = float(loss)
+        if not loss is None and np.isnan(loss):
+            loss = None
+        dt = datetime.now()
+        print ("millis ", (dt.timestamp() - timestamp)*1000)
+        return(Response(json.dumps({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify" : classify, "gpu" : self.hasgpu() }), mimetype='application/json'))
+        #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
+        
     def getpath(self, myobj):
         if hasattr(myobj, 'path') and not myobj.path is None:
             return myobj.path + '/'
