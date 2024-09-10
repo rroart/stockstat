@@ -34,7 +34,8 @@ def getdatasetdl(myobj, config, classifier):
 def getmnistdl(config):
     transform = torchvision.transforms.Compose([torchvision.transforms.ToTensor()])
     ds = torchvision.datasets.MNIST('/tmp/datasets/mnist', train=True, download=True, transform = transform)
-    return DataLoader(dataset=ds,
+    # size, classes, dl
+    return 784, 1, DataLoader(dataset=ds,
                       shuffle=True,
                       batch_size=64)
 

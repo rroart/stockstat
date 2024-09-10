@@ -84,7 +84,7 @@ def train_mnist_gan(discriminator, generator, discriminator_optim, generator_opt
         discriminator_losses.append(discriminator_epoch_loss)
         generator_losses.append(generator_epoch_loss)
         
-        print(f'epoch_d_loss: {discriminator_epoch_loss:.6f} \tepoch_g_loss: {generator_epoch_loss:.6f}')
+        print(f'epoch_discriminator_loss: {discriminator_epoch_loss:.6f} \tepoch_generator_loss: {generator_epoch_loss:.6f}')
         
         generator.eval()
         fixed_samples.append(generator(fixed_z).detach().cpu())

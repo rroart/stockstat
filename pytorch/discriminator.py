@@ -6,7 +6,6 @@ class Discriminator(nn.Module):
         self.in_features = in_features
         self.out_features = out_features
         
-        # Discriminator will down-sample the input producing a binary output
         self.fc1 = nn.Linear(in_features=in_features, out_features=128)
         self.leaky_relu1 = nn.LeakyReLU(negative_slope=0.2)
         self.fc2 = nn.Linear(in_features=128, out_features=64)
@@ -20,7 +19,6 @@ class Discriminator(nn.Module):
     def forward(self, x):
         batch_size = x.shape[0]
         x = x.view(batch_size, -1)
-        # Feed forward
         x = self.fc1(x)
         x = self.leaky_relu1(x)
         x = self.dropout(x)
