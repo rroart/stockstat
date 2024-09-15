@@ -1,7 +1,39 @@
 import tensorflow as tf
 import numpy as np
+import keras
 #import pandas as pd 
 from keras import backend as K
+
+def getdataset2(myobj, config, classifier):
+    if myobj.dataset == 'mnist':
+        return getmnist2(myobj, config)
+
+def getmnist2(myobj, config):
+    """
+    ## Loading the MNIST dataset and preprocessing it
+    """
+    batch_size = 64
+
+    # We'll use all the available examples from both the training and test
+    # sets.
+    (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
+    all_digits = np.concatenate([x_train, x_test])
+    all_labels = np.concatenate([y_train, y_test])
+
+    # Scale the pixel values to [0, 1] range, add a channel dimension to
+    # the images, and one-hot encode the labels.
+    all_digits = all_digits.astype("float32") / 255.0
+    all_digits = np.reshape(all_digits, (-1, 28, 28, 1))
+    all_labels = keras.utils.to_categorical(all_labels, 10)
+
+    # Create tf.data.Dataset.
+    dataset = tf.data.Dataset.from_tensor_slices((all_digits, all_labels))
+    dataset = dataset.shuffle(buffer_size=1024).batch(batch_size)
+
+    print(f"Shape of training images: {all_digits.shape}")
+    print(f"Shape of training labels: {all_labels.shape}")
+    mydim = (28, 28, 1)
+    return dataset, mydim, 10, True
 
 def getdataset(myobj, config, classifier):
     if myobj.dataset == 'mnist':

@@ -3,6 +3,7 @@ import os
 
 import pandas as pd
 import tensorflow as tf
+import keras
 import numpy as np
 
 import importlib
@@ -27,6 +28,8 @@ try:
     import device
     pu = device.get_pu()
     print("Using pu ", pu)
+    print("Keras", keras.__version__)
+    print("Tensorflow Keras", tf.keras.__version__)
 except:
     import sys,traceback
     traceback.print_exc(file=sys.stdout)
@@ -391,6 +394,9 @@ class Classify:
         if myobj.modelInt == 9:
             modelname = 'cnn2'
             config = myobj.tensorflowCNN2Config
+        if myobj.modelInt == 12:
+            modelname = 'conditional_gan'
+            config = myobj
         return config, modelname
       if hasattr(myobj, 'modelName'):
         if myobj.modelName == 'dnn':
@@ -559,6 +565,85 @@ class Classify:
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         queue.put(Response(json.dumps({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify" : classify, "gpu" : self.hasgpu() }), mimetype='application/json'))
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
+
+    def do_dataset_gen(self, queue, request):
+        dt = datetime.now()
+        timestamp = dt.timestamp()
+        # print(request.get_data(as_text=True))
+        myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
+        (config, modelname) = self.getModel(myobj)
+        Model = importlib.import_module('model.' + modelname)
+        (dataset, size, classes, classify) = mydatasets.getdataset2(myobj, config, self)
+
+        myobj.size = size
+        myobj.classes = classes
+
+        model = Model.Model(myobj, config, classify, Model.discriminator, Model.generator, Model.latent_dim)
+        # print("classez2", myobj.classes)
+        print(model)
+        self.printgpus()
+
+        """
+        ## Training the Conditional GAN
+        """
+        
+        #cond_gan = ConditionalGAN(
+        #    discriminator=discriminator, generator=generator, latent_dim=latent_dim
+        #)
+        gan = model
+        gan.compile(
+            d_optimizer=tf.keras.optimizers.Adam(learning_rate=0.0003),
+            g_optimizer=tf.keras.optimizers.Adam(learning_rate=0.0003),
+            loss_fn=tf.keras.losses.BinaryCrossentropy(from_logits=True),
+        )
+
+        #gan.fit(dataset, epochs=20)
+        gan.fit(dataset, epochs=1)
+
+        """
+        ## Interpolating between classes with the trained generator
+        """
+
+        # We first extract the trained generator from our Conditional GAN.
+        trained_gen = gan.generator
+
+        # Choose the number of intermediate images that would be generated in
+        # between the interpolation + 2 (start and last images).
+        num_interpolation = 9  # @param {type:"integer"}
+
+        # Sample noise for the interpolation.
+        interpolation_noise = tf.keras.random.normal(shape=(1, gan.latent_dim))
+        interpolation_noise = tf.keras.ops.repeat(interpolation_noise, repeats=num_interpolation)
+        interpolation_noise = tf.keras.ops.reshape(interpolation_noise, (num_interpolation, gan.latent_dim))
+
+        start_class = 2  # @param {type:"slider", min:0, max:9, step:1}
+        end_class = 6  # @param {type:"slider", min:0, max:9, step:1}
+
+        fake_images = gan.interpolate_class(start_class, end_class, interpolation_noise, num_interpolation, trained_gen)
+
+        """
+        Here, we first sample noise from a normal distribution and then we repeat that for
+        `num_interpolation` times and reshape the result accordingly.
+        We then distribute it uniformly for `num_interpolation`
+        with the label identities being present in some proportion.
+        """
+
+        fake_images *= 255.0
+        converted_images = fake_images.astype(np.uint8)
+        converted_images = keras.ops.image.resize(converted_images, (96, 96)).numpy().astype(np.uint8)
+        import imageio
+        imageio.mimsave("animation.gif", converted_images[:, :, :, 0], fps=1)
+
+        classifier = model
+
+        #classifier.tidy()
+        del classifier
+        dt = datetime.now()
+        print("millis ", (dt.timestamp() - timestamp) * 1000)
+        queue.put(Response(json.dumps(
+            {"accuracy": 0, "trainaccuracy": 0, "loss": 0, "classify": classify,
+             "gpu": self.hasgpu()}), mimetype='application/json'))
+        # return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def getpath(self, myobj):
         if hasattr(myobj, 'path') and not myobj.path is None:
