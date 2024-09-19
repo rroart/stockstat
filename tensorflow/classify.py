@@ -394,6 +394,12 @@ class Classify:
         if myobj.modelInt == 9:
             modelname = 'cnn2'
             config = myobj.tensorflowCNN2Config
+        if myobj.modelInt == 10:
+            modelname = 'qnn'
+            config = myobj.tensorflowQNNConfig
+        if myobj.modelInt == 11:
+            modelname = 'qcnn'
+            config = myobj.tensorflowQCNNConfig
         if myobj.modelInt == 12:
             modelname = 'conditional_gan'
             config = myobj
