@@ -16,7 +16,16 @@ class Model(MyModel):
     super(Model, self).__init__(config, classify, name='my_model')
     hidden_units = [ config.hidden ] * config.layers
     activation = 'relu'
+    if classify:
+      loss = 'sparse_categorical_crossentropy'
+      activation = 'softmax'
+      optimizer = Adam(learning_rate = config.lr)
+    else:
+      loss = 'mean_squared_error'
+      activation = 'linear'
+      optimizer = RMSprop(lr = config.lr)
     self.model = tf.keras.models.Sequential()
+    self.model.add(tf.keras.Input(shape = (myobj.size,)))
     self.model.add(tf.keras.layers.Dense(config.hidden, activation='relu'))
     if False and classify:
         self.model.add(tf.keras.layers.Dense(myobj.classes, activation = activation))
