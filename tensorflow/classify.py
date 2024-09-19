@@ -403,6 +403,9 @@ class Classify:
         if myobj.modelInt == 12:
             modelname = 'conditional_gan'
             config = myobj
+        if myobj.modelInt == 13:
+            modelname = 'dcgan'
+            config = myobj
         return config, modelname
       if hasattr(myobj, 'modelName'):
         if myobj.modelName == 'dnn':
@@ -579,7 +582,7 @@ class Classify:
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
-        (dataset, size, classes, classify) = mydatasets.getdataset2(myobj, config, self)
+        (dataset, size, classes, classify, from_logits) = mydatasets.getdataset2(myobj, config, self)
 
         myobj.size = size
         myobj.classes = classes
@@ -598,18 +601,18 @@ class Classify:
         #)
         gan = model
         gan.compile(
-            d_optimizer=tf.keras.optimizers.Adam(learning_rate=0.0003),
-            g_optimizer=tf.keras.optimizers.Adam(learning_rate=0.0003),
-            loss_fn=tf.keras.losses.BinaryCrossentropy(from_logits=True),
+            d_optimizer=tf.keras.optimizers.Adam(learning_rate=config.lr),
+            g_optimizer=tf.keras.optimizers.Adam(learning_rate=config.lr),
+            loss_fn=tf.keras.losses.BinaryCrossentropy(from_logits=from_logits),
         )
 
-        #gan.fit(dataset, epochs=20)
-        gan.fit(dataset, epochs=1)
+        gan.fit(dataset, epochs=config.epochs)
 
         """
         ## Interpolating between classes with the trained generator
         """
 
+        # mnist
         # We first extract the trained generator from our Conditional GAN.
         trained_gen = gan.generator
 

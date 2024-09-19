@@ -136,11 +136,13 @@ class Model(tf.keras.Model):
             [fake_image_and_labels, real_image_and_labels], axis=0
         )
 
+        # common
         # Assemble labels discriminating real from fake images.
         labels = ops.concatenate(
             [ops.ones((batch_size, 1)), ops.zeros((batch_size, 1))], axis=0
         )
 
+        # common
         # Train the discriminator.
         with tf.GradientTape() as tape:
             predictions = self.discriminator(combined_images)
@@ -158,9 +160,11 @@ class Model(tf.keras.Model):
             [random_latent_vectors, one_hot_labels], axis=1
         )
 
+        # common
         # Assemble labels that say "all real images".
         misleading_labels = ops.zeros((batch_size, 1))
 
+        # common
         # Train the generator (note that we should *not* update the weights
         # of the discriminator)!
         with tf.GradientTape() as tape:
@@ -173,6 +177,7 @@ class Model(tf.keras.Model):
         grads = tape.gradient(g_loss, self.generator.trainable_weights)
         self.g_optimizer.apply_gradients(zip(grads, self.generator.trainable_weights))
 
+        # common
         # Monitor loss.
         self.gen_loss_tracker.update_state(g_loss)
         self.disc_loss_tracker.update_state(d_loss)

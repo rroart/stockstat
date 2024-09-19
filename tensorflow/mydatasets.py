@@ -7,6 +7,8 @@ from keras import backend as K
 def getdataset2(myobj, config, classifier):
     if myobj.dataset == 'mnist':
         return getmnist2(myobj, config)
+    if myobj.dataset == 'celeba_gan':
+        return getceleba_gan(myobj, config)
 
 def getmnist2(myobj, config):
     """
@@ -33,7 +35,19 @@ def getmnist2(myobj, config):
     print(f"Shape of training images: {all_digits.shape}")
     print(f"Shape of training labels: {all_labels.shape}")
     mydim = (28, 28, 1)
-    return dataset, mydim, 10, True
+    return dataset, mydim, 10, True, True
+
+def getceleba_gan(myobj, config):
+    # TODO download
+    from zipfile import ZipFile
+    with ZipFile("celeba_gan/data.zip", "r") as zipobj:
+        zipobj.extractall("celeba_gan")
+    dataset = keras.utils.image_dataset_from_directory(
+        "celeba_gan", label_mode=None, image_size=(64, 64), batch_size=32
+    )
+    dataset = dataset.map(lambda x: x / 255.0)
+    mydim = (64, 64)
+    return dataset, mydim, 10, True, False
 
 def getdataset(myobj, config, classifier):
     if myobj.dataset == 'mnist':
