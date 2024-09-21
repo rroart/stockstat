@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.ta4j.core.TimeSeries;
+import org.ta4j.core.BarSeries;
 import org.ta4j.core.indicators.CCIIndicator;
 import org.ta4j.core.indicators.StochasticRSIIndicator;
 
@@ -31,7 +31,7 @@ public class Ta4jCCI extends Ta4j {
         if (size == 0) {
             return objs;
         }
-        TimeSeries series = getThreeSeries(close, low, high, size);
+        BarSeries series = getThreeSeries(close, low, high, size);
         CCIIndicator i = new CCIIndicator(series, 14);
         for (int j = 0; j < size; j++) {
             cci[j] = i.getValue(j).doubleValue();

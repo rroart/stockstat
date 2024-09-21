@@ -7,11 +7,11 @@ import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.ta4j.core.TimeSeries;
+import org.ta4j.core.BarSeries;
 import org.ta4j.core.indicators.EMAIndicator;
 import org.ta4j.core.indicators.MACDIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
-import org.ta4j.core.indicators.helpers.DifferenceIndicator;
+import org.ta4j.core.indicators.helpers.CombineIndicator;
 
 import roart.common.util.ArraysUtil;
 import roart.model.data.MarketData;
@@ -52,7 +52,7 @@ public class Ta4jMACD extends Ta4j {
         if (size == 0) {
             return objs;
         }
-        TimeSeries series = getClosedSeries(values, size);
+        BarSeries series = getClosedSeries(values, size);
         log.debug(""+series.getBarCount());
         if (series.getBarCount() == 0) {
             int jj = 0;
@@ -64,8 +64,8 @@ public class Ta4jMACD extends Ta4j {
         MACDIndicator macdI = new MACDIndicator(closePrice, 12, 26);
         EMAIndicator emaMacd = new EMAIndicator(macdI, 9);
         signal = emaMacd;
-        DifferenceIndicator macdIndicator2 = new DifferenceIndicator(shortEma, longEma);
-        DifferenceIndicator macdIndicator = new DifferenceIndicator(macdI, signal);
+        //CombineIndicator macdIndicator2 = new CombineIndicator(shortEma, longEma);
+        CombineIndicator macdIndicator = CombineIndicator.minus(macdI, signal);
         for (int j = 0; j < size; j++) {
             log.debug(""+j      );
             sig[j] = signal.getValue(j).doubleValue();

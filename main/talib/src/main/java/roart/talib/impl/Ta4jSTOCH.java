@@ -1,6 +1,6 @@
 package roart.talib.impl;
 
-import org.ta4j.core.TimeSeries;
+import org.ta4j.core.BarSeries;
 import org.ta4j.core.indicators.StochasticOscillatorDIndicator;
 import org.ta4j.core.indicators.StochasticOscillatorKIndicator;
 
@@ -23,7 +23,7 @@ public class Ta4jSTOCH extends Ta4j {
         if (size == 0) {
             return objs;
         }
-        TimeSeries series = getThreeSeries(close, low, high, size);
+        BarSeries series = getThreeSeries(close, low, high, size);
         StochasticOscillatorKIndicator kIndicator = new StochasticOscillatorKIndicator(series, 14);
         StochasticOscillatorDIndicator dIndicator = new StochasticOscillatorDIndicator(kIndicator);
         for (int j = 0; j < size; j++) {

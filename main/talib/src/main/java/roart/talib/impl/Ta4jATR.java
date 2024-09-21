@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.ta4j.core.TimeSeries;
+import org.ta4j.core.BarSeries;
 import org.ta4j.core.indicators.ATRIndicator;
 import org.ta4j.core.indicators.StochasticRSIIndicator;
 
@@ -31,7 +31,7 @@ public class Ta4jATR extends Ta4j {
         if (size == 0) {
             return objs;
         }
-        TimeSeries series = getThreeSeries(close, low, high, size);
+        BarSeries series = getThreeSeries(close, low, high, size);
         ATRIndicator i = new ATRIndicator(series, 14);
         for (int j = 0; j < size; j++) {
             atr[j] = i.getValue(j).doubleValue();

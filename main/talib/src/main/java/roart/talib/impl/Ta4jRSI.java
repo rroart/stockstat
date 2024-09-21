@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.ta4j.core.TimeSeries;
+import org.ta4j.core.BarSeries;
 import org.ta4j.core.indicators.RSIIndicator;
 import org.ta4j.core.indicators.StochasticRSIIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
@@ -30,7 +30,7 @@ public class Ta4jRSI extends Ta4j {
         if (size == 0) {
             return objs;
         }
-        TimeSeries series = getClosedSeries(values, size);
+        BarSeries series = getClosedSeries(values, size);
         RSIIndicator i = new RSIIndicator(new ClosePriceIndicator(series), 14);
         for (int j = 0; j < size; j++) {
             rsi[j] = i.getValue(j).doubleValue();

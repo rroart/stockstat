@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.ta4j.core.TimeSeries;
+import org.ta4j.core.BarSeries;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 
 import com.tictactec.ta.lib.Core;
