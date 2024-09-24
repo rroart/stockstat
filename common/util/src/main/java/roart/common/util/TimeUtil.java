@@ -2,6 +2,7 @@ package roart.common.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -263,5 +264,15 @@ public class TimeUtil {
     public static String format(LocalDate date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.MYDATEFORMAT);
         return date.format(formatter);
+    }
+    
+    public static LocalDate add(LocalDate date, boolean weekdays) {
+        date = date.plusDays(1);
+        if (weekdays) {
+            while (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                date = date.plusDays(1);
+            }
+        }
+        return date;
     }
 }

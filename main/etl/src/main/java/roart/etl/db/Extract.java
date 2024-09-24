@@ -61,7 +61,10 @@ public class Extract {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-    
+        return getStockData(conf, market, stocks, meta, periodText);
+    }
+
+    public StockData getStockData(IclijConfig conf, String market, List<StockItem> stocks, MetaItem meta, String[] periodText) {    
         Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
         Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
         stockdatemap = StockUtil.filterFew(stockdatemap, conf.getFilterDate());

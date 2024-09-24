@@ -4,11 +4,18 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import roart.common.util.TimeUtil;
+import roart.iclij.config.IclijConfig;
+import roart.common.constants.Constants;
+import roart.common.model.MetaItem;
+import roart.common.model.StockItem;
+import roart.model.data.StockData;
+import roart.etl.db.Extract;
 
 public class TestData {
     public Map<String, List<List<Double>>> getAbnormCatValMap() {
@@ -78,5 +85,54 @@ public class TestData {
         //l2.add(l);
         map.put("1", l);
         return map;
+    }
+    
+    public Map<String, Double[][]> getListMap() {
+        Map<String, Double[][]> aListMap = new HashMap<>();
+        aListMap.put("id1", new Double[][] { { 1.0 , 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0 } });
+        aListMap.put("id2", new Double[][] { { 11.0 , 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0, 33.0, 34.0, 35.0 } });
+        return aListMap;
+    }
+
+    public List<StockItem> getStockItem(String market, boolean weekdays, Double[] data, int period) throws Exception {
+        List<StockItem> list = new ArrayList<>();
+        LocalDate localDate = LocalDate.now().minusDays(60);
+        localDate = TimeUtil.add(localDate, weekdays);
+        Date mydate = TimeUtil.convertDate(localDate);
+        list.addAll(getStockItem("mark", "id1", mydate, weekdays, new Double[] { 1.0 , 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0 }, 0));
+        list.addAll(getStockItem("mark", "id2", mydate, weekdays, new Double[] { 11.0 , 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0, 33.0, 34.0, 35.0 }, 0));
+        return list;
+    }
+
+    public List<StockItem> getStockItem(String market, String id, Date date, boolean weekdays, Double[] data, int period) throws Exception {
+        List<StockItem> list = new ArrayList<>();
+        LocalDate mydate = TimeUtil.convertDate(date);
+        for (Double datum : data) {
+            StockItem stock = new StockItem();
+            stock.setMarketid(market);
+            stock.setId(id);
+            stock.setName("name"+id);
+            stock.setDate(TimeUtil.convertDate(mydate));
+            switch (period) {
+            case Constants.INDEXVALUECOLUMN:
+                stock.setIndexvalue(datum);
+                break;
+            case Constants.PRICECOLUMN:
+                stock.setPrice(datum);
+                break;
+            default:
+                stock.setPeriod(period, datum);
+            }
+            list.add(stock);
+            mydate = TimeUtil.add(mydate, weekdays);
+        }
+        return list;
+    }
+    
+    public StockData getStockdata(IclijConfig conf) throws Exception {
+        List<StockItem> stocks = getStockItem(null, true, null, 0);
+        MetaItem meta = new MetaItem("mark", "p0", "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", null, null, null);
+        String[] periodText = new String[] { "p0", "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8" };
+        return new Extract(null).getStockData(conf, "mark", stocks, meta, periodText);
     }
 }
