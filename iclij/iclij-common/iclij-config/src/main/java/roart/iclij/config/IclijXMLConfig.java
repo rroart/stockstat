@@ -76,7 +76,9 @@ public class IclijXMLConfig {
             if (configFile == null) {
                 return;
             }
-            configFile = "../conf/" + configFile;
+            if (!configFile.contains("/")) {
+                configFile = "../conf/" + configFile;
+            }
             //config = new PropertiesConfiguration(ConfigConstants.PROPFILE);
             configxml = new XMLConfiguration();
             Parameters params = new Parameters();
