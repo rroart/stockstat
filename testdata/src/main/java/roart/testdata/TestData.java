@@ -99,8 +99,8 @@ public class TestData {
         LocalDate localDate = LocalDate.now().minusDays(60);
         localDate = TimeUtil.add(localDate, weekdays);
         Date mydate = TimeUtil.convertDate(localDate);
-        list.addAll(getStockItem("mark", "id1", mydate, weekdays, new Double[] { 1.0 , 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0 }, 0));
-        list.addAll(getStockItem("mark", "id2", mydate, weekdays, new Double[] { 11.0 , 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0, 33.0, 34.0, 35.0 }, 0));
+        list.addAll(getStockItem(market, "id1", mydate, weekdays, new Double[] { 1.0 , 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0 }, period));
+        list.addAll(getStockItem(market, "id2", mydate, weekdays, new Double[] { 11.0 , 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0, 33.0, 34.0, 35.0 }, period));
         return list;
     }
 
@@ -130,9 +130,9 @@ public class TestData {
     }
     
     public StockData getStockdata(IclijConfig conf) throws Exception {
-        List<StockItem> stocks = getStockItem(null, true, null, 0);
-        MetaItem meta = new MetaItem("mark", "p0", "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", null, null, null);
-        String[] periodText = new String[] { "p0", "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8" };
-        return new Extract(null).getStockData(conf, "mark", stocks, meta, periodText);
+        List<StockItem> stocks = getStockItem(TestConstants.MARKET, true, null, Constants.INDEXVALUECOLUMN);
+        MetaItem meta = new MetaItem(TestConstants.MARKET, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
+        String[] periodText = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
+        return new Extract(null).getStockData(conf, TestConstants.MARKET, stocks, meta, periodText);
     }
 }
