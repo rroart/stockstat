@@ -612,6 +612,12 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRU, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRUPERSIST, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRUCONFIG, MLConstants.TENSORFLOWGRUCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGANDCGAN, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGANDCGANPERSIST, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGANDCGANCONFIG, MLConstants.TENSORFLOWDCGANCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGANCONDITIONALGAN, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGANCONDITIONALGANPERSIST, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGANCONDITIONALGANCONFIG, MLConstants.TENSORFLOWCONDITIONALGANCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCH, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLP, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLPPERSIST, Boolean.TRUE);
@@ -1473,6 +1479,12 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRU, new XMLType( Boolean.class, Boolean.TRUE, "Enable Predictor Tensorflow GRU"));
         mymap.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRUPERSIST, new XMLType( Boolean.class, Boolean.TRUE, "Enable Predictor Tensorflow GRU persist"));
         mymap.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRUCONFIG, new XMLType( String.class, MLConstants.TENSORFLOWGRUCONFIG, "Config for Predictor Tensorflow GRU"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGANDCGAN, new XMLType( Boolean.class, Boolean.TRUE, "Enable Predictor Tensorflow GRU"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDCGANPERSIST, new XMLType( Boolean.class, Boolean.TRUE, "Enable Predictor Tensorflow GRU persist"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGANDCGANCONFIG, new XMLType( String.class, MLConstants.TENSORFLOWGRUCONFIG, "Config for Predictor Tensorflow GRU"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGANCONDITIONALGAN, new XMLType( Boolean.class, Boolean.TRUE, "Enable Predictor Tensorflow GRU"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGANCONDITIONALGANPERSIST, new XMLType( Boolean.class, Boolean.TRUE, "Enable Predictor Tensorflow GRU persist"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGANCONDITIONALGANCONFIG, new XMLType( String.class, MLConstants.TENSORFLOWGRUCONFIG, "Config for Predictor Tensorflow GRU"));
         mymap.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCH, new XMLType( Boolean.class, Boolean.TRUE, "Enable Predictor Pytorch"));
         mymap.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLP, new XMLType( Boolean.class, Boolean.TRUE, "Enable Predictor Pytorch MLP"));
         mymap.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLPPERSIST, new XMLType( Boolean.class, Boolean.TRUE, "Enable Predictor Pytorch MLP persist"));

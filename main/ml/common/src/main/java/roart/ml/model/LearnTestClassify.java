@@ -46,6 +46,10 @@ public class LearnTestClassify {
     
     private TensorflowGRUConfig tensorflowGRUConfig;
     
+    private TensorflowDCGANConfig tensorflowDCGANConfig;
+    
+    private TensorflowConditionalGANConfig tensorflowConditionalGANConfig;
+    
     private PytorchMLPConfig pytorchMLPConfig;
     
     private PytorchCNNConfig pytorchCNNConfig;

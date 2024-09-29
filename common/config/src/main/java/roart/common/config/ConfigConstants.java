@@ -54,6 +54,12 @@ public class ConfigConstants {
     public static final String MACHINELEARNINGTENSORFLOWGRU = "machinelearning.tensorflow.gru";
     public static final String MACHINELEARNINGTENSORFLOWGRUPERSIST = "machinelearning.tensorflow.gru.persist";
     public static final String MACHINELEARNINGTENSORFLOWGRUCONFIG = "machinelearning.tensorflow.gru.config";
+    public static final String MACHINELEARNINGTENSORFLOWGANDCGAN = "machinelearning.tensorflow.gan.dcgan";
+    public static final String MACHINELEARNINGTENSORFLOWGANDCGANPERSIST = "machinelearning.tensorflow.gan.dcgan.persist";
+    public static final String MACHINELEARNINGTENSORFLOWGANDCGANCONFIG = "machinelearning.tensorflow.gan.dcgan.config";
+    public static final String MACHINELEARNINGTENSORFLOWGANCONDITIONALGAN = "machinelearning.tensorflow.gan.conditionalgan";
+    public static final String MACHINELEARNINGTENSORFLOWGANCONDITIONALGANPERSIST = "machinelearning.tensorflow.gan.conditionalgan.persist";
+    public static final String MACHINELEARNINGTENSORFLOWGANCONDITIONALGANCONFIG = "machinelearning.tensorflow.gan.conditionalgan.config";
     public static final String MACHINELEARNINGTENSORFLOWPATH = "machinelearning.tensorflow.path";
     public static final String MACHINELEARNINGTENSORFLOWSERVER = "machinelearning.tensorflow.server";
     public static final String MACHINELEARNINGPYTORCH = "machinelearning.pytorch";

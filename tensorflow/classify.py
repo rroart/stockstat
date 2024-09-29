@@ -11,6 +11,7 @@ import importlib
 import json
 from datetime import datetime
 from werkzeug.wrappers import Response
+from werkzeug.utils import secure_filename
 import shutil
 
 from multiprocessing import Queue
@@ -141,11 +142,11 @@ class Classify:
             sliding_window_stride = 1
         sliding_window_width = myobj.size
         #print(type(size))
-        #print(size)
+        print(size)
         mysize = size[0]
         sequence_length = size[1]
         arange = int((sequence_length - (sliding_window_width) - myobj.classes) / sliding_window_stride) + 1
-        #print("arange", arange)
+        print("arange", arange)
         splitInput = np.zeros((mysize * arange, sliding_window_width))
         splitTarget = np.zeros((mysize * arange))
         #print(inputs.shape)
@@ -402,10 +403,13 @@ class Classify:
             config = myobj.tensorflowQCNNConfig
         if myobj.modelInt == 12:
             modelname = 'conditional_gan'
-            config = myobj
+            config = myobj.tensorflowConditionalGANConfig
         if myobj.modelInt == 13:
             modelname = 'dcgan'
-            config = myobj
+            config = myobj.tensorflowDCGANConfig
+        if myobj.modelInt == 14:
+            modelname = 'neural_style_transfer'
+            config = myobj.tensorflowNeuralStyleTransferConfig
         return config, modelname
       if hasattr(myobj, 'modelName'):
         if myobj.modelName == 'dnn':
@@ -575,12 +579,42 @@ class Classify:
         queue.put(Response(json.dumps({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify" : classify, "gpu" : self.hasgpu() }), mimetype='application/json'))
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
+    def get_file(self, request):
+        filename = self.getFilename(request, 'file')
+        filename2 = self.getFilename(request, 'file2')
+        return (filename, filename2)
+
+    def getFilename(self, request, key):
+        if key not in request.files:
+            print('No file part')
+            # print(request.files)
+            return None
+        file = request.files[key]
+        if file.filename == '':
+            print('No selected file')
+            return None
+        if file:
+            filename = secure_filename(file.filename)
+            file.save("/tmp/" + filename)
+            filename = "/tmp/" + filename
+        return filename
+
     def do_dataset_gen(self, queue, request):
         dt = datetime.now()
         timestamp = dt.timestamp()
-        # print(request.get_data(as_text=True))
-        myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
+        #print("1111")
+        #print(request.get_data(as_text=True))
+        #print("2222")
+
+        (filename, filename2) = self.get_file(request)
+        print("Filename", filename, filename2)
+
+        #print("rrr0", request.form)
+        #print("rrr", request.files['json'])
+        myobj = json.loads(request.form['json'], object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
+        print("mmm", modelname)
+        return
         Model = importlib.import_module('model.' + modelname)
         (dataset, size, classes, classify, from_logits) = mydatasets.getdataset2(myobj, config, self)
 
@@ -608,40 +642,8 @@ class Classify:
 
         gan.fit(dataset, epochs=config.epochs)
 
-        """
-        ## Interpolating between classes with the trained generator
-        """
-
-        # mnist
-        # We first extract the trained generator from our Conditional GAN.
-        trained_gen = gan.generator
-
-        # Choose the number of intermediate images that would be generated in
-        # between the interpolation + 2 (start and last images).
-        num_interpolation = 9  # @param {type:"integer"}
-
-        # Sample noise for the interpolation.
-        interpolation_noise = tf.keras.random.normal(shape=(1, gan.latent_dim))
-        interpolation_noise = tf.keras.ops.repeat(interpolation_noise, repeats=num_interpolation)
-        interpolation_noise = tf.keras.ops.reshape(interpolation_noise, (num_interpolation, gan.latent_dim))
-
-        start_class = 2  # @param {type:"slider", min:0, max:9, step:1}
-        end_class = 6  # @param {type:"slider", min:0, max:9, step:1}
-
-        fake_images = gan.interpolate_class(start_class, end_class, interpolation_noise, num_interpolation, trained_gen)
-
-        """
-        Here, we first sample noise from a normal distribution and then we repeat that for
-        `num_interpolation` times and reshape the result accordingly.
-        We then distribute it uniformly for `num_interpolation`
-        with the label identities being present in some proportion.
-        """
-
-        fake_images *= 255.0
-        converted_images = fake_images.astype(np.uint8)
-        converted_images = keras.ops.image.resize(converted_images, (96, 96)).numpy().astype(np.uint8)
-        import imageio
-        imageio.mimsave("animation.gif", converted_images[:, :, :, 0], fps=1)
+        if gen:
+            gan.gen
 
         classifier = model
 

@@ -9,6 +9,14 @@ ahost = os.environ.get('MYAHOST')
 if ahost is None:
     ahost = "localhost"
     
+imgaport = os.environ.get('MYIMGAPORT')
+if imgaport is None:
+    imgaport = "80"
+
+imgahost = os.environ.get('MYIMGAHOST')
+if imgahost is None:
+    imgahost = "localhost"
+    
 url1 = 'http://' + ahost + ':' + aport + '/action/simulateinvest'
 url2 = 'http://' + ahost + ':' + aport + '/action/improvesimulateinvest'
 url3 = 'http://' + ahost + ':' + aport + '/action/autosimulateinvest'
@@ -21,9 +29,12 @@ url9 = 'http://' + ahost + ':' + aport + '/db/update/end'
 url10 = 'http://' + ahost + ':' + aport + '/cache/invalidate'
 url11 = 'http://' + ahost + ':' + aport + '/copy/'
 
+imgurl1 = 'http://' + imgahost + ':' + imgaport + '/datasetgen'
+
 #headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 #headers={'Content-type':'application/json', 'Accept':'application/json'}
 headers={'Content-Type' : 'application/json;charset=utf-8'}
+headers2={'Content-Type' : 'multipart/form-data;charset=utf-8'}
 def request1(market, data):
     return requests.post(url1 + '/market/' + str(market), json=data, headers=headers)
 
@@ -60,4 +71,8 @@ def cacheinvalidate():
 
 def copydb(indb, outdb):
     return requests.post(url11 + indb + "/" + outdb, headers=headers)
+
+def imgrequest1(market, files):
+    #return requests.post(imgurl1, json=data, headers=headers2, files=files)
+    return requests.post(imgurl1, files=files)
 

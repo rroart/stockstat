@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonSubTypes({  
     @Type(value = TensorflowEstimatorConfig.class, name = "TensorflowEstimatorConfig"),
     @Type(value = TensorflowFeedConfig.class, name = "TensorflowFeedConfig"),
+    @Type(value = TensorflowGANConfig.class, name = "TensorflowGANConfig"),
     @Type(value = TensorflowPreFeedConfig.class, name = "TensorflowPreFeedConfig") })  
 public abstract class TensorflowConfig extends NeuralNetConfig {
 

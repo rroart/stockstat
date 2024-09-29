@@ -241,3 +241,40 @@ Some of the last generated images around epoch 30
 
 ![results](https://i.imgur.com/h5MtQZ7l.png)
 """
+
+gen:
+    """
+    ## Interpolating between classes with the trained generator
+    """
+
+    # mnist
+    # We first extract the trained generator from our Conditional GAN.
+    trained_gen = gan.generator
+
+    # Choose the number of intermediate images that would be generated in
+    # between the interpolation + 2 (start and last images).
+    num_interpolation = 9  # @param {type:"integer"}
+
+    # Sample noise for the interpolation.
+    interpolation_noise = tf.keras.random.normal(shape=(1, gan.latent_dim))
+    interpolation_noise = tf.keras.ops.repeat(interpolation_noise, repeats=num_interpolation)
+    interpolation_noise = tf.keras.ops.reshape(interpolation_noise, (num_interpolation, gan.latent_dim))
+
+    start_class = 2  # @param {type:"slider", min:0, max:9, step:1}
+    end_class = 6  # @param {type:"slider", min:0, max:9, step:1}
+
+    fake_images = gan.interpolate_class(start_class, end_class, interpolation_noise, num_interpolation, trained_gen)
+
+    """
+    Here, we first sample noise from a normal distribution and then we repeat that for
+    `num_interpolation` times and reshape the result accordingly.
+    We then distribute it uniformly for `num_interpolation`
+    with the label identities being present in some proportion.
+    """
+
+    fake_images *= 255.0
+    converted_images = fake_images.astype(np.uint8)
+    converted_images = keras.ops.image.resize(converted_images, (96, 96)).numpy().astype(np.uint8)
+    import imageio
+
+    imageio.mimsave("animation.gif", converted_images[:, :, :, 0], fps=1)

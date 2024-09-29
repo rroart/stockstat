@@ -452,6 +452,8 @@ public class NeuralNetConfigs {
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN, new ImmutablePair(TensorflowRNNConfig.class, MLConstants.TENSORFLOWRNNCONFIG));
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU, new ImmutablePair(TensorflowGRUConfig.class, MLConstants.TENSORFLOWGRUCONFIG));
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, new ImmutablePair(TensorflowLSTMConfig.class, MLConstants.TENSORFLOWLSTMCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGANDCGANCONFIG, new ImmutablePair(TensorflowLSTMConfig.class, MLConstants.TENSORFLOWDCGANCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGANCONDITIONALGANCONFIG, new ImmutablePair(TensorflowLSTMConfig.class, MLConstants.TENSORFLOWCONDITIONALGANCONFIG));
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHMLP, new ImmutablePair(PytorchMLPConfig.class, MLConstants.PYTORCHMLPCONFIG));
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN, new ImmutablePair(PytorchCNNConfig.class, MLConstants.PYTORCHCNNCONFIG));
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN2, new ImmutablePair(PytorchCNN2Config.class, MLConstants.PYTORCHCNN2CONFIG));

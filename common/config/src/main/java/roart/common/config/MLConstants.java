@@ -47,6 +47,9 @@ public class MLConstants {
     public static final String CNN2 = "cnn2";
     public static final String GRU = "gru";
 
+    public static final String DCGAN = "dcgan";
+    public static final String CONDITIONALGAN = "conditionalgan";
+    
     public static final String RND = "RND";
     
     public static final String SPARKLORCONFIG = "{ \"maxiter\" : 1000, \"tol\" : 1.0E-6 }";
@@ -75,4 +78,6 @@ public class MLConstants {
     public static final String TENSORFLOWLSTMCONFIG = "{ \"name\" : \"lstm\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01, \"dropout\" : 0, \"dropoutin\" : 0 }";
     public static final String TENSORFLOWGRUCONFIG = "{ \"name\" : \"gru\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01, \"dropout\" : 0, \"dropoutin\" : 0 }";
     public static final String TENSORFLOWLIRCONFIG = "{ \"name\" : \"lir\", \"steps\" : 1000, \"lr\" : 0.01 }";
+    public static final String TENSORFLOWDCGANCONFIG = "{ \"name\" : \"dcgan\", \"steps\" : 20, \"lr\" : 0.0001 }";
+    public static final String TENSORFLOWCONDITIONALGANCONFIG = "{ \"name\" : \"conditionalgan\", \"steps\" : 20, \"lr\" : 0.0003 }";
 }
