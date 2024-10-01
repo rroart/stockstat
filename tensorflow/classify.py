@@ -12,6 +12,7 @@ import json
 from datetime import datetime
 from werkzeug.wrappers import Response
 from werkzeug.utils import secure_filename
+import inspect
 import shutil
 
 from multiprocessing import Queue
@@ -456,6 +457,7 @@ class Classify:
         if os.path.exists(self.getpath(myobj) + myobj.filename):
             return True
         return os.path.isfile(self.getpath(myobj) + myobj.filename + ".ckpt.index")
+    # TODO update ending
 
     def do_learntestclassify(self, queue, request):
         print("eager", tf.executing_eagerly())
@@ -613,15 +615,32 @@ class Classify:
         #print("rrr", request.files['json'])
         myobj = json.loads(request.form['json'], object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
-        print("mmm", modelname)
-        return
         Model = importlib.import_module('model.' + modelname)
-        (dataset, size, classes, classify, from_logits) = mydatasets.getdataset2(myobj, config, self)
+        if not modelname == 'neural_style_transfer':
+            (dataset, size, classes, classify, from_logits) = mydatasets.getdataset2(myobj, config, self)
 
-        myobj.size = size
-        myobj.classes = classes
+            myobj.size = size
+            myobj.classes = classes
 
-        model = Model.Model(myobj, config, classify, Model.discriminator, Model.generator, Model.latent_dim)
+            model = Model.Model(myobj, config, classify)
+        else:
+            model = Model.model(myobj, config, classify, filename, filename2)
+
+        exists = self.exists(myobj)
+        # load model if:                                                               # exists and not dynamic and wantclassify
+        if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
+            if Model.Model.localsave():
+                # dummy variable to allow saver
+                model = Model.Model(myobj, config, classify)
+                print("Restoring")
+                model.model = tf.keras.models.load_model( self.getpath(myobj) + myobj.filename + ".keras")
+                print("Restoring done")
+            else:
+                model = Model.Model(myobj, config, classify)
+        else:
+            model = Model.Model(myobj, config, classify)
+        # load end
+
         # print("classez2", myobj.classes)
         print(model)
         self.printgpus()
@@ -633,17 +652,23 @@ class Classify:
         #cond_gan = ConditionalGAN(
         #    discriminator=discriminator, generator=generator, latent_dim=latent_dim
         #)
-        gan = model
-        gan.compile(
-            d_optimizer=tf.keras.optimizers.Adam(learning_rate=config.lr),
-            g_optimizer=tf.keras.optimizers.Adam(learning_rate=config.lr),
-            loss_fn=tf.keras.losses.BinaryCrossentropy(from_logits=from_logits),
-        )
+        if not modelname == 'neural_style_transfer':
+            gan = model
+            gan.compile(
+                d_optimizer=tf.keras.optimizers.Adam(learning_rate=config.lr),
+                g_optimizer=tf.keras.optimizers.Adam(learning_rate=config.lr),
+                loss_fn=tf.keras.losses.BinaryCrossentropy(from_logits=from_logits),
+            )
 
-        gan.fit(dataset, epochs=config.epochs)
+            gan.fit(dataset, epochs=config.steps)
 
-        if gen:
-            gan.gen
+        if not self.wantDynamic(myobj) and self.wantLearn(myobj):
+            if Model.Model.localsave():
+                print("Saving")
+                model.save(self.getpath(myobj) + myobj.filename + ".keras")
+
+        if hasattr(myobj, 'generate') and myobj.generate:
+            gan.generate()
 
         classifier = model
 

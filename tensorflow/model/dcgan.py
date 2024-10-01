@@ -17,10 +17,6 @@ import tensorflow as tf
 from keras import layers
 from keras import ops
 #import matplotlib.pyplot as plt
-import os
-#import gdown
-#from zipfile import ZipFile
-
 
 """
 ## Prepare CelebA data
@@ -64,22 +60,24 @@ Let's display a sample image:
 It maps a 64x64 image to a binary classification score.
 """
 
-discriminator = keras.Sequential(
-    [
-        keras.Input(shape=(64, 64, 3)),
-        layers.Conv2D(64, kernel_size=4, strides=2, padding="same"),
-        layers.LeakyReLU(negative_slope=0.2),
-        layers.Conv2D(128, kernel_size=4, strides=2, padding="same"),
-        layers.LeakyReLU(negative_slope=0.2),
-        layers.Conv2D(128, kernel_size=4, strides=2, padding="same"),
-        layers.LeakyReLU(negative_slope=0.2),
-        layers.Flatten(),
-        layers.Dropout(0.2),
-        layers.Dense(1, activation="sigmoid"),
-    ],
-    name="discriminator",
-)
-discriminator.summary()
+def discriminator(x, y):
+    discriminator = keras.Sequential(
+        [
+            keras.Input(shape=(x, y, 3)),
+            layers.Conv2D(64, kernel_size=4, strides=2, padding="same"),
+            layers.LeakyReLU(negative_slope=0.2),
+            layers.Conv2D(128, kernel_size=4, strides=2, padding="same"),
+            layers.LeakyReLU(negative_slope=0.2),
+            layers.Conv2D(128, kernel_size=4, strides=2, padding="same"),
+            layers.LeakyReLU(negative_slope=0.2),
+            layers.Flatten(),
+            layers.Dropout(0.2),
+            layers.Dense(1, activation="sigmoid"),
+        ],
+        name="discriminator",
+    )
+    discriminator.summary()
+    return discriminator
 
 """
 ## Create the generator
@@ -89,22 +87,24 @@ It mirrors the discriminator, replacing `Conv2D` layers with `Conv2DTranspose` l
 
 latent_dim = 128
 
-generator = keras.Sequential(
-    [
-        keras.Input(shape=(latent_dim,)),
-        layers.Dense(8 * 8 * 128),
-        layers.Reshape((8, 8, 128)),
-        layers.Conv2DTranspose(128, kernel_size=4, strides=2, padding="same"),
-        layers.LeakyReLU(negative_slope=0.2),
-        layers.Conv2DTranspose(256, kernel_size=4, strides=2, padding="same"),
-        layers.LeakyReLU(negative_slope=0.2),
-        layers.Conv2DTranspose(512, kernel_size=4, strides=2, padding="same"),
-        layers.LeakyReLU(negative_slope=0.2),
-        layers.Conv2D(3, kernel_size=5, padding="same", activation="sigmoid"),
-    ],
-    name="generator",
-)
-generator.summary()
+def generator():
+    generator = keras.Sequential(
+        [
+            keras.Input(shape=(latent_dim,)),
+            layers.Dense(8 * 8 * 128),
+            layers.Reshape((8, 8, 128)),
+            layers.Conv2DTranspose(128, kernel_size=4, strides=2, padding="same"),
+            layers.LeakyReLU(negative_slope=0.2),
+            layers.Conv2DTranspose(256, kernel_size=4, strides=2, padding="same"),
+            layers.LeakyReLU(negative_slope=0.2),
+            layers.Conv2DTranspose(512, kernel_size=4, strides=2, padding="same"),
+            layers.LeakyReLU(negative_slope=0.2),
+            layers.Conv2D(3, kernel_size=5, padding="same", activation="sigmoid"),
+        ],
+        name="generator",
+    )
+    generator.summary()
+    return generator
 
 """
 ## Override `train_step`
@@ -112,14 +112,13 @@ generator.summary()
 
 
 class Model(keras.Model):
-    def __init__(self, config, classify, discriminator, generator, latent_dim):
+    def __init__(self, myobj, config, classify):
         super().__init__()
         self.config = config
         self.classify = classify
 
-        self.discriminator = discriminator
-        self.generator = generator
-        self.latent_dim = latent_dim
+        self.discriminator = discriminator(myobj.size[0], myobj.size[1])
+        self.generator = generator()
         self.seed_generator = keras.random.SeedGenerator(1337)
 
     def compile(self, d_optimizer, g_optimizer, loss_fn):
@@ -138,7 +137,7 @@ class Model(keras.Model):
         # Sample random points in the latent space
         batch_size = ops.shape(real_images)[0]
         random_latent_vectors = keras.random.normal(
-            shape=(batch_size, self.latent_dim), seed=self.seed_generator
+            shape=(batch_size, latent_dim), seed=self.seed_generator
         )
 
         # Decode them to fake images
@@ -169,7 +168,7 @@ class Model(keras.Model):
 
         # Sample random points in the latent space
         random_latent_vectors = keras.random.normal(
-            shape=(batch_size, self.latent_dim), seed=self.seed_generator
+            shape=(batch_size, latent_dim), seed=self.seed_generator
         )
 
         # common
@@ -194,6 +193,14 @@ class Model(keras.Model):
             "g_loss": self.g_loss_metric.result(),
         }
 
+    def generate(self):
+        print("Done")
+
+    def localsave(self):
+       return True
+
+    def save(self, filename):
+        self.save(filename)
 
 """
 ## Create a callback that periodically saves generated images
@@ -201,14 +208,13 @@ class Model(keras.Model):
 
 
 class GANMonitor(keras.callbacks.Callback):
-    def __init__(self, num_img=3, latent_dim=128):
+    def __init__(self, num_img=3):
         self.num_img = num_img
-        self.latent_dim = latent_dim
         self.seed_generator = keras.random.SeedGenerator(42)
 
     def on_epoch_end(self, epoch, logs=None):
         random_latent_vectors = keras.random.normal(
-            shape=(self.num_img, self.latent_dim), seed=self.seed_generator
+            shape=(self.num_img, latent_dim), seed=self.seed_generator
         )
         generated_images = self.model.generator(random_latent_vectors)
         generated_images *= 255
@@ -216,7 +222,6 @@ class GANMonitor(keras.callbacks.Callback):
         for i in range(self.num_img):
             img = keras.utils.array_to_img(generated_images[i])
             img.save("generated_img_%03d_%d.png" % (epoch, i))
-
 
 """
 ## Train the end-to-end model
@@ -232,7 +237,7 @@ class GANMonitor(keras.callbacks.Callback):
 #)
 
 #gan.fit(
-#    dataset, epochs=epochs, callbacks=[GANMonitor(num_img=10, latent_dim=latent_dim)]
+#    dataset, epochs=epochs, callbacks=[GANMonitor(num_img=10)]
 #)
 
 """
@@ -242,39 +247,5 @@ Some of the last generated images around epoch 30
 ![results](https://i.imgur.com/h5MtQZ7l.png)
 """
 
-gen:
-    """
-    ## Interpolating between classes with the trained generator
-    """
 
-    # mnist
-    # We first extract the trained generator from our Conditional GAN.
-    trained_gen = gan.generator
 
-    # Choose the number of intermediate images that would be generated in
-    # between the interpolation + 2 (start and last images).
-    num_interpolation = 9  # @param {type:"integer"}
-
-    # Sample noise for the interpolation.
-    interpolation_noise = tf.keras.random.normal(shape=(1, gan.latent_dim))
-    interpolation_noise = tf.keras.ops.repeat(interpolation_noise, repeats=num_interpolation)
-    interpolation_noise = tf.keras.ops.reshape(interpolation_noise, (num_interpolation, gan.latent_dim))
-
-    start_class = 2  # @param {type:"slider", min:0, max:9, step:1}
-    end_class = 6  # @param {type:"slider", min:0, max:9, step:1}
-
-    fake_images = gan.interpolate_class(start_class, end_class, interpolation_noise, num_interpolation, trained_gen)
-
-    """
-    Here, we first sample noise from a normal distribution and then we repeat that for
-    `num_interpolation` times and reshape the result accordingly.
-    We then distribute it uniformly for `num_interpolation`
-    with the label identities being present in some proportion.
-    """
-
-    fake_images *= 255.0
-    converted_images = fake_images.astype(np.uint8)
-    converted_images = keras.ops.image.resize(converted_images, (96, 96)).numpy().astype(np.uint8)
-    import imageio
-
-    imageio.mimsave("animation.gif", converted_images[:, :, :, 0], fps=1)

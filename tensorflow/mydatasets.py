@@ -1,7 +1,11 @@
 import tensorflow as tf
 import numpy as np
 import keras
-#import pandas as pd 
+import os
+import gdown
+from zipfile import ZipFile
+
+#import pandas as pd
 from keras import backend as K
 
 def getdataset2(myobj, config, classifier):
@@ -39,11 +43,15 @@ def getmnist2(myobj, config):
 
 def getceleba_gan(myobj, config):
     # TODO download
-    from zipfile import ZipFile
-    with ZipFile("celeba_gan/data.zip", "r") as zipobj:
-        zipobj.extractall("celeba_gan")
+    os.makedirs("/tmp/celeba_gan", 0o777, True)
+
+    url = "https://drive.google.com/uc?id=1O7m1010EJjLE5QxLZiM9Fpjs7Oj6e684"
+    output = "/tmp/celeba_gan/data.zip"
+    gdown.download(url, output, quiet=True)
+    with ZipFile("/tmp/celeba_gan/data.zip", "r") as zipobj:
+        zipobj.extractall("/tmp/celeba_gan")
     dataset = keras.utils.image_dataset_from_directory(
-        "celeba_gan", label_mode=None, image_size=(64, 64), batch_size=32
+        "/tmp/celeba_gan", label_mode=None, image_size=(64, 64), batch_size=32
     )
     dataset = dataset.map(lambda x: x / 255.0)
     mydim = (64, 64)

@@ -3,7 +3,7 @@ import keras
 from keras import layers
 from keras import ops
 import tensorflow as tf
-from .model import MyModel
+import numpy as np
 
 """
 ## Constants and hyperparameters
@@ -12,7 +12,6 @@ from .model import MyModel
 batch_size = 64
 num_channels = 1
 num_classes = 10
-image_size = 28
 latent_dim = 128
 
 
@@ -38,36 +37,38 @@ adapted from [this example](https://keras.io/guides/customizing_what_happens_in_
 """
 
 # Create the discriminator.
-discriminator = keras.Sequential(
-    [
-        keras.layers.InputLayer((28, 28, discriminator_in_channels)),
-        layers.Conv2D(64, (3, 3), strides=(2, 2), padding="same"),
-        layers.LeakyReLU(negative_slope=0.2),
-        layers.Conv2D(128, (3, 3), strides=(2, 2), padding="same"),
-        layers.LeakyReLU(negative_slope=0.2),
-        layers.GlobalMaxPooling2D(),
-        layers.Dense(1),
-    ],
-    name="discriminator",
-)
+def discriminator(x, y):
+    return keras.Sequential(
+        [
+            keras.layers.InputLayer((x, y, discriminator_in_channels)),
+            layers.Conv2D(64, (3, 3), strides=(2, 2), padding="same"),
+            layers.LeakyReLU(negative_slope=0.2),
+            layers.Conv2D(128, (3, 3), strides=(2, 2), padding="same"),
+            layers.LeakyReLU(negative_slope=0.2),
+            layers.GlobalMaxPooling2D(),
+            layers.Dense(1),
+        ],
+        name="discriminator",
+    )
 
 # Create the generator.
-generator = keras.Sequential(
-    [
-        keras.layers.InputLayer((generator_in_channels,)),
-        # We want to generate 128 + num_classes coefficients to reshape into a
-        # 7x7x(128 + num_classes) map.
-        layers.Dense(7 * 7 * generator_in_channels),
-        layers.LeakyReLU(negative_slope=0.2),
-        layers.Reshape((7, 7, generator_in_channels)),
-        layers.Conv2DTranspose(128, (4, 4), strides=(2, 2), padding="same"),
-        layers.LeakyReLU(negative_slope=0.2),
-        layers.Conv2DTranspose(128, (4, 4), strides=(2, 2), padding="same"),
-        layers.LeakyReLU(negative_slope=0.2),
-        layers.Conv2D(1, (7, 7), padding="same", activation="sigmoid"),
-    ],
-    name="generator",
-)
+def generator():
+    return keras.Sequential(
+        [
+            keras.layers.InputLayer((generator_in_channels,)),
+            # We want to generate 128 + num_classes coefficients to reshape into a
+            # 7x7x(128 + num_classes) map.
+            layers.Dense(7 * 7 * generator_in_channels),
+            layers.LeakyReLU(negative_slope=0.2),
+            layers.Reshape((7, 7, generator_in_channels)),
+            layers.Conv2DTranspose(128, (4, 4), strides=(2, 2), padding="same"),
+            layers.LeakyReLU(negative_slope=0.2),
+            layers.Conv2DTranspose(128, (4, 4), strides=(2, 2), padding="same"),
+            layers.LeakyReLU(negative_slope=0.2),
+            layers.Conv2D(1, (7, 7), padding="same", activation="sigmoid"),
+        ],
+        name="generator",
+    )
 
 """
 ## Creating a `ConditionalGAN` model
@@ -75,15 +76,15 @@ generator = keras.Sequential(
 
 
 class Model(tf.keras.Model):
-    def __init__(self, myobj, config, classify, discriminator, generator, latent_dim):
+    def __init__(self, myobj, config, classify):
         super().__init__()
         #super(Model, self).__init__(config, classify, name='my_model')
+        self.myobj = myobj
         self.config = config
         self.classify = classify
 
-        self.discriminator = discriminator
-        self.generator = generator
-        self.latent_dim = latent_dim
+        self.discriminator = discriminator(myobj.size[0], myobj.size[1])
+        self.generator = generator()
         self.seed_generator = keras.random.SeedGenerator(1337)
         self.gen_loss_tracker = keras.metrics.Mean(name="generator_loss")
         self.disc_loss_tracker = keras.metrics.Mean(name="discriminator_loss")
@@ -107,17 +108,17 @@ class Model(tf.keras.Model):
         # the images. This is for the discriminator.
         image_one_hot_labels = one_hot_labels[:, :, None, None]
         image_one_hot_labels = ops.repeat(
-            image_one_hot_labels, repeats=[image_size * image_size]
+            image_one_hot_labels, repeats=[self.myobj.size[0] * self.myobj.size[1]]
         )
         image_one_hot_labels = ops.reshape(
-            image_one_hot_labels, (-1, image_size, image_size, num_classes)
+            image_one_hot_labels, (-1, self.myobj.size[0] * self.myobj.size[1], num_classes)
         )
 
         # Sample random points in the latent space and concatenate the labels.
         # This is for the generator.
         batch_size = ops.shape(real_images)[0]
         random_latent_vectors = keras.random.normal(
-            shape=(batch_size, self.latent_dim), seed=self.seed_generator
+            shape=(batch_size, latent_dim), seed=self.seed_generator
         )
         random_vector_labels = ops.concatenate(
             [random_latent_vectors, one_hot_labels], axis=1
@@ -154,7 +155,7 @@ class Model(tf.keras.Model):
 
         # Sample random points in the latent space.
         random_latent_vectors = keras.random.normal(
-            shape=(batch_size, self.latent_dim), seed=self.seed_generator
+            shape=(batch_size, latent_dim), seed=self.seed_generator
         )
         random_vector_labels = ops.concatenate(
             [random_latent_vectors, one_hot_labels], axis=1
@@ -187,7 +188,7 @@ class Model(tf.keras.Model):
         }
 
 
-    def interpolate_class(self, first_number, second_number, interpolation_noise, num_interpolation, trained_gen):
+    def interpolate_class(self, first_number, second_number, interpolation_noise, num_interpolation):
         # Convert the start and end labels to one-hot encoded vectors.
         first_label = keras.utils.to_categorical([first_number], num_classes)
         second_label = keras.utils.to_categorical([second_number], num_classes)
@@ -203,6 +204,48 @@ class Model(tf.keras.Model):
 
         # Combine the noise and the labels and run inference with the generator.
         noise_and_labels = ops.concatenate([interpolation_noise, interpolation_labels], 1)
-        fake = trained_gen.predict(noise_and_labels)
+        fake = self.generator.predict(noise_and_labels)
         return fake
 
+    def generate(self):
+        """
+        ## Interpolating between classes with the trained generator
+        """
+
+        # mnist
+        # We first extract the trained generator from our Conditional GAN.
+        trained_gen = self.generator
+
+        # Choose the number of intermediate images that would be generated in
+        # between the interpolation + 2 (start and last images).
+        num_interpolation = 9  # @param {type:"integer"}
+
+        # Sample noise for the interpolation.
+        interpolation_noise = tf.keras.random.normal(shape=(1, latent_dim))
+        interpolation_noise = tf.keras.ops.repeat(interpolation_noise, repeats=num_interpolation)
+        interpolation_noise = tf.keras.ops.reshape(interpolation_noise, (num_interpolation, latent_dim))
+
+        start_class = 2  # @param {type:"slider", min:0, max:9, step:1}
+        end_class = 6  # @param {type:"slider", min:0, max:9, step:1}
+
+        fake_images = self.interpolate_class(start_class, end_class, interpolation_noise, num_interpolation)
+
+        """
+        Here, we first sample noise from a normal distribution and then we repeat that for
+        `num_interpolation` times and reshape the result accordingly.
+        We then distribute it uniformly for `num_interpolation`
+        with the label identities being present in some proportion.
+        """
+
+        fake_images *= 255.0
+        converted_images = fake_images.astype(np.uint8)
+        converted_images = keras.ops.image.resize(converted_images, (96, 96)).numpy().astype(np.uint8)
+        import imageio
+
+        imageio.mimsave("animation.gif", converted_images[:, :, :, 0], fps=1)
+
+    def localsave(self):
+        return True
+
+    def save(self, filename):
+        self.save(filename)
