@@ -456,8 +456,7 @@ class Classify:
             return False
         if os.path.exists(self.getpath(myobj) + myobj.filename):
             return True
-        return os.path.isfile(self.getpath(myobj) + myobj.filename + ".ckpt.index")
-    # TODO update ending
+        return os.path.isfile(self.getpath(myobj) + myobj.filename + ".kerasq")
 
     def do_learntestclassify(self, queue, request):
         print("eager", tf.executing_eagerly())
