@@ -112,10 +112,9 @@ def generator():
 
 
 class Model(keras.Model):
-    def __init__(self, myobj, config, classify):
+    def __init__(self, myobj, config):
         super().__init__()
         self.config = config
-        self.classify = classify
 
         self.discriminator = discriminator(myobj.size[0], myobj.size[1])
         self.generator = generator()
@@ -199,8 +198,11 @@ class Model(keras.Model):
     def localsave(self):
        return True
 
-    def save(self, filename):
-        self.save(filename)
+    #def save(self, filename):
+    #    self.save(filename)
+
+    def getcallback(self):
+        return GANMonitor(num_img=10)
 
 """
 ## Create a callback that periodically saves generated images

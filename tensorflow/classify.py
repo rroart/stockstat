@@ -621,23 +621,24 @@ class Classify:
             myobj.size = size
             myobj.classes = classes
 
-            model = Model.Model(myobj, config, classify)
+            model = Model.Model(myobj, config)
         else:
-            model = Model.model(myobj, config, classify, filename, filename2)
+            model = Model.model(myobj, config, filename, filename2)
 
         exists = self.exists(myobj)
-        # load model if:                                                               # exists and not dynamic and wantclassify
-        if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
-            if Model.Model.localsave():
-                # dummy variable to allow saver
-                model = Model.Model(myobj, config, classify)
-                print("Restoring")
-                model.model = tf.keras.models.load_model( self.getpath(myobj) + myobj.filename + ".keras")
-                print("Restoring done")
-            else:
-                model = Model.Model(myobj, config, classify)
-        else:
-            model = Model.Model(myobj, config, classify)
+        # load model if:
+        # exists and not dynamic and wantclassify
+        #if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
+        #    if Model.Model.localsave():
+        #        # dummy variable to allow saver
+        #        model = Model.Model(myobj, config, classify)
+        #        print("Restoring")
+        #        model.model = tf.keras.models.load_model( self.getpath(myobj) + myobj.filename + ".keras")
+        #        print("Restoring done")
+        #    else:
+        #        model = Model.Model(myobj, config, classify)
+        #else:
+        #    model = Model.Model(myobj, config, classify)
         # load end
 
         # print("classez2", myobj.classes)
@@ -659,12 +660,12 @@ class Classify:
                 loss_fn=tf.keras.losses.BinaryCrossentropy(from_logits=from_logits),
             )
 
-            gan.fit(dataset, epochs=config.steps)
+            gan.fit(dataset, epochs=config.steps, callbacks = [ gan.getcallback() ])
 
-        if not self.wantDynamic(myobj) and self.wantLearn(myobj):
-            if Model.Model.localsave():
-                print("Saving")
-                model.save(self.getpath(myobj) + myobj.filename + ".keras")
+        #if not self.wantDynamic(myobj) and self.wantLearn(myobj):
+        #    if model.localsave():
+        #        print("Saving")
+        #        model.save(self.getpath(myobj) + myobj.filename + ".keras")
 
         if hasattr(myobj, 'generate') and myobj.generate:
             gan.generate()

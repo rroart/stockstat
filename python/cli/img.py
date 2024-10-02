@@ -29,15 +29,18 @@ def image(path, path2, data):
     print(response.text)
     print(response)
 
-def dcgan():
-    data = { 'modelInt' : 13, 'dataset' : 'celeba_gan', 'generate' : True, 'tensorflowDCGANConfig' : { 'lr' : 0.0001, 'steps' : 1 } }
+def dcgan(load = False, save = False):
+    neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : load, 'mllearn' : save }
+    data = { 'modelInt' : 13, 'dataset' : 'celeba_gan', 'generate' : True, 'filename' : 'dcgan', 'neuralnetcommand' : neuralnetcommand, 'tensorflowDCGANConfig' : { 'lr' : 0.0001, 'steps' : 10 } }
     image(None, None, data)
 
-def conditionalgan():
-    data = { 'modelInt' : 12, 'dataset' : 'mnist', 'generate' : True, 'tensorflowConditionalGANConfig' : { 'lr' : 0.0003, 'steps' : 1 } }
+def conditionalgan(load = False, save = False):
+    neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : load, 'mllearn' : save }
+    data = { 'modelInt' : 12, 'dataset' : 'mnist', 'generate' : True, 'filename' : 'conditionalgan', 'neuralnetcommand' : neuralnetcommand, 'tensorflowConditionalGANConfig' : { 'lr' : 0.0003, 'steps' : 1 } }
     image(None, None, data)
 
-def neural_style_transfer(path, path2):
-    data = { 'modelInt' : 14, 'generate' : True, 'tensorflowNeuralStyleTransferConfig' : { 'steps' : 1 } }
+def neural_style_transfer(path, path2, load = False, save = False):
+    neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : load, 'mllearn' : save }
+    data = { 'modelInt' : 14, 'generate' : True, 'neuralnetcommand' : neuralnetcommand, 'tensorflowNeuralStyleTransferConfig' : { 'steps' : 1 } }
     image(path, path2, data)
     
