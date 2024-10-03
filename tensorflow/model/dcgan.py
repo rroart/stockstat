@@ -114,6 +114,7 @@ def generator():
 class Model(keras.Model):
     def __init__(self, myobj, config):
         super().__init__()
+        self.myobj = myobj
         self.config = config
 
         self.discriminator = discriminator(myobj.size[0], myobj.size[1])
@@ -193,7 +194,22 @@ class Model(keras.Model):
         }
 
     def generate(self):
+        seed_generator = keras.random.SeedGenerator(42)
+        random_latent_vectors = keras.random.normal(
+            shape=(self.myobj.files, latent_dim), seed=seed_generator
+        )
+        print("ra", random_latent_vectors)
+        generated_images = self.generator(random_latent_vectors)
+        generated_images *= 255
+        generated_images.numpy()
+        print("gi", generated_images.shape)
+        imgs = []
+        for i in range(self.myobj.files):
+            img = keras.utils.array_to_img(generated_images[i])
+            img.save("generated_img_%d.png" % (i))
+            imgs.append("generated_img_" + str(i) + ".png")
         print("Done")
+        return imgs
 
     def localsave(self):
        return True
@@ -202,14 +218,21 @@ class Model(keras.Model):
     #    self.save(filename)
 
     def getcallback(self):
-        return GANMonitor(num_img=10)
+        return GANMonitor(num_img=self.myobj.files)
 
 """
 ## Create a callback that periodically saves generated images
 """
 
-
 class GANMonitor(keras.callbacks.Callback):
+    def __init__(self, num_img=3):
+        self.num_img = num_img
+        self.seed_generator = keras.random.SeedGenerator(42)
+
+    def on_epoch_end(self, epoch, logs=None):
+        return
+
+class GANMonitor2(keras.callbacks.Callback):
     def __init__(self, num_img=3):
         self.num_img = num_img
         self.seed_generator = keras.random.SeedGenerator(42)
@@ -218,6 +241,7 @@ class GANMonitor(keras.callbacks.Callback):
         random_latent_vectors = keras.random.normal(
             shape=(self.num_img, latent_dim), seed=self.seed_generator
         )
+        print("ra", random_latent_vectors)
         generated_images = self.model.generator(random_latent_vectors)
         generated_images *= 255
         generated_images.numpy()

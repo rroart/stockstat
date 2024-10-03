@@ -76,12 +76,11 @@ def generator():
 
 
 class Model(tf.keras.Model):
-    def __init__(self, myobj, config, classify):
+    def __init__(self, myobj, config):
         super().__init__()
         #super(Model, self).__init__(config, classify, name='my_model')
         self.myobj = myobj
         self.config = config
-        self.classify = classify
 
         self.discriminator = discriminator(myobj.size[0], myobj.size[1])
         self.generator = generator()
@@ -111,7 +110,7 @@ class Model(tf.keras.Model):
             image_one_hot_labels, repeats=[self.myobj.size[0] * self.myobj.size[1]]
         )
         image_one_hot_labels = ops.reshape(
-            image_one_hot_labels, (-1, self.myobj.size[0] * self.myobj.size[1], num_classes)
+            image_one_hot_labels, (-1, self.myobj.size[0], self.myobj.size[1], num_classes)
         )
 
         # Sample random points in the latent space and concatenate the labels.
@@ -204,6 +203,7 @@ class Model(tf.keras.Model):
 
         # Combine the noise and the labels and run inference with the generator.
         noise_and_labels = ops.concatenate([interpolation_noise, interpolation_labels], 1)
+        print("nl", noise_and_labels)
         fake = self.generator.predict(noise_and_labels)
         return fake
 
@@ -218,7 +218,7 @@ class Model(tf.keras.Model):
 
         # Choose the number of intermediate images that would be generated in
         # between the interpolation + 2 (start and last images).
-        num_interpolation = 9  # @param {type:"integer"}
+        num_interpolation = self.myobj.files # 9  # @param {type:"integer"}
 
         # Sample noise for the interpolation.
         interpolation_noise = tf.keras.random.normal(shape=(1, latent_dim))
@@ -240,6 +240,15 @@ class Model(tf.keras.Model):
         fake_images *= 255.0
         converted_images = fake_images.astype(np.uint8)
         converted_images = keras.ops.image.resize(converted_images, (96, 96)).numpy().astype(np.uint8)
+        print("conv", converted_images.shape)
+
+        imgs = []
+        for i in range(self.myobj.files):
+            img = keras.utils.array_to_img(converted_images[i])
+            img.save("generated_img_%d.png" % (i))
+            imgs.append("generated_img_" + str(i) + ".png")
+        print("Done")
+        return imgs
         import imageio
 
         imageio.mimsave("animation.gif", converted_images[:, :, :, 0], fps=1)
@@ -247,5 +256,21 @@ class Model(tf.keras.Model):
     def localsave(self):
         return True
 
-    def save(self, filename):
-        self.save(filename)
+    #def save(self, filename):
+    #    self.save(filename)
+
+    def getcallback(self):
+        return GANMonitor(num_img=10)
+
+"""
+## Create a callback that periodically saves generated images
+"""
+
+
+class GANMonitor(keras.callbacks.Callback):
+    def __init__(self, num_img=3):
+        self.num_img = num_img
+        self.seed_generator = keras.random.SeedGenerator(42)
+
+    def on_epoch_end(self, epoch, logs=None):
+        return

@@ -668,7 +668,8 @@ class Classify:
         #        model.save(self.getpath(myobj) + myobj.filename + ".keras")
 
         if hasattr(myobj, 'generate') and myobj.generate:
-            gan.generate()
+            files = gan.generate()
+            print("files", files)
 
         classifier = model
 
@@ -678,7 +679,7 @@ class Classify:
         print("millis ", (dt.timestamp() - timestamp) * 1000)
         queue.put(Response(json.dumps(
             {"accuracy": 0, "trainaccuracy": 0, "loss": 0, "classify": classify,
-             "gpu": self.hasgpu()}), mimetype='application/json'))
+             "gpu": self.hasgpu(), "files" : files } ), mimetype='application/json'))
         # return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def getpath(self, myobj):
