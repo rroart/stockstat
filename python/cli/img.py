@@ -28,6 +28,14 @@ def image(path, path2, data):
     response = request.imgrequest1(None, files)
     print(response.text)
     print(response)
+    myobj = response.json() #.loads(response.text) #request.get_data(as_text=True)
+    print(type(myobj))
+    print(myobj)
+    for afile in myobj['files']:
+        response = request.imgrequest2(None, afile)
+
+        with open(afile, 'wb') as file:
+            file.write(response.content)
 
 def dcgan(load = False, save = False):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : load, 'mllearn' : save }

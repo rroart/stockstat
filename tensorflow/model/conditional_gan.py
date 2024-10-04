@@ -4,6 +4,7 @@ from keras import layers
 from keras import ops
 import tensorflow as tf
 import numpy as np
+import os
 
 """
 ## Constants and hyperparameters
@@ -208,6 +209,7 @@ class Model(tf.keras.Model):
         return fake
 
     def generate(self):
+        os.makedirs("/tmp/download", 0o777, True)
         """
         ## Interpolating between classes with the trained generator
         """
@@ -239,13 +241,14 @@ class Model(tf.keras.Model):
 
         fake_images *= 255.0
         converted_images = fake_images.astype(np.uint8)
-        converted_images = keras.ops.image.resize(converted_images, (96, 96)).numpy().astype(np.uint8)
+        # tidi
+        #converted_images = keras.ops.image.resize(converted_images, (96, 96)).numpy().astype(np.uint8)
         print("conv", converted_images.shape)
 
         imgs = []
         for i in range(self.myobj.files):
             img = keras.utils.array_to_img(converted_images[i])
-            img.save("generated_img_%d.png" % (i))
+            img.save("/tmp/download/generated_img_%d.png" % (i))
             imgs.append("generated_img_" + str(i) + ".png")
         print("Done")
         return imgs

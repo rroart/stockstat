@@ -16,6 +16,7 @@ import tensorflow as tf
 
 from keras import layers
 from keras import ops
+import os
 #import matplotlib.pyplot as plt
 
 """
@@ -194,6 +195,7 @@ class Model(keras.Model):
         }
 
     def generate(self):
+        os.makedirs("/tmp/download", 0o777, True)
         seed_generator = keras.random.SeedGenerator(42)
         random_latent_vectors = keras.random.normal(
             shape=(self.myobj.files, latent_dim), seed=seed_generator
@@ -206,7 +208,7 @@ class Model(keras.Model):
         imgs = []
         for i in range(self.myobj.files):
             img = keras.utils.array_to_img(generated_images[i])
-            img.save("generated_img_%d.png" % (i))
+            img.save("/tmp/download/generated_img_%d.png" % (i))
             imgs.append("generated_img_" + str(i) + ".png")
         print("Done")
         return imgs

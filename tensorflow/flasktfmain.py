@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 
+import os
 import sys
 from multiprocessing import Process, Queue
 
@@ -223,6 +224,12 @@ def do_filename():
     result = queue.get()
     process.join()
     return result
+
+@app.route('/download/<path:filename>', methods=['GET'])
+def download(filename):
+    # TODO validate
+    full_path = os.path.join(app.root_path, "/tmp/download")
+    return send_from_directory(full_path, filename, as_attachment=True)
 
 def argstr():
     if len(sys.argv) > 1 and sys.argv[1].isnumeric():
