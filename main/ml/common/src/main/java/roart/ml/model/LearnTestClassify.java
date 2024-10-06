@@ -15,6 +15,8 @@ import roart.common.ml.PytorchMLPConfig;
 import roart.common.ml.PytorchRNNConfig;
 import roart.common.ml.TensorflowCNN2Config;
 import roart.common.ml.TensorflowCNNConfig;
+import roart.common.ml.TensorflowConditionalGANConfig;
+import roart.common.ml.TensorflowDCGANConfig;
 import roart.common.ml.TensorflowDNNConfig;
 import roart.common.ml.TensorflowGRUConfig;
 import roart.common.ml.TensorflowLICConfig;

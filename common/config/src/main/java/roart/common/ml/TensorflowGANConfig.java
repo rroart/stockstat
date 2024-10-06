@@ -19,6 +19,14 @@ public abstract class TensorflowGANConfig extends TensorflowConfig {
         this.lr = lr;
     }
 
+    public TensorflowGANConfig(String name) {
+        super(name);
+    }
+
+    public TensorflowGANConfig() {
+        super();
+    }
+
     public double getLr() {
         return lr;
     }

@@ -30,6 +30,7 @@ url10 = 'http://' + ahost + ':' + aport + '/cache/invalidate'
 url11 = 'http://' + ahost + ':' + aport + '/copy/'
 
 imgurl1 = 'http://' + imgahost + ':' + imgaport + '/datasetgen'
+imgurl2 = 'http://' + imgahost + ':' + imgaport + '/download'
 
 #headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 #headers={'Content-type':'application/json', 'Accept':'application/json'}
@@ -75,4 +76,7 @@ def copydb(indb, outdb):
 def imgrequest1(market, files):
     #return requests.post(imgurl1, json=data, headers=headers2, files=files)
     return requests.post(imgurl1, files=files)
+
+def imgrequest2(market, afile):
+    return requests.get(imgurl2 + "/" + afile)
 
