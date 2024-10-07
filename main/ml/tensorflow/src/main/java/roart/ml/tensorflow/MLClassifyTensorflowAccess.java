@@ -234,9 +234,11 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             if (triple.getClassification() != null) {
                 int jj = 0;
             }
+            if (classify) {
             LearnClassify mutableList = new LearnClassify(triple.getId(), triple.getArray(), (Integer) cat[j]);
             //triple.setRight(acat);
             classifyMap.set(j, mutableList);
+            }
         }
         return retMap;
     }
