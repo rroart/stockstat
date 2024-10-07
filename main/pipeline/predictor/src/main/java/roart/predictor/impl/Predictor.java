@@ -237,42 +237,11 @@ public abstract class Predictor extends AbstractPredictor {
                     log.error("Models size is {}", mldao.getModels().size());
                 }
                 for (MLClassifyModel model : mldao.getModels(predictorName())) {
-                    List<LearnClassify> map = new ArrayList<>();
                     // days find max
-                    days = 0;
-                    for (String id : aListMap.keySet()) {
-                        //Double[] listl = aListMap.get(id)[0];
-                        double[][] list0 = aTruncListMap.get(id);
-                        double[] list = list0[0];
-                        // check reverse. move up before if?
-                        if (list != null && list.length > days) {
-                            days = list.length;
-                        }
-                    }
+                    days = getDays(aListMap, aTruncListMap);
                     log.info("list days {}", days);
-                    for (String id : aListMap.keySet()) {
-                        //Double[] listl = aListMap.get(id)[0];
-                        double[][] list0 = aTruncListMap.get(id);
-                        double[] list = list0[0];
-                        // check reverse. move up before if?
-                        if (list != null && list.length == days) {
-                            log.info("list {}", list.length);
-                            Object list3 = ArrayUtils.toObject(list);
-                            map.add(new LearnClassify(id, list3, (Double) null));
-                        }
-                    }
-                    List<LearnClassify> classifylist = new ArrayList<>();
-                    for (String id : aListMap.keySet()) {
-                        //Double[] listl = aListMap.get(id)[0];
-                        double[][] list0 = aTruncListMap.get(id);
-                        double[] list = list0[0];
-                        // check reverse. move up before if?
-                        if (list != null && list.length >= conf.getPredictorsDays()) {
-                            log.info("list {}", list.length);
-                            Object list3 = ArrayUtils.toObject(Arrays.copyOfRange(list, list.length - conf.getPredictorsDays(), list.length));
-                            classifylist.add(new LearnClassify(id, list3, (Double) null));
-                        }
-                    }
+                    List<LearnClassify> map = getMap(aListMap, aTruncListMap, days);
+                    List<LearnClassify> classifylist = getClassifyList(conf, aListMap, aTruncListMap);
                     // make OO of this, create object
                     Object[] meta = new Object[ResultMetaConstants.SIZE];
                     meta[ResultMetaConstants.MLNAME] = mldao.getName();
@@ -317,6 +286,59 @@ public abstract class Predictor extends AbstractPredictor {
         } catch (Exception e) {
             log.error("Exception", e);
         }
+    }
+
+    int getDays(Map<String, Double[][]> aListMap, Map<String, double[][]> aTruncListMap) {
+        int days;
+        days = 0;
+        log.info("jjj"+aListMap.size());
+        for (String id : aListMap.keySet()) {
+            //Double[] listl = aListMap.get(id)[0];
+            double[][] list0 = aTruncListMap.get(id);
+            double[] list = list0[0];
+            // check reverse. move up before if?
+            log.info("jjj"+list.length +" "+ days);
+            if (list != null && list.length > days) {
+                days = list.length;
+            }
+        }
+        return days;
+    }
+
+    List<LearnClassify> getClassifyList(IclijConfig conf, Map<String, Double[][]> aListMap,
+            Map<String, double[][]> aTruncListMap) {
+        List<LearnClassify> classifylist = new ArrayList<>();
+        for (String id : aListMap.keySet()) {
+            //Double[] listl = aListMap.get(id)[0];
+            double[][] list0 = aTruncListMap.get(id);
+            double[] list = list0[0];
+            // check reverse. move up before if?
+            log.info("if" + list.length + " " + conf.getPredictorsDays());
+            if (list != null && list.length >= conf.getPredictorsDays()) {
+                log.info("list {}", list.length);
+                Object list3 = ArrayUtils.toObject(Arrays.copyOfRange(list, list.length - conf.getPredictorsDays(), list.length));
+                log.info("iii"+Arrays.asList((double[])Arrays.copyOfRange(list, list.length - conf.getPredictorsDays(), list.length)));
+                classifylist.add(new LearnClassify(id, list3, (Double) null));
+            }
+        }
+        return classifylist;
+    }
+
+    List<LearnClassify> getMap(Map<String, Double[][]> aListMap, Map<String, double[][]> aTruncListMap,
+            int days) {
+        List<LearnClassify> map = new ArrayList<>();
+        for (String id : aListMap.keySet()) {
+            //Double[] listl = aListMap.get(id)[0];
+            double[][] list0 = aTruncListMap.get(id);
+            double[] list = list0[0];
+            // check reverse. move up before if?
+            if (list != null && list.length == days) {
+                log.info("list {}", list.length);
+                Object list3 = ArrayUtils.toObject(list);
+                map.add(new LearnClassify(id, list3, (Double) null));
+            }
+        }
+        return map;
     }
 
     private double calculateAccuracy(Map<String, Double[][]> aListMap, Double threshold,
@@ -451,7 +473,7 @@ public abstract class Predictor extends AbstractPredictor {
 
     private boolean anythingHereNot(Map<String, Double[][]> listMap2) {
         for (Double[][] array : listMap2.values()) {
-            for (int i = 0; i < array.length; i++) {
+            for (int i = 0; i < array[0].length; i++) {
                 if (array[0][i] != null) {
                     return true;
                 }

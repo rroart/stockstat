@@ -51,6 +51,7 @@
 		    --add-opens common.communication.integration.spring/roart=ALL-UNNAMED
 		    --add-opens common.communication.message.pulsar/roart=ALL-UNNAMED
 		    --add-opens iclij.common.service/roart.iclij.service=spring.core
+		    --add-opens pipeline.predictor/roart.predictor.impl=spring.core
 		    --add-opens java.base/sun.net=ALL-UNNAMED
 		  </argLine>
 		</configuration>
@@ -86,6 +87,7 @@
     <springcloudstarter.version>2022.0.3</springcloudstarter.version>
     <springcore.version>6.0.9</springcore.version>
     <reactor.version>3.6.8</reactor.version>
+    <reactornetty.version>1.1.22</reactornetty.version>
     <eurekaclient.version>2.0.0</eurekaclient.version>
     <jackson.version>2.15.4</jackson.version>
     <hibernate.version>6.1.5.Final</hibernate.version>
