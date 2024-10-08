@@ -31,6 +31,8 @@ url11 = 'http://' + ahost + ':' + aport + '/copy/'
 
 imgurl1 = 'http://' + imgahost + ':' + imgaport + '/datasetgen'
 imgurl2 = 'http://' + imgahost + ':' + imgaport + '/download'
+imgurl3 = 'http://' + imgahost + ':' + imgaport + '/dataset'
+imgurl4 = 'http://' + imgahost + ':' + imgaport + '/imgclassify'
 
 #headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 #headers={'Content-type':'application/json', 'Accept':'application/json'}
@@ -79,4 +81,10 @@ def imgrequest1(market, files):
 
 def imgrequest2(market, afile):
     return requests.get(imgurl2 + "/" + afile)
+
+def imgrequest3(market, data):
+    return requests.post(imgurl3, json=data, headers=headers)
+
+def imgrequest4(market, files):
+    return requests.post(imgurl4, files=files)
 

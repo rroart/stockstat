@@ -80,8 +80,10 @@ class Classify:
             for i in range(myobj.classes):
                 #print("i", i)
                 #print("ashape", array.shape)
+                print("ar", array)
                 (intlist, problist) = classifier.predict(array)
                 intlist = np.array(intlist)
+                print("pr", intlist)
                 if myobj.modelInt == 3 or myobj.modelInt == 8:
                     intlist2 = intlist.reshape(len(intlist), 1)
                     array = np.concatenate((array[:,1:], intlist2), axis=1)
@@ -328,6 +330,10 @@ class Classify:
         return train, traincat, test, testcat, mydim
     
     def do_learntestinner(self, myobj, classifier, train, traincat, test, testcat, classify):
+        print("ttt", train)
+        print("ttt2", traincat)
+        print("ttt3", test)
+        print("ttt4", testcat)
         #print("shape")
         #print(train.shape)
         #print(traincat.shape)
@@ -463,7 +469,7 @@ class Classify:
         #tf.logging.set_verbosity(tf.logging.FATAL)
         dt = datetime.now()
         timestamp = dt.timestamp()
-        #print(request.get_data(as_text=True))
+        print(request.get_data(as_text=True))
         #myobj = json.loads(request, object_hook=lt.LearnTest)
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         classify = not hasattr(myobj, 'classify') or myobj.classify == True
@@ -554,6 +560,21 @@ class Classify:
         (train, traincat, test, testcat, size) = self.gettraintest(myobj, config, classify)
         #print("classez2", myobj.classes)
         model = Model.Model(myobj, config, classify)
+        exists = self.exists(myobj)
+        # load model if:
+        # exists and not dynamic and wantclassify
+        if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
+            if Model.Model.localsave():
+                # dummy variable to allow saver
+                model = Model.Model(myobj, config, classify)
+                print("Restoring")
+                model.model = tf.keras.models.load_model( self.getpath(myobj) + myobj.filename + ".keras")
+                print("Restoring done")
+            else:
+                model = Model.Model(myobj, config, classify)
+        else:
+            model = Model.Model(myobj, config, classify)
+        # load end
         #print("classez2", myobj.classes)
         print(model)
         self.printgpus()
@@ -567,6 +588,11 @@ class Classify:
         #dicteval[myobj.modelname] = float(accuracy_score)
         #print("seteval" + str(myobj.modelname))
         
+        if not self.wantDynamic(myobj) and self.wantLearn(myobj):
+            if Model.Model.localsave():
+                print("Saving")
+                model.save(self.getpath(myobj) + myobj.filename + ".keras")
+
         classifier.tidy()
         del classifier
         if not accuracy_score is None:
@@ -681,6 +707,83 @@ class Classify:
             {"accuracy": 0, "trainaccuracy": 0, "loss": 0, "classify": classify,
              "gpu": self.hasgpu(), "files" : files } ), mimetype='application/json'))
         # return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
+
+    def do_imgclassify(self, queue, request):
+        print("eager", tf.executing_eagerly())
+        #tf.logging.set_verbosity(tf.logging.FATAL)
+        dt = datetime.now()
+        timestamp = dt.timestamp()
+        #myobj = json.loads(request, object_hook=lt.LearnTest)
+        (filename, filename2) = self.get_file(request)
+        print("Filename", filename, filename2)
+        img = self.preprocess_image(filename)
+        myobj = json.loads(request.form['json'], object_hook=lt.LearnTest)
+
+        (config, modelname) = self.getModel(myobj)
+        print("Cf", config, modelname)
+        Model = importlib.import_module('model.' + modelname)
+        (train, traincat, test, testcat, size, classes, classify) = mydatasets.getdataset(myobj, config, self)
+        train = np.array(train)
+        myobj.trainingarray = train
+        myobj.trainingcatarray = traincat
+        myobj.size = size
+        myobj.classes = classes
+        (train, traincat, test, testcat, size) = self.gettraintest(myobj, config, classify)
+        # print("classez2", myobj.classes)
+        model = Model.Model(myobj, config, classify)
+        exists = self.exists(myobj)
+        # load model if:
+        # exists and not dynamic and wantclassify
+        if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
+            if Model.Model.localsave():
+                # dummy variable to allow saver
+                model = Model.Model(myobj, config, classify)
+                print("Restoring")
+                model.model = tf.keras.models.load_model(self.getpath(myobj) + myobj.filename + ".keras")
+                print("Restoring done")
+            else:
+                model = Model.Model(myobj, config, classify)
+        else:
+            model = Model.Model(myobj, config, classify)
+        # load end
+        # print("classez2", myobj.classes)
+        print(model)
+        self.printgpus()
+        classifier = model
+        #print("rrr0", request.form)
+        #print("rrr", request.files['json'])
+        myobj = json.loads(request.form['json'], object_hook=lt.LearnTest)
+        myobj.classifyarray = img
+        (intlist, problist) = self.do_classifyinner(myobj, model, True)
+        print("list", intlist, problist)
+        classifier.tidy()
+        del classifier
+        dt = datetime.now()
+        print ("millis ", (dt.timestamp() - timestamp)*1000)
+        queue.put(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": 0, "trainaccuracy": 0, "loss": 0, "classify" : classify, "gpu" : self.hasgpu() }), mimetype='application/json'))
+
+    def preprocess_image(self, image_path):
+        import keras
+        #import cv2
+        from keras.applications import vgg19
+        img_nrows = 28
+        width, height = keras.utils.load_img(image_path).size
+        print("real size", width, height)
+        img_ncols = int(width * img_nrows / height)
+        print("new size", img_nrows, img_ncols)
+        # duplicated
+        # Util function to open, resize and format pictures into appropriate tensors
+        img = keras.utils.load_img(image_path, target_size=(img_nrows, img_ncols))
+        print("sh", img.size)
+        img = keras.utils.img_to_array(img)
+        print("sh", img.size, img.shape)
+        img = np.expand_dims(img, axis=0)
+        print("sh", img.size, img.shape)
+        #zimg = vgg19.preprocess_input(img)
+        img = tf.image.rgb_to_grayscale(img)
+        print("img", img)
+        print("sh", img.shape)
+        return tf.convert_to_tensor(img)
 
     def getpath(self, myobj):
         if hasattr(myobj, 'path') and not myobj.path is None:
