@@ -649,7 +649,7 @@ class Classify:
 
             model = Model.Model(myobj, config)
         else:
-            model = Model.model(myobj, config, filename, filename2)
+            model = Model.Model(myobj, config, filename, filename2)
 
         exists = self.exists(myobj)
         # load model if:
@@ -687,6 +687,8 @@ class Classify:
             )
 
             gan.fit(dataset, epochs=config.steps, callbacks = [ gan.getcallback() ])
+        else:
+            gan = model
 
         #if not self.wantDynamic(myobj) and self.wantLearn(myobj):
         #    if model.localsave():
@@ -704,7 +706,7 @@ class Classify:
         dt = datetime.now()
         print("millis ", (dt.timestamp() - timestamp) * 1000)
         queue.put(Response(json.dumps(
-            {"accuracy": 0, "trainaccuracy": 0, "loss": 0, "classify": classify,
+            {"accuracy": 0, "trainaccuracy": 0, "loss": 0, "classify": False,
              "gpu": self.hasgpu(), "files" : files } ), mimetype='application/json'))
         # return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 

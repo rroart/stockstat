@@ -54,7 +54,7 @@ def conditionalgan(ds = 'mnist', cf = 'tensorflowConditionalGANConfig', load = F
     data[cfname] = thecf
     image(None, None, data)
 
-def neural_style_transfer(path, path2, cf = 'tensorflowNeuralStyleTransferConfig', load = False, save = False):
+def neural_style_transfer(path, path2, ds = 'vgg19', cf = 'tensorflowNeuralStyleTransferConfig', load = False, save = False):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : load, 'mllearn' : save }
     cfname, modelInt, thecf = config.get(cf)
     thecf['steps'] = 1
