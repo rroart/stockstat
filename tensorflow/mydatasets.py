@@ -8,6 +8,14 @@ from zipfile import ZipFile
 #import pandas as pd
 from keras import backend as K
 
+
+def getdataset3(myobj, config, classifier):
+    if myobj.dataset == 'imdb':
+        dirs = imdbdir(myobj, config)
+    else:
+        dirs = filenamedir(myobj, config)
+    return do_dir(myobj, config, dirs)
+
 def getdataset2(myobj, config, classifier):
     if myobj.dataset == 'mnist':
         return getmnist2(myobj, config)
@@ -70,6 +78,7 @@ def getdataset(myobj, config, classifier):
         return getnumber(myobj, config)
 
 def getmnist(myobj, config):
+    os.makedirs("/tmp/datasets", 0o777, True)
     #load mnist data
     (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data("/tmp/datasets/mnist.npz")
     if hasattr(myobj, 'normalizevalue'):
@@ -218,4 +227,83 @@ def getnumber(myobj, config):
     data = [ data, data1 ]
 
     return data, None, data, None, myobj.size, myobj.classes, False
+
+vectorize_layer = None
+
+def imdbdir(myobj, config):
+    keras.utils.get_file(origin = "https://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz", extract = True, cache_dir = "/tmp/.keras")
+    return [
+        "/tmp/.keras/datasets/aclImdb/train/pos",
+        "/tmp/.keras/datasets/aclImdb/train/neg",
+        "/tmp/.keras/datasets/aclImdb/test/pos",
+        "/tmp/.keras/datasets/aclImdb/test/neg",
+    ]
+
+class DictToObject:
+    def __init__(self, dictionary):
+        for key, value in dictionary.items():
+            setattr(self, key, value)
+
+class Dummy:
+    def __init__(self, v):
+        vars(self).update(v)
+
+def do_dir(myobj, config, directories):
+    import random
+    import tensorflow.data as tf_data
+    from keras.layers import TextVectorization
+    batch_size = 128
+    vocab_size = 20000
+    maxlen = 80
+    filenames = []
+    for dir in directories:
+        for f in os.listdir(dir):
+            filenames.append(os.path.join(dir, f))
+
+    print(f"{len(filenames)} files")
+
+    # Create a dataset from text files
+    random.shuffle(filenames)
+    text_ds = tf_data.TextLineDataset(filenames)
+    text_ds = text_ds.shuffle(buffer_size=256)
+    text_ds = text_ds.batch(batch_size)
+
+    global vectorize_layer
+    vectorize_layer = TextVectorization(
+        standardize=custom_standardization,
+        max_tokens=vocab_size - 1,
+        output_mode="int",
+        output_sequence_length=maxlen + 1,
+    )
+    vectorize_layer.adapt(text_ds)
+    vocab = vectorize_layer.get_vocabulary()
+
+    text_ds = text_ds.map(prepare_lm_inputs_labels, num_parallel_calls=tf_data.AUTOTUNE)
+    text_ds = text_ds.prefetch(tf_data.AUTOTUNE)
+    mddict = { 'vocab_size' : vocab_size, 'maxlen' : maxlen, 'vocab' : vocab, 'name' : myobj.dataset }
+    #import json
+    #s = json.dumps(mddict)
+    #md = json.loads(s, object_hook = Dummy)
+    #print(type(md), md)
+    md = DictToObject(mddict)
+    #print(type(md), md)
+    return text_ds, md
+
+def custom_standardization(input_string):
+    import string
+    import tensorflow.strings as tf_strings
+    lowercased = tf_strings.lower(input_string)
+    stripped_html = tf_strings.regex_replace(lowercased, "<br />", " ")
+    return tf_strings.regex_replace(stripped_html, f"([{string.punctuation}])", r" \1")
+
+def prepare_lm_inputs_labels(text):
+    import tensorflow
+    text = tensorflow.expand_dims(text, -1)
+    tokenized_sentences = vectorize_layer(text)
+    x = tokenized_sentences[:, :-1]
+    y = tokenized_sentences[:, 1:]
+    return x, y
+
+def filenamedir(myobj, config):
+    return [ myobj.filename ]
 

@@ -417,6 +417,9 @@ class Classify:
         if myobj.modelInt == 14:
             modelname = 'neural_style_transfer'
             config = myobj.tensorflowNeuralStyleTransferConfig
+        if myobj.modelInt == 15:
+            modelname = 'miniature_gpt'
+            config = myobj.tensorflowMiniatureGPTConfig
         return config, modelname
       if hasattr(myobj, 'modelName'):
         if myobj.modelName == 'dnn':
@@ -462,7 +465,7 @@ class Classify:
             return False
         if os.path.exists(self.getpath(myobj) + myobj.filename):
             return True
-        return os.path.isfile(self.getpath(myobj) + myobj.filename + ".kerasq")
+        return os.path.isfile(self.getpath(myobj) + myobj.filename + ".keras")
 
     def do_learntestclassify(self, queue, request):
         print("eager", tf.executing_eagerly())
@@ -763,6 +766,70 @@ class Classify:
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         queue.put(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": 0, "trainaccuracy": 0, "loss": 0, "classify" : classify, "gpu" : self.hasgpu() }), mimetype='application/json'))
+
+    def do_gpt(self, queue, request):
+        dt = datetime.now()
+        timestamp = dt.timestamp()
+        # print(request.get_data(as_text=True))
+        myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
+        (config, modelname) = self.getModel(myobj)
+        Model = importlib.import_module('model.' + modelname)
+        (ds, md) = mydatasets.getdataset3(myobj, config, self)
+        #model = dictclass[md.name]
+
+        model = Model.Model(myobj, config, md)
+        exists = self.exists(myobj)
+        print("exist", exists)
+        # load model if:
+        # exists and not dynamic and wantclassify
+        text = None
+        if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
+            if model.localsave():
+                # dummy variable to allow saver
+                model = Model.Model(myobj, config, md)
+                print("Restoring")
+                model.model = tf.keras.models.load_model(self.getpath(myobj) + myobj.filename + ".keras")
+                print("Restoring done")
+                text = model.generate(model.model);
+                print("text", text)
+            else:
+                model = Model.Model(myobj, config, md)
+        else:
+            model = Model.Model(myobj, config, md)
+        # load end
+        # print("classez2", myobj.classes)
+        print(model)
+        self.printgpus()
+        classifier = model
+        # dictclass[str(myobj.modelInt) + myobj.period + myobj.modelname] = classifier
+        # global dicteval
+        # dicteval[myobj.modelname] = float(accuracy_score)
+        # print("seteval" + str(myobj.modelname))
+
+        if not self.wantDynamic(myobj) and self.wantLearn(myobj):
+            print(model.model.summary())
+            model.fit(ds)
+            if model.localsave():
+                print("Saving")
+                model.save(self.getpath(myobj) + myobj.dataset + ".keras")
+
+        #classifier.tidy()
+        del classifier
+        accuracy_score = 0
+        train_accuracy_score = 0
+        loss = 0
+        if not accuracy_score is None:
+            accuracy_score = float(accuracy_score)
+        if not train_accuracy_score is None:
+            train_accuracy_score = float(train_accuracy_score)
+        if not loss is None:
+            loss = float(loss)
+        dt = datetime.now()
+        print("millis ", (dt.timestamp() - timestamp) * 1000)
+        queue.put(Response(json.dumps(
+            {"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify": None, 'classifyarray' : [ text ],
+             "gpu": self.hasgpu()}), mimetype='application/json'))
+        # return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def preprocess_image(self, image_path):
         import keras

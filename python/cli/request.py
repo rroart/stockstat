@@ -34,6 +34,8 @@ imgurl2 = 'http://' + imgahost + ':' + imgaport + '/download'
 imgurl3 = 'http://' + imgahost + ':' + imgaport + '/dataset'
 imgurl4 = 'http://' + imgahost + ':' + imgaport + '/imgclassify'
 
+gpturl1 = 'http://' + imgahost + ':' + imgaport + '/gpt'
+
 #headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 #headers={'Content-type':'application/json', 'Accept':'application/json'}
 headers={'Content-Type' : 'application/json;charset=utf-8'}
@@ -87,4 +89,7 @@ def imgrequest3(market, data):
 
 def imgrequest4(market, files):
     return requests.post(imgurl4, files=files)
+
+def gptrequest1(market, data):
+    return requests.post(gpturl1, json=data, headers=headers)
 

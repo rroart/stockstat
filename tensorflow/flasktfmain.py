@@ -270,6 +270,45 @@ def do_imgclassify():
         traceback.print_exc(file=sys.stdout)
     return result
 
+@app.route('/gpt', methods=['POST'])
+def do_gpt():
+    def classifyrunner(queue, request):
+        try:
+            import classify
+            cl = classify.Classify()
+            cl.do_gpt(queue, request)
+        except:
+            import sys,traceback
+            memory = "CUDA error: out of memory" in traceback.format_exc()
+            cudnn = "0 successful operations" in traceback.format_exc()
+            queue.put(Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : memory, "cudnn" : cudnn }), mimetype='application/json'))
+            traceback.print_exc(file=sys.stdout)
+            print("\n")
+            import random
+            f = open("/tmp/outtf" + argstr() + str(random.randint(1000,9999)) + ".txt", "w")
+            f.write(request.get_data(as_text=True))
+            traceback.print_exc(file=f)
+            f.close()
+    aqueue = Queue()
+    process = Process(target=classifyrunner, args=(aqueue, request))
+    try:
+        import queue
+        process.start()
+        while True:
+            try:
+                result = aqueue.get(timeout=timeout)
+                break
+            except queue.Empty as e:
+                if not process.is_alive():
+                    print("Process died")
+                    result = Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : False, "cudnn" : False }), mimetype='application/json')
+                    break
+    except Exception as e:
+        print(e)
+        import sys,traceback
+        traceback.print_exc(file=sys.stdout)
+    return result
+
 def argstr():
     if len(sys.argv) > 1 and sys.argv[1].isnumeric():
         return sys.argv[1]
