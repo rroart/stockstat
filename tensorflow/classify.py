@@ -774,7 +774,7 @@ class Classify:
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
-        (ds, md) = mydatasets.getdataset3(myobj, config, self)
+        (train_ds, val_ds, test_ds, md) = mydatasets.getdataset3(myobj, config, self)
         #model = dictclass[md.name]
 
         model = Model.Model(myobj, config, md)
@@ -808,7 +808,7 @@ class Classify:
 
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
             print(model.model.summary())
-            model.fit(ds)
+            model.fit(train_ds, val_ds, test_ds)
             if model.localsave():
                 print("Saving")
                 model.save(self.getpath(myobj) + myobj.dataset + ".keras")

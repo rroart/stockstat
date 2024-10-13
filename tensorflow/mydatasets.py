@@ -8,8 +8,30 @@ from zipfile import ZipFile
 #import pandas as pd
 from keras import backend as K
 
-
 def getdataset3(myobj, config, classifier):
+    if myobj.dataset == 'gpt2':
+        return None, None, None, None
+    if myobj.dataset == 'simplebooks':
+        dirs = simplebooksdir(myobj, config)
+        return simplebooks(myobj, config, classifier, dirs[0])
+    if myobj.dataset == 'reddit_tifu':
+        import tensorflow_datasets as tfds
+        reddit_ds = tfds.load("reddit_tifu", split="train", as_supervised=True, data_dir = "/tmp")
+        for document, title in reddit_ds:
+            print(document.numpy())
+            print(title.numpy())
+            break
+        train_ds = (
+            reddit_ds.map(lambda document, _: document)
+            .batch(32)
+            .cache()
+            .prefetch(tf.data.AUTOTUNE)
+        )
+
+        train_ds = train_ds.take(500)
+        num_epochs = 1
+        return train_ds, None, None, None
+
     if myobj.dataset == 'imdb':
         dirs = imdbdir(myobj, config)
     else:
@@ -239,6 +261,17 @@ def imdbdir(myobj, config):
         "/tmp/.keras/datasets/aclImdb/test/neg",
     ]
 
+def simplebooksdir(myobj, config):
+    keras.utils.get_file(
+        origin="https://dldata-public.s3.us-east-2.amazonaws.com/simplebooks.zip",
+        extract=True,
+        cache_dir = "/tmp/.keras"
+    )
+    dir = os.path.expanduser("/tmp/.keras/datasets/simplebooks.zip/simplebooks/")
+    return [
+        dir
+    ]
+
 class DictToObject:
     def __init__(self, dictionary):
         for key, value in dictionary.items():
@@ -287,7 +320,7 @@ def do_dir(myobj, config, directories):
     #print(type(md), md)
     md = DictToObject(mddict)
     #print(type(md), md)
-    return text_ds, md
+    return text_ds, None, None, md
 
 def custom_standardization(input_string):
     import string
@@ -306,4 +339,63 @@ def prepare_lm_inputs_labels(text):
 
 def filenamedir(myobj, config):
     return [ myobj.filename ]
+
+def simplebooks(myobj, config, classifier, dir):
+    import tensorflow.data as tf_data
+    import tensorflow.strings as tf_strings
+    import keras_nlp
+
+    BATCH_SIZE = 64
+    MIN_STRING_LEN = 512
+    VOCAB_SIZE = 5000
+    SEQ_LEN = 128
+    raw_train_ds = (
+        tf_data.TextLineDataset(dir + "simplebooks-92-raw/train.txt")
+        .filter(lambda x: tf_strings.length(x) > MIN_STRING_LEN)
+        .batch(BATCH_SIZE)
+        .shuffle(buffer_size=256)
+    )
+
+    raw_val_ds = (
+        tf_data.TextLineDataset(dir + "simplebooks-92-raw/valid.txt")
+        .filter(lambda x: tf_strings.length(x) > MIN_STRING_LEN)
+        .batch(BATCH_SIZE)
+    )
+
+    vocab = keras_nlp.tokenizers.compute_word_piece_vocabulary(
+        raw_train_ds,
+        vocabulary_size=VOCAB_SIZE,
+        lowercase=True,
+        reserved_tokens=["[PAD]", "[UNK]", "[BOS]"],
+    )
+
+    tokenizer = keras_nlp.tokenizers.WordPieceTokenizer(
+        vocabulary=vocab,
+        sequence_length=SEQ_LEN,
+        lowercase=True,
+    )
+
+    start_packer = keras_nlp.layers.StartEndPacker(
+        sequence_length=SEQ_LEN,
+        start_value=tokenizer.token_to_id("[BOS]"),
+    )
+
+    def preprocess(inputs):
+        outputs = tokenizer(inputs)
+        features = start_packer(outputs)
+        labels = outputs
+        return features, labels
+
+
+    train_ds = raw_train_ds.map(preprocess, num_parallel_calls=tf_data.AUTOTUNE).prefetch(
+        tf_data.AUTOTUNE
+    )
+    val_ds = raw_val_ds.map(preprocess, num_parallel_calls=tf_data.AUTOTUNE).prefetch(
+        tf_data.AUTOTUNE
+    )
+
+    mddict = {'vocab_size': VOCAB_SIZE, 'seq_len': SEQ_LEN, 'vocab': vocab, 'tokenizer' : tokenizer, 'start_packer' : start_packer, 'name': myobj.dataset}
+    md = DictToObject(mddict)
+
+    return train_ds, val_ds, None, md
 
