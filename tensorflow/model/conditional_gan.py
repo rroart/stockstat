@@ -6,38 +6,15 @@ import tensorflow as tf
 import numpy as np
 import os
 
-"""
-## Constants and hyperparameters
-"""
-
 batch_size = 64
 num_channels = 1
 num_classes = 10
 latent_dim = 128
 
-
-"""
-## Calculating the number of input channel for the generator and discriminator
-
-In a regular (unconditional) GAN, we start by sampling noise (of some fixed
-dimension) from a normal distribution. In our case, we also need to account
-for the class labels. We will have to add the number of classes to
-the input channels of the generator (noise input) as well as the discriminator
-(generated image input).
-"""
-
 generator_in_channels = latent_dim + num_classes
 discriminator_in_channels = num_channels + num_classes
 print(generator_in_channels, discriminator_in_channels)
 
-"""
-## Creating the discriminator and generator
-
-The model definitions (`discriminator`, `generator`, and `ConditionalGAN`) have been
-adapted from [this example](https://keras.io/guides/customizing_what_happens_in_fit/).
-"""
-
-# Create the discriminator.
 def discriminator(x, y):
     return keras.Sequential(
         [
@@ -52,13 +29,10 @@ def discriminator(x, y):
         name="discriminator",
     )
 
-# Create the generator.
 def generator():
     return keras.Sequential(
         [
             keras.layers.InputLayer((generator_in_channels,)),
-            # We want to generate 128 + num_classes coefficients to reshape into a
-            # 7x7x(128 + num_classes) map.
             layers.Dense(7 * 7 * generator_in_channels),
             layers.LeakyReLU(negative_slope=0.2),
             layers.Reshape((7, 7, generator_in_channels)),
@@ -70,11 +44,6 @@ def generator():
         ],
         name="generator",
     )
-
-"""
-## Creating a `ConditionalGAN` model
-"""
-
 
 class Model(tf.keras.Model):
     def __init__(self, myobj, config):
@@ -101,11 +70,8 @@ class Model(tf.keras.Model):
         self.loss_fn = loss_fn
 
     def train_step(self, data):
-        # Unpack the data.
         real_images, one_hot_labels = data
 
-        # Add dummy dimensions to the labels so that they can be concatenated with
-        # the images. This is for the discriminator.
         image_one_hot_labels = one_hot_labels[:, :, None, None]
         image_one_hot_labels = ops.repeat(
             image_one_hot_labels, repeats=[self.myobj.size[0] * self.myobj.size[1]]
@@ -114,8 +80,6 @@ class Model(tf.keras.Model):
             image_one_hot_labels, (-1, self.myobj.size[0], self.myobj.size[1], num_classes)
         )
 
-        # Sample random points in the latent space and concatenate the labels.
-        # This is for the generator.
         batch_size = ops.shape(real_images)[0]
         random_latent_vectors = keras.random.normal(
             shape=(batch_size, latent_dim), seed=self.seed_generator
@@ -124,11 +88,8 @@ class Model(tf.keras.Model):
             [random_latent_vectors, one_hot_labels], axis=1
         )
 
-        # Decode the noise (guided by labels) to fake images.
         generated_images = self.generator(random_vector_labels)
 
-        # Combine them with real images. Note that we are concatenating the labels
-        # with these images here.
         fake_image_and_labels = ops.concatenate(
             [generated_images, image_one_hot_labels], -1
         )
@@ -138,13 +99,11 @@ class Model(tf.keras.Model):
         )
 
         # common
-        # Assemble labels discriminating real from fake images.
         labels = ops.concatenate(
             [ops.ones((batch_size, 1)), ops.zeros((batch_size, 1))], axis=0
         )
 
         # common
-        # Train the discriminator.
         with tf.GradientTape() as tape:
             predictions = self.discriminator(combined_images)
             d_loss = self.loss_fn(labels, predictions)
@@ -153,7 +112,6 @@ class Model(tf.keras.Model):
             zip(grads, self.discriminator.trainable_weights)
         )
 
-        # Sample random points in the latent space.
         random_latent_vectors = keras.random.normal(
             shape=(batch_size, latent_dim), seed=self.seed_generator
         )
@@ -162,12 +120,9 @@ class Model(tf.keras.Model):
         )
 
         # common
-        # Assemble labels that say "all real images".
         misleading_labels = ops.zeros((batch_size, 1))
 
         # common
-        # Train the generator (note that we should *not* update the weights
-        # of the discriminator)!
         with tf.GradientTape() as tape:
             fake_images = self.generator(random_vector_labels)
             fake_image_and_labels = ops.concatenate(
@@ -179,7 +134,6 @@ class Model(tf.keras.Model):
         self.g_optimizer.apply_gradients(zip(grads, self.generator.trainable_weights))
 
         # common
-        # Monitor loss.
         self.gen_loss_tracker.update_state(g_loss)
         self.disc_loss_tracker.update_state(d_loss)
         return {
@@ -210,19 +164,11 @@ class Model(tf.keras.Model):
 
     def generate(self):
         os.makedirs("/tmp/download", 0o777, True)
-        """
-        ## Interpolating between classes with the trained generator
-        """
 
-        # mnist
-        # We first extract the trained generator from our Conditional GAN.
         trained_gen = self.generator
 
-        # Choose the number of intermediate images that would be generated in
-        # between the interpolation + 2 (start and last images).
         num_interpolation = self.myobj.files # 9  # @param {type:"integer"}
 
-        # Sample noise for the interpolation.
         interpolation_noise = tf.keras.random.normal(shape=(1, latent_dim))
         interpolation_noise = tf.keras.ops.repeat(interpolation_noise, repeats=num_interpolation)
         interpolation_noise = tf.keras.ops.reshape(interpolation_noise, (num_interpolation, latent_dim))
@@ -232,16 +178,9 @@ class Model(tf.keras.Model):
 
         fake_images = self.interpolate_class(start_class, end_class, interpolation_noise, num_interpolation)
 
-        """
-        Here, we first sample noise from a normal distribution and then we repeat that for
-        `num_interpolation` times and reshape the result accordingly.
-        We then distribute it uniformly for `num_interpolation`
-        with the label identities being present in some proportion.
-        """
-
         fake_images *= 255.0
         converted_images = fake_images.astype(np.uint8)
-        # tidi
+        # TODO
         #converted_images = keras.ops.image.resize(converted_images, (96, 96)).numpy().astype(np.uint8)
         print("conv", converted_images.shape)
 
@@ -264,11 +203,6 @@ class Model(tf.keras.Model):
 
     def getcallback(self):
         return GANMonitor(num_img=10)
-
-"""
-## Create a callback that periodically saves generated images
-"""
-
 
 class GANMonitor(keras.callbacks.Callback):
     def __init__(self, num_img=3):
