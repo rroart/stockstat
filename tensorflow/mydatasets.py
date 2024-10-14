@@ -102,7 +102,7 @@ def getdataset(myobj, config, classifier):
 def getmnist(myobj, config):
     os.makedirs("/tmp/datasets", 0o777, True)
     #load mnist data
-    (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data("/tmp/datasets/mnist.npz")
+    (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
     if hasattr(myobj, 'normalizevalue'):
         from quantum import mydatasets as q
         q.getmnist(myobj, config)
@@ -124,6 +124,7 @@ def getmnist(myobj, config):
     #print(x_train.shape)
     #print(x_train.shape, x_train.shape[2])
     #print(type(y_train.shape))
+    mydimorig = (x_train.shape[1], x_train.shape[2])
     mydim = (x_train.shape[1], x_train.shape[2])
     if not config.name == "cnn" and not config.name == "cnn2":
         if config.name == "rnn" or config.name == "lstm" or config.name == "gru":
@@ -149,7 +150,7 @@ def getmnist(myobj, config):
     x_test = np.float16(x_test)        
     #print(x_train.shape)
     #print(y_train.shape)
-    return x_train, y_train, x_test, y_test, mydim, 10, True
+    return x_train, y_train, x_test, y_test, mydimorig, mydim, 10, True
 
 def getcifar10(config):
     #load mnist data
@@ -170,6 +171,7 @@ def getcifar10(config):
     #print(x_train.shape)
     #print(x_train.shape, x_train.shape[2])
     #print(type(y_train.shape))
+    mydimorig = (x_train.shape[1], x_train.shape[2])
     mydim = (x_train.shape[1], x_train.shape[2])
     if not config.name == "cnn" and not config.name == "cnn2":
         if config.name == "rnn" or config.name == "lstm" or config.name == "gru":
@@ -199,7 +201,7 @@ def getcifar10(config):
             #mydim = (1, 32, 32)
     #print(x_train.shape)
     #print(y_train.shape)
-    return x_train, y_train, x_test, y_test, mydim, 10, True
+    return x_train, y_train, x_test, y_test, mydimorig, mydim, 10, True
 
 def getdailymintemperatures(myobj):
     url = 'https://raw.githubusercontent.com/jbrownlee/Datasets/master/daily-min-temperatures.csv'
@@ -208,7 +210,7 @@ def getdailymintemperatures(myobj):
     data = data['temp']
     data = [ data ]
     #print(type(data), len(data), data)
-    return data, None, data, None, myobj.size, myobj.classes, False
+    return data, None, data, None, myobj.size, myobj.size, myobj.classes, False
 #    return data, None, None, None, myobj.size, myobj.classes
     
 def getnasdaq(myobj, config):
@@ -240,7 +242,7 @@ def getnasdaq(myobj, config):
     data = [ data ]
     data2 = [ data2 ]
 
-    return data, None, data, None, myobj.size, myobj.classes, False
+    return data, None, data, None, myobj.size, myobj.size, myobj.classes, False
 
 def getnumber(myobj, config):
     data = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40 ]
@@ -248,7 +250,7 @@ def getnumber(myobj, config):
 
     data = [ data, data1 ]
 
-    return data, None, data, None, myobj.size, myobj.classes, False
+    return data, None, data, None, myobj.size, myobj.size, myobj.classes, False
 
 vectorize_layer = None
 

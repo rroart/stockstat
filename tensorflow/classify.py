@@ -560,7 +560,7 @@ class Classify:
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
-        (train, traincat, test, testcat, size, classes, classify) = mydatasets.getdataset(myobj, config, self)
+        (train, traincat, test, testcat, origsize, size, classes, classify) = mydatasets.getdataset(myobj, config, self)
         train = np.array(train)
         myobj.trainingarray = train
         myobj.trainingcatarray = traincat
@@ -727,13 +727,15 @@ class Classify:
         #myobj = json.loads(request, object_hook=lt.LearnTest)
         (filename, filename2) = self.get_file(request)
         print("Filename", filename, filename2)
-        img = self.preprocess_image(filename)
         myobj = json.loads(request.form['json'], object_hook=lt.LearnTest)
 
         (config, modelname) = self.getModel(myobj)
         print("Cf", config, modelname)
         Model = importlib.import_module('model.' + modelname)
-        (train, traincat, test, testcat, size, classes, classify) = mydatasets.getdataset(myobj, config, self)
+        (train, traincat, test, testcat, origsize, size, classes, classify) = mydatasets.getdataset(myobj, config, self)
+
+        img = self.preprocess_image(filename, origsize)
+
         train = np.array(train)
         myobj.trainingarray = train
         myobj.trainingcatarray = traincat
@@ -764,6 +766,12 @@ class Classify:
         #print("rrr0", request.form)
         #print("rrr", request.files['json'])
         myobj = json.loads(request.form['json'], object_hook=lt.LearnTest)
+        if config.name == 'mlp':
+            print(type(img))
+            print(img.shape)
+            img = tf.reshape(img, (img.shape[0], img.shape[1] * img.shape[2], img.shape[3]))
+            print(type(img))
+            print(img.shape)
         myobj.classifyarray = img
         (intlist, problist) = self.do_classifyinner(myobj, model, True)
         print("list", intlist, problist)
@@ -837,14 +845,16 @@ class Classify:
              "gpu": self.hasgpu()}), mimetype='application/json'))
         # return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
-    def preprocess_image(self, image_path):
+    def preprocess_image(self, image_path, size):
         import keras
         #import cv2
         from keras.applications import vgg19
-        img_nrows = 28
+        #TODO
+        img_nrows = size[1]
         width, height = keras.utils.load_img(image_path).size
         print("real size", width, height)
         img_ncols = int(width * img_nrows / height)
+        img_ncols = size[0]
         print("new size", img_nrows, img_ncols)
         # duplicated
         # Util function to open, resize and format pictures into appropriate tensors
@@ -856,7 +866,7 @@ class Classify:
         print("sh", img.size, img.shape)
         #zimg = vgg19.preprocess_input(img)
         img = tf.image.rgb_to_grayscale(img)
-        print("img", img)
+        #print("img", img)
         print("sh", img.shape)
         return tf.convert_to_tensor(img)
 
