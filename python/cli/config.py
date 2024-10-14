@@ -17,6 +17,8 @@ TENSORFLOWDCGANCONFIG = { 'name' : 'dcgan', 'steps' : 20, 'lr' : 0.0001 }
 TENSORFLOWCONDITIONALGANCONFIG = { 'name' : 'conditionalgan', 'steps' : 20, 'lr' : 0.0003 }
 TENSORFLOWNEURALSTYLETRANSFERCONFIG = { 'name' : 'neural_style_transfer', 'steps' : 20 }
 TENSORFLOWMINIATUREGPTCONFIG = { 'name' : 'miniature_gpt', 'steps' : 25 }
+TENSORFLOWGPTCONFIG = { 'name' : 'gpt', 'steps' : 25 }
+TENSORFLOWGPT2CONFIG = { 'name' : 'gpt2', 'steps' : 25 }
 
 def get(cf):
     if cf == 'tensorflowDNNConfig':
