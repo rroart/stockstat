@@ -23,7 +23,7 @@ class Model(MyModel):
     else:
       loss = 'mean_squared_error'
       activation = 'linear'
-      optimizer = RMSprop(lr = config.lr)
+      optimizer = RMSprop(learning_rate  = config.lr)
     self.model = tf.keras.models.Sequential()
     self.model.add(tf.keras.Input(shape = (myobj.size,)))
     self.model.add(tf.keras.layers.Dense(config.hidden, activation='relu'))

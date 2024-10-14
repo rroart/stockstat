@@ -18,7 +18,7 @@ class Model(MyModel):
     else:
       loss = 'mean_squared_error'
       activation = 'linear'
-      optimizer = RMSprop(lr = config.lr)
+      optimizer = RMSprop(learning_rate  = config.lr)
 
     #loss = 'sparse_categorical_crossentropy'
     # Define your layers here.
