@@ -420,6 +420,12 @@ class Classify:
         if myobj.modelInt == 15:
             modelname = 'miniature_gpt'
             config = myobj.tensorflowMiniatureGPTConfig
+        if myobj.modelInt == 16:
+            modelname = 'gpt'
+            config = myobj.tensorflowGPTConfig
+        if myobj.modelInt == 17:
+            modelname = 'gpt2'
+            config = myobj.tensorflowGPT2Config
         return config, modelname
       if hasattr(myobj, 'modelName'):
         if myobj.modelName == 'dnn':
