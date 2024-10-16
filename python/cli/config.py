@@ -17,8 +17,8 @@ TENSORFLOWDCGANCONFIG = { 'name' : 'dcgan', 'steps' : 20, 'lr' : 0.0001 }
 TENSORFLOWCONDITIONALGANCONFIG = { 'name' : 'conditionalgan', 'steps' : 20, 'lr' : 0.0003 }
 TENSORFLOWNEURALSTYLETRANSFERCONFIG = { 'name' : 'neural_style_transfer', 'steps' : 20 }
 TENSORFLOWMINIATUREGPTCONFIG = { 'name' : 'miniature_gpt', 'steps' : 25 }
-TENSORFLOWGPTCONFIG = { 'name' : 'gpt', 'steps' : 25 }
-TENSORFLOWGPT2CONFIG = { 'name' : 'gpt2', 'steps' : 25 }
+TENSORFLOWGPTCONFIG = { 'name' : 'gpt', 'steps' : 5 }
+TENSORFLOWGPT2CONFIG = { 'name' : 'gpt2', 'steps' : 1 }
 
 def get(cf):
     if cf == 'tensorflowDNNConfig':
@@ -51,6 +51,10 @@ def get(cf):
         return cf, 14, TENSORFLOWNEURALSTYLETRANSFERCONFIG
     elif cf == 'tensorflowMiniatureGPTConfig':
         return cf, 15, TENSORFLOWMINIATUREGPTCONFIG
+    elif cf == 'tensorflowGPTConfig':
+        return cf, 16, TENSORFLOWGPTCONFIG
+    elif cf == 'tensorflowGPT2Config':
+        return cf, 17, TENSORFLOWGPT2CONFIG
     elif cf == 'pytorchMLPConfig':
         return cf, 1, PYTORCHMLPCONFIG
     elif cf == 'pytorchRNNConfig':

@@ -19,9 +19,10 @@ class Model:
             "gpt2_base_en", preprocessor=preprocessor
         )
 
+    def fit(self, train_ds, val_ds, test_ds):
         learning_rate = keras.optimizers.schedules.PolynomialDecay(
             5e-5,
-            decay_steps=self.md.train_ds.cardinality() * self.config.steps,
+            decay_steps=train_ds.cardinality() * self.config.steps,
             end_learning_rate=0.0,
         )
         loss = keras.losses.SparseCategoricalCrossentropy(from_logits=True)
@@ -31,7 +32,6 @@ class Model:
             weighted_metrics=["accuracy"],
         )
 
-    def fit(self, train_ds, val_ds, test_ds):
         self.model.fit(train_ds, epochs=self.config.steps)
 
 
@@ -41,5 +41,11 @@ class Model:
         return self.model.generate(start_prompt, max_length=200)
 
     def localsave(self):
-       return False
+       return True
+
+    def save(self, filename):
+        print("type", type(self.model))
+        print(filename)
+        self.model.save(filename)
+
 

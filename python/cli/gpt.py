@@ -12,10 +12,11 @@ import json
 
 from collections import OrderedDict
 
-def learn(ds = None, path = None, cf = 'tensorflowMiniatureGPTConfig'):
+def learn(ds = None, path = None, cf = 'tensorflowMiniatureGPTConfig', steps = None):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : False, 'mllearn' : True }
     cfname, modelInt, thecf = config.get(cf)
-    thecf['steps'] = 1
+    if steps is not None:
+        thecf['steps'] = steps
     data = { 'modelInt' : modelInt, 'dataset' : ds, 'filename' : path, 'classifyarray' : None, 'neuralnetcommand' : neuralnetcommand }
     data[cfname] = thecf
     response = request.gptrequest1(None, data)

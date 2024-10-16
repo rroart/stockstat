@@ -473,6 +473,11 @@ class Classify:
             return True
         return os.path.isfile(self.getpath(myobj) + myobj.filename + ".keras")
 
+    def existsds(self, myobj):
+        if not hasattr(myobj, 'dataset'):
+            return False
+        return os.path.isfile(self.getpath(myobj) + myobj.dataset + ".keras")
+
     def do_learntestclassify(self, queue, request):
         print("eager", tf.executing_eagerly())
         #tf.logging.set_verbosity(tf.logging.FATAL)
@@ -792,7 +797,7 @@ class Classify:
         #model = dictclass[md.name]
 
         model = Model.Model(myobj, config, md)
-        exists = self.exists(myobj)
+        exists = self.existsds(myobj)
         print("exist", exists)
         # load model if:
         # exists and not dynamic and wantclassify
@@ -802,7 +807,7 @@ class Classify:
                 # dummy variable to allow saver
                 model = Model.Model(myobj, config, md)
                 print("Restoring")
-                model.model = tf.keras.models.load_model(self.getpath(myobj) + myobj.filename + ".keras")
+                model.model = tf.keras.models.load_model(self.getpath(myobj) + myobj.dataset + ".keras")
                 print("Restoring done")
                 text = model.generate(model.model);
                 print("text", text)
@@ -822,7 +827,8 @@ class Classify:
 
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
             print(model.model.summary())
-            model.fit(train_ds, val_ds, test_ds)
+            if train_ds is not None:
+                model.fit(train_ds, val_ds, test_ds)
             if model.localsave():
                 print("Saving")
                 model.save(self.getpath(myobj) + myobj.dataset + ".keras")

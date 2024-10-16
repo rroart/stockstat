@@ -27,10 +27,9 @@ class Model:
             start_tokens = [word_to_index.get(_, 1) for _ in start_prompt.split()]
             num_tokens_generated = 40
             self.text_gen_callback = TextGenerator(num_tokens_generated, start_tokens, md.vocab, md)
+            self.generator = TextGenerator2(num_tokens_generated, start_tokens, md.vocab, md)
 
-        self.generator = TextGenerator2(num_tokens_generated, start_tokens, md.vocab, md)
-
-    def fit(self, text_ds):
+    def fit(self, text_ds, val_ds, test_ds):
         self.model.fit(text_ds, verbose=2, epochs=self.config.steps)
 
     def generate(self, model):
