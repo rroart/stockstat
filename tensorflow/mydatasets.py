@@ -28,8 +28,9 @@ def getdataset3(myobj, config, classifier):
             .prefetch(tf.data.AUTOTUNE)
         )
 
-        train_ds = train_ds.take(500)
-        num_epochs = 1
+        if hasattr(config, 'take'):
+            train_ds = train_ds.take(config.take)
+
         return train_ds, None, None, None
 
     if myobj.dataset == 'imdb':
@@ -257,10 +258,10 @@ vectorize_layer = None
 def imdbdir(myobj, config):
     keras.utils.get_file(origin = "https://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz", extract = True, cache_dir = "/tmp/.keras")
     return [
-        "/tmp/.keras/datasets/aclImdb/train/pos",
-        "/tmp/.keras/datasets/aclImdb/train/neg",
-        "/tmp/.keras/datasets/aclImdb/test/pos",
-        "/tmp/.keras/datasets/aclImdb/test/neg",
+        "/tmp/.keras/datasets/aclImdb_v1.tar.gz/aclImdb/train/pos",
+        "/tmp/.keras/datasets/aclImdb_v1.tar.gz/aclImdb/train/neg",
+        "/tmp/.keras/datasets/aclImdb_v1.tar.gz/aclImdb/test/pos",
+        "/tmp/.keras/datasets/aclImdb_v1.tar.gz/aclImdb/test/neg",
     ]
 
 def simplebooksdir(myobj, config):
@@ -302,6 +303,10 @@ def do_dir(myobj, config, directories):
     text_ds = tf_data.TextLineDataset(filenames)
     text_ds = text_ds.shuffle(buffer_size=256)
     text_ds = text_ds.batch(batch_size)
+
+    if hasattr(config, 'take'):
+        text_ds = text_ds.take(config.take)
+
 
     global vectorize_layer
     vectorize_layer = TextVectorization(
@@ -364,6 +369,10 @@ def simplebooks(myobj, config, classifier, dir):
         .batch(BATCH_SIZE)
     )
 
+    if hasattr(config, 'take'):
+        raw_train_ds = raw_train_ds.take(config.take)
+        raw_val_ds = raw_val_ds.take(config.take)
+
     vocab = keras_nlp.tokenizers.compute_word_piece_vocabulary(
         raw_train_ds,
         vocabulary_size=VOCAB_SIZE,
@@ -396,7 +405,7 @@ def simplebooks(myobj, config, classifier, dir):
         tf_data.AUTOTUNE
     )
 
-    mddict = {'vocab_size': VOCAB_SIZE, 'seq_len': SEQ_LEN, 'vocab': vocab, 'tokenizer' : tokenizer, 'start_packer' : start_packer, 'name': myobj.dataset}
+    mddict = {'vocab_size': VOCAB_SIZE, 'seq_len': SEQ_LEN, 'vocab': vocab, 'tokenizer' : tokenizer, 'start_packer' : start_packer, 'name': myobj.dataset, 'train_ds' : train_ds}
     md = DictToObject(mddict)
 
     return train_ds, val_ds, None, md

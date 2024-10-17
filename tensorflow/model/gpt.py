@@ -45,17 +45,16 @@ class Model:
 
         self.model = model
 
-
     def fit(self, train_ds, val_ds, test_ds):
         self.model.fit(train_ds, validation_data=val_ds, epochs=self.config.steps)
 
     # TODO model.generate
 
     def generate(self, model):
-        text_generation_callback = self.TopKTextGenerator(k=10)
+        text_generation_callback = self.TopKTextGenerator(self.myobj, self.md, self.model, k=10)
         # dummy
         model.fit(self.md.train_ds.take(1), verbose=2, epochs=2, callbacks=[text_generation_callback])
-        return self.txt
+        return text_generation_callback.txt
 
     def generate2(self, model):
         start_prompt = self.myobj.classifyarray[0]
@@ -81,20 +80,23 @@ class Model:
         print(filename)
         self.model.save(filename)
 
-    def next(self, prompt, cache, index):
-        logits = self.model(prompt)[:, index - 1, :]
-        hidden_states = None
-        return logits, hidden_states, cache
-
     class TopKTextGenerator(keras.callbacks.Callback):
 
-        def __init__(self, k):
+        def __init__(self, myobj, md, model, k):
+            self.myobj = myobj
+            self.md = md
+            self.amodel = model
             start_prompt = self.myobj.classifyarray[0]
             self.sampler = keras_nlp.samplers.TopKSampler(k)
             self.prompt_tokens = self.md.start_packer(self.md.tokenizer([start_prompt]))
             self.txt = None
 
         def on_epoch_end(self, epoch, logs=None):
+            def next(prompt, cache, index):
+                logits = self.amodel(prompt)[:, index - 1, :]
+                hidden_states = None
+                return logits, hidden_states, cache
+
             output_tokens = self.sampler(
                 next=next,
                 prompt=self.prompt_tokens,
