@@ -855,7 +855,6 @@ class Classify:
         #newdata2 = json.dumps(datadict)
         queue.put({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify": None, 'classifyarray' : [ text ],
              "gpu": self.hasgpu() })
-        # return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def preprocess_image(self, image_path, size):
         import keras

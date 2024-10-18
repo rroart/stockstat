@@ -10,8 +10,6 @@ FEED_FORWARD_DIM = 128
 NUM_HEADS = 3
 NUM_LAYERS = 2
 
-NUM_TOKENS_TO_GENERATE = 80
-
 class Model:
     def __init__(self, myobj, config, md):
         self.myobj = myobj

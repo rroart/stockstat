@@ -25,7 +25,7 @@ class Model:
         if myobj.classifyarray is not None:
             start_prompt = myobj.classifyarray[0]
             start_tokens = [word_to_index.get(_, 1) for _ in start_prompt.split()]
-            num_tokens_generated = 40
+            num_tokens_generated = myobj.classes
             self.text_gen_callback = TextGenerator(num_tokens_generated, start_tokens, md.vocab, md)
             self.generator = TextGenerator2(num_tokens_generated, start_tokens, md.vocab, md)
 
@@ -85,21 +85,21 @@ class TransformerBlock(layers.Layer):
 
 class TokenAndPositionEmbedding(layers.Layer):
     # TODO
-    def __init__(self, maxlen, vocab_size, embed_dim, trainable = True, dtype = 'float32'):
+    def __init__(self, seq_len, vocab_size, embed_dim, trainable = True, dtype = 'float32'):
         super().__init__()
         self.token_emb = layers.Embedding(input_dim=vocab_size, output_dim=embed_dim)
-        self.pos_emb = layers.Embedding(input_dim=maxlen, output_dim=embed_dim)
+        self.pos_emb = layers.Embedding(input_dim=seq_len, output_dim=embed_dim)
 
     def call(self, x):
-        maxlen = ops.shape(x)[-1]
-        positions = ops.arange(0, maxlen, 1)
+        seq_len = ops.shape(x)[-1]
+        positions = ops.arange(0, seq_len, 1)
         positions = self.pos_emb(positions)
         x = self.token_emb(x)
         return x + positions
 
 def create_model(md):
-    inputs = layers.Input(shape=(md.maxlen,), dtype="int32")
-    embedding_layer = TokenAndPositionEmbedding(md.maxlen, md.vocab_size, embed_dim)
+    inputs = layers.Input(shape=(md.seq_len,), dtype="int32")
+    embedding_layer = TokenAndPositionEmbedding(md.seq_len, md.vocab_size, embed_dim)
     x = embedding_layer(inputs)
     transformer_block = TransformerBlock(embed_dim, num_heads, feed_forward_dim)
     x = transformer_block(x)
@@ -141,11 +141,11 @@ class TextGenerator(keras.callbacks.Callback):
         num_tokens_generated = 0
         tokens_generated = []
         while num_tokens_generated <= self.max_tokens:
-            pad_len = self.md.maxlen - len(start_tokens)
+            pad_len = self.md.seq_len - len(start_tokens)
             sample_index = len(start_tokens) - 1
             if pad_len < 0:
-                x = start_tokens[:self.md.maxlen]
-                sample_index = self.md.maxlen - 1
+                x = start_tokens[:self.md.seq_len]
+                sample_index = self.md.seq_len - 1
             elif pad_len > 0:
                 x = start_tokens + [0] * pad_len
             else:
@@ -188,11 +188,11 @@ class TextGenerator2:
         num_tokens_generated = 0
         tokens_generated = []
         while num_tokens_generated <= self.max_tokens:
-            pad_len = self.md.maxlen - len(start_tokens)
+            pad_len = self.md.seq_len - len(start_tokens)
             sample_index = len(start_tokens) - 1
             if pad_len < 0:
-                x = start_tokens[:self.md.maxlen]
-                sample_index = self.md.maxlen - 1
+                x = start_tokens[:self.md.seq_len]
+                sample_index = self.md.seq_len - 1
             elif pad_len > 0:
                 x = start_tokens + [0] * pad_len
             else:

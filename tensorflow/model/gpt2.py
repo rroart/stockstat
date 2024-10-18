@@ -38,7 +38,7 @@ class Model:
     def generate(self, model):
         #self.model.compile(sampler="top_k")
         start_prompt = self.myobj.classifyarray[0]
-        return self.model.generate(start_prompt, max_length=200)
+        return self.model.generate(start_prompt, max_length=self.myobj.classes)
 
     def localsave(self):
        return True

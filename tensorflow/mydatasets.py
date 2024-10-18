@@ -294,7 +294,7 @@ def do_dir(myobj, config, directories):
     from keras.layers import TextVectorization
     batch_size = 128
     vocab_size = 20000
-    maxlen = 80
+    seq_len = 80
     filenames = []
     for dir in directories:
         for f in os.listdir(dir):
@@ -317,14 +317,14 @@ def do_dir(myobj, config, directories):
         standardize=custom_standardization,
         max_tokens=vocab_size - 1,
         output_mode="int",
-        output_sequence_length=maxlen + 1,
+        output_sequence_length=seq_len + 1,
     )
     vectorize_layer.adapt(text_ds)
     vocab = vectorize_layer.get_vocabulary()
 
     text_ds = text_ds.map(prepare_lm_inputs_labels, num_parallel_calls=tf_data.AUTOTUNE)
     text_ds = text_ds.prefetch(tf_data.AUTOTUNE)
-    mddict = { 'vocab_size' : vocab_size, 'maxlen' : maxlen, 'vocab' : vocab, 'name' : myobj.dataset, 'train_ds' : text_ds }
+    mddict = { 'vocab_size' : vocab_size, 'seq_len' : seq_len, 'vocab' : vocab, 'name' : myobj.dataset, 'train_ds' : text_ds }
     #import json
     #s = json.dumps(mddict)
     #md = json.loads(s, object_hook = Dummy)

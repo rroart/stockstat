@@ -28,10 +28,10 @@ def learn(ds = None, path = None, cf = 'tensorflowMiniatureGPTConfig', steps = N
     print(response)
     myobj = response.json() #.loads(response.text) #request.get_data(as_text=True)
 
-def chat(text, ds = None, path = None, cf = 'tensorflowMiniatureGPTConfig', take = None):
+def chat(text, ds = None, path = None, cf = 'tensorflowMiniatureGPTConfig', take = None, size = 40):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : True, 'mllearn' : False }
     cfname, modelInt, thecf = config.get(cf)
-    data = { 'modelInt' : modelInt, 'dataset' : ds, 'filename' : path, 'classifyarray' : [ text ], 'neuralnetcommand' : neuralnetcommand }
+    data = { 'modelInt' : modelInt, 'dataset' : ds, 'filename' : path, 'classifyarray' : [ text ], 'classes' : size, 'neuralnetcommand' : neuralnetcommand }
     data[cfname] = thecf
     if take is not None:
         thecf['take'] = take
