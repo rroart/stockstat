@@ -10,7 +10,9 @@ from keras import backend as K
 
 def getdataset3(myobj, config, classifier):
     if myobj.dataset == 'gpt2':
-        return None, None, None, None
+        dsdict = {"train_ds": None, "val_ds": None, "test_ds": None}
+        ds = DictToObject(dsdict)
+        return ds, None
     if myobj.dataset == 'simplebooks':
         dirs = simplebooksdir(myobj, config)
         return simplebooks(myobj, config, classifier, dirs[0])
@@ -31,7 +33,9 @@ def getdataset3(myobj, config, classifier):
         if hasattr(config, 'take'):
             train_ds = train_ds.take(config.take)
 
-        return train_ds, None, None, None
+        dsdict = {"train_ds": train_ds, "val_ds": None, "test_ds": None}
+        ds = DictToObject(dsdict)
+        return ds, None
 
     if myobj.dataset == 'imdb':
         dirs = imdbdir(myobj, config)
@@ -320,14 +324,16 @@ def do_dir(myobj, config, directories):
 
     text_ds = text_ds.map(prepare_lm_inputs_labels, num_parallel_calls=tf_data.AUTOTUNE)
     text_ds = text_ds.prefetch(tf_data.AUTOTUNE)
-    mddict = { 'vocab_size' : vocab_size, 'maxlen' : maxlen, 'vocab' : vocab, 'name' : myobj.dataset }
+    mddict = { 'vocab_size' : vocab_size, 'maxlen' : maxlen, 'vocab' : vocab, 'name' : myobj.dataset, 'train_ds' : text_ds }
     #import json
     #s = json.dumps(mddict)
     #md = json.loads(s, object_hook = Dummy)
     #print(type(md), md)
     md = DictToObject(mddict)
     #print(type(md), md)
-    return text_ds, None, None, md
+    dsdict = { "train_ds" : text_ds, "val_ds" : None, "test_ds" : None }
+    ds = DictToObject(dsdict)
+    return ds, md
 
 def custom_standardization(input_string):
     import string
@@ -405,8 +411,9 @@ def simplebooks(myobj, config, classifier, dir):
         tf_data.AUTOTUNE
     )
 
-    mddict = {'vocab_size': VOCAB_SIZE, 'seq_len': SEQ_LEN, 'vocab': vocab, 'tokenizer' : tokenizer, 'start_packer' : start_packer, 'name': myobj.dataset, 'train_ds' : train_ds}
+    mddict = {'vocab_size': VOCAB_SIZE, 'seq_len': SEQ_LEN, 'vocab': vocab, 'tokenizer' : tokenizer, 'start_packer' : start_packer, 'name': myobj.dataset, 'train_ds' : train_ds }
     md = DictToObject(mddict)
-
-    return train_ds, val_ds, None, md
+    dsdict = { "train_ds" : train_ds, "val_ds" : val_ds, "test_ds" : None }
+    ds = DictToObject(dsdict)
+    return ds, md
 

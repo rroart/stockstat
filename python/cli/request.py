@@ -90,6 +90,6 @@ def imgrequest3(market, data):
 def imgrequest4(market, files):
     return requests.post(imgurl4, files=files)
 
-def gptrequest1(market, data):
-    return requests.post(gpturl1, json=data, headers=headers)
+def gptrequest1(ds, data):
+    return requests.post(gpturl1 + "/" + ds, json=data, headers=headers)
 

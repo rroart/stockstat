@@ -18,6 +18,7 @@ import shutil
 from multiprocessing import Queue
 
 import mydatasets
+from mydatasets import DictToObject
 
 global dicteval
 dicteval = {}
@@ -786,36 +787,41 @@ class Classify:
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         queue.put(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": 0, "trainaccuracy": 0, "loss": 0, "classify" : classify, "gpu" : self.hasgpu() }), mimetype='application/json'))
 
-    def do_gpt(self, queue, request):
+    def do_gpt(self, queue, request, cachedata):
         dt = datetime.now()
         timestamp = dt.timestamp()
         # print(request.get_data(as_text=True))
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
-        (train_ds, val_ds, test_ds, md) = mydatasets.getdataset3(myobj, config, self)
-        #model = dictclass[md.name]
-
-        model = Model.Model(myobj, config, md)
+        if cachedata is not None:
+            print("Using cache")
+            datasets = cachedata.datasets
+            md = cachedata.md
+            model = cachedata.model
+        else:
+            (datasets, md) = mydatasets.getdataset3(myobj, config, self)
+            model = Model.Model(myobj, config, md)
         exists = self.existsds(myobj)
         print("exist", exists)
         # load model if:
         # exists and not dynamic and wantclassify
         text = None
-        if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
-            if model.localsave():
-                # dummy variable to allow saver
-                model = Model.Model(myobj, config, md)
-                print("Restoring")
-                model.model = tf.keras.models.load_model(self.getpath(myobj) + myobj.dataset + ".keras")
-                print("Restoring done")
-                text = model.generate(model.model);
-                print("text", text)
+        if cachedata is None:
+            if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
+                if model.localsave():
+                    # dummy variable to allow saver
+                    model = Model.Model(myobj, config, md)
+                    print("Restoring")
+                    model.model = tf.keras.models.load_model(self.getpath(myobj) + myobj.dataset + ".keras")
+                    print("Restoring done")
+                    text = model.generate(model.model);
+                    print("text", text)
+                else:
+                    model = Model.Model(myobj, config, md)
             else:
                 model = Model.Model(myobj, config, md)
-        else:
-            model = Model.Model(myobj, config, md)
-        # load end
+            # load end
         # print("classez2", myobj.classes)
         print(model)
         self.printgpus()
@@ -827,8 +833,8 @@ class Classify:
 
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
             print(model.model.summary())
-            if train_ds is not None:
-                model.fit(train_ds, val_ds, test_ds)
+            if datasets.train_ds is not None:
+                model.fit(datasets.train_ds, datasets.val_ds, datasets.test_ds)
             if model.localsave():
                 print("Saving")
                 model.save(self.getpath(myobj) + myobj.dataset + ".keras")
@@ -845,10 +851,10 @@ class Classify:
         if not loss is None:
             loss = float(loss)
         dt = datetime.now()
-        print("millis ", (dt.timestamp() - timestamp) * 1000)
-        queue.put(Response(json.dumps(
-            {"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify": None, 'classifyarray' : [ text ],
-             "gpu": self.hasgpu()}), mimetype='application/json'))
+        #datadict = { "model" : model, "datasets" : datasets, "md" : md }
+        #newdata2 = json.dumps(datadict)
+        queue.put({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify": None, 'classifyarray' : [ text ],
+             "gpu": self.hasgpu() })
         # return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def preprocess_image(self, image_path, size):

@@ -9,6 +9,9 @@ from multiprocessing import Process, Queue
 import json
 from werkzeug.wrappers import Response
 
+#from flask_caching import Cache
+#cache = Cache()
+
 def classifyrunner2(queue, request):
     cl.do_learntestclassify(queue, request)
 
@@ -22,6 +25,10 @@ def hasgpurunner(queue, dummy):
     device.hasgpu(queue)
     
 app = Flask(__name__)
+#app.config['CACHE_TYPE'] = 'simple' # Set the cache type
+#app.config['CACHE_DEFAULT_TIMEOUT'] = 30 # Set the default cache timeout in seconds
+#app.config['CACHE_KEY_PREFIX'] = 'myapp_' # Set the cache key prefix
+#cache.init_app(app)
 
 @app.route('/', methods=['GET'])
 def healthcheck():
@@ -270,13 +277,21 @@ def do_imgclassify():
         traceback.print_exc(file=sys.stdout)
     return result
 
-@app.route('/gpt', methods=['POST'])
-def do_gpt():
-    def classifyrunner(queue, request):
+@app.route('/gpt/<ds>', methods=['POST'])
+def do_gpt(ds):
+    if False:
+        from datetime import datetime
+        dt = datetime.now()
+        timestamp = dt.timestamp()
+        data = cache.get(ds)
+        print ("millis ", (dt.timestamp() - timestamp)*1000)
+    else:
+        data = None
+    def classifyrunner(queue, request, cachedata):
         try:
             import classify
             cl = classify.Classify()
-            cl.do_gpt(queue, request)
+            cl.do_gpt(queue, request, cachedata)
         except:
             import sys,traceback
             memory = "CUDA error: out of memory" in traceback.format_exc()
@@ -289,8 +304,11 @@ def do_gpt():
             f.write(request.get_data(as_text=True))
             traceback.print_exc(file=f)
             f.close()
+
     aqueue = Queue()
-    process = Process(target=classifyrunner, args=(aqueue, request))
+
+    process = Process(target=classifyrunner, args=(aqueue, request, data))
+
     try:
         import queue
         process.start()
@@ -301,13 +319,20 @@ def do_gpt():
             except queue.Empty as e:
                 if not process.is_alive():
                     print("Process died")
-                    result = Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : False, "cudnn" : False }), mimetype='application/json')
+                    result = {"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : False, "cudnn" : False }
                     break
     except Exception as e:
         print(e)
         import sys,traceback
         traceback.print_exc(file=sys.stdout)
-    return result
+    return Response(json.dumps(result), mimetype='application/json')
+    data = None
+    if data is not None:
+        print("Caching", ds)
+        #cache.set(ds, data)
+    else:
+        print("Deleting", ds)
+        #cache.delete(ds)
 
 def argstr():
     if len(sys.argv) > 1 and sys.argv[1].isnumeric():

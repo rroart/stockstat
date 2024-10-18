@@ -21,7 +21,9 @@ def learn(ds = None, path = None, cf = 'tensorflowMiniatureGPTConfig', steps = N
         thecf['take'] = take
     data = { 'modelInt' : modelInt, 'dataset' : ds, 'filename' : path, 'classifyarray' : None, 'neuralnetcommand' : neuralnetcommand }
     data[cfname] = thecf
-    response = request.gptrequest1(None, data)
+    if ds is None:
+        ds = 'gpt2';
+    response = request.gptrequest1(ds, data)
     print(response.text)
     print(response)
     myobj = response.json() #.loads(response.text) #request.get_data(as_text=True)
@@ -33,7 +35,9 @@ def chat(text, ds = None, path = None, cf = 'tensorflowMiniatureGPTConfig', take
     data[cfname] = thecf
     if take is not None:
         thecf['take'] = take
-    response = request.gptrequest1(None, data)
+    if ds is None:
+        ds = 'gpt2';
+    response = request.gptrequest1(ds, data)
     print(response.text)
     print(response)
     myobj = response.json() #.loads(response.text) #request.get_data(as_text=True)
