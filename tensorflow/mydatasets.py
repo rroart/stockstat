@@ -291,10 +291,12 @@ class Dummy:
 def do_dir(myobj, config, directories):
     import random
     import tensorflow.data as tf_data
+    import keras_nlp
     from keras.layers import TextVectorization
     batch_size = 128
     vocab_size = 20000
     seq_len = 80
+    SEQ_LEN = 80 # duplicate, borrowed
     filenames = []
     for dir in directories:
         for f in os.listdir(dir):
@@ -324,7 +326,20 @@ def do_dir(myobj, config, directories):
 
     text_ds = text_ds.map(prepare_lm_inputs_labels, num_parallel_calls=tf_data.AUTOTUNE)
     text_ds = text_ds.prefetch(tf_data.AUTOTUNE)
-    mddict = { 'vocab_size' : vocab_size, 'seq_len' : seq_len, 'vocab' : vocab, 'name' : myobj.dataset, 'train_ds' : text_ds }
+
+    # TODO duplicate, borrowed
+    tokenizer = keras_nlp.tokenizers.WordPieceTokenizer(
+        vocabulary=vocab,
+        sequence_length=SEQ_LEN,
+        lowercase=True,
+    )
+
+    # TODO almost duplicate, borrowed
+    start_packer = keras_nlp.layers.StartEndPacker(
+        sequence_length=SEQ_LEN,
+    )
+
+    mddict = { 'vocab_size' : vocab_size, 'seq_len' : seq_len, 'vocab' : vocab, 'tokenizer' : tokenizer, 'start_packer' : start_packer, 'name' : myobj.dataset, 'train_ds' : text_ds }
     #import json
     #s = json.dumps(mddict)
     #md = json.loads(s, object_hook = Dummy)
