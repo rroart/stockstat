@@ -56,7 +56,7 @@ def causal_attention_mask(batch_size, n_dest, n_src, dtype):
 
 
 class TransformerBlock(layers.Layer):
-    # TODO
+    # TODO had to add trainable and dtype for serializing
     def __init__(self, embed_dim, num_heads, ff_dim, rate=0.1, trainable = True, dtype = 'float32'):
         super().__init__()
         self.att = layers.MultiHeadAttention(num_heads, embed_dim)
@@ -84,7 +84,7 @@ class TransformerBlock(layers.Layer):
         return self.layernorm2(out1 + ffn_output)
 
 class TokenAndPositionEmbedding(layers.Layer):
-    # TODO
+    # TODO due to serializing
     def __init__(self, seq_len, vocab_size, embed_dim, trainable = True, dtype = 'float32'):
         super().__init__()
         self.token_emb = layers.Embedding(input_dim=vocab_size, output_dim=embed_dim)
