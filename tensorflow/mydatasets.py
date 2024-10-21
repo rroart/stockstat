@@ -9,34 +9,20 @@ from zipfile import ZipFile
 from keras import backend as K
 
 def getdataset3(myobj, config, classifier):
-    if myobj.dataset == 'gpt2':
+    if isinstance(myobj.dataset, list):
+        dataset = myobj.dataset[1]
+    else:
+        dataset = myobj.dataset
+
+    if config.name == 'gpt2' and dataset is None:
         dsdict = {"train_ds": None, "val_ds": None, "test_ds": None}
         ds = DictToObject(dsdict)
         return ds, None
-    if myobj.dataset == 'simplebooks':
+    if dataset == 'simplebooks':
         dirs = simplebooksdir(myobj, config)
         return simplebooks(myobj, config, classifier, dirs[0])
-    if myobj.dataset == 'reddit_tifu':
-        import tensorflow_datasets as tfds
-        reddit_ds = tfds.load("reddit_tifu", split="train", as_supervised=True, data_dir = "/tmp")
-        for document, title in reddit_ds:
-            print(document.numpy())
-            print(title.numpy())
-            break
-        train_ds = (
-            reddit_ds.map(lambda document, _: document)
-            .batch(32)
-            .cache()
-            .prefetch(tf.data.AUTOTUNE)
-        )
-
-        if hasattr(config, 'take'):
-            train_ds = train_ds.take(config.take)
-
-        dsdict = {"train_ds": train_ds, "val_ds": None, "test_ds": None}
-        ds = DictToObject(dsdict)
-        return ds, None
-
+    if dataset == 'reddit_tifu':
+        return reddit_tifu(myobj, config, classifier)
     if myobj.dataset == 'imdb':
         dirs = imdbdir(myobj, config)
     else:
@@ -295,6 +281,8 @@ def do_dir(myobj, config, directories):
     from keras.layers import TextVectorization
     batch_size = 128
     vocab_size = 20000
+    if hasattr(config, 'vocab'):
+        vocab_size = config.vocab
     seq_len = 80
     SEQ_LEN = 80 # duplicate, borrowed
     filenames = []
@@ -376,6 +364,8 @@ def simplebooks(myobj, config, classifier, dir):
     BATCH_SIZE = 64
     MIN_STRING_LEN = 512
     VOCAB_SIZE = 5000
+    if hasattr(config, 'vocab'):
+        VOCAB_SIZE = config.vocab
     SEQ_LEN = 128
     raw_train_ds = (
         tf_data.TextLineDataset(dir + "simplebooks-92-raw/train.txt")
@@ -431,4 +421,54 @@ def simplebooks(myobj, config, classifier, dir):
     dsdict = { "train_ds" : train_ds, "val_ds" : val_ds, "test_ds" : None }
     ds = DictToObject(dsdict)
     return ds, md
+
+def reddit_tifu(myobj, config, classifier):
+    import tensorflow_datasets as tfds
+    import keras_nlp
+
+    VOCAB_SIZE = 5000
+    if hasattr(config, 'vocab'):
+        VOCAB_SIZE = config.vocab
+    SEQ_LEN = 128
+    reddit_ds = tfds.load("reddit_tifu", split="train", as_supervised=True, data_dir="/tmp")
+    for document, title in reddit_ds:
+        print(document.numpy())
+        print(title.numpy())
+        break
+    train_ds = (
+        reddit_ds.map(lambda document, _: document)
+        .batch(32)
+        .cache()
+        .prefetch(tf.data.AUTOTUNE)
+    )
+
+    if hasattr(config, 'take'):
+        train_ds = train_ds.take(config.take)
+
+    vocab = keras_nlp.tokenizers.compute_word_piece_vocabulary(
+        train_ds,
+        vocabulary_size=VOCAB_SIZE,
+        lowercase=True,
+        reserved_tokens=["[PAD]", "[UNK]", "[BOS]"],
+    )
+
+    # TODO duplicate, borrowed
+    tokenizer = keras_nlp.tokenizers.WordPieceTokenizer(
+        vocabulary=vocab,
+        sequence_length=SEQ_LEN,
+        lowercase=True,
+    )
+
+    # TODO almost duplicate, borrowed
+    start_packer = keras_nlp.layers.StartEndPacker(
+        sequence_length=SEQ_LEN,
+    )
+
+    mddict = {'vocab_size': VOCAB_SIZE, 'seq_len': SEQ_LEN, 'vocab': vocab, 'tokenizer': tokenizer,
+              'start_packer': start_packer, 'name': myobj.dataset, 'train_ds': train_ds}
+    md = DictToObject(mddict)
+    dsdict = {"train_ds": train_ds, "val_ds": None, "test_ds": None}
+    ds = DictToObject(dsdict)
+    return ds, md
+
 

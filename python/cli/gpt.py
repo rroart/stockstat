@@ -12,18 +12,22 @@ import json
 
 from collections import OrderedDict
 
-def learn(ds = None, path = None, cf = 'tensorflowMiniatureGPTConfig', steps = None, take = None):
+def learn(ds = None, path = None, cf = 'tensorflowMiniatureGPTConfig', steps = None, take = None, vocab = None):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : False, 'mllearn' : True }
     cfname, modelInt, thecf = config.get(cf)
     if steps is not None:
         thecf['steps'] = steps
     if take is not None:
         thecf['take'] = take
+    if vocab is not None:
+        thecf['vocab'] = vocab
     data = { 'modelInt' : modelInt, 'dataset' : ds, 'filename' : path, 'classifyarray' : None, 'neuralnetcommand' : neuralnetcommand }
     data[cfname] = thecf
-    if ds is None:
-        ds = 'gpt2';
-    response = request.gptrequest1(ds, data)
+    if isinstance(ds, list):
+        myds = str(ds[0]) + str(ds[1])
+    else:
+        myds = ds
+    response = request.gptrequest1(myds, data)
     print(response.text)
     print(response)
     myobj = response.json() #.loads(response.text) #request.get_data(as_text=True)
@@ -35,9 +39,11 @@ def chat(text, ds = None, path = None, cf = 'tensorflowMiniatureGPTConfig', take
     data[cfname] = thecf
     if take is not None:
         thecf['take'] = take
-    if ds is None:
-        ds = 'gpt2';
-    response = request.gptrequest1(ds, data)
+    if isinstance(ds, list):
+        myds = str(ds[0]) + str(ds[1])
+    else:
+        myds = ds
+    response = request.gptrequest1(myds, data)
     print(response.text)
     print(response)
     myobj = response.json() #.loads(response.text) #request.get_data(as_text=True)

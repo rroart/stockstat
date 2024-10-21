@@ -477,7 +477,14 @@ class Classify:
     def existsds(self, myobj, modelname):
         if not hasattr(myobj, 'dataset'):
             return False
-        return os.path.isfile(self.getpath(myobj) + modelname + myobj.dataset + ".keras")
+        return os.path.isfile(self.getdspath(myobj, modelname))
+
+    def getdspath(self, myobj, modelname):
+        if isinstance(myobj.dataset, list):
+            dataset = str(myobj.dataset[0]) + str(myobj.dataset[1])
+        else:
+            dataset = myobj.dataset
+        return self.getpath(myobj) + modelname + dataset + ".keras"
 
     def do_learntestclassify(self, queue, request):
         print("eager", tf.executing_eagerly())
@@ -787,11 +794,10 @@ class Classify:
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         queue.put(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": 0, "trainaccuracy": 0, "loss": 0, "classify" : classify, "gpu" : self.hasgpu() }), mimetype='application/json'))
 
-    def do_gpt(self, queue, request, cachedata):
+    def do_gpt(self, queue, myjson, cachedata):
         dt = datetime.now()
         timestamp = dt.timestamp()
-        # print(request.get_data(as_text=True))
-        myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
+        myobj = json.loads(myjson, object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
         if cachedata is not None:
@@ -813,7 +819,7 @@ class Classify:
                     # dummy variable to allow saver
                     model = Model.Model(myobj, config, md)
                     print("Restoring")
-                    model.model = tf.keras.models.load_model(self.getpath(myobj) + modelname + myobj.dataset + ".keras")
+                    model.model = tf.keras.models.load_model(self.getdspath(myobj,  modelname))
                     print("Restoring done")
                     text = model.generate(model.model);
                     print("text", text)
@@ -837,7 +843,7 @@ class Classify:
                 model.fit(datasets.train_ds, datasets.val_ds, datasets.test_ds)
             if model.localsave():
                 print("Saving")
-                model.save(self.getpath(myobj) + modelname + myobj.dataset + ".keras")
+                model.save(self.getdspath(myobj,  modelname))
 
         #classifier.tidy()
         del classifier

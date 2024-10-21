@@ -291,7 +291,7 @@ def do_gpt(ds):
         try:
             import classify
             cl = classify.Classify()
-            cl.do_gpt(queue, request, cachedata)
+            cl.do_gpt(queue, request.get_data(as_text=True), cachedata)
         except:
             import sys,traceback
             memory = "CUDA error: out of memory" in traceback.format_exc()
