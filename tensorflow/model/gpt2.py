@@ -49,9 +49,13 @@ class Model:
             )
 
     def fit(self, train_ds, val_ds, test_ds):
+        print('Cardinality', train_ds.cardinality())
+        cardinality = train_ds.cardinality()
+        if cardinality == -2:
+            cardinality = 1
         learning_rate = keras.optimizers.schedules.PolynomialDecay(
             5e-5,
-            decay_steps=train_ds.cardinality() * self.config.steps,
+            decay_steps= cardinality * self.config.steps,
             end_learning_rate=0.0,
         )
         loss = keras.losses.SparseCategoricalCrossentropy(from_logits=True)
