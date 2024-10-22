@@ -5,12 +5,11 @@ import time
 
 keras.mixed_precision.set_global_policy("mixed_float16")
 
-# TODO not from preset
 class Model:
-    def __init__(self, myobj, config, md):
+    def __init__(self, myobj, config, dataset):
         self.myobj = myobj
         self.config = config
-        self.md = md
+        self.dataset = dataset
         if isinstance(myobj.dataset, list):
             preset = myobj.dataset[0]
         else:
@@ -25,7 +24,8 @@ class Model:
                 preset, preprocessor=preprocessor
             )
         else:
-            vocab = md.vocab
+            vocab = None
+            vocab_size = 0
             vocab = dict([(str(token), i) for i, token in enumerate(vocab)])
             tokenizer = keras_nlp.models.GPT2Tokenizer(
                 vocabulary=vocab,
@@ -36,7 +36,7 @@ class Model:
                 sequence_length=128,
             )
             backbone = keras_nlp.models.GPT2Backbone(
-                vocabulary_size=md.vocab_size,
+                vocabulary_size=vocab_size,
                 num_layers=4,
                 num_heads=4,
                 hidden_dim=256,
@@ -48,7 +48,10 @@ class Model:
                 preprocessor=preprocessor,
             )
 
-    def fit(self, train_ds, val_ds, test_ds):
+    def fit(self):
+        train_ds = self.dataset.train_ds
+        if hasattr(self.config, 'take'):
+            train_ds = train_ds.take(self.config.take)
         print('Cardinality', train_ds.cardinality())
         cardinality = train_ds.cardinality()
         if cardinality == -2:

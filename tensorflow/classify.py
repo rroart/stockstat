@@ -802,12 +802,10 @@ class Classify:
         Model = importlib.import_module('model.' + modelname)
         if cachedata is not None:
             print("Using cache")
-            datasets = cachedata.datasets
-            md = cachedata.md
             model = cachedata.model
         else:
-            (datasets, md) = mydatasets.getdataset3(myobj, config, self)
-            model = Model.Model(myobj, config, md)
+            datasets = mydatasets.getdataset3(myobj, config, self)
+            model = Model.Model(myobj, config, datasets)
         exists = self.existsds(myobj, modelname)
         print("exist", exists)
         # load model if:
@@ -817,16 +815,16 @@ class Classify:
             if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
                 if model.localsave():
                     # dummy variable to allow saver
-                    model = Model.Model(myobj, config, md)
+                    model = Model.Model(myobj, config, datasets)
                     print("Restoring")
                     model.model = tf.keras.models.load_model(self.getdspath(myobj,  modelname))
                     print("Restoring done")
                     text = model.generate(model.model);
                     print("text", text)
                 else:
-                    model = Model.Model(myobj, config, md)
+                    model = Model.Model(myobj, config, datasets)
             else:
-                model = Model.Model(myobj, config, md)
+                model = Model.Model(myobj, config, datasets)
             # load end
         # print("classez2", myobj.classes)
         print(model)
@@ -839,8 +837,8 @@ class Classify:
 
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
             print(model.model.summary())
-            if datasets.train_ds is not None:
-                model.fit(datasets.train_ds, datasets.val_ds, datasets.test_ds)
+            if model.dataset.train_ds is not None:
+                model.fit()
             if model.localsave():
                 print("Saving")
                 model.save(self.getdspath(myobj,  modelname))
@@ -861,6 +859,7 @@ class Classify:
         #newdata2 = json.dumps(datadict)
         queue.put({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify": None, 'classifyarray' : [ text ],
              "gpu": self.hasgpu() })
+        return model
 
     def preprocess_image(self, image_path, size):
         import keras
