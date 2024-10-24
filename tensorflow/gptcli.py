@@ -51,3 +51,14 @@ def chat(text, ds = None, path = None, cf = 'tensorflowMiniatureGPTConfig', take
     cache[cf+myds] = response
     result = queue.get()
     print (result)
+
+def chatloop(ds = None, path = None, cf = 'tensorflowMiniatureGPTConfig', take = None, size = 40):
+    rdall = ''
+    while True:
+        rd = input("Input")
+        do_rd = rd != ''
+        if do_rd:
+            rdall = rdall + " " + rd
+            chat(rdall, ds, path, cf, take, size)
+        else:
+            break
