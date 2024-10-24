@@ -802,7 +802,8 @@ class Classify:
         Model = importlib.import_module('model.' + modelname)
         if cachedata is not None:
             print("Using cache")
-            model = cachedata.model
+            model = cachedata
+            model.myobj = myobj
         else:
             datasets = mydatasets.getdataset3(myobj, config, self)
             model = Model.Model(myobj, config, datasets)
@@ -811,21 +812,21 @@ class Classify:
         # load model if:
         # exists and not dynamic and wantclassify
         text = None
-        if cachedata is None:
-            if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
-                if model.localsave():
+        if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
+            if model.localsave():
+                if cachedata is None:
                     # dummy variable to allow saver
                     model = Model.Model(myobj, config, datasets)
                     print("Restoring")
                     model.model = tf.keras.models.load_model(self.getdspath(myobj,  modelname))
                     print("Restoring done")
-                    text = model.generate(model.model);
-                    print("text", text)
-                else:
-                    model = Model.Model(myobj, config, datasets)
+                text = model.generate(model.model)
+                print("text", text)
             else:
                 model = Model.Model(myobj, config, datasets)
-            # load end
+        else:
+             model = Model.Model(myobj, config, datasets)
+        # load end
         # print("classez2", myobj.classes)
         print(model)
         self.printgpus()

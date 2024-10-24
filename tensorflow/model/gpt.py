@@ -20,6 +20,8 @@ class Model:
         self.myobj = myobj
         self.config = config
         self.dataset = dataset
+        self.start_packer = None
+        self.tokenizer = None
 
         train_ds, val_ds, vocab_size, vocab = self.tokenize(dataset)
         self.train_ds = train_ds
@@ -75,11 +77,13 @@ class Model:
             sequence_length=SEQ_LEN,
             lowercase=True,
         )
+        self.tokenizer = tokenizer
 
         start_packer = keras_nlp.layers.StartEndPacker(
             sequence_length=SEQ_LEN,
             start_value=tokenizer.token_to_id("[BOS]"),
         )
+        self.start_packer = start_packer
 
         def preprocess(inputs):
             outputs = tokenizer(inputs)
@@ -106,7 +110,7 @@ class Model:
     def generate(self, model):
         text_generation_callback = self.TopKTextGenerator(self.myobj, self.model, self, k=10)
         # dummy
-        model.fit(self.dataset.train_ds.take(1), verbose=2, epochs=2, callbacks=[text_generation_callback])
+        model.fit(self.train_ds.take(1), verbose=2, epochs=2, callbacks=[text_generation_callback])
         return text_generation_callback.txt
 
     def generate2(self, model):
