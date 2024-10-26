@@ -664,7 +664,7 @@ class Classify:
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
         if not modelname == 'neural_style_transfer':
-            (dataset, size, classes, classify, from_logits) = mydatasets.getdataset2(myobj, config, self)
+            (dataset, size, classes, classify, from_logits) = mydatasets.getdatasetgen(myobj, config, self)
 
             myobj.size = size
             myobj.classes = classes
@@ -805,7 +805,7 @@ class Classify:
             model = cachedata
             model.myobj = myobj
         else:
-            datasets = mydatasets.getdataset3(myobj, config, self)
+            datasets = mydatasets.getdatasettext(myobj, config, self)
             model = Model.Model(myobj, config, datasets)
         exists = self.existsds(myobj, modelname)
         print("exist", exists)

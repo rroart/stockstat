@@ -8,7 +8,7 @@ from zipfile import ZipFile
 #import pandas as pd
 from keras import backend as K
 
-def getdataset3(myobj, config, classifier):
+def getdatasettext(myobj, config, classifier):
     if isinstance(myobj.dataset, list):
         dataset = myobj.dataset[1]
     else:
@@ -29,11 +29,11 @@ def getdataset3(myobj, config, classifier):
         dirs = filenamedir(myobj, config)
     return do_dir(myobj, config, dirs)
 
-def getdataset2(myobj, config, classifier):
+def getdatasetgen(myobj, config, classifier):
     if myobj.dataset == 'mnist':
         return getmnist2(myobj, config)
     if myobj.dataset == 'celeba_gan':
-        return getceleba_gan(myobj, config)
+        return getceleba(myobj, config)
 
 def getmnist2(myobj, config):
     """
@@ -62,17 +62,17 @@ def getmnist2(myobj, config):
     mydim = (28, 28, 1)
     return dataset, mydim, 10, True, True
 
-def getceleba_gan(myobj, config):
+def getceleba(myobj, config):
     # TODO download
-    os.makedirs("/tmp/celeba_gan", 0o777, True)
+    os.makedirs("/tmp/celeba", 0o777, True)
 
     url = "https://drive.google.com/uc?id=1O7m1010EJjLE5QxLZiM9Fpjs7Oj6e684"
-    output = "/tmp/celeba_gan/data.zip"
+    output = "/tmp/celeba/data.zip"
     gdown.download(url, output, quiet=True)
-    with ZipFile("/tmp/celeba_gan/data.zip", "r") as zipobj:
-        zipobj.extractall("/tmp/celeba_gan")
+    with ZipFile("/tmp/celeba/data.zip", "r") as zipobj:
+        zipobj.extractall("/tmp/celeba")
     dataset = keras.utils.image_dataset_from_directory(
-        "/tmp/celeba_gan", label_mode=None, image_size=(64, 64), batch_size=32
+        "/tmp/celeba", label_mode=None, image_size=(64, 64), batch_size=32
     )
     dataset = dataset.map(lambda x: x / 255.0)
     mydim = (64, 64)
@@ -324,11 +324,6 @@ def reddit_tifu(myobj, config, classifier):
     import tensorflow_datasets as tfds
 
     reddit_ds = tfds.load("reddit_tifu", split="train", as_supervised=True, data_dir="/tmp")
-    print("type reddit", type(reddit_ds))
-    for document, title in reddit_ds:
-        print(document.numpy())
-        print(title.numpy())
-        break
 
     train_ds = (
         reddit_ds.map(lambda document, _: document)
