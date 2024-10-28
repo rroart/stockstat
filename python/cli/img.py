@@ -12,7 +12,7 @@ import json
 
 from collections import OrderedDict
 
-def image(path, path2, data):
+def image(path, path2, data, cf):
     img_data = None
     if path is not None:
         with open(path, 'rb') as f:
@@ -26,14 +26,14 @@ def image(path, path2, data):
         "file": (path, img_data),
         "file2": (path2, img_data2)
     }
-    response = request.imgrequest1(None, files)
+    response = request.imgrequest1(cf, files)
     print(response.text)
     print(response)
     myobj = response.json() #.loads(response.text) #request.get_data(as_text=True)
     print(type(myobj))
     print(myobj)
     for afile in myobj['files']:
-        response = request.imgrequest2(None, afile)
+        response = request.imgrequest2(cf, afile)
 
         with open(afile, 'wb') as file:
             file.write(response.content)
@@ -42,33 +42,35 @@ def dcgan(ds = 'celeba_gan', cf = 'tensorflowDCGANConfig', load = False, save = 
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : load, 'mllearn' : save }
     cfname, modelInt, thecf = config.get(cf)
     thecf['steps'] = 1
-    data = { 'modelInt' : modelInt, 'dataset' : ds, 'generate' : True, 'files' : 2, 'filename' : 'dcgan', 'neuralnetcommand' : neuralnetcommand }
-    data[cfname] = thecf
-    image(None, None, data)
+    filename = getfilename(thecf, ds)
+    data = { 'modelInt' : modelInt, 'dataset' : ds, 'generate' : True, 'files' : 2, 'filename' : filename, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
+    image(None, None, data, cf)
 
 def conditionalgan(ds = 'mnist', cf = 'tensorflowConditionalGANConfig', load = False, save = False):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : load, 'mllearn' : save }
     cfname, modelInt, thecf = config.get(cf)
     thecf['steps'] = 1
-    data = { 'modelInt' : modelInt, 'dataset' : ds, 'generate' : True, 'files' : 2, 'filename' : 'conditionalgan', 'neuralnetcommand' : neuralnetcommand }
-    data[cfname] = thecf
-    image(None, None, data)
+    filename = getfilename(thecf, ds)
+    data = { 'modelInt' : modelInt, 'dataset' : ds, 'generate' : True, 'files' : 2, 'filename' : filename, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
+    image(None, None, data, cf)
 
 def neural_style_transfer(path, path2, ds = 'vgg19', cf = 'tensorflowNeuralStyleTransferConfig', load = False, save = False):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : load, 'mllearn' : save }
     cfname, modelInt, thecf = config.get(cf)
     thecf['steps'] = 1
-    data = { 'modelInt' : modelInt, 'dataset' : ds, 'generate' : True, 'files' : 2, 'filename' : 'dcgan', 'neuralnetcommand' : neuralnetcommand }
-    data[cfname] = thecf
-    image(path, path2, data)
+    filename = getfilename(thecf, ds)
+    # TODO vgg19
+    data = { 'modelInt' : modelInt, 'dataset' : 'dcgan', 'generate' : True, 'files' : 2, 'filename' : filename, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
+    image(path, path2, data, cf)
     
 def dataset(ds = 'mnist', cf = 'tensorflowMLPConfig', load = False, save = True):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : load, 'mllearn' : save }
     cfname, modelInt, thecf = config.get(cf)
     thecf['steps'] = 1
-    data = { 'modelInt' : modelInt, 'dataset' : ds, 'filename' : ds, 'zero' : True, 'neuralnetcommand' : neuralnetcommand }
+    filename = getfilename(thecf, ds)
+    data = { 'modelInt' : modelInt, 'dataset' : ds, 'filename' : filename, 'zero' : True, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
     data[cfname] = thecf
-    response = request.imgrequest3(None, data)
+    response = request.imgrequest3(cf, data)
     print(response.text)
     print(response)
     myobj = response.json() #.loads(response.text) #request.get_data(as_text=True)
@@ -76,8 +78,8 @@ def dataset(ds = 'mnist', cf = 'tensorflowMLPConfig', load = False, save = True)
 def classify(path, ds = 'mnist', cf = 'tensorflowMLPConfig'):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : True, 'mllearn' : False }
     cfname, modelInt, thecf = config.get(cf)
-    data = { 'modelInt' : modelInt, 'dataset' : ds, 'filename' : ds, 'zero' : True, 'neuralnetcommand' : neuralnetcommand }
-    data[cfname] = thecf
+    filename = getfilename(thecf, ds)
+    data = { 'modelInt' : modelInt, 'dataset' : ds, 'filename' : filename, 'zero' : True, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
     img_data = None
     if path is not None:
         with open(path, 'rb') as f:
@@ -86,8 +88,10 @@ def classify(path, ds = 'mnist', cf = 'tensorflowMLPConfig'):
         'json': (None, json.dumps(data), 'application/json'),
         "file": (path, img_data),
     }
-    response = request.imgrequest4(None, files)
+    response = request.imgrequest4(cf, files)
     print(response.text)
     print(response)
     myobj = response.json() #.loads(response.text) #request.get_data(as_text=True)
     
+def getfilename(cf, ds):
+    return cf['name'] + ds

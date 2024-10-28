@@ -472,11 +472,13 @@ class Classify:
             return False
         if os.path.exists(self.getpath(myobj) + myobj.filename):
             return True
-        return os.path.isfile(self.getpath(myobj) + myobj.filename + ".keras")
+        return os.path.isfile(self.getfullpath(myobj))
 
+    #deprecated
     def existsds(self, myobj, modelname):
         if not hasattr(myobj, 'dataset'):
             return False
+        return os.path.isfile(self.getdspath(myobj, modelname))
         return os.path.isfile(self.getdspath(myobj, modelname))
 
     def getdspath(self, myobj, modelname):
@@ -512,7 +514,7 @@ class Classify:
                 # dummy variable to allow saver
                 model = Model.Model(myobj, config, classify)
                 print("Restoring")
-                model.model = tf.keras.models.load_model( self.getpath(myobj) + myobj.filename + ".keras")
+                model.model = tf.keras.models.load_model( self.getfullpath(myobj))
                 print("Restoring done")
             else:
                 model = Model.Model(myobj, config, classify)
@@ -536,7 +538,7 @@ class Classify:
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
             if Model.Model.localsave():
                 print("Saving")
-                model.save(self.getpath(myobj) + myobj.filename + ".keras")
+                model.save(self.getfullpath(myobj))
 
         (intlist, problist) = (None, None)
         if self.wantClassify(myobj):
@@ -590,7 +592,7 @@ class Classify:
                 # dummy variable to allow saver
                 model = Model.Model(myobj, config, classify)
                 print("Restoring")
-                model.model = tf.keras.models.load_model( self.getpath(myobj) + myobj.filename + ".keras")
+                model.model = tf.keras.models.load_model( self.getfullpath(myobj))
                 print("Restoring done")
             else:
                 model = Model.Model(myobj, config, classify)
@@ -613,7 +615,7 @@ class Classify:
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
             if Model.Model.localsave():
                 print("Saving")
-                model.save(self.getpath(myobj) + myobj.filename + ".keras")
+                model.save(self.getfullpath(myobj))
 
         classifier.tidy()
         del classifier
@@ -765,7 +767,7 @@ class Classify:
                 # dummy variable to allow saver
                 model = Model.Model(myobj, config, classify)
                 print("Restoring")
-                model.model = tf.keras.models.load_model(self.getpath(myobj) + myobj.filename + ".keras")
+                model.model = tf.keras.models.load_model(self.getfullpath(myobj))
                 print("Restoring done")
             else:
                 model = Model.Model(myobj, config, classify)
@@ -807,7 +809,7 @@ class Classify:
         else:
             datasets = mydatasets.getdatasettext(myobj, config, self)
             model = Model.Model(myobj, config, datasets)
-        exists = self.existsds(myobj, modelname)
+        exists = self.exists(myobj)
         print("exist", exists)
         # load model if:
         # exists and not dynamic and wantclassify
@@ -818,7 +820,7 @@ class Classify:
                     # dummy variable to allow saver
                     model = Model.Model(myobj, config, datasets)
                     print("Restoring")
-                    model.model = tf.keras.models.load_model(self.getdspath(myobj,  modelname))
+                    model.model = tf.keras.models.load_model(self.getfullpath(myobj))
                     print("Restoring done")
                 text = model.generate(model.model)
                 print("text", text)
@@ -842,7 +844,7 @@ class Classify:
                 model.fit()
             if model.localsave():
                 print("Saving")
-                model.save(self.getdspath(myobj,  modelname))
+                model.save(self.getfullpath(myobj))
 
         #classifier.tidy()
         del classifier
@@ -891,6 +893,9 @@ class Classify:
         if hasattr(myobj, 'path') and not myobj.path is None:
             return myobj.path + '/'
         return '/tmp/'
+
+    def getfullpath(self, myobj):
+        return self.getpath(myobj) + myobj.filename + ".keras"
 
     def do_filename(self, queue, request):
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)

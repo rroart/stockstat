@@ -294,7 +294,7 @@ def do_dir(myobj, config, directories):
     return ds
 
 def filenamedir(myobj, config):
-    return [ myobj.filename ]
+    return [ myobj.dataset ]
 
 def simplebooks(myobj, config, classifier, dir):
     import tensorflow.data as tf_data

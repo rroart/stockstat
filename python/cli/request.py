@@ -9,13 +9,21 @@ ahost = os.environ.get('MYAHOST')
 if ahost is None:
     ahost = "localhost"
     
-imgaport = os.environ.get('MYIMGAPORT')
-if imgaport is None:
-    imgaport = "80"
+tfport = os.environ.get('MYTFPORT')
+if tfport is None:
+    tfport = "80"
 
-imgahost = os.environ.get('MYIMGAHOST')
-if imgahost is None:
-    imgahost = "localhost"
+tfhost = os.environ.get('MYTFHOST')
+if tfhost is None:
+    tfhost = "localhost"
+    
+ptport = os.environ.get('MYPTPORT')
+if ptport is None:
+    ptport = "80"
+
+pthost = os.environ.get('MYPTHOST')
+if pthost is None:
+    pthost = "localhost"
     
 url1 = 'http://' + ahost + ':' + aport + '/action/simulateinvest'
 url2 = 'http://' + ahost + ':' + aport + '/action/improvesimulateinvest'
@@ -29,12 +37,25 @@ url9 = 'http://' + ahost + ':' + aport + '/db/update/end'
 url10 = 'http://' + ahost + ':' + aport + '/cache/invalidate'
 url11 = 'http://' + ahost + ':' + aport + '/copy/'
 
-imgurl1 = 'http://' + imgahost + ':' + imgaport + '/datasetgen'
-imgurl2 = 'http://' + imgahost + ':' + imgaport + '/download'
-imgurl3 = 'http://' + imgahost + ':' + imgaport + '/dataset'
-imgurl4 = 'http://' + imgahost + ':' + imgaport + '/imgclassify'
+def geturl(cf):
+    if istf(cf):
+        return 'http://' + tfhost + ':' + tfport
+    else:
+        return 'http://' + pthost + ':' + ptport
 
-gpturl1 = 'http://' + imgahost + ':' + imgaport + '/gpt'
+def imgurl1(cf):
+    return geturl(cf) + '/datasetgen'
+def imgurl2(cf):
+    return geturl(cf) + '/download'
+def imgurl3(cf):
+    return geturl(cf) + '/dataset'
+def imgurl4(cf):
+    return geturl(cf) + '/imgclassify'
+
+def gpturl1(cf):
+    return geturl(cf) + '/gpt'
+def gpturl2(cf):
+    return geturl(cf) + '/gpt2'
 
 #headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 #headers={'Content-type':'application/json', 'Accept':'application/json'}
@@ -77,19 +98,23 @@ def cacheinvalidate():
 def copydb(indb, outdb):
     return requests.post(url11 + indb + "/" + outdb, headers=headers)
 
-def imgrequest1(market, files):
-    #return requests.post(imgurl1, json=data, headers=headers2, files=files)
-    return requests.post(imgurl1, files=files)
+def imgrequest1(cf, files):
+    return requests.post(imgurl1(cf), files=files)
 
-def imgrequest2(market, afile):
-    return requests.get(imgurl2 + "/" + afile)
+def imgrequest2(cf, afile):
+    return requests.get(imgurl2(cf) + "/" + afile)
 
-def imgrequest3(market, data):
-    return requests.post(imgurl3, json=data, headers=headers)
+def imgrequest3(cf, data):
+    return requests.post(imgurl3(cf), json=data, headers=headers)
 
-def imgrequest4(market, files):
-    return requests.post(imgurl4, files=files)
+def imgrequest4(cf, files):
+    return requests.post(imgurl4(cf), files=files)
 
-def gptrequest1(ds, data):
-    return requests.post(gpturl1 + "/" + ds, json=data, headers=headers)
+def gptrequest1(cf, ds, data):
+    return requests.post(gpturl1(cf) + "/" + ds, json=data, headers=headers)
 
+def gptrequest2(cf, ds, data):
+    return requests.post(gpturl2(cf) + "/" + ds, json=data, headers=headers)
+
+def istf(cf):
+    return cf.startswith("t")

@@ -21,13 +21,10 @@ def learn(ds = None, path = None, cf = 'tensorflowMiniatureGPTConfig', steps = N
         thecf['take'] = take
     if vocab is not None:
         thecf['vocab'] = vocab
-    data = { 'modelInt' : modelInt, 'dataset' : ds, 'filename' : path, 'classifyarray' : None, 'neuralnetcommand' : neuralnetcommand }
-    data[cfname] = thecf
-    if isinstance(ds, list):
-        myds = str(ds[0]) + str(ds[1])
-    else:
-        myds = ds
-    response = request.gptrequest1(myds, data)
+    myds = getdsname(ds)
+    filename = getfilename(thecf, myds)
+    data = { 'modelInt' : modelInt, 'dataset' : ds, 'path' : path, 'filename' : filename, 'classifyarray' : None, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
+    response = request.gptrequest1(cf, myds, data)
     print(response.text)
     print(response)
     myobj = response.json() #.loads(response.text) #request.get_data(as_text=True)
@@ -35,15 +32,23 @@ def learn(ds = None, path = None, cf = 'tensorflowMiniatureGPTConfig', steps = N
 def chat(text, ds = None, path = None, cf = 'tensorflowMiniatureGPTConfig', take = None, size = 40):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : True, 'mllearn' : False }
     cfname, modelInt, thecf = config.get(cf)
-    data = { 'modelInt' : modelInt, 'dataset' : ds, 'filename' : path, 'classifyarray' : [ text ], 'classes' : size, 'neuralnetcommand' : neuralnetcommand }
-    data[cfname] = thecf
+    myds = getdsname(ds)
+    filename = getfilename(thecf, myds)
+    data = { 'modelInt' : modelInt, 'dataset' : ds, 'path' : path, 'filename' : filename, 'classifyarray' : [ text ], 'classes' : size, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
     if take is not None:
         thecf['take'] = take
+    response = request.gptrequest1(cf, myds, data)
+    print(response.text)
+    print(response)
+    myobj = response.json() #.loads(response.text) #request.get_data(as_text=True)
+
+def getdsname(ds):
     if isinstance(ds, list):
         myds = str(ds[0]) + str(ds[1])
     else:
         myds = ds
-    response = request.gptrequest1(myds, data)
-    print(response.text)
-    print(response)
-    myobj = response.json() #.loads(response.text) #request.get_data(as_text=True)
+    return myds
+
+def getfilename(cf, ds):
+    return cf['name'] + ds
+
