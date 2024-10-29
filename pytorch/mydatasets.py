@@ -7,6 +7,14 @@ import torchvision
 
 import numpy as np
 
+from classify2 import train_loader
+
+
+def getdatasetmidi(myobj, config, classifier):
+    if myobj.dataset == 'maestro':
+        return getmaestro(myobj, config)
+    return do_dir(myobj, config)
+
 def getdataset(myobj, config, classifier):
     if myobj.dataset == 'mnist':
         return getmnist(config)
@@ -230,3 +238,221 @@ def getnumber(myobj, config):
     data = [ data, data1 ]
 
     return data, None, data, None, myobj.size, myobj.classes, False
+
+class DictToObject:
+    def __init__(self, dictionary):
+        for key, value in dictionary.items():
+            setattr(self, key, value)
+
+class Dummy:
+    def __init__(self, v):
+        vars(self).update(v)
+
+def getmaestro(myobj, config):
+    import pathlib
+    import os
+    import json
+    import util.processor as midi_processor
+    import pretty_midi
+    if not pathlib.Path("/tmp/maestro").exists():
+        url = 'https://storage.googleapis.com/magentadata/datasets/maestro/v2.0.0/maestro-v2.0.0-midi.zip'
+        torchvision.datasets.utils.download_url(url, "/tmp/")
+        torchvision.datasets.utils.extract_archive("/tmp/maestro-v2.0.0-midi.zip", "/tmp/maestro")
+    maestro_root = "/tmp/maestro//maestro-v2.0.0"
+    JSON_FILE = "maestro-v2.0.0.json"
+    maestro_json_file = os.path.join(maestro_root, JSON_FILE)
+    if(not os.path.isfile(maestro_json_file)):
+        print("ERROR: Could not find file:", maestro_json_file)
+        return False
+
+    maestro_json = json.load(open(maestro_json_file, "r"))
+    print("Found", len(maestro_json), "pieces")
+    print("Preprocessing...")
+
+    train_count = 0
+    val_count   = 0
+    test_count  = 0
+
+    train = []
+    val = []
+    test = []
+
+    for piece in maestro_json:
+        mid         = os.path.join(maestro_root, piece["midi_filename"])
+        split_type  = piece["split"]
+        prepped = midi_processor.encode_midi(mid)
+
+        if(split_type == "train"):
+            train_count += 1
+            train.append(prepped)
+        elif(split_type == "validation"):
+            val_count += 1
+            val.append(prepped)
+        elif(split_type == "test"):
+            test_count += 1
+            test.append(prepped)
+        else:
+            print("ERROR: Unrecognized split type:", split_type)
+            return False
+
+    print("Num Train:", train_count)
+    print("Num Val:", val_count)
+    print("Num Test:", test_count)
+
+    train_dataset, val_dataset, test_dataset = create_epiano_datasets(train, val, test, max_sequence)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, num_workers=n_workers, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, num_workers=n_workers)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, num_workers=n_workers)
+
+    return train_loader, val_loader, test_loader
+    dsdict = { "train_loader" : train_loader, "val_loader" : val_loader, "test_loader" :test_loader }
+    ds = DictToObject(dsdict)
+    return ds
+
+def create_epiano_datasets(train, val, test, max_seq, random_seq=True):
+    import os
+
+    train_dataset = EPianoDataset(train, max_seq, random_seq)
+    val_dataset = EPianoDataset(val, max_seq, random_seq)
+    test_dataset = EPianoDataset(test, max_seq, random_seq)
+
+    return train_dataset, val_dataset, test_dataset
+
+def create_epiano_datasets2(root, max_seq, random_seq=True):
+    import os
+
+    train_dataset = EPianoDataset(root + "/train", max_seq, random_seq)
+    val_dataset = EPianoDataset(root + "/val", max_seq, random_seq)
+    test_dataset = EPianoDataset(root + "/test", max_seq, random_seq)
+
+    return train_dataset, val_dataset, test_dataset
+
+def do_dir2(myobj, config, directories):
+    import random
+    import os
+    import glob
+    import pathlib
+
+    batch_size = 128
+    filenames = glob.glob(str(config.dataset/'**/*.mid*'))
+    print('Number of files:', len(filenames))
+
+    # Create a dataset from text files
+    random.shuffle(filenames)
+    text_ds = None #tf_data.TextLineDataset(filenames)
+    text_ds = text_ds.shuffle(buffer_size=256)
+    text_ds = text_ds.batch(batch_size)
+
+    dsdict = { "train_ds" : text_ds, "val_ds" : None, "test_ds" : None }
+    ds = DictToObject(dsdict)
+    return ds
+
+def do_dir(myobj, config, directories):
+    print("Preprocessing...")
+
+    root = myobj.dataset
+    train_dataset, val_dataset, test_dataset = create_epiano_datasets2(root, max_sequence)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, num_workers=n_workers, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, num_workers=n_workers)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, num_workers=n_workers)
+
+    return train_loader, val_loader, test_loader
+    dsdict = { "train_loader" : train_loader, "val_loader" : val_loader, "test_loader" :test_loader }
+    ds = DictToObject(dsdict)
+    return ds
+
+def filenamedir(myobj, config):
+    return [ myobj.dataset ]
+
+class EPianoDataset(Dataset):
+    def __init__(self, preps, max_seq=2048, random_seq=True):
+        import os
+        self.preps      = preps
+        self.max_seq    = max_seq
+        self.random_seq = random_seq
+
+    def __len__(self):
+        return len(self.preps)
+
+    def __getitem__(self, idx):
+        raw_mid     = torch.tensor(self.preps[idx], dtype=TORCH_LABEL_TYPE
+, device=cpu_device())
+
+        x, tgt = process_midi(raw_mid, self.max_seq, self.random_seq)
+
+        return x, tgt
+
+
+import util.processor as midi_processor
+
+
+class EPianoDataset2(Dataset):
+    def __init__(self, root, max_seq=2048, random_seq=True):
+        import os
+        self.root       = root
+        self.max_seq    = max_seq
+        self.random_seq = random_seq
+        fs = [os.path.join(root, f) for f in os.listdir(self.root)]
+        self.data_files = [f for f in fs if os.path.isfile(f)]
+
+    def __len__(self):
+        return len(self.data_files)
+
+    def __getitem__(self, idx):
+        prepped = midi_processor.encode_midi(self.data_files[idx])
+        raw_mid     = torch.tensor(prepped, dtype=TORCH_LABEL_TYPE, device=cpu_device())
+
+        x, tgt = process_midi(raw_mid, self.max_seq, self.random_seq)
+
+        return x, tgt
+
+def process_midi(raw_mid, max_seq, random_seq):
+    import random
+    x   = torch.full((max_seq, ), TOKEN_PAD, dtype=TORCH_LABEL_TYPE, device=cpu_device())
+    tgt = torch.full((max_seq, ), TOKEN_PAD, dtype=TORCH_LABEL_TYPE, device=cpu_device())
+
+    raw_len     = len(raw_mid)
+    full_seq    = max_seq + 1 # Performing seq2seq
+
+    if(raw_len == 0):
+        return x, tgt
+
+    if(raw_len < full_seq):
+        x[:raw_len]         = raw_mid
+        tgt[:raw_len-1]     = raw_mid[1:]
+        tgt[raw_len-1]      = TOKEN_END
+    else:
+        # Randomly selecting a range
+        if(random_seq):
+            end_range = raw_len - full_seq
+            start = random.randint(SEQUENCE_START, end_range)
+
+        # Always taking from the start to as far as we can
+        else:
+            start = SEQUENCE_START
+
+        end = start + full_seq
+
+        data = raw_mid[start:end]
+
+        x = data[:max_seq]
+        tgt = data[1:full_seq]
+
+
+    # print("x:",x)
+    # print("tgt:",tgt)
+
+    return x, tgt
+
+from util.processor import RANGE_NOTE_ON, RANGE_NOTE_OFF, RANGE_VEL, RANGE_TIME_SHIFT
+
+SEQUENCE_START = 0
+TOKEN_END               = RANGE_NOTE_ON + RANGE_NOTE_OFF + RANGE_VEL + RANGE_TIME_SHIFT
+TOKEN_PAD               = TOKEN_END + 1
+TORCH_LABEL_TYPE        = torch.long
+TORCH_CPU_DEVICE = torch.device("cpu")
+def cpu_device():
+    return TORCH_CPU_DEVICE
+batch_size=2
+n_workers=1
+max_sequence=2048
