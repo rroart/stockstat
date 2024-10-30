@@ -12,6 +12,27 @@ import json
 
 from collections import OrderedDict
 
+def midi(path, path2, data, cf):
+    midi_data = None
+    if path is not None:
+        with open(path, 'rb') as f:
+            midi_data = f.read()
+    files = {
+        'json': (None, json.dumps(data), 'application/json'),
+        "file": (path, midi_data)
+    }
+    response = request.imgrequest1(cf, files)
+    print(response.text)
+    print(response)
+    myobj = response.json() #.loads(response.text) #request.get_data(as_text=True)
+    print(type(myobj))
+    print(myobj)
+    for afile in myobj['files']:
+        response = request.imgrequest1(cf, afile)
+
+        with open(afile, 'wb') as file:
+            file.write(response.content)
+
 def learn(ds = None, path = None, cf = 'pytorchGPT2Config', steps = None, take = None, vocab = None):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : False, 'mllearn' : True }
     cfname, modelInt, thecf = config.get(cf)

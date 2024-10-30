@@ -4,6 +4,8 @@ from util.processor import RANGE_NOTE_ON, RANGE_NOTE_OFF, RANGE_VEL, RANGE_TIME_
 from model.music_transformer import MusicTransformer
 from model.loss import SmoothCrossEntropyLoss
 from torch.optim import Adam
+from util.processor import decode_midi, encode_midi
+from mydatasets import process_midi
 
 SEQUENCE_START = 0
 TOKEN_END               = RANGE_NOTE_ON + RANGE_NOTE_OFF + RANGE_VEL + RANGE_TIME_SHIFT
@@ -143,6 +145,42 @@ class Model:
             #with open(results_file, "a", newline="") as o_stream:
             #    writer = csv.writer(o_stream)
             #    writer.writerow([epoch+1, lr, train_loss, train_acc, eval_loss, eval_acc])
+
+    def gen(self):
+        TORCH_LABEL_TYPE        = torch.long
+        num_prime = 256
+        target_seq_length = 1024
+        import random
+        f = str(random.randrange(len(self.dataset.train_dataset)))
+        if(f.isdigit()):
+            idx = int(f)
+            primer, _  = self.dataset.train_dataset[idx]
+            primer = primer.to(get_device())
+
+            print("Using primer index:", idx)
+
+        else:
+            raw_mid = encode_midi(f)
+            if(len(raw_mid) == 0):
+                print("Error: No midi messages in primer file:", f)
+                return
+
+            primer, _  = process_midi(raw_mid, num_prime, random_seq=False)
+            primer = torch.tensor(primer, dtype=TORCH_LABEL_TYPE, device=get_device())
+
+        self.model.eval()
+        with torch.set_grad_enabled(False):
+            beam = 0
+            if(beam > 0):
+                print("BEAM:", beam)
+                beam_seq = self.model.generate(primer[:num_prime], target_seq_length, beam=beam)
+
+                decode_midi(beam_seq[0].cpu().numpy(), file_path="/tmp/beam.mid")
+            else:
+                print("RAND DIST")
+                rand_seq = self.model.generate(primer[num_prime], target_seq_length, beam=0)
+
+                decode_midi(rand_seq[0].cpu().numpy(), file_path="/tmp/rand.mid")
 
 def get_device():
     if((not USE_CUDA) or (TORCH_CUDA_DEVICE is None)):
