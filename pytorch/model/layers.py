@@ -1,4 +1,4 @@
-import utils
+#import utils
 
 import math as m
 import numpy as np
@@ -127,7 +127,7 @@ class RelativeGlobalAttention(torch.nn.Module):
 
     @staticmethod
     def _qe_masking(qe):
-        mask = utils.sequence_mask(
+        mask = sequence_mask(
             torch.arange(qe.size()[-1] - 1, qe.size()[-1] - qe.size()[-2] - 1, -1).to(qe.device),
             qe.size()[-1])
         mask = ~mask.to(mask.device)
@@ -241,3 +241,9 @@ class Encoder(torch.nn.Module):
 #         targets = tuple(targets_per_gpu[0] for targets_per_gpu in targets)
 #         outputs = _criterion_parallel_apply(replicas, inputs, targets, kwargs)
 #         return Reduce.apply(*outputs) / len(outputs), targets
+
+def sequence_mask(length, max_length=None):
+    if max_length is None:
+        max_length = length.max()
+    x = torch.arange(max_length, dtype=length.dtype, device=length.device)
+    return x.unsqueeze(0) < length.unsqueeze(1)

@@ -67,6 +67,10 @@ class Model:
         else:
             train_loss_func = SmoothCrossEntropyLoss(ce_smoothing, VOCAB_SIZE, ignore_index=TOKEN_PAD)
         opt = Adam(self.model.parameters(), lr=lr, betas=(ADAM_BETA_1, ADAM_BETA_2), eps=ADAM_EPSILON)
+        best_eval_acc        = 0.0
+        best_eval_acc_epoch  = -1
+        best_eval_loss       = float("inf")
+        best_eval_loss_epoch = -1
         BASELINE_EPOCH = -1
         SEPERATOR               = "========================="
         start_epoch = BASELINE_EPOCH
@@ -81,7 +85,7 @@ class Model:
                 # Train
                 print_modulus = 1
                 lr_scheduler = None
-                train_epoch(epoch+1, self.model, self.datasets.train_loader, train_loss_func, opt, lr_scheduler, print_modulus)
+                train_epoch(epoch+1, self.model, self.dataset.train_loader, train_loss_func, opt, lr_scheduler, print_modulus)
 
                 print(SEPERATOR)
                 print("Evaluating:")
@@ -90,8 +94,8 @@ class Model:
                 print("Baseline model evaluation (Epoch 0):")
 
             # Eval
-            train_loss, train_acc = eval_model(self.model, self.datasets.train_loader, train_loss_func)
-            eval_loss, eval_acc = eval_model(self.model, self.datasets.test_loader, eval_loss_func)
+            train_loss, train_acc = eval_model(self.model, self.dataset.train_loader, train_loss_func)
+            eval_loss, eval_acc = eval_model(self.model, self.dataset.test_loader, eval_loss_func)
 
             # Learn rate
             lr = get_lr(opt)
@@ -146,18 +150,21 @@ class Model:
             #    writer = csv.writer(o_stream)
             #    writer.writerow([epoch+1, lr, train_loss, train_acc, eval_loss, eval_acc])
 
-    def gen(self):
+    def generate(self):
         TORCH_LABEL_TYPE        = torch.long
         num_prime = 256
         target_seq_length = 1024
         import random
-        f = str(random.randrange(len(self.dataset.train_dataset)))
+        f = str(random.randrange(len(self.dataset.train_loader)))
         if(f.isdigit()):
-            idx = int(f)
-            primer, _  = self.dataset.train_dataset[idx]
-            primer = primer.to(get_device())
+            batch = next(iter(self.dataset.val_loader))
+            primer, _ = batch[0], batch[1]
 
-            print("Using primer index:", idx)
+            #idx = int(f)
+            #primer, _  = self.dataset.train_loader[idx]
+            #primer = primer.to(get_device())
+
+            #print("Using primer index:", idx)
 
         else:
             raw_mid = encode_midi(f)

@@ -7,7 +7,7 @@ import torchvision
 
 import numpy as np
 
-from classify2 import train_loader
+#from classify2 import train_loader
 
 
 def getdatasetmidi(myobj, config, classifier):
@@ -295,35 +295,38 @@ def getmaestro(myobj, config):
             print("ERROR: Unrecognized split type:", split_type)
             return False
 
+        if hasattr(config, 'take'):
+            if config.take < train_count:
+                break
+
     print("Num Train:", train_count)
     print("Num Val:", val_count)
     print("Num Test:", test_count)
 
-    train_dataset, val_dataset, test_dataset = create_epiano_datasets(train, val, test, max_sequence)
+    train_dataset, val_dataset, test_dataset = create_epiano_datasets(config, train, val, test, max_sequence)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, num_workers=n_workers, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, num_workers=n_workers)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, num_workers=n_workers)
 
-    return train_loader, val_loader, test_loader
     dsdict = { "train_loader" : train_loader, "val_loader" : val_loader, "test_loader" :test_loader }
     ds = DictToObject(dsdict)
     return ds
 
-def create_epiano_datasets(train, val, test, max_seq, random_seq=True):
+def create_epiano_datasets(config, train, val, test, max_seq, random_seq=True):
     import os
 
-    train_dataset = EPianoDataset(train, max_seq, random_seq)
-    val_dataset = EPianoDataset(val, max_seq, random_seq)
-    test_dataset = EPianoDataset(test, max_seq, random_seq)
+    train_dataset = EPianoDataset(config, train, max_seq, random_seq)
+    val_dataset = EPianoDataset(config, val, max_seq, random_seq)
+    test_dataset = EPianoDataset(config, test, max_seq, random_seq)
 
     return train_dataset, val_dataset, test_dataset
 
-def create_epiano_datasets2(root, max_seq, random_seq=True):
+def create_epiano_datasets2(config, root, max_seq, random_seq=True):
     import os
 
-    train_dataset = EPianoDataset(root + "/train", max_seq, random_seq)
-    val_dataset = EPianoDataset(root + "/val", max_seq, random_seq)
-    test_dataset = EPianoDataset(root + "/test", max_seq, random_seq)
+    train_dataset = EPianoDataset2(config, root + "/train", max_seq, random_seq)
+    val_dataset = EPianoDataset2(config, root + "/val", max_seq, random_seq)
+    test_dataset = EPianoDataset2(config, root + "/test", max_seq, random_seq)
 
     return train_dataset, val_dataset, test_dataset
 
@@ -351,7 +354,7 @@ def do_dir(myobj, config, directories):
     print("Preprocessing...")
 
     root = myobj.dataset
-    train_dataset, val_dataset, test_dataset = create_epiano_datasets2(root, max_sequence)
+    train_dataset, val_dataset, test_dataset = create_epiano_datasets2(config, root, max_sequence)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, num_workers=n_workers, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, num_workers=n_workers)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, num_workers=n_workers)
@@ -365,7 +368,7 @@ def filenamedir(myobj, config):
     return [ myobj.dataset ]
 
 class EPianoDataset(Dataset):
-    def __init__(self, preps, max_seq=2048, random_seq=True):
+    def __init__(self, config, preps, max_seq=2048, random_seq=True):
         import os
         self.preps      = preps
         self.max_seq    = max_seq
@@ -387,13 +390,16 @@ import util.processor as midi_processor
 
 
 class EPianoDataset2(Dataset):
-    def __init__(self, root, max_seq=2048, random_seq=True):
+    def __init__(self, config, root, max_seq=2048, random_seq=True):
         import os
         self.root       = root
         self.max_seq    = max_seq
         self.random_seq = random_seq
         fs = [os.path.join(root, f) for f in os.listdir(self.root)]
         self.data_files = [f for f in fs if os.path.isfile(f)]
+        if hasattr(config, 'take'):
+            self.data_files = self.data_files[:config.take]
+
 
     def __len__(self):
         return len(self.data_files)

@@ -1,6 +1,6 @@
 #from custom.layers import *
 #from custom.criterion import *
-from layers import Encoder
+from model.layers import Encoder
 #from custom.config import config
 
 import sys
@@ -12,6 +12,8 @@ import random
 import torch
 #from tensorboardX import SummaryWriter
 #from progress.bar import Bar
+event_dim=388
+pad_token=event_dim
 
 class MusicTransformer(torch.nn.Module):
     def __init__(self, embedding_dim=256, vocab_size=388+2, num_layer=6,
@@ -36,7 +38,7 @@ class MusicTransformer(torch.nn.Module):
 
     def forward(self, x, length=None, writer=None):
         if self.training or not self.infer:
-            _, _, look_ahead_mask = get_masked_with_pad_tensor(self.max_seq, x, x, self.config.pad_token)
+            _, _, look_ahead_mask = get_masked_with_pad_tensor(self.max_seq, x, x, pad_token)
             decoder, w = self.Decoder(x, mask=look_ahead_mask)
             fc = self.fc(decoder)
             return fc.contiguous() if self.training else (fc.contiguous(), [weight.contiguous() for weight in w])

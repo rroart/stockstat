@@ -3,8 +3,8 @@ import torch.nn as nn
 from torch.nn.modules.normalization import LayerNorm
 import random
 
-from utilities.constants import *
-from utilities.device import get_device
+#from utilities.constants import *
+#from utilities.device import get_device
 
 from .positional_encoding import PositionalEncoding
 from .rpr import TransformerEncoderRPR, TransformerEncoderLayerRPR
@@ -12,21 +12,6 @@ from .rpr import TransformerEncoderRPR, TransformerEncoderLayerRPR
 
 # MusicTransformer
 class MusicTransformer(nn.Module):
-    """
-    ----------
-    Author: Damon Gwinn
-    ----------
-    Music Transformer reproduction from https://arxiv.org/abs/1809.04281. Arguments allow for
-    tweaking the transformer architecture (https://arxiv.org/abs/1706.03762) and the rpr argument
-    toggles Relative Position Representations (RPR - https://arxiv.org/abs/1803.02155).
-
-    Supports training and generation using Pytorch's nn.Transformer class with dummy decoder to
-    make a decoder-only transformer architecture
-
-    For RPR support, there is modified Pytorch 1.2.0 code in rpr.py. Modified source will be
-    kept up to date with Pytorch revisions only as necessary.
-    ----------
-    """
 
     def __init__(self, n_layers=6, num_heads=8, d_model=512, dim_feedforward=1024,
                  dropout=0.1, max_sequence=2048, rpr=False):
@@ -198,3 +183,23 @@ class DummyDecoder(nn.Module):
         """
 
         return memory
+
+def get_device():
+    if((not USE_CUDA) or (TORCH_CUDA_DEVICE is None)):
+        return TORCH_CPU_DEVICE
+    else:
+        return TORCH_CUDA_DEVICE
+TORCH_CPU_DEVICE = torch.device("cpu")
+
+if(torch.cuda.device_count() > 0):
+    TORCH_CUDA_DEVICE = torch.device("cuda")
+else:
+    TORCH_CUDA_DEVICE = None
+
+USE_CUDA = True
+
+from util.processor import RANGE_NOTE_ON, RANGE_NOTE_OFF, RANGE_VEL, RANGE_TIME_SHIFT
+TOKEN_END               = RANGE_NOTE_ON + RANGE_NOTE_OFF + RANGE_VEL + RANGE_TIME_SHIFT
+TOKEN_PAD               = TOKEN_END + 1
+VOCAB_SIZE              = TOKEN_PAD + 1
+TORCH_LABEL_TYPE        = torch.long

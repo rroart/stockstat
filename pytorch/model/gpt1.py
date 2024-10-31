@@ -1,4 +1,4 @@
-from music_transformer1 import MusicTransformer
+from model.music_transformer1 import MusicTransformer
 import torch
 import torch.optim as optim
 import time
@@ -29,9 +29,9 @@ class Model:
             num_layer=num_layers,
             max_seq=max_seq,
             dropout=dropout,
-            debug=debug, loader_path=config.load_path)
+            debug=debug, loader_path=None)
         self.opt = optim.Adam(self.mt.parameters(), lr=0, betas=(0.9, 0.98), eps=1e-9)
-        self.scheduler = CustomSchedule(config.embedding_dim, optimizer=self.opt)
+        self.scheduler = CustomSchedule(embedding_dim, optimizer=self.opt)
         self.device = None
 
     def localsave(self):
@@ -47,13 +47,13 @@ class Model:
         idx = 0
         for e in range(self.config.steps):
             print(">>> [Epoch was updated]")
-            for batch_num, batch in enumerate(self.dataset.train_dataset):
+            for batch_num, batch in enumerate(self.dataset.train_loader):
                 #for batch_num in range(len(dataset.files) // self.config.batch_size):
                 self.scheduler.optimizer.zero_grad()
                 try:
                     batch_x, batch_y = batch[0], batch[1]
-                    batch_x = torch.from_numpy(batch_x).contiguous().to(self.device, non_blocking=True, dtype=torch.int)
-                    batch_y = torch.from_numpy(batch_y).contiguous().to(self.device, non_blocking=True, dtype=torch.int)
+                    #batch_x = torch.from_numpy(batch_x).contiguous().to(self.device, non_blocking=True, dtype=torch.int)
+                    #batch_y = torch.from_numpy(batch_y).contiguous().to(self.device, non_blocking=True, dtype=torch.int)
                 except IndexError:
                     print("indexerror")
                     continue
@@ -79,14 +79,14 @@ class Model:
                 if batch_num % 100 == 0:
                     single_mt = self.mt
                     single_mt.eval()
-                    batch = next(iter(self.dataset.val_dataset))
+                    batch = next(iter(self.dataset.val_loader))
                     eval_x, eval_y = batch[0], batch[1]
-                    eval_x = torch.from_numpy(eval_x).contiguous().to(self.device, dtype=torch.int)
-                    eval_y = torch.from_numpy(eval_y).contiguous().to(self.device, dtype=torch.int)
+                    #eval_x = torch.from_numpy(eval_x).contiguous().to(self.device, dtype=torch.int)
+                    #eval_y = torch.from_numpy(eval_y).contiguous().to(self.device, dtype=torch.int)
 
-                    eval_preiction, weights = single_mt.forward(eval_x)
+                    eval_prediction, weights = single_mt.forward(eval_x)
 
-                    eval_metrics = metric_set(eval_preiction, eval_y)
+                    eval_metrics = metric_set(eval_prediction, eval_y)
                     torch.save(single_mt.state_dict(), '/tmp/train-{}.pth'.format(e))
                     if batch_num == 0:
                         #train_summary_writer.add_histogram("target_analysis", batch_y, global_step=e)
@@ -115,7 +115,7 @@ class Model:
                 if debug:
                     print('output switch time: {}'.format(sw_end - sw_start) )
 
-    def gen(self):
+    def generate(self):
         inputs = np.array([[24, 28, 31]])
         inputs = torch.from_numpy(inputs)
         length=500
