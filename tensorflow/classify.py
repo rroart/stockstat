@@ -81,10 +81,10 @@ class Classify:
             for i in range(myobj.classes):
                 #print("i", i)
                 #print("ashape", array.shape)
-                print("ar", array)
+                #print("ar", array)
                 (intlist, problist) = classifier.predict(array)
                 intlist = np.array(intlist)
-                print("pr", intlist)
+                #print("pr", intlist)
                 if myobj.modelInt == 3 or myobj.modelInt == 8:
                     intlist2 = intlist.reshape(len(intlist), 1)
                     array = np.concatenate((array[:,1:], intlist2), axis=1)
@@ -146,11 +146,11 @@ class Classify:
             sliding_window_stride = 1
         sliding_window_width = myobj.size
         #print(type(size))
-        print(size)
+        #print(size)
         mysize = size[0]
         sequence_length = size[1]
         arange = int((sequence_length - (sliding_window_width) - myobj.classes) / sliding_window_stride) + 1
-        print("arange", arange)
+        #print("arange", arange)
         splitInput = np.zeros((mysize * arange, sliding_window_width))
         splitTarget = np.zeros((mysize * arange))
         #print(inputs.shape)
@@ -331,10 +331,10 @@ class Classify:
         return train, traincat, test, testcat, mydim
     
     def do_learntestinner(self, myobj, classifier, train, traincat, test, testcat, classify):
-        print("ttt", train)
-        print("ttt2", traincat)
-        print("ttt3", test)
-        print("ttt4", testcat)
+        #print("ttt", train)
+        #print("ttt2", traincat)
+        #print("ttt3", test)
+        #print("ttt4", testcat)
         #print("shape")
         #print(train.shape)
         #print(traincat.shape)
@@ -493,7 +493,7 @@ class Classify:
         #tf.logging.set_verbosity(tf.logging.FATAL)
         dt = datetime.now()
         timestamp = dt.timestamp()
-        print(request.get_data(as_text=True))
+        #print(request.get_data(as_text=True))
         #myobj = json.loads(request, object_hook=lt.LearnTest)
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         classify = not hasattr(myobj, 'classify') or myobj.classify == True
