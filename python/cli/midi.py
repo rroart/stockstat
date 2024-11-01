@@ -21,19 +21,21 @@ def midi(path, path2, data, cf):
         'json': (None, json.dumps(data), 'application/json'),
         "file": (path, midi_data)
     }
-    response = request.imgrequest1(cf, files)
+    response = request.gptrequest2(cf, files)
     print(response.text)
     print(response)
     myobj = response.json() #.loads(response.text) #request.get_data(as_text=True)
     print(type(myobj))
     print(myobj)
+    if myobj['files'] is None:
+        return
     for afile in myobj['files']:
-        response = request.imgrequest1(cf, afile)
+        response = request.imgrequest2(cf, afile)
 
         with open(afile, 'wb') as file:
             file.write(response.content)
 
-def learn(ds = None, path = None, cf = 'pytorchGPT2Config', steps = None, take = None, vocab = None):
+def learn(ds = 'maestro', path = None, cf = 'pytorchGPT2Config', steps = None, take = None, vocab = None):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : False, 'mllearn' : True }
     cfname, modelInt, thecf = config.get(cf)
     if steps is not None:
@@ -45,23 +47,17 @@ def learn(ds = None, path = None, cf = 'pytorchGPT2Config', steps = None, take =
     myds = getdsname(ds)
     filename = getfilename(thecf, myds)
     data = { 'modelInt' : modelInt, 'dataset' : ds, 'path' : path, 'filename' : filename, 'classifyarray' : None, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
-    response = request.gptrequest2(cf, myds, data)
-    print(response.text)
-    print(response)
-    myobj = response.json() #.loads(response.text) #request.get_data(as_text=True)
+    midi(None, None, data, cf)
 
-def chat(text, ds = None, path = None, cf = 'pytorchGPT2Config', take = None, size = 40):
+def generate(path2 = "None", ds = 'maestro', path = None, cf = 'pytorchGPT2Config', take = None, size = 40):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : True, 'mllearn' : False }
     cfname, modelInt, thecf = config.get(cf)
     myds = getdsname(ds)
     filename = getfilename(thecf, myds)
-    data = { 'modelInt' : modelInt, 'dataset' : ds, 'path' : path, 'filename' : filename, 'classifyarray' : [ text ], 'classes' : size, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
+    data = { 'modelInt' : modelInt, 'dataset' : ds, 'path' : path, 'filename' : filename, 'classes' : size, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
     if take is not None:
         thecf['take'] = take
-    response = request.gptrequest2(cf, myds, data)
-    print(response.text)
-    print(response)
-    myobj = response.json() #.loads(response.text) #request.get_data(as_text=True)
+    midi(path2, None, data, cf)
 
 def getdsname(ds):
     if isinstance(ds, list):

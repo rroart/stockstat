@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 
 import sys
-#from torch.multiprocessing import Process, Queue
+from torch.multiprocessing import Process, Queue
 
+import os
 import json
 from werkzeug.wrappers import Response
 
@@ -154,6 +155,69 @@ def do_filename():
     process.join()
     return result
 
+@app.route('/download/<path:filename>', methods=['GET'])
+def download(filename):
+    # TODO validate
+    full_path = os.path.join(app.root_path, "/tmp/download")
+    return send_from_directory(full_path, filename, as_attachment=True)
+
+@app.route('/gpt2/<ds>', methods=['POST'])
+def do_gpt2(ds):
+    if False:
+        from datetime import datetime
+        dt = datetime.now()
+        timestamp = dt.timestamp()
+        data = cache.get(ds)
+        print ("millis ", (dt.timestamp() - timestamp)*1000)
+    else:
+        data = None
+    def classifyrunner(queue, request, cachedata):
+        try:
+            import classify
+            cl = classify.Classify()
+            cl.do_gpt2(queue, request, cachedata)
+        except:
+            import sys,traceback
+            memory = "CUDA error: out of memory" in traceback.format_exc()
+            cudnn = "0 successful operations" in traceback.format_exc()
+            queue.put(Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : memory, "cudnn" : cudnn }), mimetype='application/json'))
+            traceback.print_exc(file=sys.stdout)
+            print("\n")
+            import random
+            f = open("/tmp/outpt" + argstr() + str(random.randint(1000,9999)) + ".txt", "w")
+            f.write(request.get_data(as_text=True))
+            traceback.print_exc(file=f)
+            f.close()
+
+    aqueue = Queue()
+
+    process = Process(target=classifyrunner, args=(aqueue, request, data))
+
+    try:
+        import queue
+        process.start()
+        while True:
+            try:
+                result = aqueue.get(timeout=timeout)
+                break
+            except queue.Empty as e:
+                if not process.is_alive():
+                    print("Process died")
+                    result = {"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : False, "cudnn" : False }
+                    break
+    except Exception as e:
+        print(e)
+        import sys,traceback
+        traceback.print_exc(file=sys.stdout)
+    return Response(json.dumps(result), mimetype='application/json')
+    data = None
+    if data is not None:
+        print("Caching", ds)
+        #cache.set(ds, data)
+    else:
+        print("Deleting", ds)
+        #cache.delete(ds)
+
 def argstr():
     if len(sys.argv) > 1 and sys.argv[1].isnumeric():
         return sys.argv[1]
@@ -166,6 +230,7 @@ if __name__ == '__main__':
 #    process.start()
 #    hasgpu = queue.get()
 #    process.join()
+    timeout = 60
     hasgpu = hasgpu()
     print("Has GPU", hasgpu)
     threaded = False

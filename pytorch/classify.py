@@ -8,6 +8,7 @@ import numpy as np
 import json
 from datetime import datetime
 from werkzeug.wrappers import Response
+from werkzeug.utils import secure_filename
 import shutil
 
 #from multiprocessing import Queue
@@ -72,11 +73,12 @@ class Classify:
         #shutil.rmtree("/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.modelname + str(count))
         if not classify:
             #print("l",len(array))
+            #print("ar", array)
             if myobj.modelInt == 1:
                 predicted = torch.empty((len(array), 0)).to(dev)
             else:
                 predicted = torch.empty((len(array), 1, 0)).to(dev)
-            #print(predicted)
+            #print("pr", predicted)
             #print(myobj.size, myobj.classes)
             #print("pred", predicted.shape, predicted)
             for i in range(myobj.classes):
@@ -170,6 +172,7 @@ class Classify:
         v_y = labels.to(dev)
         for i in range(model.config.steps):
             model.train()
+            #print(v_x.shape)
             model.observe(v_x, v_y)
             torch.cuda.empty_cache()
 
@@ -268,6 +271,7 @@ class Classify:
         mysize = size[0]
         sequence_length = size[1]
         arange = int((sequence_length - (sliding_window_width) - myobj.classes) / sliding_window_stride) + 1
+        #print("arange", arange, sequence_length, sliding_window_width, myobj.classes, sliding_window_stride)
         #print("arange", arange)
         splitInput = torch.autograd.Variable(torch.zeros(mysize * arange, sliding_window_width))
         splitTarget = torch.autograd.Variable(torch.zeros(mysize * arange))
@@ -368,8 +372,15 @@ class Classify:
         else:
             lenrow = array.shape[0]
             half = round(lenrow / 2)
+            # toto
+            # too many indices for array: array is 1-dimensional, but 2 were inde
+            #print("si ", half)
+            #print("si ", array)
+            #print("si ", lenrow)
             train = array[:half, :]
             test = array[half:, :]
+            #print(train)
+            #print(test)
             traincat = cat[:half]
             testcat = cat[half:]
             if len(cat) == 1:
@@ -492,6 +503,12 @@ class Classify:
         if myobj.modelInt == 6:
             modelname = 'cnn2'
             config = myobj.pytorchCNN2Config
+        if myobj.modelInt == 7:
+            modelname = 'gpt2'
+            config = myobj.pytorchGPT2Config
+        if myobj.modelInt == 8:
+            modelname = 'gpt1'
+            config = myobj.pytorchGPT1Config
         return config, modelname
       if hasattr(myobj, 'modelName'):
         if myobj.modelName == 'mlp':
@@ -529,7 +546,20 @@ class Classify:
     def exists(self, myobj):
         if not hasattr(myobj, 'filename'):
             return False
-        return os.path.isfile(self.getpath(myobj) + myobj.filename + ".pt")
+        return os.path.isfile(self.getfullpath(myobj))
+
+    #deprecated
+    def existsds(self, myobj, modelname):
+        if not hasattr(myobj, 'dataset'):
+            return False
+        return os.path.isfile(self.getdspath(myobj, modelname))
+
+    def getdspath(self, myobj, modelname):
+        if isinstance(myobj.dataset, list):
+            dataset = str(myobj.dataset[0]) + str(myobj.dataset[1])
+        else:
+            dataset = myobj.dataset
+        return self.getpath(myobj) + modelname + dataset + ".pt"
 
     def do_learntestclassify(self, queue, request):
         dt = datetime.now()
@@ -546,7 +576,9 @@ class Classify:
             if config.name == 'mlp':
                 ii = 1
             else:
+                #print("np", myobj.trainingarray, myobj.classifyarray)
                 anarray = np.array(myobj.classifyarray, dtype='f')
+                #print("np", anarray)
                 myobj.classifyarray = anarray.reshape(anarray.shape[0], 1, anarray.shape[1])
         exists = self.exists(myobj)
         # load model if:
@@ -554,7 +586,7 @@ class Classify:
         if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
             print("Loading model")
             dev = self.getdev()
-            checkpoint = torch.load(self.getpath(myobj) + myobj.filename + ".pt", map_location = dev)
+            checkpoint = torch.load(self.getfullpath(myobj), map_location = dev)
             model = checkpoint['model']
         else:
             model = Model.Net(myobj, config, classify)
@@ -571,7 +603,7 @@ class Classify:
         # save model if
         # not dynamic and wantlearn
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
-            torch.save({'model': model }, self.getpath(myobj) + myobj.filename + ".pt")
+            torch.save({'model': model }, self.getfullpath(myobj))
         (intlist, problist) = (None, None)
         if self.wantClassify(myobj):
             (intlist, problist) = self.do_classifyinner(myobj, model, classify)
@@ -670,10 +702,175 @@ class Classify:
                 {"accuracy": 0, "trainaccuracy": 0, "loss": discriminator_losses + generator_losses, "classify": "",
                  "gpu": self.hasgpu()}), mimetype='application/json'))
 
+    def do_gpt(self, queue, myjson, cachedata):
+        dt = datetime.now()
+        timestamp = dt.timestamp()
+        myobj = json.loads(myjson, object_hook=lt.LearnTest)
+        (config, modelname) = self.getModel(myobj)
+        Model = importlib.import_module('model.' + modelname)
+        if cachedata is not None:
+            print("Using cache")
+            model = cachedata
+            model.myobj = myobj
+        else:
+            datasets = mydatasets.getdatasettext(myobj, config, self)
+            model = Model.Model(myobj, config, datasets)
+        exists = self.exists(myobj)
+        print("exist", exists)
+        # load model if:
+        # exists and not dynamic and wantclassify
+        text = None
+        if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
+            if model.localsave():
+                if cachedata is None:
+                    # dummy variable to allow saver
+                    model = Model.Model(myobj, config, datasets)
+                    print("Restoring")
+                    dev = self.getdev()
+                    checkpoint = torch.load(self.getfullpath(myobj), map_location=dev)
+                    model = checkpoint['model']
+                    print("Restoring done")
+                text = model.generate(model.model)
+                print("text", text)
+            else:
+                model = Model.Model(myobj, config, datasets)
+        else:
+             model = Model.Model(myobj, config, datasets)
+        # load end
+        # print("classez2", myobj.classes)
+        print(model)
+        self.printgpus()
+        classifier = model
+        # dictclass[str(myobj.modelInt) + myobj.period + myobj.modelname] = classifier
+        # global dicteval
+        # dicteval[myobj.modelname] = float(accuracy_score)
+        # print("seteval" + str(myobj.modelname))
+
+        if not self.wantDynamic(myobj) and self.wantLearn(myobj):
+            print(model.model.summary())
+            if model.dataset.train_ds is not None:
+                model.fit()
+            if model.localsave():
+                print("Saving")
+                torch.save({'model': model }, self.getfullpath(myobj))
+
+        #classifier.tidy()
+        del classifier
+        accuracy_score = 0
+        train_accuracy_score = 0
+        loss = 0
+        if not accuracy_score is None:
+            accuracy_score = float(accuracy_score)
+        if not train_accuracy_score is None:
+            train_accuracy_score = float(train_accuracy_score)
+        if not loss is None:
+            loss = float(loss)
+        dt = datetime.now()
+        #datadict = { "model" : model, "datasets" : datasets, "md" : md }
+        #newdata2 = json.dumps(datadict)
+        queue.put({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify": None, 'classifyarray' : [ text ],
+             "gpu": self.hasgpu() })
+        return model
+
+    def do_gpt2(self, queue, request, cachedata):
+        dt = datetime.now()
+        timestamp = dt.timestamp()
+        (filename, filename2) = self.get_file(request)
+        myobj = json.loads(request.form['json'], object_hook=lt.LearnTest)
+        (config, modelname) = self.getModel(myobj)
+        Model = importlib.import_module('model.' + modelname)
+        if cachedata is not None:
+            print("Using cache")
+            model = cachedata
+            model.myobj = myobj
+        else:
+            datasets = mydatasets.getdatasetmidi(myobj, config, self)
+            model = Model.Model(myobj, config, datasets)
+        exists = self.exists(myobj)
+        print("exist", exists)
+        # load model if:
+        # exists and not dynamic and wantclassify
+        files = None
+        if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
+            if model.localsave():
+                if cachedata is None:
+                    # dummy variable to allow saver
+                    model = Model.Model(myobj, config, datasets)
+                    print("Restoring")
+                    dev = self.getdev()
+                    checkpoint = torch.load(self.getfullpath(myobj), map_location=dev)
+                    model = checkpoint['model']
+                    print("Restoring done")
+                files = model.generate()
+                print("files", files)
+            else:
+                model = Model.Model(myobj, config, datasets)
+        else:
+             model = Model.Model(myobj, config, datasets)
+        # load end
+        # print("classez2", myobj.classes)
+        print(model)
+        #self.printgpus()
+        classifier = model
+        # dictclass[str(myobj.modelInt) + myobj.period + myobj.modelname] = classifier
+        # global dicteval
+        # dicteval[myobj.modelname] = float(accuracy_score)
+        # print("seteval" + str(myobj.modelname))
+
+        if not self.wantDynamic(myobj) and self.wantLearn(myobj):
+            #print(model.model.summary())
+            print(model.dataset)
+            if model.dataset.train_loader is not None:
+                model.fit()
+            if model.localsave():
+                print("Saving")
+                torch.save({'model': model }, self.getfullpath(myobj))
+
+        #classifier.tidy()
+        del classifier
+        accuracy_score = 0
+        train_accuracy_score = 0
+        loss = 0
+        if not accuracy_score is None:
+            accuracy_score = float(accuracy_score)
+        if not train_accuracy_score is None:
+            train_accuracy_score = float(train_accuracy_score)
+        if not loss is None:
+            loss = float(loss)
+        dt = datetime.now()
+        #datadict = { "model" : model, "datasets" : datasets, "md" : md }
+        #newdata2 = json.dumps(datadict)
+        queue.put({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify": None,
+             "gpu": self.hasgpu(), "files" : files })
+        return model
+
+    def get_file(self, request):
+        filename = self.getFilename(request, 'file')
+        filename2 = self.getFilename(request, 'file2')
+        return (filename, filename2)
+
+    def getFilename(self, request, key):
+        if key not in request.files:
+            print('No file part')
+            # print(request.files)
+            return None
+        file = request.files[key]
+        if file.filename == '':
+            print('No selected file')
+            return None
+        if file:
+            filename = secure_filename(file.filename)
+            file.save("/tmp/" + filename)
+            filename = "/tmp/" + filename
+        return filename
+
     def getpath(self, myobj):
         if hasattr(myobj, 'path') and not myobj.path is None:
             return myobj.path + '/'
         return '/tmp/'
+
+    def getfullpath(self, myobj):
+        return self.getpath(myobj) + myobj.filename + ".pt"
 
     def do_filename(self, queue, request):
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)

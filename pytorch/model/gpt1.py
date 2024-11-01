@@ -2,6 +2,7 @@ from model.music_transformer1 import MusicTransformer
 import torch
 import torch.optim as optim
 import time
+import os
 from model.criterion import SmoothCrossEntropyLoss, CustomSchedule
 from model.metrics import *
 from util.processor import decode_midi, encode_midi
@@ -80,6 +81,7 @@ class Model:
                     single_mt = self.mt
                     single_mt.eval()
                     batch = next(iter(self.dataset.val_loader))
+                    #eval_x, eval_y = batch[0], batch[1]
                     eval_x, eval_y = batch[0], batch[1]
                     #eval_x = torch.from_numpy(eval_x).contiguous().to(self.device, dtype=torch.int)
                     #eval_y = torch.from_numpy(eval_y).contiguous().to(self.device, dtype=torch.int)
@@ -116,8 +118,26 @@ class Model:
                     print('output switch time: {}'.format(sw_end - sw_start) )
 
     def generate(self):
-        inputs = np.array([[24, 28, 31]])
-        inputs = torch.from_numpy(inputs)
-        length=500
-        result = self.mt(inputs, length, None)
-        decode_midi(result, file_path="/tmp")
+        #inputs = np.array([[24, 28, 31]])
+        #inputs = torch.from_numpy(inputs)
+        #length=4000
+        #result = self.mt(inputs, length, None)
+        #decode_midi(result, file_path="/tmp")
+        #return
+        batch = next(iter(self.dataset.val_loader))
+        primer, _ = batch[0], batch[1]
+        print("tt", type(primer), len(primer), primer)
+        primer = primer[0]
+        print("tt", type(primer), len(primer), primer)
+
+        os.makedirs("/tmp/download", 0o777, True)
+        #rand_seq = self.model.generate(primer[:num_prime], target_seq_length, beam=0)
+        length=4000
+        primer = primer[:2048]
+        primer = primer.numpy()
+        primer = torch.from_numpy(np.array([primer]))
+        result = self.mt(primer, length, None)
+        print("result", result)
+        afile = "rand.mid"
+        decode_midi(result[0][0].detach().numpy(), file_path="/tmp/download/" + afile)
+        return [ afile ]

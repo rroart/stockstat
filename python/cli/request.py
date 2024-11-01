@@ -113,8 +113,8 @@ def imgrequest4(cf, files):
 def gptrequest1(cf, ds, data):
     return requests.post(gpturl1(cf) + "/" + ds, json=data, headers=headers)
 
-def gptrequest2(cf, ds, data):
-    return requests.post(gpturl2(cf) + "/" + ds, json=data, headers=headers)
+def gptrequest2(cf, files):
+    return requests.post(gpturl2(cf) + "/" + "ds", files=files)
 
 def istf(cf):
     return cf.startswith("t")

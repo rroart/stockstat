@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import os
 from util.processor import RANGE_NOTE_ON, RANGE_NOTE_OFF, RANGE_VEL, RANGE_TIME_SHIFT
 from model.music_transformer import MusicTransformer
 from model.loss import SmoothCrossEntropyLoss
@@ -159,6 +160,9 @@ class Model:
         if(f.isdigit()):
             batch = next(iter(self.dataset.val_loader))
             primer, _ = batch[0], batch[1]
+            print("tt", type(primer), len(primer), primer)
+            primer = primer[0]
+            print("tt", type(primer), len(primer), primer)
 
             #idx = int(f)
             #primer, _  = self.dataset.train_loader[idx]
@@ -173,21 +177,25 @@ class Model:
                 return
 
             primer, _  = process_midi(raw_mid, num_prime, random_seq=False)
+            print("tt", type(primer), len(primer), primer)
             primer = torch.tensor(primer, dtype=TORCH_LABEL_TYPE, device=get_device())
+            print("tt", type(primer), len(primer), primer)
 
         self.model.eval()
         with torch.set_grad_enabled(False):
+            os.makedirs("/tmp/download", 0o777, True)
             beam = 0
             if(beam > 0):
                 print("BEAM:", beam)
                 beam_seq = self.model.generate(primer[:num_prime], target_seq_length, beam=beam)
-
-                decode_midi(beam_seq[0].cpu().numpy(), file_path="/tmp/beam.mid")
+                afile = "beam.mid"
+                decode_midi(beam_seq[0].cpu().numpy(), file_path="/tmp/download/" + afile)
             else:
                 print("RAND DIST")
-                rand_seq = self.model.generate(primer[num_prime], target_seq_length, beam=0)
-
-                decode_midi(rand_seq[0].cpu().numpy(), file_path="/tmp/rand.mid")
+                rand_seq = self.model.generate(primer[:num_prime], target_seq_length, beam=0)
+                afile = "rand.mid"
+                decode_midi(rand_seq[0].cpu().numpy(), file_path="/tmp/download/" + afile)
+        return [ afile ]
 
 def get_device():
     if((not USE_CUDA) or (TORCH_CUDA_DEVICE is None)):
