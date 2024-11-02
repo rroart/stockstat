@@ -175,7 +175,7 @@ def do_gptmini(ds):
         try:
             import classify
             cl = classify.Classify()
-            cl.do_gptmini(queue, request, cachedata)
+            cl.do_gptmidi(queue, request, cachedata)
         except:
             import sys,traceback
             memory = "CUDA error: out of memory" in traceback.format_exc()

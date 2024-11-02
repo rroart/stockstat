@@ -5,8 +5,10 @@ import time
 import os
 from model.midi.criterion import SmoothCrossEntropyLoss, CustomSchedule
 from model.midi.metrics import *
-from util.processor import decode_midi
-from util.midi import TOKEN_PAD, VOCAB_SIZE
+from util.processor import decode_midi, encode_midi
+from util.midi import TOKEN_PAD, VOCAB_SIZE, process_midi, TORCH_LABEL_TYPE
+#borrow
+from model.midirpr.utils import get_device
 
 batch_size = 8
 debug = True
@@ -115,22 +117,35 @@ class Model:
                 if debug:
                     print('output switch time: {}'.format(sw_end - sw_start) )
 
-    def generate(self):
+    def generate(self, filename):
+        num_prime = 256
+        target_seq_length = 1024
         #inputs = np.array([[24, 28, 31]])
         #inputs = torch.from_numpy(inputs)
         #length=4000
         #result = self.mt(inputs, length, None)
         #decode_midi(result, file_path="/tmp")
         #return
-        batch = next(iter(self.dataset.val_loader))
-        primer, _ = batch[0], batch[1]
-        print("tt", type(primer), len(primer), primer)
-        primer = primer[0]
-        print("tt", type(primer), len(primer), primer)
+        if filename is None:
+            batch = next(iter(self.dataset.val_loader))
+            primer, _ = batch[0], batch[1]
+            print("tt", type(primer), len(primer), primer)
+            primer = primer[0]
+            print("tt", type(primer), len(primer), primer)
+        else:
+            raw_mid = encode_midi(filename)
+            if(len(raw_mid) == 0):
+                print("Error: No midi messages in primer file:", filename)
+                return
+            primer, _  = process_midi(raw_mid, num_prime, random_seq=False)
+            print("tt", type(primer), len(primer), primer)
+            primer = torch.tensor(primer, dtype=TORCH_LABEL_TYPE, device=get_device())
+            print("tt", type(primer), len(primer), primer)
 
         os.makedirs("/tmp/download", 0o777, True)
         #rand_seq = self.model.generate(primer[:num_prime], target_seq_length, beam=0)
         length=4000
+        length=target_seq_length
         primer = primer[:2048]
         primer = primer.numpy()
         primer = torch.from_numpy(np.array([primer]))

@@ -772,7 +772,7 @@ class Classify:
              "gpu": self.hasgpu() })
         return model
 
-    def do_gptmini(self, queue, request, cachedata):
+    def do_gptmidi(self, queue, request, cachedata):
         dt = datetime.now()
         timestamp = dt.timestamp()
         (filename, filename2) = self.get_file(request)
@@ -801,7 +801,7 @@ class Classify:
                     checkpoint = torch.load(self.getfullpath(myobj), map_location=dev)
                     model = checkpoint['model']
                     print("Restoring done")
-                files = model.generate()
+                files = model.generate(filename)
                 print("files", files)
             else:
                 model = Model.Model(myobj, config, datasets)

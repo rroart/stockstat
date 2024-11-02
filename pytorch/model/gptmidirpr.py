@@ -7,6 +7,7 @@ from model.midi.criterion import SmoothCrossEntropyLoss
 from torch.optim import Adam
 from util.processor import decode_midi, encode_midi
 from util.midi import process_midi, TOKEN_PAD, VOCAB_SIZE, TORCH_LABEL_TYPE, TORCH_FLOAT
+from model.midirpr.utils import get_device
 
 n_layers = 6
 num_heads = 8
@@ -146,12 +147,12 @@ class Model:
             #    writer = csv.writer(o_stream)
             #    writer.writerow([epoch+1, lr, train_loss, train_acc, eval_loss, eval_acc])
 
-    def generate(self):
+    def generate(self, filename):
         num_prime = 256
         target_seq_length = 1024
         import random
-        f = str(random.randrange(len(self.dataset.train_loader)))
-        if(f.isdigit()):
+        #.isdigit()f = str(random.randrange(len(self.dataset.train_loader)))
+        if(filename is None):
             batch = next(iter(self.dataset.val_loader))
             primer, _ = batch[0], batch[1]
             print("tt", type(primer), len(primer), primer)
@@ -165,9 +166,9 @@ class Model:
             #print("Using primer index:", idx)
 
         else:
-            raw_mid = encode_midi(f)
+            raw_mid = encode_midi(filename)
             if(len(raw_mid) == 0):
-                print("Error: No midi messages in primer file:", f)
+                print("Error: No midi messages in primer file:", filename)
                 return
 
             primer, _  = process_midi(raw_mid, num_prime, random_seq=False)
@@ -190,20 +191,6 @@ class Model:
                 afile = "rand.mid"
                 decode_midi(rand_seq[0].cpu().numpy(), file_path="/tmp/download/" + afile)
         return [ afile ]
-
-def get_device():
-    if((not USE_CUDA) or (TORCH_CUDA_DEVICE is None)):
-        return TORCH_CPU_DEVICE
-    else:
-        return TORCH_CUDA_DEVICE
-TORCH_CPU_DEVICE = torch.device("cpu")
-
-if(torch.cuda.device_count() > 0):
-    TORCH_CUDA_DEVICE = torch.device("cuda")
-else:
-    TORCH_CUDA_DEVICE = None
-
-USE_CUDA = True
 
 def train_epoch(cur_epoch, model, dataloader, loss, opt, lr_scheduler=None, print_modulus=1):
     import time
