@@ -4,8 +4,8 @@ PYTORCHLSTMCONFIG = { 'name' : 'lstm', 'steps' : 1000, 'hidden' : 100, 'layers' 
 PYTORCHGRUCONFIG = { 'name' : 'gru', 'steps' : 1000, 'hidden' : 100, 'layers' : 2, 'lr' : 0.01 }
 PYTORCHCNNCONFIG = { 'name' : 'cnn', 'steps' : 1000, 'stride' : 1, 'kernelsize' : 4, 'dropout' : 0.5, 'lr' : 0.01 }
 PYTORCHCNN2CONFIG = { 'name' : 'cnn2', 'steps' : 1000, 'stride' : 1, 'kernelsize' : 3, 'maxpool': 4, 'dropout1': 0.25, 'dropout2' : 0.5, 'lr' : 0.01 }
-PYTORCHGPT2CONFIG = { 'name' : 'gpt2', 'steps' : 1 }
-PYTORCHGPT1CONFIG = { 'name' : 'gpt1', 'steps' : 1 }
+PYTORCHGPTMIDICONFIG = { 'name' : 'gptmidi', 'steps' : 1 }
+PYTORCHGPTMIDIRPRCONFIG = { 'name' : 'gptmidirpr', 'rpr' : True, 'steps' : 1 }
 TENSORFLOWDNNCONFIG = { 'name' : 'dnn', 'steps' : 1000, 'hidden' : 100, 'layers': 2, 'lr' : 0.01 }
 TENSORFLOWLICCONFIG = { 'name' : 'lic', 'steps' : 1000, 'lr' : 0.01 }
 TENSORFLOWMLPCONFIG = { 'name' : 'mlp', 'steps' : 1000, 'hidden' : 100, 'layers' : 2, 'lr' : 0.01 }
@@ -69,8 +69,8 @@ def get(cf):
         return cf, 5, PYTORCHCNNCONFIG
     elif cf == 'pytorchCNN2Config':
         return cf, 6, PYTORCHCNN2CONFIG
-    elif cf == 'pytorchGPT2Config':
-        return cf, 7, PYTORCHGPT2CONFIG
-    elif cf == 'pytorchGPT1Config':
-        return cf, 8, PYTORCHGPT1CONFIG
+    elif cf == 'pytorchGPTMIDIConfig':
+        return cf, 7, PYTORCHGPTMIDICONFIG
+    elif cf == 'pytorchGPTMIDIRPRConfig':
+        return cf, 8, PYTORCHGPTMIDIRPRCONFIG
     return None

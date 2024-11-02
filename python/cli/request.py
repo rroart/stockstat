@@ -54,8 +54,8 @@ def imgurl4(cf):
 
 def gpturl1(cf):
     return geturl(cf) + '/gpt'
-def gpturl2(cf):
-    return geturl(cf) + '/gpt2'
+def gptmidiurl1(cf):
+    return geturl(cf) + '/gptmidi'
 
 #headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 #headers={'Content-type':'application/json', 'Accept':'application/json'}
@@ -101,7 +101,7 @@ def copydb(indb, outdb):
 def imgrequest1(cf, files):
     return requests.post(imgurl1(cf), files=files)
 
-def imgrequest2(cf, afile):
+def download(cf, afile):
     return requests.get(imgurl2(cf) + "/" + afile)
 
 def imgrequest3(cf, data):
@@ -113,8 +113,8 @@ def imgrequest4(cf, files):
 def gptrequest1(cf, ds, data):
     return requests.post(gpturl1(cf) + "/" + ds, json=data, headers=headers)
 
-def gptrequest2(cf, files):
-    return requests.post(gpturl2(cf) + "/" + "ds", files=files)
+def gptmidirequest(cf, files):
+    return requests.post(gptmidiurl1(cf) + "/" + "ds", files=files)
 
 def istf(cf):
     return cf.startswith("t")

@@ -504,11 +504,11 @@ class Classify:
             modelname = 'cnn2'
             config = myobj.pytorchCNN2Config
         if myobj.modelInt == 7:
-            modelname = 'gpt2'
-            config = myobj.pytorchGPT2Config
+            modelname = 'gptmidi'
+            config = myobj.pytorchGPTMIDIConfig
         if myobj.modelInt == 8:
-            modelname = 'gpt1'
-            config = myobj.pytorchGPT1Config
+            modelname = 'gptmidirpr'
+            config = myobj.pytorchGPTMIDIRPRConfig
         return config, modelname
       if hasattr(myobj, 'modelName'):
         if myobj.modelName == 'mlp':
@@ -772,7 +772,7 @@ class Classify:
              "gpu": self.hasgpu() })
         return model
 
-    def do_gpt2(self, queue, request, cachedata):
+    def do_gptmini(self, queue, request, cachedata):
         dt = datetime.now()
         timestamp = dt.timestamp()
         (filename, filename2) = self.get_file(request)

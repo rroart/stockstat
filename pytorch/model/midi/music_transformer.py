@@ -1,22 +1,14 @@
-#from custom.layers import *
-#from custom.criterion import *
-from model.layers import Encoder
-#from custom.config import config
+from model.midi.layers import Encoder
+from util.midi import TOKEN_PAD, VOCAB_SIZE
+from model.midi.utils import get_masked_with_pad_tensor
+from model.midi.config import threshold_len
 
-import sys
-import torch
 import torch.distributions as dist
-import random
-#import utils
 
 import torch
-#from tensorboardX import SummaryWriter
-#from progress.bar import Bar
-event_dim=388
-pad_token=event_dim
 
 class MusicTransformer(torch.nn.Module):
-    def __init__(self, embedding_dim=256, vocab_size=388+2, num_layer=6,
+    def __init__(self, embedding_dim=256, vocab_size=VOCAB_SIZE, num_layer=6,
                  max_seq=2048, dropout=0.2, debug=False, loader_path=None, dist=False, writer=None):
         super().__init__()
         self.infer = False
@@ -38,7 +30,7 @@ class MusicTransformer(torch.nn.Module):
 
     def forward(self, x, length=None, writer=None):
         if self.training or not self.infer:
-            _, _, look_ahead_mask = get_masked_with_pad_tensor(self.max_seq, x, x, pad_token)
+            _, _, look_ahead_mask = get_masked_with_pad_tensor(self.max_seq, x, x, TOKEN_PAD)
             decoder, w = self.Decoder(x, mask=look_ahead_mask)
             fc = self.fc(decoder)
             return fc.contiguous() if self.training else (fc.contiguous(), [weight.contiguous() for weight in w])
@@ -49,21 +41,15 @@ class MusicTransformer(torch.nn.Module):
                  prior: torch.Tensor,
                  length=2048,
                  tf_board_writer = None):
-        threshold_len = 500
-        event_dim = 388
-        pad_token = event_dim
         decode_array = prior
         result_array = prior
-        #print(config)
         print(length)
         for i in range(length):
             if decode_array.size(1) >= threshold_len:
                 decode_array = decode_array[:, 1:]
             _, _, look_ahead_mask = \
-                get_masked_with_pad_tensor(decode_array.size(1), decode_array, decode_array, pad_token=pad_token)
+                get_masked_with_pad_tensor(decode_array.size(1), decode_array, decode_array, pad_token=TOKEN_PAD)
 
-            # result, _ = self.forward(decode_array, lookup_mask=look_ahead_mask)
-            # result, _ = decode_fn(decode_array, look_ahead_mask)
             result, _ = self.Decoder(decode_array, None)
             result = self.fc(result)
             result = result.softmax(-1)
@@ -89,29 +75,3 @@ class MusicTransformer(torch.nn.Module):
         self.eval()
         self.infer = True
 
-def get_masked_with_pad_tensor(size, src, trg, pad_token):
-    src = src[:, None, None, :]
-    trg = trg[:, None, None, :]
-    src_pad_tensor = torch.ones_like(src).to(src.device.type) * pad_token
-    src_mask = torch.equal(src, src_pad_tensor)
-    trg_mask = torch.equal(src, src_pad_tensor)
-    if trg is not None:
-        trg_pad_tensor = torch.ones_like(trg).to(trg.device.type) * pad_token
-        dec_trg_mask = trg == trg_pad_tensor
-        # boolean reversing i.e) True * -1 + 1 = False
-        seq_mask = ~sequence_mask(torch.arange(1, size+1).to(trg.device), size)
-        # look_ahead_mask = torch.max(dec_trg_mask, seq_mask)
-        look_ahead_mask = dec_trg_mask | seq_mask
-
-    else:
-        trg_mask = None
-        look_ahead_mask = None
-
-    return src_mask, trg_mask, look_ahead_mask
-
-def sequence_mask(length, max_length=None):
-    """Tensorflow의 sequence_mask를 구현"""
-    if max_length is None:
-        max_length = length.max()
-    x = torch.arange(max_length, dtype=length.dtype, device=length.device)
-    return x.unsqueeze(0) < length.unsqueeze(1)

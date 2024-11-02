@@ -1,23 +1,21 @@
-from model.music_transformer1 import MusicTransformer
-import torch
+from model.midi.music_transformer import MusicTransformer
 import torch.optim as optim
+import numpy as np
 import time
 import os
-from model.criterion import SmoothCrossEntropyLoss, CustomSchedule
-from model.metrics import *
-from util.processor import decode_midi, encode_midi
+from model.midi.criterion import SmoothCrossEntropyLoss, CustomSchedule
+from model.midi.metrics import *
+from util.processor import decode_midi
+from util.midi import TOKEN_PAD, VOCAB_SIZE
 
 batch_size = 8
 debug = True
 
 embedding_dim=256
-vocab_size=388+2
 num_layers=6
 max_seq=2048
 dropout=0.2
 label_smooth=0.1
-event_dim=388
-pad_token=event_dim
 
 class Model:
     def __init__(self, myobj, config, dataset):
@@ -26,7 +24,7 @@ class Model:
         self.dataset = dataset
         self.mt = MusicTransformer(
             embedding_dim=embedding_dim,
-            vocab_size=vocab_size,
+            vocab_size=VOCAB_SIZE,
             num_layer=num_layers,
             max_seq=max_seq,
             dropout=dropout,
@@ -41,8 +39,8 @@ class Model:
     def fit(self):
         metric_set = MetricsSet({
             'accuracy': CategoricalAccuracy(),
-            'loss': SmoothCrossEntropyLoss(label_smooth, vocab_size, pad_token),
-            'bucket':  LogitsBucketting(vocab_size)
+            'loss': SmoothCrossEntropyLoss(label_smooth, VOCAB_SIZE, TOKEN_PAD),
+            'bucket':  LogitsBucketting(VOCAB_SIZE)
         })
 
         idx = 0

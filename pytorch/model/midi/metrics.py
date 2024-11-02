@@ -1,6 +1,4 @@
 import torch
-import numpy as np
-import torch.nn.functional as F
 
 from typing import Dict
 
@@ -18,11 +16,6 @@ class Accuracy(_Metric):
         super().__init__()
 
     def forward(self, input: torch.Tensor, target: torch.Tensor):
-        """
-        :param input: [B, L]
-        :param target: [B, L]
-        :return:
-        """
         bool_acc = input.long() == target.long()
         return bool_acc.sum().to(torch.float) / bool_acc.numel()
 
@@ -40,11 +33,6 @@ class CategoricalAccuracy(Accuracy):
         super().__init__()
 
     def forward(self, input: torch.Tensor, target: torch.Tensor):
-        """
-        :param input: [B, T, V]
-        :param target: [B, T]
-        :return:
-        """
         input = input.softmax(-1)
         categorical_input = input.argmax(-1)
         return super().forward(categorical_input, target)
@@ -67,15 +55,6 @@ class MetricsSet(object):
         return self.forward(input=input, target=target)
 
     def forward(self, input: torch.Tensor, target: torch.Tensor):
-        # return [metric(input, target) for metric in self.metrics]
         return {
             k: metric(input.to(target.device), target)
             for k, metric in self.metrics.items()}
-
-
-if __name__ == '__main__':
-    met = MockAccuracy()
-    test_tensor1 = torch.ones((3,2)).contiguous().cuda().to(non_blocking=True, dtype=torch.int)
-    test_tensor2 = torch.ones((3,2)).contiguous().cuda().to(non_blocking=True, dtype=torch.int)
-    test_tensor3 = torch.zeros((3,2))
-    print(met(test_tensor1, test_tensor2))

@@ -1,6 +1,3 @@
-import torch
-import torch.nn as nn
-
 from torch.nn import functional as F
 from torch.nn.parameter import Parameter
 from torch.nn import Module
@@ -120,17 +117,6 @@ class MultiheadAttentionRPR(Module):
                 need_weights=True, attn_mask=None):
 
         if hasattr(self, '_qkv_same_embed_dim') and self._qkv_same_embed_dim is False:
-            # return F.multi_head_attention_forward(
-            #     query, key, value, self.embed_dim, self.num_heads,
-            #     self.in_proj_weight, self.in_proj_bias,
-            #     self.bias_k, self.bias_v, self.add_zero_attn,
-            #     self.dropout, self.out_proj.weight, self.out_proj.bias,
-            #     training=self.training,
-            #     key_padding_mask=key_padding_mask, need_weights=need_weights,
-            #     attn_mask=attn_mask, use_separate_proj_weight=True,
-            #     q_proj_weight=self.q_proj_weight, k_proj_weight=self.k_proj_weight,
-            #     v_proj_weight=self.v_proj_weight)
-
             return multi_head_attention_forward_rpr(
                 query, key, value, self.embed_dim, self.num_heads,
                 self.in_proj_weight, self.in_proj_bias,
@@ -147,15 +133,6 @@ class MultiheadAttentionRPR(Module):
                     Please re-train your model with the new module',
                               UserWarning)
 
-            # return F.multi_head_attention_forward(
-            #     query, key, value, self.embed_dim, self.num_heads,
-            #     self.in_proj_weight, self.in_proj_bias,
-            #     self.bias_k, self.bias_v, self.add_zero_attn,
-            #     self.dropout, self.out_proj.weight, self.out_proj.bias,
-            #     training=self.training,
-            #     key_padding_mask=key_padding_mask, need_weights=need_weights,
-            #     attn_mask=attn_mask)
-
             return multi_head_attention_forward_rpr(
                 query, key, value, self.embed_dim, self.num_heads,
                 self.in_proj_weight, self.in_proj_bias,
@@ -165,7 +142,6 @@ class MultiheadAttentionRPR(Module):
                 key_padding_mask=key_padding_mask, need_weights=need_weights,
                 attn_mask=attn_mask, rpr_mat=self.Er)
 
-# multi_head_attention_forward_rpr
 def multi_head_attention_forward_rpr(query,                       # type: Tensor
                                  key,                             # type: Tensor
                                  value,                           # type: Tensor
@@ -192,8 +168,6 @@ def multi_head_attention_forward_rpr(query,                       # type: Tensor
                                  rpr_mat=None
                                  ):
 
-    # type: (...) -> Tuple[Tensor, Optional[Tensor]]
-
     qkv_same = torch.equal(query, key) and torch.equal(key, value)
     kv_same = torch.equal(key, value)
 
@@ -208,12 +182,9 @@ def multi_head_attention_forward_rpr(query,                       # type: Tensor
 
     if use_separate_proj_weight is not True:
         if qkv_same:
-            # self-attention
             q, k, v = linear(query, in_proj_weight, in_proj_bias).chunk(3, dim=-1)
 
         elif kv_same:
-            # encoder-decoder attention
-            # This is inline in_proj function with in_proj_weight and in_proj_bias
             _b = in_proj_bias
             _start = 0
             _end = embed_dim
@@ -228,7 +199,6 @@ def multi_head_attention_forward_rpr(query,                       # type: Tensor
                 v = None
             else:
 
-                # This is inline in_proj function with in_proj_weight and in_proj_bias
                 _b = in_proj_bias
                 _start = embed_dim
                 _end = None
@@ -238,7 +208,6 @@ def multi_head_attention_forward_rpr(query,                       # type: Tensor
                 k, v = linear(key, _w, _b).chunk(2, dim=-1)
 
         else:
-            # This is inline in_proj function with in_proj_weight and in_proj_bias
             _b = in_proj_bias
             _start = 0
             _end = embed_dim
@@ -247,7 +216,6 @@ def multi_head_attention_forward_rpr(query,                       # type: Tensor
                 _b = _b[_start:_end]
             q = linear(query, _w, _b)
 
-            # This is inline in_proj function with in_proj_weight and in_proj_bias
             _b = in_proj_bias
             _start = embed_dim
             _end = embed_dim * 2
@@ -256,7 +224,6 @@ def multi_head_attention_forward_rpr(query,                       # type: Tensor
                 _b = _b[_start:_end]
             k = linear(key, _w, _b)
 
-            # This is inline in_proj function with in_proj_weight and in_proj_bias
             _b = in_proj_bias
             _start = embed_dim * 2
             _end = None
@@ -347,7 +314,6 @@ def multi_head_attention_forward_rpr(query,                       # type: Tensor
     attn_output_weights = torch.bmm(q, k.transpose(1, 2))
     assert list(attn_output_weights.size()) == [bsz * num_heads, tgt_len, src_len]
 
-    ######### ADDITION OF RPR ###########
     if(rpr_mat is not None):
         rpr_mat = _get_valid_embedding(rpr_mat, q.shape[1], k.shape[1])
         qe = torch.einsum("hld,md->hlm", q, rpr_mat)
@@ -378,7 +344,6 @@ def multi_head_attention_forward_rpr(query,                       # type: Tensor
     attn_output = linear(attn_output, out_proj_weight, out_proj_bias)
 
     if need_weights:
-        # average attention weights over heads
         attn_output_weights = attn_output_weights.view(bsz, num_heads, tgt_len, src_len)
         return attn_output, attn_output_weights.sum(dim=1) / num_heads
     else:

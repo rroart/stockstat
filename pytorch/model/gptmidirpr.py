@@ -1,23 +1,18 @@
 import torch
 import torch.nn as nn
 import os
-from util.processor import RANGE_NOTE_ON, RANGE_NOTE_OFF, RANGE_VEL, RANGE_TIME_SHIFT
-from model.music_transformer import MusicTransformer
-from model.loss import SmoothCrossEntropyLoss
+from model.midirpr.music_transformer import MusicTransformer
+# borrowed
+from model.midi.criterion import SmoothCrossEntropyLoss
 from torch.optim import Adam
 from util.processor import decode_midi, encode_midi
-from mydatasets import process_midi
+from util.midi import process_midi, TOKEN_PAD, VOCAB_SIZE, TORCH_LABEL_TYPE, TORCH_FLOAT
 
-SEQUENCE_START = 0
-TOKEN_END               = RANGE_NOTE_ON + RANGE_NOTE_OFF + RANGE_VEL + RANGE_TIME_SHIFT
-TOKEN_PAD               = TOKEN_END + 1
-VOCAB_SIZE              = TOKEN_PAD + 1
 n_layers = 6
 num_heads = 8
 d_model = 512
 dim_feedforward = 1024
 dropout = 0.1
-rpr = "store_true"
 max_sequence = 2048
 ADAM_BETA_1             = 0.9
 ADAM_BETA_2             = 0.98
@@ -30,7 +25,7 @@ class Model:
         self.dataset = dataset
         self.model = MusicTransformer(n_layers=n_layers, num_heads=num_heads,
                 d_model=d_model, dim_feedforward=dim_feedforward, dropout=dropout,
-                max_sequence=max_sequence, rpr=rpr).to(get_device())
+                max_sequence=max_sequence, rpr=config.rpr).to(get_device())
 
     def localsave(self):
        return True
@@ -152,7 +147,6 @@ class Model:
             #    writer.writerow([epoch+1, lr, train_loss, train_acc, eval_loss, eval_acc])
 
     def generate(self):
-        TORCH_LABEL_TYPE        = torch.long
         num_prime = 256
         target_seq_length = 1024
         import random
@@ -306,4 +300,3 @@ def compute_epiano_accuracy(out, tgt):
     acc = num_right / len(tgt)
 
     return acc
-TORCH_FLOAT             = torch.float32

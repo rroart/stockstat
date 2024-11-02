@@ -1,10 +1,10 @@
-#import utils
-
 import math as m
 import numpy as np
 import math
 import torch
 import torch.nn.functional as F
+
+from model.midi.utils import sequence_mask
 
 
 def sinusoid(max_seq, embedding_dim):
@@ -39,12 +39,7 @@ class DynamicPositionEmbedding(torch.nn.Module):
         x = x + torch.from_numpy(self.positional_embedding[:, :x.size(1), :]).to(x.device, dtype=x.dtype)
         return x
 
-
 class RelativeGlobalAttention(torch.nn.Module):
-    """
-    from Music Transformer ( Huang et al, 2018 )
-    [paper link](https://arxiv.org/pdf/1809.04281.pdf)
-    """
     def __init__(self, h=4, d=256, add_emb=False, max_seq=2048, **kwargs):
         super().__init__()
         self.len_k = None
@@ -63,12 +58,6 @@ class RelativeGlobalAttention(torch.nn.Module):
             self.Radd = None
 
     def forward(self, inputs, mask=None, **kwargs):
-        """
-        :param inputs: a list of tensors. i.e) [Q, K, V]
-        :param mask: mask tensor
-        :param kwargs:
-        :return: final tensor ( output of attention )
-        """
         q = inputs[0]
         q = self.Wq(q)
         q = torch.reshape(q, (q.size(0), q.size(1), self.h, -1))
@@ -161,7 +150,6 @@ class EncoderLayer(torch.nn.Module):
         out2 = self.layernorm2(out1+ffn_out)
         return out2, w
 
-
 class DecoderLayer(torch.nn.Module):
     def __init__(self, d_model, rate=0.1, h=16, additional=False, max_seq=2048):
         super(DecoderLayer, self).__init__()
@@ -204,7 +192,6 @@ class DecoderLayer(torch.nn.Module):
         else:
             return out
 
-
 class Encoder(torch.nn.Module):
     def __init__(self, num_layers, d_model, input_vocab_size, rate=0.1, max_len=None):
         super(Encoder, self).__init__()
@@ -223,27 +210,12 @@ class Encoder(torch.nn.Module):
 
     def forward(self, x, mask=None):
         weights = []
-        # adding embedding and position encoding.
-        x = self.embedding(x.to(torch.long))  # (batch_size, input_seq_len, d_model)
+        x = self.embedding(x.to(torch.long))
         x *= math.sqrt(self.d_model)
         x = self.pos_encoding(x)
         x = self.dropout(x)
         for i in range(self.num_layers):
             x, w = self.enc_layers[i](x, mask)
             weights.append(w)
-        return x, weights # (batch_size, input_seq_len, d_model)
+        return x, weights
 
-
-# class MusicTransformerDataParallelCriterion(torch.nn.DataParallel):
-#     def forward(self, inputs, *targets, **kwargs):
-#         targets, kwargs = self.scatter(targets, kwargs, self.device_ids)
-#         replicas = self.replicate(self.module, self.device_ids[:len(inputs)])
-#         targets = tuple(targets_per_gpu[0] for targets_per_gpu in targets)
-#         outputs = _criterion_parallel_apply(replicas, inputs, targets, kwargs)
-#         return Reduce.apply(*outputs) / len(outputs), targets
-
-def sequence_mask(length, max_length=None):
-    if max_length is None:
-        max_length = length.max()
-    x = torch.arange(max_length, dtype=length.dtype, device=length.device)
-    return x.unsqueeze(0) < length.unsqueeze(1)

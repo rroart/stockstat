@@ -33,7 +33,7 @@ def image(path, path2, data, cf):
     print(type(myobj))
     print(myobj)
     for afile in myobj['files']:
-        response = request.imgrequest2(cf, afile)
+        response = request.download(cf, afile)
 
         with open(afile, 'wb') as file:
             file.write(response.content)

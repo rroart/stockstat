@@ -1,14 +1,10 @@
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.utils.data import DataLoader, Dataset, TensorDataset
-from torch.optim import *
+from torch.utils.data import DataLoader, Dataset
 import torchvision
 
 import numpy as np
 
-#from classify2 import train_loader
-
+from util.midi import process_midi, TORCH_LABEL_TYPE, cpu_device
 
 def getdatasetmidi(myobj, config, classifier):
     if myobj.dataset == 'maestro':
@@ -253,12 +249,11 @@ def getmaestro(myobj, config):
     import os
     import json
     import util.processor as midi_processor
-    import pretty_midi
     if not pathlib.Path("/tmp/maestro").exists():
         url = 'https://storage.googleapis.com/magentadata/datasets/maestro/v2.0.0/maestro-v2.0.0-midi.zip'
         torchvision.datasets.utils.download_url(url, "/tmp/")
         torchvision.datasets.utils.extract_archive("/tmp/maestro-v2.0.0-midi.zip", "/tmp/maestro")
-    maestro_root = "/tmp/maestro//maestro-v2.0.0"
+    maestro_root = "/tmp/maestro/maestro-v2.0.0"
     JSON_FILE = "maestro-v2.0.0.json"
     maestro_json_file = os.path.join(maestro_root, JSON_FILE)
     if(not os.path.isfile(maestro_json_file)):
@@ -303,7 +298,7 @@ def getmaestro(myobj, config):
     print("Num Val:", val_count)
     print("Num Test:", test_count)
 
-    train_dataset, val_dataset, test_dataset = create_epiano_datasets(config, train, val, test, max_sequence)
+    train_dataset, val_dataset, test_dataset = create_epiano_datasets_from_maestro(config, train, val, test, max_sequence)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, num_workers=n_workers, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, num_workers=n_workers)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, num_workers=n_workers)
@@ -312,29 +307,23 @@ def getmaestro(myobj, config):
     ds = DictToObject(dsdict)
     return ds
 
-def create_epiano_datasets(config, train, val, test, max_seq, random_seq=True):
-    import os
-
-    train_dataset = EPianoDataset(config, train, max_seq, random_seq)
-    val_dataset = EPianoDataset(config, val, max_seq, random_seq)
-    test_dataset = EPianoDataset(config, test, max_seq, random_seq)
+def create_epiano_datasets_from_maestro(config, train, val, test, max_seq, random_seq=True):
+    train_dataset = EPianoDatasetFromPrepped(config, train, max_seq, random_seq)
+    val_dataset = EPianoDatasetFromPrepped(config, val, max_seq, random_seq)
+    test_dataset = EPianoDatasetFromPrepped(config, test, max_seq, random_seq)
 
     return train_dataset, val_dataset, test_dataset
 
-def create_epiano_datasets2(config, root, max_seq, random_seq=True):
-    import os
-
-    train_dataset = EPianoDataset2(config, root + "/train", max_seq, random_seq)
-    val_dataset = EPianoDataset2(config, root + "/val", max_seq, random_seq)
-    test_dataset = EPianoDataset2(config, root + "/test", max_seq, random_seq)
+def create_epiano_datasets_from_dir(config, root, max_seq, random_seq=True):
+    train_dataset = EPianoDatasetFromDir(config, root + "/train", max_seq, random_seq)
+    val_dataset = EPianoDatasetFromDir(config, root + "/val", max_seq, random_seq)
+    test_dataset = EPianoDatasetFromDir(config, root + "/test", max_seq, random_seq)
 
     return train_dataset, val_dataset, test_dataset
 
 def do_dir2(myobj, config, directories):
     import random
-    import os
     import glob
-    import pathlib
 
     batch_size = 128
     filenames = glob.glob(str(config.dataset/'**/*.mid*'))
@@ -350,11 +339,11 @@ def do_dir2(myobj, config, directories):
     ds = DictToObject(dsdict)
     return ds
 
-def do_dir(myobj, config, directories):
+def do_dir(myobj, config):
     print("Preprocessing...")
 
     root = myobj.dataset
-    train_dataset, val_dataset, test_dataset = create_epiano_datasets2(config, root, max_sequence)
+    train_dataset, val_dataset, test_dataset = create_epiano_datasets_from_dir(config, root, max_sequence)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, num_workers=n_workers, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, num_workers=n_workers)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, num_workers=n_workers)
@@ -367,9 +356,8 @@ def do_dir(myobj, config, directories):
 def filenamedir(myobj, config):
     return [ myobj.dataset ]
 
-class EPianoDataset(Dataset):
+class EPianoDatasetFromPrepped(Dataset):
     def __init__(self, config, preps, max_seq=2048, random_seq=True):
-        import os
         self.preps      = preps
         self.max_seq    = max_seq
         self.random_seq = random_seq
@@ -379,7 +367,7 @@ class EPianoDataset(Dataset):
 
     def __getitem__(self, idx):
         raw_mid     = torch.tensor(self.preps[idx], dtype=TORCH_LABEL_TYPE
-, device=cpu_device())
+                                   , device=cpu_device())
 
         x, tgt = process_midi(raw_mid, self.max_seq, self.random_seq)
 
@@ -389,7 +377,7 @@ class EPianoDataset(Dataset):
 import util.processor as midi_processor
 
 
-class EPianoDataset2(Dataset):
+class EPianoDatasetFromDir(Dataset):
     def __init__(self, config, root, max_seq=2048, random_seq=True):
         import os
         self.root       = root
@@ -412,53 +400,7 @@ class EPianoDataset2(Dataset):
 
         return x, tgt
 
-def process_midi(raw_mid, max_seq, random_seq):
-    import random
-    x   = torch.full((max_seq, ), TOKEN_PAD, dtype=TORCH_LABEL_TYPE, device=cpu_device())
-    tgt = torch.full((max_seq, ), TOKEN_PAD, dtype=TORCH_LABEL_TYPE, device=cpu_device())
 
-    raw_len     = len(raw_mid)
-    full_seq    = max_seq + 1 # Performing seq2seq
-
-    if(raw_len == 0):
-        return x, tgt
-
-    if(raw_len < full_seq):
-        x[:raw_len]         = raw_mid
-        tgt[:raw_len-1]     = raw_mid[1:]
-        tgt[raw_len-1]      = TOKEN_END
-    else:
-        # Randomly selecting a range
-        if(random_seq):
-            end_range = raw_len - full_seq
-            start = random.randint(SEQUENCE_START, end_range)
-
-        # Always taking from the start to as far as we can
-        else:
-            start = SEQUENCE_START
-
-        end = start + full_seq
-
-        data = raw_mid[start:end]
-
-        x = data[:max_seq]
-        tgt = data[1:full_seq]
-
-
-    # print("x:",x)
-    # print("tgt:",tgt)
-
-    return x, tgt
-
-from util.processor import RANGE_NOTE_ON, RANGE_NOTE_OFF, RANGE_VEL, RANGE_TIME_SHIFT
-
-SEQUENCE_START = 0
-TOKEN_END               = RANGE_NOTE_ON + RANGE_NOTE_OFF + RANGE_VEL + RANGE_TIME_SHIFT
-TOKEN_PAD               = TOKEN_END + 1
-TORCH_LABEL_TYPE        = torch.long
-TORCH_CPU_DEVICE = torch.device("cpu")
-def cpu_device():
-    return TORCH_CPU_DEVICE
 batch_size=2
 n_workers=1
 max_sequence=2048

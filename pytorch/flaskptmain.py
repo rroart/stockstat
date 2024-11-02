@@ -161,8 +161,8 @@ def download(filename):
     full_path = os.path.join(app.root_path, "/tmp/download")
     return send_from_directory(full_path, filename, as_attachment=True)
 
-@app.route('/gpt2/<ds>', methods=['POST'])
-def do_gpt2(ds):
+@app.route('/gptmidi/<ds>', methods=['POST'])
+def do_gptmini(ds):
     if False:
         from datetime import datetime
         dt = datetime.now()
@@ -171,11 +171,11 @@ def do_gpt2(ds):
         print ("millis ", (dt.timestamp() - timestamp)*1000)
     else:
         data = None
-    def classifyrunner(queue, request, cachedata):
+    def gptmidirunner(queue, request, cachedata):
         try:
             import classify
             cl = classify.Classify()
-            cl.do_gpt2(queue, request, cachedata)
+            cl.do_gptmini(queue, request, cachedata)
         except:
             import sys,traceback
             memory = "CUDA error: out of memory" in traceback.format_exc()
@@ -191,7 +191,7 @@ def do_gpt2(ds):
 
     aqueue = Queue()
 
-    process = Process(target=classifyrunner, args=(aqueue, request, data))
+    process = Process(target=gptmidirunner, args=(aqueue, request, data))
 
     try:
         import queue
