@@ -93,4 +93,4 @@ def train_mnist_gan(discriminator, generator, discriminator_optim, generator_opt
     with open('mnist.pkl', 'wb') as f:
         pkl.dump(fixed_samples, f)
      
-    return discriminator_losses, generator_losses
+    return discriminator_epoch_loss, generator_epoch_loss
