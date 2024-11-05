@@ -28,9 +28,7 @@ class MusicTransformer(nn.Module):
 
         self.positional_encoding = PositionalEncoding(self.d_model, self.dropout, self.max_seq)
 
-        if(not self.rpr):
-            # To make a decoder-only transformer we need to use masked encoder layers
-            # Dummy decoder to essentially just return the encoder output
+        if not self.rpr:
             self.transformer = nn.Transformer(
                 d_model=self.d_model, nhead=self.nhead, num_encoder_layers=self.nlayers,
                 num_decoder_layers=0, dropout=self.dropout, # activation=self.ff_activ,
@@ -51,7 +49,7 @@ class MusicTransformer(nn.Module):
 
     def forward(self, x, mask=True):
 
-        if(mask is True):
+        if mask is True:
             mask = self.transformer.generate_square_subsequent_mask(x.shape[1]).to(get_device())
         else:
             mask = None
@@ -87,17 +85,17 @@ class MusicTransformer(nn.Module):
         # print("primer:",primer)
         # print(gen_seq)
         cur_i = num_primer
-        while(cur_i < target_seq_length):
+        while cur_i < target_seq_length:
             # gen_seq_batch     = gen_seq.clone()
             y = self.softmax(self.forward(gen_seq[..., :cur_i]))[..., :TOKEN_END]
             token_probs = y[:, cur_i-1, :]
 
-            if(beam == 0):
+            if beam == 0:
                 beam_ran = 2.0
             else:
                 beam_ran = random.uniform(0,1)
 
-            if(beam_ran <= beam_chance):
+            if beam_ran <= beam_chance:
                 token_probs = token_probs.flatten()
                 top_res, top_i = torch.topk(token_probs, beam)
 
@@ -115,12 +113,12 @@ class MusicTransformer(nn.Module):
 
 
                 # Let the transformer decide to end if it wants to
-                if(next_token == TOKEN_END):
+                if next_token == TOKEN_END:
                     print("Model called end of sequence at:", cur_i, "/", target_seq_length)
                     break
 
             cur_i += 1
-            if(cur_i % 50 == 0):
+            if cur_i % 50 == 0:
                 print(cur_i, "/", target_seq_length)
 
         return gen_seq[:, :cur_i]

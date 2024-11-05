@@ -1,0 +1,11 @@
+n_layers = 6
+num_heads = 8
+d_model = 512
+dim_feedforward = 1024
+dropout = 0.1
+max_sequence = 2048
+ADAM_BETA_1             = 0.9
+ADAM_BETA_2             = 0.98
+ADAM_EPSILON            = 10e-9
+LR_DEFAULT_START        = 1.0
+SCHEDULER_WARMUP_STEPS  = 4000

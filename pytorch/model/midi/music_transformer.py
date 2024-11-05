@@ -30,6 +30,7 @@ class MusicTransformer(torch.nn.Module):
 
     def forward(self, x, length=None, writer=None):
         if self.training or not self.infer:
+            # todo -1
             _, _, look_ahead_mask = get_masked_with_pad_tensor(self.max_seq, x, x, TOKEN_PAD)
             decoder, w = self.Decoder(x, mask=look_ahead_mask)
             fc = self.fc(decoder)
@@ -45,6 +46,7 @@ class MusicTransformer(torch.nn.Module):
         result_array = prior
         print(length)
         for i in range(length):
+            # todo -1
             if decode_array.size(1) >= threshold_len:
                 decode_array = decode_array[:, 1:]
             _, _, look_ahead_mask = \

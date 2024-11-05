@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 import os
+
+from model.midirpr.lr_scheduling import LrStepTracker
 from model.midirpr.music_transformer import MusicTransformer
 # borrowed
 from model.midi.criterion import SmoothCrossEntropyLoss
@@ -8,25 +10,17 @@ from torch.optim import Adam
 from util.processor import decode_midi, encode_midi
 from util.midi import process_midi, TOKEN_PAD, VOCAB_SIZE, TORCH_LABEL_TYPE, TORCH_FLOAT
 from model.midirpr.utils import get_device
-
-n_layers = 6
-num_heads = 8
-d_model = 512
-dim_feedforward = 1024
-dropout = 0.1
-max_sequence = 2048
-ADAM_BETA_1             = 0.9
-ADAM_BETA_2             = 0.98
-ADAM_EPSILON            = 10e-9
+from torch.optim.lr_scheduler import LambdaLR
+import model.midirpr.config as midirprconfig
 
 class Model:
     def __init__(self, myobj, config, dataset):
         self.myobj = myobj
         self.config = config
         self.dataset = dataset
-        self.model = MusicTransformer(n_layers=n_layers, num_heads=num_heads,
-                d_model=d_model, dim_feedforward=dim_feedforward, dropout=dropout,
-                max_sequence=max_sequence, rpr=config.rpr).to(get_device())
+        self.model = MusicTransformer(n_layers=midirprconfig.n_layers, num_heads=midirprconfig.num_heads,
+                d_model=midirprconfig.d_model, dim_feedforward=midirprconfig.dim_feedforward, dropout=midirprconfig.dropout,
+                max_sequence=midirprconfig.max_sequence, rpr=config.rpr).to(get_device())
 
     def localsave(self):
        return True
@@ -44,26 +38,37 @@ class Model:
         best_loss_file = os.path.join(results_folder, "best_loss_weights.pickle")
         best_acc_file = os.path.join(results_folder, "best_acc_weights.pickle")
         best_text = os.path.join(results_folder, "best_epochs.txt")
-        LR_DEFAULT_START        = 1.0
 
         lr = None
-        if(lr is None):
-            if(None is None):
+        if hasattr(self.config, 'lr'):
+            lr = self.config.lr
+        if lr is None:
+            if None is None:
                 init_step = 0
             else:
                 init_step = 0 * len(self.dataset.train_loader)
 
-            lr = LR_DEFAULT_START
-            #lr_stepper = LrStepTracker(args.d_model, SCHEDULER_WARMUP_STEPS, init_step)
+            lr = midirprconfig.LR_DEFAULT_START
+            lr_stepper = LrStepTracker(midirprconfig.d_model, midirprconfig.SCHEDULER_WARMUP_STEPS, init_step)
         else:
-            lr = lr
+            lr = self.config.lr
         ce_smoothing = None
         eval_loss_func = nn.CrossEntropyLoss(ignore_index=TOKEN_PAD)
         if (ce_smoothing is None):
             train_loss_func = eval_loss_func
         else:
             train_loss_func = SmoothCrossEntropyLoss(ce_smoothing, VOCAB_SIZE, ignore_index=TOKEN_PAD)
-        opt = Adam(self.model.parameters(), lr=lr, betas=(ADAM_BETA_1, ADAM_BETA_2), eps=ADAM_EPSILON)
+
+        opt = Adam(self.model.parameters(), lr=lr, betas=(midirprconfig.ADAM_BETA_1, midirprconfig.ADAM_BETA_2), eps=midirprconfig.ADAM_EPSILON)
+
+        lr = None
+        if hasattr(self.config, 'lr'):
+            lr = self.config.lr
+        if lr is None:
+            lr_scheduler = LambdaLR(opt, lr_stepper.step)
+        else:
+            lr_scheduler = None
+
         best_eval_acc        = 0.0
         best_eval_acc_epoch  = -1
         best_eval_loss       = float("inf")
@@ -81,7 +86,6 @@ class Model:
 
                 # Train
                 print_modulus = 1
-                lr_scheduler = None
                 train_epoch(epoch+1, self.model, self.dataset.train_loader, train_loss_func, opt, lr_scheduler, print_modulus)
 
                 print(SEPERATOR)
@@ -149,10 +153,10 @@ class Model:
 
     def generate(self, filename):
         num_prime = 256
-        target_seq_length = 1024
+        target_seq_length = self.myobj.classes
         import random
         #.isdigit()f = str(random.randrange(len(self.dataset.train_loader)))
-        if(filename is None):
+        if filename is None:
             batch = next(iter(self.dataset.val_loader))
             primer, _ = batch[0], batch[1]
             print("tt", type(primer), len(primer), primer)
@@ -167,7 +171,7 @@ class Model:
 
         else:
             raw_mid = encode_midi(filename)
-            if(len(raw_mid) == 0):
+            if len(raw_mid) == 0:
                 print("Error: No midi messages in primer file:", filename)
                 return
 
@@ -180,14 +184,17 @@ class Model:
         with torch.set_grad_enabled(False):
             os.makedirs("/tmp/download", 0o777, True)
             beam = 0
-            if(beam > 0):
+            if beam > 0:
                 print("BEAM:", beam)
+                print("shape", primer[:num_prime].shape)
                 beam_seq = self.model.generate(primer[:num_prime], target_seq_length, beam=beam)
                 afile = "beam.mid"
                 decode_midi(beam_seq[0].cpu().numpy(), file_path="/tmp/download/" + afile)
             else:
                 print("RAND DIST")
+                print("shape", primer[:num_prime].shape)
                 rand_seq = self.model.generate(primer[:num_prime], target_seq_length, beam=0)
+                print("shape2", type(rand_seq), rand_seq.shape)
                 afile = "rand.mid"
                 decode_midi(rand_seq[0].cpu().numpy(), file_path="/tmp/download/" + afile)
         return [ afile ]
@@ -214,7 +221,7 @@ def train_epoch(cur_epoch, model, dataloader, loss, opt, lr_scheduler=None, prin
         out.backward()
         opt.step()
 
-        if(lr_scheduler is not None):
+        if lr_scheduler is not None:
             lr_scheduler.step()
 
         time_after = time.time()
@@ -277,8 +284,7 @@ def compute_epiano_accuracy(out, tgt):
     out = out[mask]
     tgt = tgt[mask]
 
-    # Empty
-    if(len(tgt) == 0):
+    if len(tgt) == 0:
         return 1.0
 
     num_right = (out == tgt)

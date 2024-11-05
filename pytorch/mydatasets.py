@@ -291,7 +291,7 @@ def getmaestro(myobj, config):
             return False
 
         if hasattr(config, 'take'):
-            if config.take < train_count:
+            if config.take <= train_count:
                 break
 
     print("Num Train:", train_count)

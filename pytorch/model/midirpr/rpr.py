@@ -90,7 +90,7 @@ class MultiheadAttentionRPR(Module):
         self.add_zero_attn = add_zero_attn
 
         # Adding RPR embedding matrix
-        if(er_len is not None):
+        if er_len is not None:
             self.Er = Parameter(torch.rand((er_len, self.head_dim), dtype=torch.float32))
         else:
             self.Er = None
@@ -314,7 +314,7 @@ def multi_head_attention_forward_rpr(query,                       # type: Tensor
     attn_output_weights = torch.bmm(q, k.transpose(1, 2))
     assert list(attn_output_weights.size()) == [bsz * num_heads, tgt_len, src_len]
 
-    if(rpr_mat is not None):
+    if rpr_mat is not None:
         rpr_mat = _get_valid_embedding(rpr_mat, q.shape[1], k.shape[1])
         qe = torch.einsum("hld,md->hlm", q, rpr_mat)
         srel = _skew(qe)

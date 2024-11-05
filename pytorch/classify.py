@@ -798,9 +798,14 @@ class Classify:
                     model = Model.Model(myobj, config, datasets)
                     print("Restoring")
                     dev = self.getdev()
-                    checkpoint = torch.load(self.getfullpath(myobj), map_location=dev)
-                    model = checkpoint['model']
+                    #checkpoint = torch.load(self.getfullpath(myobj), map_location=dev)
+                    #model = checkpoint['model']
+                    model.model.load_state_dict(torch.load(self.getfullpath(myobj)))
                     print("Restoring done")
+                    print("training", model.model.training)
+                    if hasattr(model.model, 'test'):
+                        model.model.test()
+                    print("training", model.model.training)
                 files = model.generate(filename)
                 print("files", files)
             else:
@@ -824,7 +829,8 @@ class Classify:
                 model.fit()
             if model.localsave():
                 print("Saving")
-                torch.save({'model': model }, self.getfullpath(myobj))
+                #torch.save({'model': model }, self.getfullpath(myobj))
+                torch.save(model.model.state_dict(), self.getfullpath(myobj))
 
         #classifier.tidy()
         del classifier
