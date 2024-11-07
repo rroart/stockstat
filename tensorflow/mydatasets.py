@@ -64,15 +64,16 @@ def getmnist2(myobj, config):
 
 def getceleba(myobj, config):
     # TODO download
-    os.makedirs("/tmp/celeba", 0o777, True)
+    dir = getpath(myobj)
+    os.makedirs(dir + "celeba", 0o777, True)
 
     url = "https://drive.google.com/uc?id=1O7m1010EJjLE5QxLZiM9Fpjs7Oj6e684"
-    output = "/tmp/celeba/data.zip"
+    output = dir + "celeba/data.zip"
     gdown.download(url, output, quiet=True)
-    with ZipFile("/tmp/celeba/data.zip", "r") as zipobj:
-        zipobj.extractall("/tmp/celeba")
+    with ZipFile(dir + "celeba/data.zip", "r") as zipobj:
+        zipobj.extractall(dir + "celeba")
     dataset = keras.utils.image_dataset_from_directory(
-        "/tmp/celeba", label_mode=None, image_size=(64, 64), batch_size=32
+        dir + "celeba", label_mode=None, image_size=(64, 64), batch_size=32
     )
     dataset = dataset.map(lambda x: x / 255.0)
     mydim = (64, 64)
@@ -91,7 +92,8 @@ def getdataset(myobj, config, classifier):
         return getnumber(myobj, config)
 
 def getmnist(myobj, config):
-    os.makedirs("/tmp/datasets", 0o777, True)
+    dir = getpath(myobj)
+    os.makedirs(dir + "datasets", 0o777, True)
     #load mnist data
     (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
     if hasattr(myobj, 'normalizevalue'):
@@ -195,8 +197,9 @@ def getcifar10(config):
     return x_train, y_train, x_test, y_test, mydimorig, mydim, 10, True
 
 def getdailymintemperatures(myobj):
+    dir = getpath(myobj)
     url = 'https://raw.githubusercontent.com/jbrownlee/Datasets/master/daily-min-temperatures.csv'
-    file_path = tf.keras.utils.get_file("/tmp/daily-min-temperatures.csv", url)
+    file_path = tf.keras.utils.get_file(dir + "daily-min-temperatures.csv", url)
     data = np.genfromtxt(file_path, delimiter = ',', skip_header = 1, dtype = {'names': ('date', 'temp'), 'formats': (np.str, np.float)})
     data = data['temp']
     data = [ data ]
@@ -205,9 +208,10 @@ def getdailymintemperatures(myobj):
 #    return data, None, None, None, myobj.size, myobj.classes
     
 def getnasdaq(myobj, config):
+    dir = getpath(myobj)
     url = 'https://fred.stlouisfed.org/graph/fredgraph.csv?mode=fred&id=NASDAQCOM&cosd=2014-11-15&coed=2019-11-15&vintage_date=2019-11-17&revision_date=2019-11-17&nd=1971-02-05'
-    file_path = tf.keras.utils.get_file("/tmp/", url)
-    file_path = "/tmp/fredgraph.csv?mode=fred&id=NASDAQCOM&cosd=2014-11-15&coed=2019-11-15&vintage_date=2019-11-17&revision_date=2019-11-17&nd=1971-02-05"
+    file_path = tf.keras.utils.get_file(dir + "", url)
+    file_path = dir + "fredgraph.csv?mode=fred&id=NASDAQCOM&cosd=2014-11-15&coed=2019-11-15&vintage_date=2019-11-17&revision_date=2019-11-17&nd=1971-02-05"
     data = np.genfromtxt(file_path, delimiter = ',', skip_header = 1, dtype = {'names': ('date', 'nasdaqcom'), 'formats': (np.str, np.float)})
     #print(type(data), data.shape, data)
     data = data['nasdaqcom']
@@ -215,8 +219,8 @@ def getnasdaq(myobj, config):
     #data = data[1:20]
 
     url = 'https://fred.stlouisfed.org/graph/fredgraph.csv?mode=fred&id=DJIA&cosd=2014-11-15&coed=2019-11-15&vintage_date=2019-11-17&revision_date=2019-11-17&nd=1971-02-05'
-    file_path2 = tf.keras.utils.get_file("/tmp/", url)
-    file_path2 = "/tmp/fredgraph.csv?mode=fred&id=DJIA&cosd=2014-11-15&coed=2019-11-15&vintage_date=2019-11-17&revision_date=2019-11-17&nd=1971-02-05"
+    file_path2 = tf.keras.utils.get_file(dir + "", url)
+    file_path2 = dir + "fredgraph.csv?mode=fred&id=DJIA&cosd=2014-11-15&coed=2019-11-15&vintage_date=2019-11-17&revision_date=2019-11-17&nd=1971-02-05"
     data2 = np.genfromtxt(file_path2, delimiter = ',', skip_header = 1, dtype = {'names': ('date', 'djia'), 'formats': (np.str, np.float)})
     #print(type(data2), data2.shape, data2)
     data2 = data2['djia']
@@ -244,23 +248,25 @@ def getnumber(myobj, config):
     return data, None, data, None, myobj.size, myobj.size, myobj.classes, False
 
 def imdbdir(myobj, config):
-    keras.utils.get_file(origin = "https://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz", extract = True, cache_dir = "/tmp/.keras")
+    dir = getpath(myobj)
+    keras.utils.get_file(origin = "https://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz", extract = True, cache_dir = dir)
     return [
-        "/tmp/.keras/datasets/aclImdb_v1.tar.gz/aclImdb/train/pos",
-        "/tmp/.keras/datasets/aclImdb_v1.tar.gz/aclImdb/train/neg",
-        "/tmp/.keras/datasets/aclImdb_v1.tar.gz/aclImdb/test/pos",
-        "/tmp/.keras/datasets/aclImdb_v1.tar.gz/aclImdb/test/neg",
+        dir + "datasets/aclImdb_v1.tar.gz/aclImdb/train/pos",
+        dir + "datasets/aclImdb_v1.tar.gz/aclImdb/train/neg",
+        dir + "datasets/aclImdb_v1.tar.gz/aclImdb/test/pos",
+        dir + "datasets/aclImdb_v1.tar.gz/aclImdb/test/neg",
     ]
 
 def simplebooksdir(myobj, config):
+    dir = getpath(myobj)
     keras.utils.get_file(
         origin="https://dldata-public.s3.us-east-2.amazonaws.com/simplebooks.zip",
         extract=True,
-        cache_dir = "/tmp/.keras"
+        cache_dir = dir
     )
-    dir = os.path.expanduser("/tmp/.keras/datasets/simplebooks.zip/simplebooks/")
+    adir = os.path.expanduser(dir + "datasets/simplebooks.zip/simplebooks/")
     return [
-        dir
+        adir
     ]
 
 class DictToObject:
@@ -296,6 +302,11 @@ def do_dir(myobj, config, directories):
 def filenamedir(myobj, config):
     return [ myobj.dataset ]
 
+def getpath(myobj):
+    if hasattr(myobj, 'path') and not myobj.path is None:
+        return myobj.path + '/'
+    return '/tmp/'
+
 def simplebooks(myobj, config, classifier, dir):
     import tensorflow.data as tf_data
     import tensorflow.strings as tf_strings
@@ -323,7 +334,9 @@ def simplebooks(myobj, config, classifier, dir):
 def reddit_tifu(myobj, config, classifier):
     import tensorflow_datasets as tfds
 
-    reddit_ds = tfds.load("reddit_tifu", split="train", as_supervised=True, data_dir="/tmp")
+    dir = getpath(myobj)
+
+    reddit_ds = tfds.load("reddit_tifu", split="train", as_supervised=True, data_dir=dir)
 
     train_ds = (
         reddit_ds.map(lambda document, _: document)

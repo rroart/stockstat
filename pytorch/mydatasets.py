@@ -13,9 +13,9 @@ def getdatasetmidi(myobj, config, classifier):
 
 def getdataset(myobj, config, classifier):
     if myobj.dataset == 'mnist':
-        return getmnist(config)
+        return getmnist(myobj, config)
     if myobj.dataset == 'cifar10':
-        return getcifar10(config)
+        return getcifar10(myobj, config)
     if myobj.dataset == 'dailymintemperatures':
         return getdailymintemperatures(myobj, config)
     if myobj.dataset == 'nasdaq':
@@ -25,9 +25,9 @@ def getdataset(myobj, config, classifier):
     
 def getdatasetdl(myobj, config, classifier):
     if myobj.dataset == 'mnist':
-        return getmnistdl(config)
+        return getmnistdl(myobj, config)
     if myobj.dataset == 'cifar10':
-        return getcifar10(config)
+        return getcifar10(myobj, config)
     if myobj.dataset == 'dailymintemperatures':
         return getdailymintemperatures(myobj, config)
     if myobj.dataset == 'nasdaq':
@@ -35,16 +35,18 @@ def getdatasetdl(myobj, config, classifier):
     if myobj.dataset == 'number':
         return getnumber(myobj, config)
     
-def getmnistdl(config):
+def getmnistdl(myobj, config):
+    dir = getpath(myobj)
     transform = torchvision.transforms.Compose([torchvision.transforms.ToTensor()])
-    ds = torchvision.datasets.MNIST('/tmp/datasets/mnist', train=True, download=True, transform = transform)
+    ds = torchvision.datasets.MNIST(dir + 'datasets/mnist', train=True, download=True, transform = transform)
     # size, classes, dl
     return 784, 1, DataLoader(dataset=ds,
                       shuffle=True,
                       batch_size=64)
 
-def getmnist(config):
-    dl = DataLoader(torchvision.datasets.MNIST('/tmp/datasets/mnist', train=True, download=True))
+def getmnist(myobj, config):
+    dir = getpath(myobj)
+    dl = DataLoader(torchvision.datasets.MNIST(dir + 'datasets/mnist', train=True, download=True))
 
     tensor = dl.dataset.data
     tensor = tensor.to(dtype=torch.float32)
@@ -112,8 +114,9 @@ def getmnist(config):
     #print("mydim", mydim)
     return x_train, y_train, x_valid, y_valid, mydim, 10, True
 
-def getcifar10(config):
-    dl = DataLoader(torchvision.datasets.CIFAR10('/tmp/datasets/cifar10', train=True, download=True))
+def getcifar10(myobj, config):
+    dir = getpath(myobj)
+    dl = DataLoader(torchvision.datasets.CIFAR10(dir + 'datasets/cifar10', train=True, download=True))
 
     tensor = dl.dataset.data
     #print(tensor.shape)
@@ -184,9 +187,10 @@ def getcifar10(config):
     return x_train, y_train, x_valid, y_valid, mydim, 10, True
 
 def getdailymintemperatures(myobj, config):
+    dir = getpath(myobj)
     url = 'https://raw.githubusercontent.com/jbrownlee/Datasets/master/daily-min-temperatures.csv'
-    torchvision.datasets.utils.download_url(url, "/tmp/")
-    file_path = "/tmp/daily-min-temperatures.csv"
+    torchvision.datasets.utils.download_url(url, dir)
+    file_path = dir + "daily-min-temperatures.csv"
     data = np.genfromtxt(file_path, delimiter = ',', skip_header = 1, dtype = {'names': ('date', 'temp'), 'formats': (np.str, np.float)})
     #print(type(data), data.shape, data)
     data = data['temp']
@@ -197,9 +201,10 @@ def getdailymintemperatures(myobj, config):
     return data, None, data, None, myobj.size, myobj.classes, False
 
 def getnasdaq(myobj, config):
+    dir = getpath(myobj)
     url = 'https://fred.stlouisfed.org/graph/fredgraph.csv?mode=fred&id=NASDAQCOM&cosd=2014-11-15&coed=2019-11-15&vintage_date=2019-11-17&revision_date=2019-11-17&nd=1971-02-05'
-    torchvision.datasets.utils.download_url(url, "/tmp/")
-    file_path = "/tmp/fredgraph.csv?mode=fred&id=NASDAQCOM&cosd=2014-11-15&coed=2019-11-15&vintage_date=2019-11-17&revision_date=2019-11-17&nd=1971-02-05"
+    torchvision.datasets.utils.download_url(url, dir)
+    file_path = dir + "fredgraph.csv?mode=fred&id=NASDAQCOM&cosd=2014-11-15&coed=2019-11-15&vintage_date=2019-11-17&revision_date=2019-11-17&nd=1971-02-05"
     data = np.genfromtxt(file_path, delimiter = ',', skip_header = 1, dtype = {'names': ('date', 'nasdaqcom'), 'formats': (np.str, np.float)})
     #print(type(data), data.shape, data)
     data = data['nasdaqcom']
@@ -207,8 +212,8 @@ def getnasdaq(myobj, config):
     #data = data[1:20]
 
     url = 'https://fred.stlouisfed.org/graph/fredgraph.csv?mode=fred&id=DJIA&cosd=2014-11-15&coed=2019-11-15&vintage_date=2019-11-17&revision_date=2019-11-17&nd=1971-02-05'
-    torchvision.datasets.utils.download_url(url, "/tmp/")
-    file_path2 = "/tmp/fredgraph.csv?mode=fred&id=DJIA&cosd=2014-11-15&coed=2019-11-15&vintage_date=2019-11-17&revision_date=2019-11-17&nd=1971-02-05"
+    torchvision.datasets.utils.download_url(url, dir)
+    file_path2 = dir + "fredgraph.csv?mode=fred&id=DJIA&cosd=2014-11-15&coed=2019-11-15&vintage_date=2019-11-17&revision_date=2019-11-17&nd=1971-02-05"
     data2 = np.genfromtxt(file_path2, delimiter = ',', skip_header = 1, dtype = {'names': ('date', 'djia'), 'formats': (np.str, np.float)})
     #print(type(data2), data2.shape, data2)
     data2 = data2['djia']
@@ -244,16 +249,29 @@ class Dummy:
     def __init__(self, v):
         vars(self).update(v)
 
+def getlmdfull(myobj, config):
+    import pathlib
+    import os
+    import json
+    import util.processor as midi_processor
+    dir = getpath(myobj)
+    if not pathlib.Path(dir + "maestro").exists():
+        url = 'http://hog.ee.columbia.edu/craffel/lmd/lmd_full.tar.gz'
+        torchvision.datasets.utils.download_url(url, dir)
+        torchvision.datasets.utils.extract_archive(dir + "lmd_full.tar.gz", dir + "lmd_full")
+
+
 def getmaestro(myobj, config):
     import pathlib
     import os
     import json
     import util.processor as midi_processor
-    if not pathlib.Path("/tmp/maestro").exists():
+    dir = getpath(myobj)
+    if not pathlib.Path(dir + "maestro").exists():
         url = 'https://storage.googleapis.com/magentadata/datasets/maestro/v2.0.0/maestro-v2.0.0-midi.zip'
-        torchvision.datasets.utils.download_url(url, "/tmp/")
-        torchvision.datasets.utils.extract_archive("/tmp/maestro-v2.0.0-midi.zip", "/tmp/maestro")
-    maestro_root = "/tmp/maestro/maestro-v2.0.0"
+        torchvision.datasets.utils.download_url(url, dir)
+        torchvision.datasets.utils.extract_archive(dir + "maestro-v2.0.0-midi.zip", dir + "maestro")
+    maestro_root = dir + "maestro/maestro-v2.0.0"
     JSON_FILE = "maestro-v2.0.0.json"
     maestro_json_file = os.path.join(maestro_root, JSON_FILE)
     if(not os.path.isfile(maestro_json_file)):
@@ -355,6 +373,11 @@ def do_dir(myobj, config):
 
 def filenamedir(myobj, config):
     return [ myobj.dataset ]
+
+def getpath(myobj):
+    if hasattr(myobj, 'path') and not myobj.path is None:
+        return myobj.path + '/'
+    return '/tmp/'
 
 class EPianoDatasetFromPrepped(Dataset):
     def __init__(self, config, preps, max_seq=2048, random_seq=True):
