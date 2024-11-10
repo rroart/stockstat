@@ -43,6 +43,7 @@ def getmnist2(myobj, config):
 
     # We'll use all the available examples from both the training and test
     # sets.
+    # TODO
     (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
     all_digits = np.concatenate([x_train, x_test])
     all_labels = np.concatenate([y_train, y_test])
@@ -92,8 +93,7 @@ def getdataset(myobj, config, classifier):
         return getnumber(myobj, config)
 
 def getmnist(myobj, config):
-    dir = getpath(myobj)
-    os.makedirs(dir + "datasets", 0o777, True)
+    #os.makedirs(dir + "datasets", 0o777, True)
     #load mnist data
     (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
     if hasattr(myobj, 'normalizevalue'):
@@ -148,7 +148,6 @@ def getmnist(myobj, config):
 def getcifar10(config):
     #load mnist data
     (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
-    #"/tmp/datasets/cifar.npz")
     def create_cifar10_dataset(data, labels, batch_size):
         def gen():
             for image, label in zip(data, labels):
@@ -210,7 +209,7 @@ def getdailymintemperatures(myobj):
 def getnasdaq(myobj, config):
     dir = getpath(myobj)
     url = 'https://fred.stlouisfed.org/graph/fredgraph.csv?mode=fred&id=NASDAQCOM&cosd=2014-11-15&coed=2019-11-15&vintage_date=2019-11-17&revision_date=2019-11-17&nd=1971-02-05'
-    file_path = tf.keras.utils.get_file(dir + "", url)
+    file_path = tf.keras.utils.get_file(dir, url)
     file_path = dir + "fredgraph.csv?mode=fred&id=NASDAQCOM&cosd=2014-11-15&coed=2019-11-15&vintage_date=2019-11-17&revision_date=2019-11-17&nd=1971-02-05"
     data = np.genfromtxt(file_path, delimiter = ',', skip_header = 1, dtype = {'names': ('date', 'nasdaqcom'), 'formats': (np.str, np.float)})
     #print(type(data), data.shape, data)
@@ -302,10 +301,16 @@ def do_dir(myobj, config, directories):
 def filenamedir(myobj, config):
     return [ myobj.dataset ]
 
+def getdatapath(myobj):
+    return getpath(myobj) + "data/"
+
+def getdownloadpath(myobj):
+    return getpath(myobj) + "download/"
+
 def getpath(myobj):
     if hasattr(myobj, 'path') and not myobj.path is None:
-        return myobj.path + '/'
-    return '/tmp/'
+        return myobj.path + '/data/'
+    return '/tmp/data/'
 
 def simplebooks(myobj, config, classifier, dir):
     import tensorflow.data as tf_data

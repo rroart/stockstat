@@ -9,6 +9,8 @@ from util.midi import process_midi, TORCH_LABEL_TYPE, cpu_device
 def getdatasetmidi(myobj, config, classifier):
     if myobj.dataset == 'maestro':
         return getmaestro(myobj, config)
+    if myobj.dataset == 'lmd_full':
+        return getlmdfull(myobj, config)
     return do_dir(myobj, config)
 
 def getdataset(myobj, config, classifier):
@@ -255,7 +257,7 @@ def getlmdfull(myobj, config):
     import json
     import util.processor as midi_processor
     dir = getpath(myobj)
-    if not pathlib.Path(dir + "maestro").exists():
+    if not pathlib.Path(dir + "lmd_full").exists():
         url = 'http://hog.ee.columbia.edu/craffel/lmd/lmd_full.tar.gz'
         torchvision.datasets.utils.download_url(url, dir)
         torchvision.datasets.utils.extract_archive(dir + "lmd_full.tar.gz", dir + "lmd_full")
@@ -374,10 +376,16 @@ def do_dir(myobj, config):
 def filenamedir(myobj, config):
     return [ myobj.dataset ]
 
+def getdatapath(myobj):
+    return getpath(myobj) + "data/"
+
+def getdownloadpath(myobj):
+    return getpath(myobj) + "download/"
+
 def getpath(myobj):
     if hasattr(myobj, 'path') and not myobj.path is None:
-        return myobj.path + '/'
-    return '/tmp/'
+        return myobj.path + '/data/'
+    return '/tmp/data/'
 
 class EPianoDatasetFromPrepped(Dataset):
     def __init__(self, config, preps, max_seq=2048, random_seq=True):
