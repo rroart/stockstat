@@ -189,14 +189,14 @@ class Model:
                 print("shape", primer[:num_prime].shape)
                 beam_seq = self.model.generate(primer[:num_prime], target_seq_length, beam=beam)
                 afile = "beam.mid"
-                decode_midi(beam_seq[0].cpu().numpy(), file_path="/tmp/download/" + afile)
+                decode_midi(beam_seq[0].cpu().numpy()[target_seq_length:], file_path="/tmp/download/" + afile)
             else:
                 print("RAND DIST")
-                print("shape", primer[:num_prime].shape)
+                print("shape", primer[:num_prime].shape, primer)
                 rand_seq = self.model.generate(primer[:num_prime], target_seq_length, beam=0)
-                print("shape2", type(rand_seq), rand_seq.shape)
+                print("shape2", type(rand_seq), rand_seq.shape, rand_seq)
                 afile = "rand.mid"
-                decode_midi(rand_seq[0].cpu().numpy(), file_path="/tmp/download/" + afile)
+                decode_midi(rand_seq[0].cpu().numpy()[target_seq_length:], file_path="/tmp/download/" + afile)
         return [ afile ]
 
 def train_epoch(cur_epoch, model, dataloader, loss, opt, lr_scheduler=None, print_modulus=1):
