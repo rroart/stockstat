@@ -71,6 +71,21 @@
 
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+	<groupId>org.cyclonedx</groupId>
+	<artifactId>cyclonedx-maven-plugin</artifactId>
+	<version>${cyclonedx.version}</version>
+	<executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>makeAggregateBom</goal>
+            </goals>
+          </execution>
+	</executions>
+      </plugin>
+    </plugins>
   </build>
   <dependencies>
   </dependencies>
@@ -140,6 +155,7 @@
     <jakartaservlet.version>4.0.3</jakartaservlet.version>
     <jersey.version>2.36</jersey.version>
     <antlr4.version>4.8</antlr4.version>
+    <cyclonedx.version>2.9.0</cyclonedx.version>
   </properties>
   <repositories>
     <repository> 

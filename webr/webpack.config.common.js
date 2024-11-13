@@ -125,6 +125,14 @@ const COMMON_LOADERS = [
   }
 ];
 
+const { CycloneDxWebpackPlugin } = require('@cyclonedx/webpack-plugin');
+
+/** @type {import('@cyclonedx/webpack-plugin').CycloneDxWebpackPluginOptions} */
+const cycloneDxWebpackPluginOptions = {
+  specVersion: '1.6',
+  outputLocation: './bom'
+}
+
 // Export
 // ===============================================================================
 const JS_SOURCE = config.get('jsSourcePath');
@@ -148,6 +156,7 @@ module.exports = {
   plugins: [
       new webpack.IgnorePlugin({ resourceRegExp: /vertx/}), // https://github.com/webpack/webpack/issues/353
       new CaseSensitivePathsPlugin(),
+      new CycloneDxWebpackPlugin(cycloneDxWebpackPluginOptions),
   ],
   module: {
     rules: COMMON_LOADERS,
