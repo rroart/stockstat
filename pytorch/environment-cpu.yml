@@ -1,0 +1,17 @@
+name: pt
+channels:
+  - pytorch
+dependencies:
+  - pytorch
+  - torchvision
+  - torchaudio
+  - cpuonly
+  - pip:
+   - Flask
+   - matplotlib
+   - numpy
+   - scikit_learn
+   - torch
+   - torchvision
+   - Werkzeug
+   - pretty_midi

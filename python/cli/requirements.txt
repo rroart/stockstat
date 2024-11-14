@@ -1,0 +1,10 @@
+matplotlib
+mattermostdriver
+mplfinance
+numpy
+pandas
+pandas_datareader
+Requests
+scipy
+SQLAlchemy
+TA_Lib
