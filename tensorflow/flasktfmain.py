@@ -147,7 +147,8 @@ def do_dataset():
         try:
             import classify
             cl = classify.Classify()
-            cl.do_dataset(queue, request)
+            myjson = request.get_data(as_text=True)
+            cl.do_dataset(queue, myjson)
         except:
             import sys,traceback
             memory = "CUDA error: out of memory" in traceback.format_exc()
@@ -172,13 +173,13 @@ def do_dataset():
             except queue.Empty as e:
                 if not process.is_alive():
                     print("Process died")
-                    result = Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : False, "cudnn" : False }), mimetype='application/json')
+                    result = {"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : False, "cudnn" : False }
                     break
     except Exception as e:
         print(e)
         import sys,traceback
         traceback.print_exc(file=sys.stdout)
-    return result
+    return Response(json.dumps(result), mimetype='application/json')
 
 @app.route('/datasetgen', methods=['POST'])
 def do_dataset_gen():

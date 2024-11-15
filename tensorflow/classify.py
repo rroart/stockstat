@@ -568,11 +568,11 @@ class Classify:
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         queue.put(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "gpu" : self.hasgpu() }), mimetype='application/json'))
 
-    def do_dataset(self, queue, request):
+    def do_dataset(self, queue, myjson):
         dt = datetime.now()
         timestamp = dt.timestamp()
-        #print(request.get_data(as_text=True))
-        myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
+        print(myjson)
+        myobj = json.loads(myjson, object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
         (train, traincat, test, testcat, origsize, size, classes, classify) = mydatasets.getdataset(myobj, config, self)
@@ -627,7 +627,7 @@ class Classify:
             loss = float(loss)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put(Response(json.dumps({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify" : classify, "gpu" : self.hasgpu() }), mimetype='application/json'))
+        queue.put({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify" : classify, "gpu" : self.hasgpu() })
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def get_file(self, request):
