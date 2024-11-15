@@ -15,4 +15,5 @@ dependencies:
    - torch
    - torchvision
    - Werkzeug
+   - cyclonedx-bom
    - pretty_midi

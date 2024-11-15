@@ -3,22 +3,19 @@ dependencies:
   - pip:
     - Flask
     - gdown
-    - h5py
     - imageio
-    - ipython
     - keras
     - keras_nlp
     - matplotlib
-    - nameko
     - numpy
     - pandas
     - scikit_learn
-    - seaborn
-    - sympy
     - tensorflow
     - tensorflow_datasets
-    - wasp_eureka
     - Werkzeug
+    - cyclonedx-bom
     - pretty_midi
-    - tensorflow_quantum
     - cirq
+    - seaborn
+    - sympy
+    - tensorflow_quantum

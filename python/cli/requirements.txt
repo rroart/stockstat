@@ -8,3 +8,4 @@ Requests
 scipy
 SQLAlchemy
 TA_Lib
+cyclonedx-bom
