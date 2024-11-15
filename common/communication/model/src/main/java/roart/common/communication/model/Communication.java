@@ -152,7 +152,7 @@ public abstract class Communication {
     }
 
     public <T> T[] receiveAndStore() {
-        log.info("Receive service {}", getReceiveService());
+        log.debug("Receive service {}", getReceiveService());
         Class<T> aclass = myclass;
         String[] receives = receiveStringAndStore ();
         //T[] ts = new T[receives.length];
