@@ -91,6 +91,8 @@ def getdataset(myobj, config, classifier):
         return getnasdaq(myobj, config)
     if myobj.dataset == 'number':
         return getnumber(myobj, config)
+    if myobj.dataset == 'iris':
+        return getiris(myobj, config)
 
 def getmnist(myobj, config):
     #os.makedirs(dir + "datasets", 0o777, True)
@@ -245,6 +247,24 @@ def getnumber(myobj, config):
     data = [ data, data1 ]
 
     return data, None, data, None, myobj.size, myobj.size, myobj.classes, False
+
+def getiris(myobj, config):
+    import tensorflow_datasets as tfds
+
+    dir = getpath(myobj)
+
+    iris_ds = tfds.load("iris", split="train", as_supervised=True, data_dir=dir, shuffle_files=True)
+
+    train_ds = (
+        iris_ds.map(lambda document, _: document)
+        .batch(32)
+        .cache()
+        .prefetch(tf.data.AUTOTUNE)
+    )
+
+    dsdict = {"train_ds": train_ds, "val_ds": None, "test_ds": None}
+    ds = DictToObject(dsdict)
+    return ds
 
 def imdbdir(myobj, config):
     dir = getpath(myobj)
