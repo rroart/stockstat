@@ -1,0 +1,19 @@
+name: tfq
+dependencies:
+  - python=3.11.0
+  - pip:
+    - Flask
+    - gdown
+    - keras
+    #- matplotlib
+    - numpy
+    - pandas
+    #- scikit_learn
+    - tensorflow==2.15.0
+    - tensorflow_datasets
+    - Werkzeug
+    # not yet, conflicts, - cyclonedx-bom==5.1.1
+    - cirq
+    - seaborn
+    #- sympy
+    - tensorflow_quantum==0.7.3

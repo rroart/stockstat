@@ -32,7 +32,8 @@ try:
     pu = device.get_pu()
     print("Using pu ", pu)
     print("Keras", keras.__version__)
-    print("Tensorflow Keras", tf.keras.__version__)
+    if hasattr(tf.keras, '__version__'):
+        print("Tensorflow Keras", tf.keras.__version__)
 except:
     import sys,traceback
     traceback.print_exc(file=sys.stdout)

@@ -12,9 +12,9 @@ from cirq.contrib.svg import SVGCircuit
 
 def getmnist(myobj, config):
     #load mnist data
-    (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data("/tmp/datasets/mnist.npz")
+    (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
     if True:
-        normalizevalue = 256
+        normalizevalue = 255.0
         x_train, x_test = x_train[..., np.newaxis]/normalizevalue, x_test[..., np.newaxis]/normalizevalue
         x_train, y_train = filter_36(x_train, y_train)
         x_test, y_test = filter_36(x_test, y_test)
@@ -63,7 +63,6 @@ def getmnist(myobj, config):
         model.compile(
             loss=tf.keras.losses.Hinge(),
             optimizer=tf.keras.optimizers.Adam(),
-            #optimizer=tf.keras.optimizers.legacy.Adam(),
             metrics=[hinge_accuracy])
 
         print(model.summary())
@@ -145,16 +144,6 @@ class CircuitLayerBuilder():
         for i, qubit in enumerate(self.data_qubits):
             symbol = sympy.Symbol(prefix + '-' + str(i))
             circuit.append(gate(qubit, self.readout)**symbol)
-
-def convert_to_circuit(image):
-    """Encode truncated classical image into quantum datapoint."""
-    values = np.ndarray.flatten(image)
-    qubits = cirq.GridQubit.rect(4, 4)
-    circuit = cirq.Circuit()
-    for i, value in enumerate(values):
-        if value:
-            circuit.append(cirq.X(qubits[i]))
-    return circuit
 
 def create_quantum_model():
     """Create a QNN model circuit and readout operation to go along with it."""

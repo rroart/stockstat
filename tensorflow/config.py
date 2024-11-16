@@ -7,6 +7,8 @@ TENSORFLOWCNN2 = 'tensorflowCNN2Config'
 TENSORFLOWLSTM = 'tensorflowLSTMConfig'
 TENSORFLOWGRU = 'tensorflowGRUConfig'
 TENSORFLOWLIR = 'tensorflowLIRConfig'
+TENSORFLOWQNN = 'tensorflowQNNConfig'
+TENSORFLOWQCNN = 'tensorflowQCNNConfig'
 TENSORFLOWDCGAN = 'tensorflowDCGANConfig'
 TENSORFLOWCONDITIONALGAN = 'tensorflowConditionalGANConfig'
 TENSORFLOWNEURALSTYLETRANSFER = 'tensorflowNeuralStyleTransferConfig'
@@ -23,6 +25,8 @@ TENSORFLOWCNN2CONFIG = { 'name' : 'cnn2', 'steps' : 1000, 'stride' : 1, 'kernels
 TENSORFLOWLSTMCONFIG = { 'name' : 'lstm', 'steps' : 1000, 'hidden' : 100, 'layers' : 2, 'lr' : 0.01, 'dropout' : 0, 'dropoutin' : 0 }
 TENSORFLOWGRUCONFIG = { 'name' : 'gru', 'steps' : 1000, 'hidden' : 100, 'layers' : 2, 'lr' : 0.01, 'dropout' : 0, 'dropoutin' : 0 }
 TENSORFLOWLIRCONFIG = { 'name' : 'lir', 'steps' : 1000, 'lr' : 0.01 }
+TENSORFLOWQNNCONFIG = { 'name' : 'qnn', 'steps' : 3 }
+TENSORFLOWQCNNCONFIG = { 'name' : 'qcnn', 'steps' : 3 }
 TENSORFLOWDCGANCONFIG = { 'name' : 'dcgan', 'steps' : 20, 'lr' : 0.0001 }
 TENSORFLOWCONDITIONALGANCONFIG = { 'name' : 'conditionalgan', 'steps' : 20, 'lr' : 0.0003 }
 TENSORFLOWNEURALSTYLETRANSFERCONFIG = { 'name' : 'neural_style_transfer', 'steps' : 20 }
@@ -49,6 +53,10 @@ def get(cf):
         return cf, 8, TENSORFLOWLIRCONFIG
     elif cf == TENSORFLOWCNN2:
         return cf, 9, TENSORFLOWCNN2CONFIG
+    elif cf == TENSORFLOWQNN:
+        return cf, 10, TENSORFLOWQNNCONFIG
+    elif cf == TENSORFLOWQCNN:
+        return cf, 11, TENSORFLOWQCNNCONFIG
     elif cf == TENSORFLOWCONDITIONALGAN:
         return cf, 12, TENSORFLOWCONDITIONALGANCONFIG
     elif cf == TENSORFLOWDCGAN:
