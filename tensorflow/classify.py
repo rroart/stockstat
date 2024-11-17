@@ -576,37 +576,42 @@ class Classify:
         myobj = json.loads(myjson, object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
-        (train, traincat, test, testcat, origsize, size, classes, classify) = mydatasets.getdataset(myobj, config, self)
-        train = np.array(train)
-        myobj.trainingarray = train
-        myobj.trainingcatarray = traincat
-        myobj.size = size
-        myobj.classes = classes
-        (train, traincat, test, testcat, size) = self.gettraintest(myobj, config, classify)
+        (ds, meta) = mydatasets.getdataset(myobj, config, self)
+        if hasattr(ds, 'train'):
+            train = np.array(ds.train)
+            myobj.trainingarray = ds.train
+            myobj.trainingcatarray = ds.traincat
+            myobj.size = meta.size
+            myobj.classes = meta.classes
+            (ds.train, ds.traincat, ds.test, ds.testcat, size) = self.gettraintest(myobj, config, meta.classify)
         #print("classez2", myobj.classes)
-        model = Model.Model(myobj, config, classify)
+        model = Model.Model(myobj, config, meta.classify)
         exists = self.exists(myobj)
         # load model if:
         # exists and not dynamic and wantclassify
         if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
             if Model.Model.localsave():
                 # dummy variable to allow saver
-                model = Model.Model(myobj, config, classify)
+                model = Model.Model(myobj, config, meta.classify)
                 print("Restoring")
                 model.model = tf.keras.models.load_model( self.getfullpath(myobj))
                 print("Restoring done")
             else:
-                model = Model.Model(myobj, config, classify)
+                model = Model.Model(myobj, config, meta.classify)
         else:
-            model = Model.Model(myobj, config, classify)
+            model = Model.Model(myobj, config, meta.classify)
         # load end
         #print("classez2", myobj.classes)
         print(model)
         self.printgpus()
         classifier = model
-        (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, classifier, train, traincat, test, testcat, classify)
-        myobj.classifyarray = train
-        (intlist, problist) = self.do_classifyinner(myobj, model, classify)
+        if hasattr(ds, 'train'):
+            (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, classifier, ds.train, ds.traincat, ds.test, ds.testcat, meta.classify)
+            myobj.classifyarray = train
+            (intlist, problist) = self.do_classifyinner(myobj, model, meta.classify)
+        else:
+            classifier.train(ds)
+            (accuracy_score, loss, train_accuracy_score) = (0, 0, 0)
         global dictclass
         #dictclass[str(myobj.modelInt) + myobj.period + myobj.modelname] = classifier
         #global dicteval
@@ -614,7 +619,7 @@ class Classify:
         #print("seteval" + str(myobj.modelname))
         
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
-            if Model.Model.localsave():
+            if model.localsave():
                 print("Saving")
                 model.save(self.getfullpath(myobj))
 
@@ -628,7 +633,7 @@ class Classify:
             loss = float(loss)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify" : classify, "gpu" : self.hasgpu() })
+        queue.put({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify" : meta.classify, "gpu" : self.hasgpu() })
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def get_file(self, request):

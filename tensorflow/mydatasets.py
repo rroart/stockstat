@@ -6,7 +6,6 @@ import gdown
 from zipfile import ZipFile
 
 #import pandas as pd
-from keras import backend as K
 
 def getdatasettext(myobj, config, classifier):
     if isinstance(myobj.dataset, list):
@@ -99,9 +98,8 @@ def getmnist(myobj, config):
     #load mnist data
     (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
     if hasattr(myobj, 'normalizevalue'):
-        from quantum import mydatasets as q
-        q.getmnist(myobj, config)
-        return
+        import mydatasetsq as q
+        return q.getmnist(myobj, config)
 
     #print(tf.keras.backend.image_data_format())
     def create_mnist_dataset(data, labels, batch_size):
@@ -145,7 +143,12 @@ def getmnist(myobj, config):
     x_test = np.float16(x_test)        
     #print(x_train.shape)
     #print(y_train.shape)
-    return x_train, y_train, x_test, y_test, mydimorig, mydim, 10, True
+    dsdict = { 'train' : x_train, 'traincat' : y_train, 'test' : x_test, 'testcat' : y_test }
+    ds = DictToObject(dsdict)
+    metadict = { 'origsize' : mydimorig, 'size' : mydim, 'classes' : 10, 'classify' : True }
+    meta = DictToObject(metadict)
+
+    return ds, meta
 
 def getcifar10(config):
     #load mnist data
@@ -195,7 +198,12 @@ def getcifar10(config):
             #mydim = (1, 32, 32)
     #print(x_train.shape)
     #print(y_train.shape)
-    return x_train, y_train, x_test, y_test, mydimorig, mydim, 10, True
+    dsdict = { 'train' : x_train, 'traincat' : y_train, 'test' : x_test, 'testcat' : y_test }
+    ds = DictToObject(dsdict)
+    metadict = { 'origsize' : mydimorig, 'size' : mydim, 'classes' : 10, 'classify' : True }
+    meta = DictToObject(dsdict)
+
+    return ds, meta
 
 def getdailymintemperatures(myobj):
     dir = getpath(myobj)
@@ -264,7 +272,10 @@ def getiris(myobj, config):
 
     dsdict = {"train_ds": train_ds, "val_ds": None, "test_ds": None}
     ds = DictToObject(dsdict)
-    return ds
+    mydim = 4
+    metadict = { 'origsize' : mydim, 'size' : mydim, 'classes' : 3, 'classify' : True }
+    meta = DictToObject(dsdict)
+    return ds, meta
 
 def imdbdir(myobj, config):
     dir = getpath(myobj)
