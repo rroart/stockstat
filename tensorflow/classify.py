@@ -576,7 +576,11 @@ class Classify:
         myobj = json.loads(myjson, object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
-        (ds, meta) = mydatasets.getdataset(myobj, config, self)
+        if hasattr(myobj, 'normalizevalue'):
+            import mydatasetsq
+            (ds, meta) = mydatasetsq.getdataset(myobj, config, self)
+        else:
+            (ds, meta) = mydatasets.getdataset(myobj, config, self)
         if hasattr(ds, 'train'):
             train = np.array(ds.train)
             myobj.trainingarray = ds.train

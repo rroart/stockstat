@@ -97,9 +97,6 @@ def getmnist(myobj, config):
     #os.makedirs(dir + "datasets", 0o777, True)
     #load mnist data
     (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
-    if hasattr(myobj, 'normalizevalue'):
-        import mydatasetsq as q
-        return q.getmnist(myobj, config)
 
     #print(tf.keras.backend.image_data_format())
     def create_mnist_dataset(data, labels, batch_size):
