@@ -11,9 +11,9 @@ import matplotlib.pyplot as plt
 from cirq.contrib.svg import SVGCircuit
 
 def getmnist(myobj, config):
-    #load mnist data
-    (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
-    if True:
+        #load mnist data
+        (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+
         normalizevalue = 255.0
         x_train, x_test = x_train[..., np.newaxis]/normalizevalue, x_test[..., np.newaxis]/normalizevalue
         x_train, y_train = filter_36(x_train, y_train)
@@ -40,50 +40,13 @@ def getmnist(myobj, config):
         x_train_tfcirc = tfq.convert_to_tensor(x_train_circ)
         x_test_tfcirc = tfq.convert_to_tensor(x_test_circ)
 
-        demo_builder = CircuitLayerBuilder(data_qubits = cirq.GridQubit.rect(4,1),
-                                           readout=cirq.GridQubit(-1,-1))
-
-        circuit = cirq.Circuit()
-        demo_builder.add_layer(circuit, gate = cirq.XX, prefix='xx')
-        SVGCircuit(circuit)
-
-        model_circuit, model_readout = create_quantum_model()
-
-        # Build the Keras model.
-        model = tf.keras.Sequential([
-            # The input is the data-circuit, encoded as a tf.string
-            tf.keras.layers.Input(shape=(), dtype=tf.string),
-            # The PQC layer returns the expected value of the readout gate, range [-1,1].
-            tfq.layers.PQC(model_circuit, model_readout),
-        ])
-
         y_train_hinge = 2.0*y_train_nocon-1.0
         y_test_hinge = 2.0*y_test-1.0
 
-        model.compile(
-            loss=tf.keras.losses.Hinge(),
-            optimizer=tf.keras.optimizers.Adam(),
-            metrics=[hinge_accuracy])
-
-        print(model.summary())
-
-        EPOCHS = 3
-        BATCH_SIZE = 32
-
-        NUM_EXAMPLES = len(x_train_tfcirc)
-
-        x_train_tfcirc_sub = x_train_tfcirc[:NUM_EXAMPLES]
-        y_train_hinge_sub = y_train_hinge[:NUM_EXAMPLES]
-
-        qnn_history = model.fit(
-            x_train_tfcirc_sub, y_train_hinge_sub,
-            batch_size=32,
-            epochs=EPOCHS,
-            verbose=1,
-            validation_data=(x_test_tfcirc, y_test_hinge))
-
-        qnn_results = model.evaluate(x_test_tfcirc, y_test)
-        print(qnn_results)
+        dsdict = { 'x_train_tfcirc' : x_train_tfcirc, 'x_test_tfcirc' : x_test_tfcirc, 'y_train_hinge' : y_train_hinge, 'y_test_hinge' : y_test_hinge, 'y_test' : y_test }
+        ds = DictToObject(dsdict)
+        meta = DictToObject({ 'classify' : True })
+        return ds, meta
 
 def filter_36(x, y):
     keep = (y == 3) | (y == 6)
@@ -135,42 +98,8 @@ def convert_to_circuit(image):
             circuit.append(cirq.X(qubits[i]))
     return circuit
 
-class CircuitLayerBuilder():
-    def __init__(self, data_qubits, readout):
-        self.data_qubits = data_qubits
-        self.readout = readout
+class DictToObject:
+    def __init__(self, dictionary):
+        for key, value in dictionary.items():
+            setattr(self, key, value)
 
-    def add_layer(self, circuit, gate, prefix):
-        for i, qubit in enumerate(self.data_qubits):
-            symbol = sympy.Symbol(prefix + '-' + str(i))
-            circuit.append(gate(qubit, self.readout)**symbol)
-
-def create_quantum_model():
-    """Create a QNN model circuit and readout operation to go along with it."""
-    data_qubits = cirq.GridQubit.rect(4, 4)  # a 4x4 grid.
-    readout = cirq.GridQubit(-1, -1)         # a single qubit at [-1,-1]
-    circuit = cirq.Circuit()
-
-    # Prepare the readout qubit.
-    circuit.append(cirq.X(readout))
-    circuit.append(cirq.H(readout))
-
-    builder = CircuitLayerBuilder(
-        data_qubits = data_qubits,
-        readout=readout)
-
-    # Then add layers (experiment by adding more).
-    builder.add_layer(circuit, cirq.XX, "xx1")
-    builder.add_layer(circuit, cirq.ZZ, "zz1")
-
-    # Finally, prepare the readout qubit.
-    circuit.append(cirq.H(readout))
-
-    return circuit, cirq.Z(readout)
-
-def hinge_accuracy(y_true, y_pred):
-    y_true = tf.squeeze(y_true) > 0.0
-    y_pred = tf.squeeze(y_pred) > 0.0
-    result = tf.cast(y_true == y_pred, tf.float32)
-
-    return tf.reduce_mean(result)
