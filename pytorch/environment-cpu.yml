@@ -2,17 +2,17 @@ name: pt
 channels:
   - pytorch
 dependencies:
-  - pytorch
+  - pytorch=2.4.1
   - torchvision
   - torchaudio
   - cpuonly
   - pip:
-   - Flask
-   - matplotlib
-   - numpy
-   - scikit_learn
-   - torch
-   - torchvision
-   - Werkzeug
-   - cyclonedx-bom
-   - pretty_midi
+    - Flask
+    - matplotlib
+    - numpy
+    - scikit_learn
+    - torch
+    - torchvision
+    - Werkzeug
+    - cyclonedx-bom
+    - pretty_midi
