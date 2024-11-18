@@ -622,12 +622,12 @@ class Classify:
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         return(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "gpu" : self.hasgpu()}), mimetype='application/json'))
 
-    def do_dataset(self, queue, request):
+    def do_dataset(self, queue, myjson):
         torch.cuda.empty_cache()
         dt = datetime.now()
         timestamp = dt.timestamp()
-        #print(request.get_data(as_text=True))
-        myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
+        #print(myjson)
+        myobj = json.loads(myjson, object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
         (train, traincat, test, testcat, size, classes, classify) = mydatasets.getdataset(myobj, config, self)
@@ -656,9 +656,8 @@ class Classify:
             loss = None
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        return(Response(json.dumps({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify" : classify, "gpu" : self.hasgpu() }), mimetype='application/json'))
-        #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
-        
+        return({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify" : classify, "gpu" : self.hasgpu() })
+
     def do_dataset_gen(self, queue, request):
         import discriminator
         import generator
@@ -772,11 +771,11 @@ class Classify:
              "gpu": self.hasgpu() })
         return model
 
-    def do_gptmidi(self, queue, request, cachedata):
+    def do_gptmidi(self, queue, myjson, filenames, cachedata):
         dt = datetime.now()
         timestamp = dt.timestamp()
-        (filename, filename2) = self.get_file(request)
-        myobj = json.loads(request.form['json'], object_hook=lt.LearnTest)
+        filename = filenames[0]
+        myobj = json.loads(myjson, object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
         if cachedata is not None:

@@ -95,7 +95,8 @@ def do_dataset():
         try:
             import classify
             cl = classify.Classify()
-            return cl.do_dataset(queue, request)
+            myjson = request.get_data(as_text=True)
+            return cl.do_dataset(queue, myjson)
         except:
             import sys,traceback
             traceback.print_exc(file=sys.stdout)
@@ -107,13 +108,14 @@ def do_dataset():
             f.close()
             memory = "CUDA out of memory" in traceback.format_exc()
             return(Response(json.dumps({"accuracy": None, "loss": None, "gpu" : hasgpu, "memory" : memory, "exception" : True }), mimetype='application/json'))
-    return classifyrunner(None, request)
+    result = classifyrunner(None, request)
+    return Response(json.dumps(result), mimetype='application/json')
     queue = Queue()
     process = Process(target=classifyrunner, args=(queue, request))
     process.start()
     result = queue.get()
     process.join()
-    return result
+    return Response(json.dumps(result), mimetype='application/json')
 
 @app.route('/datasetgen', methods=['POST'])
 def do_dataset_gen():
@@ -162,7 +164,7 @@ def download(filename):
     return send_from_directory(full_path, filename, as_attachment=True)
 
 @app.route('/gptmidi/<ds>', methods=['POST'])
-def do_gptmini(ds):
+def do_gptmidi(ds):
     if False:
         from datetime import datetime
         dt = datetime.now()
@@ -175,7 +177,10 @@ def do_gptmini(ds):
         try:
             import classify
             cl = classify.Classify()
-            cl.do_gptmidi(queue, request, cachedata)
+            myjson = request.form['json']
+            (filename, filename2) = cl.get_file(request)
+            filenames = [ filename ]
+            cl.do_gptmidi(queue, myjson, filenames, cachedata)
         except:
             import sys,traceback
             memory = "CUDA error: out of memory" in traceback.format_exc()
