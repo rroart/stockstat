@@ -489,14 +489,14 @@ class Classify:
             dataset = myobj.dataset
         return self.getpath(myobj) + modelname + dataset + ".keras"
 
-    def do_learntestclassify(self, queue, request):
+    def do_learntestclassify(self, queue, myjson):
         print("eager", tf.executing_eagerly())
         #tf.logging.set_verbosity(tf.logging.FATAL)
         dt = datetime.now()
         timestamp = dt.timestamp()
         #print(request.get_data(as_text=True))
         #myobj = json.loads(request, object_hook=lt.LearnTest)
-        myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
+        myobj = json.loads(myjson, object_hook=lt.LearnTest)
         classify = not hasattr(myobj, 'classify') or myobj.classify == True
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
@@ -511,7 +511,7 @@ class Classify:
         exists = self.exists(myobj)
         # load model if:                                                               # exists and not dynamic and wantclassify
         if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
-            if Model.Model.localsave():
+            if model.localsave():
                 # dummy variable to allow saver
                 model = Model.Model(myobj, config, classify)
                 print("Restoring")
@@ -537,7 +537,7 @@ class Classify:
         #print(myobj.neuralnetcommand.mlclassify, myobj.neuralnetcommand.mllearn, myobj.neuralnetcommand.mldynamic)
         # save model if                                                                # not dynamic and wantlearn
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
-            if Model.Model.localsave():
+            if model.localsave():
                 print("Saving")
                 model.save(self.getfullpath(myobj))
 
@@ -567,7 +567,7 @@ class Classify:
             loss = float(loss)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "gpu" : self.hasgpu() }), mimetype='application/json'))
+        queue.put({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "gpu" : self.hasgpu() })
 
     def do_dataset(self, queue, myjson):
         dt = datetime.now()
@@ -660,23 +660,27 @@ class Classify:
             filename = "/tmp/" + filename
         return filename
 
-    def do_dataset_gen(self, queue, request):
+    def do_dataset_gen(self, queue, myjson, filenames):
         dt = datetime.now()
         timestamp = dt.timestamp()
         #print("1111")
         #print(request.get_data(as_text=True))
         #print("2222")
 
-        (filename, filename2) = self.get_file(request)
+        filename = filenames[0]
+        filename2 = filenames[1]
+
         print("Filename", filename, filename2)
 
         #print("rrr0", request.form)
         #print("rrr", request.files['json'])
-        myobj = json.loads(request.form['json'], object_hook=lt.LearnTest)
+        myobj = json.loads(myjson, object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
         if not modelname == 'neural_style_transfer':
             (dataset, size, classes, classify, from_logits) = mydatasets.getdatasetgen(myobj, config, self)
+            if hasattr(config, 'take'):
+                dataset = dataset.take(config.take)
 
             myobj.size = size
             myobj.classes = classes
@@ -739,20 +743,20 @@ class Classify:
         del classifier
         dt = datetime.now()
         print("millis ", (dt.timestamp() - timestamp) * 1000)
-        queue.put(Response(json.dumps(
+        queue.put(
             {"accuracy": 0, "trainaccuracy": 0, "loss": 0, "classify": False,
-             "gpu": self.hasgpu(), "files" : files } ), mimetype='application/json'))
+             "gpu": self.hasgpu(), "files" : files } )
         # return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
-    def do_imgclassify(self, queue, request):
+    def do_imgclassify(self, queue, myjson, filenames):
         print("eager", tf.executing_eagerly())
         #tf.logging.set_verbosity(tf.logging.FATAL)
         dt = datetime.now()
         timestamp = dt.timestamp()
         #myobj = json.loads(request, object_hook=lt.LearnTest)
-        (filename, filename2) = self.get_file(request)
+        filename = filenames[0]
         print("Filename", filename, filename2)
-        myobj = json.loads(request.form['json'], object_hook=lt.LearnTest)
+        myobj = json.loads(myjson, object_hook=lt.LearnTest)
 
         (config, modelname) = self.getModel(myobj)
         print("Cf", config, modelname)

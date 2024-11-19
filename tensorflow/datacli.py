@@ -8,31 +8,24 @@ from multiprocessing import Process, Queue
 
 import config
 
-dataset = classify.Classify()
+cl = classify.Classify()
 queue = Queue()
 cache = {}
 
-def learn(ds = "mnist", path = None, cf = 'tensorflowMLPConfig', steps = None, take = None, q = False):
+def learn(cf = 'tensorflowMLPConfig', size = None, classes = None, train_x = None, train_y = None, test_x = None, test_y = None, steps = None, zero = True):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : False, 'mllearn' : True }
     cfname, modelInt, thecf = config.get(cf)
     if steps is not None:
         thecf['steps'] = steps
-    if take is not None:
-        thecf['take'] = take
-    myds = getdsname(ds)
-    filename = getfilename(thecf, myds)
-    data = { 'modelInt' : modelInt, 'dataset' : ds, 'path' : path, 'filename' : filename, 'classifyarray' : None, 'neuralnetcommand' : neuralnetcommand, cfname : thecf, 'zero' : True }
-    if q:
-        data['normalizevalue'] = 255.0
-    cachedata = cache.get(cf+myds)
+    filename = getfilename(thecf, "ds")
+    data = { 'modelInt' : modelInt, 'filename' : filename, 'size' : size, 'classes' : classes, 'trainingarray' : train_x, 'trainingcatarray' : train_y, 'testarray' : test_x, 'testcatarray' : test_y, 'classifyarray' : None, 'neuralnetcommand' : neuralnetcommand, cfname : thecf, 'zero' : zero }
     myjson = json.dumps(data)
-    response = dataset.do_dataset(queue, myjson)
-    cache[cf+myds] = response
+    response = cl.do_learntestclassify(queue, myjson)
     result = queue.get()
     print (result)
     return result
 
-def classify(text, ds = "mnist", path = None, cf = 'tensorflowMLPConfig', take = None, size = 40):
+def classify(text, path = None, cf = 'tensorflowMLPConfig', take = None, size = 40):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : True, 'mllearn' : False }
     cfname, modelInt, thecf = config.get(cf)
     if take is not None:
@@ -42,7 +35,7 @@ def classify(text, ds = "mnist", path = None, cf = 'tensorflowMLPConfig', take =
     data = { 'modelInt' : modelInt, 'dataset' : ds, 'path' : path, 'filename' : filename, 'classifyarray' : [ text ], 'classes' : size, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
     cachedata = cache.get(cf+myds)
     myjson = json.dumps(data)
-    response = dataset.do_gpt(queue, myjson, cachedata)
+    response = cl.do_gpt(queue, myjson, cachedata)
     cache[cf+myds] = response
     result = queue.get()
     print (result)

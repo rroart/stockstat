@@ -90,7 +90,8 @@ def do_learntestclassify():
         try:
             import classify
             cl = classify.Classify()
-            cl.do_learntestclassify(queue, request)
+            myjson = request.get_data(as_text=True)
+            cl.do_learntestclassify(queue, myjson)
         except:
             import sys,traceback
             memory = "CUDA error: out of memory" in traceback.format_exc()
@@ -115,13 +116,13 @@ def do_learntestclassify():
             except queue.Empty as e:
                 if not process.is_alive():
                     print("Process died")
-                    result = Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : False, "cudnn" : False }), mimetype='application/json')
+                    result = {"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : False, "cudnn" : False }
                     break
     except Exception as e:
         print(e)
         import sys,traceback
         traceback.print_exc(file=sys.stdout)
-    return result
+    return Response(json.dumps(result), mimetype='application/json')
 
 @app.route('/predictone', methods=['POST'])
 def do_learntestpredictone():
@@ -187,12 +188,15 @@ def do_dataset_gen():
         try:
             import classify
             cl = classify.Classify()
-            cl.do_dataset_gen(queue, request)
+            myjson = request.form['json']
+            (filename, filename2) = cl.get_file(request)
+            filenames = [ filename, filename2 ]
+            cl.do_dataset_gen(queue, myjson, filenames)
         except:
             import sys,traceback
             memory = "CUDA error: out of memory" in traceback.format_exc()
             cudnn = "0 successful operations" in traceback.format_exc()
-            queue.put(Response(json.dumps({"accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : memory, "cudnn" : cudnn }), mimetype='application/json'))
+            queue.put({"accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : memory, "cudnn" : cudnn })
             traceback.print_exc(file=sys.stdout)
             print("\n")
             import random
@@ -212,13 +216,13 @@ def do_dataset_gen():
             except queue.Empty as e:
                 if not process.is_alive():
                     print("Process died")
-                    result = Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : False, "cudnn" : False }), mimetype='application/json')
+                    result = {"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : False, "cudnn" : False }
                     break
     except Exception as e:
         print(e)
         import sys,traceback
         traceback.print_exc(file=sys.stdout)
-    return result
+    return Response(json.dumps(result), mimetype='application/json')
 
 @app.route('/filename', methods=['POST'])
 def do_filename():
@@ -245,7 +249,10 @@ def do_imgclassify():
         try:
             import classify
             cl = classify.Classify()
-            cl.do_imgclassify(queue, request)
+            myjson = request.form['json']
+            (filename, filename2) = cl.get_file(request)
+            filenames = [ filename, filename2 ]
+            cl.do_imgclassify(queue, myjson, filenames)
         except:
             import sys,traceback
             memory = "CUDA error: out of memory" in traceback.format_exc()

@@ -16,7 +16,7 @@ content_weight = 2.5e-8
 img_nrows = 400
 
 class Model:
-    def __init__(self, config, classify, base_image_path, style_reference_image_path):
+    def __init__(self, myobj, config, base_image_path, style_reference_image_path):
         self.config = config
 
         self.base_image_path = base_image_path

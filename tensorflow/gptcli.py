@@ -30,6 +30,7 @@ def learn(ds = None, path = None, cf = 'tensorflowMiniatureGPTConfig', steps = N
     cache[cf+myds] = response
     result = queue.get()
     print (result)
+    return result
 
 def chat(text, ds = None, path = None, cf = 'tensorflowMiniatureGPTConfig', take = None, size = 40):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : True, 'mllearn' : False }
@@ -45,6 +46,7 @@ def chat(text, ds = None, path = None, cf = 'tensorflowMiniatureGPTConfig', take
     cache[cf+myds] = response
     result = queue.get()
     print (result)
+    return result
 
 def getfilename(cf, ds):
     return cf['name'] + ds
