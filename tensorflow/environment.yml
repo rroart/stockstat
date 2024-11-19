@@ -1,5 +1,6 @@
 name: tf
 dependencies:
+  - python=3.12.0
   - pip:
     - Flask
     - gdown
@@ -9,13 +10,13 @@ dependencies:
     - matplotlib
     - numpy
     - pandas
-    - scikit_learn
-    - tensorflow
+    #- scikit_learn
+    - tensorflow==2.17.0
     - tensorflow_datasets
     - Werkzeug
     - cyclonedx-bom
     - pretty_midi
-    - cirq
-    - seaborn
-    - sympy
-    - tensorflow_quantum
+    #- cirq
+    #- seaborn
+    #- sympy
+    #- tensorflow_quantum
