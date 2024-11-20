@@ -5,6 +5,8 @@ source config.sh
 OUTCOMES=3
 SIZE=4
 
+HOST=afree
+HOST=localhost
 PORT=8008
 
 if [ "$1" = "t" ]; then
@@ -49,6 +51,8 @@ TIMEDATASETARR[3]=\"nasdaq\"
 TIMEDATASETARRLEN=${#TIMEDATASETARR[@]}
 #TIMEDATASETARRLEN=0
 
+NNC="\"neuralnetcommand\":{\"mllearn\":true,\"mlclassify\":false,\"mldynamic\":false,\"mlcross\":false}"
+
 mkdir -p /tmp/datasets
 
 if [[ ! "$1" =~ ^g ]]; then
@@ -56,14 +60,14 @@ if [[ ! "$1" =~ ^g ]]; then
 	for J in `seq 1 $DATASETARRLEN`; do
 	    echo
 	    echo "Model" $I
-	    curl -i -d "{ \"trainingarray\" : [], \"trainingcatarray\" : [], \"dataset\" : ${DATASETARR[J]}, \"modelInt\" : $I, \"classes\" : ${OUTCOMESARR[J]}, ${CONFIG[I]}, \"size\" : $SIZE, \"zero\" : true }" localhost:$PORT/dataset
+	    curl -i -d "{ \"trainingarray\" : [], \"trainingcatarray\" : [], \"dataset\" : ${DATASETARR[J]}, \"modelInt\" : $I, \"classes\" : ${OUTCOMESARR[J]}, ${CONFIG[I]}, \"size\" : $SIZE, \"zero\" : true, $NNC }" $HOST:$PORT/dataset
 	done
     done
     for I in $TIMEMODELS; do
 	for J in `seq 1 $TIMEDATASETARRLEN`; do
 	    echo
 	    echo "Model" $I
-	    curl -i -d "{ \"trainingarray\" : [], \"trainingcatarray\" : [], \"dataset\" : ${TIMEDATASETARR[J]}, \"modelInt\" : $I, \"classes\" : $OUTCOMES, ${TIMECONFIG[I]}, \"size\" : $SIZE, \"zero\" : true }" localhost:$PORT/dataset
+	    curl -i -d "{ \"trainingarray\" : [], \"trainingcatarray\" : [], \"dataset\" : ${TIMEDATASETARR[J]}, \"modelInt\" : $I, \"classes\" : $OUTCOMES, ${TIMECONFIG[I]}, \"size\" : $SIZE, \"zero\" : true, $NNC }" $HOST:$PORT/dataset
 	done
     done
 fi
@@ -73,7 +77,7 @@ if [ "$1" = "g" ]; then
 	for J in `seq 1 $DATASETARRLEN`; do
 	    echo
 	    echo "Model" $I
-	    curl -i -d "{ \"trainingarray\" : [], \"trainingcatarray\" : [], \"dataset\" : ${DATASETARR[J]}, \"modelInt\" : $I, \"classes\" : $OUTCOMES, ${CONFIG[I]}, \"size\" : $SIZE, \"zero\" : true, \"filename\" : ${FILENAME[I]}, \"save\" : false }" localhost:$PORT/dataset
+	    curl -i -d "{ \"trainingarray\" : [], \"trainingcatarray\" : [], \"dataset\" : ${DATASETARR[J]}, \"modelInt\" : $I, \"classes\" : $OUTCOMES, ${CONFIG[I]}, \"size\" : $SIZE, \"zero\" : true, \"filename\" : ${FILENAME[I]}, \"save\" : false, $NNC }" $HOST:$PORT/dataset
 	done
     done
 fi
