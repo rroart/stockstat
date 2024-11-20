@@ -5,8 +5,7 @@ import datasetcli as cli
 
 class MyTestCase(unittest.TestCase):
     def test_something(self):
-        testlist = [ config.TENSORFLOWQNN, config.TENSORFLOWQCNN ]
-        #testlist = [ config.TENSORFLOWQCNN]
+        testlist = [ config.TENSORFLOWQNN, config.TENSORFLOWQCNN, config.TENSORFLOWPQK ]
         for test in testlist:
             result = cli.learn(ds = 'fashion_mnist', cf = test, take = 40, steps = 1, q = True)
             print(result)

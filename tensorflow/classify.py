@@ -428,6 +428,9 @@ class Classify:
         if myobj.modelInt == 17:
             modelname = 'gpt2'
             config = myobj.tensorflowGPT2Config
+        if myobj.modelInt == 18:
+            modelname = 'pqk'
+            config = myobj.tensorflowPQKConfig
         return config, modelname
       if hasattr(myobj, 'modelName'):
         if myobj.modelName == 'dnn':

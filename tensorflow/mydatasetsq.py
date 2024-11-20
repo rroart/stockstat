@@ -164,25 +164,11 @@ def getfashionmnist(myobj, config):
     y_relabel = get_stilted_dataset(S_pqk, V_pqk, S_original, V_original)
     y_train_new, y_test_new = y_relabel[:N_TRAIN], y_relabel[N_TRAIN:]
 
-    dsdict = {'x_train_tfcirc': x_train_tfcirc, 'x_test_tfcirc': x_test_tfcirc, 'y_train_hinge': y_train_hinge,
-              'y_test_hinge': y_test_hinge, 'y_test': y_test}
+    dsdict = {'x_train': x_train_pqk, 'x_test': x_test_pqk, 'y_train': y_train_new,
+              'y_test': y_test_new }
     ds = DictToObject(dsdict)
     meta = DictToObject({'classify': True})
     return ds, meta
-
-    pqk_model = create_pqk_model(qubits)
-    pqk_model.compile(loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
-                  optimizer=tf.keras.optimizers.Adam(learning_rate=0.003),
-                  metrics=['accuracy'])
-
-    pqk_model.summary()
-
-    model = create_fair_classical_model(DATASET_DIM)
-    model.compile(loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
-                  optimizer=tf.keras.optimizers.Adam(learning_rate=0.03),
-                  metrics=['accuracy'])
-
-    model.summary()
 
     #docs_infra: no_execute
     plt.figure(figsize=(10,5))
@@ -302,14 +288,6 @@ def get_stilted_dataset(S, V, S_2, V_2, lambdav=1.1):
   final_y = new_labels > np.median(new_labels)
   noisy_y = (final_y ^ (np.random.uniform(size=final_y.shape) > 0.95))
   return noisy_y
-
-#docs_infra: no_execute
-def create_pqk_model(qubits):
-    model = tf.keras.Sequential()
-    model.add(tf.keras.layers.Dense(32, activation='sigmoid', input_shape=[len(qubits) * 3,]))
-    model.add(tf.keras.layers.Dense(16, activation='sigmoid'))
-    model.add(tf.keras.layers.Dense(1))
-    return model
 
 #docs_infra: no_execute
 def create_fair_classical_model(DATASET_DIM):

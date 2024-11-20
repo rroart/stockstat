@@ -15,6 +15,7 @@ TENSORFLOWNEURALSTYLETRANSFER = 'tensorflowNeuralStyleTransferConfig'
 TENSORFLOWMINIATUREGPT = 'tensorflowMiniatureGPTConfig'
 TENSORFLOWGPT = 'tensorflowGPTConfig'
 TENSORFLOWGPT2 = 'tensorflowGPT2Config'
+TENSORFLOWPQK = 'tensorflowPQKConfig'
 
 TENSORFLOWDNNCONFIG = { 'name' : 'dnn', 'steps' : 1000, 'hidden' : 100, 'layers': 2, 'lr' : 0.01 }
 TENSORFLOWLICCONFIG = { 'name' : 'lic', 'steps' : 1000, 'lr' : 0.01 }
@@ -33,6 +34,7 @@ TENSORFLOWNEURALSTYLETRANSFERCONFIG = { 'name' : 'neural_style_transfer', 'steps
 TENSORFLOWMINIATUREGPTCONFIG = { 'name' : 'miniature_gpt', 'steps' : 25 }
 TENSORFLOWGPTCONFIG = { 'name' : 'gpt', 'steps' : 5 }
 TENSORFLOWGPT2CONFIG = { 'name' : 'gpt2', 'steps' : 1 }
+TENSORFLOWPQKCONFIG = { 'name' : 'pqk', 'steps' : 3 }
 
 def get(cf):
     if cf == TENSORFLOWDNN:
@@ -69,4 +71,6 @@ def get(cf):
         return cf, 16, TENSORFLOWGPTCONFIG
     elif cf == TENSORFLOWGPT2:
         return cf, 17, TENSORFLOWGPT2CONFIG
+    elif cf == TENSORFLOWPQK:
+        return cf, 18, TENSORFLOWPQKCONFIG
     return None
