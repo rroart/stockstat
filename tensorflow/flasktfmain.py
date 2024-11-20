@@ -96,7 +96,7 @@ def do_learntestclassify():
             import sys,traceback
             memory = "CUDA error: out of memory" in traceback.format_exc()
             cudnn = "0 successful operations" in traceback.format_exc()
-            queue.put(Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : memory, "cudnn" : cudnn }), mimetype='application/json'))
+            queue.put({"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : memory, "cudnn" : cudnn })
             traceback.print_exc(file=sys.stdout)
             print("\n")
             import random

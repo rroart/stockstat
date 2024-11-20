@@ -12,13 +12,13 @@ cl = classify.Classify()
 queue = Queue()
 cache = {}
 
-def learn(cf = 'tensorflowMLPConfig', size = None, classes = None, train_x = None, train_y = None, test_x = None, test_y = None, steps = None, zero = True):
+def learn(cf = 'tensorflowMLPConfig', size = None, classes = None, train_x = None, train_y = None, test_x = None, test_y = None, classifyarray = None, steps = None, zero = True):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : False, 'mllearn' : True }
     cfname, modelInt, thecf = config.get(cf)
     if steps is not None:
         thecf['steps'] = steps
     filename = getfilename(thecf, "ds")
-    data = { 'modelInt' : modelInt, 'filename' : filename, 'size' : size, 'classes' : classes, 'trainingarray' : train_x, 'trainingcatarray' : train_y, 'testarray' : test_x, 'testcatarray' : test_y, 'classifyarray' : None, 'neuralnetcommand' : neuralnetcommand, cfname : thecf, 'zero' : zero }
+    data = { 'modelInt' : modelInt, 'filename' : filename, 'size' : size, 'classes' : classes, 'trainingarray' : train_x, 'trainingcatarray' : train_y, 'testarray' : test_x, 'testcatarray' : test_y, 'classifyarray' : classifyarray, 'neuralnetcommand' : neuralnetcommand, cfname : thecf, 'zero' : zero, 'classify' : False }
     myjson = json.dumps(data)
     response = cl.do_learntestclassify(queue, myjson)
     result = queue.get()

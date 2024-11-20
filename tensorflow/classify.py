@@ -494,9 +494,8 @@ class Classify:
         #tf.logging.set_verbosity(tf.logging.FATAL)
         dt = datetime.now()
         timestamp = dt.timestamp()
-        #print(request.get_data(as_text=True))
-        #myobj = json.loads(request, object_hook=lt.LearnTest)
         myobj = json.loads(myjson, object_hook=lt.LearnTest)
+        #print(myjson)
         classify = not hasattr(myobj, 'classify') or myobj.classify == True
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
