@@ -65,30 +65,23 @@ def dataset(ds = 'mnist', cf = config.TENSORFLOWMLP):
     filename = getfilename(thecf, ds)
     data = { 'modelInt' : modelInt, 'dataset' : ds, 'filename' : filename, 'zero' : True, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
     data[cfname] = thecf
-    img.do_dataset()
-    response = request.imgrequest3(cf, data)
-    print(response.text)
-    print(response)
-    myobj = response.json() #.loads(response.text) #request.get_data(as_text=True)
+    myjson = json.dumps(data)
+    response = img.do_dataset(queue, myjson)
+    result = queue.get()
+    print(result)
+    return result
 
 def classify(path, ds = 'mnist', cf = config.TENSORFLOWMLP):
     neuralnetcommand = { 'mldynamic' : None, 'mlclassify' : None, 'mllearn' : None }
     cfname, modelInt, thecf = config.get(cf)
     filename = getfilename(thecf, ds)
     data = { 'modelInt' : modelInt, 'dataset' : ds, 'filename' : filename, 'zero' : True, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
-    img_data = None
-    if path is not None:
-        with open(path, 'rb') as f:
-            img_data = f.read()
-    files = {
-        'json': (None, json.dumps(data), 'application/json'),
-        "file": (path, img_data),
-    }
-    img.do_imgclassify()
-    response = queue.get()
-    print(response.text)
-    print(response)
-    myobj = response.json() #.loads(response.text) #request.get_data(as_text=True)
+    filenames = [ path ]
+    myjson = json.dumps(data)
+    img.do_imgclassify(queue, myjson, filenames)
+    result = queue.get()
+    print(result)
+    return result
     
 def getfilename(cf, ds):
     return cf['name'] + ds

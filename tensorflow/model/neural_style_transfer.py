@@ -29,6 +29,7 @@ class Model:
         outputs_dict = dict([(layer.name, layer.output) for layer in model.layers])
 
         self.feature_extractor = keras.Model(inputs=model.inputs, outputs=outputs_dict)
+        self.loss = None
 
     def preprocess_image(self, image_path):
         img = keras.utils.load_img(image_path, target_size=(img_nrows, self.img_ncols))
@@ -71,6 +72,10 @@ class Model:
             x[:, : img_nrows - 1, : self.img_ncols - 1, :] - x[:, : img_nrows - 1, 1:, :]
         )
         return tf.reduce_sum(tf.pow(a + b, 1.25))
+
+    @property
+    def metrics(self):
+        return self.loss
 
     def compile(self):
         print("DANGER full trust")
@@ -132,6 +137,8 @@ class Model:
             loss, grads = self.compute_loss_and_grads(
                 combination_image, base_image, style_reference_image
             )
+            print("MET", loss)
+            self.loss = loss
             optimizer.apply_gradients([(grads, combination_image)])
             #if i % 100 == 0:
             if False:

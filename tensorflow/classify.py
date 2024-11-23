@@ -366,7 +366,8 @@ class Classify:
         if isinstance(classifier, tf.keras.Model):
             print(classifier.metrics_names)
             print(classifier.summary())
-        print("Accs", train_accuracy_score, accuracy_score)
+        print("Accuracy train test", train_accuracy_score, accuracy_score)
+        print("Loss train test", train_loss, test_loss)
         #print("test_loss")
         #print(test_loss)
         #print(accuracy_score)
@@ -501,6 +502,7 @@ class Classify:
         #print(myjson)
         classify = not hasattr(myobj, 'classify') or myobj.classify == True
         (config, modelname) = self.getModel(myobj)
+        print("Model name", modelname)
         Model = importlib.import_module('model.' + modelname)
         (train, traincat, test, testcat, size) = self.gettraintest(myobj, config, classify)
         myobj.size = size
@@ -739,6 +741,15 @@ class Classify:
             files = gan.generate()
             print("files", files)
 
+        if not modelname == 'neural_style_transfer':
+            print("met", gan.metrics)
+            print("met", gan.metrics[0].result(), gan.metrics[1].result())
+            t = max(gan.metrics[0].result(), gan.metrics[1].result())
+            loss = tf.get_static_value(t)
+        else:
+            loss = gan.metrics
+        print("met", loss)
+
         classifier = model
 
         #classifier.tidy()
@@ -746,7 +757,7 @@ class Classify:
         dt = datetime.now()
         print("millis ", (dt.timestamp() - timestamp) * 1000)
         queue.put(
-            {"accuracy": 0, "trainaccuracy": 0, "loss": 0, "classify": False,
+            {"accuracy": None, "trainaccuracy": None, "loss": loss, "classify": False,
              "gpu": self.hasgpu(), "files" : files } )
         # return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
@@ -757,38 +768,38 @@ class Classify:
         timestamp = dt.timestamp()
         #myobj = json.loads(request, object_hook=lt.LearnTest)
         filename = filenames[0]
-        print("Filename", filename, filename2)
+        print("Filename", filename)
         myobj = json.loads(myjson, object_hook=lt.LearnTest)
 
         (config, modelname) = self.getModel(myobj)
         print("Cf", config, modelname)
         Model = importlib.import_module('model.' + modelname)
-        (train, traincat, test, testcat, origsize, size, classes, classify) = mydatasets.getdataset(myobj, config, self)
+        (ds, meta) = mydatasets.getdataset(myobj, config, self)
 
-        img = self.preprocess_image(filename, origsize)
+        img = self.preprocess_image(filename, meta.origsize)
 
-        train = np.array(train)
+        train = np.array(ds.train)
         myobj.trainingarray = train
-        myobj.trainingcatarray = traincat
-        myobj.size = size
-        myobj.classes = classes
-        (train, traincat, test, testcat, size) = self.gettraintest(myobj, config, classify)
+        myobj.trainingcatarray = ds.traincat
+        myobj.size = meta.size
+        myobj.classes = meta.classes
+        (train, traincat, test, testcat, size) = self.gettraintest(myobj, config, meta.classify)
         # print("classez2", myobj.classes)
-        model = Model.Model(myobj, config, classify)
+        model = Model.Model(myobj, config, meta.classify)
         exists = self.exists(myobj)
         # load model if:
         # exists and not dynamic and wantclassify
         if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
             if Model.Model.localsave():
                 # dummy variable to allow saver
-                model = Model.Model(myobj, config, classify)
+                model = Model.Model(myobj, config, meta.classify)
                 print("Restoring")
                 model.model = tf.keras.models.load_model(self.getfullpath(myobj))
                 print("Restoring done")
             else:
-                model = Model.Model(myobj, config, classify)
+                model = Model.Model(myobj, config, meta.classify)
         else:
-            model = Model.Model(myobj, config, classify)
+            model = Model.Model(myobj, config, meta.classify)
         # load end
         # print("classez2", myobj.classes)
         print(model)
@@ -796,7 +807,6 @@ class Classify:
         classifier = model
         #print("rrr0", request.form)
         #print("rrr", request.files['json'])
-        myobj = json.loads(request.form['json'], object_hook=lt.LearnTest)
         if config.name == 'mlp':
             print(type(img))
             print(img.shape)
@@ -810,7 +820,7 @@ class Classify:
         del classifier
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": 0, "trainaccuracy": 0, "loss": 0, "classify" : classify, "gpu" : self.hasgpu() }), mimetype='application/json'))
+        queue.put({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": None, "trainaccuracy": None, "loss": None, "classify" : meta.classify, "gpu" : self.hasgpu() })
 
     def do_gpt(self, queue, myjson, cachedata):
         dt = datetime.now()
