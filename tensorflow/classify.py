@@ -103,6 +103,7 @@ class Classify:
             return predicted, problist
         else:
             print("Classify", array.shape)
+            print("Classify", array)
             (intlist, problist) = classifier.predict(array)
         if classify and not self.zero(myobj):
             intlist = np.array(intlist)
@@ -122,7 +123,7 @@ class Classify:
         myobj.size = size
         model = Model.Model(myobj, config, classify)
         classifier = model
-        (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, classifier, train, traincat, test, testcat, classify)
+        (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, config, classifier, train, traincat, test, testcat, classify)
         global dictclass
         #dictclass[str(myobj.modelInt) + myobj.period + myobj.modelname] = classifier
         #global dicteval
@@ -331,7 +332,7 @@ class Classify:
         print("Shapes ", train.shape, traincat.shape, mydim)
         return train, traincat, test, testcat, mydim
     
-    def do_learntestinner(self, myobj, classifier, train, traincat, test, testcat, classify):
+    def do_learntestinner(self, myobj, config, classifier, train, traincat, test, testcat, classify):
         #print("ttt", train)
         #print("ttt2", traincat)
         #print("ttt3", test)
@@ -359,13 +360,25 @@ class Classify:
             #print(y_hat.size(),y_hat)
             #return None, loss.item()
 
-        train_loss, train_accuracy_score = classifier.evaluate(train, traincat)
-        
-        test_loss, accuracy_score = classifier.evaluate(test, testcat)
+        print("Classify", classify)
+        # TODO why one?
+        if config.name == 'lir':
+            train_loss = classifier.evaluate(train, traincat)
+            test_loss = classifier.evaluate(test, testcat)
+            train_accuracy_score = None
+            accuracy_score = None
+        else:
+            train_loss, train_accuracy_score = classifier.evaluate(train, traincat)
+            test_loss, accuracy_score = classifier.evaluate(test, testcat)
 
+        print("Keras model", isinstance(classifier, tf.keras.Model))
         if isinstance(classifier, tf.keras.Model):
             print(classifier.metrics_names)
             print(classifier.summary())
+        print("Keras model", isinstance(classifier.model, tf.keras.Model))
+        if isinstance(classifier.model, tf.keras.Model):
+            print(classifier.model.metrics_names)
+            print(classifier.model.summary())
         print("Accuracy train test", train_accuracy_score, accuracy_score)
         print("Loss train test", train_loss, test_loss)
         #print("test_loss")
@@ -499,7 +512,7 @@ class Classify:
         dt = datetime.now()
         timestamp = dt.timestamp()
         myobj = json.loads(myjson, object_hook=lt.LearnTest)
-        #print(myjson)
+        print(myjson)
         classify = not hasattr(myobj, 'classify') or myobj.classify == True
         (config, modelname) = self.getModel(myobj)
         print("Model name", modelname)
@@ -513,9 +526,10 @@ class Classify:
                 anarray = np.array(myobj.classifyarray, dtype='f')
                 myobj.classifyarray = anarray.reshape(anarray.shape[0], 1, anarray.shape[1])
         exists = self.exists(myobj)
-        # load model if:                                                               # exists and not dynamic and wantclassify
+        # load model if:
+        # exists and not dynamic and wantclassify
         if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
-            if model.localsave():
+            if Model.Model.localsave():
                 # dummy variable to allow saver
                 model = Model.Model(myobj, config, classify)
                 print("Restoring")
@@ -534,7 +548,7 @@ class Classify:
         train_accuracy_score = None
         loss = None
         if self.wantLearn(myobj):
-            (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, classifier, train, traincat, test, testcat, classify)
+            (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, config, classifier, train, traincat, test, testcat, classify)
         #print(type(classifier))
 
         #print("neuralnetcommand")
@@ -614,7 +628,7 @@ class Classify:
         self.printgpus()
         classifier = model
         if hasattr(ds, 'train'):
-            (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, classifier, ds.train, ds.traincat, ds.test, ds.testcat, meta.classify)
+            (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, classifier, config, ds.train, ds.traincat, ds.test, ds.testcat, meta.classify)
             myobj.classifyarray = train
             (intlist, problist) = self.do_classifyinner(myobj, model, meta.classify)
         else:

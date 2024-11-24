@@ -10,6 +10,7 @@ class MyTestCase(unittest.TestCase):
             result = cli.learn(ds = 'mnist', cf = test, take = 40, steps = 1)
             print(result)
             self.assertIsNotNone(result['accuracy'], "Accuracy")  # add assertion
+            # toto classify
         # here
 
 if __name__ == '__main__':

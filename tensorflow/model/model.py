@@ -46,7 +46,8 @@ class MyModel():
     def tidy(self):
         return None
 
-    def localsave(self):
+    @staticmethod
+    def localsave():
         return True
 
     def save(self, filename):

@@ -24,9 +24,11 @@ class MyTestCase(unittest.TestCase):
         classes = 10
         for test in testlist:
             print("Doing", test)
-            result = cli.learn(cf = test, train_x = train_x, train_y = train_y, test_x = test_x, test_y = test_y, steps = 1, size = size, classes = classes, classifyarray = classify)
+            result = cli.learntestclassify(cf = test, train_x = train_x, train_y = train_y, test_x = test_x, test_y = test_y, steps = 1, size = size, classes = classes, classify_x = classify, classify = False)
             print(result)
-            self.assertIsNotNone(result['accuracy'], "Accuracy")  # add assertion
+            self.assertIsNotNone(result['loss'], "Loss")  # add assertion
+            # self.assertIsNotNone(result['accuracy'], "Accuracy")  # add assertion
+       # todo prediect, loss
         # here
 
 if __name__ == '__main__':
