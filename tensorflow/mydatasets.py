@@ -276,6 +276,7 @@ def getiris(myobj, config):
 
 def imdbdir(myobj, config):
     dir = getpath(myobj)
+    os.makedirs(dir, 0o777, True)
     keras.utils.get_file(origin = "https://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz", extract = True, cache_dir = dir)
     return [
         dir + "datasets/aclImdb_v1.tar.gz/aclImdb/train/pos",
@@ -286,6 +287,7 @@ def imdbdir(myobj, config):
 
 def simplebooksdir(myobj, config):
     dir = getpath(myobj)
+    os.makedirs(dir, 0o777, True)
     keras.utils.get_file(
         origin="https://dldata-public.s3.us-east-2.amazonaws.com/simplebooks.zip",
         extract=True,
@@ -368,6 +370,7 @@ def reddit_tifu(myobj, config, classifier):
     import tensorflow_datasets as tfds
 
     dir = getpath(myobj)
+    os.makedirs(dir, 0o777, True)
 
     reddit_ds = tfds.load("reddit_tifu", split="train", as_supervised=True, data_dir=dir)
 
