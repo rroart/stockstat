@@ -32,7 +32,6 @@ class MyTestCase(unittest.TestCase):
         test_y = test_y.values.tolist()
 
         testlist = [ config.TENSORFLOWDNN, config.TENSORFLOWLIC, config.TENSORFLOWMLP ]
-        #testlist = [ config.TENSORFLOWLIC, config.TENSORFLOWMLP ]
         size = 4
         for test in testlist:
             print("Doing", test)
@@ -45,7 +44,7 @@ class MyTestCase(unittest.TestCase):
             print(result)
             self.assertIsNotNone(result['accuracy'], "Accuracy")
 
-            result = cli.classify(IRISTEST, cf=test, train_x = IRISTEST, train_y = IRISCLASS, size=size)
+            result = cli.classify(IRISTEST, cf=test, train_x = IRISTEST, train_y = IRISCLASS, size=size, classes = 3)
             print(result)
             self.assertIsNotNone(result['classifycatarray'], "Classify")
 
@@ -81,7 +80,7 @@ class MyTestCase(unittest.TestCase):
             print(result)
             self.assertIsNotNone(result['accuracy'], "Accuracy")
 
-            result = cli.classify(IRISTEST2, cf=test, train_x = IRISTEST2, train_y = IRISCLASS, size=size)
+            result = cli.classify(IRISTEST2, cf=test, train_x = IRISTEST2, train_y = IRISCLASS, size=size, classes = 3)
             print(result)
             self.assertIsNotNone(result['classifycatarray'], "Classify")
 

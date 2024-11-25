@@ -20,9 +20,9 @@ def learntest(cf = 'tensorflowMLPConfig', size = None, classes = None, train_x =
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : False, 'mllearn' : True }
     return learntestclassify_inner(cf = cf, steps = steps, size = size, classes = classes, take = take, zero = zero, train_x = train_x, train_y = train_y, test_x = test_x, test_y = test_y , classify_x = None, classify = classify, neuralnetcommand = neuralnetcommand)
 
-def classify(classify_x, path = None, cf = 'tensorflowMLPConfig', take = None, size = None, train_x = None, train_y = None, zero = True, classify = True):
+def classify(classify_x, path = None, cf = 'tensorflowMLPConfig', take = None, size = None, train_x = None, train_y = None, zero = True, classify = True, classes = None):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : True, 'mllearn' : False }
-    return learntestclassify_inner(cf = cf, size = size, classes = None, take = take, zero = zero, train_x = classify_x, train_y = [[0]], test_x = [], test_y = [] , classify_x = classify_x, classify = classify, neuralnetcommand = neuralnetcommand)
+    return learntestclassify_inner(cf = cf, size = size, classes = classes, take = take, zero = zero, train_x = classify_x, train_y = [[0]], test_x = [], test_y = [] , classify_x = classify_x, classify = classify, neuralnetcommand = neuralnetcommand)
 
 def learntestclassify_inner(cf='tensorflowMLPConfig', size=None, classes=None, train_x=[], train_y=[], test_x=[],
     test_y=[], classify_x=None, steps=None, zero=True, classify=True, take = None, neuralnetcommand = None):
