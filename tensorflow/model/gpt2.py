@@ -84,4 +84,8 @@ class Model:
         print(filename)
         self.model.save(filename)
 
+    @property
+    def metrics(self):
+        val = self.model.evaluate(self.dataset.train_ds)
+        return val[0]
 

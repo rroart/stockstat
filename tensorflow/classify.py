@@ -839,6 +839,7 @@ class Classify:
     def do_gpt(self, queue, myjson, cachedata):
         dt = datetime.now()
         timestamp = dt.timestamp()
+        print("my", myjson)
         myobj = json.loads(myjson, object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
@@ -878,6 +879,10 @@ class Classify:
         # dicteval[myobj.modelname] = float(accuracy_score)
         # print("seteval" + str(myobj.modelname))
 
+        loss = None
+        if self.wantLearn(myobj):
+            loss = model.metrics
+
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
             print(model.model.summary())
             if model.dataset.train_ds is not None:
@@ -888,9 +893,8 @@ class Classify:
 
         #classifier.tidy()
         del classifier
-        accuracy_score = 0
-        train_accuracy_score = 0
-        loss = 0
+        accuracy_score = None
+        train_accuracy_score = None
         if not accuracy_score is None:
             accuracy_score = float(accuracy_score)
         if not train_accuracy_score is None:

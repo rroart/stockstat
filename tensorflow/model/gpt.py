@@ -104,6 +104,7 @@ class Model:
 
     def fit(self):
         self.model.fit(self.train_ds, validation_data=self.val_ds, epochs=self.config.steps)
+        print("eval", self.model.evaluate(self.train_ds))
 
     # TODO model.generate
 
@@ -136,6 +137,11 @@ class Model:
         print("type", type(self.model))
         print(filename)
         self.model.save(filename)
+
+    @property
+    def metrics(self):
+        val = self.model.evaluate(self.train_ds)
+        return val[0]
 
     class TopKTextGenerator(keras.callbacks.Callback):
 

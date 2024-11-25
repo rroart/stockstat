@@ -39,6 +39,7 @@ def chat(text, ds = None, path = None, cf = 'tensorflowMiniatureGPTConfig', take
         thecf['take'] = take
     myds = getdsname(ds)
     filename = getfilename(thecf, myds)
+    print("text", text)
     data = { 'modelInt' : modelInt, 'dataset' : ds, 'path' : path, 'filename' : filename, 'classifyarray' : [ text ], 'classes' : size, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
     cachedata = cache.get(cf+myds)
     myjson = json.dumps(data)

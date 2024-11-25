@@ -24,20 +24,15 @@ class Model:
 
         train_ds, val_ds, vocab_size, vocab = self.tokenize(self.dataset)
         self.train_ds = train_ds
+        self.val_db = val_ds
+        self.vocab = vocab
 
         self.model = create_model(vocab_size)
         self.vectorize_layer = None
 
-        word_to_index = {}
+        self.word_to_index = {}
         for index, word in enumerate(vocab):
-            word_to_index[word] = index
-
-        if myobj.classifyarray is not None:
-            start_prompt = myobj.classifyarray[0]
-            start_tokens = [word_to_index.get(_, 1) for _ in start_prompt.split()]
-            num_tokens_generated = myobj.classes
-            self.text_gen_callback = TextGenerator(num_tokens_generated, start_tokens, vocab)
-            self.generator = TextGenerator2(num_tokens_generated, start_tokens, vocab)
+            self.word_to_index[word] = index
 
     def tokenize(self, dataset):
         vocab_size = VOCAB_SIZE
@@ -64,7 +59,13 @@ class Model:
         self.model.fit(self.train_ds, verbose=2, epochs=self.config.steps)
 
     def generate(self, model):
-        return self.generator.gen(model);
+        start_prompt = self.myobj.classifyarray[0]
+        start_tokens = [self.word_to_index.get(_, 1) for _ in start_prompt.split()]
+        num_tokens_generated = self.myobj.classes
+        #self.text_gen_callback = TextGenerator(num_tokens_generated, start_tokens, vocab, None)
+        generator = TextGenerator2(num_tokens_generated, start_tokens, self.vocab, None)
+
+        return generator.gen(model);
 
     def localsave(self):
        return True
@@ -89,6 +90,9 @@ class Model:
         y = tokenized_sentences[:, 1:]
         return x, y
 
+    @property
+    def metrics(self):
+        return self.model.evaluate(self.train_ds)
 
 def causal_attention_mask(batch_size, n_dest, n_src, dtype):
     i = ops.arange(n_dest)[:, None]
