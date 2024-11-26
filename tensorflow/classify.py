@@ -275,7 +275,8 @@ class Classify:
     def gettraintest(self, myobj, config, classify):
         mydim = myobj.size
         array = np.array(myobj.trainingarray, dtype='f')
-        if config.name == "cnn2":
+        # TODO no transpose with dataset
+        if config.name == "cnn2" and not hasattr(myobj, 'dataset'):
             print("cnn2 shape")
             print(array.shape)
             #array = np.transpose(array, [0, 3, 2, 1])
@@ -628,7 +629,7 @@ class Classify:
         self.printgpus()
         classifier = model
         if hasattr(ds, 'train'):
-            (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, classifier, config, ds.train, ds.traincat, ds.test, ds.testcat, meta.classify)
+            (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, config, classifier, ds.train, ds.traincat, ds.test, ds.testcat, meta.classify)
             myobj.classifyarray = train
             (intlist, problist) = self.do_classifyinner(myobj, model, meta.classify)
         else:

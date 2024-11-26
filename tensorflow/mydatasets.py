@@ -198,7 +198,7 @@ def getcifar10(config):
     dsdict = { 'train' : x_train, 'traincat' : y_train, 'test' : x_test, 'testcat' : y_test }
     ds = DictToObject(dsdict)
     metadict = { 'origsize' : mydimorig, 'size' : mydim, 'classes' : 10, 'classify' : True }
-    meta = DictToObject(dsdict)
+    meta = DictToObject(metadict)
 
     return ds, meta
 
