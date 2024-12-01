@@ -19,6 +19,8 @@ public class PipelineData {
 
     private Map<String, Object> map = new HashMap<>();
 
+    private final SerialMap smap = new SerialMap();
+
     public PipelineData() {
         super();
     }
@@ -61,5 +63,9 @@ public class PipelineData {
 
     public Set<String> keySet() {
         return map.keySet();
+    }
+    
+    public SerialMap smap() {
+        return smap;
     }
 }

@@ -8,10 +8,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         include = JsonTypeInfo.As.PROPERTY,  
         property = "_class")  
         */
-@JsonTypeInfo(  
+@JsonTypeInfo(
         use = JsonTypeInfo.Id.CLASS,
-        property = "_class")  
-abstract class SerialObject {
+        property = "_class")
+public abstract class SerialObject {
 
     public SerialObject() {
         super();
