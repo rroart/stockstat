@@ -633,8 +633,8 @@ class Classify:
             myobj.classifyarray = train
             (intlist, problist) = self.do_classifyinner(myobj, model, meta.classify)
         else:
-            classifier.train(ds)
-            (accuracy_score, loss, train_accuracy_score) = (0, 0, 0)
+            (accuracy_score, loss, train_accuracy_score) = classifier.train(ds)
+            #(accuracy_score, loss, train_accuracy_score) = (0, 0, 0)
         global dictclass
         #dictclass[str(myobj.modelInt) + myobj.period + myobj.modelname] = classifier
         #global dicteval

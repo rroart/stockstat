@@ -6,6 +6,8 @@ import sympy
 
 from .model import MyModel
 
+hinge = True
+
 class Model(MyModel):
 
   def __init__(self, myobj, config, classify):
@@ -28,32 +30,45 @@ class Model(MyModel):
           tfq.layers.PQC(model_circuit, model_readout),
       ])
 
-      self.model.compile(
-          loss=tf.keras.losses.Hinge(),
-          optimizer=tf.keras.optimizers.Adam(),
-          metrics=[hinge_accuracy])
-
+      if hinge:
+          self.model.compile(
+              loss=tf.keras.losses.Hinge(),
+              optimizer=tf.keras.optimizers.Adam(),
+              metrics=[hinge_accuracy])
+      else:
+          self.pqk_model.compile(loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
+              optimizer=tf.keras.optimizers.Adam(learning_rate=0.003),
+              metrics=['accuracy'])
       print(self.model.summary())
 
   def train(self, dataset):
       EPOCHS = 3
       BATCH_SIZE = 32
 
-      NUM_EXAMPLES = len(dataset.x_train_tfcirc)
+      NUM_EXAMPLES = len(dataset.x_train)
 
-      x_train_tfcirc_sub = dataset.x_train_tfcirc[:NUM_EXAMPLES]
-      y_train_hinge_sub = dataset.y_train_hinge[:NUM_EXAMPLES]
+      y_train = dataset.y_train
+      y_test = dataset.y_test
+
+      #if hasattr(self.myobj, 'hinge') and self.myobj.hinge == True:
+      if hinge:
+          y_train = 2.0 * y_train - 1.0
+          y_test = 2.0 * y_test - 1.0
+
+      x_train_sub = dataset.x_train[:NUM_EXAMPLES]
+      y_train_sub = dataset.y_train[:NUM_EXAMPLES]
 
       qnn_history = self.model.fit(
-          x_train_tfcirc_sub, y_train_hinge_sub,
+          x_train_sub, y_train_sub,
           batch_size=BATCH_SIZE,
           epochs=EPOCHS,
           verbose=1,
-          validation_data=(dataset.x_test_tfcirc, dataset.y_test_hinge))
+          validation_data=(dataset.x_test, y_test))
 
       print("History", qnn_history)
-      qnn_results = self.model.evaluate(dataset.x_test_tfcirc, dataset.y_test)
+      qnn_results = self.model.evaluate(dataset.x_test, dataset.y_test)
       print("Results", qnn_results)
+      return 0, qnn_results[0], qnn_results[1]
 
   def localsave(self):
       return False

@@ -32,6 +32,7 @@ class Model(MyModel):
       print("History", pqk_history)
       #pqk_results = self.pqk_model.evaluate(dataset.x_test, dataset.y_test)
       #print("Results", pqk_results)
+      return 0, 0, 0
 
   def localsave(self):
       return False

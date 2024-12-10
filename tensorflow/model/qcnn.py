@@ -70,6 +70,7 @@ class Model(MyModel):
                                verbose=1,
                                validation_data=(test_excitations, test_labels))
     print("History", history)
+    return 0, 0, 0
 
 
   def localsave(self):

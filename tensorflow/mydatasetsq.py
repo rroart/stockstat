@@ -10,18 +10,27 @@ import collections
 import matplotlib.pyplot as plt
 from cirq.contrib.svg import SVGCircuit
 
+import mydatasetscommon
+
 def getdataset(myobj, config, classifier):
     if myobj.dataset == 'mnist':
         return getmnist(myobj, config)
     if myobj.dataset == 'fashion_mnist':
         return getfashionmnist(myobj, config)
+    if myobj.dataset == 'iris':
+        return getiris(myobj, config)
+    if myobj.dataset == 'iris2':
+        return getiris2(myobj, config)
 
 def getmnist(myobj, config):
         #load mnist data
         (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
 
+        #print(type(y_train))
+        #exit
         normalizevalue = 255.0
         x_train, x_test = x_train[..., np.newaxis]/normalizevalue, x_test[..., np.newaxis]/normalizevalue
+        print("shape",x_train.shape, y_train.shape)
         x_train, y_train = filter_36(x_train, y_train)
         x_test, y_test = filter_36(x_test, y_test)
         x_train_small = tf.image.resize(x_train, (4,4)).numpy()
@@ -46,10 +55,7 @@ def getmnist(myobj, config):
         x_train_tfcirc = tfq.convert_to_tensor(x_train_circ)
         x_test_tfcirc = tfq.convert_to_tensor(x_test_circ)
 
-        y_train_hinge = 2.0*y_train_nocon-1.0
-        y_test_hinge = 2.0*y_test-1.0
-
-        dsdict = { 'x_train_tfcirc' : x_train_tfcirc, 'x_test_tfcirc' : x_test_tfcirc, 'y_train_hinge' : y_train_hinge, 'y_test_hinge' : y_test_hinge, 'y_test' : y_test }
+        dsdict = { 'x_train' : x_train_tfcirc, 'x_test' : x_test_tfcirc, 'y_train' : y_train_nocon, 'y_test' : y_test }
         ds = DictToObject(dsdict)
         meta = DictToObject({ 'classify' : True })
         return ds, meta
@@ -296,6 +302,141 @@ def create_fair_classical_model(DATASET_DIM):
     model.add(tf.keras.layers.Dense(16, activation='sigmoid'))
     model.add(tf.keras.layers.Dense(1))
     return model
+
+
+def getiris(myobj, config):
+    x_train, y_train, x_test, y_test = mydatasetscommon.iriscommon()
+    x_train = np.array(x_train)
+    y_train = np.array(y_train)
+    x_test = np.array(x_test)
+    y_test = np.array(y_test)
+
+    y_train = y_train.reshape(-1)
+    y_test = y_test.reshape(-1)
+
+    normalizevalue = 8.0
+    print("shape",x_train.shape, y_train.shape)
+    x_train, x_test = x_train[..., np.newaxis] / normalizevalue, x_test[..., np.newaxis] / normalizevalue
+    print("shape",x_train.shape, y_train.shape)
+    x_train, y_train = filter_12(x_train, y_train)
+    x_test, y_test = filter_12(x_test, y_test)
+    x_train_small = x_train #tf.image.resize(x_train, (4, 4)).numpy()
+    x_test_small = x_test #tf.image.resize(x_test, (4, 4)).numpy()
+    x_train_nocon, y_train_nocon = remove_contradicting(x_train_small, y_train)
+    THRESHOLD = 0.5
+
+    x_train_bin = np.array(x_train_nocon > THRESHOLD, dtype=np.float32)
+    x_test_bin = np.array(x_test_small > THRESHOLD, dtype=np.float32)
+
+    _ = remove_contradicting(x_train_bin, y_train_nocon)
+
+    x_train_circ = [convert_to_circuit(x) for x in x_train_bin]
+    x_test_circ = [convert_to_circuit(x) for x in x_test_bin]
+
+    SVGCircuit(x_train_circ[0])
+
+    bin_img = x_train_bin[0, :, :]
+    indices = np.array(np.where(bin_img)).T
+    indices
+
+    x_train_tfcirc = tfq.convert_to_tensor(x_train_circ)
+    x_test_tfcirc = tfq.convert_to_tensor(x_test_circ)
+
+    dsdict = {'x_train': x_train_tfcirc, 'x_test': x_test_tfcirc, 'y_train': y_train_nocon,
+              'y_test': y_test}
+    ds = DictToObject(dsdict)
+    meta = DictToObject({'classify': True})
+    return ds, meta
+
+
+def filter_12(x, y):
+    keep = (y == 1) | (y == 2)
+    x, y = x[keep], y[keep]
+    y = y == 1
+    return x,y
+
+
+def getiris2(myobj, config):
+    x_train, y_train, x_test, y_test = mydatasetscommon.iriscommon()
+    x_train = np.array(x_train)
+    y_train = np.array(y_train)
+    x_test = np.array(x_test)
+    y_test = np.array(y_test)
+
+    y_train = y_train.reshape(-1)
+    y_test = y_test.reshape(-1)
+
+    normalizevalue = 8.0
+    print("shape",x_train.shape, y_train.shape)
+    x_train, x_test = x_train[..., np.newaxis] / normalizevalue, x_test[..., np.newaxis] / normalizevalue
+    print("shape",x_train.shape, y_train.shape)
+
+    x_train, y_train = filter_12(x_train, y_train)
+    x_test, y_test = filter_12(x_test, y_test)
+
+    print("Number of filtered training examples:", len(x_train))
+    print("Number of filtered test examples:", len(x_test))
+
+    print(y_train[0])
+
+    plt.imshow(x_train[0, :, :])
+    plt.colorbar()
+
+    DATASET_DIM = 10
+    x_train, x_test = truncate_x(x_train, x_test, n_components=DATASET_DIM)
+    print(f'New datapoint dimension:', len(x_train[0]))
+
+    N_TRAIN = 1000
+    N_TEST = 200
+    x_train, x_test = x_train[:N_TRAIN], x_test[:N_TEST]
+    y_train, y_test = y_train[:N_TRAIN], y_test[:N_TEST]
+
+    print("New number of training examples:", len(x_train))
+    print("New number of test examples:", len(x_test))
+
+    SVGCircuit(single_qubit_wall(
+        cirq.GridQubit.rect(1,4), np.random.uniform(size=(4, 3))))
+
+    test_circuit, test_symbols = v_theta(cirq.GridQubit.rect(1, 2))
+    print(f'Symbols found in circuit:{test_symbols}')
+    SVGCircuit(test_circuit)
+
+    qubits = cirq.GridQubit.rect(1, DATASET_DIM + 1)
+    q_x_train_circuits = prepare_pqk_circuits(qubits, x_train)
+    q_x_test_circuits = prepare_pqk_circuits(qubits, x_test)
+
+    x_train_pqk = get_pqk_features(qubits, q_x_train_circuits)
+    x_test_pqk = get_pqk_features(qubits, q_x_test_circuits)
+    print('New PQK training dataset has shape:', x_train_pqk.shape)
+    print('New PQK testing dataset has shape:', x_test_pqk.shape)
+
+    S_pqk, V_pqk = get_spectrum(
+        tf.reshape(tf.concat([x_train_pqk, x_test_pqk], 0), [-1, len(qubits) * 3]))
+
+    S_original, V_original = get_spectrum(
+        tf.cast(tf.concat([x_train, x_test], 0), tf.float32), gamma=0.005)
+
+    print('Eigenvectors of pqk kernel matrix:', V_pqk)
+    print('Eigenvectors of original kernel matrix:', V_original)
+
+    y_relabel = get_stilted_dataset(S_pqk, V_pqk, S_original, V_original)
+    y_train_new, y_test_new = y_relabel[:N_TRAIN], y_relabel[N_TRAIN:]
+
+    dsdict = {'x_train': x_train_pqk, 'x_test': x_test_pqk, 'y_train': y_train_new,
+              'y_test': y_test_new }
+    ds = DictToObject(dsdict)
+    meta = DictToObject({'classify': True})
+    return ds, meta
+
+    #docs_infra: no_execute
+    plt.figure(figsize=(10,5))
+    plt.plot(classical_history.history['accuracy'], label='accuracy_classical')
+    plt.plot(classical_history.history['val_accuracy'], label='val_accuracy_classical')
+    plt.plot(pqk_history.history['accuracy'], label='accuracy_quantum')
+    plt.plot(pqk_history.history['val_accuracy'], label='val_accuracy_quantum')
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.legend()
 
 
 class DictToObject:
