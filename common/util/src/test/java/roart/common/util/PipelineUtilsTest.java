@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import roart.common.constants.Constants;
 import roart.common.pipeline.data.MapOneDim;
 import roart.common.pipeline.data.OneDim;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialDouble;
 import roart.common.pipeline.data.SerialInteger;
 import roart.common.pipeline.data.SerialMap;
@@ -71,24 +72,24 @@ public class PipelineUtilsTest {
      }
      */
     
-    @Test
+    //@Test
     public void test3() {
         SerialOneDim array = new SerialOneDim();
         array.array = new Integer[] { 1, 2, 3 };
         SerialMap map = new SerialMap();
         //map.list = List.of(List.of(11, "blbl"));
         SerialMap map2 = new SerialMap();
-        map2.map.put("a", array);
-        map.map.put("m", map2);
+        map2.put("a", array);
+        map.put("m", map2);
         SerialString s = new SerialString();
         s.string = "bla";
-        map.map.put("s", s);
+        map.put("s", s);
         SerialInteger i = new SerialInteger();
         i.integer = 3;
-        map2.map.put("i", i);
+        map2.put("i", i);
         SerialDouble d = new SerialDouble();
         d.adouble = 3.14;
-        map2.map.put("d", d);
+        map2.put("d", d);
         //map2.list = List.of(List.of(1, map));
         //Object o = (Object) map2;
         //System.out.println("Obj" + JsonUtil.convert(o));
@@ -113,8 +114,60 @@ public class PipelineUtilsTest {
         assertEquals(json, newjson);
         assertEquals(json2, newjson2);
         
-        System.out.println(((SerialOneDim)((SerialMap)map.map.get("m")).map.get("a")).array.getClass().getCanonicalName());
-        System.out.println(((SerialOneDim)((SerialMap)smap.map.get("m")).map.get("a")).array.getClass().getCanonicalName());
+        System.out.println(((SerialOneDim)((SerialMap)map.get("m")).get("a")).array.getClass().getCanonicalName());
+        System.out.println(((SerialOneDim)((SerialMap)smap.get("m")).get("a")).array.getClass().getCanonicalName());
+    
+        List<OneDim> lo = List.of(new OneDim(new Integer[] {}));
+        String j = JsonUtil.convert(lo);
+        //List<OneDim> lo2 = JsonUtil.convert
+    }
+    
+    
+    @Test
+    public void test4() {
+        PipelineData data = new PipelineData();
+        data.getMap().put("key", "value");
+        SerialOneDim array = new SerialOneDim();
+        array.array = new Integer[] { 1, 2, 3 };
+        SerialMap map = data.smap();
+        //map.list = List.of(List.of(11, "blbl"));
+        SerialMap map2 = new SerialMap();
+        map2.put("a", array);
+        map.put("m", map2);
+        SerialString s = new SerialString();
+        s.string = "bla";
+        map.put("s", s);
+        SerialInteger i = new SerialInteger();
+        i.integer = 3;
+        map2.put("i", i);
+        SerialDouble d = new SerialDouble();
+        d.adouble = 3.14;
+        map2.put("d", d);
+        //map2.list = List.of(List.of(1, map));
+        //Object o = (Object) map2;
+        //System.out.println("Obj" + JsonUtil.convert(o));
+        //List l = List.of(o);
+        //System.out.println("Obj" + JsonUtil.convert(l));
+        
+        String json = JsonUtil.convert(data);
+        String json2 = JsonUtil.convert(map2);
+        
+        System.out.println("js" + json);
+        System.out.println("js2" + json2);
+                
+        PipelineData data2 = JsonUtil.convert(json, PipelineData.class);
+        SerialMap smap2 = JsonUtil.convert(json2, SerialMap.class);
+
+        String newjson = JsonUtil.convert(data2);
+        String newjson2 = JsonUtil.convert(smap2);
+        
+        System.out.println("json" + newjson);
+        System.out.println("json2"+ newjson2);
+        
+        assertEquals(json, newjson);
+        assertEquals(json2, newjson2);
+        
+        //List<OneDim> lo2 = JsonUtil.convert
     }
     
     

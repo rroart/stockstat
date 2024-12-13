@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         property = "_class")
 public abstract class SerialObject {
 
-    public SerialObject() {
+    protected SerialObject() {
         super();
     }
 

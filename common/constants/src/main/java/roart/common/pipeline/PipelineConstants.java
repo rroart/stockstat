@@ -101,4 +101,6 @@ public class PipelineConstants {
     public static final String EVOLVE = "evolve";
     public static final String UPDATE = "update";
     public static final String SCORE = "score";
+    
+    public static final String INCDEC = "incdec";
 }

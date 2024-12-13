@@ -19,7 +19,7 @@ public class PipelineData {
 
     private Map<String, Object> map = new HashMap<>();
 
-    private final SerialMap smap = new SerialMap();
+    private SerialMap smap = new SerialMap();
 
     public PipelineData() {
         super();
@@ -65,6 +65,15 @@ public class PipelineData {
         return map.keySet();
     }
     
+    
+    public SerialMap getSmap() {
+        return smap;
+    }
+
+    public void setSmap(SerialMap smap) {
+        this.smap = smap;
+    }
+
     public SerialMap smap() {
         return smap;
     }
