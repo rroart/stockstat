@@ -1,3 +1,5 @@
+package roart.common.util;
+
 public class MiscUtil {
     public static String getSubComponent(String mlname, String modelname) {
         return mlname + " " + modelname;
