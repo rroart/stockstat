@@ -3,8 +3,10 @@ package roart.iclij.component;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -26,6 +28,8 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.MapOneDim;
 import roart.common.pipeline.data.OneDim;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialObject;
+import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.util.JsonUtil;
 import roart.common.util.PipelineUtils;
 import roart.component.model.ComponentData;
@@ -134,6 +138,69 @@ public class ComponentMLIndicator extends ComponentML {
         if (resultMap == null) {
             return;
         }
+        Map<String, IncDecItem> getsells = new HashMap<>();
+        Map<String, IncDecItem> getbuys = new HashMap<>();
+        for (SerialObject object : param.getResultMeta().getList()) {
+            SerialResultMeta meta = (SerialResultMeta) object;
+            int returnSize = (int) meta.getReturnSize();
+
+            boolean emptyMeta = meta.getMlName() == null;
+            
+            if (emptyMeta) {
+                continue;
+            }
+            
+            if (positions == null) {
+                int jj = 0;
+            }
+            
+            Pair<String, String> paircount = new MiscUtil().getComponentPair(meta);
+            Map<String, Double[]> classifyMap = (Map<String, Double[]>) meta.getClassifyMap(); 
+            Map<String, double[]> offsetMap = (Map<String, double[]>) meta.getOffsetMap();
+            Map<Double, String> labelMap = createLabelMapShort();
+                    
+            MLMetricsItem mltest = search(mlTests, meta);
+            if (mlTests == null || mltest != null) {
+                //&& (positions == null || !positions.containsBelow(getPipeline(), paircount, above, mltest, param.getInput().getConfig().getFindProfitMemoryFilter()))) {
+                Double score = mltest.getTestAccuracy();
+                for (Entry<String, Double[]> entry : classifyMap.entrySet()) {
+                    String key = entry.getKey();
+                    Double[] classification = entry.getValue();
+                    List<List<Double>> resultList = param.getCategoryValueMap().get(key);
+                    List<Double> mainList = resultList.get(0);
+                    if (mainList == null) {
+                        continue;
+                    }
+                    String tfpn = labelMap.get(classification[0]);
+                    if (tfpn == null) {
+                        continue;
+                    }
+                    boolean increase = false;
+                    //System.out.println(okConfMap.keySet());
+                    //Set<Pair<String, Integer>> keyset = profitdata.getInputdata().getConfMap().keySet();
+                    //keyPair = ComponentMLAggregator.getRealKeys(keyPair, keyset);
+                    //System.out.println(okListMap.keySet());
+                    if (above == null || above == true) {
+                    if (tfpn.equals(Constants.ABOVE)) {
+                        increase = true;
+                        //IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                        IncDecItem incdec = mapAdder(getbuys /*profitdata.getBuys()*/, key, score, profitdata.getInputdata().getNameMap(), param.getBaseDate(), param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
+                        incdec.setIncrease(increase);
+                    }
+                    }
+                    if (above == null || above == false) {
+                    if (tfpn.equals(Constants.BELOW)) {
+                        increase = false;
+                        //IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                        IncDecItem incdec = mapAdder(getsells /*profitdata.getSells()*/, key, score, profitdata.getInputdata().getNameMap(), param.getBaseDate(), param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
+                        incdec.setIncrease(increase);
+                    }
+                    }
+                }                        
+            }
+        }
+        log.info("sels " + getsells.size() + " " + getsells);
+        log.info("buys " + getbuys.size() + " " + getbuys);
         MapOneDim aResultMap = PipelineUtils.getMapOneDim(resultMap.get(PipelineConstants.RESULT));
         int resultIndex = 0;
         int count = 0;
@@ -202,6 +269,8 @@ public class ComponentMLIndicator extends ComponentML {
             resultIndex += returnSize;
             count++;
         }
+        log.info("sels " + profitdata.getSells().size() + " " + profitdata.getSells());
+        log.info("buys " + profitdata.getBuys().size() + " " + profitdata.getBuys());
     }
 
     @Deprecated
@@ -253,7 +322,7 @@ public class ComponentMLIndicator extends ComponentML {
         int resultIndex = 0;
         int newResultIndex = 0;
         for (int count = 0; count < param.getResultMeta().size(); count++) {
-            ResultMeta meta = param.getResultMeta().get(count);
+            SerialResultMeta meta = (SerialResultMeta) param.getResultMeta().get(count);
             resultIndex = newResultIndex;
             MemoryItem memory = new MemoryItem();
             int returnSize = (int) meta.getReturnSize();
@@ -272,14 +341,14 @@ public class ComponentMLIndicator extends ComponentML {
             
             Double testaccuracy = (Double) meta.getTestAccuracy();
             Double testloss = (Double) meta.getLoss();
-            Map<String, List<Double>> offsetMap = (Map<String, List<Double>>) meta.getOffsetMap();
+            //Map<String, List<Double>> offsetMap = (Map<String, List<Double>>) meta.getOffsetMap();
             //Map<String, double[]> offsetMap = (Map<String, double[]>) meta.get(8);
             /*
             Map<String, Integer> countMapLearn = (Map<String, Integer>) meta.get(5);
             Map<String, Integer> countMapClass = (Map<String, Integer>) meta.get(7);
              */
-            Map<String, Integer> countMapLearn = (Map<String, Integer>) param.getResultMeta().get(count).getLearnMap();
-            Map<String, Integer> countMapClass = (Map<String, Integer>) param.getResultMeta().get(count).getClassifyMap();
+            Map<String, Integer> countMapLearn = (Map<String, Integer>) ((SerialResultMeta) param.getResultMeta().get(count)).getLearnMap();
+            Map<String, Integer> countMapClass = (Map<String, Integer>) ((SerialResultMeta) param.getResultMeta().get(count)).getClassifyMap();
             long total = 0;
             long goodTP = 0;
             long goodFP = 0;
@@ -542,5 +611,11 @@ public class ComponentMLIndicator extends ComponentML {
         return ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS;
     }
     
+    public static Map<Double, String> createLabelMapShort() {
+        Map<Double, String> labelMap1 = new HashMap<>();
+        labelMap1.put(1.0, Constants.ABOVE);
+        labelMap1.put(2.0, Constants.BELOW);
+        return labelMap1;
+    }
 }
 

@@ -26,7 +26,7 @@ public class MACDBase extends Aggregator {
 
     private Map<String, Double[]> resultObject;
 
-    public MACDBase(IclijConfig conf, String catName, String catName2, Integer cat, PipelineData[] datareaders) {
+    public MACDBase(IclijConfig conf, String catName, String catName2, Integer cat, PipelineData[] datareaders, List<String> stockDates) {
         super(conf, "macdb", cat);
         PipelineData macdmap = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORMACD);
         if (macdmap == null) {

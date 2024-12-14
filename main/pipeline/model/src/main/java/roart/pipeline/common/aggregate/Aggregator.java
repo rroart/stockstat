@@ -12,6 +12,8 @@ import roart.iclij.config.IclijConfig;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialList;
+import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.model.PipelineResultData;
 import roart.common.util.MathUtil;
 import roart.pipeline.Pipeline;
@@ -33,22 +35,22 @@ public abstract class Aggregator extends PipelineResultData {
     protected Map<String, Object> lossMap;
     protected Map<String, Object[]> otherResultMap;
     protected Map<String, Object[]> resultMap;
+    protected SerialMap resultSMap = new SerialMap();
     protected List<Object[]> otherMeta;
     protected List<Object[]> resultMetaArray;
-    private List<ResultMeta> resultMetas;
+    private SerialList resultMetas = new SerialList();
 
     public Aggregator(IclijConfig conf, String string, int category) {
         this.title = string;
         this.conf = conf;
         this.category = category;
-        resultMetas = new ArrayList<>();
     }
 
-    public List<ResultMeta> getResultMetas() {
+    public SerialList getResultMetas() {
         return resultMetas;
     }
 
-    public void setResultMetas(List<ResultMeta> resultMetas) {
+    public void setResultMetas(SerialList resultMetas) {
         this.resultMetas = resultMetas;
     }
 
@@ -99,12 +101,14 @@ public abstract class Aggregator extends PipelineResultData {
         map.put(PipelineConstants.CATEGORYTITLE, title);
         map.put(PipelineConstants.RESULT, resultMap);
         map.put(PipelineConstants.OTHERRESULT, otherResultMap);
-        map.put(PipelineConstants.RESULTMETA, resultMetas);
+        resultSMap.put(PipelineConstants.RESULTMETA, resultMetas);
         map.put(PipelineConstants.RESULTMETAARRAY, resultMetaArray);
         map.put(PipelineConstants.ACCURACY, accuracyMap);
         map.put(PipelineConstants.LOSS, lossMap);
         map.put(PipelineConstants.OBJECT, objectMap);
         map.put(PipelineConstants.OBJECTFIXED, objectFixedMap);
+        map.smap()
+        .put(PipelineConstants.RESULT, resultSMap);
         return map;
     }
     

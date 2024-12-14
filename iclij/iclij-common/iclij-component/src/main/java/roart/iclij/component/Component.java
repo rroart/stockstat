@@ -26,6 +26,8 @@ import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.model.TimingItem;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialObject;
+import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
@@ -455,7 +457,8 @@ public abstract class Component {
         if (param.getResultMeta() == null) {
             return result;
         }
-        for (ResultMeta meta : param.getResultMeta()) {
+        for (SerialObject object : param.getResultMeta().getList()) {
+            SerialResultMeta meta = (SerialResultMeta) object;
             Double testaccuracy = meta.getTestAccuracy();
             if (testaccuracy != null) {
                 testAccuracies.add(testaccuracy);
@@ -475,19 +478,20 @@ public abstract class Component {
             }
             result[2] = null;
             if (param.getResultMeta().size() > 1) {
-                List<ResultMeta> metalist = param.getResultMeta()
+                List<SerialObject> metalist = param.getResultMeta().getList()
                 .stream()
                 .filter(Objects::nonNull)
-                .filter(e -> e.getTestAccuracy() != null)
-                .filter(e -> e.getTestAccuracy() == acc)
+                .filter(e -> ((SerialResultMeta) e).getTestAccuracy() != null)
+                .filter(e -> ((SerialResultMeta) e).getTestAccuracy() == acc)
                 .collect(Collectors.toList());
                 result[2] = "";
-                for(ResultMeta meta : metalist) {
+                for(SerialObject object : metalist) {
+                    SerialResultMeta meta = (SerialResultMeta) object;
                     result[2] = result[2] + meta.getThreshold().toString() + " " + meta.getSubType() + meta.getSubSubType() + " " + meta.getLearnMap();
                 }
             }
             if (param.getResultMeta().size() == 1) {
-                result[2] = param.getResultMeta().get(0).getThreshold().toString() + " " + param.getResultMeta().get(0).getLearnMap();
+                result[2] = ((SerialResultMeta) param.getResultMeta().get(0)).getThreshold().toString() + " " + ((SerialResultMeta) param.getResultMeta().get(0)).getLearnMap();
             }
             return result;
         }
@@ -532,7 +536,8 @@ public abstract class Component {
         if (param.getResultMeta() == null) {
             return;
         }
-        for (ResultMeta meta : param.getResultMeta()) {
+        for (SerialObject object : param.getResultMeta().getList()) {
+            SerialResultMeta meta = (SerialResultMeta) object;
             if (meta.getMlName() == null) {
                 continue;
             }

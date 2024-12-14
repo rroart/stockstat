@@ -60,8 +60,8 @@ public class MLMACD extends IndicatorAggregator {
     }
 
     public MLMACD(IclijConfig conf, String string, String title, int category, 
-            Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
-        super(conf, string, category, title, idNameMap, datareaders, neuralnetcommand);
+            Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates) throws Exception {
+        super(conf, string, category, title, idNameMap, datareaders, neuralnetcommand, stockDates);
     }
 
     private abstract class MacdSubType extends MergeSubType {

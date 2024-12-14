@@ -32,6 +32,7 @@ import roart.common.ml.NeuralNetConfigs;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
@@ -102,7 +103,7 @@ public class MLIndicator extends Aggregator {
     List<MLClassifyDao> mldaos = new ArrayList<>();
 
     public MLIndicator(IclijConfig conf, String string, String title, int category, 
-            PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+            PipelineData[] datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates) throws Exception {
         super(conf, string, category);
         this.key = title;
         makeMapTypes();
@@ -448,7 +449,7 @@ public class MLIndicator extends Aggregator {
                     meta1[ResultMetaConstants.LEARNMAP] = countMap1;
                     meta1[ResultMetaConstants.THRESHOLD] = threshold;
                     resultMetaArray.add(meta1);
-                    ResultMeta resultMeta1 = new ResultMeta();
+                    SerialResultMeta resultMeta1 = new SerialResultMeta();
                     resultMeta1.setMlName(mldao.getName());
                     resultMeta1.setModelName(model.getName());
                     resultMeta1.setReturnSize(model.getReturnSize());
@@ -526,7 +527,7 @@ public class MLIndicator extends Aggregator {
                     Object[] meta = resultMetaArray.get(testCount);
                     meta[ResultMetaConstants.CLASSIFYMAP] = classifyResult;
                     meta[ResultMetaConstants.LEARNMAP] = countMap;
-                    ResultMeta resultMeta = getResultMetas().get(testCount);
+                    SerialResultMeta resultMeta = (SerialResultMeta) getResultMetas().get(testCount);
                     resultMeta.setClassifyMap(classifyResult);
                     resultMeta.setLearnMap(countMap);
                     testCount++;
@@ -590,7 +591,7 @@ public class MLIndicator extends Aggregator {
                     meta1[ResultMetaConstants.LEARNMAP] = countMap1;
                     meta1[ResultMetaConstants.THRESHOLD] = threshold;
                     resultMetaArray.add(meta1);
-                    ResultMeta resultMeta1 = new ResultMeta();
+                    SerialResultMeta resultMeta1 = new SerialResultMeta();
                     resultMeta1.setMlName(mldao.getName());
                     resultMeta1.setModelName(model.getName());
                     resultMeta1.setReturnSize(model.getReturnSize());
@@ -632,7 +633,7 @@ public class MLIndicator extends Aggregator {
                 accuracyMap.put(mldao.getName() + model.getName() + threshold, result.getAccuracy());
                 lossMap.put(mldao.getName() + model.getName() + threshold, result.getLoss());
                 Object[] meta = resultMetaArray.get(testCount);
-                ResultMeta resultMeta = getResultMetas().get(testCount);
+                SerialResultMeta resultMeta = (SerialResultMeta) getResultMetas().get(testCount);
                 meta[6] = result.getAccuracy();
                 resultMeta.setTestAccuracy(result.getAccuracy());
                 meta[9] = result.getLoss();
@@ -753,7 +754,12 @@ public class MLIndicator extends Aggregator {
                             } else {
                                 log.info("map null  {}", mapType);
                             }
-                            fields[retindex++] = aType != null ? labelMapShort2.get(aType[0]) : null;
+                            String type = null;
+                            if (aType != null) {
+                                type = labelMapShort2.get(aType[0]);
+                                Double prob = aType[1];
+                            }
+                            fields[retindex++] = type;
                             if (model.getReturnSize() > 1) {
                                 fields[retindex++] = aType != null ? aType[1] : null;
                             }

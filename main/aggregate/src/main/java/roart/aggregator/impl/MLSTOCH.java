@@ -32,8 +32,8 @@ public class MLSTOCH extends IndicatorAggregator {
     }
 
     public MLSTOCH(IclijConfig conf, String string, String title, int category, 
-            Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
-        super(conf, string, category, title, idNameMap, datareaders, neuralnetcommand);
+            Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates) throws Exception {
+        super(conf, string, category, title, idNameMap, datareaders, neuralnetcommand, stockDates);
     }
 
     private abstract class STOCHSubType extends SubType {

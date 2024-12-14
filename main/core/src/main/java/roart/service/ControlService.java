@@ -215,7 +215,7 @@ public class ControlService {
             */
             
             Aggregator[] aggregates = getAggregates(conf, stockData.periodText,
-                    stockData.marketdatamap, categories, pipelinedata , disableList, stockData.catName, stockData.cat);
+                    stockData.marketdatamap, categories, pipelinedata , disableList, stockData.catName, stockData.cat, stockData.stockdates);
 
             ResultItemTableRow headrow = createHeadRow(categories, new AbstractPredictor[0], aggregates);
             table.add(headrow);
@@ -479,9 +479,9 @@ public class ControlService {
     private Aggregator[] getAggregates(IclijConfig conf, String[] periodText,
             Map<String, MarketData> marketdatamap,
             AbstractCategory[] categories,
-            PipelineData[] datareaders, List<String> disableList, String catName, Integer cat) throws Exception {
+            PipelineData[] datareaders, List<String> disableList, String catName, Integer cat, List<String> stockDates) throws Exception {
         Aggregator[] aggregates = new Aggregator[3];
-        aggregates[0] = new MACDBase(conf, catName, catName, cat, datareaders);
+        aggregates[0] = new MACDBase(conf, catName, catName, cat, datareaders, stockDates);
         aggregates[1] = new AggregatorRecommenderIndicator(conf, catName, marketdatamap, categories, datareaders, disableList);
         aggregates[2] = new RecommenderRSI(conf, catName, marketdatamap, categories);
         /*

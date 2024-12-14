@@ -24,6 +24,8 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.MapOneDim;
 import roart.common.pipeline.data.OneDim;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialObject;
+import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.util.JsonUtil;
 import roart.common.util.PipelineUtils;
 import roart.common.util.TimeUtil;
@@ -270,7 +272,8 @@ public class ComponentPredictor extends ComponentML {
         long goodDec = 0;
         long totalInc = 0;
         long totalDec = 0;
-        for (ResultMeta meta : param.getResultMeta()) {
+        for (SerialObject object : param.getResultMeta().getList()) {
+            SerialResultMeta meta = (SerialResultMeta) object;
             Double testloss = (Double) meta.getLoss();
             for (String key : param.getCategoryValueMap().keySet()) {
                 List<List<Double>> resultList = param.getCategoryValueMap().get(key);
@@ -450,7 +453,8 @@ public class ComponentPredictor extends ComponentML {
         if (param.getResultMeta() == null) {
             return result;
         }
-        for (ResultMeta meta : param.getResultMeta()) {
+        for (SerialObject object : param.getResultMeta().getList()) {
+            SerialResultMeta meta = (SerialResultMeta) object;
             // only different
             Double testaccuracy = meta.getLoss();
             if (testaccuracy != null) {

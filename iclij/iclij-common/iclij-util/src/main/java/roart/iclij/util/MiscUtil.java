@@ -38,6 +38,7 @@ import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.model.TimingItem;
+import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.iclij.config.Market;
@@ -494,6 +495,19 @@ public class MiscUtil {
         String modelname = (String) meta.get(ResultMetaConstants.MODELNAME);
         String subtype = (String) meta.get(ResultMetaConstants.SUBTYPE);
         String subsubtype = (String) meta.get(ResultMetaConstants.SUBSUBTYPE);
+        String subcomponent = mlname + " " + modelname;
+        String localcomponent = null;
+        if (subtype != null) {
+            localcomponent = subtype + subsubtype;
+        }
+        return new ImmutablePair<>(subcomponent, localcomponent);
+    }
+
+    public Pair<String, String> getComponentPair(SerialResultMeta meta) {
+        String mlname = (String) meta.getMlName();
+        String modelname = (String) meta.getModelName();
+        String subtype = (String) meta.getSubType();
+        String subsubtype = (String) meta.getSubSubType();
         String subcomponent = mlname + " " + modelname;
         String localcomponent = null;
         if (subtype != null) {

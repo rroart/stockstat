@@ -13,6 +13,8 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialList;
+import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.model.PipelineResultData;
 import roart.result.model.ResultItemTableRow;
 import roart.result.model.ResultMeta;
@@ -28,7 +30,8 @@ public abstract class AbstractPredictor extends PipelineResultData {
     protected Map<String, Object> accuracyMap;
     protected Map<String, Object> lossMap;
     protected List<Object[]> resultMetaArray;
-    private List<ResultMeta> resultMetas;
+    protected SerialMap resultSMap = new SerialMap();
+    private SerialList resultMetas = new SerialList();
 
     protected NeuralNetCommand neuralnetcommand;
    
@@ -37,16 +40,15 @@ public abstract class AbstractPredictor extends PipelineResultData {
         this.conf = conf;
         this.category = category;
         this.neuralnetcommand = neuralnetcommand;
-        resultMetas = new ArrayList<>();
     }
 
     public abstract boolean isEnabled();
 
-    public List<ResultMeta> getResultMetas() {
+    public SerialList getResultMetas() {
         return resultMetas;
     }
 
-    public void setResultMetas(List<ResultMeta> resultMetas) {
+    public void setResultMetas(SerialList resultMetas) {
         this.resultMetas = resultMetas;
     }
 
@@ -93,10 +95,12 @@ public abstract class AbstractPredictor extends PipelineResultData {
         map.put(PipelineConstants.CATEGORY, category);
         map.put(PipelineConstants.CATEGORYTITLE, title);
         map.put(PipelineConstants.RESULT, resultMap);
-        map.put(PipelineConstants.RESULTMETA, resultMetas);
+        resultSMap.put(PipelineConstants.RESULTMETA, resultMetas);
         map.put(PipelineConstants.RESULTMETAARRAY, resultMetaArray);
         map.put(PipelineConstants.ACCURACY, accuracyMap);
         map.put(PipelineConstants.LOSS, lossMap);
+        map.smap()
+        .put(PipelineConstants.RESULT, resultSMap);
         return map;
     }
 

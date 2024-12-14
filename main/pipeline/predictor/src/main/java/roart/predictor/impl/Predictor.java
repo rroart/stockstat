@@ -33,6 +33,7 @@ import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.util.MathUtil;
 import roart.common.util.PipelineUtils;
 import roart.common.util.JsonUtil;
@@ -248,7 +249,7 @@ public abstract class Predictor extends AbstractPredictor {
                     meta[ResultMetaConstants.MODELNAME] = model.getName();
                     meta[ResultMetaConstants.RETURNSIZE] = model.getReturnSize();
                     resultMetaArray.add(meta);
-                    ResultMeta resultMeta = new ResultMeta();
+                    SerialResultMeta resultMeta = new SerialResultMeta();
                     resultMeta.setMlName(mldao.getName());
                     resultMeta.setModelName(model.getName());
                     resultMeta.setReturnSize(model.getReturnSize());
@@ -259,6 +260,7 @@ public abstract class Predictor extends AbstractPredictor {
                     mlmeta.features = true;
                     String filename = getFilename(mldao, model, "" + conf.getPredictorsDays(), "" + conf.getPredictorsFuturedays(), conf.getConfigData().getMarket(), null);
                     String path = model.getPath();
+                    // predictorsdays is the length to inputs, futuredays are how many days to predict
                     LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, null, map, model, conf.getPredictorsDays(), conf.getPredictorsFuturedays(), mapTime, classifylist, null, path, filename, neuralnetcommand, mlmeta, false);  
                     lossMap.put(mldao.getName() + model.getName(), result.getLoss());
                     meta[ResultMetaConstants.LOSS] = result.getLoss();

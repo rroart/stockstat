@@ -20,8 +20,8 @@ public class MLMulti extends IndicatorAggregator {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public MLMulti(IclijConfig conf, String string, String title, int category, 
-            Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
-        super(conf, string, category, title, idNameMap, datareaders, neuralnetcommand);
+            Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates) throws Exception {
+        super(conf, string, category, title, idNameMap, datareaders, neuralnetcommand, stockDates);
 /*
         if (isEnabled()) {
             calculateMe(conf, periodDataMap, category, categories, datareaders);    

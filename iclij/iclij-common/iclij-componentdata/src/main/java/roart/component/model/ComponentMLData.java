@@ -2,11 +2,12 @@ package roart.component.model;
 
 import java.util.List;
 
+import roart.common.pipeline.data.SerialList;
 import roart.result.model.ResultMeta;
 
 public abstract class ComponentMLData extends ComponentData {
 
-    private List<ResultMeta> resultMeta;
+    private SerialList resultMeta;
 
     private List<List> resultMetaArray;
 
@@ -14,11 +15,11 @@ public abstract class ComponentMLData extends ComponentData {
         super(componentparam);
     }
 
-    public List<ResultMeta> getResultMeta() {
+    public SerialList getResultMeta() {
         return resultMeta;
     }
 
-    public void setResultMeta(List<ResultMeta> resultMeta) {
+    public void setResultMeta(SerialList resultMeta) {
         this.resultMeta = resultMeta;
     }
 

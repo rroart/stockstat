@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Triple;
@@ -39,11 +40,16 @@ import roart.common.ml.NeuralNetConfigs;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialIncDec;
+import roart.common.pipeline.data.SerialList;
+import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.data.TwoDimd;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
+import roart.common.util.MiscUtil;
 import roart.common.util.PipelineUtils;
+import roart.common.util.TimeUtil;
 import roart.executor.MyExecutors;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
@@ -116,11 +122,16 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     protected List<SubType> wantedSubTypes = new ArrayList<>();
 
-    public IndicatorAggregator(IclijConfig conf, String string, int category, String title, Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+    protected List<String> stockDates;
+    
+    protected SerialList sincdecs = new SerialList();
+
+    public IndicatorAggregator(IclijConfig conf, String string, int category, String title, Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates) throws Exception {
         super(conf, string, category);
         this.key = title;
         this.idNameMap = idNameMap;
         this.datareaders = datareaders;
+        this.stockDates = stockDates;
 
         makeMapTypes();
         if (conf.wantML()) {
@@ -225,9 +236,9 @@ public abstract class IndicatorAggregator extends Aggregator {
             }
         }        
         handleOtherStats(conf, mapMap);
-        }
         log.info("time1 {}", (System.currentTimeMillis() - time1));
-        createResultMap(conf, mapResult0);
+        createResultMap(conf, mapResult0, mapMap);
+        }
         handleSpentTime(conf);
 
     }
@@ -367,7 +378,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             Object[] meta = new Object[ResultMetaConstants.SIZE];
                             meta[ResultMetaConstants.RETURNSIZE] = model.getReturnSize();
                             resultMetaArray.add(meta);
-                            ResultMeta resultMeta = new ResultMeta();
+                            SerialResultMeta resultMeta = new SerialResultMeta();
                             resultMeta.setReturnSize(model.getReturnSize());
                             getResultMetas().add(resultMeta);
                             if (model.isPredictorOnly()) {
@@ -658,7 +669,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                 meta[ResultMetaConstants.LEARNMAP] = countMap;
                 meta[ResultMetaConstants.THRESHOLD] = threshold;
 		resultMetaArray.add(meta);
-		ResultMeta resultMeta = new ResultMeta();
+		SerialResultMeta resultMeta = new SerialResultMeta();
 		resultMeta.setMlName(mldao.getName());
 		resultMeta.setModelName(model.getName());
 		resultMeta.setReturnSize(model.getReturnSize());
@@ -757,7 +768,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     private void handleResultMetaAccuracy(int testCount, LearnTestClassifyResult result) {
         Object[] meta = resultMetaArray.get(testCount);
-        ResultMeta resultMeta = getResultMetas().get(testCount);
+        SerialResultMeta resultMeta = (SerialResultMeta) getResultMetas().get(testCount);
         meta[ResultMetaConstants.TESTACCURACY] = result.getAccuracy();
         resultMeta.setTestAccuracy(result.getAccuracy());
         meta[ResultMetaConstants.TRAINACCURACY] = result.getTrainaccuracy();
@@ -767,7 +778,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     }
 
     private void createResultMap(IclijConfig conf,
-            Map<Double, Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>>> mapResult0) {
+            Map<Double, Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>>> mapResult0, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap) {
         for (String id : listMap.keySet()) {
             Object[] fields = new Object[fieldSize];
             resultMap.put(id, fields);
@@ -777,7 +788,6 @@ public abstract class IndicatorAggregator extends Aggregator {
             if (conf.wantML()) {
                 Map<Double, String> labelMapShort2 = createLabelMapShort();
                 //int momidx = 6;
-                Double[] type;
                 Double[] thresholds = getThresholds();
                 for (Double threshold : thresholds) {
                 Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult = mapResult0.get(threshold);
@@ -815,6 +825,40 @@ public abstract class IndicatorAggregator extends Aggregator {
                                 int modelSize = model.getSizes(this);
                                 if (retindex > 28) {
                                     int jj = 0;
+                                }
+                                String type = null;
+                                if (aType != null && stockDates != null) {
+                                    /*
+                                    ComponentInput input = new ComponentInput(myConfig.getConfigData(), null, item.getMarket(), null, null, true, false, new ArrayList<>(), new HashMap<>());
+                                    ComponentData param = null;
+                                    try {
+                                        param = ComponentData.getParam(myConfig, input, 0, market);
+                                    } catch (Exception e) {
+                                        log.error(Constants.EXCEPTION, e);
+                                    }
+                                     */
+                                    
+                                    type = labelMapShort2.get(aType[0]);
+                                    Double prob = aType[1];
+                                    
+                                    String subComponent = MiscUtil.getSubComponent(mldao.getName(), model.getName());
+                                    String localComponent = MiscUtil.getLocalComponent(subType.getType() + mergeTxt(subType), mapType);
+                                    
+                                    Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap2 = mapMap.get(subType).get("offset");
+                                    Map<String, double[]> offsetMap = transformOffsetMap(offsetMap2);
+                                    double[] off = offsetMap.get(id);
+                                    if (off == null) {
+                                        log.error("The offset should not be null for {}", id);
+                                        continue;
+                                    }
+                                    int offsetZero = (int) Math.round(off[0]);
+                                    LocalDate confdate = conf.getConfigData().getDate();
+                                    LocalDate date = TimeUtil.getBackEqualBefore2(confdate, offsetZero, stockDates);
+            
+                                    //int obj = offsetMap.get(id);
+                                    
+                                    SerialIncDec incdec = new SerialIncDec(id, type, prob, subComponent, localComponent, date);
+                                    sincdecs.add(incdec);
                                 }
                                 fields[retindex++] = aType != null ? labelMapShort2.get(aType[0]) : null;
                                 if (model.getReturnSize() > 1) {
@@ -907,7 +951,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         meta[ResultMetaConstants.LEARNMAP] = countMap;
         meta[ResultMetaConstants.CLASSIFYMAP] = classifyMap;
         meta[ResultMetaConstants.OFFSETMAP] = transformOffsetMap(offsetMap);
-        ResultMeta resultMeta = getResultMetas().get(testCount);
+        SerialResultMeta resultMeta = (SerialResultMeta) getResultMetas().get(testCount);
         resultMeta.setOffsetMap((Map) meta[ResultMetaConstants.OFFSETMAP]);
         resultMeta.setClassifyMap(classifyMap);
         resultMeta.setLearnMap(countMap);
@@ -980,7 +1024,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                         meta[5] = countMap;
                         meta[6] = testaccuracy;
                         resultMetaArray.add(meta);
-                        ResultMeta resultMeta = new ResultMeta();
+                        SerialResultMeta resultMeta = new SerialResultMeta();
                         resultMeta.setMlName(mldao.getName());
                         resultMeta.setModelName(model.getName());
                         resultMeta.setReturnSize(model.getReturnSize());
@@ -1224,6 +1268,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                     Map<String, List<Pair<double[], Pair<Object, Double>>>> commonFreshMap = mapGetter(subtypeMap, FRESH + commonType);
                     Map<String, List<Pair<double[], Pair<Object, Double>>>> posnegFreshMap = mapGetter(subtypeMap, FRESH + posnegType);
                     double[] doubleArray = new double[] { (endOfArray - 1) - (end + 1) };
+                    
                     mapGetter4(offsetMap, id).add(new MutablePair(doubleArray, null));
                     mapGetter4(commonFreshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
                     mapGetter4(posnegFreshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
@@ -1305,6 +1350,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                     Map<String, List<Pair<double[], Pair<Object, Double>>>> commonFreshMap = mapGetter(subtypeMap, FRESH + commonType);
                     Map<String, List<Pair<double[], Pair<Object, Double>>>> posnegFreshMap = mapGetter(subtypeMap, FRESH + posnegType);
                     double[] doubleArray = new double[] { (list.length - 1) - (end + 1)};
+                    
                     mapGetter4(offsetMap, id).add(new MutablePair(doubleArray, null));
                     mapGetter4(commonFreshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
                     mapGetter4(posnegFreshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
@@ -2026,5 +2072,11 @@ public abstract class IndicatorAggregator extends Aggregator {
             market = testmarket;
         }
         return market + "_" + getName() + "_" + dao.getName() + "_" + model.getName() + "_" + getFilenamePart() + threshold + "_" + subType + "_" + mapType + "_" + mlmeta.dimString() + in + "_" + out;
+    }
+    
+    public PipelineData putData() {
+        PipelineData data = super.putData();
+        data.smap().put(PipelineConstants.INCDEC, sincdecs);
+        return data;
     }
 }

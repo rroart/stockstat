@@ -21,6 +21,10 @@ import roart.common.model.ConfigItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialIncDec;
+import roart.common.pipeline.data.SerialList;
+import roart.common.pipeline.data.SerialMap;
+import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
@@ -192,7 +196,9 @@ public abstract class ComponentML extends Component {
         param.setResultMetaArray(resultMetaArray);
         //List<ResultMeta> resultMeta = (List<ResultMeta>) mlMACDMaps.get(PipelineConstants.RESULTMETA);
         List<Object> objectList = (List<Object>) mlMaps.get(PipelineConstants.RESULTMETA);
-        List<ResultMeta> resultMeta = JsonUtil.convertnostrip(objectList, new TypeReference<List<ResultMeta>>() { });
+        SerialMap smap = (SerialMap) mlMaps.smap().get(PipelineConstants.RESULT);
+        SerialList resultMeta = (SerialList) smap.get(PipelineConstants.RESULTMETA);
+        //List<ResultMeta> resultMeta = JsonUtil.convertnostrip(objectList, new TypeReference<List<ResultMeta>>() { });
         param.setResultMeta(resultMeta);
     }
 
@@ -405,6 +411,51 @@ public abstract class ComponentML extends Component {
             }
             if (aTest.getSubcomponent().equals(pair.getLeft())) {
                 if (aTest.getLocalcomponent() == null || aTest.getLocalcomponent().equals(pair.getRight())) {
+                    return aTest;
+                }
+            }
+        }
+        return null;
+    }
+
+    protected MLMetricsItem search(List<MLMetricsItem> mlTests, SerialResultMeta meta) {
+        Pair<String, String> pair = new MiscUtil().getComponentPair(meta);
+        if (mlTests == null) {
+            MLMetricsItem test = new MLMetricsItem();
+            test.setComponent(getPipeline());
+            test.setSubcomponent(pair.getLeft());
+            test.setLocalcomponent(pair.getRight());
+            test.setTestAccuracy(1.0);
+            return test;
+        }
+        for (MLMetricsItem aTest : mlTests) {
+            if (!aTest.getComponent().equals(getPipeline())) {
+                continue;
+            }
+            if (aTest.getSubcomponent().equals(pair.getLeft())) {
+                if (aTest.getLocalcomponent() == null || aTest.getLocalcomponent().equals(pair.getRight())) {
+                    return aTest;
+                }
+            }
+        }
+        return null;
+    }
+
+    protected MLMetricsItem search(List<MLMetricsItem> mlTests, SerialIncDec incdec) {
+        if (mlTests == null) {
+            MLMetricsItem test = new MLMetricsItem();
+            test.setComponent(getPipeline());
+            test.setSubcomponent(incdec.getSubComponent());
+            test.setLocalcomponent(incdec.getLocalComponent());
+            test.setTestAccuracy(1.0);
+            return test;
+        }
+        for (MLMetricsItem aTest : mlTests) {
+            if (!aTest.getComponent().equals(getPipeline())) {
+                continue;
+            }
+            if (aTest.getSubcomponent().equals(incdec.getSubComponent())) {
+                if (aTest.getLocalcomponent() == null || aTest.getLocalcomponent().equals(incdec.getLocalComponent())) {
                     return aTest;
                 }
             }

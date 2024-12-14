@@ -118,7 +118,7 @@ public class ControlService {
             new ServiceUtil().calculatePredictors(predictors);
             
             Aggregator[] aggregates = getAggregates(conf, pipelineData,
-                    disableList, stockData.idNameMap, stockData.catName, stockData.cat, neuralnetcommand);
+                    disableList, stockData.idNameMap, stockData.catName, stockData.cat, neuralnetcommand, stockData.stockdates);
 
             /*
             for (AbstractCategory category : categories) {
@@ -237,18 +237,18 @@ public class ControlService {
     private Aggregator[] getAggregates(IclijConfig conf, PipelineData[] pipelineData,
             List<String> disableList,
             Map<String, String> idNameMap,
-            String catName, Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
+            String catName, Integer cat, NeuralNetCommand neuralnetcommand, List<String> stockDates) throws Exception {
         Aggregator[] aggregates = new Aggregator[10];
-        aggregates[0] = new MACDBase(conf, catName, catName, cat, pipelineData);
+        aggregates[0] = new MACDBase(conf, catName, catName, cat, pipelineData, stockDates);
         //aggregates[1] = new AggregatorRecommenderIndicator(conf, catName, marketdatamap, categories, pipelineData, disableList);
         //aggregates[2] = new RecommenderRSI(conf, catName, marketdatamap, categories);
-        aggregates[3] = new MLMACD(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand);
-        aggregates[4] = new MLRSI(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand);
-        aggregates[5] = new MLATR(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand);
-        aggregates[6] = new MLCCI(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand);
-        aggregates[7] = new MLSTOCH(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand);
-        aggregates[8] = new MLMulti(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand);
-        aggregates[9] = new MLIndicator(conf, catName, catName, cat, pipelineData, neuralnetcommand);
+        aggregates[3] = new MLMACD(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand, stockDates);
+        aggregates[4] = new MLRSI(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand, stockDates);
+        aggregates[5] = new MLATR(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand, stockDates);
+        aggregates[6] = new MLCCI(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand, stockDates);
+        aggregates[7] = new MLSTOCH(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand, stockDates);
+        aggregates[8] = new MLMulti(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand, stockDates);
+        aggregates[9] = new MLIndicator(conf, catName, catName, cat, pipelineData, neuralnetcommand, stockDates);
         log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.MACHINELEARNING));
         log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.AGGREGATORSMLMACD));
         log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.INDICATORSMACD));
