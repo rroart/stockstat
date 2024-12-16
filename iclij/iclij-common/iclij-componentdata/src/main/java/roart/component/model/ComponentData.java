@@ -381,11 +381,12 @@ public class ComponentData {
         PipelineData[] result = getService().getContent(useMl);
         this.resultMaps = result;
         try {
+            // TODO needed where, reread?
             List<String> stockdates = (List<String>) PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.DATELIST);
             this.setStockDates(stockdates);
-            Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.LIST)));
+            Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.LIST)));
             this.setCategoryValueMap(aCategoryValueMap);
-            Map<String, List<List<Double>>> aFillCategoryValueMap = MapUtil.convertA2L(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.FILLLIST)));
+            Map<String, List<List<Double>>> aFillCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.FILLLIST)));
             this.setFillCategoryValueMap(aFillCategoryValueMap);
             Map<String, List<List<Object>>> aVolumeMap = (Map<String, List<List<Object>>>) PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.VOLUME);
             this.setVolumeMap(aVolumeMap);
@@ -425,9 +426,9 @@ public class ComponentData {
             String cat = (String) PipelineUtils.getPipeline(result, PipelineConstants.META).get(PipelineConstants.CATEGORY);
             List<String> stockdates = (List<String>) PipelineUtils.getPipeline(result, cat).get(PipelineConstants.DATELIST);
             this.setStockDates(stockdates);
-            Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) PipelineUtils.getPipeline(result, cat).get(PipelineConstants.LIST)));
+            Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, cat).get(PipelineConstants.LIST)));
             this.setCategoryValueMap(aCategoryValueMap);
-            Map<String, List<List<Double>>> aFillCategoryValueMap = MapUtil.convertA2L(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) PipelineUtils.getPipeline(result, cat).get(PipelineConstants.FILLLIST)));
+            Map<String, List<List<Double>>> aFillCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, cat).get(PipelineConstants.FILLLIST)));
             this.setFillCategoryValueMap(aFillCategoryValueMap);
             InmemoryMessage msg = null;
             Map<String, List<List<Object>>> aVolumeMap = (Map<String, List<List<Object>>>) PipelineUtils.getPipeline(result, cat).get(PipelineConstants.VOLUME);
