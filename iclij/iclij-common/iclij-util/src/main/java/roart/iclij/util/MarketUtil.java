@@ -150,7 +150,7 @@ public class MarketUtil {
                 } else {
                     threshold = market.getFilter().getDecthreshold();
                 }
-                Map<String, TwoDimD> listMap3 = getCategoryList(maps, category);
+                Map<String, List<List<Double>>> listMap3 = getCategoryList(maps, category);
                 Map<String, IncDecItem> buysFilter = incdecFilterOnIncreaseValue(market, inc ? profitdata.getBuys() : profitdata.getSells(), maps, threshold, categoryMap,
                         listMap3, offsetDays, inc);
                 if (inc) {
@@ -164,7 +164,7 @@ public class MarketUtil {
     
     public Map<String, IncDecItem> incdecFilterOnIncreaseValue(Market market, Map<String, IncDecItem> incdecs,
             PipelineData[] maps, Double threshold, PipelineData categoryMap,
-            Map<String, TwoDimD> listMap3, Integer offsetDays, boolean inc) {
+            Map<String, List<List<Double>>> listMap3, Integer offsetDays, boolean inc) {
         Map<String, IncDecItem> incdecsFilter = new HashMap<>();
         for(IncDecItem item : incdecs.values()) {
             String key = item.getId();
@@ -178,11 +178,11 @@ public class MarketUtil {
                 log.debug("market null map {}", market.getConfig().getMarket());
                 continue;
             }
-            TwoDimD list = listMap3.get(key);
+            List<List<Double>> list = listMap3.get(key);
             if (list == null) {
                 continue;
             }
-            List<Double> list0 = Arrays.asList(list.get(0));
+            List<Double> list0 = list.get(0);
             Double value = null;
             if (offsetDays == null) {
                 value = list0.get(list0.size() - 1);
@@ -210,7 +210,7 @@ public class MarketUtil {
         return incdecsFilter;
     }
 
-    public Map<String, TwoDimD> getCategoryList(PipelineData[] maps, String category) {
+    public Map<String, List<List<Double>>> getCategoryList(PipelineData[] maps, String category) {
         String newCategory = null;
         if (Constants.PRICE.equals(category)) {
             newCategory = "" + Constants.PRICECOLUMN;
@@ -220,13 +220,13 @@ public class MarketUtil {
         }
         if (newCategory != null) {
             PipelineData map = PipelineUtils.getPipeline(maps, newCategory);
-            return (Map) MapUtil.convertA2L(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) map.get(PipelineConstants.LIST)));
+            return MapUtil.convertA2L(PipelineUtils.sconvertMapDD(map.get(PipelineConstants.LIST)));
         }
-        Map<String, TwoDimD> listMap3 = null;
+        Map<String, List<List<Double>>> listMap3 = null;
         for (Entry<String, PipelineData> entry : PipelineUtils.getPipelineMap(maps).entrySet()) {
             PipelineData map = entry.getValue();
             if (category.equals(map.get(PipelineConstants.CATEGORYTITLE))) {
-                listMap3 = (Map<String, TwoDimD>) map.get(PipelineConstants.LIST);
+                listMap3 = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(map.get(PipelineConstants.LIST)));
             }
         }
         return listMap3;

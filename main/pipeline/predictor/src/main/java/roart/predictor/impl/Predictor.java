@@ -159,10 +159,10 @@ public abstract class Predictor extends AbstractPredictor {
             log.info("empty {}", category);
             return;
         }
-        this.listMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST));
-        this.fillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.FILLLIST));
+        this.listMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
+        this.fillListMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.FILLLIST));
         //this.truncListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCLIST));       
-        this.truncFillListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCFILLLIST));       
+        this.truncFillListMap = PipelineUtils.sconvertMapdd(datareader.get(PipelineConstants.TRUNCFILLLIST));       
         //this.base100ListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.BASE100LIST));
         //this.base100FillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.BASE100FILLLIST));
         //this.truncBase100ListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCBASE100LIST));       
@@ -452,6 +452,9 @@ public abstract class Predictor extends AbstractPredictor {
     }
 
     protected boolean anythingHereA(Map<String, Double[][]> myListMap) {
+        if (myListMap == null) {
+            return false;
+        }
         for (Double[][] array : myListMap.values()) {
             for (int i = 0; i < array[0].length; i++) {
                 if (array[0][i] != null) {
@@ -463,6 +466,9 @@ public abstract class Predictor extends AbstractPredictor {
     }
 
     protected boolean anythingHere(Map<String, List<List<Double>>> listMap2) {
+        if (listMap2 == null) {
+            return false;
+        }
         for (List<List<Double>> array : listMap2.values()) {
             for (int i = 0; i < array.get(0).size(); i++) {
                 if (array.get(0).get(i) != null) {
@@ -474,6 +480,9 @@ public abstract class Predictor extends AbstractPredictor {
     }
 
     private boolean anythingHereNot(Map<String, Double[][]> listMap2) {
+        if (listMap2 == null) {
+            return false;
+        }
         for (Double[][] array : listMap2.values()) {
             for (int i = 0; i < array[0].length; i++) {
                 if (array[0][i] != null) {
@@ -556,7 +565,7 @@ public abstract class Predictor extends AbstractPredictor {
     public boolean hasValue() {
         Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
         PipelineData datareader = pipelineMap.get(key);
-        return anythingHereA(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST)));
+        return anythingHereA(PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST)));
     }
     
     @Override

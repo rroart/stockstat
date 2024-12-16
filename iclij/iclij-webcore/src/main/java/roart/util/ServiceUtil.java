@@ -959,6 +959,9 @@ public class ServiceUtil {
 
     @Deprecated
     private static boolean anythingHere3(Map<String, List<List<Double>>> listMap2, int size) {
+        if (listMap2 == null) {
+            return false;
+        }
         for (List<List<Double>> array : listMap2.values()) {
             if (size != Constants.OHLC || size != array.size()) {
                 return false;

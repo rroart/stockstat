@@ -17,8 +17,12 @@ import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialDouble;
 import roart.common.pipeline.data.SerialInteger;
 import roart.common.pipeline.data.SerialMap;
+import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialOneDim;
 import roart.common.pipeline.data.SerialString;
+import roart.common.pipeline.data.SerialMapDD;
+import roart.common.pipeline.data.SerialMapdd;
+import roart.common.pipeline.data.TwoDimD;
 import roart.common.util.ArraysUtil;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -129,7 +133,7 @@ public class PipelineUtilsTest {
         data.getMap().put("key", "value");
         SerialOneDim array = new SerialOneDim();
         array.array = new Integer[] { 1, 2, 3 };
-        SerialMap map = data.smap();
+        PipelineData map = data;
         //map.list = List.of(List.of(11, "blbl"));
         SerialMap map2 = new SerialMap();
         map2.put("a", array);
@@ -143,6 +147,16 @@ public class PipelineUtilsTest {
         SerialDouble d = new SerialDouble();
         d.adouble = 3.14;
         map2.put("d", d);
+        
+        TwoDimD twodimd = new TwoDimD(new Double[][] { { 1.0,2.0} , { 3.0, 4.0 } });
+        map.put("dim1", twodimd);
+        map.put("dim", PipelineUtils.sconvertDD(Map.of("k1", new Double[][] { { 1.0,2.0} , { 3.0, 4.0 } })));
+        SerialMapPlain smapplain = new SerialMapPlain(Map.of("k1", new Double[][] { { 1.0,2.0} , { 3.0, 4.0 } }));
+        map.put("dim2", smapplain);
+        SerialMapDD sDD = new SerialMapDD(Map.of("k1", new Double[][] { { 1.0,2.0} , { 3.0, 4.0 } }));
+        map.put("dim3", sDD);
+        SerialMapdd sdd = new SerialMapdd(Map.of("k1", new double[][] { { 1.0,2.0} , { 3.0, 4.0 } }));
+        map.put("dim4", sdd);
         //map2.list = List.of(List.of(1, map));
         //Object o = (Object) map2;
         //System.out.println("Obj" + JsonUtil.convert(o));
@@ -167,7 +181,18 @@ public class PipelineUtilsTest {
         assertEquals(json, newjson);
         assertEquals(json2, newjson2);
         
+        System.out.println(data2.get("dim2").getClass().getCanonicalName());
+        // not equals
+        System.out.println(((SerialMapPlain)data.get("dim2")).get("k1").getClass().getCanonicalName());
+        System.out.println(((SerialMapPlain)data2.get("dim2")).get("k1").getClass().getCanonicalName());
+        // equals
+        System.out.println(((SerialMap)data.get("dim")).get("k1").getClass().getCanonicalName());
+        System.out.println(((SerialMap)data2.get("dim")).get("k1").getClass().getCanonicalName());
         //List<OneDim> lo2 = JsonUtil.convert
+        System.out.println(((SerialMapDD)data.get("dim3")).get("k1").getClass().getCanonicalName());
+        System.out.println(((SerialMapDD)data2.get("dim3")).get("k1").getClass().getCanonicalName());
+        System.out.println(((SerialMapdd)data.get("dim4")).get("k1").getClass().getCanonicalName());
+        System.out.println(((SerialMapdd)data2.get("dim4")).get("k1").getClass().getCanonicalName());
     }
     
     

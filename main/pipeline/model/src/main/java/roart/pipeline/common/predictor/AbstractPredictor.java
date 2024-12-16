@@ -95,12 +95,12 @@ public abstract class AbstractPredictor extends PipelineResultData {
         map.put(PipelineConstants.CATEGORY, category);
         map.put(PipelineConstants.CATEGORYTITLE, title);
         map.put(PipelineConstants.RESULT, resultMap);
-        resultSMap.put(PipelineConstants.RESULTMETA, resultMetas);
+        map.put(PipelineConstants.RESULTMETA, resultMetas);
         map.put(PipelineConstants.RESULTMETAARRAY, resultMetaArray);
         map.put(PipelineConstants.ACCURACY, accuracyMap);
+        // TODO unused
         map.put(PipelineConstants.LOSS, lossMap);
-        map.smap()
-        .put(PipelineConstants.RESULT, resultSMap);
+        //map.smap().put(PipelineConstants.RESULT, resultSMap);
         return map;
     }
 

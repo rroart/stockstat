@@ -275,7 +275,7 @@ public class MLIndicator extends Aggregator {
 
         Map<String, List<AggregatorMLIndicator>> usedIndicators = AggregatorMLIndicator.getUsedAggregatorMLIndicators(conf);
         Set<String> ids = new HashSet<>();
-        Map<String, Double[][]> list0 = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST));
+        Map<String, Double[][]> list0 = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
         ids.addAll(list0.keySet());
         List<String> indicators = getIndicators(datareaders, usedIndicators, ids);
         log.info("INDIC" + usedIndicators.values().iterator().next().stream().map(AggregatorMLIndicator::indicator).toList());
@@ -688,7 +688,7 @@ public class MLIndicator extends Aggregator {
                 String indicatorName = indicator;
                 PipelineData indicatorResult = PipelineUtils.getPipeline(datareaders, indicatorName);
                 if (indicatorResult != null) {
-                    Map<String, Double[][]> aListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST));
+                    Map<String, Double[][]> aListMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
                     Double[][] aResult = aListMap.get(id);
                     arrayResult = ArrayUtils.addAll(arrayResult, aResult[0]);
                 }
@@ -814,7 +814,7 @@ public class MLIndicator extends Aggregator {
                 if (indicatorResult != null) {
                     indicators.add(indicator);
                     PipelineData datareader = pipelineMap.get(this.key);
-                    Map<String, Double[][]> aResult = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST));
+                    Map<String, Double[][]> aResult = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
                     //Map<String, Object[]> aResult = (Map<String, Object[]>) indicatorResult.get(PipelineConstants. LIST);
                     ids.retainAll(aResult.keySet());
                 } else {
@@ -826,6 +826,9 @@ public class MLIndicator extends Aggregator {
     }
 
     private boolean anythingHereA(Map<String, Double[][]> listMap2) {
+        if (listMap2 == null) {
+            return false;
+        }
         for (Double[][] array : listMap2.values()) {
             for (int i = 0; i < array.length; i++) {
                 int len = array[i].length;
@@ -841,6 +844,9 @@ public class MLIndicator extends Aggregator {
     }
 
     protected boolean anythingHere(Map<String, List<List<Double>>> listMap2) {
+        if (listMap2 == null) {
+            return false;
+        }
         for (List<List<Double>> array : listMap2.values()) {
             for (int i = 0; i < array.get(0).size(); i++) {
                 if (array.get(0).get(i) != null) {

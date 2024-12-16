@@ -42,9 +42,9 @@ public class MACDBase extends Aggregator {
             log.info("empty {}", category);
             return;
         }
-        Map<String, Double[][]> aListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST));
-        Map<String, double[][]> fillListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCFILLLIST));
-        Map<String, double[][]>  base100FillListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>)  datareader.get(PipelineConstants.TRUNCBASE100FILLLIST));
+        Map<String, Double[][]> aListMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
+        Map<String, double[][]> fillListMap = PipelineUtils.sconvertMapdd(datareader.get(PipelineConstants.TRUNCFILLLIST));
+        Map<String, double[][]>  base100FillListMap = PipelineUtils.sconvertMapdd(datareader.get(PipelineConstants.TRUNCBASE100FILLLIST));
         this.listMap = fillListMap;
     }
 

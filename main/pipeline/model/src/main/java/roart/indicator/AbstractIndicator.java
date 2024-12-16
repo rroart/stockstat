@@ -20,6 +20,7 @@ import roart.common.constants.Constants;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.util.MathUtil;
 import roart.common.util.PipelineUtils;
@@ -63,6 +64,8 @@ public abstract class AbstractIndicator extends Calculatable {
     protected Map<String, Map<String, Object[]>> marketObjectMap;
     protected Map<String, Map<String, Object[]>> marketResultMap;
     protected Map<String, Map<String, Double[]>> marketCalculatedMap;
+
+    protected SerialMap resultSMap = new SerialMap();
 
     public AbstractIndicator(IclijConfig conf, String string, int category) {
         this.title = string;
@@ -133,13 +136,20 @@ public abstract class AbstractIndicator extends Calculatable {
         map.setName(indicatorName());
         map.put(PipelineConstants.RESULT, calculatedMap);
         map.put(PipelineConstants.OBJECT, objectMap);
+        // TODO unused
         map.put(PipelineConstants.OBJECTFIXED, objectFixedMap);
         //map.put(PipelineConstants.LIST, listMap);
         //map.put(PipelineConstants.TRUNCLIST, truncListMap);
         map.put(PipelineConstants.RESULT, calculatedMap);
+        
+        // market as key
+        // raw calculations
         map.put(PipelineConstants.MARKETOBJECT, marketObjectMap);
+        // prep for web?
         map.put(PipelineConstants.MARKETCALCULATED, marketCalculatedMap);
+        // result for web table
         map.put(PipelineConstants.MARKETRESULT, marketResultMap);
+        //map.smap().put(PipelineConstants.RESULT, resultSMap);
         return map;
     }
 
@@ -157,6 +167,9 @@ public abstract class AbstractIndicator extends Calculatable {
 
 
     public boolean anythingHereA(Map<String, double[][]> listMap) {
+        if (listMap == null) {
+            return false;
+        }
         for (double[][] array : listMap.values()) {
             if (array[0].length > 0) {
                 return true;
@@ -166,6 +179,9 @@ public abstract class AbstractIndicator extends Calculatable {
     }
 
     public boolean anythingHere(Map<String, Double[][]> listMap2) {
+        if (listMap2 == null) {
+            return false;
+        }
         for (Double[][] array : listMap2.values()) {
             for (int i = 0; i < array[0].length; i++) {
                 if (array[0][i] != null) {
@@ -177,6 +193,9 @@ public abstract class AbstractIndicator extends Calculatable {
     }
 
     protected boolean anythingHere3(Map<String, Double[][]> listMap2) {
+        if (listMap2 == null) {
+            return false;
+        }
         for (Double[][] array : listMap2.values()) {
             if (array.length != Constants.OHLC) {
                 return false;
@@ -249,7 +268,7 @@ public abstract class AbstractIndicator extends Calculatable {
     }
 
     protected Map<String, Double[][]> getListMap() {
-        return PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST));
+        return PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
     }
 
     public String getKey() {

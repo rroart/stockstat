@@ -177,9 +177,9 @@ public abstract class IndicatorAggregator extends Aggregator {
             log.info("empty {}", category);
             return;
         }
-        Map<String, Double[][]> aListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST));
-        Map<String, double[][]> fillListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCFILLLIST));
-        Map<String, double[][]>  base100FillListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCBASE100FILLLIST)) ;
+        Map<String, Double[][]> aListMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
+        Map<String, double[][]> fillListMap = PipelineUtils.sconvertMapdd(datareader.get(PipelineConstants.TRUNCFILLLIST));
+        Map<String, double[][]>  base100FillListMap = PipelineUtils.sconvertMapdd(datareader.get(PipelineConstants.TRUNCBASE100FILLLIST)) ;
         // TODO
         this.listMap = /*conf.wantPercentizedPriceIndex() ? base100FillListMap :*/ fillListMap;
 
@@ -260,6 +260,9 @@ public abstract class IndicatorAggregator extends Aggregator {
     }
 
     protected boolean anythingHereA(Map<String, Double[][]> listMap2) {
+        if (listMap2 == null) {
+            return false;
+        }
         for (Double[][] array : listMap2.values()) {
             for (int i = 0; i < array[0].length; i++) {
                 if (array[0][i] != null) {
@@ -271,6 +274,9 @@ public abstract class IndicatorAggregator extends Aggregator {
     }
 
     protected boolean anythingHere(Map<String, List<List<Double>>> listMap2) {
+        if (listMap2 == null) {
+            return false;
+        }
         for (List<List<Double>> array : listMap2.values()) {
             for (int i = 0; i < array.get(0).size(); i++) {
                 if (array.get(0).get(i) != null) {
@@ -282,6 +288,9 @@ public abstract class IndicatorAggregator extends Aggregator {
     }
 
     protected boolean anythingHere3(Map<String, List<List<Double>>> listMap2) {
+        if (listMap2 == null) {
+            return false;
+        }
         for (List<List<Double>> array : listMap2.values()) {
             if (array.size() != Constants.OHLC) {
                 return false;
@@ -300,6 +309,9 @@ public abstract class IndicatorAggregator extends Aggregator {
     }
 
     protected boolean anythingHere3A(Map<String, Double[][]> listMap2) {
+        if (listMap2 == null) {
+            return false;
+        }
         for (Double[][] array : listMap2.values()) {
             if (array.length != Constants.OHLC) {
                 return false;
@@ -318,6 +330,9 @@ public abstract class IndicatorAggregator extends Aggregator {
     }
 
     private boolean anythingHereNot(Map<String, Double[][]> listMap) {
+        if (listMap == null) {
+            return false;
+        }
         for (Double[][] array : listMap.values()) {
             for (int i = 0; i < array.length; i++) {
                 int len = array[i].length;
@@ -333,6 +348,9 @@ public abstract class IndicatorAggregator extends Aggregator {
     }
 
     private boolean anythingHere2(Map<String, Double[]> listMap) {
+        if (listMap == null) {
+            return false;
+        }
         for (Double[] array : listMap.values()) {
             for (int i = 0; i < array.length; i++) {
                 if (array[i] != null) {
@@ -2076,7 +2094,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     
     public PipelineData putData() {
         PipelineData data = super.putData();
-        data.smap().put(PipelineConstants.INCDEC, sincdecs);
+        data.put(PipelineConstants.INCDEC, sincdecs);
         return data;
     }
 }

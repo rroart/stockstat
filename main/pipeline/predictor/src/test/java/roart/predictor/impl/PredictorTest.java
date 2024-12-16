@@ -57,7 +57,11 @@ public class PredictorTest {
             System.out.println("mark" + conf.getConfigData().getMarket());
             datareaders[0] = new DataReader(conf, stockdata.marketdatamap, Constants.INDEXVALUECOLUMN, TestConstants.MARKET).putData();
 
-            Predictor predictor = new PredictorTensorflowMLP(conf, Constants.INDEX + " MLP", Constants.INDEX, Constants.INDEXVALUECOLUMN, datareaders, neuralnetcommand);
+            List<Predictor> predictors = List.of( 
+                    new PredictorTensorflowMLP(conf, Constants.INDEX + " MLP", Constants.INDEX, Constants.INDEXVALUECOLUMN, datareaders, neuralnetcommand),
+                    new PredictorTensorflowRNN(conf, Constants.INDEX + " RNN", Constants.INDEX, Constants.INDEXVALUECOLUMN, datareaders, neuralnetcommand)
+                    );
+            for (Predictor predictor : predictors) {
             int days = predictor.getDays(aListMap, aTruncListMap);
             List<LearnClassify> map = predictor.getMap(aListMap, aTruncListMap, days);
             List<LearnClassify> classifylist = predictor.getClassifyList(conf, aListMap, aTruncListMap);
@@ -75,6 +79,7 @@ public class PredictorTest {
                 //System.out.println(resultmap.keySet());
             }
             assertNotNull(pipelinedata);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

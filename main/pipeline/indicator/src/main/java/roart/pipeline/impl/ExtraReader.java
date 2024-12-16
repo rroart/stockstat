@@ -340,7 +340,7 @@ public class ExtraReader extends Pipeline {
             List<String> dateList = (List<String>) datareader.get(PipelineConstants.DATELIST);
             int dateIndex = dateList.indexOf(date);
             int prevDateIndex = dateList.indexOf(prevDate);
-            Map<String, Double[][]> fillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.FILLLIST));
+            Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.FILLLIST));
             Object[] arr = null;
             Double[][] fillList = fillListMap.get(entry.getId());
             Double value = fillList[0][dateIndex];
@@ -390,7 +390,7 @@ public class ExtraReader extends Pipeline {
             List<String> dateList = (List<String>) datareader.get(PipelineConstants.DATELIST);
             int dateIndex = dateList.size() - dateList.indexOf(commonDate);
             int prevDateIndex = dateList.indexOf(prevDate);
-            Map<String, Double[][]> fillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.FILLLIST));
+            Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.FILLLIST));
             Object[] arr = null;
             Double[][] fillList = fillListMap.get(entry.getId());
             dateIndex = fillList[0].length - dateIndex;

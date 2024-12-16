@@ -74,6 +74,9 @@ public class MapUtil {
 
     public static Map<String, List<List<Double>>> convertA2L(Map<String, Double[][]> map) {
         Map<String, List<List<Double>>> newMap = new HashMap<>();
+        if (map == null) {
+            return newMap;
+        }
         for (Entry<String, Double[][]> entry : map.entrySet()) {
             newMap.put(entry.getKey(), ArraysUtil.convertA2L(entry.getValue()));
         }

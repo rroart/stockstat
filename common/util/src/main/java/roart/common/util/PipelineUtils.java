@@ -17,6 +17,11 @@ import roart.common.pipeline.data.OneDim;
 import roart.common.pipeline.data.OneDimD;
 import roart.common.pipeline.data.OneDimd;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMap;
+import roart.common.pipeline.data.SerialMapDD;
+import roart.common.pipeline.data.SerialMapPlain;
+import roart.common.pipeline.data.SerialMapdd;
+import roart.common.pipeline.data.SerialObject;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.data.TwoDimd;
 
@@ -43,6 +48,9 @@ public class PipelineUtils {
 
     public static PipelineData getPipeline(PipelineData[] datareaders, String name) {
         for (PipelineData datareader : datareaders) {
+            if (name == null) {
+                int jj = 0;
+            }
             if (name.equals(datareader.getName())) {
                 return datareader;
             }
@@ -94,6 +102,58 @@ public class PipelineUtils {
         return newMap;
     }
     
+    public static SerialMap sconvertdd(Map<String, double[][]> map) {
+        SerialMap newMap = new SerialMap();
+        if (map == null) {
+            return newMap;
+        }
+        for (Entry<String, double[][]> entry : map.entrySet()) {
+            newMap.put(entry.getKey(), new TwoDimd(entry.getValue()));
+        }
+        return newMap;
+    }
+
+    public static SerialMap sconvertDD(Map<String, Double[][]> map) {
+        SerialMap newMap = new SerialMap();
+        if (map == null) {
+            return newMap;
+        }
+        for (Entry<String, Double[][]> entry : map.entrySet()) {
+            newMap.put(entry.getKey(), new TwoDimD(entry.getValue()));
+        }
+        return newMap;
+    }
+    
+    public static SerialMapPlain sconvertplaindd(Map<String, double[][]> map) {
+        return new SerialMapPlain(map);
+    }
+
+    public static SerialMapPlain sconvertplainDD(Map<String, Double[][]> map) {
+        return new SerialMapPlain(map);
+    }
+    
+    public static Map<String, Double[][]> sconvertTwoDimD(Object object) {
+        SerialMap serialmap = (SerialMap) object;
+        Map map = serialmap.getMap();
+        return convertTwoDimD(map);
+    }
+
+    public static Map<String, Double[][]> sconvertTwoDimd(Object object) {
+        SerialMap serialmap = (SerialMap) object;
+        Map map = serialmap.getMap();
+        return convertTwoDimd(map);
+    }
+
+    public static Map<String, Double[][]> sconvertMapDD(Object object) {
+        SerialMapDD serialmap = (SerialMapDD) object;
+        return serialmap.getMap();
+    }
+
+    public static Map<String, double[][]> sconvertMapdd(Object object) {
+        SerialMapdd serialmap = (SerialMapdd) object;
+        return serialmap.getMap();
+    }
+
     public static Map<String, double[]> convertOneDimd(Map<String, OneDimd> map) {
         Map<String, double[]> newMap = new HashMap<>();
         if (map == null) {
@@ -349,5 +409,4 @@ public class PipelineUtils {
         }
         log.info("Total Size {}", total);
     }
-
 }

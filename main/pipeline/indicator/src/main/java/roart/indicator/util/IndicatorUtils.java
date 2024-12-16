@@ -173,7 +173,7 @@ public class IndicatorUtils {
             Map<String, Object[]> objMap = (Map<String, Object[]>) resultMap.get(PipelineConstants.OBJECT);
             if (objMap != null) {
                 objectMapsList.add(objMap);
-                listList.add(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) resultMap.get(PipelineConstants.LIST)));
+                listList.add(PipelineUtils.sconvertMapDD(resultMap.get(PipelineConstants.LIST)));
                 arraySize += 0; // indicator.getResultSize();
                 log.debug("Sizes {}", listList.get(listList.size() - 1).size());
             }
@@ -429,7 +429,7 @@ public class IndicatorUtils {
             Map<String, Object[]> objMap = (Map<String, Object[]>) resultMap.get(PipelineConstants.OBJECT);
             if (objMap != null) { 
                 objectMapsList.add(objMap);
-                Map<String, Double[][]> list0 = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST));
+                Map<String, Double[][]> list0 = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
                 listList.add(list0);
                 AbstractIndicator indicator = dummyfactory(conf, indicatorName);
                 arraySize += indicator.getResultSize();
@@ -484,7 +484,7 @@ public class IndicatorUtils {
                     datareader = pipelineMap.get(Constants.PRICE);
                     log.debug("TODO temp workaround");
                 }
-            Map<String, Double[][]> fillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.FILLLIST));
+            Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.FILLLIST));
                 Double[][] fillList = fillListMap.get(entry.getId());
                 // null
                 if (fillList == null || fillList[0] == null) {

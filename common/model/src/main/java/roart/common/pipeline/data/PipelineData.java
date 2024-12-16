@@ -50,10 +50,17 @@ public class PipelineData {
     }
 
     public void put(String key, Object object) {
+        if (object instanceof SerialObject serialobject) {
+            smap.put(key, serialobject);
+            return;
+        }
         map.put(key, object);
     }
     
     public Object get(String key) {
+        if (smap.containsKey(key)) {
+            return smap.get(key);
+        }
         return map.get(key);
     }
 
@@ -74,6 +81,7 @@ public class PipelineData {
         this.smap = smap;
     }
 
+    @Deprecated
     public SerialMap smap() {
         return smap;
     }

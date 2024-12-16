@@ -111,11 +111,11 @@ public abstract class Indicator extends AbstractIndicator {
                 datareader = mypipelineMap.get(Constants.PRICE);
                 log.debug("TODO temp workaround");
             }
-            Map<String, Double[][]> fillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.FILLLIST));
-            Map<String, double[][]> truncFillListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCFILLLIST));
+            Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.FILLLIST));
+            Map<String, double[][]> truncFillListMap = PipelineUtils.sconvertMapdd(datareader.get(PipelineConstants.TRUNCFILLLIST));
             Object[] arr = null;
-            Double[][] fillList0 = fillListMap.get(ms.getId());
-            double[][] fillList = truncFillListMap.get(ms.getId());
+            //Double[][] fillList0 = fillListMap.get(ms.getId());
+            double[][] fillList = truncFillListMap != null ? truncFillListMap.get(ms.getId()) : null;
             if (fillList != null) {
                 aListMap.put(ms.getId(), fillList);
             }
@@ -179,8 +179,8 @@ public abstract class Indicator extends AbstractIndicator {
         if (wantPercentizedPriceIndex() != null) {
             //wantPercentizedPriceIndex = wantPercentizedPriceIndex();
         }
-        Map<String, double[][]> truncFillListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCFILLLIST));       
-        Map<String, double[][]> truncBase100FillListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCBASE100FILLLIST));
+        Map<String, double[][]> truncFillListMap = PipelineUtils.sconvertMapdd(datareader.get(PipelineConstants.TRUNCFILLLIST));       
+        Map<String, double[][]> truncBase100FillListMap = PipelineUtils.sconvertMapdd(datareader.get(PipelineConstants.TRUNCBASE100FILLLIST));
         List<Map> resultList = getMarketCalcResults(wantPercentizedPriceIndex ? truncBase100FillListMap : truncFillListMap);
         objectMap = resultList.get(0);
         calculatedMap = resultList.get(1);

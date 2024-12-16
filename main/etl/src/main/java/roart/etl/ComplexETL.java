@@ -46,8 +46,8 @@ public class ComplexETL {
                 Pipeline datareader = pipelineMap.get("" + cat); // used id 0-9
                 // interpolation does not work yet
                 List<String> datelist = (List<String>) datareader.putData().get(PipelineConstants.DATELIST);
-                Map<String, Double[][]> listMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.putData().get(PipelineConstants.LIST));
-                Map<String, Double[][]> fillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.putData().get(PipelineConstants.FILLLIST));
+                Map<String, Double[][]> listMap = PipelineUtils.sconvertMapDD(datareader.putData().get(PipelineConstants.LIST));
+                Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(datareader.putData().get(PipelineConstants.FILLLIST));
                 Double[][] fillList = fillListMap.get(id);
                 try {
                     int dateIndex = datelist.size() - datelist.indexOf(date);

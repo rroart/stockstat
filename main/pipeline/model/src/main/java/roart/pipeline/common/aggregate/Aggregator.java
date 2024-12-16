@@ -36,6 +36,7 @@ public abstract class Aggregator extends PipelineResultData {
     protected Map<String, Object[]> otherResultMap;
     protected Map<String, Object[]> resultMap;
     protected SerialMap resultSMap = new SerialMap();
+    @Deprecated // ?
     protected List<Object[]> otherMeta;
     protected List<Object[]> resultMetaArray;
     private SerialList resultMetas = new SerialList();
@@ -100,15 +101,18 @@ public abstract class Aggregator extends PipelineResultData {
         map.put(PipelineConstants.CATEGORY, category);
         map.put(PipelineConstants.CATEGORYTITLE, title);
         map.put(PipelineConstants.RESULT, resultMap);
+        // TODO unused
         map.put(PipelineConstants.OTHERRESULT, otherResultMap);
-        resultSMap.put(PipelineConstants.RESULTMETA, resultMetas);
+        map.put(PipelineConstants.RESULTMETA, resultMetas);
         map.put(PipelineConstants.RESULTMETAARRAY, resultMetaArray);
         map.put(PipelineConstants.ACCURACY, accuracyMap);
+        // TODO unused
         map.put(PipelineConstants.LOSS, lossMap);
+        // TODO unused?
         map.put(PipelineConstants.OBJECT, objectMap);
+        // TODO unused
         map.put(PipelineConstants.OBJECTFIXED, objectFixedMap);
-        map.smap()
-        .put(PipelineConstants.RESULT, resultSMap);
+        //map.smap().put(PipelineConstants.RESULT, resultSMap);
         return map;
     }
     

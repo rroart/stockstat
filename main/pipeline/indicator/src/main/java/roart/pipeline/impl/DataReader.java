@@ -11,6 +11,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMapDD;
+import roart.common.pipeline.data.SerialMapdd;
 import roart.common.util.ArraysUtil;
 import roart.common.util.PipelineUtils;
 import roart.common.util.TimeUtil;
@@ -56,15 +58,15 @@ public class DataReader extends Pipeline {
             int jj = 0;
         }
         map.setName(categoryTitle);
-        map.put(PipelineConstants.LIST, PipelineUtils.convertDD(listMap));
+        map.put(PipelineConstants.LIST, new SerialMapDD(listMap));
         map.put(PipelineConstants.VOLUME, volumeMap);
-        map.put(PipelineConstants.FILLLIST, PipelineUtils.convertDD(fillListMap));
-        map.put(PipelineConstants.BASE100LIST, PipelineUtils.convertDD(base100ListMap));
-        map.put(PipelineConstants.BASE100FILLLIST, PipelineUtils.convertDD(base100FillListMap));
-        map.put(PipelineConstants.TRUNCLIST, PipelineUtils.convertdd(truncListMap));
-        map.put(PipelineConstants.TRUNCFILLLIST, PipelineUtils.convertdd(truncFillListMap));
-        map.put(PipelineConstants.TRUNCBASE100LIST, PipelineUtils.convertdd(truncBase100ListMap));
-        map.put(PipelineConstants.TRUNCBASE100FILLLIST, PipelineUtils.convertdd(truncBase100FillListMap));
+        map.put(PipelineConstants.FILLLIST, new SerialMapDD(fillListMap));
+        map.put(PipelineConstants.BASE100LIST, new SerialMapDD(base100ListMap));
+        map.put(PipelineConstants.BASE100FILLLIST, new SerialMapDD(base100FillListMap));
+        map.put(PipelineConstants.TRUNCLIST, new SerialMapdd(truncListMap));
+        map.put(PipelineConstants.TRUNCFILLLIST, new SerialMapdd(truncFillListMap));
+        map.put(PipelineConstants.TRUNCBASE100LIST, new SerialMapdd(truncBase100ListMap));
+        map.put(PipelineConstants.TRUNCBASE100FILLLIST, new SerialMapdd(truncBase100FillListMap));
         map.put(PipelineConstants.NAME, nameMap);
         map.put(PipelineConstants.DATELIST, dateList);
         map.put(PipelineConstants.CATEGORYTITLE, categoryTitle);
@@ -147,6 +149,9 @@ public class DataReader extends Pipeline {
     }
     
     private boolean anythingHere(Map<String, Double[][]> listMap) {
+        if (listMap == null) {
+            return false;
+        }
         for (Double[][] array : listMap.values()) {
             for (int i = 0; i < array[0].length; i++) {
                 if (array[0][i] != null) {

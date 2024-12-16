@@ -85,10 +85,10 @@ public abstract class ComponentMLAggregator extends ComponentML {
         log.info("Keys {}", param.getCategoryValueMap().keySet());
         List<String> stockDates = param.getService().getDates(param.getInput().getMarket());
         if (true) {
-            SerialMap smap = (SerialMap) resultMap.smap().get(PipelineConstants.RESULT);
+            //SerialMap smap = (SerialMap) resultMap.smap().get(PipelineConstants.RESULT);
             Map<String, IncDecItem> getsells = new HashMap<>();
             Map<String, IncDecItem> getbuys = new HashMap<>();
-            SerialList list = (SerialList) resultMap.smap().get(PipelineConstants.INCDEC);
+            SerialList list = (SerialList) resultMap.get(PipelineConstants.INCDEC);
             for (SerialObject entry : list.getList()) {
                 SerialIncDec sincdec = (SerialIncDec) entry;
                 String key = sincdec.getId();

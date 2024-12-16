@@ -58,9 +58,9 @@ public class DayAdviser extends Adviser {
             Map<String, Object> objectMaps = null; //PipelineUtils.getPipeline(resultMaps, cat);
             Map<String, List<List<Double>>> aCategoryValueMap;
             if (simulateConfig.getInterpolate()) {
-                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) objectMaps.get(PipelineConstants.FILLLIST)));
+                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(objectMaps.get(PipelineConstants.FILLLIST)));
             } else {
-                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) objectMaps.get(PipelineConstants.LIST)));
+                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(objectMaps.get(PipelineConstants.LIST)));
             }
             categoryValueMap = aCategoryValueMap;
         } else {

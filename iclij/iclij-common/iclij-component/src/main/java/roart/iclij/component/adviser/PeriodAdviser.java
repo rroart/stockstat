@@ -88,9 +88,9 @@ public class PeriodAdviser extends Adviser {
             }
             Map<String, List<List<Double>>> aCategoryValueMap;
             if (getInterpolate(simulateConfig.getInterpolate())) {
-                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.FILLLIST)));
+                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.FILLLIST)));
             } else {
-                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST)));
+                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST)));
             }
             categoryValueMap = aCategoryValueMap;
         } else {

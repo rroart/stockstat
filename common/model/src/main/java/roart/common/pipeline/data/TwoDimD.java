@@ -1,14 +1,6 @@
 package roart.common.pipeline.data;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-/*
-@JsonTypeInfo(  
-        use = JsonTypeInfo.Id.NAME,  
-        include = JsonTypeInfo.As.PROPERTY,  
-        property = "_class")
-        */  
-public class TwoDimD {
+public class TwoDimD extends SerialObject {
 
     private Double[][] array;
     

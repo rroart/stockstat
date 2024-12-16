@@ -63,7 +63,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         PipelineData datareader = pipelineMap.get("" + cat.getPeriod());
         Map<String, AbstractIndicator> usedIndicatorMap = cat.getIndicatorMap();
         Map<String, PipelineData> localResultMap = cat.putData();
-        Map<String, Double[][]> list0 = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.LIST));
+        Map<String, Double[][]> list0 = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
  
         usedRecommenders = Recommend.getUsedRecommenders(conf);
         Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders, usedIndicatorMap, conf);

@@ -38,5 +38,8 @@ public class SerialMap extends SerialObject {
         return map.entrySet();
     }
     
+    public boolean containsKey(String key) {
+        return map.containsKey(key);
+    }
 }
     

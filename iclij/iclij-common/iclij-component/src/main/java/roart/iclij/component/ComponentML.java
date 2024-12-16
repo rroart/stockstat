@@ -195,9 +195,9 @@ public abstract class ComponentML extends Component {
         List<List> resultMetaArray = (List) mlMaps.get(PipelineConstants.RESULTMETAARRAY);
         param.setResultMetaArray(resultMetaArray);
         //List<ResultMeta> resultMeta = (List<ResultMeta>) mlMACDMaps.get(PipelineConstants.RESULTMETA);
-        List<Object> objectList = (List<Object>) mlMaps.get(PipelineConstants.RESULTMETA);
-        SerialMap smap = (SerialMap) mlMaps.smap().get(PipelineConstants.RESULT);
-        SerialList resultMeta = (SerialList) smap.get(PipelineConstants.RESULTMETA);
+        //List<Object> objectList = (List<Object>) mlMaps.get(PipelineConstants.RESULTMETA);
+        //SerialMap smap = (SerialMap) mlMaps.smap().get(PipelineConstants.RESULT);
+        SerialList resultMeta = (SerialList) mlMaps.get(PipelineConstants.RESULTMETA);
         //List<ResultMeta> resultMeta = JsonUtil.convertnostrip(objectList, new TypeReference<List<ResultMeta>>() { });
         param.setResultMeta(resultMeta);
     }
