@@ -7,11 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.util.HashMap;
 
-@JsonTypeInfo(  
-        use = JsonTypeInfo.Id.NAME,  
-        include = JsonTypeInfo.As.PROPERTY,  
-        property = "_class")  
-public class PipelineData {
+public class PipelineData extends SerialObject {
 
     private String id;
     

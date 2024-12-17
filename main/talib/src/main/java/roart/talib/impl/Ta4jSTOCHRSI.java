@@ -9,6 +9,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.indicators.StochasticRSIIndicator;
 
+import roart.common.pipeline.data.SerialTA;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.stockutil.StockUtil;
@@ -18,17 +19,18 @@ import roart.talib.util.TaUtil;
 
 public class Ta4jSTOCHRSI extends Ta4j {
     @Override
-    protected Object[] getInner(double[][] arrarr, int size) {
+    protected SerialTA getInner(double[][] arrarr, int size) {
         double[] values = arrarr[0];
         double[] rsi = new double[values.length];
         double[] rsi2 = new double[values.length];
-        Object[] objs = new Object[4];
-        objs[0] = rsi;
+        Integer[] objs = new Integer[4];
+        double[][] objsarr = new double[4][];
+        objsarr[0] = rsi;
         //objs[1] = rsi2;
         objs[1] = 0; // beg;
         objs[2] = size; // end;
         if (size == 0) {
-            return objs;
+            return new SerialTA(objs, objsarr);
         }
         BarSeries series = getClosedSeries(values, size);
         StochasticRSIIndicator i = new StochasticRSIIndicator(series, 14);
@@ -38,7 +40,7 @@ public class Ta4jSTOCHRSI extends Ta4j {
                 int jj = 0;
             }
         }
-        return objs;
+        return new SerialTA(objs, objsarr);
     }
 
     @Override

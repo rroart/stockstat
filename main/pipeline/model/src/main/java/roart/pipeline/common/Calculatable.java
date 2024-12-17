@@ -1,5 +1,6 @@
 package roart.pipeline.common;
 
+import roart.common.pipeline.data.SerialTA;
 import roart.common.pipeline.model.PipelineResultData;
 
 public abstract class Calculatable extends PipelineResultData {
@@ -10,10 +11,10 @@ public abstract class Calculatable extends PipelineResultData {
         return category;
     }
 
-    public abstract Object calculate(double[][] array);
+    public abstract SerialTA calculate(double[][] array);
     
-    public abstract Object calculate(Double[][] array);
+    public abstract SerialTA calculate(Double[][] array);
 
-    public abstract Object calculate(scala.collection.Seq[] objArray);
+    public abstract SerialTA calculate(scala.collection.Seq[] objArray);
     
 }

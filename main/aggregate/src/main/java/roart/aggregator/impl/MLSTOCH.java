@@ -14,6 +14,7 @@ import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMapTA;
 import roart.common.util.PipelineUtils;
 import roart.ml.dao.MLClassifyDao;
 import roart.talib.util.TaConstants;
@@ -37,9 +38,9 @@ public class MLSTOCH extends IndicatorAggregator {
     }
 
     private abstract class STOCHSubType extends SubType {
-        public STOCHSubType(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
+        public STOCHSubType(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
             this.listMap = (Map<String, Double[][]>) list;
-            this.taMap = (Map<String, Object[]>) taObject;
+            this.taMap = taObject;
             this.resultMap = (Map<String, Double[]>) resultObject;
             this.afterbefore = afterbefore;
             this.range = range;
@@ -48,7 +49,7 @@ public class MLSTOCH extends IndicatorAggregator {
     }
 
     private class STOCHSubTypeSTOCH extends STOCHSubType {
-        public STOCHSubTypeSTOCH(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
+        public STOCHSubTypeSTOCH(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
             super(list, taObject, resultObject, afterbefore, range);
         }
         @Override
@@ -80,7 +81,7 @@ public class MLSTOCH extends IndicatorAggregator {
         List<SubType> wantedSubTypesList = new ArrayList<>();
         PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCH);
         Object list = null;
-        Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+        SerialMapTA taObject = (SerialMapTA) pipelineData.get(PipelineConstants.OBJECT);
         Object resultObject = pipelineData.get(PipelineConstants.RESULT);
         wantedSubTypesList.add(new STOCHSubTypeSTOCH(list, taObject, resultObject, afterbefore, TaConstants.TWORANGE));
         return wantedSubTypesList;

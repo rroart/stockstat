@@ -13,6 +13,7 @@ import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MInteger;
 
+import roart.common.pipeline.data.SerialTA;
 import roart.common.util.ArraysUtil;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
@@ -33,7 +34,7 @@ public class TalibMACD extends Talib {
     private static final int MACDIDXHISTFIXED = 7;
 
     @Override
-    protected Object[] getInner(double[][] arrarr, int size) {
+    protected SerialTA getInner(double[][] arrarr, int size) {
 	double[] values = arrarr[0];
         long time0 = System.currentTimeMillis();
         //values = ArraysUtil.getPercentizedPriceIndex(values);
@@ -45,17 +46,18 @@ public class TalibMACD extends Talib {
         double[] hist = new double[values.length];
         log.debug("lookback {}", core.macdLookback(26, 12, 9));     
         core.macd(0, size - 1, values, 26, 12, 9, beg, end, macd, sig, hist);
-        Object[] objs = new Object[8];
-        objs[MACDIDXMACD] = macd;
-        objs[MACDIDXSIGN] = sig;
-        objs[MACDIDXHIST] = hist;
+        Integer[] objs = new Integer[8];
+        double[][] objsarr = new double[8][];
+        objsarr[MACDIDXMACD] = macd;
+        objsarr[MACDIDXSIGN] = sig;
+        objsarr[MACDIDXHIST] = hist;
         objs[MACDIDXBEG] = beg.value;
         objs[MACDIDXEND] = end.value;
-        objs[MACDIDXMACDFIXED] = ArraysUtil.makeFixed(macd, beg.value, end.value, values.length);
-        objs[MACDIDXSIGFIXED] = ArraysUtil.makeFixed(sig, beg.value, end.value, values.length);
-        objs[MACDIDXHISTFIXED] = ArraysUtil.makeFixed(hist, beg.value, end.value, values.length);
+        objsarr[MACDIDXMACDFIXED] = ArraysUtil.makeFixed(macd, beg.value, end.value, values.length);
+        objsarr[MACDIDXSIGFIXED] = ArraysUtil.makeFixed(sig, beg.value, end.value, values.length);
+        objsarr[MACDIDXHISTFIXED] = ArraysUtil.makeFixed(hist, beg.value, end.value, values.length);
         log.debug("timer {}", System.currentTimeMillis() - time0);
-        return objs;
+        return new SerialTA(objs, objsarr);
     }
 
     @Override

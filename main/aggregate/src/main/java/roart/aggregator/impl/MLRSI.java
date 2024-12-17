@@ -13,6 +13,8 @@ import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMapTA;
+import roart.common.pipeline.data.SerialTA;
 import roart.common.util.PipelineUtils;
 import roart.ml.dao.MLClassifyDao;
 import roart.talib.util.TaConstants;
@@ -38,10 +40,10 @@ public class MLRSI extends IndicatorAggregator {
     }
 
     private abstract class RsiSubType extends MergeSubType {
-        public RsiSubType(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
+        public RsiSubType(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
             super(afterbefore);
             this.listMap = (Map<String, Double[][]>) list;
-            this.taMap = (Map<String, Object[]>) taObject;
+            this.taMap = taObject;
             this.resultMap = (Map<String, Double[]>) resultObject;
             this.afterbefore = afterbefore;
             this.range = range;
@@ -53,7 +55,7 @@ public class MLRSI extends IndicatorAggregator {
     }
 
     private class SubTypeRSI extends RsiSubType {
-        public SubTypeRSI(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range, IclijConfig conf) {
+        public SubTypeRSI(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range, IclijConfig conf) {
             super(list, taObject, resultObject, afterbefore, range);
             double high = conf.getMLRSIBuyRSILimit();
             double low = conf.getMLRSISellRSILimit();
@@ -78,7 +80,7 @@ public class MLRSI extends IndicatorAggregator {
     }
 
     private class SubTypeSRSI extends RsiSubType {
-        public SubTypeSRSI(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range, IclijConfig conf) {
+        public SubTypeSRSI(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range, IclijConfig conf) {
             super(list, taObject, resultObject, afterbefore, range);
             double high = conf.getMLRSIBuySRSILimit();
             double low = conf.getMLRSISellSRSILimit();
@@ -104,7 +106,7 @@ public class MLRSI extends IndicatorAggregator {
 
     private class MergeSubTypeRSI extends SubTypeRSI {
 
-        public MergeSubTypeRSI(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore,
+        public MergeSubTypeRSI(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore,
                 int[] range, IclijConfig conf) {
             super(list, taObject, resultObject, afterbefore, range, conf);
          }
@@ -131,14 +133,14 @@ public class MLRSI extends IndicatorAggregator {
             if (conf.isRSIEnabled()) {
                 PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORRSI);
                 Object list = null;
-                Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+                SerialMapTA taObject = (SerialMapTA) pipelineData.get(PipelineConstants.OBJECT);
                 Object resultObject = pipelineData.get(PipelineConstants.RESULT);
                 wantedSubTypesList.add(new SubTypeRSI(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf));
             }
             if (conf.isSTOCHRSIEnabled()) {
                 PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCHRSI);
                 Object list = null;
-                Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+                SerialMapTA taObject = (SerialMapTA) pipelineData.get(PipelineConstants.OBJECT);
                 Object resultObject = pipelineData.get(PipelineConstants.RESULT);
                 wantedSubTypesList.add(new SubTypeSRSI(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf));
             }

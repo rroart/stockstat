@@ -23,6 +23,11 @@ import roart.common.config.MarketStock;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialList;
+import roart.common.pipeline.data.SerialMap;
+import roart.common.pipeline.data.SerialMapTA;
+import roart.common.pipeline.data.SerialObject;
+import roart.common.pipeline.data.SerialTA;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
@@ -63,7 +68,7 @@ public class IndicatorUtils {
      */
 
     @Deprecated
-    public static Object[] getDayMomMap(IclijConfig conf, Map<String, Object[]> objectMap, Map<String, Double[]> listMap,
+    public static Object[] getDayMomMap(IclijConfig conf, Map<String, SerialTA> objectMap, Map<String, Double[]> listMap,
             TaUtil tu) throws Exception {
         Object[] retobj = new Object[2];
         Map<Integer, Map<String, Double[]>> dayMomMap = new HashMap<>();
@@ -77,7 +82,7 @@ public class IndicatorUtils {
         for (int j = conf.getTestIndicatorRecommenderComplexFutureDays(); j < conf.getTableDays(); j += conf.getTestIndicatorRecommenderComplexIntervalDays()) {
             Map<String, Double[]> momMap = new HashMap<>();
             for (String id : listMap.keySet()) {
-                Object[] objs = objectMap.get(id);
+                SerialTA objs = objectMap.get(id);
                 Double[] momentum = tu.getWithThreeAndDelta(conf.getMACDHistogramDeltaDays(), conf.getMACDDeltaDays(), conf.getMACDSignalDeltaDays(), objs, j);
                 if (momentum != null) {
                     momMap.put(id, momentum);
@@ -97,7 +102,7 @@ public class IndicatorUtils {
     }
 
     @Deprecated
-    public static Object[] getDayRsiMap(IclijConfig conf, Map<String, Object[]> objectMap, Map<String, Double[]> listMap,
+    public static Object[] getDayRsiMap(IclijConfig conf, Map<String, SerialTA> objectMap, Map<String, Double[]> listMap,
             TaUtil tu) throws Exception {
         Object[] retobj = new Object[2];
         Map<Integer, Map<String, Double[]>> dayRsiMap = new HashMap<>();
@@ -110,7 +115,7 @@ public class IndicatorUtils {
         for (int j = conf.getTestIndicatorRecommenderComplexFutureDays(); j < conf.getTableDays(); j += conf.getTestIndicatorRecommenderComplexIntervalDays()) {
             Map<String, Double[]> rsiMap = new HashMap<>();
             for (String id : listMap.keySet()) {
-                Object[] objs = objectMap.get(id);
+                SerialTA objs = objectMap.get(id);
                 Double[] rsi = tu.getWithOneAndDelta(conf.getRSIDeltaDays(), objs, j);
                 if (rsi != null) {
                     rsiMap.put(id, rsi);
@@ -129,7 +134,7 @@ public class IndicatorUtils {
     }
 
     @Deprecated
-    public static Object[] getDayMomRsiMap(IclijConfig conf, Map<String, Object[]> objectMacdMap, Map<String, Double[]> listMacdMap, Map<String, Object[]> objectRsiMap, Map<String, Double[]> listRsiMap, 
+    public static Object[] getDayMomRsiMap(IclijConfig conf, Map<String, SerialTA> objectMacdMap, Map<String, Double[]> listMacdMap, Map<String, SerialTA> objectRsiMap, Map<String, Double[]> listRsiMap, 
             TaUtil tu) throws Exception {
         Object[] retobj = new Object[2];
         Map<Integer, Map<String, Double[]>> dayMomRsiMap = new HashMap<>();
@@ -142,8 +147,8 @@ public class IndicatorUtils {
         for (int j = conf.getTestIndicatorRecommenderComplexFutureDays(); j < conf.getTableDays(); j += conf.getTestIndicatorRecommenderComplexIntervalDays()) {
             Map<String, Double[]> momrsiMap = new HashMap<>();
             for (String id : listMacdMap.keySet()) {
-                Object[] objsMacd = objectMacdMap.get(id);
-                Object[] objsRSI = objectRsiMap.get(id);
+                SerialTA objsMacd = objectMacdMap.get(id);
+                SerialTA objsRSI = objectRsiMap.get(id);
                 Double[] momentum = tu.getWithThreeAndDelta(conf.getMACDHistogramDeltaDays(), conf.getMACDDeltaDays(), conf.getMACDSignalDeltaDays(), objsMacd, j);
                 Double[] rsi = tu.getWithOneAndDelta(conf.getRSIDeltaDays(), objsRSI, j);
                 if (momentum != null) {
@@ -165,12 +170,12 @@ public class IndicatorUtils {
 
     @Deprecated
     public static Object[] getDayIndicatorMap(IclijConfig conf, TaUtil tu, List<String> indicators, int futureDays, int tableDays, int intervalDays) throws Exception {
-        List<Map<String, Object[]>> objectMapsList = new ArrayList<>();
+        List<SerialMapTA> objectMapsList = new ArrayList<>();
         List<Map<String, Double[][]>> listList = new ArrayList<>();
         int arraySize = 0;
         for (String indicator : indicators) {
             PipelineData resultMap = null; //indicator.putData();
-            Map<String, Object[]> objMap = (Map<String, Object[]>) resultMap.get(PipelineConstants.OBJECT);
+            SerialMapTA objMap = (SerialMapTA) resultMap.get(PipelineConstants.OBJECT);
             if (objMap != null) {
                 objectMapsList.add(objMap);
                 listList.add(PipelineUtils.sconvertMapDD(resultMap.get(PipelineConstants.LIST)));
@@ -220,7 +225,7 @@ public class IndicatorUtils {
     // for MLI
     
     public static Object[] getDayIndicatorMap(IclijConfig conf, List<String> indicators, int futureDays, int tableDays, int intervalDays, ExtraData extraData, PipelineData[] datareaders, List<String> dateList) throws Exception {
-        List<Map<String, Object[]>> objectMapsList = new ArrayList<>();
+        List<SerialMapTA> objectMapsList = new ArrayList<>();
         List<Map<String, Double[][]>> listList = new ArrayList<>();
         int arraySize = getCommonArraySizeAndObjectMap(conf, indicators, objectMapsList, listList, datareaders);
         Object[] retobj = new Object[3];
@@ -297,7 +302,7 @@ public class IndicatorUtils {
     // for ARI
     
     public static Object[] getDayIndicatorMap(IclijConfig conf, List<String> indicators, int futureDays, int tableDays, int intervalDays, ExtraData extraData, PipelineData[] datareaders) throws Exception {
-        List<Map<String, Object[]>> objectMapsList = new ArrayList<>();
+        List<SerialMapTA> objectMapsList = new ArrayList<>();
         List<Map<String, Double[][]>> listList = new ArrayList<>();
         int arraySize = getCommonArraySizeAndObjectMap(conf, indicators, objectMapsList, listList, datareaders);
         Object[] retobj = new Object[3];
@@ -387,11 +392,11 @@ public class IndicatorUtils {
     // for ARI
 
     private static Double[] getCommonResult(IclijConfig conf, List<String> indicators,
-            List<Map<String, Object[]>> objectMapsList, int j, String id, Double[] result, PipelineData[] datareaders) {
+            List<SerialMapTA> objectMapsList, int j, String id, Double[] result, PipelineData[] datareaders) {
         int idx = 0;
-        for (Map<String, Object[]> objectMap : objectMapsList) {
+        for (SerialMapTA objectMap : objectMapsList) {
             String ind = indicators.get(idx++);
-            Object[] objsIndicator = objectMap.get(id);
+            SerialTA objsIndicator = objectMap.get(id);
             PipelineData pipeline = PipelineUtils.getPipeline(datareaders, ind);
             result = appendDayResult(conf, j, result  , pipeline.getName(), objsIndicator);
         }
@@ -401,16 +406,16 @@ public class IndicatorUtils {
     // for MLI
 
     private static Double[] getCommonResult(IclijConfig conf, List<String> indicators,
-            List<Map<String, Object[]>> objectMapsList, int j, String id, Double[] result, String commonDate, PipelineData[] datareaders) {
+            List<SerialMapTA> objectMapsList, int j, String id, Double[] result, String commonDate, PipelineData[] datareaders) {
         int idx = 0;
-        for (Map<String, Object[]> objectMap : objectMapsList) {
+        for (SerialMapTA objectMap : objectMapsList) {
             String indicatorName = indicators.get(idx++);
             Map<String, PipelineData> pipelineMap = getPipelineMap(datareaders);
             PipelineData meta = pipelineMap.get(PipelineConstants.META);
             PipelineData pipeline = pipelineMap.get((String) meta.get(PipelineConstants.CATEGORY));
             List<String> dateList2 = (List<String>) pipeline.get(PipelineConstants.DATELIST);
             j = dateList2.size() - 1 - dateList2.indexOf(commonDate);
-            Object[] objsIndicator = objectMap.get(id);
+            SerialTA objsIndicator = objectMap.get(id);
             result = appendDayResult(conf, j, result, indicatorName, objsIndicator);
         }
         return result;
@@ -419,14 +424,14 @@ public class IndicatorUtils {
     // shared
     
     private static int getCommonArraySizeAndObjectMap(IclijConfig conf, List<String> indicators,
-            List<Map<String, Object[]>> objectMapsList, List<Map<String, Double[][]>> listList, PipelineData[] datareaders) {
+            List<SerialMapTA> objectMapsList, List<Map<String, Double[][]>> listList, PipelineData[] datareaders) {
         int arraySize = 0;
         Map<String, PipelineData> pipelineMap = PipelineUtils.getPipelineMap(datareaders);
         for (String indicatorName : indicators) {
             PipelineData meta = pipelineMap.get(PipelineConstants.META);
             PipelineData datareader = pipelineMap.get((String) meta.get(PipelineConstants.CATEGORY));
             PipelineData resultMap = pipelineMap.get(indicatorName);
-            Map<String, Object[]> objMap = (Map<String, Object[]>) resultMap.get(PipelineConstants.OBJECT);
+            SerialMapTA objMap = (SerialMapTA) resultMap.get(PipelineConstants.OBJECT);
             if (objMap != null) { 
                 objectMapsList.add(objMap);
                 Map<String, Double[][]> list0 = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
@@ -528,11 +533,11 @@ public class IndicatorUtils {
         for (AbstractIndicator indicator : allIndicators) {
             if (indicator.wantForExtras()) {
                 PipelineData localIndicatorResults =  PipelineUtils.getPipeline(datareaders, indicator.indicatorName());
-                Map<String, Map<String, Object[]>> marketObjectMap = (Map<String, Map<String, Object[]>>) localIndicatorResults.get(PipelineConstants.MARKETOBJECT);
-                for (Entry<String, Map<String, Object[]>> marketEntry : marketObjectMap.entrySet()) {
-                    Map<String, Object[]> objectMap = marketEntry.getValue();
-                    for (Entry<String, Object[]> entry : objectMap.entrySet()) {
-                        Object[] objsIndicator = entry.getValue();
+                SerialMap marketObjectMap = (SerialMap) localIndicatorResults.get(PipelineConstants.MARKETOBJECT);
+                for (Entry<String, SerialObject> marketEntry : marketObjectMap.entrySet()) {
+                    SerialMapTA objectMap = (SerialMapTA) marketEntry.getValue();
+                    for (Entry<String, SerialTA> entry : objectMap.entrySet()) {
+                        SerialTA objsIndicator = entry.getValue();
                         result = appendDayResult(conf, j, result, localIndicatorResults.getName(), objsIndicator);
                     }
                 }
@@ -556,11 +561,11 @@ public class IndicatorUtils {
                 Map<String, PipelineData[]> dataReaderMap = (Map<String, PipelineData[]>) localResults.get(PipelineConstants.DATAREADER);
                 log.debug("lockeys {}", localResults.keySet());
                 //Map<Pair<String, String>, List<StockItem>> pairMap = pairStockMap;
-                Map<String, Map<String, Object[]>> marketObjectMap = (Map<String, Map<String, Object[]>>) localIndicatorResults.get(PipelineConstants.MARKETOBJECT);
+                SerialMap marketObjectMap = (SerialMap) localIndicatorResults.get(PipelineConstants.MARKETOBJECT);
                 if (marketObjectMap == null) {
                     continue;
                 }
-                for (Entry<String, Map<String, Object[]>> marketEntry : marketObjectMap.entrySet()) {
+                for (Entry<String, SerialObject> marketEntry : marketObjectMap.entrySet()) {
                     String market = marketEntry.getKey();     
                     PipelineData[] mydatareaders = dataReaderMap.get(market);
                     Map<String, PipelineData> mypipelineMap = getPipelineMap(mydatareaders);
@@ -580,9 +585,9 @@ public class IndicatorUtils {
 
                     List<String> dateList2 = (List<String>) pipeline.get(PipelineConstants.DATELIST);
                     j = dateList2.size() - 1 - dateList2.indexOf(commonDate);
-                    Map<String, Object[]> objectMap = marketEntry.getValue();
-                    for (Entry<String, Object[]> entry2 : objectMap.entrySet()) {
-                        Object[] objsIndicator = entry2.getValue();
+                    SerialMapTA objectMap = (SerialMapTA) marketEntry.getValue();
+                    for (Entry<String, SerialTA> entry2 : objectMap.entrySet()) {
+                        SerialTA objsIndicator = entry2.getValue();
                         PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, indicator.indicatorName());
                         result = appendDayResult(conf, j, result, pipelineData.getName(), objsIndicator);
                     }
@@ -618,7 +623,7 @@ public class IndicatorUtils {
         return size;
     }
 
-    private static Double[] appendDayResult(IclijConfig conf, int j, Double[] result, String indicator, Object[] objsIndicator) {
+    private static Double[] appendDayResult(IclijConfig conf, int j, Double[] result, String indicator, SerialTA objsIndicator) {
         Object[] arr = dummyfactory(conf, indicator).getDayResult(objsIndicator, j);
         if (arr != null && arr.length > 0) {
             result = (Double[]) ArrayUtils.addAll(result, arr);
@@ -715,6 +720,15 @@ public class IndicatorUtils {
         return pipelineMap;
     }
 
+    public static Map<String, PipelineData> getPipelineMap(SerialList datareaders) {
+        Map<String, PipelineData> pipelineMap = new HashMap<>();
+        for (SerialObject object : datareaders.getList()) {
+            PipelineData datareader = (PipelineData) object;
+            pipelineMap.put(datareader.getName(), datareader);
+        }
+        return pipelineMap;
+    }
+
     public static void filterNonExistingClassifications(Map<Double, String> labelMapShort,
             Map<String, Double[]> classifyResult) {
         log.info("Values " + classifyResult.values());
@@ -784,8 +798,8 @@ public class IndicatorUtils {
         }
     }
 
-    public static Map<String, Object[]> doCalculationsArrNonNull(IclijConfig conf, Map<String, double[][]> listMap, String key, Calculatable indicator, boolean wantPercentizedPriceIndex) {
-        Map<String, Object[]> objectMap = new HashMap<>();
+    public static Map<String, SerialTA> doCalculationsArrNonNull(IclijConfig conf, Map<String, double[][]> listMap, String key, Calculatable indicator, boolean wantPercentizedPriceIndex) {
+        Map<String, SerialTA> objectMap = new HashMap<>();
         for (String id : listMap.keySet()) {
             //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
             double [][] list = listMap.get(id);
@@ -814,7 +828,7 @@ public class IndicatorUtils {
             if (list[0].length == 0) {
                 //continue;
             }
-            Object[] objs = (Object[]) indicator.calculate(list);
+            SerialTA objs = indicator.calculate(list);
             if ("F00000HGSN".equals(id)) {
                 log.debug("braz " + Arrays.asList(list));
             }

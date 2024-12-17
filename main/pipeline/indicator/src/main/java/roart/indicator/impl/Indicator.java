@@ -13,6 +13,11 @@ import roart.common.config.MarketStock;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialList;
+import roart.common.pipeline.data.SerialMap;
+import roart.common.pipeline.data.SerialMarketStock;
+import roart.common.pipeline.data.SerialObject;
+import roart.common.pipeline.data.SerialTA;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.data.TwoDimd;
 import roart.common.util.ArraysUtil;
@@ -80,11 +85,12 @@ public abstract class Indicator extends AbstractIndicator {
         Map<Pair<String, String>, double[][]> pairTruncListMap = null; // (Map<Pair<String, String>, double[][]>) localResults.get(PipelineConstants.PAIRTRUNCLIST);
         */
         //Set<String> commonDates = (Set<String>) localResults.get(PipelineConstants.DATELIST);
-        Collection<MarketStock> marketStocks = (Collection<MarketStock>) localResults.get(PipelineConstants.MARKETSTOCKS);
-        Map<String, PipelineData[]> dataReaderMap = (Map<String, PipelineData[]>) localResults.get(PipelineConstants.DATAREADER);
+        SerialList marketStocks = (SerialList) localResults.get(PipelineConstants.MARKETSTOCKS);
+        SerialMap dataReaderMap = (SerialMap) localResults.get(PipelineConstants.DATAREADER);
         log.debug("lockeys {}", localResults.keySet());
         //Map<Pair<String, String>, List<StockItem>> pairMap = pairStockMap;
-        for(MarketStock ms : marketStocks) {
+        for(SerialObject object : marketStocks.getList()) {
+            SerialMarketStock ms = (SerialMarketStock) object;
             String market = ms.getMarket();
             String id = ms.getId();
             String catName = ms.getCategory();
@@ -93,14 +99,14 @@ public abstract class Indicator extends AbstractIndicator {
                 aListMap = new HashMap<>();
                 marketListMap.put(market, aListMap);
             }
-            PipelineData[] datareaders2 = dataReaderMap.get(market);
+            SerialList datareaders2 = (SerialList) dataReaderMap.get(market);
             Map<String, PipelineData> pipelineMap2 = IndicatorUtils.getPipelineMap(datareaders2);
             int category = 0; // extraData.category;
             String cat = ms.getCategory();
             if (cat == null) {
                 cat = Constants.EXTRA;
             }
-            PipelineData[] mydatareaders = dataReaderMap.get(market);
+            SerialList mydatareaders = (SerialList) dataReaderMap.get(market);
             Map<String, PipelineData> mypipelineMap = IndicatorUtils.getPipelineMap(mydatareaders);
             PipelineData datareader = mypipelineMap.get(cat);
             //Pipeline datareader = pipelineMap.get("" + category);
@@ -201,7 +207,7 @@ public abstract class Indicator extends AbstractIndicator {
         log.info("time0 {}", (System.currentTimeMillis() - time0));
 
         long time2 = System.currentTimeMillis();
-        Map<String, Object[]> myObjectMap = IndicatorUtils.doCalculationsArrNonNull(conf, aListMap, key, this, conf.wantPercentizedPriceIndex());
+        Map<String, SerialTA> myObjectMap = IndicatorUtils.doCalculationsArrNonNull(conf, aListMap, key, this, conf.wantPercentizedPriceIndex());
 
         log.info("time2 {}", (System.currentTimeMillis() - time2));
         long time1 = System.currentTimeMillis();
@@ -226,7 +232,7 @@ public abstract class Indicator extends AbstractIndicator {
     }
 
     @Override
-    protected Double[] getCalculated(Map<String, Object[]> objectMap, String id) {
+    protected Double[] getCalculated(Map<String, SerialTA> objectMap, String id) {
         return null;
     }
 

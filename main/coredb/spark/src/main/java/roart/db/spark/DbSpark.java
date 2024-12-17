@@ -4,6 +4,7 @@ import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
+import roart.common.pipeline.data.SerialTA;
 import roart.common.util.ArraysUtil;
 import roart.db.spark.util.SparkSessionUtil;
 import roart.pipeline.common.Calculatable;
@@ -143,7 +144,7 @@ public class DbSpark {
         return null;
     }
 
-    public static Map<String, Object[]> doCalculations(Map<String, List<Double>> listMap, Calculatable ind) {
+    public static Map<String, SerialTA> doCalculations(Map<String, List<Double>> listMap, Calculatable ind) {
         if (spark == null) {
             return null;
         }
@@ -162,7 +163,7 @@ public class DbSpark {
 
         Dataset<Row> df = spark.createDataFrame(rowList, schema);
         //df.show();
-        Map<String, Object[]> m = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate((Double[][])((ArraySeq)x.getAs("values")).array())));
+        Map<String, SerialTA> m = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> ind.calculate((Double[][])((ArraySeq)x.getAs("values")).array())));
         //System.out.println("m size " + m.size());
         log.info("time calc " + (System.currentTimeMillis() - time0));
         return m;
@@ -198,7 +199,7 @@ public class DbSpark {
         return objMap;
     }
 
-    public static Map<String, Object[]> doCalculationsArrNonNull(Map<String, double[][]> listMap, String key, Calculatable ind,  boolean wantPercentizedPriceIndex) {
+    public static Map<String, SerialTA> doCalculationsArrNonNull(Map<String, double[][]> listMap, String key, Calculatable ind,  boolean wantPercentizedPriceIndex) {
         if (spark == null) {
             return null;
         }
@@ -234,7 +235,7 @@ public class DbSpark {
 
         Dataset<Row> df = spark.createDataFrame(rowList, schema);
         //df.show();
-        Map<String, Object[]> objMap = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate((scala.collection.Seq[])((ArraySeq)x.getAs("values")).array())));
+        Map<String, SerialTA> objMap = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> ind.calculate((scala.collection.Seq[])((ArraySeq)x.getAs("values")).array())));
         //System.out.println("m size " + m.size());
         log.info("time calc " + (System.currentTimeMillis() - time0));
         return objMap;

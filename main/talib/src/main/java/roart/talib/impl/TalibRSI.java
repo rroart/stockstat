@@ -11,6 +11,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MInteger;
 
+import roart.common.pipeline.data.SerialTA;
 import roart.common.util.ArraysUtil;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
@@ -27,7 +28,7 @@ public class TalibRSI extends Talib {
     public static final int RSIIDXRSIFIXED = 3;
 
     @Override
-    protected Object[] getInner(double[][] arrarr, int size) {
+    protected SerialTA getInner(double[][] arrarr, int size) {
         double[] values = arrarr[0];
         Core core = new Core();
         MInteger beg = new MInteger();
@@ -35,13 +36,14 @@ public class TalibRSI extends Talib {
         double[] rsi = new double[values.length];
         log.debug("lookback {}", core.rsiLookback(14));
         core.rsi(0, size - 1, values, 14, beg, end, rsi);
-        Object[] objs = new Object[4];
-        objs[RSIIDXRSI] = rsi;
+        Integer[] objs = new Integer[4];
+        double[][] objsarr = new double[4][];
+        objsarr[RSIIDXRSI] = rsi;
         objs[RSIIDXBEG] = beg.value;
         objs[RSIIDXEND] = end.value;
-        objs[RSIIDXRSIFIXED] = ArraysUtil.makeFixed(rsi, beg.value, end.value, values.length);
+        objsarr[RSIIDXRSIFIXED] = ArraysUtil.makeFixed(rsi, beg.value, end.value, values.length);
         log.debug("rsi beg end {} {} {}", beg.value, end.value, Arrays.toString(rsi));
-        return objs;
+        return new SerialTA(objs, objsarr);
     }
 
     @Override

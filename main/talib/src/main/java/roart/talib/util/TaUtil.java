@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
 import roart.common.model.StockItem;
+import roart.common.pipeline.data.SerialTA;
 import roart.common.util.ArraysUtil;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
@@ -170,12 +171,12 @@ public class TaUtil {
         return delta/(deltadays - 1);
     }
 
-    public Double[] getWithOneAndDelta(int rsideltadays, Object[] objs) {
+    public Double[] getWithOneAndDelta(int rsideltadays, SerialTA objs) {
         return getWithOneAndDelta(rsideltadays, objs, 0);
     }
 
-    public Double[] getWithOneAndDelta(int deltadays, Object[] objs, int offset) {
-        int end = (int) objs[TaConstants.ONEIDXEND];
+    public Double[] getWithOneAndDelta(int deltadays, SerialTA objs, int offset) {
+        int end = (int) objs.get(TaConstants.ONEIDXEND);
         if (end < offset + deltadays) {
             return null;
         }
@@ -202,8 +203,8 @@ public class TaUtil {
         return retindex;
     }
 
-    public Double[] getWithTwoAndDelta(int onedeltadays, int twodeltadays, Object[] objs, int offset) {
-        int end = (int) objs[TaConstants.TWOIDXEND];
+    public Double[] getWithTwoAndDelta(int onedeltadays, int twodeltadays, SerialTA objs, int offset) {
+        int end = (int) objs.get(TaConstants.TWOIDXEND);
         if (end < offset + Math.max(onedeltadays, twodeltadays)) {
             return null;
         }
@@ -216,7 +217,7 @@ public class TaUtil {
         return retValues;
     }
 
-    public Double[] getWithTwoAndDelta(int onedeltadays, int twodeltadays, Object[] objs) {
+    public Double[] getWithTwoAndDelta(int onedeltadays, int twodeltadays, SerialTA objs) {
         return getWithTwoAndDelta(onedeltadays, twodeltadays, objs, 0);
     }
 
@@ -243,8 +244,8 @@ public class TaUtil {
         return retindex;
     }
 
-    public Double[] getWithThreeAndDelta(int onedeltadays, int twodeltadays, int threedeltadays, Object[] objs, int offset) {
-        int end = (int) objs[TaConstants.THREEIDXEND];
+    public Double[] getWithThreeAndDelta(int onedeltadays, int twodeltadays, int threedeltadays, SerialTA objs, int offset) {
+        int end = (int) objs.get(TaConstants.THREEIDXEND);
         int max = Collections.max(Arrays.asList(new Integer[] { onedeltadays, twodeltadays, threedeltadays }));
         if (end < offset + max) {
             return null;
@@ -260,7 +261,7 @@ public class TaUtil {
         return retValues;
     }
 
-    public Double[] getWithThreeAndDelta(int onedeltadays, int twodeltadays, int threedeltadays, Object[] objs) {
+    public Double[] getWithThreeAndDelta(int onedeltadays, int twodeltadays, int threedeltadays, SerialTA objs) {
         return getWithThreeAndDelta(onedeltadays, twodeltadays, threedeltadays, objs, 0);
     }
 
@@ -294,18 +295,18 @@ public class TaUtil {
         return retindex;
     }
 
-    private Double getArrayValueAtOffset(Object[] objs, int arrayindex, int endvalueindex, int offset) {
-        double[] hist = (double[]) objs[arrayindex];
-        int end = (int) objs[endvalueindex];
+    private Double getArrayValueAtOffset(SerialTA objs, int arrayindex, int endvalueindex, int offset) {
+        double[] hist = (double[]) objs.getarray(arrayindex);
+        int end = (int) objs.get(endvalueindex);
         if (end == 0) {
             return null;
         }
         return hist[end - offset - 1];
     }
     
-    private Double getArrayValueAtOffsetDelta(Object[] objs, int arrayindex, int endvalueindex, int deltadays, int offset) {
-        double[] hist = (double[]) objs[arrayindex];
-        int end = (int) objs[endvalueindex];
+    private Double getArrayValueAtOffsetDelta(SerialTA objs, int arrayindex, int endvalueindex, int deltadays, int offset) {
+        double[] hist = (double[]) objs.getarray(arrayindex);
+        int end = (int) objs.get(endvalueindex);
         if (end == 0) {
             return null;
         }

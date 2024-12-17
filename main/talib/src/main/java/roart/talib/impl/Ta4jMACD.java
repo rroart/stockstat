@@ -13,6 +13,7 @@ import org.ta4j.core.indicators.MACDIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.helpers.CombineIndicator;
 
+import roart.common.pipeline.data.SerialTA;
 import roart.common.util.ArraysUtil;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
@@ -32,25 +33,26 @@ public class Ta4jMACD extends Ta4j {
     private static final int MACDIDXHISTFIXED = 7;
 
     @Override
-    protected Object[] getInner(double[][] arrarr, int size) {
+    protected SerialTA getInner(double[][] arrarr, int size) {
         double[] values = arrarr[0];
         long time0 = System.currentTimeMillis();
         //values = ArraysUtil.getPercentizedPriceIndex(values);
-        Object[] objs = new Object[8];
+        Integer[] objs = new Integer[8];
+        double[][] objsarr = new double[8][];
         double[] macd = new double[values.length];
         double[] sig = new double[values.length];
         double[] hist = new double[values.length];
         double[] rsi3 = new double[values.length];
-        objs[MACDIDXMACD] = macd;
-        objs[MACDIDXSIGN] = sig;
-        objs[MACDIDXHIST] = hist;
+        objsarr[MACDIDXMACD] = macd;
+        objsarr[MACDIDXSIGN] = sig;
+        objsarr[MACDIDXHIST] = hist;
         objs[MACDIDXBEG] = 0;
         objs[MACDIDXEND] = size;
-        objs[MACDIDXMACDFIXED] = ArraysUtil.makeFixed(macd, 0, values.length, values.length);
-        objs[MACDIDXSIGFIXED] = ArraysUtil.makeFixed(sig, 0, values.length, values.length);
-        objs[MACDIDXHISTFIXED] = ArraysUtil.makeFixed(hist, 0, values.length, values.length);
+        objsarr[MACDIDXMACDFIXED] = ArraysUtil.makeFixed(macd, 0, values.length, values.length);
+        objsarr[MACDIDXSIGFIXED] = ArraysUtil.makeFixed(sig, 0, values.length, values.length);
+        objsarr[MACDIDXHISTFIXED] = ArraysUtil.makeFixed(hist, 0, values.length, values.length);
         if (size == 0) {
-            return objs;
+            return new SerialTA(objs, objsarr);
         }
         BarSeries series = getClosedSeries(values, size);
         log.debug(""+series.getBarCount());
@@ -73,7 +75,7 @@ public class Ta4jMACD extends Ta4j {
             hist[j] = macdIndicator.getValue(j).doubleValue();
         }
         log.debug("timer {}", System.currentTimeMillis() - time0);
-        return objs;
+        return new SerialTA(objs, objsarr);
     }
 
     @Override

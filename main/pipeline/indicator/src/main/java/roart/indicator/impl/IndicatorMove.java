@@ -5,6 +5,7 @@ import java.util.Map;
 
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.SerialTA;
 import roart.common.constants.Constants;
 import roart.common.model.StockItem;
 import roart.stockutil.StockUtil;
@@ -59,7 +60,7 @@ public class IndicatorMove extends Indicator {
     }
 
     @Override
-    protected Double[] getCalculated(Map<String, Object[]> objectMap, String id) {
+    protected Double[] getCalculated(Map<String, SerialTA> objectMap, String id) {
         return null;
     }
 

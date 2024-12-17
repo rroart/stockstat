@@ -10,6 +10,7 @@ import org.ta4j.core.BarSeries;
 import org.ta4j.core.indicators.CCIIndicator;
 import org.ta4j.core.indicators.StochasticRSIIndicator;
 
+import roart.common.pipeline.data.SerialTA;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.stockutil.StockUtil;
@@ -19,17 +20,18 @@ import roart.talib.util.TaUtil;
 
 public class Ta4jCCI extends Ta4j {
     @Override
-    protected Object[] getInner(double[][] arrarr, int size) {
+    protected SerialTA getInner(double[][] arrarr, int size) {
         double[] close = arrarr[0];
         double[] low = arrarr[1];
         double[] high = arrarr[2];
         double[] cci = new double[close.length];
-        Object[] objs = new Object[3];
-        objs[0] = cci;
+        Integer[] objs = new Integer[3];
+        double[][] objsarr = new double[3][];
+        objsarr[0] = cci;
         objs[1] = 0; // beg;
         objs[2] = size; // end;
         if (size == 0) {
-            return objs;
+            return new SerialTA(objs, objsarr);
         }
         BarSeries series = getThreeSeries(close, low, high, size);
         CCIIndicator i = new CCIIndicator(series, 14);
@@ -39,7 +41,7 @@ public class Ta4jCCI extends Ta4j {
                 int jj = 0;
             }
         }
-        return objs;
+        return new SerialTA(objs, objsarr);
     }
 
     @Override

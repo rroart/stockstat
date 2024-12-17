@@ -11,6 +11,7 @@ import org.ta4j.core.indicators.RSIIndicator;
 import org.ta4j.core.indicators.StochasticRSIIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 
+import roart.common.pipeline.data.SerialTA;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.stockutil.StockUtil;
@@ -20,15 +21,16 @@ import roart.talib.util.TaUtil;
 
 public class Ta4jRSI extends Ta4j {
     @Override
-    protected Object[] getInner(double[][] arrarr, int size) {
+    protected SerialTA getInner(double[][] arrarr, int size) {
         double[] values = arrarr[0];
         double[] rsi = new double[values.length];
-        Object[] objs = new Object[4];
-        objs[0] = rsi;
+        Integer[] objs = new Integer[4];
+        double[][] objsarr = new double[4][];
+        objsarr[0] = rsi;
         objs[1] = 0; // beg;
         objs[2] = size; // end;
         if (size == 0) {
-            return objs;
+            return new SerialTA(objs, objsarr);
         }
         BarSeries series = getClosedSeries(values, size);
         RSIIndicator i = new RSIIndicator(new ClosePriceIndicator(series), 14);
@@ -38,7 +40,7 @@ public class Ta4jRSI extends Ta4j {
                 int jj = 0;
             }
         }
-        return objs;
+        return new SerialTA(objs, objsarr);
     }
 
     @Override

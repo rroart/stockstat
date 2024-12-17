@@ -10,6 +10,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MInteger;
 
+import roart.common.pipeline.data.SerialTA;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.stockutil.StockUtil;
@@ -20,7 +21,7 @@ import roart.talib.util.TaUtil;
 public class TalibATR extends Talib {
 
     @Override
-    protected Object[] getInner(double[][] arrarr, int size) {
+    protected SerialTA getInner(double[][] arrarr, int size) {
 	double[] close = arrarr[0];
         double[] low = arrarr[1];
 	double[] high = arrarr[2];
@@ -29,11 +30,12 @@ public class TalibATR extends Talib {
         MInteger end = new MInteger();
         double[] rsi = new double[close.length];
         core.atr(0, size - 1, low, high, close, 14, beg, end, rsi);
-        Object[] objs = new Object[3];
-        objs[0] = rsi;
+        Integer[] objs = new Integer[3];
+        double[][] objsarr = new double[3][];
+        objsarr[0] = rsi;
         objs[1] = beg.value;
         objs[2] = end.value;
-        return objs;
+        return new SerialTA(objs, objsarr);
     }
 
     @Override

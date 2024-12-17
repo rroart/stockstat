@@ -12,6 +12,7 @@ import com.tictactec.ta.lib.MAType;
 import com.tictactec.ta.lib.MInteger;
 
 import roart.common.constants.Constants;
+import roart.common.pipeline.data.SerialTA;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.stockutil.StockUtil;
@@ -22,7 +23,7 @@ import roart.talib.util.TaUtil;
 public class TalibSTOCH extends Talib {
 
     @Override
-    protected Object[] getInner(double[][] arrarr, int size) {
+    protected SerialTA getInner(double[][] arrarr, int size) {
 	double[] close = arrarr[0];
         double[] low = arrarr[1];
 	double[] high = arrarr[2];
@@ -42,12 +43,13 @@ public class TalibSTOCH extends Talib {
                 log.error(Constants.EXCEPTION, e);
             }
         }
-        Object[] objs = new Object[4];
-        objs[0] = rsi;
-        objs[1] = rsi2;
+        Integer[] objs = new Integer[4];
+        double[][] objsarr = new double[4][];
+        objsarr[0] = rsi;
+        objsarr[1] = rsi2;
         objs[2] = beg.value;
         objs[3] = end.value;
-        return objs;
+        return new SerialTA(objs, objsarr);
     }
 
     @Override

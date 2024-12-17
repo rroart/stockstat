@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.model.StockItem;
+import roart.common.pipeline.data.SerialTA;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.stockutil.StockUtil;
@@ -20,7 +21,7 @@ import roart.talib.util.TaUtil;
 public abstract class Ta {
     protected static Logger log = LoggerFactory.getLogger(Ta.class);
 
-    public Object[] calculate(double[][] array) {
+    public SerialTA calculate(double[][] array) {
         return getInner(array, array[0].length);
     }
     
@@ -47,24 +48,24 @@ public abstract class Ta {
             Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
         String[] titles = getTitles();
         int[][] arrarr = getArrayMeta();
-        Object[] objs = get(days, market, id, ids, marketdatamap, perioddata, periodstr, getInputArrays());
+        SerialTA objs = get(days, market, id, ids, marketdatamap, perioddata, periodstr, getInputArrays());
         int[] array = arrarr[TaConstants.ARRAY];
         int[] range = arrarr[TaConstants.RANGE];
         int[] arrayfixed = arrarr[TaConstants.ARRAYFIXED];
         double[][] valuesArr = new double[array.length][];
         for (int i = 0; i < array.length; i++) {
-            valuesArr[i] = (double[]) objs[array[i]];
+            valuesArr[i] = (double[]) objs.getarray(array[i]);
             String string = Arrays.toString(valuesArr[i]);
             log.info("{} {}", titles[i], string);
        }
-        int beg = (int) objs[range[0]];
-        int end = (int) objs[range[1]];
+        int beg = (int) objs.get(range[0]);
+        int end = (int) objs.get(range[1]);
         log.info("beg end {} {}", beg, end);
         
         return getDataset(valuesArr, titles, beg, end);
     }
     
-    private Object[] get(int days, String market,
+    private SerialTA get(int days, String market,
             String id, Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr, int arraysize) {
         Set<Pair<String, Integer>> pairs = perioddata.pairs;
         MarketData marketdata = marketdatamap.get(market);
@@ -78,7 +79,7 @@ public abstract class Ta {
         return getInner(arrarr, size);
     }
 
-    protected abstract Object[] getInner(double[][] arrarr, int size);
+    protected abstract SerialTA getInner(double[][] arrarr, int size);
 
     protected abstract String[] getTitles();
     

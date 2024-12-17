@@ -12,6 +12,11 @@ public class SerialList extends SerialObject {
         super();
     }
 
+    public SerialList(List<SerialObject> list) {
+        super();
+        this.list = list;
+    }
+
     public List<SerialObject> getList() {
         return list;
     }

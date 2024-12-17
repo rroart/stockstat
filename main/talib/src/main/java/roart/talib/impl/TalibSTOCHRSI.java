@@ -11,6 +11,7 @@ import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MAType;
 import com.tictactec.ta.lib.MInteger;
 
+import roart.common.pipeline.data.SerialTA;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.stockutil.StockUtil;
@@ -20,7 +21,7 @@ import roart.talib.util.TaUtil;
 
 public class TalibSTOCHRSI extends Talib {
     @Override
-    protected Object[] getInner(double[][] arrarr, int size) {
+    protected SerialTA getInner(double[][] arrarr, int size) {
         double[] values = arrarr[0];
         Core core = new Core();
         MInteger beg = new MInteger();
@@ -32,12 +33,13 @@ public class TalibSTOCHRSI extends Talib {
         MAType optInFastD;
         optInFastD = MAType.Sma;
         core.stochRsi(0, size - 1, values, 14, 5, 3, optInFastD, beg, end, rsi, rsi2);
-        Object[] objs = new Object[4];
-        objs[0] = rsi;
-        objs[1] = rsi2;
+        Integer[] objs = new Integer[4];
+        double[][] objsarr = new double[4][];
+        objsarr[0] = rsi;
+        objsarr[1] = rsi2;
         objs[2] = beg.value;
         objs[3] = end.value;
-        return objs;
+        return new SerialTA(objs, objsarr);
     }
 
     @Override

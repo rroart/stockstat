@@ -15,6 +15,7 @@ import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMapTA;
 import roart.common.util.PipelineUtils;
 import roart.ml.dao.MLClassifyDao;
 import roart.talib.util.TaConstants;
@@ -38,9 +39,9 @@ public class MLCCI extends IndicatorAggregator {
     }
 
     private abstract class CCISubType extends SubType {
-        public CCISubType(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
+        public CCISubType(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
             this.listMap = (Map<String, Double[][]>) list;
-            this.taMap = (Map<String, Object[]>) taObject;
+            this.taMap = taObject;
             this.resultMap = (Map<String, Double[]>) resultObject;
             this.afterbefore = afterbefore;
             this.range = range;
@@ -49,7 +50,7 @@ public class MLCCI extends IndicatorAggregator {
     }
 
     private class CCISubTypeCCI extends CCISubType {
-        public CCISubTypeCCI(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
+        public CCISubTypeCCI(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
             super(list, taObject, resultObject, afterbefore, range);
         }
         @Override
@@ -81,7 +82,7 @@ public class MLCCI extends IndicatorAggregator {
         List<SubType> wantedSubTypesList = new ArrayList<>();
         PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORCCI);
         Object list = null;
-        Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+        SerialMapTA taObject = (SerialMapTA) pipelineData.get(PipelineConstants.OBJECT);
         Object resultObject = pipelineData.get(PipelineConstants.RESULT);
         wantedSubTypesList.add(new CCISubTypeCCI(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE));
         return wantedSubTypesList;

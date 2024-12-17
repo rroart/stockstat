@@ -22,6 +22,9 @@ import roart.common.constants.Constants;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialList;
+import roart.common.pipeline.data.SerialMap;
+import roart.common.pipeline.data.SerialMarketStock;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
@@ -46,9 +49,9 @@ public class ExtraReader extends Pipeline {
     //Map<Pair<String, String>, List<Date>> pairDateListMap;
     //Map<Pair<String, String>, double[][]> pairTruncListMap;
     public Set<String> commonDates;
-    public Set<MarketStock> allMarketStocks = new LinkedHashSet<>();
+    public Set<SerialMarketStock> allMarketStocks = new LinkedHashSet<>();
     private Set<String> markets = new HashSet<>();
-    private Set<MarketStock> marketStocks = new HashSet<>();
+    private Set<SerialMarketStock> marketStocks = new HashSet<>();
     private Extra extra;
     private Map<String, Pipeline[]> dataReaderMap;
     private Map<String, StockData> stockDataMap;
@@ -116,8 +119,9 @@ public class ExtraReader extends Pipeline {
                     //continue;
                 }
                 markets.add(ms.getMarket());
-                marketStocks.add(ms);
-                allMarketStocks.add(ms);
+                SerialMarketStock sms = new SerialMarketStock(ms.getMarket(), ms.getId(), ms.getCategory());
+                marketStocks.add(sms);
+                allMarketStocks.add(sms);
                 //MarketStock aMs = new MarketStock(ms.getMarket(), null, ms.getCategory());
                 //Pair<String, String> pair = new ImmutablePair(ms.getMarket(), ms.getId());
                 //pairs.add(pair);
@@ -134,7 +138,8 @@ public class ExtraReader extends Pipeline {
                         //continue;
                     }
                     markets.add(ms.getMarket());
-                    marketStocks.add(ms);
+                    SerialMarketStock sms = new SerialMarketStock(ms.getMarket(), ms.getId(), ms.getCategory());
+                    marketStocks.add(sms);
                     //Pair<String, String> pair = new ImmutablePair(ms.getMarket(), ms.getId());
                     //pairs.add(pair);
                 }
@@ -151,7 +156,7 @@ public class ExtraReader extends Pipeline {
         
         List<String> dateList = StockDao.getDateList(conf.getConfigData().getMarket(), marketdatamap);
         commonDates = new HashSet<>(dateList);
-        for (MarketStock ms : marketStocks) {
+        for (SerialMarketStock ms : marketStocks) {
             String market = ms.getMarket();
             List<StockItem> stocksId = new ArrayList<>();
             StockData stockData = stockDataMap.get(market);
@@ -203,7 +208,7 @@ public class ExtraReader extends Pipeline {
 
                 Pipeline[] newDataReaders = new Pipeline[] { newDataReader };
                 dataReaderMap.put(id, newDataReaders);
-                MarketStock complexMs = new MarketStock();
+                SerialMarketStock complexMs = new SerialMarketStock();
                 complexMs.setMarket(id);
                 complexMs.setId(id);
                 // TODO setcat extra?
@@ -225,17 +230,17 @@ public class ExtraReader extends Pipeline {
         //map.put(PipelineConstants.PAIRTRUNCLIST, pairTruncListMap);
         map.setName(PipelineConstants.EXTRAREADER);
         map.put(PipelineConstants.DATELIST, commonDates);
-        Map<String, PipelineData[]> dataReaderMap2 = new HashMap<>();
+        SerialMap dataReaderMap2 = new SerialMap();
         for (Entry<String, Pipeline[]> entry : dataReaderMap.entrySet()) {
             Pipeline[] pipeline = entry.getValue();
-            PipelineData[] pipelinedata = new PipelineData[pipeline.length];
+            SerialList pipelinedata = new SerialList();
             for (int i = 0; i < pipeline.length; i++) {
-                pipelinedata[i] = pipeline[i].putData();
+                pipelinedata.add(pipeline[i].putData());
             }
             dataReaderMap2.put(entry.getKey(), pipelinedata );
         }
         map.put(PipelineConstants.DATAREADER, dataReaderMap2);
-        map.put(PipelineConstants.MARKETSTOCKS, allMarketStocks);
+        map.put(PipelineConstants.MARKETSTOCKS, new SerialList(new ArrayList<>(allMarketStocks)));
         return map;
     }
     
@@ -379,7 +384,7 @@ public class ExtraReader extends Pipeline {
             PipelineData[] datareaders = dataReaderMap.get(market);
             Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
             String cat = entry.getCategory();
-             if (cat == null) {
+            if (cat == null) {
                 cat = Constants.EXTRA;
             }
             PipelineData datareader = pipelineMap.get(cat);

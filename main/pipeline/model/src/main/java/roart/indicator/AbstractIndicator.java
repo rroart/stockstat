@@ -21,6 +21,9 @@ import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMap;
+import roart.common.pipeline.data.SerialMapD;
+import roart.common.pipeline.data.SerialMapTA;
+import roart.common.pipeline.data.SerialTA;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.util.MathUtil;
 import roart.common.util.PipelineUtils;
@@ -56,7 +59,7 @@ public abstract class AbstractIndicator extends Calculatable {
     */
     // save and return this map
     // need getters for this and not? buy/sell
-    protected Map<String, Object[]> objectMap;
+    protected Map<String, SerialTA> objectMap;
     protected Map<String, Object[]> objectFixedMap;
     protected Map<String, Double[]> calculatedMap;
     protected Map<String, Object[]> resultMap;
@@ -74,7 +77,7 @@ public abstract class AbstractIndicator extends Calculatable {
     }
 
     public abstract boolean isEnabled();
-    protected abstract Double[] getCalculated(Map<String, Object[]> objectMap, String id);
+    protected abstract Double[] getCalculated(Map<String, SerialTA> objectMap, String id);
     protected abstract void getFieldResult(Double[] momentum, Object[] fields);
 
     public abstract String getName();
@@ -86,12 +89,12 @@ public abstract class AbstractIndicator extends Calculatable {
     }
 
     @Override
-    public Object calculate(double[][] array) {
+    public SerialTA calculate(double[][] array) {
         return null;
     }
 
     @Override
-    public Object calculate(Double[][] array) {
+    public SerialTA calculate(Double[][] array) {
         double[][] newArray = new double[array.length][];
         for (int i = 0; i < array.length; i ++) {
             newArray[i] = ArrayUtils.toPrimitive(array[i]);
@@ -100,7 +103,7 @@ public abstract class AbstractIndicator extends Calculatable {
     }
 
     @Override
-    public Object calculate(scala.collection.Seq[] objArray) {
+    public SerialTA calculate(scala.collection.Seq[] objArray) {
         double[][] newArray = new double[objArray.length][];
         for (int i = 0; i < objArray.length; i++) {
             List list = scala.collection.JavaConverters.seqAsJavaList(objArray[0]);
@@ -127,27 +130,32 @@ public abstract class AbstractIndicator extends Calculatable {
         return null;
     }
 
-    public Object[] getDayResult(Object[] objs, int offset) {
+    public Object[] getDayResult(SerialTA objsIndicator, int offset) {
         return null;
     }
 
     public PipelineData putData() {
         PipelineData map = getData();
         map.setName(indicatorName());
-        map.put(PipelineConstants.RESULT, calculatedMap);
-        map.put(PipelineConstants.OBJECT, objectMap);
+        // the mixed and complex results of indicator
+        // an array with numbers or arrays
+        map.put(PipelineConstants.OBJECT, new SerialMapTA(objectMap));
         // TODO unused
         map.put(PipelineConstants.OBJECTFIXED, objectFixedMap);
         //map.put(PipelineConstants.LIST, listMap);
         //map.put(PipelineConstants.TRUNCLIST, truncListMap);
-        map.put(PipelineConstants.RESULT, calculatedMap);
         
-        // market as key
+        // for web
+        map.put(PipelineConstants.RESULT, new SerialMapD(calculatedMap));
+        
+        // market as key, for extras
         // raw calculations
         map.put(PipelineConstants.MARKETOBJECT, marketObjectMap);
         // prep for web?
+        // TODO unused?
         map.put(PipelineConstants.MARKETCALCULATED, marketCalculatedMap);
         // result for web table
+        // TODO unused?
         map.put(PipelineConstants.MARKETRESULT, marketResultMap);
         //map.smap().put(PipelineConstants.RESULT, resultSMap);
         return map;
@@ -215,10 +223,10 @@ public abstract class AbstractIndicator extends Calculatable {
 
     protected abstract int getAnythingHereRange();
     
-    protected Map<String, Double[]> getCalculatedMap(Map<String, Object[]> objectMap, Map<String, double[][]> truncListMap) {
+    protected Map<String, Double[]> getCalculatedMap(Map<String, SerialTA> myObjectMap, Map<String, double[][]> truncListMap) {
         Map<String, Double[]> result = new HashMap<>();
         for (String id : truncListMap.keySet()) {
-            Double[] calculated = getCalculated(objectMap, id);
+            Double[] calculated = getCalculated(myObjectMap, id);
             if (calculated != null) {
                 result.put(id, calculated);
                 // and continue?
@@ -229,7 +237,7 @@ public abstract class AbstractIndicator extends Calculatable {
         return result;
     }
 
-    protected Map<String, Object[]> getResultMap(IclijConfig conf, Map<String, Object[]> objectMap, Map<String, Double[]> momMap) {
+    protected Map<String, Object[]> getResultMap(IclijConfig conf, Map<String, SerialTA> myObjectMap, Map<String, Double[]> momMap) {
         Map<String, Object[]> result = new HashMap<>();
         Map<String, Double[][]> listMap = null;
         if (datareader != null) {

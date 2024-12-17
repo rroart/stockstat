@@ -22,6 +22,7 @@ import roart.common.model.SimDataItem;
 import roart.common.model.StockItem;
 import roart.common.model.TimingBLItem;
 import roart.common.model.TimingItem;
+import roart.common.pipeline.data.SerialTA;
 import roart.pipeline.common.Calculatable;
 
 public abstract class DbAccess {
@@ -88,7 +89,7 @@ public abstract class DbAccess {
 
     public abstract List<Date> getDates(String market);
 
-    public abstract Map<String, Object[]> doCalculationsArr(IclijConfig conf, Map<String, double[][]> listMap, String key,
+    public abstract Map<String, SerialTA> doCalculationsArr(IclijConfig conf, Map<String, double[][]> listMap, String key,
             Calculatable indicator, boolean wantPercentizedPriceIndex);
 
 }

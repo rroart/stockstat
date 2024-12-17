@@ -6,6 +6,7 @@ import java.util.Map;
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialTA;
 import roart.common.constants.Constants;
 import roart.pipeline.Pipeline;
 import roart.talib.Ta;
@@ -46,7 +47,7 @@ public class IndicatorATR extends Indicator {
     }
 
     @Override
-    public Object calculate(double[][] array) {
+    public SerialTA calculate(double[][] array) {
         Ta tu = new TalibATR();
         return tu.calculate(array);
     }
@@ -58,14 +59,14 @@ public class IndicatorATR extends Indicator {
     }
 
     @Override
-    protected Double[] getCalculated(Map<String, Object[]> objectMap, String id) {
-        Object[] objs = objectMap.get(id);
+    protected Double[] getCalculated(Map<String, SerialTA> objectMap, String id) {
+        SerialTA objs = objectMap.get(id);
         TaUtil tu = new TaUtil();
         return tu.getWithOneAndDelta(conf.getATRDeltaDays(), objs);
     }
 
     @Override
-    public Object[] getDayResult(Object[] objs, int offset) {
+    public Object[] getDayResult(SerialTA objs, int offset) {
         TaUtil tu = new TaUtil();
         return tu.getWithOneAndDelta(conf.getATRDeltaDays(), objs, offset);
     }

@@ -15,6 +15,8 @@ import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMapTA;
+import roart.common.pipeline.data.SerialTA;
 import roart.common.util.PipelineUtils;
 import roart.ml.dao.MLClassifyDao;
 import roart.talib.util.TaConstants;
@@ -38,9 +40,9 @@ public class MLATR extends IndicatorAggregator {
     }
 
     private abstract class ATRSubType extends SubType {
-        public ATRSubType(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
+        public ATRSubType(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
             this.listMap = (Map<String, Double[][]>) list;
-            this.taMap = (Map<String, Object[]>) taObject;
+            this.taMap = taObject;
             this.resultMap = (Map<String, Double[]>) resultObject;
             this.afterbefore = afterbefore;
             this.range = range;
@@ -49,7 +51,7 @@ public class MLATR extends IndicatorAggregator {
     }
 
     private class ATRSubTypeATR extends ATRSubType {
-        public ATRSubTypeATR(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
+        public ATRSubTypeATR(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
             super(list, taObject, resultObject, afterbefore, range);
         }
         @Override

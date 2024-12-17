@@ -12,6 +12,7 @@ import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMapTA;
 import roart.common.util.PipelineUtils;
 import roart.ml.dao.MLClassifyDao;
 import roart.talib.util.TaConstants;
@@ -57,7 +58,7 @@ public class MLMulti extends IndicatorAggregator {
             if (conf.wantAggregatorsMlmultiMACD()) {
                 PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORMACD);
                 Object list = null;
-                Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+                SerialMapTA taObject = (SerialMapTA) pipelineData.get(PipelineConstants.OBJECT);
                 Object resultObject = pipelineData.get(PipelineConstants.RESULT);
                 Filter[] filter = new Filter[] { new Filter(true, 0, shortneg), new Filter(false, 0, shortpos) };
                 if (taObject != null) {
@@ -67,7 +68,7 @@ public class MLMulti extends IndicatorAggregator {
             if (conf.wantAggregatorsMlmultiRSI()) {
                 PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORRSI);
                 Object list = null;
-                Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+                SerialMapTA taObject = (SerialMapTA) pipelineData.get(PipelineConstants.OBJECT);
                 Object resultObject = pipelineData.get(PipelineConstants.RESULT);
                 Filter[] filter = new Filter[] { new Filter(true, conf.getMLRSIBuyRSILimit(), shortpos), new Filter(false, conf.getMLRSISellRSILimit(), shortneg) };
                 if (taObject != null) {
@@ -77,7 +78,7 @@ public class MLMulti extends IndicatorAggregator {
             if (conf.wantAggregatorsMlmultiATR()) {
                 PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORATR);
                 Object list = null;
-                Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+                SerialMapTA taObject = (SerialMapTA) pipelineData.get(PipelineConstants.OBJECT);
                 Object resultObject = pipelineData.get(PipelineConstants.RESULT);
                 Filter[] filter = new Filter[] { new Filter(true, conf.getMLATRBuyLimit(), shortpos), new Filter(false, conf.getMLATRSellLimit(), shortneg) };
                 if (taObject != null) {
@@ -87,7 +88,7 @@ public class MLMulti extends IndicatorAggregator {
             if (conf.wantAggregatorsMlmultiCCI()) {
                 PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORCCI);
                 Object list = null;
-                Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+                SerialMapTA taObject = (SerialMapTA) pipelineData.get(PipelineConstants.OBJECT);
                 Object resultObject = pipelineData.get(PipelineConstants.RESULT);
                 Filter[] filter = new Filter[] { new Filter(true, conf.getMLCCIBuyLimit(), shortpos), new Filter(false, conf.getMLCCISellLimit(), shortneg) };
                 if (taObject != null) {
@@ -97,7 +98,7 @@ public class MLMulti extends IndicatorAggregator {
             if (conf.wantAggregatorsMlmultiSTOCH()) {
                 PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCH);
                 Object list = null;
-                Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+                SerialMapTA taObject = (SerialMapTA) pipelineData.get(PipelineConstants.OBJECT);
                 Object resultObject = pipelineData.get(PipelineConstants.RESULT);
                 Filter[] filter = new Filter[] { new Filter(true, conf.getMLSTOCHBuyLimit(), shortpos), new Filter(false, conf.getMLSTOCHSellLimit(), shortneg) };
                 if (taObject != null) {
@@ -107,7 +108,7 @@ public class MLMulti extends IndicatorAggregator {
             if (conf.wantAggregatorsMlmultiSTOCHRSI()) {
                 PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCHRSI);
                 Object list = null;
-                Object taObject = pipelineData.get(PipelineConstants.OBJECT);
+                SerialMapTA taObject = (SerialMapTA) pipelineData.get(PipelineConstants.OBJECT);
                 Object resultObject = pipelineData.get(PipelineConstants.RESULT);
                 Filter[] filter = new Filter[] { new Filter(true, conf.getMLRSIBuySRSILimit(), shortpos), new Filter(false, conf.getMLRSISellSRSILimit(), shortneg) };
                 if (taObject != null) {
@@ -126,10 +127,10 @@ public class MLMulti extends IndicatorAggregator {
     private class SubTypeMulti extends MergeSubType {
         private IclijConfig conf;
         private String name;
-        public SubTypeMulti(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range, IclijConfig conf, Filter[] filter, String name, MySubType mySubType) {
+        public SubTypeMulti(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range, IclijConfig conf, Filter[] filter, String name, MySubType mySubType) {
             super(afterbefore);
             this.listMap = (Map<String, Double[][]>) list;
-            this.taMap = (Map<String, Object[]>) taObject;
+            this.taMap = taObject;
             this.resultMap = (Map<String, Double[]>) resultObject;
             this.afterbefore = afterbefore;
             this.range = range;

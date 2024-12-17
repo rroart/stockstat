@@ -42,7 +42,9 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialIncDec;
 import roart.common.pipeline.data.SerialList;
+import roart.common.pipeline.data.SerialMapTA;
 import roart.common.pipeline.data.SerialResultMeta;
+import roart.common.pipeline.data.SerialTA;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.data.TwoDimd;
 import roart.common.util.ArraysUtil;
@@ -1237,9 +1239,9 @@ public abstract class IndicatorAggregator extends Aggregator {
             Map<Integer, Integer> posneg, String[] labels, String[] startlabels, AfterBeforeLimit afterbefore, Double threshold) {
         //boolean endOnly = subType.filters[0].limit == subType.filters[1].limit;
         //Map<Integer, Integer> newPosNeg = ArraysUtil.getAcceptedRanges(posneg, afterbefore.before, afterbefore.after, listsize, endOnly);
-        Object[] objs = subType.taMap.get(id);
+        SerialTA objs = subType.taMap.get(id);
         //int begOfArray = (int) objs[subType.range[0]];
-        int endOfArray = (int) objs[subType.range[1]];
+        int endOfArray = (int) objs.get(subType.range[1]);
         for (Entry<Integer, Integer> entry : posneg.entrySet()) {
             String textlabel;
             int start = entry.getKey();
@@ -1300,7 +1302,7 @@ public abstract class IndicatorAggregator extends Aggregator {
             SubType subType, String commonType, String posnegType, String id, double[] list,
             Map<String, Double> labelMap2, double[][] arrays, int listsize, Map<Integer, Integer> posneg, String[] labels,
             Object object, AfterBeforeLimit afterbefore, SubType[] subs, Double threshold/*, Pair<Integer, Integer> intersect*/) {
-        Object[] objs = subType.taMap.get(id);
+        SerialTA objs = subType.taMap.get(id);
         /*
         int begOfArray = (int) objs[subType.range[0]];
         int endOfArray = (int) objs[subType.range[1]];
@@ -1576,10 +1578,10 @@ public abstract class IndicatorAggregator extends Aggregator {
                     if (curResult == null || !Arrays.stream(curResult).allMatch(i -> i != null)) {
                         continue;
                     }
-                    Map<String, Object[]> taObjectMap = subType.taMap;
-                    Object[] taObject = taObjectMap.get(id);
-                    int begOfArray = (int) taObject[subType.range[0]];
-                    int endOfArray = (int) taObject[subType.range[1]];
+                    SerialMapTA taObjectMap = subType.taMap;
+                    SerialTA taObject = taObjectMap.get(id);
+                    int begOfArray = (int) taObject.get(subType.range[0]);
+                    int endOfArray = (int) taObject.get(subType.range[1]);
                     log.debug("beg end {} {} {}", id, begOfArray, endOfArray);
                     if (endOfArray <= 0) {
                         log.error("error arrayend 0");
@@ -1588,7 +1590,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                     double[] trunclist = ArrayUtils.subarray(list[0], begOfArray, begOfArray + endOfArray);
                     log.debug("trunclist {} {}", list.length, Arrays.asList(trunclist));
 
-                    double[] anArray = (double[]) taObject[subType.getArrIdx()];
+                    double[] anArray = (double[]) taObject.getarray(subType.getArrIdx());
                     //anArray = createArray(anArray, begOfArray, endOfArray);
                     for (int i = 0; i < posneg.length; i++) {
                         Map<Integer, Integer>[] map = ArraysUtil.searchForwardLimit(anArray, endOfArray, subType.filters[i].limit, subType.filters[1 - i].limit);
@@ -1757,10 +1759,10 @@ public abstract class IndicatorAggregator extends Aggregator {
                     if (curResult == null || !Arrays.stream(curResult).allMatch(i -> i != null)) {
                         continue;
                     }
-                    Map<String, Object[]> taObjectMap = subType.taMap;
-                    Object[] taObject = taObjectMap.get(id);
-                    int begOfArray = (int) taObject[subType.range[0]];
-                    int endOfArray = (int) taObject[subType.range[1]];
+                    SerialMapTA taObjectMap = subType.taMap;
+                    SerialTA taObject = taObjectMap.get(id);
+                    int begOfArray = (int) taObject.get(subType.range[0]);
+                    int endOfArray = (int) taObject.get(subType.range[1]);
                     begendList.add(new ImmutablePair(begOfArray, begOfArray + endOfArray - 1));
                     log.debug("beg end {} {} {}", id, begOfArray, endOfArray);
                     if (endOfArray <= 0) {
@@ -1787,11 +1789,11 @@ public abstract class IndicatorAggregator extends Aggregator {
                     if (!subType.useMerged) {
                         continue;
                     }
-                    Map<String, Object[]> taObjectMap = subType.taMap;
-                    Object[] taObject = taObjectMap.get(id);
-                    double[] anArray = (double[]) taObject[subType.getArrIdx()];
-                    int begOfArray = (int) taObject[subType.range[0]];
-                    int endOfArray = (int) taObject[subType.range[1]];
+                    SerialMapTA taObjectMap = subType.taMap;
+                    SerialTA taObject = taObjectMap.get(id);
+                    double[] anArray = (double[]) taObject.getarray(subType.getArrIdx());
+                    int begOfArray = (int) taObject.get(subType.range[0]);
+                    int endOfArray = (int) taObject.get(subType.range[1]);
                     int newBeg = intersectBegOfArray - begOfArray;
                     if (subType.afterbefore.before > endOfArray - newBeg) {
                         log.error("Subtype too small");
@@ -1822,10 +1824,10 @@ public abstract class IndicatorAggregator extends Aggregator {
                 }
                 if (triggerSubType != null) {
                     SubType subType = triggerSubType;
-                    Map<String, Object[]> taObjectMap = subType.taMap;
-                    Object[] taObject = taObjectMap.get(id);
-                    int begOfArray = (int) taObject[subType.range[0]];
-                    int endOfArray = (int) taObject[subType.range[1]];
+                    SerialMapTA taObjectMap = subType.taMap;
+                    SerialTA taObject = taObjectMap.get(id);
+                    int begOfArray = (int) taObject.get(subType.range[0]);
+                    int endOfArray = (int) taObject.get(subType.range[1]);
                     log.debug("beg end {} {} {}", id, begOfArray, intersectEndOfArray);
                     if (endOfArray <= 0) {
                         log.error("error arrayend 0");
@@ -1973,7 +1975,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         //public abstract Filter getFilter();
         protected Map<String, Double[][]> listMap;
         protected Map<String, Double[]> resultMap;
-        protected Map<String, Object[]> taMap;
+        protected SerialMapTA taMap;
         protected AfterBeforeLimit afterbefore;
         protected int[] range;
         protected Filter[] filters;

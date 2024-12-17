@@ -15,6 +15,7 @@ import roart.common.model.SimDataItem;
 import roart.common.model.StockItem;
 import roart.common.model.TimingBLItem;
 import roart.common.model.TimingItem;
+import roart.common.pipeline.data.SerialTA;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -146,8 +147,8 @@ public class DbHibernate {
 
     // Moved
     @Deprecated
-    public static Map<String, Object[]> doCalculationsArrNonNull(IclijConfig conf, Map<String, double[][]> listMap, String key, Calculatable indicator, boolean wantPercentizedPriceIndex) {
-        Map<String, Object[]> objectMap = new HashMap<>();
+    public static Map<String, SerialTA> doCalculationsArrNonNull(IclijConfig conf, Map<String, double[][]> listMap, String key, Calculatable indicator, boolean wantPercentizedPriceIndex) {
+        Map<String, SerialTA> objectMap = new HashMap<>();
         for (String id : listMap.keySet()) {
             //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
             double [][] list = listMap.get(id);
@@ -176,7 +177,7 @@ public class DbHibernate {
             if (list[0].length == 0) {
                 //continue;
             }
-            Object[] objs = (Object[]) indicator.calculate(list);
+            SerialTA objs = indicator.calculate(list);
             if ("F00000HGSN".equals(id)) {
                 log.debug("braz " + Arrays.asList(list));
             }
