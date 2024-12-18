@@ -17,11 +17,17 @@ import roart.common.pipeline.data.OneDim;
 import roart.common.pipeline.data.OneDimD;
 import roart.common.pipeline.data.OneDimd;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialInteger;
+import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialMapDD;
 import roart.common.pipeline.data.SerialMapPlain;
+import roart.common.pipeline.data.SerialMapVolume;
 import roart.common.pipeline.data.SerialMapdd;
+import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.data.SerialObject;
+import roart.common.pipeline.data.SerialString;
+import roart.common.pipeline.data.SerialVolume;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.data.TwoDimd;
 
@@ -212,6 +218,7 @@ public class PipelineUtils {
     // , PipelineConstants.MARKETOBJECT
     
     public static void fixPipeline(PipelineData[] pipelineData, Class marketStockClass, Class stockDataClass) {
+        // TODO remaining volumemap, namemap, meta, datelist, title
         for (PipelineData data : pipelineData) {
             for (Entry<String, Object> entry : data.getMap().entrySet()) {
                 if (PipelineConstants.VOLUME.equals(entry.getKey())) {
@@ -408,5 +415,53 @@ public class PipelineUtils {
             }
         }
         log.info("Total Size {}", total);
+    }
+    
+    public static Map<String, Object[][]> getVolumeMap(PipelineData data) {
+        return null;
+    }
+    
+    public static List<String> getDatelist(PipelineData data) {
+        SerialListPlain list = (SerialListPlain) data.get(PipelineConstants.DATELIST);
+        if (list != null) {
+            return list.getList();
+        }
+        return null;
+    }
+    
+    public static Map getNamemap(PipelineData data) {
+        SerialMapPlain list = (SerialMapPlain) data.get(PipelineConstants.NAME);
+        if (list != null) {
+            return list.getMap();
+        }
+        return null;
+    }
+
+    public static Integer getWantedcat(PipelineData data) {
+        SerialInteger list = (SerialInteger) data.get(PipelineConstants.WANTEDCAT);
+        if (list != null) {
+            return list.getInteger();
+        }
+        return null;
+    }
+
+    public static String getCat(PipelineData data) {
+        SerialString list = (SerialString) data.get(PipelineConstants.CATEGORY);
+        if (list != null) {
+            return list.getString();
+        }
+        return null;
+    }
+
+    public static SerialMeta getMeta(PipelineData data) {
+        return (SerialMeta) data.get(PipelineConstants.META);
+    }
+
+    public static Map<String, SerialVolume[]> getVolume(PipelineData data) {
+        SerialMapVolume list = (SerialMapVolume) data.get(PipelineConstants.VOLUME);
+        if (list != null) {
+            return list.getMap();
+        }
+        return null;
     }
 }

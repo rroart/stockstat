@@ -5,15 +5,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-public class SerialMapTA extends SerialObject {
+public class SerialMapVolume extends SerialObject {
+    private Map<String, SerialVolume[]> map = new HashMap<>();
 
-    private Map<String, SerialTA> map = new HashMap<>();
-
-    public SerialMapTA() {
+    public SerialMapVolume() {
         super();
     }
 
-    public SerialMapTA(Map<String, SerialTA> map) {
+    public SerialMapVolume(Map<String, SerialVolume[]> map) {
         super();
         if (map == null) {
             int jj = 0;
@@ -21,20 +20,20 @@ public class SerialMapTA extends SerialObject {
         this.map = map;
     }
 
-    public Map<String, SerialTA> getMap() {
+    public Map<String, SerialVolume[]> getMap() {
         return map;
     }
 
-    public void setMap(Map<String, SerialTA> map) {
+    public void setMap(Map<String, SerialVolume[]> map) {
         this.map = map;
     }
 
-    public SerialMapTA put(String key, SerialTA value) {
+    public SerialMapVolume put(String key, SerialVolume[] value) {
         map.put(key, value);
         return this;
     }
 
-    public SerialTA get(String key) {
+    public SerialVolume[] get(String key) {
         if (map == null) {
             int jj = 0;
         }
@@ -45,7 +44,7 @@ public class SerialMapTA extends SerialObject {
         return map.keySet();
     }
 
-    public Set<Entry<String, SerialTA>> entrySet() {
+    public Set<Entry<String, SerialVolume[]>> entrySet() {
         return map.entrySet();
     }
 }

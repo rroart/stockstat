@@ -7,6 +7,11 @@ public class SerialInteger extends SerialObject {
         super();
     }
 
+    public SerialInteger(Integer integer) {
+        super();
+        this.integer = integer;
+    }
+
     public Integer getInteger() {
         return integer;
     }

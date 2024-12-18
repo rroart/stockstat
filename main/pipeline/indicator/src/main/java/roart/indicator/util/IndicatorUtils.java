@@ -412,8 +412,8 @@ public class IndicatorUtils {
             String indicatorName = indicators.get(idx++);
             Map<String, PipelineData> pipelineMap = getPipelineMap(datareaders);
             PipelineData meta = pipelineMap.get(PipelineConstants.META);
-            PipelineData pipeline = pipelineMap.get((String) meta.get(PipelineConstants.CATEGORY));
-            List<String> dateList2 = (List<String>) pipeline.get(PipelineConstants.DATELIST);
+            PipelineData pipeline = pipelineMap.get(PipelineUtils.getCat(meta));
+            List<String> dateList2 = PipelineUtils.getDatelist(pipeline);
             j = dateList2.size() - 1 - dateList2.indexOf(commonDate);
             SerialTA objsIndicator = objectMap.get(id);
             result = appendDayResult(conf, j, result, indicatorName, objsIndicator);
@@ -583,7 +583,7 @@ public class IndicatorUtils {
                         log.debug("TODO temp workaround");
                     }
 
-                    List<String> dateList2 = (List<String>) pipeline.get(PipelineConstants.DATELIST);
+                    List<String> dateList2 = PipelineUtils.getDatelist(pipeline);
                     j = dateList2.size() - 1 - dateList2.indexOf(commonDate);
                     SerialMapTA objectMap = (SerialMapTA) marketEntry.getValue();
                     for (Entry<String, SerialTA> entry2 : objectMap.entrySet()) {

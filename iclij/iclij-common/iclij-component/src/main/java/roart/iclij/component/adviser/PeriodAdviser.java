@@ -21,6 +21,7 @@ import roart.common.model.IncDecItem;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.util.JsonUtil;
 import roart.common.util.MapUtil;
@@ -66,7 +67,7 @@ public class PeriodAdviser extends Adviser {
             }
             //List<MetaItem> metas = param.getService().getMetas();
             PipelineData metaData = PipelineUtils.getPipeline(resultMaps, PipelineConstants.META);
-            MetaItem meta = JsonUtil.convert(metaData.get(PipelineConstants.META), MetaItem.class);
+            SerialMeta meta = PipelineUtils.getMeta(metaData);
             if (cat >= Constants.PERIODS) {
                 // from old stored data
                 log.error("Category too big {}", cat);

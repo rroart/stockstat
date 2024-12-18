@@ -7,6 +7,11 @@ public     class SerialString extends SerialObject {
         super();
     }
 
+    public SerialString(String string) {
+        super();
+        this.string = string;
+    }
+
     public String getString() {
         return string;
     }

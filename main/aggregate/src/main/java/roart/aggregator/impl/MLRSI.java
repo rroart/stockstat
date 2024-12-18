@@ -13,6 +13,7 @@ import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.SerialMapTA;
 import roart.common.pipeline.data.SerialTA;
 import roart.common.util.PipelineUtils;
@@ -42,9 +43,10 @@ public class MLRSI extends IndicatorAggregator {
     private abstract class RsiSubType extends MergeSubType {
         public RsiSubType(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
             super(afterbefore);
-            this.listMap = (Map<String, Double[][]>) list;
+            this.listMap = list != null ? (Map<String, Double[][]>) list : new HashMap<>();
             this.taMap = taObject;
-            this.resultMap = (Map<String, Double[]>) resultObject;
+            SerialMapD smap = (SerialMapD) resultObject;
+            this.resultMap = smap.getMap() != null ? smap.getMap() : new HashMap<>();
             this.afterbefore = afterbefore;
             this.range = range;
         }

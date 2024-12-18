@@ -9,6 +9,7 @@ import roart.common.constants.Constants;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.data.TwoDimd;
 import roart.common.util.PipelineUtils;
@@ -34,7 +35,7 @@ public class MACDBase extends Aggregator {
         }
         Object resultObject2 = macdmap.get(PipelineConstants.RESULT);
 
-        this.resultObject = (Map<String, Double[]>) resultObject2;
+        this.resultObject = ((SerialMapD) resultObject2).getMap();
         
         Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
         PipelineData datareader = pipelineMap.get(catName);

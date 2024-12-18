@@ -2,6 +2,7 @@ package roart.common.pipeline.data;
 
 public class SerialTA extends SerialObject {
 
+    // first is offset, second size
     private Integer[] objs;
     
     private double[][] objsarr;    

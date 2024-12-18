@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import roart.common.pipeline.data.SerialVolume;
 import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.verifyprofit.VerifyProfit;
 import roart.testdata.TestData;
@@ -20,7 +21,7 @@ public class SimulateInvestComponentTest {
     public void test() {
         TestData testData = new TestData();
         Map<String, List<List<Double>>> categoryValueMap = testData.getVolumeCatValMap();
-        Map<String, List<List<Object>>> volumeMap = testData.getVolumeMap();
+        Map<String, SerialVolume[]> volumeMap = testData.getVolumeMap();
         List<String> stockDates = testData.getStockDates(LocalDate.now(), 14, false);
         SimulateInvestComponent comp = new SimulateInvestComponent();
         int firstidx = 13; 

@@ -381,8 +381,8 @@ public class EvolutionService {
     public StockData getStockData(PipelineData[] pipelineData) {
         StockData stockData = new StockData();
         PipelineData pipelineDatum = PipelineUtils.getPipeline(pipelineData, PipelineConstants.META);
-        stockData.cat = (Integer) pipelineDatum.get(PipelineConstants.WANTEDCAT);
-        stockData.catName = (String) pipelineDatum.get(PipelineConstants.CATEGORY);
+        stockData.cat = PipelineUtils.getWantedcat(pipelineDatum);
+        stockData.catName = PipelineUtils.getCat(pipelineDatum);
         return stockData;
     }
 

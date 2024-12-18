@@ -1,6 +1,7 @@
 package roart.aggregator.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.SerialMapTA;
 import roart.common.util.PipelineUtils;
 import roart.ml.dao.MLClassifyDao;
@@ -129,9 +131,10 @@ public class MLMulti extends IndicatorAggregator {
         private String name;
         public SubTypeMulti(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range, IclijConfig conf, Filter[] filter, String name, MySubType mySubType) {
             super(afterbefore);
-            this.listMap = (Map<String, Double[][]>) list;
+            this.listMap = list != null ? (Map<String, Double[][]>) list : new HashMap<>();
             this.taMap = taObject;
-            this.resultMap = (Map<String, Double[]>) resultObject;
+            SerialMapD smap = (SerialMapD) resultObject;
+            this.resultMap = smap.getMap() != null ? smap.getMap() : new HashMap<>();
             this.afterbefore = afterbefore;
             this.range = range;
             this.filters = filter;

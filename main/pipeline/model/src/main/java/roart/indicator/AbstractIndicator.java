@@ -139,7 +139,7 @@ public abstract class AbstractIndicator extends Calculatable {
         map.setName(indicatorName());
         // the mixed and complex results of indicator
         // an array with numbers or arrays
-        map.put(PipelineConstants.OBJECT, new SerialMapTA(objectMap));
+        map.put(PipelineConstants.OBJECT, new SerialMapTA(objectMap/* != null ? objectMap : new HashMap<>()*/));
         // TODO unused
         map.put(PipelineConstants.OBJECTFIXED, objectFixedMap);
         //map.put(PipelineConstants.LIST, listMap);

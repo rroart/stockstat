@@ -265,10 +265,10 @@ public class MLIndicator extends Aggregator {
         Map<Pair<String, String>, String> pairCatMap = null; // (Map<Pair<String, String>, String>) localResults.get(PipelineConstants.PAIRCAT);
         */
         log.info("KEY" + this.key + " " + pipelineMap.keySet() + " " + title + " ");
-        List<String> dateList = (List<String>) pipelineMap.get(this.key).get(PipelineConstants.DATELIST);
+        List<String> dateList = PipelineUtils.getDatelist(pipelineMap.get(this.key));
 	List<String> dateList2 = new ArrayList<>(dateList); // StockDao.getDateList(conf.getConfigData().getMarket(), marketdatamap);
         if (extrareader.get(PipelineConstants.MARKETSTOCKS) != null) {
-            dateList = (List) extrareader.get(PipelineConstants.DATELIST);
+            dateList = PipelineUtils.getDatelist(extrareader);
             Collections.sort(dateList);
         }
         Map<String, PipelineData> usedIndicatorMap = PipelineUtils.getPipelineMapStartsWith(datareaders, PipelineConstants.INDICATOR);

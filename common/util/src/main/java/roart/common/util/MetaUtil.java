@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
+import roart.common.pipeline.data.SerialMeta;
 
 public class MetaUtil {
 
@@ -47,6 +48,21 @@ public class MetaUtil {
             break;
         default:
             return meta.getperiod(category);
+        }
+        return categoryName;
+    }
+    
+    public String getCategory(SerialMeta meta, Integer category) {
+        String categoryName;
+        switch (category) {
+        case Constants.PRICECOLUMN:
+            categoryName = Constants.PRICE;
+            break;
+        case Constants.INDEXVALUECOLUMN:
+            categoryName = Constants.INDEX;
+            break;
+        default:
+            return meta.getPeriod()[category];
         }
         return categoryName;
     }

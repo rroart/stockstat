@@ -60,6 +60,12 @@ import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialInteger;
+import roart.common.pipeline.data.SerialListPlain;
+import roart.common.pipeline.data.SerialMapPlain;
+import roart.common.pipeline.data.SerialMeta;
+import roart.common.pipeline.data.SerialPlain;
+import roart.common.pipeline.data.SerialString;
 import roart.common.util.JsonUtil;
 import roart.common.util.PipelineUtils;
 import roart.common.util.ServiceConnectionUtil;
@@ -168,11 +174,12 @@ public class ControlService {
         
         PipelineData singlePipelineData = new PipelineData();
         singlePipelineData.setName(PipelineConstants.META);
-        singlePipelineData.put(PipelineConstants.META, stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta);
-        singlePipelineData.put(PipelineConstants.CATEGORY, stockData.catName);
-        singlePipelineData.put(PipelineConstants.WANTEDCAT, stockData.cat);
-        singlePipelineData.put(PipelineConstants.NAME, stockData.idNameMap);
-        singlePipelineData.put(PipelineConstants.DATELIST, stockData.stockdates);
+        MetaItem meta = stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta;
+        singlePipelineData.put(PipelineConstants.META, new SerialMeta(meta.getMarketid(), meta.getPeriod(), meta.getPriority(), meta.getReset(), meta.isLhc()));
+        singlePipelineData.put(PipelineConstants.CATEGORY, new SerialString(stockData.catName));
+        singlePipelineData.put(PipelineConstants.WANTEDCAT, new SerialInteger(stockData.cat));
+        singlePipelineData.put(PipelineConstants.NAME, new SerialMapPlain(stockData.idNameMap));
+        singlePipelineData.put(PipelineConstants.DATELIST, new SerialListPlain(stockData.stockdates));
         PipelineData[] pipelinedata = new PipelineData[0];
         pipelinedata = ArrayUtils.add(pipelinedata, singlePipelineData);
         ResultItemTable table = new ResultItemTable();
@@ -684,7 +691,7 @@ public class ControlService {
         if (stockData != null) {
             PipelineData map = new PipelineData();
             map.setName(PipelineConstants.DATELIST);
-            map.put(PipelineConstants.DATELIST, stockData.stockdates);
+            map.put(PipelineConstants.DATELIST, new SerialListPlain(stockData.stockdates));
             pipelineData = ArrayUtils.add(pipelineData, map);
             result.setPipelineData(pipelineData);
             return;
@@ -710,7 +717,7 @@ public class ControlService {
             Collections.sort(dates);
             PipelineData map = new PipelineData();
             map.setName(PipelineConstants.DATELIST);
-            map.put(PipelineConstants.DATELIST, dates);
+            map.put(PipelineConstants.DATELIST, new SerialListPlain(dates));
             pipelineData = ArrayUtils.add(pipelineData, map);
             result.setPipelineData(pipelineData);
         } catch (Exception e) {

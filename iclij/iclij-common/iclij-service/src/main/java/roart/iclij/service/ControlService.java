@@ -253,7 +253,7 @@ public class ControlService {
         param.setWantMaps(true);
         param.setMarket(market);
         IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETDATES);
-        list = (List<String>) PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.DATELIST).get(PipelineConstants.DATELIST);      
+        list = PipelineUtils.getDatelist(PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.DATELIST));      
         MyCache.getInstance().put(key, list);
         return list;
     }
@@ -289,6 +289,7 @@ public class ControlService {
         neuralnetcommand.setMlcross(conf.wantMLCross());
         param.setNeuralnetcommand(neuralnetcommand);
         IclijServiceResult result;
+        
         // TODO retry or queue
         if (useMl) {
             // todo send queue ml
@@ -429,6 +430,40 @@ public class ControlService {
         param.setNeuralnetcommand(neuralnetcommand);
         // TODO retry or queue
         IclijServiceResult result = WebFluxUtil.sendMMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVENN);
+        if (doSet) {
+            PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE);  
+            updateMap.putAll(datum.getMap(PipelineConstants.UPDATE));
+            scoreMap.putAll(datum.getMap(PipelineConstants.SCORE));
+            resultMap.getMap().putAll(datum.getMap(PipelineConstants.RESULT));
+            //Map<String, Object> updateMap = result.getMaps().get("update");
+            //conf.getConfigValueMap().putAll(updateMap);
+            //return updateMap;
+        }
+        return result.getList();
+    }
+
+    public List<ResultItem> getEvolveMLAsync(boolean doSet, List<String> disableList, String ml,  IclijConfig conf, Map<String, Object> updateMap, Map<String, Object> scoreMap, PipelineData resultMap) {
+        IclijServiceParam param = new IclijServiceParam();
+        param.setConfigData(conf.getConfigData());
+        Set<String> ids = new HashSet<>();
+        ids.add(ml);
+        param.setIds(ids);
+        param.setConfList(disableList);
+        NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
+        neuralnetcommand.setMllearn(true);
+        neuralnetcommand.setMlclassify(true);
+        // where is this reset?
+        neuralnetcommand.setMldynamic(true);
+        param.setNeuralnetcommand(neuralnetcommand);
+        // TODO retry or queue
+        IclijServiceResult result = WebFluxUtil.sendMMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVENN);
+        return null;
+    }
+
+    public List<ResultItem> getEvolveMLAsync2(QueueElement el) {
+        boolean doSet = true; List<String> disableList = null; String ml = "";  IclijConfig conf = null; Map<String, Object> updateMap = null; Map<String, Object> scoreMap = null; PipelineData resultMap = null;
+        IclijServiceResult result = null;
+        
         if (doSet) {
             PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE);  
             updateMap.putAll(datum.getMap(PipelineConstants.UPDATE));

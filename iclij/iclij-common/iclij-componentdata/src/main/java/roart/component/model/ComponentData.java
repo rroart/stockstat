@@ -21,6 +21,7 @@ import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.TimingItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialVolume;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.util.MapUtil;
 import roart.common.util.PipelineUtils;
@@ -61,7 +62,7 @@ public class ComponentData {
     
     private Map<String, List<List<Double>>> fillCategoryValueMap;
     
-    private Map<String, List<List<Object>>> volumeMap;
+    private Map<String, SerialVolume[]> volumeMap;
     
     private Integer usedsec;
 
@@ -277,12 +278,12 @@ public class ComponentData {
         this.fillCategoryValueMap = fillCategoryValueMap;
     }
 
-    public Map<String, List<List<Object>>> getVolumeMap() {
+    public Map<String, SerialVolume[]> getVolumeMap() {
         return volumeMap;
     }
 
-    public void setVolumeMap(Map<String, List<List<Object>>> volumeMap) {
-        this.volumeMap = volumeMap;
+    public void setVolumeMap(Map<String, SerialVolume[]> aVolumeMap) {
+        this.volumeMap = aVolumeMap;
     }
 
     public Integer getUsedsec() {
@@ -382,13 +383,13 @@ public class ComponentData {
         this.resultMaps = result;
         try {
             // TODO needed where, reread?
-            List<String> stockdates = (List<String>) PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.DATELIST);
+            List<String> stockdates = PipelineUtils.getDatelist(PipelineUtils.getPipeline(result, this.getCategoryTitle()));
             this.setStockDates(stockdates);
             Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.LIST)));
             this.setCategoryValueMap(aCategoryValueMap);
             Map<String, List<List<Double>>> aFillCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.FILLLIST)));
             this.setFillCategoryValueMap(aFillCategoryValueMap);
-            Map<String, List<List<Object>>> aVolumeMap = (Map<String, List<List<Object>>>) PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.VOLUME);
+            Map<String, SerialVolume[]> aVolumeMap = PipelineUtils.getVolume(PipelineUtils.getPipeline(result, this.getCategoryTitle()));
             this.setVolumeMap(aVolumeMap);
         } catch (Exception e) {
             int jj = 0;
@@ -423,15 +424,15 @@ public class ComponentData {
             // NOT yet Inmemory inmemory = InmemoryFactory.get(conf .getInmemoryServer(), conf.getInmemoryHazelcast(), conf.getInmemoryRedis());
             //log.info("" + result.keySet());
             //log.info("" + result.get(PipelineConstants.META).keySet());
-            String cat = (String) PipelineUtils.getPipeline(result, PipelineConstants.META).get(PipelineConstants.CATEGORY);
-            List<String> stockdates = (List<String>) PipelineUtils.getPipeline(result, cat).get(PipelineConstants.DATELIST);
+            String cat = PipelineUtils.getCat(PipelineUtils.getPipeline(result, PipelineConstants.META));
+            List<String> stockdates = PipelineUtils.getDatelist(PipelineUtils.getPipeline(result, cat));
             this.setStockDates(stockdates);
             Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, cat).get(PipelineConstants.LIST)));
             this.setCategoryValueMap(aCategoryValueMap);
             Map<String, List<List<Double>>> aFillCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, cat).get(PipelineConstants.FILLLIST)));
             this.setFillCategoryValueMap(aFillCategoryValueMap);
             InmemoryMessage msg = null;
-            Map<String, List<List<Object>>> aVolumeMap = (Map<String, List<List<Object>>>) PipelineUtils.getPipeline(result, cat).get(PipelineConstants.VOLUME);
+            Map<String, SerialVolume[]> aVolumeMap = PipelineUtils.getVolume(PipelineUtils.getPipeline(result, cat));
             this.setVolumeMap(aVolumeMap);
         } catch (Exception e) {
             int jj = 0;

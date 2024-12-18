@@ -29,6 +29,7 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.SerialMapTA;
 import roart.common.util.ArraysUtil;
 import roart.common.util.PipelineUtils;
@@ -68,9 +69,10 @@ public class MLMACD extends IndicatorAggregator {
     private abstract class MacdSubType extends MergeSubType {
         public MacdSubType(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
             super(afterbefore);
-            this.listMap = (Map<String, Double[][]>) list;
+            this.listMap = list != null ? (Map<String, Double[][]>) list : new HashMap<>();
             this.taMap = taObject;
-            this.resultMap = (Map<String, Double[]>) resultObject;
+            SerialMapD smap = (SerialMapD) resultObject;
+            this.resultMap = smap.getMap() != null ? smap.getMap() : new HashMap<>();
             this.afterbefore = afterbefore;
             this.range = range;
             this.filters = new Filter[] { new Filter(true, 0, shortneg), new Filter(false, 0, shortpos) };

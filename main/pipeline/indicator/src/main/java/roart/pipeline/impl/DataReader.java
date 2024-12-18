@@ -11,8 +11,13 @@ import org.apache.commons.lang3.ArrayUtils;
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialList;
+import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialMapDD;
+import roart.common.pipeline.data.SerialMapPlain;
+import roart.common.pipeline.data.SerialMapVolume;
 import roart.common.pipeline.data.SerialMapdd;
+import roart.common.pipeline.data.SerialVolume;
 import roart.common.util.ArraysUtil;
 import roart.common.util.PipelineUtils;
 import roart.common.util.TimeUtil;
@@ -49,7 +54,7 @@ public class DataReader extends Pipeline {
     List<String> dateList;
     String categoryTitle;
 
-    private Map<String, Object[][]> volumeMap;
+    private Map<String, SerialVolume[]> volumeMap;
     
     @Override
     public PipelineData putData() {
@@ -59,7 +64,7 @@ public class DataReader extends Pipeline {
         }
         map.setName(categoryTitle);
         map.put(PipelineConstants.LIST, new SerialMapDD(listMap));
-        map.put(PipelineConstants.VOLUME, volumeMap);
+        map.put(PipelineConstants.VOLUME, new SerialMapVolume(volumeMap));
         map.put(PipelineConstants.FILLLIST, new SerialMapDD(fillListMap));
         map.put(PipelineConstants.BASE100LIST, new SerialMapDD(base100ListMap));
         map.put(PipelineConstants.BASE100FILLLIST, new SerialMapDD(base100FillListMap));
@@ -67,8 +72,8 @@ public class DataReader extends Pipeline {
         map.put(PipelineConstants.TRUNCFILLLIST, new SerialMapdd(truncFillListMap));
         map.put(PipelineConstants.TRUNCBASE100LIST, new SerialMapdd(truncBase100ListMap));
         map.put(PipelineConstants.TRUNCBASE100FILLLIST, new SerialMapdd(truncBase100FillListMap));
-        map.put(PipelineConstants.NAME, nameMap);
-        map.put(PipelineConstants.DATELIST, dateList);
+        map.put(PipelineConstants.NAME, new SerialMapPlain(nameMap));
+        map.put(PipelineConstants.DATELIST, new SerialListPlain(dateList));
         map.put(PipelineConstants.CATEGORYTITLE, categoryTitle);
         return map;
     }

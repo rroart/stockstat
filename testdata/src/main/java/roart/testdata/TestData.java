@@ -14,6 +14,7 @@ import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
+import roart.common.pipeline.data.SerialVolume;
 import roart.model.data.StockData;
 import roart.etl.db.Extract;
 
@@ -76,11 +77,11 @@ public class TestData {
         return map;
     }
     
-    public Map<String, List<List<Object>>> getVolumeMap() {
-        Map<String, List<List<Object>>> map = new HashMap<>();
-        List<Object> nulls = Arrays.asList(null, null);
-        List<Object> t = Arrays.asList(3, "DKK");
-        List<List<Object>> l = Arrays.asList(t, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, t);
+    public Map<String, SerialVolume[]> getVolumeMap() {
+        Map<String, SerialVolume[]> map = new HashMap<>();
+        SerialVolume nulls = new SerialVolume(null, null);
+        SerialVolume t = new SerialVolume(3L, "DKK");
+        SerialVolume[] l = new SerialVolume[] { t, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, t};
         //List<List<Object>> l2 = new ArrayList<>();
         //l2.add(l);
         map.put("1", l);

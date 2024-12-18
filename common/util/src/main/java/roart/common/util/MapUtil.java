@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.SerialVolume;
 
 public class MapUtil {
 
@@ -50,10 +51,10 @@ public class MapUtil {
         }
     }
 
-    public static void mapAdd(Map<String, Object[][]> aMap, String id, int index, Object[] value, int length) {
-        Object[][] array = aMap.get(id);
+    public static void mapAdd(Map<String, SerialVolume[]> aMap, String id, int index, SerialVolume value, int length) {
+        SerialVolume[] array = aMap.get(id);
         if (array == null) {
-            array = new Object[length][2];
+            array = new SerialVolume[length];
             aMap.put(id, array);
         }
         array[index] = value;

@@ -79,7 +79,7 @@ public abstract class IndicatorAdviser extends Adviser {
             if (resultMaps == null || resultMaps.length == 0) {
                 int  jj = 0;
             }
-            Integer cat = (Integer) PipelineUtils.getPipeline(resultMaps, PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
+            Integer cat = PipelineUtils.getWantedcat(PipelineUtils.getPipeline(resultMaps, PipelineConstants.META));
             String catName = new MetaUtil().getCategory(meta, cat);
             PipelineData objectMaps = PipelineUtils.getPipeline(resultMaps, getPipeline());
             if (objectMaps != null) {
@@ -126,7 +126,7 @@ public abstract class IndicatorAdviser extends Adviser {
             System.out.println("keys " + entry.getValue().keySet());
         }
         */
-        Integer cat = (Integer) PipelineUtils.getPipeline(maps, PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
+        Integer cat = PipelineUtils.getWantedcat(PipelineUtils.getPipeline(maps, PipelineConstants.META));
         String catName = new MetaUtil().getCategory(meta, cat);
         PipelineData resultMaps = PipelineUtils.getPipeline(maps, getPipeline());
         if (resultMaps != null) {

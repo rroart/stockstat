@@ -23,6 +23,7 @@ import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialList;
+import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialMarketStock;
 import roart.common.pipeline.data.TwoDimD;
@@ -229,7 +230,7 @@ public class ExtraReader extends Pipeline {
         //map.put(PipelineConstants.PAIRDATELIST, pairDateListMap);
         //map.put(PipelineConstants.PAIRTRUNCLIST, pairTruncListMap);
         map.setName(PipelineConstants.EXTRAREADER);
-        map.put(PipelineConstants.DATELIST, commonDates);
+        map.put(PipelineConstants.DATELIST, new SerialListPlain(new ArrayList<>(commonDates)));
         SerialMap dataReaderMap2 = new SerialMap();
         for (Entry<String, Pipeline[]> entry : dataReaderMap.entrySet()) {
             Pipeline[] pipeline = entry.getValue();
@@ -342,7 +343,7 @@ public class ExtraReader extends Pipeline {
                 datareader = pipelineMap.get(Constants.PRICE);
                 log.debug("TODO temp workaround");
             }
-            List<String> dateList = (List<String>) datareader.get(PipelineConstants.DATELIST);
+            List<String> dateList = PipelineUtils.getDatelist(datareader);
             int dateIndex = dateList.indexOf(date);
             int prevDateIndex = dateList.indexOf(prevDate);
             Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.FILLLIST));
@@ -392,7 +393,7 @@ public class ExtraReader extends Pipeline {
                 datareader = pipelineMap.get(Constants.PRICE);
                 log.debug("TODO temp workaround");
             }
-            List<String> dateList = (List<String>) datareader.get(PipelineConstants.DATELIST);
+            List<String> dateList = PipelineUtils.getDatelist(datareader);
             int dateIndex = dateList.size() - dateList.indexOf(commonDate);
             int prevDateIndex = dateList.indexOf(prevDate);
             Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.FILLLIST));

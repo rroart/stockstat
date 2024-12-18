@@ -40,6 +40,7 @@ import roart.common.model.MetaItem;
 import roart.common.model.SimDataItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialVolume;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
 import roart.common.util.MapUtil;
@@ -1849,7 +1850,7 @@ public class SimulateInvestComponent extends ComponentML {
     @Deprecated
     private void getVolumeExcludes(SimulateInvestConfig simConfig, int extradelay, List<String> stockDates,
             int interval, Map<String, List<List<Double>>> categoryValueMap,
-            Map<String, List<List<Object>>> volumeMap, int delay, int indexOffset, List<String> volumeExcludes, Map<String, double[]> newVolumeMap) {
+            Map<String, SerialVolume[]> volumeMap, int delay, int indexOffset, List<String> volumeExcludes, Map<String, double[]> newVolumeMap) {
         if (simConfig.getVolumelimits() != null) {
             Map<String, Double> volumeLimits = simConfig.getVolumelimits();
             int len = interval * 2;
@@ -1874,11 +1875,11 @@ public class SimulateInvestComponent extends ComponentML {
         }
     }
 
-    private String getCurrency(Map<String, List<List<Object>>> volumeMap, String id) {
+    private String getCurrency(Map<String, SerialVolume[]> volumeMap, String id) {
         String currency = null;
-        List<List<Object>> list = volumeMap.get(id);
-        for (int i = list.size() - 1; i >= 0; i--) {
-            currency = (String) list.get(i).get(1);
+        SerialVolume[] list = volumeMap.get(id);
+        for (int i = list.length - 1; i >= 0; i--) {
+            currency = (String) list[i].getCurrency();
             if (currency != null) {
                 break;
             }
@@ -1887,7 +1888,7 @@ public class SimulateInvestComponent extends ComponentML {
     }
 
     Map<Integer, List<String>> getVolumeExcludesFull(SimulateInvestConfig simConfig, int interval, Map<String, List<List<Double>>> categoryValueMap,
-            Map<String, List<List<Object>>> volumeMap, int firstidx, int lastidx) {
+            Map<String, SerialVolume[]> volumeMap, int firstidx, int lastidx) {
         Map<Integer, List<String>> listlist = new HashMap<>(); 
         if (simConfig.getVolumelimits() != null) {
             Map<String, Double> volumeLimits = simConfig.getVolumelimits();
@@ -1905,23 +1906,18 @@ public class SimulateInvestComponent extends ComponentML {
                 }
                 List<Double> mainList = resultList.get(0);
                 //ValidateUtil.validateSizes(mainList, stockDates);
-                List<List<Object>> list = volumeMap.get(id);
+                SerialVolume[] list = volumeMap.get(id);
                 if (mainList != null) {
                     int size = mainList.size();
                     MutablePair<Double, Integer>[] newList = new MutablePair[size];
                     int start = size - 1 - firstidx;
                     int end = size - 1 - lastidx;
                     for (int i = start; i <= end; i++) {
-                        Object volumeObject = list.get(i).get(0);
+                        Object volumeObject = list[i].getVolume();
                         if (volumeObject == null) {
                             continue;
                         }
-                        Long volume;
-                        if (volumeObject instanceof Integer) {
-                            volume = (long) ((Integer) list.get(i).get(0)).intValue();
-                        } else {
-                            volume = (Long) list.get(i).get(0);
-                        }
+                        Long volume = list[i].getVolume();
                         Double price = mainList.get(i /* mainList.size() - 1 - indexOffset */);
                         if (volume != null) {
                             if (price == null) {
@@ -2600,7 +2596,7 @@ public class SimulateInvestComponent extends ComponentML {
         Map<Integer, List<String>> volumeExcludeFillMap;
         List<String> configExcludeList;
         Set<String> abnormExcludes;
-        Map<String, List<List<Object>>> volumeMap;
+        Map<String, SerialVolume[]> volumeMap;
         Map<Integer, Trend> trendMap;
         Map<Integer, Trend> trendFillMap;
         Map<Integer, String> trendStrMap;
