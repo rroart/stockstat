@@ -5,28 +5,28 @@ import java.util.List;
 
 import roart.result.model.ResultMeta;
 
-public class SerialList extends SerialObject {
-    private List<SerialObject> list = new ArrayList<>();
+public class SerialList<T extends SerialObject> extends SerialObject {
+    private List<T> list = new ArrayList<>();
 
     public SerialList() {
         super();
     }
 
-    public SerialList(List<SerialObject> list) {
+    public SerialList(List<T> list) {
         super();
         this.list = list;
     }
 
-    public List<SerialObject> getList() {
+    public List<T> getList() {
         return list;
     }
 
-    public void setList(List<SerialObject> list) {
+    public void setList(List<T> list) {
         this.list = list;
     }
 
-    public void add(SerialObject incdec) {
-        list.add(incdec);
+    public void add(T object) {
+        list.add(object);
     }
 
     public SerialObject get(int index) {

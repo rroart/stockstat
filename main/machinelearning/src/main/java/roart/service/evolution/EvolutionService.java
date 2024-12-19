@@ -26,6 +26,7 @@ import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.util.JsonUtil;
 import roart.common.util.PipelineUtils;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
@@ -155,9 +156,9 @@ public class EvolutionService {
             Map<String, Object> resultMap) {
         PipelineData maps = new PipelineData();
         maps.setName(PipelineConstants.EVOLVE);
-        maps.put(PipelineConstants.UPDATE, updateMap);
-        maps.put(PipelineConstants.SCORE, scoreMap);
-        maps.put(PipelineConstants.RESULT, resultMap);
+        maps.put(PipelineConstants.UPDATE, new SerialMapPlain(updateMap));
+        maps.put(PipelineConstants.SCORE, new SerialMapPlain(scoreMap));
+        maps.put(PipelineConstants.RESULT, new SerialMapPlain(resultMap));
         return maps;
     }
 
@@ -382,7 +383,7 @@ public class EvolutionService {
         StockData stockData = new StockData();
         PipelineData pipelineDatum = PipelineUtils.getPipeline(pipelineData, PipelineConstants.META);
         stockData.cat = PipelineUtils.getWantedcat(pipelineDatum);
-        stockData.catName = PipelineUtils.getCat(pipelineDatum);
+        stockData.catName = PipelineUtils.getMetaCat(pipelineDatum);
         return stockData;
     }
 

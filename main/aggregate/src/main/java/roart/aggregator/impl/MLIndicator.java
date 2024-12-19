@@ -293,7 +293,6 @@ public class MLIndicator extends Aggregator {
         otherResultMap = new HashMap<>();
         accuracyMap = new HashMap<>();
         lossMap = new HashMap<>();
-        resultMetaArray = new ArrayList<>();
         otherMeta = new ArrayList<>();
         objectMap = new HashMap<>();
         long time2 = System.currentTimeMillis();
@@ -441,14 +440,6 @@ public class MLIndicator extends Aggregator {
                     } else {
                         log.info("keyset {}", classifyMap.stream().map(e -> e.getId()).collect(Collectors.toList()));
                     }
-                    // make OO of this, create object
-                    Object[] meta1 = new Object[ResultMetaConstants.SIZE];
-                    meta1[ResultMetaConstants.MLNAME] = mldao.getName();
-                    meta1[ResultMetaConstants.MODELNAME] = model.getName();
-                    meta1[ResultMetaConstants.RETURNSIZE] = model.getReturnSize();
-                    meta1[ResultMetaConstants.LEARNMAP] = countMap1;
-                    meta1[ResultMetaConstants.THRESHOLD] = threshold;
-                    resultMetaArray.add(meta1);
                     SerialResultMeta resultMeta1 = new SerialResultMeta();
                     resultMeta1.setMlName(mldao.getName());
                     resultMeta1.setModelName(model.getName());
@@ -507,11 +498,8 @@ public class MLIndicator extends Aggregator {
                     }
                     accuracyMap.put(mldao.getName() + model.getName() + threshold, result.getAccuracy());
                     lossMap.put(mldao.getName() + model.getName() + threshold, result.getLoss());
-                    meta1[ResultMetaConstants.TESTACCURACY] = result.getAccuracy();
                     resultMeta1.setTestAccuracy(result.getAccuracy());
-                    meta1[ResultMetaConstants.TRAINACCURACY] = result.getTrainaccuracy();
                     resultMeta1.setTrainAccuracy(result.getTrainaccuracy());
-                    meta1[ResultMetaConstants.LOSS] = result.getLoss();
                     resultMeta1.setLoss(result.getLoss());
                     mapResult.put("" + model, classifyResult);
                     Map<String, Long> countMap = new HashMap<>();
@@ -524,9 +512,6 @@ public class MLIndicator extends Aggregator {
                         counts.append(countEntry.getKey() + " : " + countEntry.getValue() + " ");
                     }
                     addEventRow(counts.toString(), "", "");  
-                    Object[] meta = resultMetaArray.get(testCount);
-                    meta[ResultMetaConstants.CLASSIFYMAP] = classifyResult;
-                    meta[ResultMetaConstants.LEARNMAP] = countMap;
                     SerialResultMeta resultMeta = (SerialResultMeta) getResultMetas().get(testCount);
                     resultMeta.setClassifyMap(classifyResult);
                     resultMeta.setLearnMap(countMap);
@@ -583,14 +568,6 @@ public class MLIndicator extends Aggregator {
                         log.info("keyset {}", classifyMap.stream().map(e -> e.getId()).collect(Collectors.toList()));
 
                     }
-                    // make OO of this, create object
-                    Object[] meta1 = new Object[ResultMetaConstants.SIZE];
-                    meta1[ResultMetaConstants.MLNAME] = mldao.getName();
-                    meta1[ResultMetaConstants.MODELNAME] = model.getName();
-                    meta1[ResultMetaConstants.RETURNSIZE] = model.getReturnSize();
-                    meta1[ResultMetaConstants.LEARNMAP] = countMap1;
-                    meta1[ResultMetaConstants.THRESHOLD] = threshold;
-                    resultMetaArray.add(meta1);
                     SerialResultMeta resultMeta1 = new SerialResultMeta();
                     resultMeta1.setMlName(mldao.getName());
                     resultMeta1.setModelName(model.getName());
@@ -617,7 +594,7 @@ public class MLIndicator extends Aggregator {
                     Callable callable = new MLClassifyLearnTestPredictCallable(nnconfigs, mldao, this, learnMap, model, arrayLength, cats, mapTime, classifyMap, labelMapShort, path, filename, neuralnetcommand, mlmeta);  
                     Future<LearnTestClassifyResult> future = MyExecutors.run(callable, 1);
                     futureList.add(future);
-                    futureMap.put(future, new FutureMap(mldao, model, resultMetaArray.size() - 1));
+                    futureMap.put(future, new FutureMap(mldao, model, /* TODO resultMetaArray.size()*/ - 1));
                 }
             }
             for (Future<LearnTestClassifyResult> future: futureList) {
@@ -632,11 +609,8 @@ public class MLIndicator extends Aggregator {
                 Map<String, Double[]> classifyResult = result.getCatMap();
                 accuracyMap.put(mldao.getName() + model.getName() + threshold, result.getAccuracy());
                 lossMap.put(mldao.getName() + model.getName() + threshold, result.getLoss());
-                Object[] meta = resultMetaArray.get(testCount);
                 SerialResultMeta resultMeta = (SerialResultMeta) getResultMetas().get(testCount);
-                meta[6] = result.getAccuracy();
                 resultMeta.setTestAccuracy(result.getAccuracy());
-                meta[9] = result.getLoss();
                 resultMeta.setLoss(result.getLoss());
                 //log.info("keys" + Arrays.deepToString(classifyResult.values().toArray()));
                 //log.info("keys" + classifyResult.keySet());
@@ -652,8 +626,6 @@ public class MLIndicator extends Aggregator {
                     counts.append(countEntry.getKey() + " : " + countEntry.getValue() + " ");
                 }
                 addEventRow(counts.toString(), "", "");  
-                meta[ResultMetaConstants.LEARNMAP] = countMap;
-                meta[ResultMetaConstants.CLASSIFYMAP] = classifyResult;
                 resultMeta.setClassifyMap(classifyResult);
                 resultMeta.setLearnMap(countMap);
             }

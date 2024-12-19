@@ -271,11 +271,11 @@ public class ControlService {
     public StockData getStockData(IclijConfig conf, PipelineData[] pipelineData) {
         StockData stockData = new StockData();
         PipelineData pipelineDatum = PipelineUtils.getPipeline(pipelineData, PipelineConstants.META);
-        stockData.cat = (Integer) pipelineDatum.get(PipelineConstants.WANTEDCAT);
-        stockData.catName = (String) pipelineDatum.get(PipelineConstants.CATEGORY);
-        stockData.idNameMap = (Map<String, String>) pipelineDatum.get(PipelineConstants.NAME);
-        stockData.stockdates = (List<String>) pipelineDatum.get(PipelineConstants.DATELIST);
-         return stockData;
+        stockData.cat = PipelineUtils.getWantedcat(pipelineDatum);
+        stockData.catName = PipelineUtils.getMetaCat(pipelineDatum);
+        stockData.idNameMap = PipelineUtils.getNamemap(pipelineDatum);
+        stockData.stockdates = PipelineUtils.getDatelist(pipelineDatum);
+        return stockData;
     }
 
     public void send(String service, Object object, IclijConfig config) {

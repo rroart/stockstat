@@ -50,6 +50,14 @@ public class PipelineData extends SerialObject {
             smap.put(key, serialobject);
             return;
         }
+        if (object instanceof String serialobject) {
+            smap.put(key, new SerialString(serialobject));
+            return;
+        }
+        if (object instanceof Integer serialobject) {
+            smap.put(key, new SerialInteger(serialobject));
+            return;
+        }
         map.put(key, object);
     }
     

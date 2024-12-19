@@ -24,6 +24,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.MapOneDim;
 import roart.common.pipeline.data.OneDim;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.SerialObject;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.util.JsonUtil;
@@ -146,8 +147,8 @@ public class ComponentPredictor extends ComponentML {
         Map<String, Object> resultMap = (Map<String, Object>) param.getResultMap().get("result");
         List<MyElement> list0 = new ArrayList<>();
         //List<MyElement> list1 = new ArrayList<>();
-        List meta =  param.getResultMetaArray().get(0);
-        String subcomponent = meta.get(ResultMetaConstants.MLNAME) + " " + meta.get(ResultMetaConstants.MODELNAME);
+        SerialResultMeta meta =  param.getResultMeta().get(0);
+        String subcomponent = meta.getMlName() + " " + meta.getModelName();
         Map<String, List<List<Double>>> categoryValueMap = param.getCategoryValueMap();
         for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
             String key = entry.getKey();
@@ -196,16 +197,16 @@ public class ComponentPredictor extends ComponentML {
             //return;
         }
         PipelineData resultMap = param.getResultMap();
-        MapOneDim aResultMap =  PipelineUtils.getMapOneDim(resultMap.get(PipelineConstants.RESULT));
+        MapOneDim aResultMap = PipelineUtils.getMapOneDim(resultMap.get(PipelineConstants.RESULT));
         int resultIndex = 0;
         int count = 0;
-        if (param.getResultMetaArray() == null) {
+        if (param.getResultMeta() == null) {
             int jj = 0;
         }
-        for (List meta : param.getResultMetaArray()) {
-            int returnSize = (int) meta.get(ResultMetaConstants.RETURNSIZE);
+        for (SerialResultMeta meta : param.getResultMeta()) {
+            int returnSize = (int) meta.getReturnSize();
 
-            boolean emptyMeta = meta.get(ResultMetaConstants.MLNAME) == null;
+            boolean emptyMeta = meta.getMlName() == null;
             
             if (emptyMeta) {
                 resultIndex += returnSize;
@@ -272,9 +273,8 @@ public class ComponentPredictor extends ComponentML {
         long goodDec = 0;
         long totalInc = 0;
         long totalDec = 0;
-        for (SerialObject object : param.getResultMeta().getList()) {
-            SerialResultMeta meta = (SerialResultMeta) object;
-            Double testloss = (Double) meta.getLoss();
+        for (SerialResultMeta meta : param.getResultMeta()) {
+           Double testloss = (Double) meta.getLoss();
             for (String key : param.getCategoryValueMap().keySet()) {
                 List<List<Double>> resultList = param.getCategoryValueMap().get(key);
                 List<Double> mainList = resultList.get(0);
@@ -453,8 +453,7 @@ public class ComponentPredictor extends ComponentML {
         if (param.getResultMeta() == null) {
             return result;
         }
-        for (SerialObject object : param.getResultMeta().getList()) {
-            SerialResultMeta meta = (SerialResultMeta) object;
+        for (SerialResultMeta meta : param.getResultMeta()) {
             // only different
             Double testaccuracy = meta.getLoss();
             if (testaccuracy != null) {

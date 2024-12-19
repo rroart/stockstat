@@ -175,7 +175,7 @@ public class IndicatorUtils {
         int arraySize = 0;
         for (String indicator : indicators) {
             PipelineData resultMap = null; //indicator.putData();
-            SerialMapTA objMap = (SerialMapTA) resultMap.get(PipelineConstants.OBJECT);
+            SerialMapTA objMap = PipelineUtils.getMapTA(resultMap);
             if (objMap != null) {
                 objectMapsList.add(objMap);
                 listList.add(PipelineUtils.sconvertMapDD(resultMap.get(PipelineConstants.LIST)));
@@ -412,7 +412,7 @@ public class IndicatorUtils {
             String indicatorName = indicators.get(idx++);
             Map<String, PipelineData> pipelineMap = getPipelineMap(datareaders);
             PipelineData meta = pipelineMap.get(PipelineConstants.META);
-            PipelineData pipeline = pipelineMap.get(PipelineUtils.getCat(meta));
+            PipelineData pipeline = pipelineMap.get(PipelineUtils.getMetaCat(meta));
             List<String> dateList2 = PipelineUtils.getDatelist(pipeline);
             j = dateList2.size() - 1 - dateList2.indexOf(commonDate);
             SerialTA objsIndicator = objectMap.get(id);
@@ -431,7 +431,7 @@ public class IndicatorUtils {
             PipelineData meta = pipelineMap.get(PipelineConstants.META);
             PipelineData datareader = pipelineMap.get((String) meta.get(PipelineConstants.CATEGORY));
             PipelineData resultMap = pipelineMap.get(indicatorName);
-            SerialMapTA objMap = (SerialMapTA) resultMap.get(PipelineConstants.OBJECT);
+            SerialMapTA objMap = PipelineUtils.getMapTA(resultMap);
             if (objMap != null) { 
                 objectMapsList.add(objMap);
                 Map<String, Double[][]> list0 = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
@@ -720,7 +720,7 @@ public class IndicatorUtils {
         return pipelineMap;
     }
 
-    public static Map<String, PipelineData> getPipelineMap(SerialList datareaders) {
+    public static Map<String, PipelineData> getPipelineMap(SerialList<SerialObject> datareaders) {
         Map<String, PipelineData> pipelineMap = new HashMap<>();
         for (SerialObject object : datareaders.getList()) {
             PipelineData datareader = (PipelineData) object;

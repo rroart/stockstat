@@ -225,7 +225,7 @@ public class MarketUtil {
         Map<String, List<List<Double>>> listMap3 = null;
         for (Entry<String, PipelineData> entry : PipelineUtils.getPipelineMap(maps).entrySet()) {
             PipelineData map = entry.getValue();
-            if (category.equals(map.get(PipelineConstants.CATEGORYTITLE))) {
+            if (category.equals(PipelineUtils.getCatTitle(map))) {
                 listMap3 = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(map.get(PipelineConstants.LIST)));
             }
         }

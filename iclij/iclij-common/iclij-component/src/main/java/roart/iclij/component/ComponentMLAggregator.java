@@ -23,6 +23,7 @@ import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialIncDec;
 import roart.common.pipeline.data.SerialList;
 import roart.common.pipeline.data.SerialMap;
+import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.SerialObject;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.util.JsonUtil;
@@ -76,7 +77,8 @@ public abstract class ComponentMLAggregator extends ComponentML {
             //return;
         }
         PipelineData resultMap = param.getResultMap();
-        MapOneDim aResultMap =  PipelineUtils.getMapOneDim(resultMap.get(PipelineConstants.RESULT));
+        MapOneDim aResultMap = PipelineUtils.getMapOneDim(resultMap.get(PipelineConstants.RESULT));
+
         if (aResultMap == null) {
             int jj = 0;
         }
@@ -88,9 +90,8 @@ public abstract class ComponentMLAggregator extends ComponentML {
             //SerialMap smap = (SerialMap) resultMap.smap().get(PipelineConstants.RESULT);
             Map<String, IncDecItem> getsells = new HashMap<>();
             Map<String, IncDecItem> getbuys = new HashMap<>();
-            SerialList list = (SerialList) resultMap.get(PipelineConstants.INCDEC);
-            for (SerialObject entry : list.getList()) {
-                SerialIncDec sincdec = (SerialIncDec) entry;
+            SerialList<SerialIncDec> list = (SerialList) resultMap.get(PipelineConstants.INCDEC);
+            for (SerialIncDec sincdec : list.getList()) {
                 String key = sincdec.getId();
                 
                 MLMetricsItem mltest = search(mlTests, sincdec);
@@ -138,8 +139,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
         Map<Double, String> labelMap = createLabelMapShort();
         Map<String, IncDecItem> getsells = new HashMap<>();
         Map<String, IncDecItem> getbuys = new HashMap<>();
-        for (SerialObject object : param.getResultMeta().getList()) {
-            SerialResultMeta meta = (SerialResultMeta) object;
+        for (SerialResultMeta meta : param.getResultMeta()) {
             boolean emptyMeta = meta.getMlName() == null;
             
             if (emptyMeta) {
@@ -191,109 +191,26 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     //keyPair = getRealKeys(keyPair, keyset);
                     //System.out.println(okListMap.keySet());
                     if (above == null || above == true) {
-                    if (tfpn.equals(Constants.TP) || tfpn.equals(Constants.FN)) {
-                        increase = true;
-                        //IncDecItem incdec = mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
-                        IncDecItem incdec = mapAdder2(getbuys /*profitdata.getBuys()*/, key, score, profitdata.getInputdata().getNameMap(), date, mltest.getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
-                        incdec.setIncrease(increase);
-                    }
+                        if (tfpn.equals(Constants.TP) || tfpn.equals(Constants.FN)) {
+                            increase = true;
+                            //IncDecItem incdec = mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                            IncDecItem incdec = mapAdder2(profitdata.getBuys(), key, score, profitdata.getInputdata().getNameMap(), date, mltest.getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
+                            incdec.setIncrease(increase);
+                        }
                     }
                     if (above == null || above == false) {
-                    if (tfpn.equals(Constants.TN) || tfpn.equals(Constants.FP)) {
-                        increase = false;
-                        //IncDecItem incdec = mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
-                        IncDecItem incdec = mapAdder2(getsells/*profitdata.getSells()*/, key, score, profitdata.getInputdata().getNameMap(), date, mltest.getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
-                        incdec.setIncrease(increase);
-                    }
+                        if (tfpn.equals(Constants.TN) || tfpn.equals(Constants.FP)) {
+                            increase = false;
+                            //IncDecItem incdec = mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                            IncDecItem incdec = mapAdder2(profitdata.getSells(), key, score, profitdata.getInputdata().getNameMap(), date, mltest.getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
+                            incdec.setIncrease(increase);
+                        }
                     }
                 }                        
             }
         }
         log.info("sels " + getsells.size() + " " + getsells);
         log.info("buys " + getbuys.size() + " " + getbuys);
-        int resultIndex = 0;
-        int count = 0;
-        for (List meta : param.getResultMetaArray()) {
-            int returnSize = (int) meta.get(ResultMetaConstants.RETURNSIZE);
-
-            boolean emptyMeta = meta.get(ResultMetaConstants.MLNAME) == null;
-            
-            if (emptyMeta) {
-                resultIndex += returnSize;
-                count++;
-                continue;
-            }
-            if (memories == null) {
-                int jj = 0;
-            }
-            
-            Map<String, List<Double>> offsetMap = (Map<String, List<Double>>) meta.get(ResultMetaConstants.OFFSETMAP);
-
-            Pair<String, String> paircount = new MiscUtil().getComponentPair(meta);
-            MLMetricsItem mltest = search(mlTests, meta);
-            
-            //if memory.learnconf > mltest then..above.
-            
-            if (mlTests == null || mltest != null) {
-                    //&& (memories == null || !memories.containsBelow(getPipeline(), paircount, above, mltest, param.getInput().getConfig().getFindProfitMemoryFilter()))) {
-                Double score = mltest.getTestAccuracy();
-                Pair keyPair = new ImmutablePair(getPipeline(), count);
-                for (String key : param.getCategoryValueMap().keySet()) {
-                    List<List<Double>> resultList = param.getCategoryValueMap().get(key);
-                    List<Double> mainList = resultList.get(0);
-                    if (mainList == null) {
-                        continue;
-                    }
-                    OneDim list = aResultMap.get(key);
-                    if (list == null) {
-                        continue;
-                    }
-                    String tfpn = (String) list.get(resultIndex);
-                    if (tfpn == null) {
-                        continue;
-                    }
-
-                    if (offsetMap == null) {
-                        log.info("Offset map null, skipping rest");
-                        continue;
-                    }
-                    List<Double> off = offsetMap.get(key);
-                    if (off == null) {
-                        log.error("The offset should not be null for {}", key);
-                        continue;
-                    }
-                    int offsetZero = (int) Math.round(off.get(0));
-                    LocalDate confdate0 = param.getService().conf.getConfigData().getDate();
-                    LocalDate confdate = param.getBaseDate();
-                    LocalDate date = TimeUtil.getBackEqualBefore2(confdate, offsetZero, stockDates);
-                    
-                    boolean increase = false;
-                    //System.out.println(okConfMap.keySet());
-                    //Set<Pair<String, Integer>> keyset = profitdata.getInputdata().getConfMap().keySet();
-                    //keyPair = getRealKeys(keyPair, keyset);
-                    //System.out.println(okListMap.keySet());
-                    if (above == null || above == true) {
-                    if (tfpn.equals(Constants.TP) || tfpn.equals(Constants.FN)) {
-                        increase = true;
-                        //IncDecItem incdec = mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
-                        IncDecItem incdec = mapAdder2(profitdata.getBuys(), key, score, profitdata.getInputdata().getNameMap(), date, mltest.getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
-                        incdec.setIncrease(increase);
-                    }
-                    }
-                    if (above == null || above == false) {
-                    if (tfpn.equals(Constants.TN) || tfpn.equals(Constants.FP)) {
-                        increase = false;
-                        //IncDecItem incdec = mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
-                        IncDecItem incdec = mapAdder2(profitdata.getSells(), key, score, profitdata.getInputdata().getNameMap(), date, mltest.getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
-                        incdec.setIncrease(increase);
-                    }
-                    }
-                }                        
-            }
-
-            resultIndex += returnSize;
-            count++;
-        }
         log.info("sels " + profitdata.getSells().size() + " " + profitdata.getSells());
         log.info("buys " + profitdata.getBuys().size() + " " + profitdata.getBuys());
     }
@@ -306,27 +223,27 @@ public abstract class ComponentMLAggregator extends ComponentML {
         List<MemoryItem> memoryList = new ArrayList<>();
         int resultIndex = 0;
         int newResultIndex = 0;
-        for (int count = 0; count < param.getResultMetaArray().size(); count++) {
-            List meta = param.getResultMetaArray().get(count);
+        for (int count = 0; count < param.getResultMeta().size(); count++) {
+            SerialResultMeta meta = param.getResultMeta().get(count);
             resultIndex = newResultIndex;
             MemoryItem memory = new MemoryItem();
-            int returnSize = (int) meta.get(ResultMetaConstants.RETURNSIZE);
+            int returnSize = (int) meta.getReturnSize();
             newResultIndex += returnSize;
-            if (meta.get(ResultMetaConstants.MLNAME) == null) {
+            if (meta.getMlName() == null) {
                 continue;
             }
             
-            String subtype = (String) meta.get(ResultMetaConstants.SUBTYPE);
-            String subsubtype = (String) meta.get(ResultMetaConstants.SUBSUBTYPE);
+            String subtype = (String) meta.getSubType();
+            String subsubtype = (String) meta.getSubSubType();
 
             String localcomponent = null;
             if (subtype != null) {
                 localcomponent = subtype + subsubtype;
             }
 
-            Double testaccuracy = (Double) meta.get(ResultMetaConstants.TESTACCURACY);
-            Double testloss = (Double) meta.get(ResultMetaConstants.LOSS);
-            Map<String, List<Double>> offsetMap = (Map<String, List<Double>>) meta.get(ResultMetaConstants.OFFSETMAP);
+            Double testaccuracy = (Double) meta.getTestAccuracy();
+            Double testloss = (Double) meta.getLoss();
+            Map<String, double[]> offsetMap = meta.getOffsetMap();
             /*
             Map<String, Integer> countMapLearn = (Map<String, Integer>) meta.get(5);
             Map<String, Integer> countMapClass = (Map<String, Integer>) meta.get(7);
@@ -348,7 +265,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
             double goodTNprob = 0;
             double goodFNprob = 0;
             Map<Double, String> labelMap = createLabelMapShort();
-            Map<String, List<Double>> classifyMap = (Map<String, List<Double>>) meta.get(ResultMetaConstants.CLASSIFYMAP);
+            Map<String, List<Double>> classifyMap = (Map<String, List<Double>>) meta.getClassifyMap();
             //int size = param.getResultMap().values().iterator().next().size();
             if (classifyMap == null) {
                 int jj = 0;
@@ -380,12 +297,12 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     log.info("Offset map null, skipping rest");
                     continue;
                 }
-                List<Double> off = offsetMap.get(key);
+                double[] off = offsetMap.get(key);
                 if (off == null) {
                     log.error("The offset should not be null for {}", key);
                     continue;
                 }
-                int offsetZero = (int) Math.round(off.get(0));
+                int offsetZero = (int) Math.round(off[0]);
                 Double valFuture = mainList.get(mainList.size() - 1 - param.getLoopoffset() - offsetZero);
                 Double valNow = mainList.get(mainList.size() - 1 - param.getFuturedays() - param.getLoopoffset() - offsetZero);
                 Double tfpnProb = null;
@@ -397,7 +314,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                 }
                 if (valFuture != null && valNow != null) {
                     //System.out.println("vals " + key + " " + valNow + " " + valFuture);
-                    boolean aboveThreshold = (valFuture / valNow) >= (Double) meta.get(ResultMetaConstants.THRESHOLD);
+                    boolean aboveThreshold = (valFuture / valNow) >= (Double) meta.getThreshold();
                     total++;
                     if (tfpn.equals(ServiceUtilConstants.TP)) {
                         tpSize++;
@@ -447,9 +364,9 @@ public abstract class ComponentMLAggregator extends ComponentML {
             memory.setFuturedate(param.getFutureDate());
             memory.setComponent(getPipeline());
             memory.setCategory(param.getCategoryTitle());
-            memory.setSubcomponent(meta.get(ResultMetaConstants.MLNAME) + " " + meta.get(ResultMetaConstants.MODELNAME));
+            memory.setSubcomponent(meta.getMlName() + " " + meta.getModelName());
             memory.setLocalcomponent(localcomponent);
-            memory.setDescription(getShort((String) meta.get(ResultMetaConstants.MLNAME)) + withComma(getShort((String) meta.get(ResultMetaConstants.MODELNAME))) + withComma(meta.get(ResultMetaConstants.SUBTYPE)) + withComma(meta.get(ResultMetaConstants.SUBSUBTYPE)));
+            memory.setDescription(getShort((String) meta.getMlName()) + withComma(getShort((String) meta.getModelName())) + withComma(meta.getSubType()) + withComma(meta.getSubSubType()));
             memory.setTestaccuracy(testaccuracy);
             memory.setTestloss(testloss);
             memory.setParameters(JsonUtil.convert(parameters));

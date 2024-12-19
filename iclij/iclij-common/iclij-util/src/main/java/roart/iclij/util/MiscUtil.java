@@ -522,4 +522,10 @@ public class MiscUtil {
         return new ImmutablePair(mlname, modelname);
     }
     
+    public Pair<String, String> getSubComponentPair(SerialResultMeta meta) {
+        String mlname = (String) meta.getMlName();
+        String modelname = (String) meta.getModelName();
+        return new ImmutablePair(mlname, modelname);
+    }
+    
 }

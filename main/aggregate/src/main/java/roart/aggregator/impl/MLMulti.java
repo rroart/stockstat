@@ -60,8 +60,8 @@ public class MLMulti extends IndicatorAggregator {
             if (conf.wantAggregatorsMlmultiMACD()) {
                 PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORMACD);
                 Object list = null;
-                SerialMapTA taObject = (SerialMapTA) pipelineData.get(PipelineConstants.OBJECT);
-                Object resultObject = pipelineData.get(PipelineConstants.RESULT);
+                SerialMapTA taObject = PipelineUtils.getMapTA(pipelineData);
+                SerialMapD resultObject = PipelineUtils.getResultMap(pipelineData);
                 Filter[] filter = new Filter[] { new Filter(true, 0, shortneg), new Filter(false, 0, shortpos) };
                 if (taObject != null) {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.THREERANGE, conf, filter, Constants.MACD, MySubType.MACDHIST));
@@ -70,8 +70,8 @@ public class MLMulti extends IndicatorAggregator {
             if (conf.wantAggregatorsMlmultiRSI()) {
                 PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORRSI);
                 Object list = null;
-                SerialMapTA taObject = (SerialMapTA) pipelineData.get(PipelineConstants.OBJECT);
-                Object resultObject = pipelineData.get(PipelineConstants.RESULT);
+                SerialMapTA taObject = PipelineUtils.getMapTA(pipelineData);
+                SerialMapD resultObject = PipelineUtils.getResultMap(pipelineData);
                 Filter[] filter = new Filter[] { new Filter(true, conf.getMLRSIBuyRSILimit(), shortpos), new Filter(false, conf.getMLRSISellRSILimit(), shortneg) };
                 if (taObject != null) {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, Constants.RSI, MySubType.RSI));
@@ -80,8 +80,8 @@ public class MLMulti extends IndicatorAggregator {
             if (conf.wantAggregatorsMlmultiATR()) {
                 PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORATR);
                 Object list = null;
-                SerialMapTA taObject = (SerialMapTA) pipelineData.get(PipelineConstants.OBJECT);
-                Object resultObject = pipelineData.get(PipelineConstants.RESULT);
+                SerialMapTA taObject = PipelineUtils.getMapTA(pipelineData);
+                SerialMapD resultObject = PipelineUtils.getResultMap(pipelineData);
                 Filter[] filter = new Filter[] { new Filter(true, conf.getMLATRBuyLimit(), shortpos), new Filter(false, conf.getMLATRSellLimit(), shortneg) };
                 if (taObject != null) {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, Constants.ATR, MySubType.ATR));
@@ -90,8 +90,8 @@ public class MLMulti extends IndicatorAggregator {
             if (conf.wantAggregatorsMlmultiCCI()) {
                 PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORCCI);
                 Object list = null;
-                SerialMapTA taObject = (SerialMapTA) pipelineData.get(PipelineConstants.OBJECT);
-                Object resultObject = pipelineData.get(PipelineConstants.RESULT);
+                SerialMapTA taObject = PipelineUtils.getMapTA(pipelineData);
+                SerialMapD resultObject = PipelineUtils.getResultMap(pipelineData);
                 Filter[] filter = new Filter[] { new Filter(true, conf.getMLCCIBuyLimit(), shortpos), new Filter(false, conf.getMLCCISellLimit(), shortneg) };
                 if (taObject != null) {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, Constants.CCI, MySubType.CCI));
@@ -100,8 +100,8 @@ public class MLMulti extends IndicatorAggregator {
             if (conf.wantAggregatorsMlmultiSTOCH()) {
                 PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCH);
                 Object list = null;
-                SerialMapTA taObject = (SerialMapTA) pipelineData.get(PipelineConstants.OBJECT);
-                Object resultObject = pipelineData.get(PipelineConstants.RESULT);
+                SerialMapTA taObject = PipelineUtils.getMapTA(pipelineData);
+                SerialMapD resultObject = PipelineUtils.getResultMap(pipelineData);
                 Filter[] filter = new Filter[] { new Filter(true, conf.getMLSTOCHBuyLimit(), shortpos), new Filter(false, conf.getMLSTOCHSellLimit(), shortneg) };
                 if (taObject != null) {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.TWORANGE, conf, filter, Constants.STOCH, MySubType.STOCH));
@@ -110,8 +110,8 @@ public class MLMulti extends IndicatorAggregator {
             if (conf.wantAggregatorsMlmultiSTOCHRSI()) {
                 PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCHRSI);
                 Object list = null;
-                SerialMapTA taObject = (SerialMapTA) pipelineData.get(PipelineConstants.OBJECT);
-                Object resultObject = pipelineData.get(PipelineConstants.RESULT);
+                SerialMapTA taObject = PipelineUtils.getMapTA(pipelineData);
+                SerialMapD resultObject = PipelineUtils.getResultMap(pipelineData);
                 Filter[] filter = new Filter[] { new Filter(true, conf.getMLRSIBuySRSILimit(), shortpos), new Filter(false, conf.getMLRSISellSRSILimit(), shortneg) };
                 if (taObject != null) {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, Constants.STOCHRSI, MySubType.STOCHRSI));
@@ -129,11 +129,10 @@ public class MLMulti extends IndicatorAggregator {
     private class SubTypeMulti extends MergeSubType {
         private IclijConfig conf;
         private String name;
-        public SubTypeMulti(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range, IclijConfig conf, Filter[] filter, String name, MySubType mySubType) {
+        public SubTypeMulti(Object list, SerialMapTA taObject, SerialMapD smap, AfterBeforeLimit afterbefore, int[] range, IclijConfig conf, Filter[] filter, String name, MySubType mySubType) {
             super(afterbefore);
             this.listMap = list != null ? (Map<String, Double[][]>) list : new HashMap<>();
             this.taMap = taObject;
-            SerialMapD smap = (SerialMapD) resultObject;
             this.resultMap = smap.getMap() != null ? smap.getMap() : new HashMap<>();
             this.afterbefore = afterbefore;
             this.range = range;

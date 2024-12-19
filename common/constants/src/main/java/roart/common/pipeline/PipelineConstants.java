@@ -19,6 +19,7 @@ public class PipelineConstants {
     public static final String MAP = "map";
     public static final String RESULT = "result";
     public static final String OTHERRESULT = "otherresult";
+    @Deprecated
     public static final String RESULTMETAARRAY = "resultmetaarray";
     public static final String RESULTMETA = "resultmeta";
     public static final String OTHERMETA = "othermeta";

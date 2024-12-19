@@ -457,8 +457,7 @@ public abstract class Component {
         if (param.getResultMeta() == null) {
             return result;
         }
-        for (SerialObject object : param.getResultMeta().getList()) {
-            SerialResultMeta meta = (SerialResultMeta) object;
+        for (SerialResultMeta meta : param.getResultMeta()) {
             Double testaccuracy = meta.getTestAccuracy();
             if (testaccuracy != null) {
                 testAccuracies.add(testaccuracy);
@@ -478,11 +477,11 @@ public abstract class Component {
             }
             result[2] = null;
             if (param.getResultMeta().size() > 1) {
-                List<SerialObject> metalist = param.getResultMeta().getList()
+                List<SerialResultMeta> metalist = param.getResultMeta()
                 .stream()
                 .filter(Objects::nonNull)
-                .filter(e -> ((SerialResultMeta) e).getTestAccuracy() != null)
-                .filter(e -> ((SerialResultMeta) e).getTestAccuracy() == acc)
+                .filter(e -> e.getTestAccuracy() != null)
+                .filter(e -> e.getTestAccuracy() == acc)
                 .collect(Collectors.toList());
                 result[2] = "";
                 for(SerialObject object : metalist) {
@@ -536,8 +535,7 @@ public abstract class Component {
         if (param.getResultMeta() == null) {
             return;
         }
-        for (SerialObject object : param.getResultMeta().getList()) {
-            SerialResultMeta meta = (SerialResultMeta) object;
+        for (SerialResultMeta meta : param.getResultMeta()) {
             if (meta.getMlName() == null) {
                 continue;
             }

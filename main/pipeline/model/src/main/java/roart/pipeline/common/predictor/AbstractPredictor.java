@@ -13,8 +13,11 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialInteger;
 import roart.common.pipeline.data.SerialList;
 import roart.common.pipeline.data.SerialMap;
+import roart.common.pipeline.data.SerialMapPlain;
+import roart.common.pipeline.data.SerialString;
 import roart.common.pipeline.model.PipelineResultData;
 import roart.result.model.ResultItemTableRow;
 import roart.result.model.ResultMeta;
@@ -29,7 +32,7 @@ public abstract class AbstractPredictor extends PipelineResultData {
     protected Map<String, Object[]> resultMap;
     protected Map<String, Object> accuracyMap;
     protected Map<String, Object> lossMap;
-    protected List<Object[]> resultMetaArray;
+    //protected List<Object[]> resultMetaArray;
     protected SerialMap resultSMap = new SerialMap();
     private SerialList resultMetas = new SerialList();
 
@@ -94,12 +97,13 @@ public abstract class AbstractPredictor extends PipelineResultData {
         map.setName(getName());
         map.put(PipelineConstants.CATEGORY, category);
         map.put(PipelineConstants.CATEGORYTITLE, title);
-        map.put(PipelineConstants.RESULT, resultMap);
+        map.put(PipelineConstants.RESULT, new SerialMapPlain(resultMap));
         map.put(PipelineConstants.RESULTMETA, resultMetas);
-        map.put(PipelineConstants.RESULTMETAARRAY, resultMetaArray);
+        // TODO remove
+        //map.put(PipelineConstants.RESULTMETAARRAY, resultMetaArray);
         map.put(PipelineConstants.ACCURACY, accuracyMap);
         // TODO unused
-        map.put(PipelineConstants.LOSS, lossMap);
+        //map.put(PipelineConstants.LOSS, lossMap);
         //map.smap().put(PipelineConstants.RESULT, resultSMap);
         return map;
     }

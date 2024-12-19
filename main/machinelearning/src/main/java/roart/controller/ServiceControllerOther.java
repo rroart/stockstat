@@ -9,9 +9,12 @@ import roart.common.communication.model.Communication;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.controller.ServiceControllerOtherAbstract;
+import roart.common.queue.QueueElement;
 import roart.common.service.ServiceParam;
+import roart.common.util.JsonUtil;
 import roart.db.dao.DbDao;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 
 public class ServiceControllerOther extends ServiceControllerOtherAbstract {
@@ -29,6 +32,18 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
         IclijServiceResult r = null;
         log.info("Cserv {}", c.getService());
         if (serviceMatch(EurekaConstants.GETCONFIG, c)) {
+            r = new IclijServiceResult();
+            try {
+                r.setConfigData(iclijConfig.getConfigData());
+                log.info("configs {}", r.getConfigData());
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+                r.setError(e.getMessage());
+            }
+        }
+        if (serviceMatch(EurekaConstants.GETEVOLVENN, c)) {
+            QueueElement element = JsonUtil.convert((String) param, QueueElement.class);
+            IclijServiceParam iparam;
             r = new IclijServiceResult();
             try {
                 r.setConfigData(iclijConfig.getConfigData());

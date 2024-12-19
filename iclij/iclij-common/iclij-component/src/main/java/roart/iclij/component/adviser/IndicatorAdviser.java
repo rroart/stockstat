@@ -34,7 +34,7 @@ import roart.iclij.config.SimulateInvestConfig;
 
 public abstract class IndicatorAdviser extends Adviser {
 
-    protected SerialMapTA objectMap;
+    protected Map<String, SerialTA> objectMap;
     
     protected boolean indicatorreverse;
     
@@ -85,7 +85,7 @@ public abstract class IndicatorAdviser extends Adviser {
             if (objectMaps != null) {
                 Map<String, Object> indicatorMaps = (Map<String, Object>) objectMaps.get(getPipeline());
                 //System.out.println("macd"+ macdMaps.keySet());
-                objectMap = (SerialMapTA) objectMaps.get(PipelineConstants.OBJECT);
+                objectMap = PipelineUtils.getObjectMap(objectMaps);
             }
             return;
         }
@@ -132,7 +132,7 @@ public abstract class IndicatorAdviser extends Adviser {
         if (resultMaps != null) {
             //Map<String, Object> indicatorMaps = (Map<String, Object>) resultMaps.get(getPipeline());
             //System.out.println("macd"+ macdMaps.keySet());
-            objectMap = (SerialMapTA) resultMaps.get(PipelineConstants.OBJECT);
+            objectMap = PipelineUtils.getObjectMap(resultMaps);
         }
     }
 

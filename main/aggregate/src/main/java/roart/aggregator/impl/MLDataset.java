@@ -147,7 +147,6 @@ public class MLDataset extends Aggregator {
         otherResultMap = new HashMap<>();
         accuracyMap = new HashMap<>();
         lossMap = new HashMap<>();
-        resultMetaArray = new ArrayList<>();
         otherMeta = new ArrayList<>();
         objectMap = new HashMap<>();
         long time2 = System.currentTimeMillis();
@@ -219,7 +218,7 @@ public class MLDataset extends Aggregator {
                     Callable callable = new MLClassifyDatasetCallable(nnconfigs, mldao, model, mapTime, neuralnetcommand, mlmeta, dataset);  
                     Future<LearnTestClassifyResult> future = MyExecutors.run(callable, 1);
                     futureList.add(future);
-                    futureMap.put(future, new FutureMap(mldao, model, resultMetaArray.size() - 1));
+                    futureMap.put(future, new FutureMap(mldao, model, /* TODO resultMeta.size()*/ - 1));
                 }
             }
             for (Future<LearnTestClassifyResult> future: futureList) {

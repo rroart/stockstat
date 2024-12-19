@@ -22,6 +22,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.util.PipelineUtils;
 import roart.gene.CalcGene;
@@ -234,7 +235,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         map.setName(getName());
         map.put(PipelineConstants.CATEGORY, category);
         map.put(PipelineConstants.CATEGORYTITLE, title);
-        map.put(PipelineConstants.RESULT, resultMap);
+        map.put(PipelineConstants.RESULT, new SerialMapPlain(resultMap));
         return map;
     }
     

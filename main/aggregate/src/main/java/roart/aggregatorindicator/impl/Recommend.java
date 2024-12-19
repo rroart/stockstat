@@ -14,6 +14,7 @@ import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialTA;
+import roart.common.util.PipelineUtils;
 import roart.indicator.AbstractIndicator;
 
 public abstract class Recommend extends AggregatorIndicator {
@@ -65,7 +66,7 @@ public abstract class Recommend extends AggregatorIndicator {
                     continue;
                 }
                 PipelineData resultMap = indicator.putData();
-                Map<String, SerialTA> objMap = (Map<String, SerialTA>) resultMap.get(PipelineConstants.OBJECT);
+                Map<String, SerialTA> objMap = PipelineUtils.getObjectMap(resultMap);
                 if (objMap != null) { 
                     List<Pair<String, String>> aBuyList = recommend.getBuyList();
                     for (Pair<String, String> pair : aBuyList) {

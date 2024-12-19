@@ -67,11 +67,10 @@ public class MLMACD extends IndicatorAggregator {
     }
 
     private abstract class MacdSubType extends MergeSubType {
-        public MacdSubType(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
+        public MacdSubType(Object list, SerialMapTA taObject, SerialMapD smap, AfterBeforeLimit afterbefore, int[] range) {
             super(afterbefore);
             this.listMap = list != null ? (Map<String, Double[][]>) list : new HashMap<>();
             this.taMap = taObject;
-            SerialMapD smap = (SerialMapD) resultObject;
             this.resultMap = smap.getMap() != null ? smap.getMap() : new HashMap<>();
             this.afterbefore = afterbefore;
             this.range = range;
@@ -84,7 +83,7 @@ public class MLMACD extends IndicatorAggregator {
     }
 
     private class MacdSubTypeHist extends MacdSubType {
-        public MacdSubTypeHist(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
+        public MacdSubTypeHist(Object list, SerialMapTA taObject, SerialMapD resultObject, AfterBeforeLimit afterbefore, int[] range) {
             super(list, taObject, resultObject, afterbefore, range);
             this.mySubType = MySubType.MACDHIST;
         }
@@ -109,7 +108,7 @@ public class MLMACD extends IndicatorAggregator {
     }
 
     private class MacdSubTypeMacd extends MacdSubType {
-        public MacdSubTypeMacd(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
+        public MacdSubTypeMacd(Object list, SerialMapTA taObject, SerialMapD resultObject, AfterBeforeLimit afterbefore, int[] range) {
             super(list, taObject, resultObject, afterbefore, range);
             this.mySubType = MySubType.MACDMACD;
        }
@@ -132,7 +131,7 @@ public class MLMACD extends IndicatorAggregator {
     }
 
     private class MacdSubTypeSignal extends MacdSubType {
-        public MacdSubTypeSignal(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
+        public MacdSubTypeSignal(Object list, SerialMapTA taObject, SerialMapD resultObject, AfterBeforeLimit afterbefore, int[] range) {
             super(list, taObject, resultObject, afterbefore, range);
             this.mySubType = MySubType.MACDSIG;
             this.useDirectly = false;
@@ -173,8 +172,8 @@ public class MLMACD extends IndicatorAggregator {
         List<SubType> wantedSubTypesList = new ArrayList<>();
         PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORMACD);
         Object list = null;
-        SerialMapTA taObject = (SerialMapTA) pipelineData.get(PipelineConstants.OBJECT);
-        Object resultObject = pipelineData.get(PipelineConstants.RESULT);
+        SerialMapTA taObject = PipelineUtils.getMapTA(pipelineData);
+        SerialMapD resultObject = PipelineUtils.getResultMap(pipelineData);
         if (conf.wantMLHist()) {
             wantedSubTypesList.add(new MacdSubTypeHist(list, taObject, resultObject, afterbefore, TaConstants.THREERANGE));
         }

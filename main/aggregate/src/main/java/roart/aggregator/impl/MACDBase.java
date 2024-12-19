@@ -10,6 +10,7 @@ import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMapD;
+import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.data.TwoDimd;
 import roart.common.util.PipelineUtils;
@@ -33,9 +34,9 @@ public class MACDBase extends Aggregator {
         if (macdmap == null) {
             return;
         }
-        Object resultObject2 = macdmap.get(PipelineConstants.RESULT);
+        SerialMapD resultObject2 = PipelineUtils.getResultMap(macdmap);
 
-        this.resultObject = ((SerialMapD) resultObject2).getMap();
+        this.resultObject = resultObject2.getMap();
         
         Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
         PipelineData datareader = pipelineMap.get(catName);
@@ -108,7 +109,7 @@ public class MACDBase extends Aggregator {
         map.setName(getName());
         map.put(PipelineConstants.CATEGORY, category);
         map.put(PipelineConstants.CATEGORYTITLE, title);
-        map.put(PipelineConstants.RESULT, resultMap);
+        map.put(PipelineConstants.RESULT, new SerialMapPlain(resultMap));
         return map;
     }
     

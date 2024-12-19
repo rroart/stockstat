@@ -18,15 +18,20 @@ import roart.common.pipeline.data.OneDimD;
 import roart.common.pipeline.data.OneDimd;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialInteger;
+import roart.common.pipeline.data.SerialList;
 import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialMap;
+import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.SerialMapDD;
 import roart.common.pipeline.data.SerialMapPlain;
+import roart.common.pipeline.data.SerialMapTA;
 import roart.common.pipeline.data.SerialMapVolume;
 import roart.common.pipeline.data.SerialMapdd;
 import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.data.SerialObject;
+import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.pipeline.data.SerialString;
+import roart.common.pipeline.data.SerialTA;
 import roart.common.pipeline.data.SerialVolume;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.data.TwoDimd;
@@ -445,7 +450,7 @@ public class PipelineUtils {
         return null;
     }
 
-    public static String getCat(PipelineData data) {
+    public static String getMetaCat(PipelineData data) {
         SerialString list = (SerialString) data.get(PipelineConstants.CATEGORY);
         if (list != null) {
             return list.getString();
@@ -457,6 +462,14 @@ public class PipelineUtils {
         return (SerialMeta) data.get(PipelineConstants.META);
     }
 
+    public static Integer getCat(PipelineData data) {
+        SerialInteger list = (SerialInteger) data.get(PipelineConstants.CATEGORY);
+        if (list != null) {
+            return list.getInteger();
+        }
+        return null;
+    }
+
     public static Map<String, SerialVolume[]> getVolume(PipelineData data) {
         SerialMapVolume list = (SerialMapVolume) data.get(PipelineConstants.VOLUME);
         if (list != null) {
@@ -464,4 +477,37 @@ public class PipelineUtils {
         }
         return null;
     }
+
+    public static String getCatTitle(PipelineData data) {
+        SerialString string = (SerialString) data.get(PipelineConstants.CATEGORY);
+        if (string != null) {
+            return string.getString();
+        }
+        return null;
+    }
+
+    public static List<SerialResultMeta> getResultMeta(PipelineData data) {
+        SerialList<SerialResultMeta> list = (SerialList<SerialResultMeta>) data.get(PipelineConstants.RESULTMETA);
+        if (list != null) {
+            return list.getList();
+        }
+        return null;
+    }
+
+    public static SerialMapTA getMapTA(PipelineData data) {
+        return (SerialMapTA) data.get(PipelineConstants.OBJECT);
+    }
+
+    public static Map<String, SerialTA> getObjectMap(PipelineData data) {
+        SerialMapTA objectMap = (SerialMapTA) data.get(PipelineConstants.OBJECT);
+        if (objectMap != null) {
+            return objectMap.getMap();
+        }
+        return null;
+    }
+    
+    public static SerialMapD getResultMap(PipelineData data) {
+        return (SerialMapD) data.get(PipelineConstants.RESULT);
+    }
+
 }

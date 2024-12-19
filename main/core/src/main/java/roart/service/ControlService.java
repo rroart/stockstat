@@ -176,8 +176,8 @@ public class ControlService {
         singlePipelineData.setName(PipelineConstants.META);
         MetaItem meta = stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta;
         singlePipelineData.put(PipelineConstants.META, new SerialMeta(meta.getMarketid(), meta.getPeriod(), meta.getPriority(), meta.getReset(), meta.isLhc()));
-        singlePipelineData.put(PipelineConstants.CATEGORY, new SerialString(stockData.catName));
-        singlePipelineData.put(PipelineConstants.WANTEDCAT, new SerialInteger(stockData.cat));
+        singlePipelineData.put(PipelineConstants.CATEGORY, stockData.catName);
+        singlePipelineData.put(PipelineConstants.WANTEDCAT, stockData.cat);
         singlePipelineData.put(PipelineConstants.NAME, new SerialMapPlain(stockData.idNameMap));
         singlePipelineData.put(PipelineConstants.DATELIST, new SerialListPlain(stockData.stockdates));
         PipelineData[] pipelinedata = new PipelineData[0];

@@ -181,7 +181,6 @@ public abstract class Predictor extends AbstractPredictor {
         resultMap = new HashMap<>();
         accuracyMap = new HashMap<>();
         lossMap = new HashMap<>();
-        resultMetaArray = new ArrayList<>();
 
         List<String> dateList = PipelineUtils.getDatelist(pipelineMap.get(key));
         Integer days = conf.getDays();
@@ -243,12 +242,6 @@ public abstract class Predictor extends AbstractPredictor {
                     log.info("list days {}", days);
                     List<LearnClassify> map = getMap(aListMap, aTruncListMap, days);
                     List<LearnClassify> classifylist = getClassifyList(conf, aListMap, aTruncListMap);
-                    // make OO of this, create object
-                    Object[] meta = new Object[ResultMetaConstants.SIZE];
-                    meta[ResultMetaConstants.MLNAME] = mldao.getName();
-                    meta[ResultMetaConstants.MODELNAME] = model.getName();
-                    meta[ResultMetaConstants.RETURNSIZE] = model.getReturnSize();
-                    resultMetaArray.add(meta);
                     SerialResultMeta resultMeta = new SerialResultMeta();
                     resultMeta.setMlName(mldao.getName());
                     resultMeta.setModelName(model.getName());
@@ -263,8 +256,6 @@ public abstract class Predictor extends AbstractPredictor {
                     // predictorsdays is the length to inputs, futuredays are how many days to predict
                     LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, null, map, model, conf.getPredictorsDays(), conf.getPredictorsFuturedays(), mapTime, classifylist, null, path, filename, neuralnetcommand, mlmeta, false);  
                     lossMap.put(mldao.getName() + model.getName(), result.getLoss());
-                    meta[ResultMetaConstants.LOSS] = result.getLoss();
-                    meta[ResultMetaConstants.THRESHOLD] = threshold;
                     resultMeta.setLoss(result.getLoss());
                     resultMeta.setThreshold(threshold);
                     if (!neuralnetcommand.isMldynamic() && neuralnetcommand.isMllearn()) {
@@ -281,7 +272,6 @@ public abstract class Predictor extends AbstractPredictor {
                     //accuracy = result.getAccuracy();
                     accuracy = calculateAccuracy(aListMap, threshold, classifyResult, classifyResultNew);
                     accuracyMap.put(mldao.getName() + model.getName(), accuracy);
-                    meta[ResultMetaConstants.TESTACCURACY] = accuracy;
                     resultMeta.setTestAccuracy(accuracy);
                 }
             }

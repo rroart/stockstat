@@ -85,7 +85,7 @@ public abstract class Indicator extends AbstractIndicator {
         Map<Pair<String, String>, double[][]> pairTruncListMap = null; // (Map<Pair<String, String>, double[][]>) localResults.get(PipelineConstants.PAIRTRUNCLIST);
         */
         //Set<String> commonDates = (Set<String>) localResults.get(PipelineConstants.DATELIST);
-        SerialList marketStocks = (SerialList) localResults.get(PipelineConstants.MARKETSTOCKS);
+        SerialList<SerialObject> marketStocks = (SerialList) localResults.get(PipelineConstants.MARKETSTOCKS);
         SerialMap dataReaderMap = (SerialMap) localResults.get(PipelineConstants.DATAREADER);
         log.debug("lockeys {}", localResults.keySet());
         //Map<Pair<String, String>, List<StockItem>> pairMap = pairStockMap;

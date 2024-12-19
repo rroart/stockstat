@@ -39,10 +39,9 @@ public class MLSTOCH extends IndicatorAggregator {
     }
 
     private abstract class STOCHSubType extends SubType {
-        public STOCHSubType(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
+        public STOCHSubType(Object list, SerialMapTA taObject, SerialMapD smap, AfterBeforeLimit afterbefore, int[] range) {
             this.listMap = list != null ? (Map<String, Double[][]>) list : new HashMap<>();
             this.taMap = taObject;
-            SerialMapD smap = (SerialMapD) resultObject;
             this.resultMap = smap.getMap() != null ? smap.getMap() : new HashMap<>();
             this.afterbefore = afterbefore;
             this.range = range;
@@ -51,7 +50,7 @@ public class MLSTOCH extends IndicatorAggregator {
     }
 
     private class STOCHSubTypeSTOCH extends STOCHSubType {
-        public STOCHSubTypeSTOCH(Object list, SerialMapTA taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
+        public STOCHSubTypeSTOCH(Object list, SerialMapTA taObject, SerialMapD resultObject, AfterBeforeLimit afterbefore, int[] range) {
             super(list, taObject, resultObject, afterbefore, range);
         }
         @Override
@@ -83,8 +82,8 @@ public class MLSTOCH extends IndicatorAggregator {
         List<SubType> wantedSubTypesList = new ArrayList<>();
         PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCH);
         Object list = null;
-        SerialMapTA taObject = (SerialMapTA) pipelineData.get(PipelineConstants.OBJECT);
-        Object resultObject = pipelineData.get(PipelineConstants.RESULT);
+        SerialMapTA taObject = PipelineUtils.getMapTA(pipelineData);
+        SerialMapD resultObject = PipelineUtils.getResultMap(pipelineData);
         wantedSubTypesList.add(new STOCHSubTypeSTOCH(list, taObject, resultObject, afterbefore, TaConstants.TWORANGE));
         return wantedSubTypesList;
     }

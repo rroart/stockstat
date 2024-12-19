@@ -26,6 +26,7 @@ import roart.common.pipeline.data.SerialList;
 import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.util.JsonUtil;
+import roart.common.util.PipelineUtils;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
 import roart.constants.IclijConstants;
@@ -192,12 +193,12 @@ public abstract class ComponentML extends Component {
             return;
         }
         ComponentMLData param = (ComponentMLData) componentparam;
-        List<List> resultMetaArray = (List) mlMaps.get(PipelineConstants.RESULTMETAARRAY);
-        param.setResultMetaArray(resultMetaArray);
+        //List<List> resultMetaArray = (List) mlMaps.get(PipelineConstants.RESULTMETAARRAY);
+        //param.setResultMetaArray(resultMetaArray);
         //List<ResultMeta> resultMeta = (List<ResultMeta>) mlMACDMaps.get(PipelineConstants.RESULTMETA);
         //List<Object> objectList = (List<Object>) mlMaps.get(PipelineConstants.RESULTMETA);
         //SerialMap smap = (SerialMap) mlMaps.smap().get(PipelineConstants.RESULT);
-        SerialList resultMeta = (SerialList) mlMaps.get(PipelineConstants.RESULTMETA);
+        List<SerialResultMeta> resultMeta = PipelineUtils.getResultMeta(mlMaps);
         //List<ResultMeta> resultMeta = JsonUtil.convertnostrip(objectList, new TypeReference<List<ResultMeta>>() { });
         param.setResultMeta(resultMeta);
     }
@@ -247,11 +248,11 @@ public abstract class ComponentML extends Component {
         Map<Pair<String, String>, String> map = getMap();
         Map<Pair<String, String>, String> mapPersist = getMapPersist();
         ComponentMLData paramML = (ComponentMLData) param;
-        List<List> resultMetas = paramML.getResultMetaArray();
+        List<SerialResultMeta> resultMetas = paramML.getResultMeta();
         int count = 0;
         if (resultMetas != null) {
-            for (List meta : resultMetas) {
-                boolean emptyMeta = meta.get(ResultMetaConstants.MLNAME) == null;
+            for (SerialResultMeta meta : resultMetas) {
+                boolean emptyMeta = meta.getMlName() == null;
                 
                 if (emptyMeta) {
                     count++;                

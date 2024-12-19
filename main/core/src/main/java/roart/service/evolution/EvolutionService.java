@@ -98,8 +98,8 @@ public class EvolutionService {
             singlePipelineData.setName(PipelineConstants.META);
             MetaItem meta = stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta;
             singlePipelineData.put(PipelineConstants.META, new SerialMeta(meta.getMarketid(), meta.getPeriod(), meta.getPriority(), meta.getReset(), meta.isLhc()));
-            singlePipelineData.put(PipelineConstants.CATEGORY, new SerialString(stockData.catName));
-            singlePipelineData.put(PipelineConstants.WANTEDCAT, new SerialInteger(stockData.cat));
+            singlePipelineData.put(PipelineConstants.CATEGORY, stockData.catName);
+            singlePipelineData.put(PipelineConstants.WANTEDCAT, stockData.cat);
             singlePipelineData.put(PipelineConstants.NAME, new SerialMapPlain(stockData.idNameMap));
             singlePipelineData.put(PipelineConstants.DATELIST, new SerialListPlain(stockData.stockdates));
             PipelineData[] pipelineData = new PipelineData[0];
@@ -148,9 +148,9 @@ public class EvolutionService {
             Map<String, Object> resultMap) {
         PipelineData maps = new PipelineData();
         maps.setName(PipelineConstants.EVOLVE);
-        maps.put(PipelineConstants.UPDATE, updateMap);
-        maps.put(PipelineConstants.SCORE, scoreMap);
-        maps.put(PipelineConstants.RESULT, resultMap);
+        maps.put(PipelineConstants.UPDATE, new SerialMapPlain(updateMap));
+        maps.put(PipelineConstants.SCORE, new SerialMapPlain(scoreMap));
+        maps.put(PipelineConstants.RESULT, new SerialMapPlain(resultMap));
         return maps;
     }
 
