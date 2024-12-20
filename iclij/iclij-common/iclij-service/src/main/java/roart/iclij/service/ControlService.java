@@ -409,6 +409,7 @@ public class ControlService {
             PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE);  
             updateMap.putAll(datum.getMap(PipelineConstants.UPDATE));
             scoreMap.putAll(datum.getMap(PipelineConstants.SCORE));
+            // rec with own result
             resultMap.getMap().putAll(datum.getMap(PipelineConstants.RESULT));
         }
         return result.getList();

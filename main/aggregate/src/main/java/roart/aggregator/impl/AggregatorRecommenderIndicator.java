@@ -235,6 +235,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         map.setName(getName());
         map.put(PipelineConstants.CATEGORY, category);
         map.put(PipelineConstants.CATEGORYTITLE, title);
+        // rec with own result
         map.put(PipelineConstants.RESULT, new SerialMapPlain(resultMap));
         return map;
     }

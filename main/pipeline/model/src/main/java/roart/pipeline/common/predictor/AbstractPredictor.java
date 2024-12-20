@@ -101,7 +101,7 @@ public abstract class AbstractPredictor extends PipelineResultData {
         map.put(PipelineConstants.RESULTMETA, resultMetas);
         // TODO remove
         //map.put(PipelineConstants.RESULTMETAARRAY, resultMetaArray);
-        map.put(PipelineConstants.ACCURACY, accuracyMap);
+        map.put(PipelineConstants.ACCURACY, new SerialMapPlain(accuracyMap));
         // TODO unused
         //map.put(PipelineConstants.LOSS, lossMap);
         //map.smap().put(PipelineConstants.RESULT, resultSMap);

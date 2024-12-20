@@ -197,6 +197,7 @@ public class ComponentPredictor extends ComponentML {
             //return;
         }
         PipelineData resultMap = param.getResultMap();
+        // mix text num
         MapOneDim aResultMap = PipelineUtils.getMapOneDim(resultMap.get(PipelineConstants.RESULT));
         int resultIndex = 0;
         int count = 0;

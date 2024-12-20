@@ -1,6 +1,5 @@
 package roart.iclij.component;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,19 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import roart.common.config.ConfigConstants;
 import roart.common.config.Extra;
-import roart.common.config.MarketStockExpression;
 import roart.common.constants.Constants;
-import roart.common.constants.ResultMetaConstants;
 import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
@@ -28,30 +20,24 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.MapOneDim;
 import roart.common.pipeline.data.OneDim;
 import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialMapD;
-import roart.common.pipeline.data.SerialMeta;
-import roart.common.pipeline.data.SerialObject;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.util.JsonUtil;
 import roart.common.util.PipelineUtils;
 import roart.component.model.ComponentData;
 import roart.component.model.MLIndicatorData;
 import roart.evolution.fitness.Fitness;
-import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
-import roart.iclij.evolution.chromosome.impl.MLIndicatorChromosome;
-import roart.iclij.evolution.chromosome.winner.ConfigMapChromosomeWinner;
 import roart.gene.impl.ConfigMapGene;
 import roart.gene.impl.MLIndicatorConfigMapGene;
 import roart.iclij.component.constants.ServiceUtilConstants;
-import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
+import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
+import roart.iclij.evolution.chromosome.impl.MLIndicatorChromosome;
+import roart.iclij.evolution.chromosome.winner.ConfigMapChromosomeWinner;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
-import roart.iclij.util.MiscUtil;
-import roart.result.model.ResultMeta;
 import roart.service.model.ProfitData;
 
 public class ComponentMLIndicator extends ComponentML {
@@ -250,6 +236,7 @@ public class ComponentMLIndicator extends ComponentML {
         MLIndicatorData param = (MLIndicatorData) componentparam;
         List<MemoryItem> memoryList = new ArrayList<>();
         PipelineData resultMap = param.getResultMap();
+        // mix text num
         MapOneDim aResultMap = PipelineUtils.getMapOneDim(resultMap.get(PipelineConstants.RESULT));
         int resultIndex = 0;
         int newResultIndex = 0;

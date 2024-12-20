@@ -424,7 +424,7 @@ public class ComponentData {
             // NOT yet Inmemory inmemory = InmemoryFactory.get(conf .getInmemoryServer(), conf.getInmemoryHazelcast(), conf.getInmemoryRedis());
             //log.info("" + result.keySet());
             //log.info("" + result.get(PipelineConstants.META).keySet());
-            String cat = PipelineUtils.getCat(PipelineUtils.getPipeline(result, PipelineConstants.META));
+            String cat = PipelineUtils.getMetaCat(PipelineUtils.getPipeline(result, PipelineConstants.META));
             List<String> stockdates = PipelineUtils.getDatelist(PipelineUtils.getPipeline(result, cat));
             this.setStockDates(stockdates);
             Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, cat).get(PipelineConstants.LIST)));
@@ -466,9 +466,9 @@ public class ComponentData {
             int jj = 0;
             return;
         }
-        Integer aCategory = (Integer) aMap.get(PipelineConstants.CATEGORY);
+        Integer aCategory = PipelineUtils.getCat(aMap);
         this.setCategory(aCategory);
-        String aCategoryTitle = (String) aMap.get(PipelineConstants.CATEGORYTITLE);
+        String aCategoryTitle = PipelineUtils.getCatTitle(aMap);
         this.setCategoryTitle(aCategoryTitle);        
     }
     

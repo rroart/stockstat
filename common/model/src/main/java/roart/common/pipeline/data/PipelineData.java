@@ -46,6 +46,9 @@ public class PipelineData extends SerialObject {
     }
 
     public void put(String key, Object object) {
+        if (object == null) {
+            return;
+        }
         if (object instanceof SerialObject serialobject) {
             smap.put(key, serialobject);
             return;
@@ -56,6 +59,10 @@ public class PipelineData extends SerialObject {
         }
         if (object instanceof Integer serialobject) {
             smap.put(key, new SerialInteger(serialobject));
+            return;
+        }
+        if (object instanceof Double serialobject) {
+            smap.put(key, new SerialDouble(serialobject));
             return;
         }
         map.put(key, object);

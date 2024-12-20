@@ -26,6 +26,7 @@ import roart.common.pipeline.data.SerialList;
 import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialMarketStock;
+import roart.common.pipeline.data.SerialObject;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
@@ -328,11 +329,11 @@ public class ExtraReader extends Pipeline {
         }
         String date = extraData.dateList.get(size - j);
         String prevDate = extraData.dateList.get(size - (j + (deltas - 1)));
-        Map<String, PipelineData[]> dataReaderMap = (Map<String, PipelineData[]>) extraData.extrareader.get(PipelineConstants.DATAREADER);
-        LinkedHashSet<MarketStock> allMarketStocks = (LinkedHashSet<MarketStock>) extraData.extrareader.get(PipelineConstants.MARKETSTOCKS);
-        for (MarketStock entry : allMarketStocks) {
+        Map<String, SerialList<PipelineData>> dataReaderMap = PipelineUtils.getDatareader(extraData.extrareader);
+        List<SerialMarketStock> allMarketStocks = PipelineUtils.getMarketstocks(extraData.extrareader);
+        for (SerialMarketStock entry : allMarketStocks) {
             String market = entry.getMarket();
-            PipelineData[] datareaders = dataReaderMap.get(market);
+            SerialList datareaders = dataReaderMap.get(market);
             Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
             String cat = entry.getCategory();
             if (cat == null) {
@@ -378,11 +379,11 @@ public class ExtraReader extends Pipeline {
         }
         String date = extraData.dateList.get(size - j);
         String prevDate = extraData.dateList.get(size - (j + (deltas - 1)));
-        Map<String, PipelineData[]> dataReaderMap = (Map<String, PipelineData[]>) extraData.extrareader.get(PipelineConstants.DATAREADER);
-        Collection<MarketStock> allMarketStocks = (Collection<MarketStock>) extraData.extrareader.get(PipelineConstants.MARKETSTOCKS);
-        for (MarketStock entry : allMarketStocks) {
+        Map<String, SerialList<PipelineData>> dataReaderMap = PipelineUtils.getDatareader(extraData.extrareader);
+        List<SerialMarketStock> allMarketStocks = PipelineUtils.getMarketstocks(extraData.extrareader);
+        for (SerialMarketStock entry : allMarketStocks) {
             String market = entry.getMarket();
-            PipelineData[] datareaders = dataReaderMap.get(market);
+            SerialList datareaders = dataReaderMap.get(market);
             Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
             String cat = entry.getCategory();
             if (cat == null) {

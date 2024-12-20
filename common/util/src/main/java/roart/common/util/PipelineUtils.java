@@ -479,7 +479,7 @@ public class PipelineUtils {
     }
 
     public static String getCatTitle(PipelineData data) {
-        SerialString string = (SerialString) data.get(PipelineConstants.CATEGORY);
+        SerialString string = (SerialString) data.get(PipelineConstants.CATEGORYTITLE);
         if (string != null) {
             return string.getString();
         }
@@ -506,8 +506,26 @@ public class PipelineUtils {
         return null;
     }
     
+    public static Map getMarketObjectMap(PipelineData data) {
+        SerialMapPlain map = (SerialMapPlain) data.get(PipelineConstants.MARKETOBJECT);
+        if (map != null) {
+            return map.getMap();
+        }
+        return null;
+    }
+    
     public static SerialMapD getResultMap(PipelineData data) {
         return (SerialMapD) data.get(PipelineConstants.RESULT);
+    }
+
+    public static Map getDatareader(PipelineData data) {
+        SerialMap map = (SerialMap) data.get(PipelineConstants.DATAREADER);
+        return map.getMap();
+    }
+
+    public static List getMarketstocks(PipelineData data) {
+        SerialList map = (SerialList) data.get(PipelineConstants.MARKETSTOCKS);
+        return map.getList();
     }
 
 }

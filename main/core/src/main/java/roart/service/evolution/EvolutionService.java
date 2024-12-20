@@ -150,6 +150,7 @@ public class EvolutionService {
         maps.setName(PipelineConstants.EVOLVE);
         maps.put(PipelineConstants.UPDATE, new SerialMapPlain(updateMap));
         maps.put(PipelineConstants.SCORE, new SerialMapPlain(scoreMap));
+        // rec with own result
         maps.put(PipelineConstants.RESULT, new SerialMapPlain(resultMap));
         return maps;
     }

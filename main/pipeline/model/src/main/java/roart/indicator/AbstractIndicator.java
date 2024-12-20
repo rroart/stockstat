@@ -22,6 +22,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialMapD;
+import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialMapTA;
 import roart.common.pipeline.data.SerialTA;
 import roart.common.pipeline.data.TwoDimD;
@@ -64,7 +65,7 @@ public abstract class AbstractIndicator extends Calculatable {
     protected Map<String, Double[]> calculatedMap;
     protected Map<String, Object[]> resultMap;
 
-    protected Map<String, Map<String, Object[]>> marketObjectMap;
+    protected Map<String, Map<String, SerialTA>> marketObjectMap;
     protected Map<String, Map<String, Object[]>> marketResultMap;
     protected Map<String, Map<String, Double[]>> marketCalculatedMap;
 
@@ -139,7 +140,7 @@ public abstract class AbstractIndicator extends Calculatable {
         map.setName(indicatorName());
         // the mixed and complex results of indicator
         // an array with numbers or arrays
-        map.put(PipelineConstants.OBJECT, new SerialMapTA(objectMap/* != null ? objectMap : new HashMap<>()*/));
+        map.put(PipelineConstants.OBJECT, new SerialMapTA(objectMap != null ? objectMap : new HashMap<>()));
         // TODO unused
         map.put(PipelineConstants.OBJECTFIXED, objectFixedMap);
         //map.put(PipelineConstants.LIST, listMap);
@@ -150,13 +151,13 @@ public abstract class AbstractIndicator extends Calculatable {
         
         // market as key, for extras
         // raw calculations
-        map.put(PipelineConstants.MARKETOBJECT, marketObjectMap);
+        map.put(PipelineConstants.MARKETOBJECT, new SerialMapPlain(marketObjectMap));
         // prep for web?
         // TODO unused?
-        map.put(PipelineConstants.MARKETCALCULATED, marketCalculatedMap);
+        //map.put(PipelineConstants.MARKETCALCULATED, marketCalculatedMap);
         // result for web table
         // TODO unused?
-        map.put(PipelineConstants.MARKETRESULT, marketResultMap);
+        //map.put(PipelineConstants.MARKETRESULT, marketResultMap);
         //map.smap().put(PipelineConstants.RESULT, resultSMap);
         return map;
     }

@@ -26,6 +26,7 @@ import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.model.TimingItem;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialObject;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.util.JsonUtil;
@@ -339,7 +340,7 @@ public abstract class Component {
             param.setScoreMap(scoreMap);
             PipelineData resultMap = new PipelineData();
             resultMap.setName(getPipeline());
-            resultMap.put(filename, results);
+            resultMap.put(filename, new SerialListPlain(results));
             resultMap.put(EvolveConstants.TITLETEXT, title + nullString(fitness.titleText()));
             resultMap.put(EvolveConstants.SUBTITLETEXT, subtitle);
             resultMap.put(EvolveConstants.ID, filename);

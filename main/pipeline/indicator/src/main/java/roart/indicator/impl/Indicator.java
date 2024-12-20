@@ -64,9 +64,9 @@ public abstract class Indicator extends AbstractIndicator {
             if (resultList == null || resultList.isEmpty()) {
                 continue;
             }
-            Map anObjectMap = resultList.get(0);
-            Map aCalculatedMap = resultList.get(1);
-            Map aResultMap = resultList.get(2);
+            Map<String, SerialTA> anObjectMap = resultList.get(0);
+            Map<String, Double[]> aCalculatedMap = resultList.get(1);
+            Map<String, Object[]> aResultMap = resultList.get(2);
             marketObjectMap.put(market, anObjectMap);
             marketCalculatedMap.put(market, aCalculatedMap);
             marketResultMap.put(market, aResultMap);
@@ -85,12 +85,11 @@ public abstract class Indicator extends AbstractIndicator {
         Map<Pair<String, String>, double[][]> pairTruncListMap = null; // (Map<Pair<String, String>, double[][]>) localResults.get(PipelineConstants.PAIRTRUNCLIST);
         */
         //Set<String> commonDates = (Set<String>) localResults.get(PipelineConstants.DATELIST);
-        SerialList<SerialObject> marketStocks = (SerialList) localResults.get(PipelineConstants.MARKETSTOCKS);
-        SerialMap dataReaderMap = (SerialMap) localResults.get(PipelineConstants.DATAREADER);
+        List<SerialMarketStock> marketStocks = PipelineUtils.getMarketstocks(localResults);
+        Map<String, SerialList<PipelineData>> dataReaderMap = PipelineUtils.getDatareader(localResults);
         log.debug("lockeys {}", localResults.keySet());
         //Map<Pair<String, String>, List<StockItem>> pairMap = pairStockMap;
-        for(SerialObject object : marketStocks.getList()) {
-            SerialMarketStock ms = (SerialMarketStock) object;
+        for(SerialMarketStock ms : marketStocks) {
             String market = ms.getMarket();
             String id = ms.getId();
             String catName = ms.getCategory();

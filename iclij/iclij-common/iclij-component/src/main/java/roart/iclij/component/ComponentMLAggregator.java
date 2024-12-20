@@ -8,11 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-
 import roart.common.constants.Constants;
-import roart.common.constants.ResultMetaConstants;
 import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
@@ -22,9 +18,6 @@ import roart.common.pipeline.data.OneDim;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialIncDec;
 import roart.common.pipeline.data.SerialList;
-import roart.common.pipeline.data.SerialMap;
-import roart.common.pipeline.data.SerialMapD;
-import roart.common.pipeline.data.SerialObject;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.util.JsonUtil;
 import roart.common.util.PipelineUtils;
@@ -33,16 +26,15 @@ import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
 import roart.component.model.MLAggregatorData;
 import roart.evolution.fitness.Fitness;
+import roart.gene.impl.ConfigMapGene;
+import roart.iclij.component.constants.ServiceUtilConstants;
+import roart.iclij.config.Market;
 import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.iclij.evolution.chromosome.winner.ConfigMapChromosomeWinner;
-import roart.gene.impl.ConfigMapGene;
-import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
-import roart.iclij.util.MiscUtil;
 import roart.service.model.ProfitData;
-import roart.iclij.component.constants.ServiceUtilConstants;
 
 public abstract class ComponentMLAggregator extends ComponentML {
 
@@ -77,12 +69,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
             //return;
         }
         PipelineData resultMap = param.getResultMap();
-        MapOneDim aResultMap = PipelineUtils.getMapOneDim(resultMap.get(PipelineConstants.RESULT));
 
-        if (aResultMap == null) {
-            int jj = 0;
-        }
-        log.info("Keys {}", aResultMap.keySet());
         log.info("Keys {}", resultMap.keySet());
         log.info("Keys {}", param.getCategoryValueMap().keySet());
         List<String> stockDates = param.getService().getDates(param.getInput().getMarket());
@@ -219,6 +206,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
     public List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters) throws Exception {
         ComponentMLData param = (ComponentMLData) componentparam;
         PipelineData resultMap = param.getResultMap();
+        // mix text num
         MapOneDim aResultMap = PipelineUtils.getMapOneDim(resultMap.get(PipelineConstants.RESULT));
         List<MemoryItem> memoryList = new ArrayList<>();
         int resultIndex = 0;

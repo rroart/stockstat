@@ -121,6 +121,7 @@ public class ComponentRecommender extends ComponentNoML {
         if (!evolve) {
         PipelineData resultMap = param.getResultMap();
         if (resultMap != null) {
+            // rec with own result
         Map<String, Object> resultMap2 = (Map<String, Object>) resultMap.get(PipelineConstants.RESULT);
         Map<String, List<Double>> recommendBuySell = (Map<String, List<Double>>) resultMap2.get(RecommendConstants.COMPLEX);
         param.setRecommendBuySell(recommendBuySell);
@@ -150,6 +151,7 @@ public class ComponentRecommender extends ComponentNoML {
         //System.out.println(okConfMap.keySet());
         //System.out.println(okListMap.keySet());
         Map maps = (Map) resultMaps; //.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+        // rec with own result
         Map<String, Map> resultMap0 = (Map<String, Map>) maps.get(PipelineConstants.RESULT);
         Map<String, List<Double>> resultMap = (Map<String, List<Double>>) resultMap0.get(RecommendConstants.COMPLEX);
         if (resultMap == null) {
