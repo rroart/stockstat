@@ -15,6 +15,7 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.model.PipelineResultData;
+import roart.common.util.PipelineUtils;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.NeuralNetChromosome;
 import roart.evolution.fitness.Fitness;
@@ -63,7 +64,7 @@ public class FitnessNeuralNet extends Fitness {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        Map<String, Object> accuracyMap = (Map<String, Object>) pipelineData.putData().get(PipelineConstants.ACCURACY);
+        Map<String, Object> accuracyMap = PipelineUtils.getAccuracyMap(pipelineData.putData());
         if (accuracyMap == null) {
             return 0;
         }

@@ -789,7 +789,7 @@ public abstract class MarketAction extends Action {
         Map<String, String> nameMap = null;
         for (Entry<String, PipelineData> entry : PipelineUtils.getPipelineMap(maps).entrySet()) {
             PipelineData map = entry.getValue();
-            nameMap = (Map<String, String>) map.get(PipelineConstants.NAME);
+            nameMap = PipelineUtils.getNamemap(map);
             if (nameMap != null) {
                 break;
             }

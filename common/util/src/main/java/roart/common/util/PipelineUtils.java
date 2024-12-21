@@ -528,4 +528,9 @@ public class PipelineUtils {
         return map.getList();
     }
 
+    public static Map getAccuracyMap(PipelineData data) {
+        SerialMapPlain map = (SerialMapPlain) data.get(PipelineConstants.ACCURACY);
+        return map.getMap();
+    }
+
 }
