@@ -65,7 +65,7 @@ public abstract class AbstractIndicator extends Calculatable {
     protected Map<String, Double[]> calculatedMap;
     protected Map<String, Object[]> resultMap;
 
-    protected Map<String, Map<String, SerialTA>> marketObjectMap;
+    protected Map<String, SerialMap> marketObjectMap;
     protected Map<String, Map<String, Object[]>> marketResultMap;
     protected Map<String, Map<String, Double[]>> marketCalculatedMap;
 
@@ -151,7 +151,7 @@ public abstract class AbstractIndicator extends Calculatable {
         
         // market as key, for extras
         // raw calculations
-        map.put(PipelineConstants.MARKETOBJECT, new SerialMapPlain(marketObjectMap));
+        map.put(PipelineConstants.MARKETOBJECT, new SerialMap(marketObjectMap));
         // prep for web?
         // TODO unused?
         //map.put(PipelineConstants.MARKETCALCULATED, marketCalculatedMap);

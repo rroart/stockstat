@@ -21,6 +21,7 @@ import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialList;
+import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialMapTA;
 import roart.common.pipeline.data.SerialMarketStock;
 import roart.common.pipeline.data.SerialObject;
@@ -525,9 +526,9 @@ public class IndicatorUtils {
         for (AbstractIndicator indicator : allIndicators) {
             if (indicator.wantForExtras()) {
                 PipelineData localIndicatorResults =  PipelineUtils.getPipeline(datareaders, indicator.indicatorName());
-                Map<String, Map<String, SerialTA>> marketObjectMap = PipelineUtils.getMarketObjectMap(localIndicatorResults);
-                for (Entry<String, Map<String, SerialTA>> marketEntry : marketObjectMap.entrySet()) {
-                    SerialMapTA objectMap = (SerialMapTA) marketEntry.getValue();
+                Map<String, SerialMap<String, SerialTA>> marketObjectMap = PipelineUtils.getMarketObjectMap(localIndicatorResults);
+                for (Entry<String, SerialMap<String, SerialTA>> marketEntry : marketObjectMap.entrySet()) {
+                    SerialMap<String, SerialTA> objectMap = marketEntry.getValue();
                     for (Entry<String, SerialTA> entry : objectMap.entrySet()) {
                         SerialTA objsIndicator = entry.getValue();
                         result = appendDayResult(conf, j, result, localIndicatorResults.getName(), objsIndicator);
@@ -550,20 +551,20 @@ public class IndicatorUtils {
         for (AbstractIndicator indicator : allIndicators) {
             if (indicator.wantForExtras()) {
                 PipelineData localIndicatorResults =  PipelineUtils.getPipeline(datareaders, indicator.indicatorName());
-                Map<String, PipelineData[]> dataReaderMap = PipelineUtils.getMarketObjectMap(localResults);
+                Map<String, SerialList<PipelineData>> dataReaderMap = PipelineUtils.getDatareader(localResults);
                 log.debug("lockeys {}", localResults.keySet());
                 //Map<Pair<String, String>, List<StockItem>> pairMap = pairStockMap;
-                Map<String, Map<String, SerialTA>> marketObjectMap = PipelineUtils.getMarketObjectMap(localIndicatorResults);
+                Map<String, SerialMap<String, SerialTA>> marketObjectMap = PipelineUtils.getMarketObjectMap(localIndicatorResults);
                 if (marketObjectMap == null) {
                     continue;
                 }
-                for (Entry<String, Map<String, SerialTA>> marketEntry : marketObjectMap.entrySet()) {
+                for (Entry<String, SerialMap<String, SerialTA>> marketEntry : marketObjectMap.entrySet()) {
                     String market = marketEntry.getKey();     
-                    PipelineData[] mydatareaders = dataReaderMap.get(market);
+                    SerialList mydatareaders = dataReaderMap.get(market);
                     Map<String, PipelineData> mypipelineMap = getPipelineMap(mydatareaders);
 
                     SerialMarketStock marketStock = marketStockMap.get(market);
-                    String cat = marketStock.getCategory();;
+                    String cat = marketStock.getCategory();
                     if (cat == null) {
                         cat = Constants.EXTRA;
                     }
@@ -577,7 +578,7 @@ public class IndicatorUtils {
 
                     List<String> dateList2 = PipelineUtils.getDatelist(pipeline);
                     j = dateList2.size() - 1 - dateList2.indexOf(commonDate);
-                    SerialMapTA objectMap = (SerialMapTA) marketEntry.getValue();
+                    SerialMap<String, SerialTA> objectMap = marketEntry.getValue();
                     for (Entry<String, SerialTA> entry2 : objectMap.entrySet()) {
                         SerialTA objsIndicator = entry2.getValue();
                         PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, indicator.indicatorName());

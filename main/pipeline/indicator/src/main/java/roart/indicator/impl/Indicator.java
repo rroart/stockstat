@@ -67,7 +67,7 @@ public abstract class Indicator extends AbstractIndicator {
             Map<String, SerialTA> anObjectMap = resultList.get(0);
             Map<String, Double[]> aCalculatedMap = resultList.get(1);
             Map<String, Object[]> aResultMap = resultList.get(2);
-            marketObjectMap.put(market, anObjectMap);
+            marketObjectMap.put(market, new SerialMap(anObjectMap));
             marketCalculatedMap.put(market, aCalculatedMap);
             marketResultMap.put(market, aResultMap);
         }

@@ -507,7 +507,7 @@ public class PipelineUtils {
     }
     
     public static Map getMarketObjectMap(PipelineData data) {
-        SerialMapPlain map = (SerialMapPlain) data.get(PipelineConstants.MARKETOBJECT);
+        SerialMap map = (SerialMap) data.get(PipelineConstants.MARKETOBJECT);
         if (map != null) {
             return map.getMap();
         }
