@@ -388,6 +388,9 @@ public class IndicatorUtils {
             List<SerialMapTA> objectMapsList, int j, String id, Double[] result, PipelineData[] datareaders) {
         int idx = 0;
         for (SerialMapTA objectMap : objectMapsList) {
+            if (objectMap == null) {
+                continue;
+            }
             String ind = indicators.get(idx++);
             SerialTA objsIndicator = objectMap.get(id);
             PipelineData pipeline = PipelineUtils.getPipeline(datareaders, ind);
@@ -402,6 +405,9 @@ public class IndicatorUtils {
             List<SerialMapTA> objectMapsList, int j, String id, Double[] result, String commonDate, PipelineData[] datareaders) {
         int idx = 0;
         for (SerialMapTA objectMap : objectMapsList) {
+            if (objectMap == null) {
+                continue;
+            }
             String indicatorName = indicators.get(idx++);
             Map<String, PipelineData> pipelineMap = getPipelineMap(datareaders);
             PipelineData meta = pipelineMap.get(PipelineConstants.META);
@@ -425,13 +431,15 @@ public class IndicatorUtils {
             PipelineData datareader = pipelineMap.get(PipelineUtils.getMetaCat(meta));
             PipelineData resultMap = pipelineMap.get(indicatorName);
             SerialMapTA objMap = PipelineUtils.getMapTA(resultMap);
-            if (objMap != null) { 
+            if (objMap.getMap() != null && !objMap.getMap().isEmpty()) { 
                 objectMapsList.add(objMap);
                 Map<String, Double[][]> list0 = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
                 listList.add(list0);
                 AbstractIndicator indicator = dummyfactory(conf, indicatorName);
                 arraySize += indicator.getResultSize();
                 log.info("sizes {}", listList.get(listList.size() - 1).size());
+            } else {
+                listList.add(null);
             }
         }
         return arraySize;
@@ -483,6 +491,9 @@ public class IndicatorUtils {
                     log.debug("TODO temp workaround");
                 }
                 Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.FILLLIST));
+                if (fillListMap == null) {
+                    int jj = 0;
+                }
                 Double[][] fillList = fillListMap.get(entry.getId());
                 // null
                 if (fillList == null || fillList[0] == null) {
