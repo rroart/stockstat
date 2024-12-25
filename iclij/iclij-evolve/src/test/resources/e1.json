@@ -1,0 +1,845 @@
+{
+  "_class": "PipelineData",
+  "id": null,
+  "name": "abovebelow",
+  "map": {},
+  "smap": {
+    "_class": "SerialMap",
+    "map": {
+      "date": {
+        "_class": "SerialString",
+        "string": "2024.12.24"
+      },
+      "default": {
+        "_class": "SerialDouble",
+        "adouble": 0.4
+      },
+      "titletext": {
+        "_class": "SerialString",
+        "string": "improveabovebelow tradcomm abovebelow"
+      },
+      "subtitletext": {
+        "_class": "SerialString",
+        "string": "[['mlmacd','mlmulti','mlrsi'],['spark ovr','spark lsvc','pytorch gru','spark lor','spark mlpc','tensorflow lstm','tensorflow cnn','tensorflow mlp','pytorch rnn','pytorch lstm','pytorch mlp','pytorch cnn']]"
+      },
+      "learned": {
+        "_class": "SerialDouble",
+        "adouble": 0.5555555555555556
+      },
+      "1735130951491_fcac4c59-18ea-4ffd-b18a-fb5c9abb9238.txt": {
+        "_class": "SerialListPlain",
+        "list": [
+          {
+            "0.5555555555555556": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                true
+              ]
+            }
+          },
+          {
+            "0.5": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                false,
+                false,
+                true,
+                false,
+                true,
+                false,
+                true,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ]
+            }
+          },
+          {
+            "0.46153846153846156": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false,
+                false,
+                true
+              ]
+            }
+          },
+          {
+            "0.46153846153846156": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                false,
+                true,
+                false,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false
+              ]
+            }
+          },
+          {
+            "0.45454545454545453": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                false,
+                false,
+                true,
+                false,
+                false,
+                true,
+                true,
+                true,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                false,
+                false,
+                true,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                false,
+                false,
+                true,
+                false,
+                true
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                true,
+                false,
+                true,
+                false,
+                true,
+                true,
+                true,
+                false,
+                false,
+                true,
+                true,
+                false,
+                true,
+                true
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                true,
+                false,
+                false,
+                false,
+                true,
+                true,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                false,
+                true
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                true,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                false,
+                true,
+                false,
+                true,
+                false,
+                false,
+                false
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                true,
+                false,
+                false,
+                false,
+                true,
+                false,
+                false,
+                false,
+                true,
+                false,
+                true,
+                false,
+                false,
+                true
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                true,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                true,
+                false,
+                false,
+                false,
+                false,
+                true,
+                false,
+                false,
+                false,
+                true,
+                true,
+                false,
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                false,
+                false,
+                true,
+                false,
+                true,
+                true,
+                true,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                false,
+                false,
+                true,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                false,
+                false,
+                true,
+                false,
+                false
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                true,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                true,
+                false,
+                true,
+                false,
+                true,
+                true,
+                true,
+                false,
+                false,
+                true,
+                false,
+                false,
+                true,
+                true
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                true,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false,
+                true,
+                false,
+                false
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                true,
+                false,
+                true,
+                false,
+                false,
+                true,
+                true,
+                false,
+                false,
+                true,
+                true,
+                false,
+                false,
+                false
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                true,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                false,
+                false,
+                false,
+                true,
+                true,
+                false,
+                true
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                true,
+                false,
+                true,
+                false,
+                false,
+                true,
+                true,
+                false,
+                true,
+                true,
+                false,
+                false,
+                true,
+                true
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                true,
+                false,
+                false,
+                false,
+                true,
+                true,
+                false,
+                false,
+                true,
+                true,
+                true,
+                false,
+                false,
+                true
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                false,
+                false,
+                false,
+                true,
+                false,
+                true,
+                true
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                true,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                false,
+                true,
+                true,
+                false,
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                true,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                true
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                true,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false,
+                true,
+                true,
+                true,
+                true
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                true,
+                false,
+                true,
+                false,
+                true,
+                false,
+                true,
+                false,
+                false,
+                false,
+                true,
+                true,
+                false,
+                true
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                true,
+                false,
+                true,
+                false,
+                true,
+                true,
+                true,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                true
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                true,
+                false,
+                true,
+                false,
+                true,
+                true,
+                true,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                false,
+                true,
+                true,
+                true,
+                true,
+                false,
+                false
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                true,
+                false,
+                true,
+                false,
+                false,
+                true,
+                true,
+                false,
+                true,
+                false,
+                true,
+                true,
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                true,
+                false,
+                false,
+                false,
+                true,
+                false,
+                true,
+                false,
+                true,
+                true,
+                true,
+                false,
+                true,
+                true
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                true,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                false,
+                true,
+                true,
+                true,
+                false,
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "0.42857142857142855": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                true,
+                false,
+                true,
+                false,
+                true,
+                true,
+                true,
+                false,
+                false,
+                true,
+                false,
+                true,
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "0.4": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                true,
+                false,
+                false,
+                true,
+                false,
+                true,
+                true,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "0.4": {
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                true,
+                false,
+                true,
+                true,
+                false,
+                false,
+                true,
+                true,
+                false,
+                true,
+                false,
+                false,
+                false,
+                true
+              ]
+            }
+          }
+        ]
+      },
+      "id": {
+        "_class": "SerialString",
+        "string": "1735130951491_fcac4c59-18ea-4ffd-b18a-fb5c9abb9238.txt"
+      }
+    }
+  }
+}

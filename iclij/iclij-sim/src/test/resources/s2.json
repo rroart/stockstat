@@ -1,0 +1,1164 @@
+{
+  "_class": "PipelineData",
+  "id": null,
+  "name": "improveautosimulateinvest",
+  "map": {},
+  "smap": {
+    "_class": "SerialMap",
+    "map": {
+      "titletext": {
+        "_class": "SerialString",
+        "string": "improveautosimulateinvest ose improveautosimulateinvest improveautosimulateinvest"
+      },
+      "1735131796411_c5fafdac-01a7-4307-9670-26387f657620.txt": {
+        "_class": "SerialListPlain",
+        "list": [
+          {
+            "0.0": {
+              "resultMap": {},
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 0,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.32,
+                  "autosimulateinvest.keepadviser": true,
+                  "autosimulateinvest.lastcount": 20,
+                  "autosimulateinvest.autoscorelimit": -0.03,
+                  "autosimulateinvest.scorelimit": 1.63,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.44,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 17,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 0,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.32,
+                "autosimulateinvest.keepadviser": true,
+                "autosimulateinvest.lastcount": 20,
+                "autosimulateinvest.autoscorelimit": -0.03,
+                "autosimulateinvest.scorelimit": 1.63,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.44,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 17,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": {},
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 2,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.41,
+                  "autosimulateinvest.keepadviser": true,
+                  "autosimulateinvest.lastcount": 32,
+                  "autosimulateinvest.autoscorelimit": -0.1,
+                  "autosimulateinvest.scorelimit": 2.36,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.49,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 16,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 2,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.41,
+                "autosimulateinvest.keepadviser": true,
+                "autosimulateinvest.lastcount": 32,
+                "autosimulateinvest.autoscorelimit": -0.1,
+                "autosimulateinvest.scorelimit": 2.36,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.49,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 16,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": {},
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 1,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.05,
+                  "autosimulateinvest.keepadviser": true,
+                  "autosimulateinvest.lastcount": 10,
+                  "autosimulateinvest.autoscorelimit": -0.18,
+                  "autosimulateinvest.scorelimit": 3.53,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.26,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 19,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 1,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.05,
+                "autosimulateinvest.keepadviser": true,
+                "autosimulateinvest.lastcount": 10,
+                "autosimulateinvest.autoscorelimit": -0.18,
+                "autosimulateinvest.scorelimit": 3.53,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.26,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 19,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": {},
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 2,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.53,
+                  "autosimulateinvest.keepadviser": false,
+                  "autosimulateinvest.lastcount": 32,
+                  "autosimulateinvest.autoscorelimit": -0.08,
+                  "autosimulateinvest.scorelimit": 2.96,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.81,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 14,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 2,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.53,
+                "autosimulateinvest.keepadviser": false,
+                "autosimulateinvest.lastcount": 32,
+                "autosimulateinvest.autoscorelimit": -0.08,
+                "autosimulateinvest.scorelimit": 2.96,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.81,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 14,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": {},
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 2,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.84,
+                  "autosimulateinvest.keepadviser": true,
+                  "autosimulateinvest.lastcount": 9,
+                  "autosimulateinvest.autoscorelimit": -0.13,
+                  "autosimulateinvest.scorelimit": 4.82,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.63,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 19,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 2,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.84,
+                "autosimulateinvest.keepadviser": true,
+                "autosimulateinvest.lastcount": 9,
+                "autosimulateinvest.autoscorelimit": -0.13,
+                "autosimulateinvest.scorelimit": 4.82,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.63,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 19,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": {},
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 2,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.57,
+                  "autosimulateinvest.keepadviser": true,
+                  "autosimulateinvest.lastcount": 8,
+                  "autosimulateinvest.autoscorelimit": -0.11,
+                  "autosimulateinvest.scorelimit": 4.91,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.78,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 16,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 2,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.57,
+                "autosimulateinvest.keepadviser": true,
+                "autosimulateinvest.lastcount": 8,
+                "autosimulateinvest.autoscorelimit": -0.11,
+                "autosimulateinvest.scorelimit": 4.91,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.78,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 16,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": {},
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 1,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.39,
+                  "autosimulateinvest.keepadviser": false,
+                  "autosimulateinvest.lastcount": 14,
+                  "autosimulateinvest.autoscorelimit": -0.14,
+                  "autosimulateinvest.scorelimit": 2.4,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.12,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 2,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 1,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.39,
+                "autosimulateinvest.keepadviser": false,
+                "autosimulateinvest.lastcount": 14,
+                "autosimulateinvest.autoscorelimit": -0.14,
+                "autosimulateinvest.scorelimit": 2.4,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.12,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 2,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": {},
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 2,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.98,
+                  "autosimulateinvest.keepadviser": false,
+                  "autosimulateinvest.lastcount": 2,
+                  "autosimulateinvest.autoscorelimit": -0.07,
+                  "autosimulateinvest.scorelimit": 4.51,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.92,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 14,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 2,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.98,
+                "autosimulateinvest.keepadviser": false,
+                "autosimulateinvest.lastcount": 2,
+                "autosimulateinvest.autoscorelimit": -0.07,
+                "autosimulateinvest.scorelimit": 4.51,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.92,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 14,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": {},
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 2,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.97,
+                  "autosimulateinvest.keepadviser": true,
+                  "autosimulateinvest.lastcount": 1,
+                  "autosimulateinvest.autoscorelimit": -0.15,
+                  "autosimulateinvest.scorelimit": 3.19,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.29,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 15,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 2,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.97,
+                "autosimulateinvest.keepadviser": true,
+                "autosimulateinvest.lastcount": 1,
+                "autosimulateinvest.autoscorelimit": -0.15,
+                "autosimulateinvest.scorelimit": 3.19,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.29,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 15,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": {},
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 2,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.55,
+                  "autosimulateinvest.keepadviser": false,
+                  "autosimulateinvest.lastcount": 10,
+                  "autosimulateinvest.autoscorelimit": -0.18,
+                  "autosimulateinvest.scorelimit": 4.27,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.18,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 18,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 2,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.55,
+                "autosimulateinvest.keepadviser": false,
+                "autosimulateinvest.lastcount": 10,
+                "autosimulateinvest.autoscorelimit": -0.18,
+                "autosimulateinvest.scorelimit": 4.27,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.18,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 18,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": {},
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 2,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.98,
+                  "autosimulateinvest.keepadviser": false,
+                  "autosimulateinvest.lastcount": 9,
+                  "autosimulateinvest.autoscorelimit": -0.15,
+                  "autosimulateinvest.scorelimit": 4.01,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.77,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 5,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 2,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.98,
+                "autosimulateinvest.keepadviser": false,
+                "autosimulateinvest.lastcount": 9,
+                "autosimulateinvest.autoscorelimit": -0.15,
+                "autosimulateinvest.scorelimit": 4.01,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.77,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 5,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": {},
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 2,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.85,
+                  "autosimulateinvest.keepadviser": true,
+                  "autosimulateinvest.lastcount": 27,
+                  "autosimulateinvest.autoscorelimit": -0.16,
+                  "autosimulateinvest.scorelimit": 1.71,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.25,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 13,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 2,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.85,
+                "autosimulateinvest.keepadviser": true,
+                "autosimulateinvest.lastcount": 27,
+                "autosimulateinvest.autoscorelimit": -0.16,
+                "autosimulateinvest.scorelimit": 1.71,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.25,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 13,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": {},
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 2,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.74,
+                  "autosimulateinvest.keepadviser": false,
+                  "autosimulateinvest.lastcount": 9,
+                  "autosimulateinvest.autoscorelimit": -0.16,
+                  "autosimulateinvest.scorelimit": 1.03,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.84,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 18,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 2,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.74,
+                "autosimulateinvest.keepadviser": false,
+                "autosimulateinvest.lastcount": 9,
+                "autosimulateinvest.autoscorelimit": -0.16,
+                "autosimulateinvest.scorelimit": 1.03,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.84,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 18,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": {},
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 2,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.78,
+                  "autosimulateinvest.keepadviser": false,
+                  "autosimulateinvest.lastcount": 3,
+                  "autosimulateinvest.autoscorelimit": -0.12,
+                  "autosimulateinvest.scorelimit": 3.59,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.67,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 9,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 2,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.78,
+                "autosimulateinvest.keepadviser": false,
+                "autosimulateinvest.lastcount": 3,
+                "autosimulateinvest.autoscorelimit": -0.12,
+                "autosimulateinvest.scorelimit": 3.59,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.67,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 9,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": {},
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 2,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.56,
+                  "autosimulateinvest.keepadviser": false,
+                  "autosimulateinvest.lastcount": 18,
+                  "autosimulateinvest.autoscorelimit": -0.0,
+                  "autosimulateinvest.scorelimit": 4.64,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.99,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 11,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 2,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.56,
+                "autosimulateinvest.keepadviser": false,
+                "autosimulateinvest.lastcount": 18,
+                "autosimulateinvest.autoscorelimit": -0.0,
+                "autosimulateinvest.scorelimit": 4.64,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.99,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 11,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": {},
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 2,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.45,
+                  "autosimulateinvest.keepadviser": false,
+                  "autosimulateinvest.lastcount": 38,
+                  "autosimulateinvest.autoscorelimit": -0.0,
+                  "autosimulateinvest.scorelimit": 2.23,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.17,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 19,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 2,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.45,
+                "autosimulateinvest.keepadviser": false,
+                "autosimulateinvest.lastcount": 38,
+                "autosimulateinvest.autoscorelimit": -0.0,
+                "autosimulateinvest.scorelimit": 2.23,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.17,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 19,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": {},
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 1,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.05,
+                  "autosimulateinvest.keepadviser": true,
+                  "autosimulateinvest.lastcount": 10,
+                  "autosimulateinvest.autoscorelimit": -0.16,
+                  "autosimulateinvest.scorelimit": 1.71,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.26,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 13,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 1,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.05,
+                "autosimulateinvest.keepadviser": true,
+                "autosimulateinvest.lastcount": 10,
+                "autosimulateinvest.autoscorelimit": -0.16,
+                "autosimulateinvest.scorelimit": 1.71,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.26,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 13,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": {},
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 2,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.71,
+                  "autosimulateinvest.keepadviser": false,
+                  "autosimulateinvest.lastcount": 32,
+                  "autosimulateinvest.autoscorelimit": -0.12,
+                  "autosimulateinvest.scorelimit": 3.59,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.67,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 16,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 2,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.71,
+                "autosimulateinvest.keepadviser": false,
+                "autosimulateinvest.lastcount": 32,
+                "autosimulateinvest.autoscorelimit": -0.12,
+                "autosimulateinvest.scorelimit": 3.59,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.67,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 16,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": {},
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 2,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.41,
+                  "autosimulateinvest.keepadviser": true,
+                  "autosimulateinvest.lastcount": 37,
+                  "autosimulateinvest.autoscorelimit": -0.14,
+                  "autosimulateinvest.scorelimit": 3.94,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.1,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 20,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 2,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.41,
+                "autosimulateinvest.keepadviser": true,
+                "autosimulateinvest.lastcount": 37,
+                "autosimulateinvest.autoscorelimit": -0.14,
+                "autosimulateinvest.scorelimit": 3.94,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.1,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 20,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          }
+        ]
+      },
+      "id": {
+        "_class": "SerialString",
+        "string": "1735131796411_c5fafdac-01a7-4307-9670-26387f657620.txt"
+      }
+    }
+  }
+}

@@ -30,6 +30,7 @@ import roart.common.pipeline.data.SerialMapdd;
 import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.data.SerialObject;
 import roart.common.pipeline.data.SerialResultMeta;
+import roart.common.pipeline.data.SerialDouble;
 import roart.common.pipeline.data.SerialString;
 import roart.common.pipeline.data.SerialTA;
 import roart.common.pipeline.data.SerialVolume;
@@ -533,4 +534,23 @@ public class PipelineUtils {
         return map.getMap();
     }
 
+    public static String getString(PipelineData data, String key) {
+        SerialString string = (SerialString) data.get(key);
+        return string.getString();
+    }
+
+    public static Double getDouble(PipelineData data, String key) {
+        SerialDouble adouble = (SerialDouble) data.get(key);
+        return adouble.getAdouble();
+    }
+
+    public static List getList(PipelineData data, String key) {
+        SerialList list = (SerialList) data.get(key);
+        return list.getList();
+    }
+
+    public static List getListPlain(PipelineData data, String key) {
+        SerialListPlain list = (SerialListPlain) data.get(key);
+        return list.getList();
+    }
 }

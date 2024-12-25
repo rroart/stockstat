@@ -1,0 +1,1144 @@
+{
+  "_class": "PipelineData",
+  "id": null,
+  "name": "filter",
+  "map": {},
+  "smap": {
+    "_class": "SerialMap",
+    "map": {
+      "titletext": {
+        "_class": "SerialString",
+        "string": "improvefilter nasdaq100 filter"
+      },
+      "1735130984897_9441828a-15c4-4557-b0d9-fae0a44859f3.txt": {
+        "_class": "SerialListPlain",
+        "list": [
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "1d",
+                  "incdays": 21,
+                  "incthreshold": 1.03,
+                  "deccategory": "1w",
+                  "decdays": 38,
+                  "decthreshold": 0.91,
+                  "confidence": 0.99,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "cy",
+                  "incdays": 21,
+                  "incthreshold": 1.07,
+                  "deccategory": "1y",
+                  "decdays": 34,
+                  "decthreshold": 1.04,
+                  "confidence": 0.86,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "1d",
+                  "incdays": 31,
+                  "incthreshold": 1.02,
+                  "deccategory": "3y",
+                  "decdays": 10,
+                  "decthreshold": 1.08,
+                  "confidence": 0.28,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "3m",
+                  "incdays": null,
+                  "incthreshold": 0.93,
+                  "deccategory": "10y",
+                  "decdays": null,
+                  "decthreshold": 1.09,
+                  "confidence": 0.5800000000000001,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "cy",
+                  "incdays": 21,
+                  "incthreshold": 1.03,
+                  "deccategory": "3y",
+                  "decdays": 42,
+                  "decthreshold": 0.98,
+                  "confidence": 0.99,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "10y",
+                  "incdays": 39,
+                  "incthreshold": 0.91,
+                  "deccategory": "3y",
+                  "decdays": null,
+                  "decthreshold": 0.96,
+                  "confidence": 0.48000000000000004,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "1w",
+                  "incdays": 16,
+                  "incthreshold": 1.04,
+                  "deccategory": "1y",
+                  "decdays": 28,
+                  "decthreshold": 0.99,
+                  "confidence": 0.5800000000000001,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "10y",
+                  "incdays": 38,
+                  "incthreshold": 1.08,
+                  "deccategory": "5y",
+                  "decdays": 15,
+                  "decthreshold": 0.99,
+                  "confidence": 0.44,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "5y",
+                  "incdays": 20,
+                  "incthreshold": 0.9400000000000001,
+                  "deccategory": "1y",
+                  "decdays": 16,
+                  "decthreshold": 1.05,
+                  "confidence": 0.52,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "10y",
+                  "incdays": 39,
+                  "incthreshold": 0.91,
+                  "deccategory": "3y",
+                  "decdays": null,
+                  "decthreshold": 0.96,
+                  "confidence": 0.38,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "1m",
+                  "incdays": 20,
+                  "incthreshold": 1.08,
+                  "deccategory": "1y",
+                  "decdays": null,
+                  "decthreshold": 0.97,
+                  "confidence": 0.5800000000000001,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "10y",
+                  "incdays": 21,
+                  "incthreshold": 1.05,
+                  "deccategory": "1w",
+                  "decdays": 45,
+                  "decthreshold": 1.07,
+                  "confidence": 0.85,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "5y",
+                  "incdays": 32,
+                  "incthreshold": 1.03,
+                  "deccategory": "1w",
+                  "decdays": 25,
+                  "decthreshold": 0.9500000000000001,
+                  "confidence": 0.9500000000000001,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "1d",
+                  "incdays": null,
+                  "incthreshold": 1.03,
+                  "deccategory": "3y",
+                  "decdays": 31,
+                  "decthreshold": 0.92,
+                  "confidence": 0.27,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "1d",
+                  "incdays": 31,
+                  "incthreshold": 1.08,
+                  "deccategory": "5y",
+                  "decdays": 10,
+                  "decthreshold": 1.08,
+                  "confidence": 0.44,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "5y",
+                  "incdays": 13,
+                  "incthreshold": 0.97,
+                  "deccategory": "10y",
+                  "decdays": null,
+                  "decthreshold": 0.9500000000000001,
+                  "confidence": 0.9500000000000001,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "5y",
+                  "incdays": 20,
+                  "incthreshold": 1.03,
+                  "deccategory": "3y",
+                  "decdays": 33,
+                  "decthreshold": 0.96,
+                  "confidence": 0.52,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "1w",
+                  "incdays": 45,
+                  "incthreshold": 1.07,
+                  "deccategory": "3y",
+                  "decdays": 31,
+                  "decthreshold": 1.02,
+                  "confidence": 0.85,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "3y",
+                  "incdays": 14,
+                  "incthreshold": 1.03,
+                  "deccategory": "3y",
+                  "decdays": 35,
+                  "decthreshold": 0.98,
+                  "confidence": 0.86,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "cy",
+                  "incdays": 9,
+                  "incthreshold": 1.03,
+                  "deccategory": "1y",
+                  "decdays": 31,
+                  "decthreshold": 0.91,
+                  "confidence": 0.86,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "1d",
+                  "incdays": null,
+                  "incthreshold": 1.03,
+                  "deccategory": "3y",
+                  "decdays": 32,
+                  "decthreshold": 0.91,
+                  "confidence": 0.37,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "1w",
+                  "incdays": 6,
+                  "incthreshold": 0.91,
+                  "deccategory": "3y",
+                  "decdays": null,
+                  "decthreshold": 1.08,
+                  "confidence": 0.25,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "10y",
+                  "incdays": 38,
+                  "incthreshold": 1.07,
+                  "deccategory": "3y",
+                  "decdays": 13,
+                  "decthreshold": 0.9500000000000001,
+                  "confidence": 0.44,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "1y",
+                  "incdays": 44,
+                  "incthreshold": 0.99,
+                  "deccategory": "1w",
+                  "decdays": 37,
+                  "decthreshold": 0.9400000000000001,
+                  "confidence": 0.99,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "1d",
+                  "incdays": 44,
+                  "incthreshold": 0.99,
+                  "deccategory": "10y",
+                  "decdays": 42,
+                  "decthreshold": 0.98,
+                  "confidence": 0.2,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "cy",
+                  "incdays": null,
+                  "incthreshold": 1.03,
+                  "deccategory": "1y",
+                  "decdays": 31,
+                  "decthreshold": 0.96,
+                  "confidence": 0.86,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "cy",
+                  "incdays": 31,
+                  "incthreshold": 0.91,
+                  "deccategory": "3y",
+                  "decdays": null,
+                  "decthreshold": 0.91,
+                  "confidence": 0.28,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "1y",
+                  "incdays": 19,
+                  "incthreshold": 0.93,
+                  "deccategory": "1w",
+                  "decdays": 37,
+                  "decthreshold": 0.9400000000000001,
+                  "confidence": 0.99,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "5y",
+                  "incdays": 39,
+                  "incthreshold": 0.9400000000000001,
+                  "deccategory": "1w",
+                  "decdays": 35,
+                  "decthreshold": 1.07,
+                  "confidence": 0.44,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "cy",
+                  "incdays": 6,
+                  "incthreshold": 1.08,
+                  "deccategory": "3y",
+                  "decdays": null,
+                  "decthreshold": 0.96,
+                  "confidence": 0.85,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "5y",
+                  "incdays": 14,
+                  "incthreshold": 1.03,
+                  "deccategory": "3y",
+                  "decdays": 42,
+                  "decthreshold": 0.98,
+                  "confidence": 0.21000000000000002,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "5y",
+                  "incdays": 20,
+                  "incthreshold": 1.08,
+                  "deccategory": "10y",
+                  "decdays": 42,
+                  "decthreshold": 0.97,
+                  "confidence": 0.5800000000000001,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "5y",
+                  "incdays": 20,
+                  "incthreshold": 1.08,
+                  "deccategory": "10y",
+                  "decdays": 42,
+                  "decthreshold": 0.97,
+                  "confidence": 0.5800000000000001,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "cy",
+                  "incdays": null,
+                  "incthreshold": 1.03,
+                  "deccategory": "1y",
+                  "decdays": 31,
+                  "decthreshold": 0.96,
+                  "confidence": 0.86,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          },
+          {
+            "0.0": {
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "MarketFilterGene",
+                "className": null,
+                "marketfilter": {
+                  "inccategory": "3y",
+                  "incdays": 42,
+                  "incthreshold": 1.02,
+                  "deccategory": "1m",
+                  "decdays": 31,
+                  "decthreshold": 0.91,
+                  "confidence": 0.23,
+                  "recordage": 7,
+                  "categories": [
+                    "1d",
+                    "1w",
+                    "1m",
+                    "3m",
+                    "cy",
+                    "1y",
+                    "3y",
+                    "5y",
+                    "10y"
+                  ]
+                }
+              },
+              "confList": []
+            }
+          }
+        ]
+      },
+      "id": {
+        "_class": "SerialString",
+        "string": "1735130984897_9441828a-15c4-4557-b0d9-fae0a44859f3.txt"
+      }
+    }
+  }
+}

@@ -53,6 +53,12 @@
 		    --add-opens iclij.common.service/roart.iclij.service=spring.core
 		    --add-opens pipeline.predictor/roart.predictor.impl=spring.core
 		    --add-opens java.base/sun.net=ALL-UNNAMED
+		    --add-opens iclij.evolve/roart.controller=spring.core
+		    --add-opens iclij.evolve/roart.controller=spring.beans
+		    --add-opens iclij.evolve/roart.controller=spring.context
+		    --add-opens iclij.sim/roart.controller=spring.core
+		    --add-opens iclij.sim/roart.controller=spring.beans
+		    --add-opens iclij.sim/roart.controller=spring.context
 		  </argLine>
 		</configuration>
          </plugin>
