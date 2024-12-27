@@ -554,4 +554,14 @@ public class PipelineUtils {
         SerialListPlain list = (SerialListPlain) data.get(key);
         return list.getList();
     }
+
+    public static Map getMap(PipelineData data, String key) {
+        SerialMap list = (SerialMap) data.get(key);
+        return list.getMap();
+    }
+
+    public static Map getMapPlain(PipelineData data, String key) {
+        SerialMapPlain list = (SerialMapPlain) data.get(key);
+        return list.getMap();
+    }
 }

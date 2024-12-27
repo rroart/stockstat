@@ -31,6 +31,11 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
+      <artifactId>stockstat-common-model</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
       <artifactId>stockstat-common-myexecutor</artifactId>
       <version>${stockstat.version}</version>
     </dependency>

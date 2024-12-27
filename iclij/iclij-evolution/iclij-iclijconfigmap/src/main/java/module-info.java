@@ -6,9 +6,7 @@
  *
  */
 module iclij.evolutioniclijconfigmap {
-    exports roart.evolution.iclijconfigmap.genetics.gene.impl;
     exports roart.evolution.iclijconfigmap.jenetics.gene.impl;
-    exports roart.evolution.iclijconfigmap.common.gene.impl;
     requires iclij.common.config;
     requires evolution.gene;
     requires evolution.model;

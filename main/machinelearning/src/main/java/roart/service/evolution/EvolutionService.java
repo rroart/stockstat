@@ -27,6 +27,7 @@ import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMapPlain;
+import roart.common.pipeline.data.SerialScoreChromosome;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
@@ -192,7 +193,7 @@ public class EvolutionService {
             evolution.fittest = fitness::fitness;
             
             List<String> individuals = new ArrayList<>();
-            List<Pair<Double, AbstractChromosome>> results = new ArrayList<>();
+            List<SerialScoreChromosome> results = new ArrayList<>();
             Individual best = null;
             try {
             	best = evolution.getFittest(evolutionConfig, chromosome, individuals, results, null);
@@ -241,7 +242,7 @@ public class EvolutionService {
             }
             updateMap.put(configKey, newNNConfigstring);
             scoreMap.put(configKey, best.getFitness());
-            scoreMap.put("scores", results.stream().map(Pair::getLeft).collect(Collectors.toList()));            
+            scoreMap.put("scores", results.stream().map(SerialScoreChromosome::getLeft).collect(Collectors.toList()));            
             resultMap.put(filename, results);
             resultMap.put(EvolveConstants.ID, filename);
             resultMap.put(EvolveConstants.TITLETEXT, title);
@@ -282,7 +283,7 @@ public class EvolutionService {
             evolution.fittest = fitness::fitness;
             
             List<String> individuals = new ArrayList<>();
-            List<Pair<Double, AbstractChromosome>> results = new ArrayList<>();
+            List<SerialScoreChromosome> results = new ArrayList<>();
             Individual best = null;
             try {
             	best = evolution.getFittest(evolutionConfig, chromosome, individuals, results, null);

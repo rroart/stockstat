@@ -52,7 +52,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.SimulateFilter;
-import roart.iclij.util.MiscUtil;
+import roart.iclij.service.util.MiscUtil;
 import roart.simulate.model.SimulateStock;
 import roart.simulate.model.StockHistory;
 import roart.simulate.util.SimUtil;
@@ -60,6 +60,9 @@ import roart.constants.SimConstants;
 import roart.db.dao.IclijDbDao;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.SimDataItem;
+import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialScoreChromosome;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.factory.InmemoryFactory;
 import org.apache.commons.math3.stat.correlation.KendallsCorrelation;
@@ -89,16 +92,16 @@ public class Sim {
 
     public void method(String param, String string, boolean b) {
         //param = getParam(param);
-        Map<String, Object> myMap = convert(param);
-        if (myMap.isEmpty()) {
+        PipelineData data = JsonUtil.convert(param, PipelineData.class);
+        if (data.getMap().isEmpty()) {
             return;
         }
-        String id = (String) myMap.get(EvolveConstants.ID);
-        List<Pair<Double, AbstractChromosome>> myList = (List<Pair<Double, AbstractChromosome>>) myMap.get(id);
+        String id = PipelineUtils.getString(data, EvolveConstants.ID);
+        List<SerialScoreChromosome> myList = PipelineUtils.getListPlain(data, id);
         if (myList.size() > 0) {
             //for ()
-            for (Pair<Double, AbstractChromosome> aPair : myList) {
-                IclijConfigMapChromosome aChromosome = (IclijConfigMapChromosome) aPair.getValue();
+            for (SerialScoreChromosome aPair : myList) {
+                IclijConfigMapChromosome aChromosome = (IclijConfigMapChromosome) aPair.getRight();
                 Map<String, Object> aMap = aChromosome.getMap();
                 aMap.remove(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
                 aMap.remove(IclijConfigConstants.SIMULATEINVESTFILTERS);
@@ -115,8 +118,8 @@ public class Sim {
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
-            Pair<Double, AbstractChromosome> winnerPair = myList.get(0);
-            IclijConfigMapChromosome winnerChromosome = (IclijConfigMapChromosome) winnerPair.getValue();
+            SerialScoreChromosome winnerPair = myList.get(0);
+            IclijConfigMapChromosome winnerChromosome = (IclijConfigMapChromosome) winnerPair.getRight();
             String filterString = getFilter(winnerChromosome);
             int adviser = getAdviser(winnerChromosome);
             if (adviser == -1) {
@@ -130,7 +133,8 @@ public class Sim {
             }
             {
                 SimulateFilter[] listoverrides = null;
-                Object o = myMap.get(SimConstants.FILTER);
+                Object o = data.get(SimConstants.FILTER);
+                System.out.println("ooo" + o.getClass().getCanonicalName());
                 SimulateFilter[] listoverrides2 = JsonUtil.convert((String)o, SimulateFilter[].class);
                 SimulateFilter[] listoverride = listoverrides2;
                 if (listoverride != null) {
@@ -231,7 +235,7 @@ public class Sim {
             for (Pair<Double, String> aSummary : maxSummaries) {
                 output.add("Max " + MathUtil.round(aSummary.getKey(), 2) + " " + aSummary.getValue());
             }
-            String simtext = (String) myMap.get(EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
+            String simtext = PipelineUtils.getString(data, EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
             String node = iclijConfig.getEvolveSaveLocation();
             String mypath = iclijConfig.getEvolveSavePath();
             configCurator(iclijConfig);
@@ -271,17 +275,17 @@ public class Sim {
             }
             if (filter.isUseclusters() && b && commonScore[0] != null) {
                 IclijConfigMapChromosome chromosome = (IclijConfigMapChromosome) chromosomeMap.get(commonScore[0]).get(0);
-                SimDataItem data = new SimDataItem();
-                data.setRecord(LocalDate.now());
-                data.setScore(commonScore[1]);
-                data.setMarket(market);
+                SimDataItem simdata = new SimDataItem();
+                simdata.setRecord(LocalDate.now());
+                simdata.setScore(commonScore[1]);
+                simdata.setMarket(market);
                 //data.setAdviser(adviser);
-                data.setStartdate(startdate);
-                data.setEnddate(enddate);
-                data.setFilter(JsonUtil.convert(filter));
-                data.setConfig(JsonUtil.convert(chromosome.getMap()));
+                simdata.setStartdate(startdate);
+                simdata.setEnddate(enddate);
+                simdata.setFilter(JsonUtil.convert(filter));
+                simdata.setConfig(JsonUtil.convert(chromosome.getMap()));
                 try {
-                    dbDao.save(data);
+                    dbDao.save(simdata);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -297,17 +301,17 @@ public class Sim {
             if (!b) {
                 return;
             }
-            SimDataItem data = new SimDataItem();
-            data.setRecord(LocalDate.now());
-            data.setScore(min);
-            data.setMarket(market);
+            SimDataItem simdata = new SimDataItem();
+            simdata.setRecord(LocalDate.now());
+            simdata.setScore(min);
+            simdata.setMarket(market);
             //data.setAdviser(adviser);
-            data.setStartdate(startdate);
-            data.setEnddate(enddate);
-            data.setFilter(JsonUtil.convert(filter));
-            data.setConfig(JsonUtil.convert(chromosome.getMap()));
+            simdata.setStartdate(startdate);
+            simdata.setEnddate(enddate);
+            simdata.setFilter(JsonUtil.convert(filter));
+            simdata.setConfig(JsonUtil.convert(chromosome.getMap()));
             try {
-                dbDao.save(data);
+                dbDao.save(simdata);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
@@ -316,12 +320,12 @@ public class Sim {
 
     public void method2(String param) {
         //param = getParam(param);
-        Map<String, Object> myMap = convert(param);
-        if (myMap.isEmpty()) {
+        PipelineData data = JsonUtil.convert(param, PipelineData.class);
+        if (data.getMap().isEmpty()) {
             return;
         }
-        String id = (String) myMap.get(EvolveConstants.ID);
-        List<Pair<Double, AbstractChromosome>> myList = (List<Pair<Double, AbstractChromosome>>) myMap.get(id);
+        String id = PipelineUtils.getString(data, EvolveConstants.ID);
+        List<SerialScoreChromosome> myList = PipelineUtils.getListPlain(data, id);
         if (myList.size() > 0) {
             List<String> output = new ArrayList<>();
 
@@ -347,7 +351,7 @@ public class Sim {
                 output.add(mysummary);
                 output.add("");
                 if (success) {
-                    summaries.add(new ImmutablePair<>(keyScore, mysummary));
+                    summaries.add(new ImmutablePair(keyScore, mysummary));
                     scores.add(score);
                     if (score.doubleValue() != keyScore.doubleValue()) {
                         minScores.add(keyScore);
@@ -360,7 +364,7 @@ public class Sim {
             for (Pair<Double, String> aSummary : maxSummaries) {
                 output.add("Max " + MathUtil.round(aSummary.getKey(), 2) + " " + aSummary.getValue());
             }
-            String simtext = (String) myMap.get(EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
+            String simtext = PipelineUtils.getString(data, EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
             String node = iclijConfig.getEvolveSaveLocation();
             String mypath = iclijConfig.getEvolveSavePath();
             configCurator(iclijConfig);
@@ -572,12 +576,12 @@ public class Sim {
         return Collections.min(scores);
     }
 
-    private void getPopulationAbove(List<Pair<Double, AbstractChromosome>> myList, SimulateFilter filter,
+    private void getPopulationAbove(List<SerialScoreChromosome> myList, SimulateFilter filter,
             List<String> output) {
         int max = Math.min(filter.getPopulationabove(), myList.size());
         boolean above = true;
         for (int i = 0; i < max; i++) {
-            Pair<Double, AbstractChromosome> aPair = myList.get(i);
+            SerialScoreChromosome aPair = myList.get(i);
             if (aPair.getLeft() < 1) {
                 above = false;
                 break;
@@ -587,10 +591,10 @@ public class Sim {
         //summary.add(new Summary(above, "Populationabove " + max));
     }
 
-    private Map<Double, List<AbstractChromosome>> groupCommon(List<Pair<Double, AbstractChromosome>> myList, List<String> output) {
+    private Map<Double, List<AbstractChromosome>> groupCommon(List<SerialScoreChromosome> myList, List<String> output) {
         List<Pair<Double, List<AbstractChromosome>>> retlist = new ArrayList<>();
         Map<Double, List<AbstractChromosome>> chromosomeMap = new LinkedHashMap<>();
-        for (Pair<Double, AbstractChromosome> aPair : myList) {
+        for (SerialScoreChromosome aPair : myList) {
             new MiscUtil().listGetterAdder(chromosomeMap, aPair.getLeft(), aPair.getRight());
         }
         return chromosomeMap;
@@ -649,7 +653,7 @@ public class Sim {
 
     private Map<String, Object> convert(String param) {
         Map<String, Object> map = new HashMap<>();
-        List<Pair<Double, AbstractChromosome>> myList = new ArrayList<>();
+        List<SerialScoreChromosome> myList = new ArrayList<>();
         Map<String, Object> res0 = null;
         try {
             //res0 = mapper.readValue(param, new TypeReference<Map<String, List<LinkedHashMap<Double, IclijConfigMapChromosome>>>>(){});
@@ -683,7 +687,7 @@ public class Sim {
             for (Entry<Double, AbstractChromosome> entry : aMap.entrySet()) {
                 Double score = entry.getKey();
                 AbstractChromosome chromosome = entry.getValue();
-                Pair<Double, AbstractChromosome> pair = new ImmutablePair<>(score, chromosome);
+                SerialScoreChromosome pair = new SerialScoreChromosome(score, chromosome);
                 myList.add(pair);
 
                 Map<String, Object> resultMap = new HashMap<>();

@@ -40,6 +40,7 @@ import roart.common.model.MetaItem;
 import roart.common.model.SimDataItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialVolume;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
@@ -734,7 +735,7 @@ public class SimulateInvestComponent extends ComponentML {
                         }
                         map.put(SimConstants.FILTER, JsonUtil.convert(filter));
                         //map.put("market", market.getConfig().getMarket());
-                        resultMap.put("" + offset, map);
+                        resultMap.put("" + offset, new SerialMapPlain(map));
                     }
                     scores.add(score);
                     if (aOneRun.lastbuysell != null) {

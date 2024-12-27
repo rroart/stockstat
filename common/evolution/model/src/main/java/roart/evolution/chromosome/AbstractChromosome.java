@@ -13,13 +13,28 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
+import roart.evolution.chromosome.impl.IndicatorChromosome;
+import roart.evolution.chromosome.impl.IndicatorChromosome3;
+import roart.evolution.chromosome.impl.NeuralNetChromosome;
+import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapChromosome;
 import roart.evolution.species.Individual;
+import roart.gene.CalcGene;
+import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
+import roart.iclij.evolution.marketfilter.chromosome.impl.AboveBelowChromosome;
+import roart.iclij.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         property = "_class")
 @JsonSubTypes({  
-    })  
+    @Type(value = AboveBelowChromosome.class, name = "AboveBelowChromosome"),
+    @Type(value = ConfigMapChromosome2.class, name = "ConfigMapChromosome2"),
+    @Type(value = IclijConfigMapChromosome.class, name = "IclijConfigMapChromosome"),
+    @Type(value = IndicatorChromosome.class, name = "IndicatorChromosome"),
+    @Type(value = IndicatorChromosome3.class, name = "IndicatorChromosome3"),
+    @Type(value = MarketFilterChromosome2.class, name = "MarketFilterChromosome2"),
+    @Type(value = NeuralNetChromosome.class, name = "NeuralNetChromosome")
+})  
 public abstract class AbstractChromosome {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
     

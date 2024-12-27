@@ -14,6 +14,8 @@ import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.species.Individual;
 import roart.evolution.species.Population;
+import roart.common.pipeline.data.SerialList;
+import roart.common.pipeline.data.SerialScoreChromosome;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -25,7 +27,7 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
     }
     
     @Override
-    public Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome chromosome, List<String> individuals, List<Pair<Double, AbstractChromosome>> results, AbstractChromosome defaultChromosome) throws Exception {
+    public Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome chromosome, List<String> individuals, List<SerialScoreChromosome> results, AbstractChromosome defaultChromosome) throws Exception {
         int selectionSize = getEvolutionConfig().getSelect();
         Population population = new Population(selectionSize, evolutionConfig, chromosome, false, defaultChromosome);
         if (getEvolutionConfig().getUseoldelite() && !chromosome.isEmpty()) {
@@ -43,7 +45,7 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
         parent.getEvaluation().transformFromNode();
         if (results != null) {
             for (Individual individual : population.getIndividuals()) {
-                Pair<Double, AbstractChromosome> pair = new ImmutablePair<>(individual.getFitness(), individual.getEvaluation());
+                SerialScoreChromosome pair = new SerialScoreChromosome(individual.getFitness(), individual.getEvaluation());
                 results.add(pair);
             }
         }

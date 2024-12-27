@@ -25,6 +25,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.executor.MyExecutors;
 import roart.common.constants.Constants;
+import roart.common.pipeline.data.SerialList;
+import roart.common.pipeline.data.SerialScoreChromosome;
 import roart.common.util.JsonUtil;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.config.EvolutionConfig;
@@ -68,7 +70,7 @@ public abstract class EvolutionAlgorithm {
         this.doParallel = doParallel;
     }
 
-    public abstract Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome recommender, List<String> individuals, List<Pair<Double, AbstractChromosome>> results, AbstractChromosome defaultChromosome) throws Exception;
+    public abstract Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome recommender, List<String> individuals, List<SerialScoreChromosome> results, AbstractChromosome defaultChromosome) throws Exception;
 
     protected void printmap(Map<String, Object> map) throws JsonProcessingException {
         for (String key : new ArrayList<String>()) {
