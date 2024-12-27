@@ -1,47 +1,24 @@
 package roart.iclij.component;
 
-import java.text.ParseException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 
 import roart.common.constants.Constants;
-import roart.common.constants.EvolveConstants;
 import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
-import roart.constants.IclijConstants;
-import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.Fitness;
-import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.Parameters;
-import roart.iclij.model.Trend;
-import roart.iclij.model.WebData;
 import roart.iclij.model.action.MarketActionData;
-import roart.iclij.util.MarketUtil;
-import roart.iclij.util.MiscUtil;
-import roart.iclij.verifyprofit.TrendUtil;
-import roart.iclij.verifyprofit.VerifyProfitUtil;
+import roart.iclij.service.util.MiscUtil;
 import roart.service.model.ProfitData;
-import roart.service.model.ProfitInputData;
 
 public class AboveBelowComponent extends ComponentML {
 

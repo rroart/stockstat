@@ -68,6 +68,9 @@ public class IndicatorATR extends Indicator {
     @Override
     public Object[] getDayResult(SerialTA objs, int offset) {
         TaUtil tu = new TaUtil();
+        if (objs == null) {
+            int jj = 0;
+        }
         return tu.getWithOneAndDelta(conf.getATRDeltaDays(), objs, offset);
     }
 

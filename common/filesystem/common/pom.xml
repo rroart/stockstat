@@ -13,6 +13,11 @@
   <name>Stock Statistics Common File System</name>
   <dependencies>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-logging</artifactId>
+      <version>${springboot.version}</version>
+    </dependency>
+    <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-constants</artifactId>
       <version>${stockstat.version}</version>
@@ -36,6 +41,11 @@
       <groupId>roart</groupId>
       <artifactId>stockstat-common-inmemory-model</artifactId>
       <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-math3</artifactId>
+      <version>${commons.math3.version}</version>
     </dependency>
   </dependencies>
 </project>

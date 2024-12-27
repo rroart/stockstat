@@ -48,7 +48,7 @@ import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.EvolveActionData;
 import roart.iclij.model.action.ImproveProfitActionData;
-import roart.iclij.util.MiscUtil;
+import roart.iclij.service.util.MiscUtil;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 import roart.iclij.evolution.fitness.impl.FitnessConfigMap;

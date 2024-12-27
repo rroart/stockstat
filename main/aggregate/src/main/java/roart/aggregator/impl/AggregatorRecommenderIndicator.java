@@ -24,7 +24,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.TwoDimD;
-import roart.common.util.PipelineUtils;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.gene.CalcGene;
 import roart.gene.impl.CalcComplexGene;
 import roart.gene.impl.CalcDoubleGene;

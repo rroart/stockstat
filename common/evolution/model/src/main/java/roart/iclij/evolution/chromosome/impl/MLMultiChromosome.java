@@ -3,8 +3,6 @@ package roart.iclij.evolution.chromosome.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import roart.common.config.ConfigConstants;
 import roart.gene.impl.ConfigMapGene;
 

@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.SerialVolume;
-
 public class MapUtil {
 
     /**
@@ -49,15 +46,6 @@ public class MapUtil {
             }
             array[i][index] = value[i];
         }
-    }
-
-    public static void mapAdd(Map<String, SerialVolume[]> aMap, String id, int index, SerialVolume value, int length) {
-        SerialVolume[] array = aMap.get(id);
-        if (array == null) {
-            array = new SerialVolume[length];
-            aMap.put(id, array);
-        }
-        array[index] = value;
     }
 
     public static <K, V> void mapAddMe(Map<K, List<V>> aMap, K id, V value) {

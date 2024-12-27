@@ -25,7 +25,7 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.FileObject;
 import roart.common.model.Location;
-import roart.common.util.FsUtil;
+import roart.common.filesystem.util.FsUtil;
 
 import java.util.Map.Entry;
 

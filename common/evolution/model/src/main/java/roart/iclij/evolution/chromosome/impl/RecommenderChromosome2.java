@@ -2,10 +2,8 @@ package roart.iclij.evolution.chromosome.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -13,14 +11,9 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import roart.common.config.ConfigConstants;
-import roart.common.pipeline.PipelineConstants;
-import roart.common.util.JsonUtil;
-import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
 import roart.gene.impl.ConfigMapGene;
-import roart.iclij.config.Market;
-import roart.service.model.ProfitData;
 
 public class RecommenderChromosome2 extends ConfigMapChromosome2 {
     private List<List<String>> listPermBuy = getAllPerms(getBuyList());

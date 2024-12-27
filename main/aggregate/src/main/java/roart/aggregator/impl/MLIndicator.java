@@ -34,9 +34,9 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.pipeline.data.TwoDimD;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
-import roart.common.util.PipelineUtils;
 import roart.executor.MyExecutors;
 import roart.iclij.config.IclijConfig;
 import roart.indicator.AbstractIndicator;
@@ -213,7 +213,7 @@ public class MLIndicator extends Aggregator {
         }
         List<Map<String, Double[][]>> listList = (List<Map<String, Double[][]>>) retObj[2];
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
-        System.out.println("kk" + dayIndicatorMap.keySet());
+        //System.out.println("kk" + dayIndicatorMap.keySet());
         if (dayIndicatorMap == null) {
             int jj = 0;
         }

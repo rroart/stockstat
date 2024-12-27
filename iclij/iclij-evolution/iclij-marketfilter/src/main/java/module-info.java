@@ -6,7 +6,6 @@
  *
  */
 module iclij.evolutionmarketfilter {
-    exports roart.evolution.marketfilter.genetics.gene.impl;
     exports roart.evolution.marketfilter.jenetics.gene.impl;
     requires iclij.common.config;
     requires evolution.gene;

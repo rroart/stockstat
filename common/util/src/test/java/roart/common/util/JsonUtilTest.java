@@ -17,7 +17,6 @@ import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 
 import roart.common.constants.Constants;
-import roart.common.pipeline.data.TwoDimD;
 import roart.common.util.ArraysUtil;
 
 public class JsonUtilTest {
@@ -56,6 +55,7 @@ public class JsonUtilTest {
         
     }
     
+    /*
     @Test
     public void test2() {
         Double[][] a = new Double[][]{ { 2.0 } };
@@ -66,4 +66,5 @@ public class JsonUtilTest {
         System.out.println("ser" + d2.getArray()[0][0]);
         System.out.println("ser" + d2.getArray().getClass().getCanonicalName());
     }
+    */
 }

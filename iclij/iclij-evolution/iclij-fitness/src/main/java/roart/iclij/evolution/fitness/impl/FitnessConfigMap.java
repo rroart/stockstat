@@ -1,44 +1,30 @@
 package roart.iclij.evolution.fitness.impl;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
-import roart.iclij.model.action.MarketActionData;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
-import roart.common.model.IncDecItem;
 import roart.common.model.MemoryItem;
-import roart.common.util.TimeUtil;
-import roart.iclij.component.Component;
-import roart.iclij.component.factory.ComponentFactory;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
-import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
-import roart.gene.impl.ConfigMapGene;
-import roart.iclij.config.Market;
 import roart.evolution.fitness.Fitness;
+import roart.gene.impl.ConfigMapGene;
+import roart.iclij.component.Component;
+import roart.iclij.component.factory.ComponentFactory;
+import roart.iclij.config.Market;
+import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.iclij.factory.actioncomponentconfig.ActionComponentConfigFactory;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.Parameters;
-import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
+import roart.iclij.model.action.MarketActionData;
 import roart.iclij.model.config.ActionComponentConfig;
-import roart.iclij.util.MarketUtil;
-import roart.iclij.util.MiscUtil;
-import roart.iclij.verifyprofit.VerifyProfit;
-import roart.iclij.verifyprofit.VerifyProfitUtil;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 

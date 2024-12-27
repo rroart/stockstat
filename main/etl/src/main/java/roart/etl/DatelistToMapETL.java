@@ -96,10 +96,19 @@ public class DatelistToMapETL {
                 String stockid = stock.getId();
                 Pair<Long, String> value = StockDao.getVolume(stock);
                 SerialVolume value2 = new SerialVolume(value.getLeft(), value.getRight() );
-                MapUtil.mapAdd(retMap, stockid, datedstocklists.length - 1 - i, value2, datedstocklists.length);
+                mapAdd(retMap, stockid, datedstocklists.length - 1 - i, value2, datedstocklists.length);
             }
         }
         return retMap;
+    }
+
+    public static void mapAdd(Map<String, SerialVolume[]> aMap, String id, int index, SerialVolume value, int length) {
+        SerialVolume[] array = aMap.get(id);
+        if (array == null) {
+            array = new SerialVolume[length];
+            aMap.put(id, array);
+        }
+        array[index] = value;
     }
 
 }

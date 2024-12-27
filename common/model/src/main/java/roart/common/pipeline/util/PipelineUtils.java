@@ -1,4 +1,4 @@
-package roart.common.util;
+package roart.common.pipeline.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +28,6 @@ import roart.common.pipeline.data.SerialMapTA;
 import roart.common.pipeline.data.SerialMapVolume;
 import roart.common.pipeline.data.SerialMapdd;
 import roart.common.pipeline.data.SerialMeta;
-import roart.common.pipeline.data.SerialObject;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.pipeline.data.SerialDouble;
 import roart.common.pipeline.data.SerialString;
@@ -36,6 +35,8 @@ import roart.common.pipeline.data.SerialTA;
 import roart.common.pipeline.data.SerialVolume;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.data.TwoDimd;
+import roart.common.util.ArraysUtil;
+import roart.common.util.JsonUtil;
 
 public class PipelineUtils {
     private static Logger log = LoggerFactory.getLogger(PipelineUtils.class);

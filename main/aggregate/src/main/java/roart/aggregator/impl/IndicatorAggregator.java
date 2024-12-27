@@ -47,10 +47,10 @@ import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.pipeline.data.SerialTA;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.data.TwoDimd;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
 import roart.common.util.MiscUtil;
-import roart.common.util.PipelineUtils;
 import roart.common.util.TimeUtil;
 import roart.executor.MyExecutors;
 import roart.indicator.AbstractIndicator;
@@ -1749,6 +1749,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                     }
                     SerialMapTA taObjectMap = subType.taMap;
                     SerialTA taObject = taObjectMap.get(id);
+                    if (taObject == null) {
+                        int jj = 0;
+                    }
                     double[] anArray = (double[]) taObject.getarray(subType.getArrIdx());
                     int begOfArray = (int) taObject.get(subType.range[0]);
                     int endOfArray = (int) taObject.get(subType.range[1]);

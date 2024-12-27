@@ -18,7 +18,7 @@ import roart.common.util.ArraysUtil;
 import roart.common.util.MathUtil;
 import roart.constants.SimConstants;
 import roart.iclij.config.SimulateFilter;
-import roart.iclij.util.MiscUtil;
+import roart.iclij.service.util.MiscUtil;
 import roart.simulate.model.SimulateStock;
 import roart.simulate.model.StockHistory;
 

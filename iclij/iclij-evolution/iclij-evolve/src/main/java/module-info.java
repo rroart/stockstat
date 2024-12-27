@@ -27,4 +27,6 @@ module iclij.evolutionevolve {
 	requires common.model;
 	requires iclij.evolutionchromosome;
 	requires dbdao;
+    requires evolution.model;
+    requires evolution.gene;
 }

@@ -20,12 +20,13 @@ import roart.common.constants.Constants;
 import roart.common.model.IncDecItem;
 import roart.common.pipeline.data.PipelineData;
 import roart.component.model.ComponentData;
+import roart.component.util.IncDecUtil;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
-import roart.iclij.util.MarketUtil;
-import roart.iclij.util.MiscUtil;
+import roart.iclij.service.util.MarketUtil;
+import roart.iclij.service.util.MiscUtil;
 import roart.iclij.verifyprofit.VerifyProfitUtil;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
@@ -201,8 +202,8 @@ public class FitnessAboveBelowCommon {
             log.error(Constants.EXCEPTION, e3);
         }
         PipelineData[] maps = param.getResultMaps();
-        new MarketUtil().filterIncDecs(param, market, profitdata, maps, true, stockDates);
-        new MarketUtil().filterIncDecs(param, market, profitdata, maps, false, stockDates);
+        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, stockDates);
+        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, stockDates);
 
         double incdecFitness = 0.0;
         try {

@@ -1,4 +1,4 @@
-package roart.common.util;
+package roart.common.filesystem.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

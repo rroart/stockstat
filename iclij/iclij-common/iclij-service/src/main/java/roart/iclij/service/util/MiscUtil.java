@@ -1,4 +1,4 @@
-package roart.iclij.util;
+package roart.iclij.service.util;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

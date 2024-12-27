@@ -7,11 +7,19 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
 import roart.evolution.species.Individual;
 
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        property = "_class")
+@JsonSubTypes({  
+    })  
 public abstract class AbstractChromosome {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
     

@@ -7,6 +7,7 @@
  */
 module iclij.common.componentdata {
     exports roart.component.model;
+    exports roart.component.util;
 
     requires common.model;
     requires common.util;

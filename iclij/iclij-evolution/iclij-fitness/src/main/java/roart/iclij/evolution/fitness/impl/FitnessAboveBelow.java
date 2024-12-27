@@ -1,46 +1,25 @@
 package roart.iclij.evolution.fitness.impl;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.iclij.model.action.MarketActionData;
-import roart.common.config.ConfigConstants;
-import roart.common.constants.CategoryConstants;
-import roart.common.constants.Constants;
 import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.fitness.Fitness;
-import roart.iclij.evolution.marketfilter.chromosome.impl.AboveBelowChromosome;
 import roart.iclij.config.Market;
+import roart.iclij.evolution.marketfilter.chromosome.impl.AboveBelowChromosome;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.Parameters;
-import roart.iclij.model.Trend;
-import roart.iclij.model.WebData;
-import roart.iclij.util.MarketUtil;
-import roart.iclij.util.MiscUtil;
-import roart.iclij.verifyprofit.VerifyProfit;
-import roart.iclij.verifyprofit.VerifyProfitUtil;
+import roart.iclij.model.action.MarketActionData;
 import roart.service.model.ProfitData;
-import roart.service.model.ProfitInputData;
 
 public class FitnessAboveBelow extends Fitness {
 

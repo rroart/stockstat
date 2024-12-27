@@ -29,7 +29,7 @@ import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.Market;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.ControlService;
-import roart.iclij.util.MarketUtil;
+import roart.iclij.service.util.MarketUtil;
 import roart.util.ServiceUtil;
 
 public class PopulateThread extends Thread {

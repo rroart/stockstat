@@ -28,6 +28,7 @@ import roart.common.pipeline.data.PipelineData;
 import roart.iclij.component.Component;
 import roart.iclij.component.factory.ComponentFactory;
 import roart.component.model.ComponentData;
+import roart.component.util.IncDecUtil;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.fitness.Fitness;
 import roart.iclij.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
@@ -39,8 +40,8 @@ import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
 import roart.iclij.model.config.ActionComponentConfig;
-import roart.iclij.util.MarketUtil;
-import roart.iclij.util.MiscUtil;
+import roart.iclij.service.util.MarketUtil;
+import roart.iclij.service.util.MiscUtil;
 import roart.iclij.verifyprofit.VerifyProfit;
 import roart.iclij.verifyprofit.VerifyProfitUtil;
 import roart.service.model.ProfitData;
@@ -172,8 +173,8 @@ public class FitnessMarketFilter extends Fitness {
         }
         incProp = incProp1;
         PipelineData[] maps = param.getResultMaps();
-        new MarketUtil().filterIncDecs(param, market, profitdata, maps, true, null);
-        new MarketUtil().filterIncDecs(param, market, profitdata, maps, false, null);
+        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, null);
+        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, null);
 
         double memoryFitness = 0.0;
         double incdecFitness = 0.0;

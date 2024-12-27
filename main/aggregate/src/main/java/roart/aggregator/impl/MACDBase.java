@@ -13,7 +13,7 @@ import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.data.TwoDimd;
-import roart.common.util.PipelineUtils;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.indicator.util.IndicatorUtils;
 import roart.pipeline.Pipeline;
 import roart.pipeline.common.aggregate.Aggregator;

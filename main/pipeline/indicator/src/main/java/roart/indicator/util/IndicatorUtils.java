@@ -26,7 +26,7 @@ import roart.common.pipeline.data.SerialMapTA;
 import roart.common.pipeline.data.SerialMarketStock;
 import roart.common.pipeline.data.SerialObject;
 import roart.common.pipeline.data.SerialTA;
-import roart.common.util.PipelineUtils;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.iclij.config.IclijConfig;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.impl.Indicator;

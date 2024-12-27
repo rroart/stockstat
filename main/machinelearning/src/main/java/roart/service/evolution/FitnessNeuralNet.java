@@ -15,7 +15,7 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.model.PipelineResultData;
-import roart.common.util.PipelineUtils;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.NeuralNetChromosome;
 import roart.evolution.fitness.Fitness;

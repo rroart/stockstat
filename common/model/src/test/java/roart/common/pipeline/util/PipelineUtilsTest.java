@@ -1,4 +1,4 @@
-package roart.common.util;
+package roart.common.pipeline.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,11 +19,13 @@ import roart.common.pipeline.data.SerialInteger;
 import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialOneDim;
+import roart.common.pipeline.data.SerialPairPlain;
 import roart.common.pipeline.data.SerialString;
 import roart.common.pipeline.data.SerialMapDD;
 import roart.common.pipeline.data.SerialMapdd;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.util.ArraysUtil;
+import roart.common.util.JsonUtil;
 
 import static org.junit.jupiter.api.Assertions.*;
 

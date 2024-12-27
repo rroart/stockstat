@@ -15,7 +15,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.SerialMapTA;
-import roart.common.util.PipelineUtils;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.ml.dao.MLClassifyDao;
 import roart.talib.util.TaConstants;
 

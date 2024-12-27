@@ -6,8 +6,6 @@
  *
  */
 module evolution.chromosome {
-    exports roart.evolution.chromosome.impl;
-
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
     requires common.config;

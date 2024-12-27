@@ -36,12 +36,13 @@ import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
 import roart.iclij.model.config.ActionComponentConfig;
-import roart.iclij.util.MarketUtil;
-import roart.iclij.util.MiscUtil;
+import roart.iclij.service.util.MarketUtil;
+import roart.iclij.service.util.MiscUtil;
 import roart.iclij.verifyprofit.VerifyProfit;
 import roart.iclij.verifyprofit.VerifyProfitUtil;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
+import roart.component.util.IncDecUtil;
 
 public class FitnessMarketFilter2 {
 
@@ -109,8 +110,8 @@ public class FitnessMarketFilter2 {
         Trend incProp = null;
         incProp = extracted(chromosome, myData, listInc, listDec, mlTests);
         PipelineData[] maps = param.getResultMaps();
-        new MarketUtil().filterIncDecs(param, market, profitdata, maps, true, null);
-        new MarketUtil().filterIncDecs(param, market, profitdata, maps, false, null);
+        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, null);
+        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, null);
 
         double memoryFitness = 0.0;
         double incdecFitness = 0.0;

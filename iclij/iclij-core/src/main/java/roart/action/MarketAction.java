@@ -37,13 +37,13 @@ import roart.common.model.MetaItem;
 import roart.common.model.TimingItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
-import roart.common.util.MetaUtil;
-import roart.common.util.PipelineUtils;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
 import roart.iclij.component.factory.ComponentFactory;
 import roart.component.model.ComponentData;
+import roart.component.util.IncDecUtil;
 import roart.constants.IclijConstants;
 import roart.controller.IclijController;
 import roart.db.dao.IclijDbDao;
@@ -66,8 +66,9 @@ import roart.iclij.model.config.ActionComponentConfig;
 import roart.iclij.service.ControlService;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
-import roart.iclij.util.MarketUtil;
-import roart.iclij.util.MiscUtil;
+import roart.iclij.service.util.MarketUtil;
+import roart.iclij.util.MetaUtil;
+import roart.iclij.service.util.MiscUtil;
 import roart.iclij.verifyprofit.VerifyProfitUtil;
 import roart.util.ServiceUtil;
 
@@ -595,8 +596,8 @@ public abstract class MarketAction extends Action {
         //saveTiming(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, false);
         
         if (!getActionData().isDataset()) {
-        new MarketUtil().filterIncDecs(param, market, profitdata, maps, true, null);
-        new MarketUtil().filterIncDecs(param, market, profitdata, maps, false, null);
+        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, null);
+        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, null);
         }
         //filterDecs(param, market, profitdata, maps);
         //buys = buys.values().stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());        

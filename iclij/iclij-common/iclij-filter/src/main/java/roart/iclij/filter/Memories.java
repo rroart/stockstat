@@ -20,7 +20,7 @@ import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
-import roart.iclij.util.MiscUtil;
+import roart.iclij.service.util.MiscUtil;
 
 public class Memories {
     private Logger log = LoggerFactory.getLogger(this.getClass());

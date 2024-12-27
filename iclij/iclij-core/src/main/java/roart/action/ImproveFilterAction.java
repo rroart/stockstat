@@ -41,7 +41,7 @@ import roart.iclij.filter.Memories;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.ImproveFilterActionData;
-import roart.iclij.util.MiscUtil;
+import roart.iclij.service.util.MiscUtil;
 import roart.service.model.ProfitData;
 
 public class ImproveFilterAction extends MarketAction {

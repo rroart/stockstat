@@ -43,7 +43,7 @@ import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.EvolveActionData;
 import roart.iclij.model.action.MachineLearningActionData;
-import roart.iclij.util.MiscUtil;
+import roart.iclij.service.util.MiscUtil;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 

@@ -39,7 +39,7 @@ import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.inmemory.model.InmemoryUtil;
 import roart.common.model.FileObject;
 import roart.common.model.Location;
-import roart.common.util.FsUtil;
+import roart.common.filesystem.util.FsUtil;
 import roart.common.util.IOUtil;
 import roart.filesystem.FileSystemOperations;
 

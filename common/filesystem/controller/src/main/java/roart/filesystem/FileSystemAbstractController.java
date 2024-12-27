@@ -28,7 +28,7 @@ import roart.common.filesystem.FileSystemPathParam;
 import roart.common.filesystem.FileSystemPathResult;
 import roart.common.filesystem.FileSystemStringResult;
 import roart.common.model.FileObject;
-import roart.common.util.FsUtil;
+import roart.common.filesystem.util.FsUtil;
 
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

@@ -7,6 +7,7 @@
  */
 module iclij.common.service {
     exports roart.iclij.service;
+    exports roart.iclij.service.util;
     exports roart.iclij.model.component;
 
     requires iclij.common.config;
@@ -35,4 +36,5 @@ module iclij.common.service {
     requires spring.beans;
     requires spring.context;
     requires common.queue;
+    requires dbdao;
 }

@@ -9,7 +9,6 @@ import roart.common.constants.Constants;
 import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MetaItem;
-import roart.common.util.MetaUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.db.dao.IclijDbDao;
@@ -22,7 +21,8 @@ import roart.iclij.config.Market;
 import roart.iclij.evolution.fitness.impl.FitnessMarketFilter;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
-import roart.iclij.util.MiscUtil;
+import roart.iclij.util.MetaUtil;
+import roart.iclij.service.util.MiscUtil;
 import roart.service.model.ProfitData;
 
 public class EvolveFilterMy extends EvolveMy {

@@ -6,8 +6,6 @@
  *
  */
 module iclij.evolutionchromosome {
-    exports roart.iclij.evolution.marketfilter.chromosome.impl;
-    exports roart.iclij.evolution.chromosome.impl;
     exports roart.iclij.evolution.chromosome.winner;
     requires iclij.common.config;
     requires iclij.common.componentdata;

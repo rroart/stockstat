@@ -49,8 +49,8 @@ import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.ImproveSimulateInvestActionData;
 import roart.iclij.model.action.SimulateInvestActionData;
-import roart.iclij.util.MarketUtil;
-import roart.iclij.util.MiscUtil;
+import roart.iclij.service.util.MarketUtil;
+import roart.iclij.service.util.MiscUtil;
 import roart.iclij.verifyprofit.TrendUtil;
 import roart.service.model.ProfitData;
 import roart.common.queue.QueueElement;
@@ -149,6 +149,7 @@ public class ImproveSimulateInvestAction extends MarketAction {
             e.getService().send(ServiceConstants.SIMFILTER, element, param.getConfig());
 
             Map<String, Object> updateMap = e.getUpdateMap();
+            // TODO
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
             }

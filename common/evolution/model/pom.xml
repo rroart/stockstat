@@ -25,6 +25,21 @@
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-evolution-gene</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-iclij-common-config</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-util</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
       <version>${jackson.version}</version>

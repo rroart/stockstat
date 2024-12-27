@@ -1,20 +1,26 @@
 package roart.evolution.chromosome.impl;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+import java.util.Optional;
 import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Random;
+import java.util.Set;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import roart.iclij.config.IclijConfig;
+//import roart.common.pipeline.PipelineConstants;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.fitness.AbstractScore;
 import roart.evolution.species.Individual;
@@ -23,14 +29,10 @@ import roart.gene.impl.CalcComplexGene;
 import roart.gene.impl.CalcDoubleGene;
 import roart.gene.impl.CalcGeneFactory;
 import roart.gene.impl.CalcGeneUtils;
-import roart.iclij.config.IclijConfig;
-import roart.model.data.MarketData;
+//import roart.model.data.MarketData;
 
-public class IndicatorChromosome3 extends AbstractChromosome {
+public class IndicatorChromosome extends AbstractChromosome {
     protected static Logger log = LoggerFactory.getLogger(AbstractChromosome.class);
-    
-    private static final int top = 5;
-    
     private List<String> keys;
 
     public List<String> getKeys() {
@@ -55,9 +57,7 @@ public class IndicatorChromosome3 extends AbstractChromosome {
     
     private double threshold;
     
-    private int futuredays = 10;
-    
-    public IndicatorChromosome3(IclijConfig conf, List<String> keys, Object[] retObj, boolean b, List<String> disableList, AbstractScore evalUtil, int listlen, Double threshold) {
+    public IndicatorChromosome(IclijConfig conf, List<String> keys, Object[] retObj, boolean b, List<String> disableList, AbstractScore evalUtil, int listlen, Double threshold) {
         this.conf = conf.copy();
         setKeys(keys);
         this.retObj = retObj;
@@ -129,10 +129,9 @@ public class IndicatorChromosome3 extends AbstractChromosome {
             return 0;
         }
         Map<String, List<Double>> resultMap = new HashMap<>();
-        List<BuySellList> mainlist = new ArrayList<>();
         for (Entry<String, Double[]> entry : indicatorMap.entrySet()) {
             String id = entry.getKey();
-            int newlistidx = listlen - 1 - j + futuredays;
+            int newlistidx = listlen - 1 - j + conf.getTestIndicatorRecommenderComplexFutureDays();
             int curlistidx = listlen - 1 - j;
             Double[] list = listList.get(0).get(id)[0];
             if (list[newlistidx] == null || list[curlistidx] == null) {
@@ -166,20 +165,14 @@ public class IndicatorChromosome3 extends AbstractChromosome {
             resultList.add(recommend);
             resultList.add(change);
             resultMap.put(id, resultList);
-            mainlist.add(new BuySellList(id, change, recommend));
         }
         if (resultMap.isEmpty()) {
             return 0;
         }
-        double finalRecommend; // = evalUtil.calculateResult(resultMap, threshold);
+        double finalRecommend = evalUtil.calculateResult(resultMap, threshold);
         //finalRecommend *= 0.1;
         //double reco = count * (1 - Math.abs(finalRecommend-count)/Math.max(Math.abs(finalRecommend), count));
-        //log.debug("Recommend {}", finalRecommend);
-        Collections.sort(mainlist, (o1, o2) -> (o2.score.compareTo(o1.score)));
-        finalRecommend = 0;
-        for (int i = 0; i < top; i++) {
-            finalRecommend += mainlist.get(i).change - 1;
-        }
+        log.debug("Recommend {}", finalRecommend);
         return finalRecommend;
     }
 
@@ -188,21 +181,9 @@ public class IndicatorChromosome3 extends AbstractChromosome {
         Double change;
         Double score;
         
-        public BuySellList(String id, Double change, Double score) {
-            super();
-            this.id = id;
-            this.change = change;
-            this.score = score;
-        }
-
         @Override
         public int compareTo(Double score0) {
             return Double.compare(score0, score);
-        }
-        
-        @Override
-        public String toString() {
-            return id + " , " + score + " , " + change;
         }
     }
 
@@ -214,9 +195,6 @@ public class IndicatorChromosome3 extends AbstractChromosome {
             }
             CalcGene node = (CalcGene) conf.getConfigData().getConfigValueMap().get(key);
             node.mutate();
-        }
-        if (random.nextBoolean()) {
-            futuredays = 1 + random.nextInt(10);
         }
     }
 
@@ -237,7 +215,6 @@ public class IndicatorChromosome3 extends AbstractChromosome {
             conf.getConfigData().getConfigValueMap().put(key, node);
         }
         normalize();
-        futuredays = 1 + random.nextInt(10);
     }
 
     @Override
@@ -273,7 +250,7 @@ public class IndicatorChromosome3 extends AbstractChromosome {
             if (disableList.contains(key) || total == 0) {
                 continue;
             }
-            log.debug("Class cast for key {}", key);
+            log.info("Class cast for key {}", key);
             CalcGene anode = (CalcGene) conf.getConfigData().getConfigValueMap().get(key);
             int tmpNum = 0;
             if (anode instanceof CalcComplexGene) {
@@ -291,7 +268,7 @@ public class IndicatorChromosome3 extends AbstractChromosome {
     @Override
     public double getFitness() throws JsonParseException, JsonMappingException, IOException {
         double testRecommendQualBuySell = 0;
-        for (int j = futuredays; j < listlen; j += 1) {
+        for (int j = conf.getTestIndicatorRecommenderComplexFutureDays(); j < listlen; j += conf.getTestIndicatorRecommenderComplexIntervalDays()) {
             // scale down wrt max?
             // check if 0?
             testRecommendQualBuySell += getEvaluations(j);
@@ -302,13 +279,13 @@ public class IndicatorChromosome3 extends AbstractChromosome {
     @Override
     public Individual crossover(AbstractChromosome evaluation) {
         Random rand = new Random();
-        Map<String, Object> configValueMap = new HashMap<>(((IndicatorChromosome3) evaluation).conf.getConfigData().getConfigValueMap());
+        Map<String, Object> configValueMap = new HashMap<>(((IndicatorChromosome) evaluation).conf.getConfigData().getConfigValueMap());
         for (String key : keys) {
             Object value;
             if (rand.nextBoolean()) {
                 value = conf.getConfigData().getConfigValueMap().get(key);
             } else {
-                value = ((IndicatorChromosome3) evaluation).conf.getConfigData().getConfigValueMap().get(key);
+                value = ((IndicatorChromosome) evaluation).conf.getConfigData().getConfigValueMap().get(key);
             }
             configValueMap.put(key, value);
         }
@@ -321,7 +298,7 @@ public class IndicatorChromosome3 extends AbstractChromosome {
 
     @Override
     public AbstractChromosome copy() {
-        AbstractChromosome newEval = new IndicatorChromosome3(new IclijConfig(conf), new ArrayList<String>(keys), retObj, useMax, disableList, evalUtil, listlen, threshold);
+        AbstractChromosome newEval = new IndicatorChromosome(new IclijConfig(conf), new ArrayList<String>(keys), retObj, useMax, disableList, evalUtil, listlen, threshold);
         return newEval;
     }
 
@@ -359,4 +336,5 @@ public class IndicatorChromosome3 extends AbstractChromosome {
         return ret;
     }
 
+    class MarketData {}
 }

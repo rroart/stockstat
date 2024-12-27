@@ -35,7 +35,6 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.util.MathUtil;
-import roart.common.util.PipelineUtils;
 import roart.common.util.JsonUtil;
 import roart.indicator.util.IndicatorUtils;
 import roart.ml.common.MLClassifyModel;
@@ -50,6 +49,7 @@ import roart.stockutil.StockUtil;
 import roart.ml.model.LearnClassify;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.data.TwoDimd;
+import roart.common.pipeline.util.PipelineUtils;
 
 public abstract class Predictor extends AbstractPredictor {
 

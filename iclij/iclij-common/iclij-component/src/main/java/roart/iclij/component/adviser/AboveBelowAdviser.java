@@ -35,7 +35,7 @@ import roart.db.dao.IclijDbDao;
 import roart.iclij.config.Market;
 import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.model.action.MarketActionData;
-import roart.iclij.util.MiscUtil;
+import roart.iclij.service.util.MiscUtil;
 
 public class AboveBelowAdviser extends Adviser {
 

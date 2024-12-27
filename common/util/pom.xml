@@ -23,11 +23,6 @@
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-common-model</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
       <version>${jackson.version}</version>

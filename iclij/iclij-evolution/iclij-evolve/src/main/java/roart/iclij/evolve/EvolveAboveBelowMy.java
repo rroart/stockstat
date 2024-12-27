@@ -23,7 +23,7 @@ import roart.iclij.evolution.fitness.impl.FitnessAboveBelow;
 import roart.iclij.evolution.fitness.impl.FitnessAboveBelow2;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
-import roart.iclij.util.MiscUtil;
+import roart.iclij.service.util.MiscUtil;
 import roart.service.model.ProfitData;
 
 public class EvolveAboveBelowMy extends EvolveMy {

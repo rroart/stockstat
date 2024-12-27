@@ -23,9 +23,25 @@
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-evolution-model</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-util</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
       <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

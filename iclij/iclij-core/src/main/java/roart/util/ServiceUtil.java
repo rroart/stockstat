@@ -25,7 +25,6 @@ import roart.common.constants.Constants;
 import roart.common.model.ActionComponentItem;
 import roart.common.model.MetaItem;
 import roart.common.model.TimingItem;
-import roart.common.util.MetaUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
@@ -37,7 +36,8 @@ import roart.iclij.model.WebData;
 import roart.iclij.model.WebDataJson;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.IclijServiceResult;
-import roart.iclij.util.MarketUtil;
+import roart.iclij.service.util.MarketUtil;
+import roart.iclij.util.MetaUtil;
 
 public class ServiceUtil {
     private static Logger log = LoggerFactory.getLogger(ServiceUtil.class);

@@ -5,11 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import roart.common.config.ConfigConstants;
 import roart.iclij.config.IclijConfig;
-import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
 import roart.gene.impl.ConfigMapGene;

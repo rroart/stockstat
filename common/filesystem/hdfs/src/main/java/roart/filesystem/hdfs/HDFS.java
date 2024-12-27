@@ -45,7 +45,7 @@ import roart.common.filesystem.FileSystemPathResult;
 import roart.common.filesystem.FileSystemStringResult;
 import roart.common.model.FileObject;
 import roart.common.model.Location;
-import roart.common.util.FsUtil;
+import roart.common.filesystem.util.FsUtil;
 import roart.common.util.IOUtil;
 import roart.filesystem.FileSystemOperations;
 

@@ -33,6 +33,11 @@
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-iclij-common-service</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
       <version>${jackson.version}</version>

@@ -14,7 +14,7 @@ import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialTA;
-import roart.common.util.PipelineUtils;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.indicator.AbstractIndicator;
 
 public abstract class Recommend extends AggregatorIndicator {
