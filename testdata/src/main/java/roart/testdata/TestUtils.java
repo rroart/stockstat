@@ -1,7 +1,11 @@
 package roart.testdata;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
 
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -51,4 +55,45 @@ public class TestUtils {
         return JsonUtil.convert(createCommunicationMap());
     }
 
+    public List<Integer> getNumbersUsingIntStreamRange(int start, int end) {
+        return IntStream.range(start, end)
+          .boxed()
+          .toList();
+    }
+
+    public Double[] getNumbersUsingIntStreamRangeDArray(int start, int end) {
+        return IntStream.range(start, end)
+          .boxed()
+          .map(e -> Double.valueOf(e))
+          .toList()
+          .toArray(new Double[0]);
+    }
+    
+    public double[] add(double[] array, double value) {
+        double[] newarray = new double[array.length];
+        for (int i = 0; i < array.length; i++) {
+            newarray[i] = array[i] + value;
+        }
+        return newarray;
+    }
+
+    Random rand = new Random();
+    
+    public double[] getNumbersRandomDArray(double start, int count, double range) {
+        double[] arr = new double[count];
+        arr[0] = start;
+        for (int i = 1; i < count; i++) {
+            arr[i] = arr[i-1] * (1 + range/2 - rand.nextDouble(range));
+        }
+        return arr;
+    }
+    
+    public double[] getNumbersRandomDArrayAdd(double[] arr, int mult, double range) {
+        double[] newarr = new double[arr.length];
+        for (int i = 1; i < arr.length; i++) {
+            newarr[i] = arr[i] + mult * rand.nextDouble(range);
+        }
+        return newarr;
+    }
+    
 }

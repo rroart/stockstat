@@ -49,4 +49,5 @@ module iclij.evolve {
     requires spring.data.jdbc;
     requires common.queue;
     requires common.queueutil;
+    requires iclij.evolutionmarketfilter;
 }

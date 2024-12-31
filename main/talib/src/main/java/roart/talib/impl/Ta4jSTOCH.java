@@ -23,7 +23,7 @@ public class Ta4jSTOCH extends Ta4j {
         objs[2] = 0; // beg;
         objs[3] = size; // end;
         if (size == 0) {
-            return new SerialTA(objs, objsarr);
+            return new SerialTA(objs, objsarr, 0, size);
         }
         BarSeries series = getThreeSeries(close, low, high, size);
         StochasticOscillatorKIndicator kIndicator = new StochasticOscillatorKIndicator(series, 14);
@@ -35,7 +35,7 @@ public class Ta4jSTOCH extends Ta4j {
                 int jj = 0;
             }
         }
-        return new SerialTA(objs, objsarr);
+        return new SerialTA(objs, objsarr, 0, size);
     }
 
     @Override

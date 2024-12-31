@@ -35,7 +35,7 @@ public class TalibCCI extends Talib {
         objsarr[0] = rsi;
         objs[1] = beg.value;
         objs[2] = end.value;
-        return new SerialTA(objs, objsarr);
+        return new SerialTA(objs, objsarr, beg.value, end.value);
     }
 
     @Override

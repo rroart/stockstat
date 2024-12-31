@@ -43,7 +43,7 @@ public class TalibRSI extends Talib {
         objs[RSIIDXEND] = end.value;
         objsarr[RSIIDXRSIFIXED] = ArraysUtil.makeFixed(rsi, beg.value, end.value, values.length);
         log.debug("rsi beg end {} {} {}", beg.value, end.value, Arrays.toString(rsi));
-        return new SerialTA(objs, objsarr);
+        return new SerialTA(objs, objsarr, beg.value, end.value);
     }
 
     @Override

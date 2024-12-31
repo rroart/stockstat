@@ -57,7 +57,7 @@ public class TalibMACD extends Talib {
         objsarr[MACDIDXSIGFIXED] = ArraysUtil.makeFixed(sig, beg.value, end.value, values.length);
         objsarr[MACDIDXHISTFIXED] = ArraysUtil.makeFixed(hist, beg.value, end.value, values.length);
         log.debug("timer {}", System.currentTimeMillis() - time0);
-        return new SerialTA(objs, objsarr);
+        return new SerialTA(objs, objsarr, beg.value, end.value);
     }
 
     @Override

@@ -31,6 +31,7 @@ import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialObject;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.pipeline.data.SerialScoreChromosome;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
@@ -565,13 +566,9 @@ public abstract class Component {
             return;
         }
         PipelineData results = param.getResultMap();
-        String id = (String) results.get(EvolveConstants.ID);
-        List<LinkedHashMap> myList = (List<LinkedHashMap>) results.get(id);
-        if (myList == null) {
-        	return;
-        }
-        String scoreString = (String) myList.get(0).keySet().iterator().next();
-        double score = Double.valueOf(scoreString);
+        String id = PipelineUtils.getString(results, EvolveConstants.ID);
+        List<SerialScoreChromosome> myList = PipelineUtils.getList(results, id);
+        double score = myList.get(0).getLeft();
         
         MLMetricsItem item = new MLMetricsItem();
         item.setRecord(LocalDate.now());

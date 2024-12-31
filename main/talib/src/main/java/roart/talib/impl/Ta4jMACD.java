@@ -52,7 +52,7 @@ public class Ta4jMACD extends Ta4j {
         objsarr[MACDIDXSIGFIXED] = ArraysUtil.makeFixed(sig, 0, values.length, values.length);
         objsarr[MACDIDXHISTFIXED] = ArraysUtil.makeFixed(hist, 0, values.length, values.length);
         if (size == 0) {
-            return new SerialTA(objs, objsarr);
+            return new SerialTA(objs, objsarr, 0, size);
         }
         BarSeries series = getClosedSeries(values, size);
         log.debug(""+series.getBarCount());
@@ -75,7 +75,7 @@ public class Ta4jMACD extends Ta4j {
             hist[j] = macdIndicator.getValue(j).doubleValue();
         }
         log.debug("timer {}", System.currentTimeMillis() - time0);
-        return new SerialTA(objs, objsarr);
+        return new SerialTA(objs, objsarr, 0, size);
     }
 
     @Override

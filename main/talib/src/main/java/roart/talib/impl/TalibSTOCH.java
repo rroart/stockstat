@@ -49,7 +49,7 @@ public class TalibSTOCH extends Talib {
         objsarr[1] = rsi2;
         objs[2] = beg.value;
         objs[3] = end.value;
-        return new SerialTA(objs, objsarr);
+        return new SerialTA(objs, objsarr, beg.value, end.value);
     }
 
     @Override

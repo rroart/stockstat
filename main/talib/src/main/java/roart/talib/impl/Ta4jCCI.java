@@ -31,7 +31,7 @@ public class Ta4jCCI extends Ta4j {
         objs[1] = 0; // beg;
         objs[2] = size; // end;
         if (size == 0) {
-            return new SerialTA(objs, objsarr);
+            return new SerialTA(objs, objsarr, 0, size);
         }
         BarSeries series = getThreeSeries(close, low, high, size);
         CCIIndicator i = new CCIIndicator(series, 14);
@@ -41,7 +41,7 @@ public class Ta4jCCI extends Ta4j {
                 int jj = 0;
             }
         }
-        return new SerialTA(objs, objsarr);
+        return new SerialTA(objs, objsarr, 0, size);
     }
 
     @Override

@@ -30,7 +30,7 @@ public class Ta4jSTOCHRSI extends Ta4j {
         objs[1] = 0; // beg;
         objs[2] = size; // end;
         if (size == 0) {
-            return new SerialTA(objs, objsarr);
+            return new SerialTA(objs, objsarr, 0, size);
         }
         BarSeries series = getClosedSeries(values, size);
         StochasticRSIIndicator i = new StochasticRSIIndicator(series, 14);
@@ -40,7 +40,7 @@ public class Ta4jSTOCHRSI extends Ta4j {
                 int jj = 0;
             }
         }
-        return new SerialTA(objs, objsarr);
+        return new SerialTA(objs, objsarr, 0, size);
     }
 
     @Override
