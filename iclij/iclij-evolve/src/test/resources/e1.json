@@ -12,39 +12,31 @@
       },
       "default": {
         "_class": "SerialDouble",
-        "adouble": 0.4
+        "adouble": 0.0
       },
       "titletext": {
         "_class": "SerialString",
-        "string": "improveabovebelow tradcomm abovebelow"
+        "string": "improveabovebelow nasdaq100 abovebelow"
       },
       "subtitletext": {
         "_class": "SerialString",
-        "string": "[['mlmacd','mlmulti','mlrsi'],['spark ovr','spark lsvc','pytorch gru','spark lor','spark mlpc','tensorflow lstm','tensorflow cnn','tensorflow mlp','pytorch rnn','pytorch lstm','pytorch mlp','pytorch cnn']]"
+        "string": "[[\"mlrsi\"],[\"pytorch gru\",\"pytorch rnn\",\"pytorch lstm\"]]"
       },
       "learned": {
         "_class": "SerialDouble",
-        "adouble": 0.5555555555555556
+        "adouble": 0.0
       },
-      "1735130951491_fcac4c59-18ea-4ffd-b18a-fb5c9abb9238.txt": {
-        "_class": "SerialListPlain",
+      "1735335407260_1572b58d-99a2-4e93-ab85-1cc7debe889f.txt": {
+        "_class": "SerialList",
         "list": [
           {
-            "0.5555555555555556": {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
               "resultMap": null,
               "ascending": true,
               "genes": [
-                false,
-                false,
-                false,
-                false,
-                false,
-                false,
-                false,
-                true,
-                false,
-                true,
-                false,
                 false,
                 false,
                 false,
@@ -53,44 +45,13 @@
             }
           },
           {
-            "0.5": {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
               "resultMap": null,
               "ascending": true,
               "genes": [
-                false,
-                false,
-                false,
-                true,
-                false,
-                true,
-                false,
-                true,
-                true,
-                false,
-                false,
-                false,
-                false,
-                false,
-                false
-              ]
-            }
-          },
-          {
-            "0.46153846153846156": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                false,
-                false,
-                false,
-                false,
-                false,
-                true,
-                false,
-                true,
-                true,
-                true,
-                true,
                 true,
                 false,
                 false,
@@ -99,481 +60,13 @@
             }
           },
           {
-            "0.46153846153846156": {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
               "resultMap": null,
               "ascending": true,
               "genes": [
-                false,
-                false,
-                false,
-                false,
-                false,
-                true,
-                false,
-                true,
-                false,
-                false,
-                true,
-                false,
-                false,
-                false,
-                false
-              ]
-            }
-          },
-          {
-            "0.45454545454545453": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                true,
-                false,
-                false,
-                true,
-                false,
-                false,
-                true,
-                true,
-                true,
-                false,
-                true,
-                false,
-                false,
-                false,
-                false
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                false,
-                false,
-                false,
-                true,
-                false,
-                false,
-                true,
-                true,
-                true,
-                true,
-                false,
-                false,
-                true,
-                false,
-                true
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                true,
-                true,
-                false,
-                true,
-                false,
-                true,
-                true,
-                true,
-                false,
-                false,
-                true,
-                true,
-                false,
-                true,
-                true
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                true,
-                true,
-                false,
-                false,
-                false,
-                true,
-                true,
-                false,
-                false,
-                false,
-                true,
-                true,
-                true,
-                false,
-                true
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                false,
-                true,
-                false,
-                false,
-                false,
-                true,
-                true,
-                true,
-                false,
-                true,
-                false,
-                true,
-                false,
-                false,
-                false
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                true,
-                true,
-                false,
-                false,
-                false,
-                true,
-                false,
-                false,
-                false,
-                true,
-                false,
-                true,
-                false,
-                false,
-                true
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                false,
-                true,
-                false,
-                false,
-                false,
-                true,
-                true,
-                true,
-                false,
-                false,
-                false,
-                false,
-                true,
-                true,
-                true
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                true,
-                true,
-                false,
-                false,
-                false,
-                false,
-                true,
-                false,
-                false,
-                false,
-                true,
-                true,
-                false,
-                true,
-                false
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                false,
-                false,
-                false,
-                true,
-                false,
-                true,
-                true,
-                true,
-                false,
-                false,
-                false,
-                true,
-                true,
-                true,
-                false
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                false,
-                false,
-                false,
-                true,
-                false,
-                false,
-                true,
-                true,
-                true,
-                true,
-                false,
-                false,
-                true,
-                false,
-                false
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                true,
-                true,
-                false,
-                false,
-                false,
-                true,
-                true,
-                true,
-                false,
-                false,
-                true,
-                true,
-                true,
-                true,
-                false
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                true,
-                true,
-                false,
-                true,
-                false,
-                true,
-                true,
-                true,
-                false,
-                false,
-                true,
-                false,
-                false,
-                true,
-                true
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                true,
-                true,
-                false,
-                false,
-                false,
-                false,
-                true,
-                true,
-                true,
-                true,
-                true,
-                false,
-                true,
-                false,
-                false
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                true,
-                true,
-                false,
-                true,
-                false,
-                false,
-                true,
-                true,
-                false,
-                false,
-                true,
-                true,
-                false,
-                false,
-                false
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                false,
-                true,
-                false,
-                false,
-                false,
-                true,
-                true,
-                true,
-                false,
-                false,
-                false,
-                true,
-                true,
-                false,
-                true
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                true,
-                true,
-                false,
-                true,
-                false,
-                false,
-                true,
-                true,
-                false,
-                true,
-                true,
-                false,
-                false,
-                true,
-                true
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                true,
-                true,
-                false,
-                false,
-                false,
-                true,
-                true,
-                false,
-                false,
-                true,
-                true,
-                true,
-                false,
-                false,
-                true
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                false,
-                true,
-                false,
-                false,
-                false,
-                false,
-                true,
-                true,
-                false,
-                false,
-                false,
-                true,
-                false,
-                true,
-                true
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                true,
-                true,
-                false,
-                false,
-                false,
-                false,
-                true,
-                true,
-                true,
-                false,
-                true,
-                true,
-                false,
-                true,
-                false
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                true,
-                true,
-                false,
-                false,
-                false,
-                false,
-                true,
-                true,
-                false,
-                true,
-                false,
                 false,
                 false,
                 false,
@@ -582,22 +75,14 @@
             }
           },
           {
-            "0.42857142857142855": {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
               "resultMap": null,
               "ascending": true,
               "genes": [
                 false,
-                true,
-                false,
-                false,
-                false,
-                true,
-                true,
-                true,
-                true,
-                true,
-                false,
-                true,
                 true,
                 true,
                 true
@@ -605,21 +90,43 @@
             }
           },
           {
-            "0.42857142857142855": {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
               "resultMap": null,
               "ascending": true,
               "genes": [
                 false,
                 true,
-                false,
                 true,
-                false,
+                true
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
                 true,
-                false,
                 true,
-                false,
-                false,
-                false,
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
                 true,
                 true,
                 false,
@@ -628,114 +135,29 @@
             }
           },
           {
-            "0.42857142857142855": {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
               "resultMap": null,
               "ascending": true,
               "genes": [
                 true,
-                true,
                 false,
-                true,
-                false,
-                true,
-                true,
-                true,
-                false,
-                true,
-                false,
-                false,
-                false,
-                false,
-                true
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                true,
-                true,
-                false,
-                true,
-                false,
-                true,
-                true,
-                true,
-                false,
-                false,
-                true,
-                true,
-                true,
-                true,
-                false
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                false,
-                true,
-                false,
-                false,
-                false,
-                false,
-                true,
-                true,
-                false,
-                true,
-                true,
-                true,
-                true,
                 false,
                 false
               ]
             }
           },
           {
-            "0.42857142857142855": {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
               "resultMap": null,
               "ascending": true,
               "genes": [
                 false,
-                true,
-                false,
-                true,
-                false,
-                false,
-                true,
-                true,
-                false,
-                true,
-                false,
-                true,
-                true,
-                true,
-                false
-              ]
-            }
-          },
-          {
-            "0.42857142857142855": {
-              "resultMap": null,
-              "ascending": true,
-              "genes": [
-                true,
-                true,
-                false,
-                false,
-                false,
-                true,
-                false,
-                true,
-                false,
-                true,
-                true,
-                true,
                 false,
                 true,
                 true
@@ -743,22 +165,14 @@
             }
           },
           {
-            "0.42857142857142855": {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
               "resultMap": null,
               "ascending": true,
               "genes": [
                 false,
-                true,
-                false,
-                false,
-                false,
-                true,
-                true,
-                true,
-                false,
-                true,
-                true,
-                true,
                 false,
                 true,
                 false
@@ -766,44 +180,28 @@
             }
           },
           {
-            "0.42857142857142855": {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
               "resultMap": null,
               "ascending": true,
               "genes": [
                 true,
                 true,
                 false,
-                true,
-                false,
-                true,
-                true,
-                true,
-                false,
-                false,
-                true,
-                false,
-                true,
-                true,
-                false
+                true
               ]
             }
           },
           {
-            "0.4": {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
               "resultMap": null,
               "ascending": true,
               "genes": [
-                false,
-                true,
-                false,
-                false,
-                true,
-                false,
-                true,
-                true,
-                false,
-                false,
-                true,
                 true,
                 true,
                 true,
@@ -812,24 +210,346 @@
             }
           },
           {
-            "0.4": {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                true,
+                false,
+                false
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                true,
+                false,
+                true
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                false,
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                false,
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                true,
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                false,
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                true,
+                false,
+                false
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                false,
+                false,
+                false
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                false,
+                true,
+                true
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                false,
+                true,
+                true
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                false,
+                true,
+                true
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                false,
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
               "resultMap": null,
               "ascending": true,
               "genes": [
                 true,
                 true,
                 false,
+                false
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                false,
+                false,
+                true
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                true,
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
+                true,
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                false,
+                true,
+                true
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
+                false,
+                false,
+                true
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
                 true,
                 true,
                 false,
+                true
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
                 false,
+                false,
+                false
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
                 true,
                 true,
                 false,
+                false
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                false,
                 true,
                 false,
+                false
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.0,
+            "chromosome": {
+              "_class": "AboveBelowChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "genes": [
+                true,
                 false,
-                false,
+                true,
                 true
               ]
             }
@@ -838,7 +558,7 @@
       },
       "id": {
         "_class": "SerialString",
-        "string": "1735130951491_fcac4c59-18ea-4ffd-b18a-fb5c9abb9238.txt"
+        "string": "1735335407260_1572b58d-99a2-4e93-ab85-1cc7debe889f.txt"
       }
     }
   }

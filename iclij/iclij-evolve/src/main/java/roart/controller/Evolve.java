@@ -395,7 +395,7 @@ public class Evolve {
     public void method4(String param) {
         //param = getParam(param);
         List<String> output = new ArrayList<>();
-        PipelineData data = JsonUtil.convert(param, PipelineData.class);
+        PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class);
         //Map<String, Object> myMap = new HashMap<>(); //convert(param, new TypeReference<List<LinkedHashMap<Double, AboveBelowChromosome>>>(){});
         String id = PipelineUtils.getString(data, EvolveConstants.ID);
         List<SerialScoreChromosome> myList = PipelineUtils.getList(data, id);
@@ -676,7 +676,7 @@ public class Evolve {
         send(service, object, mapper);
     }
 
-    private void print(String text) {
+    void print(String text) {
         String node = iclijConfig.getEvolveSaveLocation();
         String mypath = iclijConfig.getEvolveSavePath();
         configCurator(iclijConfig);

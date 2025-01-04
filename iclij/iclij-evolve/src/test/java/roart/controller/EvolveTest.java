@@ -57,13 +57,14 @@ public class EvolveTest {
     
     @Test
     public void test() throws IOException {
-        String s1 = string("e1x.json");
+        String s1 = string("e1.json");
         String s2 = string("e2.json");
         PipelineData d1 = convert(s1, PipelineData.class);
         PipelineData d2 = JsonUtil.convert(s2, PipelineData.class);
         System.out.println("" + d1);
         System.out.println("" + d2);
-        Evolve evolve = new Evolve(dbDao, iclijConfig);
+        Evolve evolve = spy(new Evolve(dbDao, iclijConfig));
+        doNothing().when(evolve).print(anyString());
         try {
         //evolve.method3(s2);
          evolve.method4(s1);

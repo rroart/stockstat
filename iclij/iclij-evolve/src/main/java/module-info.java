@@ -5,7 +5,7 @@
  * @author roart
  *
  */
-module iclij.evolve {
+open module iclij.evolve {
 
     requires iclij.common.service;
     requires common.communication.model;

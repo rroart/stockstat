@@ -37,6 +37,7 @@
 		  <argLine>
 		    --add-opens java.base/java.lang=spring.core
 		    --add-reads model=ALL-UNNAMED
+		    --add-reads iclij.common.config=ALL-UNNAMED
 		    --add-reads springdata=ALL-UNNAMED
 		    --add-opens springdata/roart.common.springdata.model=spring.core
 		    --add-opens springdata/roart.common.springdata.repository=spring.core
@@ -53,12 +54,6 @@
 		    --add-opens iclij.common.service/roart.iclij.service=spring.core
 		    --add-opens pipeline.predictor/roart.predictor.impl=spring.core
 		    --add-opens java.base/sun.net=ALL-UNNAMED
-		    --add-opens iclij.evolve/roart.controller=spring.core
-		    --add-opens iclij.evolve/roart.controller=spring.beans
-		    --add-opens iclij.evolve/roart.controller=spring.context
-		    --add-opens iclij.sim/roart.controller=spring.core
-		    --add-opens iclij.sim/roart.controller=spring.beans
-		    --add-opens iclij.sim/roart.controller=spring.context
 		  </argLine>
 		</configuration>
          </plugin>

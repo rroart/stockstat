@@ -5,7 +5,7 @@
  * @author roart
  *
  */
-module iclij.sim {
+open module iclij.sim {
     requires iclij.common.service;
     requires common.communication.model;
     requires iclij.common.config;
