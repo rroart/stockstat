@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 //@ComponentScan(basePackages = "roart.testdata")
 //@SpringBootTest(classes = TestConfiguration.class)
 @SpringBootTest(classes = { IclijConfig.class, Config.class } )
-public class PredictorTest {
+public class PredictorIT {
 
     @Autowired
     IclijConfig conf;
