@@ -12,25 +12,38 @@ import roart.testdata.TestUtils;
 import roart.talib.Ta;
 
 public class TaTest {
-    // ta4j: Ta4jSTOCHRSI
+    // TODO ta4j only: Ta4jSTOCHRSI
     
     @Test
     public void test() {
         double[][] das = getRandomOHLC();
 
-        Ta[][] tas = new Ta[][] {
-            { new TalibMACD(), new Ta4jMACD() },
-            { new TalibATR(), new Ta4jATR() },
-            { new TalibCCI(), new Ta4jCCI() },
-            { new TalibMACD(), new Ta4jMACD() },
-            { new TalibRSI(), new Ta4jRSI() },
-            { new TalibSTOCH(), new Ta4jSTOCH() },
+        Ta[][] tas = getTAs();
+
+        printTAs(das, tas);
+    }
+
+    @Test
+    public void test2() {
+        double[][] das = getCustom();
+        
+        Ta[][] tas = getTAs();
+/*
+        tas = new Ta[][] {
             { new TalibSTOCHRSI(), new Ta4jSTOCHRSI() }
         };
 
+        tas = new Ta[][] {
+            { new TalibRSI(), new Ta4jRSI() }
+        };
+*/
+        printTAs(das, tas);
+    }
+
+    private void printTAs(double[][] das, Ta[][] tas) {
+        System.out.println("das" + Arrays.asList(ArraysUtil.convert(das[0])));
         for (Ta[] ta : tas) {
             System.out.println("ta " + ta[0].getClass().getCanonicalName());
-            System.out.println("das" + Arrays.asList(ArraysUtil.convert(das[0])));
             SerialTA talib = ta[0].calculate(das);
             SerialTA ta4j = ta[1].calculate(das);
             System.out.println("talib a " + talib.getBegoffset() + " " + talib.getSize());
@@ -39,10 +52,40 @@ public class TaTest {
             System.out.println("ta4j " + ta4j.getObjs().length + " " + ta4j.getObjsarr().length);
             //System.out.println("talib" + talib.getObjs()[3] + " " + talib.getObjsarr()[0][0]);
             //System.out.println("talib" + new ArrayList<>(Arrays.asList(talib.getarray(0))));
-            System.out.println("talib " + Arrays.asList(ArraysUtil.convert(talib.getarray(0))));
-            System.out.println("ta4j " + Arrays.asList(ArraysUtil.convert(ta4j.getarray(0))));
+            for (int i = 0; i < 4; i++) {
+                if (talib.getarray(i) != null) {
+                    //System.out.println("talib " + talib.getarray(i).getClass().getCanonicalName());
+                }
+                if (talib.getarray(i) == null || ta4j.getarray(i) == null /*|| talib.getarray(i).getClass() == null*/) {
+                    break;
+                }
+                System.out.println("talib " + Arrays.asList(ArraysUtil.convert(talib.getarray(i))));
+                System.out.println("ta4j " + Arrays.asList(ArraysUtil.convert(ta4j.getarray(i))));
+            }
             System.out.println();
         }
+    }
+
+    private Ta[][] getTAs() {
+        Ta[][] tas = new Ta[][] {
+            { new TalibATR(), new Ta4jATR() },
+            { new TalibCCI(), new Ta4jCCI() },
+            { new TalibMACD(), new Ta4jMACD() },
+            { new TalibRSI(), new Ta4jRSI() },
+            { new TalibSTOCH(), new Ta4jSTOCH() },
+            { new TalibSTOCHRSI(), new Ta4jSTOCHRSI() }
+        };
+        return tas;
+    }
+
+    private double[][] getCustom() {
+        double[][] das;
+        double[] da = new double[] { 50.45, 50.30, 50.20, 50.15, 50.05, 50.06, 50.10, 50.08, 50.03, 50.07, 50.01, 50.14, 50.22,
+                50.43, 50.50, 50.56, 50.52, 50.70, 50.55, 50.62, 50.90, 50.82, 50.86, 51.20, 51.30, 51.10,  
+                50.45, 50.30, 50.20, 50.15, 50.05, 50.06, 50.10, 50.08, 50.03, 50.07, 50.01, 50.14, 50.22,
+                50.43, 50.50, 50.56, 50.52, 50.70, 50.55, 50.62, 50.90, 50.82, 50.86, 51.20, 51.30, 51.10};
+        das = new double[][] { da, da, da };
+        return das;
     }
 
     private double[][] getOHLC() {
