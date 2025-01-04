@@ -52,7 +52,7 @@ public abstract class Ta4j extends Ta {
         return series;
     }
 
-    protected BarSeries getThreeSeries(double[] close, double low[], double high[], int size) {
+    protected BarSeries getThreeSeries(double[] close, double[] low, double[] high, int size) {
         LocalDate date = LocalDate.now();
         BarSeries series = new BaseBarSeries();
         for (int i = 0; i < size; i++) {

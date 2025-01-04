@@ -12,6 +12,7 @@ import org.ta4j.core.indicators.EMAIndicator;
 import org.ta4j.core.indicators.MACDIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.helpers.CombineIndicator;
+import org.ta4j.core.indicators.numeric.NumericIndicator;
 
 import roart.common.pipeline.data.SerialTA;
 import roart.common.util.ArraysUtil;
@@ -65,14 +66,17 @@ public class Ta4jMACD extends Ta4j {
         EMAIndicator longEma = new EMAIndicator(closePrice, 26);
         MACDIndicator macdI = new MACDIndicator(closePrice, 12, 26);
         EMAIndicator emaMacd = new EMAIndicator(macdI, 9);
+        System.out.println("unstab2 "+ macdI.getUnstableBars());
+        System.out.println("unstab3 "+ signal.getUnstableBars());
         signal = emaMacd;
         //CombineIndicator macdIndicator2 = new CombineIndicator(shortEma, longEma);
-        CombineIndicator macdIndicator = CombineIndicator.minus(macdI, signal);
+        CombineIndicator histogram2 = CombineIndicator.minus(macdI, emaMacd);
+        NumericIndicator histogram = NumericIndicator.of(macdI).minus(emaMacd);
         for (int j = 0; j < size; j++) {
             log.debug(""+j      );
             sig[j] = signal.getValue(j).doubleValue();
             macd[j] = macdI.getValue(j).doubleValue();
-            hist[j] = macdIndicator.getValue(j).doubleValue();
+            hist[j] = histogram.getValue(j).doubleValue();
         }
         log.debug("timer {}", System.currentTimeMillis() - time0);
         return new SerialTA(objs, objsarr, 0, size);

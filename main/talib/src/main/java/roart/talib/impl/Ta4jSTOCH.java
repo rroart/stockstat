@@ -28,14 +28,19 @@ public class Ta4jSTOCH extends Ta4j {
         BarSeries series = getThreeSeries(close, low, high, size);
         StochasticOscillatorKIndicator kIndicator = new StochasticOscillatorKIndicator(series, 14);
         StochasticOscillatorDIndicator dIndicator = new StochasticOscillatorDIndicator(kIndicator);
-        for (int j = 0; j < size; j++) {
-            stochk[j] = kIndicator.getValue(j).doubleValue();
-            stochd[j] = dIndicator.getValue(j).doubleValue();
+        System.out.println("unstab1 "+ kIndicator.getUnstableBars());
+        System.out.println("unstab2 "+ dIndicator.getUnstableBars());
+        int beg = kIndicator.getUnstableBars();
+        objs[2] = beg;
+        objs[3] = size - beg;
+        for (int j = 0; j < size - beg; j++) {
+            stochk[j] = kIndicator.getValue(j + beg).doubleValue();
+            stochd[j] = dIndicator.getValue(j + beg).doubleValue();
             if (Double.isNaN(stochk[j])) {
                 int jj = 0;
             }
         }
-        return new SerialTA(objs, objsarr, 0, size);
+        return new SerialTA(objs, objsarr, beg, size - beg);
     }
 
     @Override

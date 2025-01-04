@@ -33,14 +33,19 @@ public class Ta4jRSI extends Ta4j {
             return new SerialTA(objs, objsarr, 0, size);
         }
         BarSeries series = getClosedSeries(values, size);
+        ClosePriceIndicator c = new ClosePriceIndicator(series);
+        System.out.println("sta " + c.getValue(0).doubleValue());
         RSIIndicator i = new RSIIndicator(new ClosePriceIndicator(series), 14);
-        for (int j = 0; j < size; j++) {
-            rsi[j] = i.getValue(j).doubleValue();
+        int beg = i.getUnstableBars();
+        objs[1] = beg;
+        objs[2] = size - beg;
+        for (int j = 0; j < size - beg; j++) {
+            rsi[j] = i.getValue(j + beg).doubleValue();
             if (Double.isNaN(rsi[j])) {
                 int jj = 0;
             }
         }
-        return new SerialTA(objs, objsarr, 0, size);
+        return new SerialTA(objs, objsarr, beg, size - beg);
     }
 
     @Override
