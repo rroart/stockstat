@@ -42,4 +42,5 @@ module iclij.common.component {
     requires curator.framework;
     requires spring.beans;
     requires dbdao;
+    requires stockstat.shadow.zookeeper;
 }

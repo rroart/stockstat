@@ -5,7 +5,7 @@
  * @author roart
  *
  */
-module coredb.spring {
+open module coredb.spring {
     exports roart.db.spring;
 
     requires iclij.common.config;

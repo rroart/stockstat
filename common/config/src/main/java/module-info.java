@@ -5,7 +5,7 @@
  * @author roart
  *
  */
-module common.config {
+open module common.config {
     exports roart.common.config;
     exports roart.common.ml;
     requires java.xml;

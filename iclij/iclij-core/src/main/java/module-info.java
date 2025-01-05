@@ -5,7 +5,7 @@
  * @author roart
  *
  */
-module iclij.core {
+open module iclij.core {
     exports roart.controller;
     exports roart.action;
     

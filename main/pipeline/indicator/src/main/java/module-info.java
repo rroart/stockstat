@@ -5,7 +5,7 @@
  * @author roart
  *
  */
-module pipeline.indicator {
+open module pipeline.indicator {
     exports roart.indicator.impl;
     exports roart.indicator.util;
     exports roart.pipeline.impl;

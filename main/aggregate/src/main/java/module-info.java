@@ -5,7 +5,7 @@
  * @author roart
  *
  */
-module aggregate {
+open module aggregate {
     exports roart.aggregator.impl;
     exports roart.aggregatorindicator.impl;
     

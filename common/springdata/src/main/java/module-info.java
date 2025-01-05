@@ -5,7 +5,7 @@
  * @author roart
  *
  */
-module springdata {
+open module springdata {
     exports roart.common.springdata.model;
     exports roart.common.springdata.repository;
 

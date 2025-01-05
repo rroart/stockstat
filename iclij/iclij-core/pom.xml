@@ -266,6 +266,12 @@
       <artifactId>tweety-full</artifactId>
       <version>${tweety.version}</version>
       <scope>test</scope>
+      <exclusions>
+	<exclusion>
+	  <groupId>org.tweetyproject</groupId>
+	  <artifactId>web</artifactId>
+	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.tweetyproject</groupId>
