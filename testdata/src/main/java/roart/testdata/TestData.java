@@ -13,6 +13,11 @@ import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialListPlain;
+import roart.common.pipeline.data.SerialMapPlain;
+import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.data.SerialVolume;
 import roart.common.util.TimeUtil;
 import roart.model.data.StockData;
@@ -138,4 +143,26 @@ public class TestData {
         String[] periodText = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
         return new Extract(null).getStockData(conf, TestConstants.MARKET, stocks, meta, periodText);
     }
+    
+    public StockData getStockdata2(IclijConfig conf) throws Exception {
+        List<StockItem> stocks = getStockItem(TestConstants.MARKET2, true, null, Constants.INDEXVALUECOLUMN);
+        MetaItem meta = new MetaItem(TestConstants.MARKET2, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
+        String[] periodText = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
+        return new Extract(null).getStockData(conf, TestConstants.MARKET2, stocks, meta, periodText);
+    }
+    
+    public StockData getStockdata3(IclijConfig conf) throws Exception {
+        List<StockItem> stocks = getStockItem(TestConstants.MARKET3, true, null, Constants.INDEXVALUECOLUMN);
+        MetaItem meta = new MetaItem(TestConstants.MARKET3, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
+        String[] periodText = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
+        return new Extract(null).getStockData(conf, TestConstants.MARKET3, stocks, meta, periodText);
+    }
+
+    public Map<String, StockData> getExtraStockdataMap(IclijConfig conf) throws Exception {
+        Map<String, StockData> map = new HashMap<>();
+        map.put(TestConstants.MARKET2, getStockdata2(conf));
+        map.put(TestConstants.MARKET3, getStockdata3(conf));
+        return map;
+    }
+    
 }

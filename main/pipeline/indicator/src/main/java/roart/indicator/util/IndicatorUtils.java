@@ -17,16 +17,25 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.category.AbstractCategory;
 import roart.common.constants.Constants;
+import roart.common.model.MetaItem;
+import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialList;
+import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialMap;
+import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialMapTA;
 import roart.common.pipeline.data.SerialMarketStock;
+import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.data.SerialObject;
 import roart.common.pipeline.data.SerialTA;
 import roart.common.pipeline.util.PipelineUtils;
+import roart.common.util.TimeUtil;
+import roart.db.dao.DbDao;
+import roart.etl.db.Extract;
 import roart.iclij.config.IclijConfig;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.impl.Indicator;
@@ -37,8 +46,13 @@ import roart.indicator.impl.IndicatorRSI;
 import roart.indicator.impl.IndicatorSTOCH;
 import roart.indicator.impl.IndicatorSTOCHRSI;
 import roart.ml.model.LearnClassify;
+import roart.model.data.MarketData;
+import roart.model.data.StockData;
+import roart.pipeline.Pipeline;
 import roart.pipeline.common.Calculatable;
+import roart.pipeline.common.aggregate.Aggregator;
 import roart.pipeline.data.ExtraData;
+import roart.pipeline.impl.DataReader;
 import roart.pipeline.impl.ExtraReader;
 import roart.talib.util.TaUtil;
 
@@ -422,7 +436,7 @@ public class IndicatorUtils {
 
     // shared
     
-    private static int getCommonArraySizeAndObjectMap(IclijConfig conf, List<String> indicators,
+    public static int getCommonArraySizeAndObjectMap(IclijConfig conf, List<String> indicators,
             List<SerialMapTA> objectMapsList, List<Map<String, Double[][]>> listList, PipelineData[] datareaders) {
         int arraySize = 0;
         Map<String, PipelineData> pipelineMap = PipelineUtils.getPipelineMap(datareaders);
@@ -841,4 +855,104 @@ public class IndicatorUtils {
         return objectMap;
     }
     
+    public Pipeline[] getDataReaders(IclijConfig conf, String[] periodText, Map<String, MarketData> marketdatamap,
+            StockData stockData, Map<String, StockData> stockDataMap, ExtraReader extraReader) throws Exception {
+        Pipeline[] datareaders = new Pipeline[Constants.PERIODS + 3];
+        datareaders[0] = new DataReader(conf, marketdatamap, Constants.INDEXVALUECOLUMN, conf.getConfigData().getMarket());
+        datareaders[1] = new DataReader(conf, marketdatamap, Constants.PRICECOLUMN, conf.getConfigData().getMarket());
+        extraDataReadData(conf, marketdatamap, stockData, extraReader, stockDataMap);
+        datareaders[2] = extraReader;
+        for (int i = 0; i < Constants.PERIODS; i++) {
+            datareaders[i + 3] = new DataReader(conf, marketdatamap, i, conf.getConfigData().getMarket());
+        }
+        return datareaders;
+    }
+
+    private void extraDataReadData(IclijConfig conf, Map<String, MarketData> marketdatamap, StockData stockData,
+            ExtraReader extraReader, Map<String, StockData> stockDataMap) throws Exception {
+        Map<String, Pipeline[]> dataReaderMap;
+        dataReaderMap = new HashMap<>();
+        for (String market : extraReader.getMarkets()) {
+            StockData stockData2 = stockDataMap.get(market);
+            Pipeline[] datareaders2 = extraReader.getDataReaders(conf, stockData.periodText,
+                    stockData2.marketdatamap, market);
+            dataReaderMap.put(market, datareaders2);
+        }
+        extraReader.readData(conf, marketdatamap, 0, stockData, stockDataMap, dataReaderMap);
+    }
+
+    public Map<String, StockData> getExtraStockDataMap(IclijConfig conf, DbDao dbDao,ExtraReader extraReader) {
+        Map<String, StockData> stockDataMap;
+        stockDataMap = new HashMap<>();
+        for (String market : extraReader.getMarkets()) {
+            StockData stockData2 = new Extract(dbDao).getStockData(conf, market);
+            stockDataMap.put(market, stockData2);
+        }
+        return stockDataMap;
+    }
+    
+    public PipelineData getMetadata(IclijConfig conf, StockData stockData) {
+        PipelineData singlePipelineData = new PipelineData();
+        singlePipelineData.setName(PipelineConstants.META);
+        MetaItem meta = stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta;
+        singlePipelineData.put(PipelineConstants.META, new SerialMeta(meta.getMarketid(), meta.getPeriod(), meta.getPriority(), meta.getReset(), meta.isLhc()));
+        singlePipelineData.put(PipelineConstants.CATEGORY, stockData.catName);
+        singlePipelineData.put(PipelineConstants.WANTEDCAT, stockData.cat);
+        singlePipelineData.put(PipelineConstants.NAME, new SerialMapPlain(stockData.idNameMap));
+        singlePipelineData.put(PipelineConstants.DATELIST, new SerialListPlain(stockData.stockdates));
+        return singlePipelineData;
+    }
+
+    public PipelineData[] createPipelineDataCategories(PipelineData[] pipelinedata, List<AbstractCategory> categories,
+            StockData stockData) {
+        for (int i = 0; i < Constants.ALLPERIODS; i++) {
+            if (stockData.catName.equals(categories.get(i).getTitle())) {
+                for (Entry<String, AbstractIndicator> entry : categories.get(i).getIndicatorMap().entrySet()) {
+                    PipelineData singlePipelinedata = entry.getValue().putData();
+                    pipelinedata = ArrayUtils.add(pipelinedata, singlePipelinedata);
+                }
+            }
+        }
+        return pipelinedata;
+    }
+
+    public List<StockItem> getDayStocks(IclijConfig conf, StockData stockData) {
+        String mydate = TimeUtil.format(conf.getConfigData().getDate());
+        int dateIndex = TimeUtil.getIndexEqualBefore(stockData.stockdates, mydate);
+        if (dateIndex >= 0) {
+            mydate = stockData.stockdates.get(dateIndex);
+        }
+        return stockData.stockdatemap.get(mydate);
+    }
+
+    public PipelineData[] createPipelineAggregators(PipelineData[] pipelinedata, List<Aggregator> aggregates) {
+        /*
+        aggregates.addAll(Arrays.asList(getAggregates(conf, stockData.periodText,
+                stockData.marketdatamap, categories.toArray(new AbstractCategory[0]), pipelinedata , disableList, stockData.catName, stockData.cat, stockData.stockdates)));
+        */
+        
+        // add all indicators aggregates
+        for (int i = 0; i < aggregates.size(); i++) {
+            if (!aggregates.get(i).isEnabled()) {
+                continue;
+            }
+            log.debug("ag {}", aggregates.get(i).getName());
+            PipelineData singlePipelinedata = aggregates.get(i).putData();
+            pipelinedata = ArrayUtils.add(pipelinedata, singlePipelinedata);
+        }
+        return pipelinedata;
+    }
+
+    public PipelineData[] createDatareaderPipelineData(IclijConfig conf, PipelineData[] pipelinedata,
+            StockData stockData, Pipeline[] datareaders) {
+        PipelineData singlePipelineData = getMetadata(conf, stockData);
+    
+        pipelinedata = ArrayUtils.add(pipelinedata, singlePipelineData);
+    
+        for (Pipeline datareader : datareaders) {
+            pipelinedata = ArrayUtils.add(pipelinedata, datareader.putData());
+        }
+        return pipelinedata;
+    }
+
 }

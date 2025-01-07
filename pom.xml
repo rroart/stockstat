@@ -40,6 +40,9 @@
 		    --add-opens java.base/sun.net=ALL-UNNAMED
 		    --add-reads springdata=ALL-UNNAMED
 		    --add-reads iclij.common.config=ALL-UNNAMED
+		    --add-reads pipeline.category=spring.context
+		    --add-reads pipeline.category=spring.core
+		    --add-reads pipeline.category=spring.beans
 		  </argLine>
 		</configuration>
          </plugin>

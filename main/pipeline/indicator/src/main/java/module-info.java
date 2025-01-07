@@ -25,4 +25,5 @@ open module pipeline.indicator {
     requires com.fasterxml.jackson.databind;
     requires common.util;
     requires common.model;
+    requires dbdao;
 }

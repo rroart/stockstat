@@ -5,8 +5,9 @@
  * @author roart
  *
  */
-module pipeline.category {
+open module pipeline.category {
     exports roart.category.impl;
+    exports roart.category.util;
 
     requires common.constants;
     requires pipeline.indicator;

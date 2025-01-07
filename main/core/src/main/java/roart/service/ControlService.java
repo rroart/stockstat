@@ -1,5 +1,6 @@
 package roart.service;
 
+import java.util.Arrays;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -45,12 +46,13 @@ import roart.category.AbstractCategory;
 import roart.category.impl.CategoryIndex;
 import roart.category.impl.CategoryPeriod;
 import roart.category.impl.CategoryPrice;
+import roart.category.util.CategoryUtil;
 import roart.common.communication.factory.CommunicationFactory;
 import roart.common.communication.model.Communication;
 import roart.common.config.ConfigConstants;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.IclijServiceResult;
-import roart.indicator.AbstractIndicator;
+import roart.indicator.util.IndicatorUtils;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
 import roart.common.inmemory.factory.InmemoryFactory;
@@ -162,135 +164,77 @@ public class ControlService {
      */
 
     public List<ResultItem> getContent(IclijConfig conf, List<String> disableList, IclijServiceResult result) {
-        Map<String, Map<String, Object>> maps = new HashMap<>();
         log.info("mydate {}", conf.getConfigData().getDate());
         log.info("mydate {}", conf.getDays());
         //createOtherTables();
-        StockData stockData = new Extract(dbDao).getStockData(conf);
-        if (stockData == null) {
-            return new ArrayList<>();
-        }
-        
-        
-        PipelineData singlePipelineData = new PipelineData();
-        singlePipelineData.setName(PipelineConstants.META);
-        MetaItem meta = stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta;
-        singlePipelineData.put(PipelineConstants.META, new SerialMeta(meta.getMarketid(), meta.getPeriod(), meta.getPriority(), meta.getReset(), meta.isLhc()));
-        singlePipelineData.put(PipelineConstants.CATEGORY, stockData.catName);
-        singlePipelineData.put(PipelineConstants.WANTEDCAT, stockData.cat);
-        singlePipelineData.put(PipelineConstants.NAME, new SerialMapPlain(stockData.idNameMap));
-        singlePipelineData.put(PipelineConstants.DATELIST, new SerialListPlain(stockData.stockdates));
-        PipelineData[] pipelinedata = new PipelineData[0];
-        pipelinedata = ArrayUtils.add(pipelinedata, singlePipelineData);
+        List<ResultItem> retlist = new ArrayList<>();
         ResultItemTable table = new ResultItemTable();
         List<ResultItemTable> otherTables = new ArrayList<>();
         otherTables.add(mlTimesTable);
         otherTables.add(eventTable);
-
+        PipelineData[] pipelinedata = new PipelineData[0];
+        List<AbstractCategory> categories = new ArrayList<>();
+        List<Aggregator> aggregates = new ArrayList<>();
         try {
-            Pipeline[] datareaders = new ServiceUtil().getDataReaders(conf, dbDao,
-                    stockData.periodText, stockData.marketdatamap, stockData);
-
-            String mydate = TimeUtil.format(conf.getConfigData().getDate());
-            int dateIndex = TimeUtil.getIndexEqualBefore(stockData.stockdates, mydate);
-            if (dateIndex >= 0) {
-                mydate = stockData.stockdates.get(dateIndex);
-            }
-            List<StockItem> dayStocks = stockData.stockdatemap.get(mydate);
-            
-            for (Pipeline datareader : datareaders) {
-                pipelinedata = ArrayUtils.add(pipelinedata, datareader.putData());
+            StockData stockData = new Extract(dbDao).getStockData(conf);
+            if (stockData == null) {
+                return new ArrayList<>();
             }
 
-            AbstractCategory[] categories = new ServiceUtil().getCategories(conf, dayStocks,
-                    stockData.periodText, pipelinedata);
+            IndicatorUtils iu = new IndicatorUtils();
+            ExtraReader extraReader = new ExtraReader(conf, stockData.marketdatamap, 0, stockData);
+            Map<String, StockData> extraStockDataMap = iu.getExtraStockDataMap(conf, dbDao, extraReader);
 
-            for (int i = 0; i < Constants.ALLPERIODS; i++) {
-                if (stockData.catName.equals(categories[i].getTitle())) {
-                    for (Entry<String, AbstractIndicator> entry : categories[i].getIndicatorMap().entrySet()) {
-                        PipelineData singlePipelinedata = entry.getValue().putData();
-                        pipelinedata = ArrayUtils.add(pipelinedata, singlePipelinedata);
-                    }
-                }
-            }
-            
+            Pipeline[] datareaders = iu.getDataReaders(conf, stockData.periodText,
+                    stockData.marketdatamap, stockData, extraStockDataMap, extraReader);
+
             /*
-            AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, stockData.marketdatamap,
-                    pipelinedata, categories, neuralnetcommand);
-            //new ServiceUtil().createPredictors(categories);
-            new ServiceUtil().calculatePredictors(predictors);
+            pipelinedata = iu.createPipeline(conf, disableList, pipelinedata, categories, aggregates, stockData,
+                    datareaders);
             */
             
-            Aggregator[] aggregates = getAggregates(conf, stockData.periodText,
-                    stockData.marketdatamap, categories, pipelinedata , disableList, stockData.catName, stockData.cat, stockData.stockdates);
+            // pipelinedata from datareaders and new meta
 
-            ResultItemTableRow headrow = createHeadRow(categories, new AbstractPredictor[0], aggregates);
+            pipelinedata = iu.createDatareaderPipelineData(conf, pipelinedata, stockData, datareaders);
+
+            // for categories and adding to pipelinedata
+
+            List<StockItem> dayStocks = iu.getDayStocks(conf, stockData);
+            
+            categories = Arrays.asList(new CategoryUtil().getCategories(conf, dayStocks,
+                    stockData.periodText, pipelinedata));
+            
+            // add all indicators for the category
+
+            pipelinedata = iu.createPipelineDataCategories(pipelinedata, categories, stockData);
+
+            // for aggregates and adding to the pipeline
+
+            aggregates = Arrays.asList(getAggregates(conf, stockData.periodText,
+                    stockData.marketdatamap, categories.toArray(new AbstractCategory[0]), pipelinedata , disableList, stockData.catName, stockData.cat, stockData.stockdates));
+
+            pipelinedata = iu.createPipelineAggregators(pipelinedata, aggregates);
+            
+            ResultItemTableRow headrow = createHeadRow(categories.toArray(new AbstractCategory[0]), new AbstractPredictor[0], aggregates.toArray(new Aggregator[0]));
             table.add(headrow);
             //log.info("sizes " + stocks.size() + " " + datedstocks.size() + " " + datedstocksoffset.size());
-            createRows(conf, table, stockData.datedstocks, categories, new AbstractPredictor[0], aggregates);
+            createRows(conf, table, stockData.datedstocks, categories.toArray(new AbstractCategory[0]), new AbstractPredictor[0], aggregates.toArray(new Aggregator[0]));
             log.info("retlist2 {}",table.size());
             cleanRows(headrow, table);
-            addOtherTables(categories);
-            //addOtherTables(predictors);
-            addOtherTables(aggregates);
-            /*
-            for (AbstractCategory category : categories) {
-                List<AbstractPredictor> predictors = category.getPredictors();
-                addOtherTables(predictors);
-            }
-            */
-            if (maps != null) {
-                Map<String, Object> aMap = new HashMap<>();
-                aMap.put(PipelineConstants.WANTEDCAT, stockData.cat);
-                aMap.put(PipelineConstants.META, stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta);
-                maps.put(PipelineConstants.META, aMap);
-                
-                for (int i = 0; i < datareaders.length; i++) {
-                    Map map = datareaders[i].putData().getMap();
-                    maps.put(datareaders[i].pipelineName(), map);
-                    log.debug("pi {}", datareaders[i].pipelineName());
-                }
-                for (int i = 0; i < Constants.ALLPERIODS; i++) {
-                    Map map = categories[i].putData();
-                    maps.put(categories[i].getTitle(), map);
-                    log.debug("ca {}", categories[i].getTitle());
-                }
-                /*
-                for (int i = 0; i < Constants.ALLPERIODS; i++) {
-                    if (predictors[i] == null) {
-                        continue;
-                    }
-                    Map map = predictors[i].putData().getMap();
-                    maps.put(predictors[i].getName(), map);
-                    log.debug("ca {}", predictors[i].getName());
-                    PipelineData singlePipelinedata = predictors[i].putData();
-                    pipelinedata = ArrayUtils.add(pipelinedata, singlePipelinedata);
-                }
-                */
-                for (int i = 0; i < aggregates.length; i++) {
-                    if (!aggregates[i].isEnabled()) {
-                        continue;
-                    }
-                    log.debug("ag {}", aggregates[i].getName());
-                    Map map = aggregates[i].putData().getMap();
-                    maps.put(aggregates[i].getName(), map);
-                    PipelineData singlePipelinedata = aggregates[i].putData();
-                    pipelinedata = ArrayUtils.add(pipelinedata, singlePipelinedata);
-                }
+            addOtherTables(categories.toArray(new AbstractCategory[0]));
+            addOtherTables(aggregates.toArray(new Aggregator[0]));
+            retlist.add(table);
+            for (ResultItemTable list : otherTables) {
+                retlist.add(list);
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        List<ResultItem> retlist = new ArrayList<>();
-        retlist.add(table);
-        for (ResultItemTable list : otherTables) {
-            retlist.add(list);
-        }
-        //new CleanETL().fixmap((Map) maps);
+
         PipelineUtils.printmap(pipelinedata);
         new CleanETL().fixmap(pipelinedata);
         PipelineUtils.printmap(pipelinedata);
-       //result.setMaps(maps);
+
         result.setList(retlist);
         result.setPipelineData(pipelinedata);
         Inmemory inmemory = InmemoryFactory.get(conf.getInmemoryServer(), conf.getInmemoryHazelcast(), conf.getInmemoryRedis());
@@ -310,7 +254,7 @@ public class ControlService {
         }
         return retlist;
     }
-    
+
     private void cleanRows(ResultItemTableRow headrow, ResultItemTable table) {
         ResultItemTableRow sum = null;
         if (table.rows.size() > 1) {
