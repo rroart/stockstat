@@ -110,7 +110,7 @@
     <commons.beanutils.version>1.9.4</commons.beanutils.version>
     <httpclient.version>4.5.6</httpclient.version>
     <jaxb.version>2.3.1</jaxb.version>
-    <stanfordcorenlp.version>3.9.1</stanfordcorenlp.version>
+    <stanfordcorenlp.version>4.5.8</stanfordcorenlp.version>
     <opennlp.version>1.8.4</opennlp.version>
     <batik.version>1.8</batik.version>
     <jfreesvg.version>3.0</jfreesvg.version>
