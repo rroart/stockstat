@@ -74,6 +74,12 @@
             </goals>
           </execution>
         </executions>
+	<configuration>
+	  <argLine>
+	    --add-opens java.base/sun.nio.ch=stockstat.shadow.spark
+	  </argLine>
+	  <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+	</configuration>
       </plugin>
     </plugins>
   </build>
