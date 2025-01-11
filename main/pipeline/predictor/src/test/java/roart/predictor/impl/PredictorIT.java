@@ -12,6 +12,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.util.ArraysUtil;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.bean.ConfigC;
 import roart.ml.model.LearnClassify;
 import roart.model.data.StockData;
 import roart.pipeline.impl.DataReader;
@@ -33,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 //@TestPropertySource("file:${user.dir}/../../../../config/test/application.properties") 
 //@ComponentScan(basePackages = "roart.testdata")
 //@SpringBootTest(classes = TestConfiguration.class)
-@SpringBootTest(classes = { IclijConfig.class, Config.class } )
+@SpringBootTest(classes = { IclijConfig.class, ConfigC.class } )
 public class PredictorIT {
 
     @Autowired

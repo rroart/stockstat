@@ -5,7 +5,7 @@
  * @author roart
  *
  */
-module pipeline.predictor {
+open module pipeline.predictor {
     exports roart.predictor.impl;
 
     requires common.constants;
