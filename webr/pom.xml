@@ -67,6 +67,19 @@
 	      </arguments>
 	    </configuration>
 	  </execution>
+	  <execution>
+	    <id>cdxgen</id>
+	    <goals>
+	      <goal>exec</goal>
+	    </goals>
+	    <phase>package</phase>
+	    <configuration>
+	      <executable>cdxgen</executable>
+	      <arguments>
+		<argument>.</argument>
+	      </arguments>
+	    </configuration>
+	  </execution>
 	</executions>
       </plugin>
     </plugins>
