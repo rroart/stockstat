@@ -54,7 +54,7 @@ const COMMON_LOADERS = [
       }
     ],
   }, {
-    test: /\.(js|jsx)?$/,
+    test: /\.(js|jsx|ts)?$/,
     exclude: /node_modules/,
     loader: 'babel-loader',
     options: {
@@ -142,7 +142,7 @@ module.exports = {
     path: path.join(__dirname, 'docroot'),
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.css'],
+      extensions: ['.js', '.jsx', '.ts', '.css'],
       fallback: {
 	  fs: false
       },

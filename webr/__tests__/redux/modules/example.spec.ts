@@ -1,4 +1,4 @@
-import { reducers, constants, actions, initialState } from  '../../../src/js/redux/modules/example'
+import { reducers, constants, actions, initialState } from  '../../../src/js/redux/modules/main'
 import { getStore } from '../../../__fixtures__/store'
 
 const fixture = {
@@ -7,12 +7,12 @@ const fixture = {
   source: 'fake-source',
 }
 
-describe('redux.modules.example', () => {
+describe('redux.modules.main', () => {
   let store = null;
 
   beforeEach(() => {
     store = getStore({
-      example: initialState()
+      main: initialState()
     });
   });
 
@@ -22,7 +22,7 @@ describe('redux.modules.example', () => {
 
   it('should return correct state when running updateExample', () => {
     const type = constants.UPDATE_EXAMPLE
-    const state = store.getState().example
+    const state = store.getState().main
 
     const result = reducers[type](state, { payload: fixture })
 

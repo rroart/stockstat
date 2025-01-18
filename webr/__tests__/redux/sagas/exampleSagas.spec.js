@@ -1,9 +1,9 @@
 import { put } from 'redux-saga/effects'
-import { fetchExampleData } from '../../../src/js/redux/sagas/exampleSaga'
-import { actions as exampleActions } from '../../../src/js/redux/modules/example'
+import { fetchMainData } from '../../../src/js/redux/sagas/mainSaga'
+import { actions as exampleActions } from '../../../src/js/redux/modules/main'
 
 describe('redux.sagas.exampleSaga', () => {
-  describe('fetchExampleData', () => {
+  describe('fetchMainData', () => {
 
     global.__CONFIG__ = {
       description: 'fake description'
@@ -16,7 +16,7 @@ describe('redux.sagas.exampleSaga', () => {
       };
 
     it('should call exampleActions.updateExample with correct data', () => {
-      const generator = fetchExampleData()
+      const generator = fetchMainData()
 
       let next = generator.next()
 

@@ -13,7 +13,7 @@ class IclijServiceParam {
     wantMaps: boolean;
     confList: string[];
     webpath: string;
-    offset: int;
+    offset: number;
     guiSize: GuiSize;
     neuralnetcommand: NeuralNetCommand;
 }
@@ -45,7 +45,6 @@ class IclijServiceResult {
     list: string[];
     maps: object;
     error: string;
-    list: string[];
     lists: IclijServiceList[];
 }
 
@@ -55,22 +54,22 @@ class IclijServiceList {
 }
 
 class ConfigMaps {
-    text: Map;
-    deflt: Map;
-    type: Map;
+    text: Map<string, object>;
+    deflt: Map<string, object>;
+    type: Map<string, object>;
 }
 
 class ConfigData {
     configMaps: ConfigMaps;
     configTreeMap: object;
-    configValueMap: Map;
+    configValueMap: Map<string, object>;
     date: object;
     market: string;
 }
 
 class GuiSize {
-    x: int;
-    y: int;
+    x: number;
+    y: number;
 }
 
 class NeuralNetCommand {
