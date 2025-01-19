@@ -7,6 +7,7 @@
  */
 open module iclij.common.config {
     exports roart.iclij.config;
+    exports roart.iclij.config.bean;
 
     requires common.config;
     requires commons.configuration2;
