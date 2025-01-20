@@ -7,6 +7,7 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import precss from 'precss';
 import postcssCssnext from 'postcss-cssnext';
 
+// TODO import webpackConfig, { JS_SOURCE } from './webpack.config.common'
 const webpackConfig = require('./webpack.config.common');
 const JS_SOURCE = config.get('jsSourcePath');
 
