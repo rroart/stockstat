@@ -42,8 +42,8 @@ function Table({ columns, data }) {
 	    <h2>No table</h2>
 	);
     }
-    const hcolumns = useMemo( () => columns); //, [mycolumns] );
-    const hdata = useMemo( () => data);//, [mydata] );
+    const hcolumns = useMemo( () => columns, []); //, [mycolumns] );
+    const hdata = useMemo( () => data, []);//, [mydata] );
     const {
 	getTableProps,
 	getTableBodyProps,

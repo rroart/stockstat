@@ -25,7 +25,7 @@ function handleDownload(value, filename) {
   console.log(value);
   console.log(value.original);
   console.log(value.original['Md5/Id']);
-  Client.fetchApi.download("/download", { str : value.original['Md5/Id'], filename : filename });
+  // TODO Client.fetchApi.download("/download", { str : value.original['Md5/Id'], filename : filename });
   console.log("here2");
 }
 
@@ -68,10 +68,13 @@ function getcolumns(resultitemtable, baseurl, callback) {
   console.log(head + " " + array);
   const keys = Object.keys(head);
   for(let i = 0; i < keys.length; i++) {
+    /*
+    TODO copy paste
     if (keys[i] == "Md5/Id") {
       columns.push({ accessor: keys[i], Header: keys[i], sort: true, id: 'col'+i, Cell: ({value}) => (<a onClick = {(e) => handleMLT(value, callback)}>{value}</a>)});
       continue;
     }
+      */
     if (keys[i] == "Filename") {
       columns.push({ accessor: keys[i], Header: keys[i], sort: true, id: 'col'+i, Cell: ({row, value}) => (<a onClick = { (e) => handleDownload(row, value)}>{value}</a>)});
       continue;
@@ -139,9 +142,12 @@ function convert(resultitemtable, date, props) {
   const array = resultitemtable;
   console.log(array);
   if (array.length == 0) {
+    /*
+    TODO
     return (
       <ReactTable key={date} data={ [] } columns={ [] } />
     );
+    */
   }
   const head = array[0];
   const rest = array.slice(1);
@@ -259,6 +265,7 @@ function gethtable(getTableProps, getTableBodyProps, headerGroups, rows, prepare
   );
 }
 
+// unused
 function convert2(array) {
   console.log("here");
   console.log(array);
@@ -284,11 +291,14 @@ function convert2(array) {
   }
   console.log(result);
   console.log(columns);
+  /*
   return (
     <ReactTable data={ result } columns={ columns } />
   );
+  */
 }
 
+// unused
 function convertbs(resultitemtable) {
   console.log("here");
   const array = resultitemtable.rows;
@@ -315,11 +325,14 @@ function convertbs(resultitemtable) {
     result.push(newrow);
   }
   console.log(result);
+  /*
   return (
     <BootstrapTable keyField='id' data={ result } columns={ columns } />
   );
+  */
 }
 
+// unused
 function convert2bs(array) {
   console.log("here");
   console.log(array);
@@ -344,9 +357,11 @@ function convert2bs(array) {
     result.push(newrow);
   }
   console.log(result);
+  /*
   return (
     <BootstrapTable keyField='id' data={ result } columns={ columns } />
   );
+  */
 }
 
 function getTable(resultitemtable, date, props) {
@@ -355,7 +370,8 @@ function getTable(resultitemtable, date, props) {
 
 function getTableNew(hcolumns, hdata, title) {
   return <div>
-    <Tooltip effect="solid" html="true"/>
+    // TODO effect="solid" html="true"
+    <Tooltip/>
     <h3>{ title }</h3>
     <Table columns={hcolumns} data={hdata} />
   </div>;
@@ -419,6 +435,7 @@ function getTabNew(lists, date, callback) {
   );
 }
 
+// used
 function getTabNewOld(lists, date, callback) {
   const baseurl = Client.geturl("/");
   const tables = [];

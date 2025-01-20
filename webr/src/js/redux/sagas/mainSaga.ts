@@ -8,11 +8,15 @@ import { Client, ConvertToSelect } from '../../common/components/util'
 import { ServiceParam, ServiceResult, NeuralNetCommand, IclijServiceParam, IclijServiceResult } from '../../common/types/main'
 import { MyTable } from '../../common/components/MyTable'
 
+global.__CONFIG__ = {
+    description: 'fake description'
+}
+
 export function* fetchMainData() {
   // pretend there is an api call
   const result = {
     title: 'Stockstat',
-    description: __CONFIG__.description,
+    description: global.__CONFIG__.description,
     source: 'This message is coming from Redux',
   };
   //const result3 = 3;
@@ -120,7 +124,7 @@ export function* fetchContentGraph(action) {
     const props = action.payload.props;
     const date = config.get('enddate');
     serviceparam.market = config.get('market');
-    const ids = new Set([serviceparam.market + "," + id]);
+    const ids = [serviceparam.market + "," + id] ;
     serviceparam.ids = ids;
     console.log(serviceparam.market);
     var guisize = new GuiSize();
@@ -181,7 +185,7 @@ export function* fetchEvolve(action) {
     console.log(date);
     serviceparam.configData = getConfigData(config, serviceparam.market, date);
     if (id != null) {
-	const ids = new Set([id]);
+	const ids = [id];
 	serviceparam.ids = ids;
     }
     //serviceparam.market = '0';
@@ -221,7 +225,7 @@ export function* fetchContent2(action) {
     const config2 = result;
     console.log(config2);
     const list = result.lists;
-    const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+    const tab = MyTable.getTab(result.lists, Date.now(), props);
     yield put(mainActions.newtabMain(tab));
 }
 
@@ -243,7 +247,7 @@ export function* fetchContentEvolve(action) {
     const config2 = result;
     console.log(config2);
     const list = result.lists;
-    const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+    const tab = MyTable.getTab(result.lists, Date.now(), props);
     yield put(mainActions.newtabMain(tab));
 }
 
@@ -265,7 +269,7 @@ export function* fetchContentDataset(action) {
     const config2 = result;
     console.log(config2);
     const list = result.lists;
-    const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+    const tab = MyTable.getTab(result.lists, Date.now(), props);
     yield put(mainActions.newtabMain(tab));
 }
 
@@ -287,7 +291,7 @@ export function* fetchContentCrosstest(action) {
     const config2 = result;
     console.log(config2);
     const list = result.lists;
-    const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+    const tab = MyTable.getTab(result.lists, Date.now(), props);
     yield put(mainActions.newtabMain(tab));
 }
 
@@ -309,7 +313,7 @@ export function* fetchContentFilter(action) {
     const config2 = result;
     console.log(config2);
     const list = result.lists;
-    const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+    const tab = MyTable.getTab(result.lists, Date.now(), props);
     yield put(mainActions.newtabMain(tab));
 }
 
@@ -331,7 +335,7 @@ export function* fetchContentAboveBelow(action) {
     const config2 = result;
     console.log(config2);
     const list = result.lists;
-    const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+    const tab = MyTable.getTab(result.lists, Date.now(), props);
     yield put(mainActions.newtabMain(tab));
 }
 
@@ -353,7 +357,7 @@ export function* fetchContentImprove(action) {
     const config2 = result;
     console.log(config2);
     const list = result.lists;
-    const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+    const tab = MyTable.getTab(result.lists, Date.now(), props);
     yield put(mainActions.newtabMain(tab));
 }
 
@@ -404,7 +408,7 @@ export function* fetchSingleMarket(action) {
 	console.log(serviceparam.market);
 	//serviceparam.offset = i * config.get('singlemarket').get('loopinterval');
 	if (loop) {
-	    serviceparam.offset = i * serviceparam.configData.configValueMap.get('singlemarket.loopinterval');
+	    // TODO serviceparam.offset = i * serviceparam.configData.configValueMap.get('singlemarket.loopinterval');
 	}
 	console.log("herecontent");
 	console.log(serviceparam.market);
@@ -415,7 +419,7 @@ export function* fetchSingleMarket(action) {
 	const config2 = result;
 	console.log(config2);
 	const list = result.lists;
-	const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+	const tab = MyTable.getTab(result.lists, Date.now(), props);
 	yield put(mainActions.newtabMain(tab));
     }
 }
@@ -438,7 +442,7 @@ export function* fetchImproveProfit(action) {
     const config2 = result;
     console.log(config2);
     const list = result.lists;
-    const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+    const tab = MyTable.getTab(result.lists, Date.now(), props);
     yield put(mainActions.newtabMain(tab));
 }
 
@@ -460,7 +464,7 @@ export function* fetchImproveAboveBelow(action) {
     const config2 = result;
     console.log(config2);
     const list = result.lists;
-    const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+    const tab = MyTable.getTab(result.lists, Date.now(), props);
     yield put(mainActions.newtabMain(tab));
 }
 
@@ -492,9 +496,9 @@ export function* fetchGetVerify(action) {
 	console.log(config['verification']);
 	console.log(serviceparam.configData);
 	//serviceparam.offset = i * config.get('verification').get('loopinterval');
-	console.log(serviceparam.configData.configValueMap.get('verification.loopinterval'))
+	//console.log(serviceparam.configData.configValueMap.get('verification.loopinterval'))
 	if (loop) {
-	    serviceparam.offset = i * serviceparam.configData.configValueMap.get('verification.loopinterval');
+	    // TODO serviceparam.offset = i * serviceparam.configData.configValueMap.get('verification.loopinterval');
 	}
 	console.log("herecontent");
 	console.log(serviceparam.market);
@@ -505,7 +509,7 @@ export function* fetchGetVerify(action) {
 	const config2 = result;
 	console.log(config2);
 	const list = result.lists;
-	const tab = MyIclijTable.getTab(result.lists, Date.now(), props);
+	const tab = MyTable.getTab(result.lists, Date.now(), props);
 	yield put(mainActions.newtabMain(tab));
     }
 }
@@ -558,7 +562,7 @@ export function* fetchCount() {
 
 export function* getNewTab() {
     console.log("bla")
-    const result = new Tab();
+    const result = null // TODO new Tab();
   yield put(mainActions.newtabMain(result));
 }
 

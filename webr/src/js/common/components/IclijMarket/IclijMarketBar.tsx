@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 
 import { Config, Client, ConvertToSelect } from '../util'
 import Select from 'react-select';
-import { DropdownButton, MenuItem, ButtonToolbar, Button, Nav, Navbar, NavItem, FormControl } from 'react-bootstrap';
+import { DropdownButton, ButtonToolbar, Button, Nav, Navbar, NavItem, FormControl } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import MyTable from "../MyTable/MyTable";
@@ -79,7 +79,7 @@ function IclijMarketBar( { props, callbackNewTab } ) {
     props.seticonfigvalue([ 'enddate', null ]);
   }
 
-  function  getContent(event, props) {
+  function  getContentNot(event, props) {
     console.log(event);
     console.log(props);
     console.log(props.main.imarket);
@@ -164,15 +164,15 @@ function IclijMarketBar( { props, callbackNewTab } ) {
       if (param.async === true) {
         callbackAsync(result.uuid);
       } else {
-        const tables = MyTable.getTabNew(result.lists, Date.now(), callbackNewTab, props);
+        const tables = MyTable.getTabNew(result.lists, Date.now(), callbackNewTab);
         callbackNewTab(tables);
       }
     });
   }, [param]);
 
   const callbackAsync = useCallback( (uuid) => {
-    uuids.push(uuid);
-    setUuids([...uuids]);
+    uuids.add(uuid);
+    setUuids(uuids);
   }, [uuids]);
 
   const { main } = props;
@@ -197,53 +197,51 @@ function IclijMarketBar( { props, callbackNewTab } ) {
     <div>
       <Navbar>
         <Nav>
-          <NavItem eventKey={1} href="#">
+          <NavItem>
             Name
-            <Select options="[{size:'5'}]"
+            <Select
                     onChange={e => handleChange(e, props)}
                     options={markets2}
             />
           </NavItem>
-          <NavItem eventKey={1} href="#">
+          <NavItem>
             Name
-            <Select options="[{size:'5'}]"
+            <Select
                     onChange={e => handleChangeML(e, props)}
                     options={markets2}
             />
           </NavItem>
-          <NavItem eventKey={1} href="#">
+          <NavItem>
             Name
-            <Select options="[{size:'5'}]"
+            <Select
                     onChange={e => resetMarket(e, props)}
                     options={markets2}
             />
           </NavItem>
-          <NavItem eventKey={1} href="#">
+          <NavItem>
             Name
-            <Select options="[{size:'5'}]"
+            <Select
                     onChange={e => resetML(e, props)}
                     options={markets2}
             />
           </NavItem>
-          <NavItem eventKey={2} href="#">
+          <NavItem>
             Start date
-            <DatePicker id="startdatepicker" value={startdate} onChange={e => handleStartDateChange(e, props)}/>
+            <DatePicker id="startdatepicker" value={startdate} onChange={(e: Date | null) => handleStartDateChange(e, props)}/>
           </NavItem>
-          <NavItem eventKey={3} href="#">
+          <NavItem>
             End date
-            <DatePicker id="enddatepicker" value={enddate} onChange={e => handleEndDateChange(e, props)}/>
+            <DatePicker id="enddatepicker" value={enddate} onChange={(e: Date | null) => handleEndDateChange(e, props)}/>
           </NavItem>
-          <NavItem eventKey={4} href="#">
+          <NavItem>
             <Button
-              bsStyle="primary"
-              onClick={ (e) => resetStartDate(e, props) }
+               onClick={ (e) => resetStartDate(e, props) }
             >
               Reset start date
             </Button>
           </NavItem>
-          <NavItem eventKey={5} href="#">
+          <NavItem>
             <Button
-              bsStyle="primary"
               onClick={ (e) => resetEndDate(e, props) }
             >
               Reset end date
@@ -253,9 +251,8 @@ function IclijMarketBar( { props, callbackNewTab } ) {
       </Navbar>
       <Navbar>
         <Nav>
-          <NavItem eventKey={6} href="#">
+          <NavItem>
             <Button
-              bsStyle="primary"
               onClick={
                 (e) => getContent(e, props)
               }
@@ -263,19 +260,17 @@ function IclijMarketBar( { props, callbackNewTab } ) {
               Get find profit data
             </Button>
           </NavItem>
-          <NavItem eventKey={6} href="#">
+          <NavItem>
             <Button
-              bsStyle="primary"
-              onClick={
+               onClick={
                 (e) => getContentMachineLearning(e, props)
               }
             >
               Get machine learning data
             </Button>
           </NavItem>
-          <NavItem eventKey={6} href="#">
+          <NavItem>
             <Button
-              bsStyle="primary"
               onClick={
                 (e) => getContentEvolve(e, props)
               }
@@ -283,9 +278,8 @@ function IclijMarketBar( { props, callbackNewTab } ) {
               Get evolve data
             </Button>
           </NavItem>
-          <NavItem eventKey={6} href="#">
+          <NavItem>
             <Button
-              bsStyle="primary"
               onClick={
                 (e) => getContentImprove(e, props)
               }
@@ -293,19 +287,17 @@ function IclijMarketBar( { props, callbackNewTab } ) {
               Get improve profit data
             </Button>
           </NavItem>
-          <NavItem eventKey={6} href="#">
+          <NavItem>
             <Button
-              bsStyle="primary"
-              onClick={
+                onClick={
                 (e) => getContentDataset(e, props)
               }
             >
               Get dataset data
             </Button>
           </NavItem>
-          <NavItem eventKey={6} href="#">
+          <NavItem>
             <Button
-              bsStyle="primary"
               onClick={
                 (e) => getContentCrosstest(e, props)
               }
@@ -313,9 +305,8 @@ function IclijMarketBar( { props, callbackNewTab } ) {
               Get crosstest data
             </Button>
           </NavItem>
-          <NavItem eventKey={6} href="#">
+          <NavItem>
             <Button
-              bsStyle="primary"
               onClick={
                 (e) => getContentFilter(e, props)
               }
@@ -323,10 +314,9 @@ function IclijMarketBar( { props, callbackNewTab } ) {
               Get filter data
             </Button>
           </NavItem>
-          <NavItem eventKey={7} href="#">
+          <NavItem>
             <Button
-              bsStyle="primary"
-              onClick={
+                onClick={
                 (e) => getContentAboveBelow(e, props)
               }
             >

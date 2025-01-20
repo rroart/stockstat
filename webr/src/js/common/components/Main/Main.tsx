@@ -111,12 +111,11 @@ var nums = [ [ '1' , '2'], ['3' , '4'], ['5', '6']];
           </Tab>
           <Tab eventKey={5} title="Control Panel">
               <h2>Control Panel</h2>
-	      <ControlPanel props = { props }/>
+	      <ControlPanel /* TODO props = { props }*/ />
           </Tab>
 	  { mytabs.map((item, index) => getanewtab(item, 6 + index)) }
         </Tabs>
         <Button
-       bsStyle="primary"
        onClick={
          () => { newtab3() }
 	 }
@@ -124,7 +123,6 @@ var nums = [ [ '1' , '2'], ['3' , '4'], ['5', '6']];
      New tab
      </Button>
         <Button
-       bsStyle="primary"
        onClick={
          () => { onIncrementAsync() }
        }
@@ -132,7 +130,6 @@ var nums = [ [ '1' , '2'], ['3' , '4'], ['5', '6']];
      Async
      </Button>
         <Button
-       bsStyle="primary"
        onClick={
          () => { onIncrement() }
        }
@@ -140,7 +137,6 @@ var nums = [ [ '1' , '2'], ['3' , '4'], ['5', '6']];
      Inc
      </Button>
         <Button
-       bsStyle="primary"
        onClick={
          () => { onIncrement2() }
        }

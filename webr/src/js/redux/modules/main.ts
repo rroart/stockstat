@@ -104,7 +104,7 @@ export const getAwesomeR4 = createAction(GET_R4, () => ({}));
 export const updateMain = createAction(UPDATE_MAIN, (result2) => ({ result2 }));
 export const updateR3 = createAction(UPDATE_R3, (result3) => ({ result3 }));
 export const updateR4 = createAction(UPDATE_R4, (result4) => ({ result4 }));
-export const newtabMain3 = createAction(NEWTAB_MAIN3, () => ( new Tab()));
+export const newtabMain3 = createAction(NEWTAB_MAIN3, () => (  null /* TODO new Tab()*/));
 export const newtabMain = createAction(NEWTAB_MAIN, (par) => ( par ) );
 //export const increment = createAction(INCREMENT);
 export const increment = createAction(INCREMENT, ( num = 1) => ({ num }));

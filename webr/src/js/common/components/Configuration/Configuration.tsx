@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 
 import { Client, ConvertToSelect } from '../util'
 import Select from 'react-select';
-import { DropdownButton, MenuItem, ButtonToolbar, Nav, Navbar, NavItem, FormControl } from 'react-bootstrap';
+import { DropdownButton, ButtonToolbar, Nav, Navbar, NavItem, FormControl } from 'react-bootstrap';
 import ConfigTree from './ConfigTree';
 
 function Configuration( { props, config, configname } ) {

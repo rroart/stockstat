@@ -4,6 +4,7 @@ import './Main.css';
 
 class MainWithError extends PureComponent {
   render() {
+    /* TODO
     const { main } = this.props;
     const result = main && main.result ? main.result : null;
 
@@ -15,6 +16,7 @@ class MainWithError extends PureComponent {
         </div>
       );
     }
+      */
     return <div />;
   }
 }

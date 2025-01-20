@@ -91,8 +91,9 @@ function checkStatus(response) {
     return response;
   } else {
     const error = new Error(`HTTP Error ${response.statusText}`);
-    error.status = response.statusText;
-    error.response = response;
+    // TODO
+    //error.status = response.statusText;
+    //error.response = response;
     console.log(error); // eslint-disable-line no-console
     throw error;
   }

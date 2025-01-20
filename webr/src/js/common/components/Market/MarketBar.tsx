@@ -3,15 +3,15 @@ import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 import { Client, Config, ConvertToSelect } from '../util'
 import Select from 'react-select';
-import { DropdownButton, MenuItem, ButtonToolbar, Button, Nav, Navbar, NavItem, FormControl } from 'react-bootstrap';
+import { Button, Nav, Navbar, NavItem, FormControl } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
-import { ServiceParam, ServiceResult, NeuralNetCommand, IclijServiceParam, IclijServiceResult, GuiSize } from '../../types/main'
+import { NeuralNetCommand, GuiSize } from '../../types/main'
 import MyTable from "../MyTable/MyTable";
 import MyMap from "../util/MyMap";
 
 function MarketBar( { props, callbackNewTab }) {
   const [ param, setParam ] = useState(null);
-  const [ uuids, setUuids ] = useState( new Set() );
+  const [ uuids, setUuids ] = useState( new Set<String>() );
   const [ graphid, setGraphid ] = useState(null);
 
   function handleChange(event, props) {
@@ -93,15 +93,15 @@ function MarketBar( { props, callbackNewTab }) {
       if (param.async === true) {
         callbackAsync(result.uuid);
       } else {
-        const tables = MyTable.getTabNewOld(result.list, Date.now(), callbackGraph, props);
+        const tables = MyTable.getTabNewOld(result.list, Date.now(), callbackGraph);
         callbackNewTab(tables);
       }
     });
   }, [param]);
 
   const callbackAsync = useCallback( (uuid) => {
-    uuids.push(uuid);
-    setUuids([...uuids]);
+    uuids.add(uuid);
+    setUuids(uuids);
   }, [uuids]);
 
   const callbackGraph = useCallback( (value) => {
@@ -115,7 +115,7 @@ function MarketBar( { props, callbackNewTab }) {
     const param = Config.getParam(props.main.iconfig, "getcontentgraph2");
 
     const id = graphid;
-    const ids = new Set([param.market + "," + id]);
+    const ids = [param.market + "," + id];
     param.ids = ids;
 
     var guisize = new GuiSize();
@@ -145,54 +145,51 @@ function MarketBar( { props, callbackNewTab }) {
     <div>
       <Navbar>
         <Nav>
-          <NavItem eventKey={1} href="#">
+          <NavItem>
             Name
-            <Select options="[{size:'5'}]"
+            <Select 
                     onChange={e => handleChange(e, props)}
                     options={markets2}
             />
           </NavItem>
-          <NavItem eventKey={1} href="#">
+          <NavItem>
             Name
-            <Select options="[{size:'5'}]"
+            <Select 
                     onChange={e => handleChangeML(e, props)}
                     options={markets2}
             />
           </NavItem>
-          <NavItem eventKey={1} href="#">
+          <NavItem>
             Name
-            <Select options="[{size:'5'}]"
+            <Select 
                     onChange={e => resetML(e, props)}
                     options={markets2}
             />
           </NavItem>
-          <NavItem eventKey={2} href="#">
+          <NavItem>
             Start date
-            <DatePicker id="startdatepicker" value={startdate} onChange={e => handleStartDateChange(e, props)}/>
+            <DatePicker selected={startdate} onChange={(e:Date | null) => handleStartDateChange(e, props)}/>
           </NavItem>
-          <NavItem eventKey={3} href="#">
+          <NavItem>
             End date
-            <DatePicker id="enddatepicker" value={enddate} onChange={e => handleEndDateChange(e, props)}/>
+            <DatePicker selected={enddate} onChange={(e:Date | null) => handleEndDateChange(e, props)}/>
           </NavItem>
-          <NavItem eventKey={4} href="#">
+          <NavItem>
             <Button
-              bsStyle="primary"
               onClick={ (e) => resetStartDate(e, props) }
             >
               Reset start date
             </Button>
           </NavItem>
-          <NavItem eventKey={5} href="#">
+          <NavItem>
             <Button
-              bsStyle="primary"
               onClick={ (e) => resetEndDate(e, props) }
             >
               Reset end date
             </Button>
           </NavItem>
-          <NavItem eventKey={6} href="#">
+          <NavItem>
             <Button
-              bsStyle="primary"
               onClick={
                 (e) => getMarketData(e, props)
               }

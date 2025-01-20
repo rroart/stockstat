@@ -58,7 +58,7 @@ function TreeView( { props, config, map, configname } ) {
   }
   const map2 = MyMap.mymap(confMap);
   const itemlist = [];
-  for (let [key, value] of map2) {
+  for (let [key, value] of Object.entries(map2)) {
     itemlist.push(getview(value, key));
   }
   const map3 = itemlist; // Array.from(itemlist);

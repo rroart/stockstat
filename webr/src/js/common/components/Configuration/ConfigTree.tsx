@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 
 import { Client, ConvertToSelect } from '../util'
 import Select from 'react-select';
-import { DropdownButton, MenuItem, ButtonToolbar, Nav, Navbar, NavItem, FormControl } from 'react-bootstrap';
+import { DropdownButton, ButtonToolbar, Nav, Navbar, NavItem, FormControl } from 'react-bootstrap';
 import TreeView from './TreeView';
 import { MyMap } from '../util'
 
@@ -26,7 +26,7 @@ function ConfigTree( { props, config, configname } ) {
   const confMap = MyMap.myhas(configTreeMap, 'configTreeMap') ? MyMap.myget(configTreeMap, 'configTreeMap') : [];
   const map2 = MyMap.mymap(confMap);
   const itemlist = [];
-  for (let [key, value] of map2) {
+  for (let [key, value] of Object.entries(map2)) {
     itemlist.push(getview(value, key));
   }
   const map3 = itemlist; // Array.from(itemlist);
