@@ -14,10 +14,10 @@ function handleButtonClick(value, callback) {
   const result = Client.fetchApi.search("/searchmlt", { str : value });
   result.then(function(result) { callback(result); });
   console.log("here1");
-  const htm=(<h2>hei</h2>);
+  /*const htm=(<h2>hei</h2>);
   console.log("call " , htm);
   mainActions.newtabMain(htm);
-  console.log("call ", htm);
+  console.log("call ", htm);*/
 }
 
 function handleDownload(value, filename) {
@@ -38,6 +38,9 @@ function getcolumnsold(resultitemtable, baseurl, callback) {
   const columns = [];
   const head = array[0];
   for(let i = 0; i <head.cols.length; i++) {
+    /*
+    TODO copy paste
+      */
     if (head.cols[i] == "Img") {
       columns.push({ accessor:head.cols[i], Header:head.cols[i], sort: true, id: 'col'+i, Cell: ({value}) => (<a onClick = {(e) => handleButtonClick(value, callback)}>{value}</a>)});
       continue;
@@ -74,7 +77,6 @@ function getcolumns(resultitemtable, baseurl, callback) {
       columns.push({ accessor: keys[i], Header: keys[i], sort: true, id: 'col'+i, Cell: ({value}) => (<a onClick = {(e) => handleMLT(value, callback)}>{value}</a>)});
       continue;
     }
-      */
     if (keys[i] == "Filename") {
       columns.push({ accessor: keys[i], Header: keys[i], sort: true, id: 'col'+i, Cell: ({row, value}) => (<a onClick = { (e) => handleDownload(row, value)}>{value}</a>)});
       continue;
@@ -84,6 +86,8 @@ function getcolumns(resultitemtable, baseurl, callback) {
     } else {
       columns.push({ accessor: keys[i], Header: keys[i], sort: true });
     }
+      */
+    columns.push({ accessor: keys[i], Header: keys[i], sort: true });
   }
   console.log(columns);
   return columns;
@@ -177,7 +181,8 @@ function convert(resultitemtable, date, props) {
       //columns.push({ accessor: head.items[i], Header: head.items[i], sort: true, id: 'button'+i, Cell: (row) => (<span id={head.items[i]} data-tip = {row.value} dangerouslySetInnerHTML={{__html: row.value }}/>) });
     } else {
       columns.push({ accessor: head.items[i], Header: head.items[i], sort: true });
-    }
+    }  
+    //columns.push({ accessor: head.items[i], Header: head.items[i], sort: true });
   }
   console.log(columns);
   console.log(head);
@@ -214,7 +219,9 @@ function convert(resultitemtable, date, props) {
   console.log(columns);
 }
 
+// unused
 function gethtable(getTableProps, getTableBodyProps, headerGroups, rows, prepareRow) {
+/* TODO
   return (
     <div>
       <table {...getTableProps()} style={{ border: 'solid 1px blue' }}>
@@ -263,6 +270,7 @@ function gethtable(getTableProps, getTableBodyProps, headerGroups, rows, prepare
       </table>
     </div>
   );
+  */
 }
 
 // unused
