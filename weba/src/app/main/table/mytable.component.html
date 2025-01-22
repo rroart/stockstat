@@ -3,7 +3,7 @@
   <ng-container *ngFor="let col of displayedColumns" matColumnDef="{{col}}">
     <mat-header-cell *matHeaderCellDef mat-sort-header>{{col}}</mat-header-cell>
     <mat-cell *matCellDef="let element">
-      <button class="mat-raised-button" *ngIf="col=='Img'" (click)="handleButtonClick(this.main.config, element[col])">{{element[col]}}</button>
+      <button class="mat-raised-button" *ngIf="col==='Img'" (click)="handleButtonClick(this.main.config, element[col])">{{element[col]}}</button>
       {{element[col]}}
     </mat-cell>
   </ng-container>

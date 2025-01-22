@@ -44,7 +44,9 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
       .subscribe(settings => (this.settings = settings));
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log("not implemented");
+  }
 
   ngOnDestroy(): void {
     this.unsubscribe$.next();
