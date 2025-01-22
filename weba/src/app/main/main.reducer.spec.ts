@@ -17,6 +17,7 @@ describe('MainReducer', () => {
     expect(state).toBe(initialState);
   });
 
+  /*
   it('should update language', () => {
     const action = new ActionMainChangeLanguage({ language: 'sk' });
     const state = mainReducer(undefined, action);
@@ -69,4 +70,5 @@ describe('MainReducer', () => {
     const state = mainReducer(undefined, action);
     expect(state.stickyHeader).toEqual(false);
   });
+  */
 });

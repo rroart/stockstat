@@ -82,13 +82,16 @@ describe('Main Actions', () => {
   it('should create ActionMainPersist action', () => {
     const action = new ActionMainPersist({
       main: {
-        autoNightMode: true,
-        elementsAnimations: true,
-        language: 'en',
-        theme: NIGHT_MODE_THEME,
-        pageAnimations: true,
-        pageAnimationsDisabled: true,
-        stickyHeader: true
+        count: 0,
+        tabs: undefined,
+        startdate: '',
+        enddate: '',
+        market: '',
+        market2: '',
+        markets: [],
+        tasks: [],
+        config: undefined,
+        config2: undefined
       }
     });
 

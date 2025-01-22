@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import { LocalStorageService } from '@app/core';
+import { AnimationsService, LocalStorageService } from '@app/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { asyncScheduler, interval, of } from 'rxjs';
 import { MytableComponent } from './table/mytable.component';
+
+export const MAIN_KEY = 'EXAMPLES.MAIN';
 
 import {
   catchError,
@@ -68,6 +70,7 @@ export class MainEffects {
   constructor(
     private actions$: Actions<Action>,
     private localStorageService: LocalStorageService,
+    private animationsService: AnimationsService,
     private service: MainService
   ) {}
 

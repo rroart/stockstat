@@ -50,7 +50,7 @@ export class AppComponent implements OnInit, OnDestroy {
   version = env.versions.app;
   year = new Date().getFullYear();
   logo = require("file-loader!../assets/logo.png");
-  languages = ['en'];
+  languages = ['en', 'de', 'sk', 'fr', 'es', 'pt-br'];
   navigation = [
     { link: 'main', label: 'anms.menu.main' },
   ];

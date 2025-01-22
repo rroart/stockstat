@@ -29,7 +29,7 @@ describe('SettingsEffects', () => {
       );
       const metadata = getEffectsMetadata(effect);
 
-      expect(metadata.persistSettings).toEqual({ dispatch: false });
+      expect(metadata.persistSettings$).toEqual({ dispatch: false });
     });
   });
 
@@ -52,7 +52,7 @@ describe('SettingsEffects', () => {
       animationsService
     );
 
-    effect.persistSettings.subscribe(() => {
+    effect.persistSettings$.subscribe(() => {
       expect(localStorageService.setItem).toHaveBeenCalledWith(
         SETTINGS_KEY,
         persistAction.payload.settings

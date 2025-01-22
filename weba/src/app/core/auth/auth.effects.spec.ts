@@ -23,7 +23,7 @@ describe('AuthEffects', () => {
       const effect = new AuthEffects(actions, localStorageService, router);
       const metadata = getEffectsMetadata(effect);
 
-      expect(metadata.login).toEqual({ dispatch: false });
+      expect(metadata.login$).toEqual({ dispatch: false });
     });
 
     it('should call setItem on LocalStorageService', () => {
@@ -32,7 +32,7 @@ describe('AuthEffects', () => {
       const actions = new Actions(source);
       const effect = new AuthEffects(actions, localStorageService, router);
 
-      effect.login.subscribe(() => {
+      effect.login$.subscribe(() => {
         expect(localStorageService.setItem).toHaveBeenCalledWith(AUTH_KEY, {
           isAuthenticated: true
         });
@@ -46,7 +46,7 @@ describe('AuthEffects', () => {
       const effect = new AuthEffects(actions, localStorageService, router);
       const metadata = getEffectsMetadata(effect);
 
-      expect(metadata.logout).toEqual({ dispatch: false });
+      expect(metadata.logout$).toEqual({ dispatch: false });
     });
 
     it('should call setItem on LocalStorageService and navigate to about', () => {
@@ -55,7 +55,7 @@ describe('AuthEffects', () => {
       const actions = new Actions(source);
       const effect = new AuthEffects(actions, localStorageService, router);
 
-      effect.login.subscribe(() => {
+      effect.login$.subscribe(() => {
         expect(localStorageService.setItem).toHaveBeenCalledWith(AUTH_KEY, {
           isAuthenticated: false
         });

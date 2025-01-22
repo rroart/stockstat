@@ -1,5 +1,7 @@
 import { AppState } from '@app/core';
 
+export const NIGHT_MODE_THEME = 'BLACK-THEME';
+
 export type Language = 'en';
 
 export interface MainState {

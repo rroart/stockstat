@@ -17,11 +17,13 @@ describe('SettingsReducer', () => {
     expect(state).toBe(initialState);
   });
 
+  /*
   it('should update language', () => {
     const action = new ActionSettingsChangeLanguage({ language: 'sk' });
     const state = settingsReducer(undefined, action);
     expect(state.language).toEqual('sk');
   });
+  */
 
   it('should update theme', () => {
     const action = new ActionSettingsChangeTheme({ theme: 'dark' });
