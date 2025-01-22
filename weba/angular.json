@@ -147,13 +147,11 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "src/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
             ]
           }
         }
@@ -169,21 +167,13 @@
             "protractorConfig": "e2e/protractor.conf.js",
             "devServerTarget": "angular-ngrx-material-starter:serve"
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": "e2e/tsconfig.e2e.json",
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
-    }
+    },
   },
   "defaultProject": "angular-ngrx-material-starter",
   "cli": {
+    "schematicCollections": ["angular-eslint"],
     "analytics": false
   }
 }
