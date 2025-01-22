@@ -5,6 +5,7 @@ import {
   compose,
   createStore,
 } from 'redux';
+//import { configureStore } from '@reduxjs/toolkit';
 
 import sagas from './sagas';
 import rootReducer from './rootReducers';

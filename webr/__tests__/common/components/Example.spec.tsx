@@ -14,19 +14,17 @@ const fixture = {
 };
 
 describe('ExampleView', () => {
+  let count = 3;
   it('should render a blank div without data', () => {
-    /*render(<Main />)
+    render(<Main props = { count }/>)
   
-    expect(screen.length).toEqual(1)*/
-    //expect(el.find('.exampleOutput').length).toEqual(0)
+    /*expect(screen.length).toEqual(1)*/
   })
 
   it('should render with correct data', () => {
-    /*render(<Main {...fixture} />)
+    render(<Main props = { count } {...fixture} />)
 
-    expect(screen.length).toEqual(1)
+    /*expect(screen.length).toEqual(1)
     expect(screen.find('.exampleOutput').length).toEqual(1)*/
-    //expect(el.length).toEqual(1)
-    //expect(el.find('.exampleOutput').length).toEqual(1)
   })
 })

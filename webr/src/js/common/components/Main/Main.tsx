@@ -62,13 +62,23 @@ function Main( {props} ) {
     )
   }
 
+  console.log("main");
   const { main } = props;
     console.log(main);
-    console.log(Object.keys(main));
     const result = main && main.result2 ? main.result2 : null;
+    // for testing
+    if (result) {
+      console.log("result");
+    }
+    else {
+      console.log("noresult");
+      return (<div/>);
+    }
+    console.log(Object.keys(main));
     const result3 = main && main.result3 ? main.result3 : null;
     const count = main && main.count ? main.count : null;
     //const tabs = main && main.tabs ? main.tabs : null;
+    console.log("count" + count);
 
 var mytabs = tabs;
 var map = new Object();
