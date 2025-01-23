@@ -75,6 +75,7 @@ export class MainComponent implements OnInit, OnDestroy {
       select(selectAuth),
       map(auth => auth.isAuthenticated)
     );
+    // TODO null problems for test
     this.mytabs = this.main.tabs;
 
     const myrows = [];

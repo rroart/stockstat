@@ -91,7 +91,7 @@
 	      <executable>npm</executable>
 	      <arguments>
 		<argument>run</argument>
-		<argument>test</argument>
+		<argument>test-headless</argument>
 	      </arguments>
 	    </configuration>
 	  </execution>

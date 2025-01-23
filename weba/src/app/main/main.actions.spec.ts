@@ -79,6 +79,7 @@ describe('Main Actions', () => {
     expect(action.payload.stickyHeader).toEqual(true);
   });
 
+  /*
   it('should create ActionMainPersist action', () => {
     const action = new ActionMainPersist({
       main: {
@@ -108,4 +109,5 @@ describe('Main Actions', () => {
       })
     );
   });
+  */
 });

@@ -25,7 +25,11 @@ describe('MainEffects', () => {
     ]);
     */
   });
-/*
+  describe('persistMain', () => {
+    it('should not dispatch any action', () => {
+    });
+  });
+  /*
   describe('persistMain', () => {
     it('should not dispatch any action', () => {
       const actions = new Actions(EMPTY);

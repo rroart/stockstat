@@ -8,6 +8,7 @@
     "docker-start": "ng serve  --host 0.0.0.0 --port 18184",
     "build": "NODE_OPTIONS=--openssl-legacy-provider ng build",
     "test": "npm run lint && ng test --configuration=test",
+    "test-headless": "ng test --watch=false --browsers=ChromeHeadless",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "watch": "ng test --configuration=test --browsers ChromeHeadless --watch",
