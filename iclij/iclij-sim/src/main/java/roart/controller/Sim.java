@@ -92,11 +92,13 @@ public class Sim {
 
     public void method(String param, String string, boolean b) {
         //param = getParam(param);
-        PipelineData data = JsonUtil.convert(param, PipelineData.class);
+        PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class);
+        // TODO
         if (data.getMap().isEmpty()) {
             return;
         }
         String id = PipelineUtils.getString(data, EvolveConstants.ID);
+        // TODO
         List<SerialScoreChromosome> myList = PipelineUtils.getListPlain(data, id);
         if (myList.size() > 0) {
             //for ()
@@ -238,6 +240,7 @@ public class Sim {
             String simtext = PipelineUtils.getString(data, EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
             String node = iclijConfig.getEvolveSaveLocation();
             String mypath = iclijConfig.getEvolveSavePath();
+            // TODO_
             configCurator(iclijConfig);
             String text = printtext(string + " " + simtext, "File " + id, output);
             String filename = new FileSystemDao(iclijConfig, curatorClient).writeFile(node, mypath, null, text);
@@ -320,11 +323,13 @@ public class Sim {
 
     public void method2(String param) {
         //param = getParam(param);
-        PipelineData data = JsonUtil.convert(param, PipelineData.class);
+        PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class);
+        // TODO
         if (data.getMap().isEmpty()) {
             return;
         }
         String id = PipelineUtils.getString(data, EvolveConstants.ID);
+        // TODO
         List<SerialScoreChromosome> myList = PipelineUtils.getListPlain(data, id);
         if (myList.size() > 0) {
             List<String> output = new ArrayList<>();
@@ -367,6 +372,7 @@ public class Sim {
             String simtext = PipelineUtils.getString(data, EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
             String node = iclijConfig.getEvolveSaveLocation();
             String mypath = iclijConfig.getEvolveSavePath();
+            // TODO_
             configCurator(iclijConfig);
             String text = printtext("simauto " + simtext, "File " + id, output);
             String filename = new FileSystemDao(iclijConfig, curatorClient).writeFile(node, mypath, null, text);

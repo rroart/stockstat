@@ -509,6 +509,7 @@ public class PipelineUtils {
     }
     
     public static Map getMarketObjectMap(PipelineData data) {
+        // TODO if this is serialized
         SerialMap map = (SerialMap) data.get(PipelineConstants.MARKETOBJECT);
         if (map != null) {
             return map.getMap();

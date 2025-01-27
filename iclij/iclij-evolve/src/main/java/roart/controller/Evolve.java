@@ -115,14 +115,15 @@ public class Evolve {
         //param = getParam(param);
         List<String> output = new ArrayList<>();
         TypeReference ref = new TypeReference<List<LinkedHashMap<Double, AbstractChromosome>>>(){};
-        PipelineData data = JsonUtil.convert(param, PipelineData.class);
+        PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class);
         String id = PipelineUtils.getString(data, EvolveConstants.ID);
+        // TODO_
         List<SerialScoreChromosome> myList0 = PipelineUtils.getList(data, id);
         if (myList0 == null) {
         	return;
         }
         List<ImmutablePair<Double, String>> myList = myList0.stream().map(e -> new ImmutablePair<Double, String>(e.getLeft(), "" + e.getRight())).toList();
-        Map<String, Object> aconf = PipelineUtils.getMapPlain(data, EvolveConstants.DEFAULT);
+        Map<String, Object> aconf = PipelineUtils.getMap(data, EvolveConstants.DEFAULT);
         //System.out.println("aconf" + aconf);
         //if (true) return;
         String title = PipelineUtils.getString(data, EvolveConstants.TITLETEXT);
@@ -275,11 +276,13 @@ public class Evolve {
     public void method2(String param) {
         //param = getParam(param);
         List<String> output = new ArrayList<>();
-        PipelineData data = JsonUtil.convert(param, PipelineData.class);
+        PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class);
+        // TODO
         if (data.getMap().isEmpty()) {
             
         }
         String id = PipelineUtils.getString(data, EvolveConstants.ID);
+        // TODO
         List<SerialScoreChromosome> myList0 = PipelineUtils.getListPlain(data, id);
         for (SerialScoreChromosome my : myList0) {
             //System.out.println(my.getKey() + " " + my.getRight());
@@ -383,9 +386,10 @@ public class Evolve {
     public void method3(String param) {
         //param = getParam(param);
         //Map<String, Object> myMap = convert(param, new TypeReference<List<LinkedHashMap<Double, MarketFilterChromosome2>>>(){});
-        PipelineData data = JsonUtil.convert(param, PipelineData.class);
+        PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class);
         String id = PipelineUtils.getString(data, EvolveConstants.ID);
-        List<SerialScoreChromosome> myList = PipelineUtils.getListPlain(data, id);
+        // TODO
+        List<SerialScoreChromosome> myList = PipelineUtils.getList(data, id);
         //List<SerialScoreChromosome> myList = (List<SerialScoreChromosome>) myMap.get(id);
         List myList0 = PipelineUtils.getListPlain(data, id);
         System.out.println("myl"+ myList0.size() + " " + myList0.get(0).getClass().getCanonicalName());
@@ -398,6 +402,7 @@ public class Evolve {
         PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class);
         //Map<String, Object> myMap = new HashMap<>(); //convert(param, new TypeReference<List<LinkedHashMap<Double, AboveBelowChromosome>>>(){});
         String id = PipelineUtils.getString(data, EvolveConstants.ID);
+        // TODO
         List<SerialScoreChromosome> myList = PipelineUtils.getList(data, id);
         List myList0 = PipelineUtils.getList(data, id);
         System.out.println("myl"+ myList0.size() + " " + myList0.get(0).getClass().getCanonicalName());

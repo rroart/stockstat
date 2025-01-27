@@ -410,7 +410,8 @@ public class ControlService {
             updateMap.putAll(datum.getMap(PipelineConstants.UPDATE));
             scoreMap.putAll(datum.getMap(PipelineConstants.SCORE));
             // rec with own result
-            resultMap.getMap().putAll(datum.getMap(PipelineConstants.RESULT));
+            // TODO
+            resultMap.putAll(datum.getMap(PipelineConstants.RESULT));
         }
         return result.getList();
         //return result.getMaps().get("update");
@@ -435,7 +436,8 @@ public class ControlService {
             PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE);  
             updateMap.putAll(datum.getMap(PipelineConstants.UPDATE));
             scoreMap.putAll(datum.getMap(PipelineConstants.SCORE));
-            resultMap.getMap().putAll(datum.getMap(PipelineConstants.RESULT));
+            // TODO?
+            resultMap.putAll(datum.getListMap(PipelineConstants.RESULT));
             //Map<String, Object> updateMap = result.getMaps().get("update");
             //conf.getConfigValueMap().putAll(updateMap);
             //return updateMap;

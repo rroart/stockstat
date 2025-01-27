@@ -26,7 +26,11 @@ import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialList;
+import roart.common.pipeline.data.SerialListMap;
+import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialMapPlain;
+import roart.common.pipeline.data.SerialNeuralNetConfig;
 import roart.common.pipeline.data.SerialScoreChromosome;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
@@ -159,7 +163,7 @@ public class EvolutionService {
         maps.setName(PipelineConstants.EVOLVE);
         maps.put(PipelineConstants.UPDATE, new SerialMapPlain(updateMap));
         maps.put(PipelineConstants.SCORE, new SerialMapPlain(scoreMap));
-        maps.put(PipelineConstants.RESULT, new SerialMapPlain(resultMap));
+        maps.put(PipelineConstants.RESULT, new SerialListMap(resultMap));
         return maps;
     }
 
@@ -243,10 +247,11 @@ public class EvolutionService {
             updateMap.put(configKey, newNNConfigstring);
             scoreMap.put(configKey, best.getFitness());
             scoreMap.put("scores", results.stream().map(SerialScoreChromosome::getLeft).collect(Collectors.toList()));            
-            resultMap.put(filename, results);
+            // TODO_
+            resultMap.put(filename, new SerialList(results));
             resultMap.put(EvolveConstants.ID, filename);
             resultMap.put(EvolveConstants.TITLETEXT, title);
-            resultMap.put(EvolveConstants.DEFAULT, nnconfig);
+            resultMap.put(EvolveConstants.DEFAULT, new SerialNeuralNetConfig(nnconfig));
 
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(myKey);
@@ -308,10 +313,11 @@ public class EvolutionService {
             }
             updateMap.put(configKey, newNNConfigstring);
             scoreMap.put(configKey, best.getFitness());
-            resultMap.put(filename, results);
+            // TODO
+            resultMap.put(filename, new SerialList(results));
             resultMap.put(EvolveConstants.TITLETEXT, title);
             resultMap.put(EvolveConstants.ID, filename);
-            resultMap.put(EvolveConstants.DEFAULT, nnconfig);
+            resultMap.put(EvolveConstants.DEFAULT, new SerialNeuralNetConfig(nnconfig));
 
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(myKey);

@@ -29,6 +29,7 @@ import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.model.TimingItem;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMap;
 import roart.common.queue.QueueElement;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
@@ -115,7 +116,8 @@ public class ImproveProfitAction extends MarketAction {
             PipelineData results = componentData.getResultMap();
             // if not interrupted
             if (results != null) {
-            	results.put(EvolveConstants.DEFAULT, defaults);
+                // TODO TODO
+            	results.put(EvolveConstants.DEFAULT, new SerialMap(defaults));
             	// TODO?
                 Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 QueueElement element = new QueueElement();

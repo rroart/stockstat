@@ -11,23 +11,36 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import roart.common.constants.Constants;
+import roart.common.constants.EvolveConstants;
+import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.MapOneDim;
 import roart.common.pipeline.data.OneDim;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialDouble;
 import roart.common.pipeline.data.SerialInteger;
+import roart.common.pipeline.data.SerialKeyValue;
+import roart.common.pipeline.data.SerialList;
+import roart.common.pipeline.data.SerialListMap;
 import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialOneDim;
+import roart.common.pipeline.data.SerialPair;
 import roart.common.pipeline.data.SerialPairPlain;
+import roart.common.pipeline.data.SerialScoreChromosome;
 import roart.common.pipeline.data.SerialString;
 import roart.common.pipeline.data.SerialMapDD;
 import roart.common.pipeline.data.SerialMapdd;
+import roart.common.pipeline.data.SerialNeuralNetConfig;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
+import roart.iclij.evolution.marketfilter.chromosome.impl.AboveBelowChromosome;
 
 import static org.junit.jupiter.api.Assertions.*;
+import roart.common.ml.NeuralNetConfig;
+import roart.common.ml.NeuralNetConfigs;
+import roart.common.config.ConfigConstants;
+import roart.common.config.MLConstants;
 
 public class PipelineUtilsTest {
     private static Double[] array = { 1.0,-1.0 };
@@ -201,5 +214,131 @@ public class PipelineUtilsTest {
     /*
     */
     
-            
+    @Test
+    public void test5() {
+        String filename = "file";
+        List<SerialScoreChromosome> results = List.of(new SerialScoreChromosome(0.5, new AboveBelowChromosome(List.of(false))));
+        NeuralNetConfig nnConfig = new NeuralNetConfigs().get(ConfigConstants.MACHINELEARNINGPYTORCHMLP);
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put(filename, new SerialList(results));
+        resultMap.put(EvolveConstants.ID, filename);
+        resultMap.put(EvolveConstants.TITLETEXT, "title");
+        resultMap.put(EvolveConstants.DEFAULT, new SerialNeuralNetConfig(nnConfig));
+        SerialMapPlain serialMapPlain = new SerialMapPlain(resultMap);
+        SerialMapPlain newSerialMapPlain = testsub(serialMapPlain);
+        
+        SerialNeuralNetConfig newNN = (SerialNeuralNetConfig) serialMapPlain.getMap().get(EvolveConstants.DEFAULT);
+        System.out.println("NN" + newNN.getClass().getName());
+        //SerialNeuralNetConfig newNN2 = (SerialNeuralNetConfig) newSerialMapPlain.getMap().get(EvolveConstants.DEFAULT);
+        //System.out.println("NN" + newNN2.getClass().getName());
+        
+        //SerialMap serialMap = new SerialMap(resultMap);
+        //testsub(serialMap);
+        
+        PipelineData data = new PipelineData();
+        data.setName(PipelineConstants.EVOLVE);
+        //maps.put(PipelineConstants.UPDATE, new SerialMapPlain(updateMap));
+        //maps.put(PipelineConstants.SCORE, new SerialMapPlain(scoreMap));
+        data.put(PipelineConstants.RESULT, serialMapPlain);
+        
+        PipelineData newData = testsub(data);
+        
+        SerialMap serialMap = new SerialMap(resultMap);
+        SerialMap newSerialMap = testsub(serialMap);
+        
+        SerialNeuralNetConfig newNN3 = (SerialNeuralNetConfig) serialMap.getMap().get(EvolveConstants.DEFAULT);
+        System.out.println("NN" + newNN3.getClass().getName());
+        SerialNeuralNetConfig newNN4 = (SerialNeuralNetConfig) newSerialMap.getMap().get(EvolveConstants.DEFAULT);
+        System.out.println("NN" + newNN4.getClass().getName());
+    }
+           
+    public <C> C testsub(C object) {
+        System.out.println("Checking for " + object.getClass().getCanonicalName());
+        String json = JsonUtil.convert(object);
+        
+        System.out.println("json" + json);
+                
+        C data2 = (C) JsonUtil.convert(json, object.getClass());
+
+        String newjson = JsonUtil.convert(data2);
+        
+        System.out.println("json2"+ newjson);
+        
+        assertEquals(json, newjson);
+
+        return data2;
+    }
+
+    @Test
+    public void test6() {
+        String filename = "file";
+        List<SerialScoreChromosome> results = List.of(new SerialScoreChromosome(0.5, new AboveBelowChromosome(List.of(false))));
+        NeuralNetConfig nnConfig = new NeuralNetConfigs().get(ConfigConstants.MACHINELEARNINGPYTORCHMLP);
+        SerialList resultList = new SerialList();
+        resultList.add(new SerialPair(new SerialString(filename), new SerialList(results)));
+        resultList.add(new SerialPair(new SerialString(EvolveConstants.ID), new SerialString(filename)));
+        resultList.add(new SerialPair(new SerialString(EvolveConstants.TITLETEXT), new SerialString("title")));
+        resultList.add(new SerialPair(new SerialString(EvolveConstants.DEFAULT), new SerialNeuralNetConfig(nnConfig)));
+
+        SerialList newSerialList = testsub(resultList);
+        
+        SerialPair pair = (SerialPair) resultList.get(3);
+        SerialNeuralNetConfig newNN3 = (SerialNeuralNetConfig) pair.getRight();
+        System.out.println("NN" + newNN3.getClass().getName());
+
+        SerialPair pair2 = (SerialPair) newSerialList.get(3);
+        SerialNeuralNetConfig newNN4 = (SerialNeuralNetConfig) pair2.getRight();
+        System.out.println("NN" + newNN4.getClass().getName());
+        assertEquals(newNN3.getClass().getName(), newNN4.getClass().getName());
+    }
+
+    @Test
+    public void test7() {
+        String filename = "file";
+        List<SerialScoreChromosome> results = List.of(new SerialScoreChromosome(0.5, new AboveBelowChromosome(List.of(false))));
+        NeuralNetConfig nnConfig = new NeuralNetConfigs().get(ConfigConstants.MACHINELEARNINGPYTORCHMLP);
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put(filename, new SerialList(results));
+        resultMap.put(EvolveConstants.ID, filename);
+        resultMap.put(EvolveConstants.TITLETEXT, "title");
+        resultMap.put(EvolveConstants.DEFAULT, new SerialNeuralNetConfig(nnConfig));
+        
+        SerialMap serialMap = new SerialMap(resultMap);
+        
+        PipelineData data = new PipelineData();
+        data.setName(PipelineConstants.EVOLVE);
+        //maps.put(PipelineConstants.UPDATE, new SerialMapPlain(updateMap));
+        //maps.put(PipelineConstants.SCORE, new SerialMapPlain(scoreMap));
+        data.put(PipelineConstants.RESULT, serialMap);
+        
+        PipelineData newData = testsub(data);
+        
+        SerialNeuralNetConfig newNN3 = (SerialNeuralNetConfig) data.get(EvolveConstants.DEFAULT);
+        System.out.println("NN" + newNN3.getClass().getName());
+        SerialNeuralNetConfig newNN4 = (SerialNeuralNetConfig) newData.get(EvolveConstants.DEFAULT);
+        System.out.println("NN" + newNN4.getClass().getName());
+        assertEquals(newNN3.getClass().getName(), newNN4.getClass().getName());
+    }
+           
+    @Test
+    public void test8() {
+        String filename = "file";
+        List<SerialScoreChromosome> results = List.of(new SerialScoreChromosome(0.5, new AboveBelowChromosome(List.of(false))));
+        NeuralNetConfig nnConfig = new NeuralNetConfigs().get(ConfigConstants.MACHINELEARNINGPYTORCHMLP);
+        SerialListMap resultList = new SerialListMap();
+        resultList.put(filename, new SerialList(results));
+        resultList.put(EvolveConstants.ID, new SerialString(filename));
+        resultList.put(EvolveConstants.TITLETEXT, new SerialString("title"));
+        resultList.put(EvolveConstants.DEFAULT, new SerialNeuralNetConfig(nnConfig));
+
+        SerialListMap newSerialList = testsub(resultList);
+        
+        SerialNeuralNetConfig newNN3 = (SerialNeuralNetConfig) resultList.get(EvolveConstants.DEFAULT);
+        System.out.println("NN" + newNN3.getClass().getName());
+
+        SerialNeuralNetConfig newNN4 = (SerialNeuralNetConfig) newSerialList.get(EvolveConstants.DEFAULT);
+        System.out.println("NN" + newNN4.getClass().getName());
+        assertEquals(newNN3.getClass().getName(), newNN4.getClass().getName());
+    }
+
 }

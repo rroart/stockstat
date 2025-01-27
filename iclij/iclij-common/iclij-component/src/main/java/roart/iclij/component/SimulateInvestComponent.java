@@ -735,6 +735,7 @@ public class SimulateInvestComponent extends ComponentML {
                         }
                         map.put(SimConstants.FILTER, JsonUtil.convert(filter));
                         //map.put("market", market.getConfig().getMarket());
+                        // fix
                         resultMap.put("" + offset, new SerialMapPlain(map));
                     }
                     scores.add(score);
@@ -1880,6 +1881,9 @@ public class SimulateInvestComponent extends ComponentML {
         String currency = null;
         SerialVolume[] list = volumeMap.get(id);
         for (int i = list.length - 1; i >= 0; i--) {
+            if (list[i] == null) {
+                continue;
+            }
             currency = (String) list[i].getCurrency();
             if (currency != null) {
                 break;
@@ -1914,7 +1918,7 @@ public class SimulateInvestComponent extends ComponentML {
                     int start = size - 1 - firstidx;
                     int end = size - 1 - lastidx;
                     for (int i = start; i <= end; i++) {
-                        Object volumeObject = list[i].getVolume();
+                        Object volumeObject = list[i];
                         if (volumeObject == null) {
                             continue;
                         }

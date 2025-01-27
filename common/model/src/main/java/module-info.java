@@ -17,4 +17,5 @@ module common.model {
     //requires jackson.annotations;
     requires com.fasterxml.jackson.annotation;
     requires org.slf4j;
+    requires common.config;
 }

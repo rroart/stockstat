@@ -21,7 +21,9 @@ import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialInteger;
+import roart.common.pipeline.data.SerialListMap;
 import roart.common.pipeline.data.SerialListPlain;
+import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.data.SerialString;
@@ -151,7 +153,7 @@ public class EvolutionService {
         maps.put(PipelineConstants.UPDATE, new SerialMapPlain(updateMap));
         maps.put(PipelineConstants.SCORE, new SerialMapPlain(scoreMap));
         // rec with own result
-        maps.put(PipelineConstants.RESULT, new SerialMapPlain(resultMap));
+        maps.put(PipelineConstants.RESULT, new SerialListMap(resultMap));
         return maps;
     }
 

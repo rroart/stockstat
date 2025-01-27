@@ -1,11 +1,13 @@
 package roart.common.pipeline.data;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class PipelineData extends SerialObject {
 
@@ -76,6 +78,10 @@ public class PipelineData extends SerialObject {
     }
 
     public Map<String, Object> getMap(String key) {
+        if (smap.containsKey(key)) {
+            SerialMapPlain amap = (SerialMapPlain) smap.get(key);
+            return amap.getMap();
+        }
         return (Map<String, Object>) map.get(key);
     }
 
@@ -96,4 +102,25 @@ public class PipelineData extends SerialObject {
     public SerialMap smap() {
         return smap;
     }
+
+    public void putAll(Map<String, Object> amap) {
+        for (Entry<String, Object> entry : amap.entrySet()) {
+            put(entry.getKey(), entry.getValue());
+        }
+    }
+
+    public List<SerialKeyValue> getListMap(String key) {
+        if (smap.containsKey(key)) {
+            SerialListMap amap = (SerialListMap) smap.get(key);
+            return amap.getMap();
+        }
+        return null;
+    }
+
+    public void putAll(List<SerialKeyValue> listMap) {
+        for (SerialKeyValue entry : listMap) {
+            put(entry.getKey(), entry.getValue());
+        }
+    }
+
 }

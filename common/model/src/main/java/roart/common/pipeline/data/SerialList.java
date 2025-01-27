@@ -3,8 +3,6 @@ package roart.common.pipeline.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import roart.result.model.ResultMeta;
-
 public class SerialList<T extends SerialObject> extends SerialObject {
     private List<T> list = new ArrayList<>();
 
