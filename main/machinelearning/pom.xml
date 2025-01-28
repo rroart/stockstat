@@ -224,6 +224,11 @@
       <artifactId>stockstat-stockutil</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-pipeline-predictor</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
     <!--dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>

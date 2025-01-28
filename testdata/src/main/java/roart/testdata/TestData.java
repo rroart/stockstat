@@ -1,5 +1,6 @@
 package roart.testdata;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,6 +9,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
@@ -163,6 +168,86 @@ public class TestData {
         map.put(TestConstants.MARKET2, getStockdata2(conf));
         map.put(TestConstants.MARKET3, getStockdata3(conf));
         return map;
+    }
+    
+    public StockData getStockdata(IclijConfig conf, Date startDate, Date endDate, String marketName, int size, int column, boolean ohlc) throws Exception {
+        List<StockItem> stocks = getStockItem(startDate, endDate, marketName, size, true, column, ohlc);
+        MetaItem meta = new MetaItem(marketName, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
+        String[] periodText = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
+        return new Extract(null).getStockData(conf, marketName, stocks, meta, periodText);
+    }
+    
+    public StockData getStockdata(IclijConfig conf, Date startDate, Date endDate, String market, int size, boolean weekdays, int period, boolean ohlc) throws Exception {
+        List<StockItem> stocks = getStockItem(startDate, endDate, market, size, weekdays, period, ohlc);
+        MetaItem meta = new MetaItem(TestConstants.MARKET, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
+        String[] periodText = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
+        return new Extract(null).getStockData(conf, market, stocks, meta, periodText);
+    }
+    
+    public List<StockItem> getStockItem(Date startDate, Date endDate, String market, int size, boolean weekdays, int period, boolean ohlc) throws Exception {
+        Random random = new Random();
+        List<StockItem> list = new ArrayList<>();
+        LocalDate startdate = TimeUtil.convertDate(startDate);
+        LocalDate enddate = TimeUtil.convertDate(endDate);
+        long days = Duration.between(startdate, enddate).toDaysPart();
+        for (int i = 0; i < size; i++) {
+            String id = UUID.randomUUID().toString();
+            double split = random.nextDouble();
+            int startsplit = (int) (days * split);
+            int endsplit = (int) (days - startsplit);
+            LocalDate mystartdate = startdate;
+            if (random.nextLong(10) < 2) {
+                mystartdate = mystartdate.plus(random.nextLong(startsplit), ChronoUnit.DAYS);                
+                mystartdate = TimeUtil.add(mystartdate, weekdays);
+            }
+            LocalDate myenddate = enddate;
+            if (random.nextLong(10) < 2) {
+                myenddate = myenddate.minus(random.nextLong(startsplit), ChronoUnit.DAYS);
+                myenddate = TimeUtil.add(myenddate, weekdays);
+            }
+            double datum = random.nextDouble(1000);
+            while (mystartdate.isBefore(myenddate)) {
+                StockItem stock = new StockItem();
+                stock.setMarketid(market);
+                stock.setId(id);
+                stock.setName("name"+id);
+                stock.setDate(TimeUtil.convertDate(mystartdate));
+                boolean missing = random.nextInt(100) < 2;
+                // TODO for all
+                if (!missing) {
+                    switch (period) {
+                    case Constants.INDEXVALUECOLUMN:
+                        stock.setIndexvalue(datum);
+                        break;
+                    case Constants.PRICECOLUMN:
+                        stock.setPrice(datum);
+                        if (ohlc) {
+                            stock.setPricelow(change(datum, -1, 0.04, random));
+                            stock.setPriceopen(change(datum, -1, 0.04, random));
+                            stock.setPricehigh(change(datum, 1, 0.04, random));
+                        }
+                        break;
+                    default:
+                        stock.setPeriod(period, datum);
+                    }
+                    list.add(stock);
+                }
+                mystartdate = TimeUtil.add(mystartdate, weekdays);
+                datum = change(random, datum);
+                // TODO random big change
+            }
+        }
+        return list;
+    }
+
+    private Double change(double datum, int i, double d, Random random) {
+        datum = datum * (1.0 + i * d * random.nextDouble());
+        return datum;
+    }
+
+    private double change(Random random, double datum) {
+        datum = datum * (1.02 - 0.04 * random.nextDouble());
+        return datum;
     }
     
 }

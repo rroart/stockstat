@@ -47,6 +47,7 @@ import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 import roart.model.data.StockData;
 import roart.pipeline.common.predictor.AbstractPredictor;
+import roart.predictor.util.PredictorUtils;
 import roart.result.model.ResultItem;
 import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
@@ -137,10 +138,10 @@ public class EvolutionService {
     
             StockData stockData = getStockData(pipelineData);
             
-            AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, datareaders,
+            AbstractPredictor[] predictors = new PredictorUtils().getPredictors(conf, datareaders,
                     stockData.catName, stockData.cat, neuralnetcommand);
             //new ServiceUtil().createPredictors(categories);
-            new ServiceUtil().calculatePredictors(predictors);
+            new PredictorUtils().calculatePredictors(predictors);
 
             findMLSettings(conf, evolutionConfig, disableList, table, updateMap, ml, datareaders, stockData.catName, stockData.cat, neuralnetcommand, scoreMap, resultMap);
     

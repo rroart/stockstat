@@ -322,6 +322,54 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-pipeline-indicator</artifactId>
+      <version>${stockstat.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-pipeline-category</artifactId>
+      <version>${stockstat.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-pipeline-model</artifactId>
+      <version>${stockstat.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-pipeline-predictor</artifactId>
+      <version>${stockstat.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-aggregate</artifactId>
+      <version>${stockstat.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-model</artifactId>
+      <version>${stockstat.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-stockutil</artifactId>
+      <version>${stockstat.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-testdata</artifactId>
+      <version>${stockstat.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.version}</version>

@@ -26,9 +26,13 @@ import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.TimeUtil;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
+import roart.model.data.StockData;
 
 public class StockUtil {
 
@@ -200,6 +204,7 @@ public class StockUtil {
      * @return array of stock lists based on date
      */
 
+    // TODO if list has not right date
     public static List<StockItem>[] getDatedstocklists(Map<String, List<StockItem>> stockdatemap, LocalDate datedate, int count, int mytableintervaldays) {
         List<StockItem>[] datedstocklists = null;
         datedstocklists = new ArrayList[count];
@@ -1259,4 +1264,14 @@ public class StockUtil {
         return stockdatemap;
     }
     
+    public StockData getStockData(IclijConfig conf, PipelineData[] pipelineData) {
+        StockData stockData = new StockData();
+        PipelineData pipelineDatum = PipelineUtils.getPipeline(pipelineData, PipelineConstants.META);
+        stockData.cat = PipelineUtils.getWantedcat(pipelineDatum);
+        stockData.catName = PipelineUtils.getMetaCat(pipelineDatum);
+        stockData.idNameMap = PipelineUtils.getNamemap(pipelineDatum);
+        stockData.stockdates = PipelineUtils.getDatelist(pipelineDatum);
+        return stockData;
+    }
+
 }

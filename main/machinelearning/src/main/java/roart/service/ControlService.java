@@ -55,6 +55,7 @@ import roart.common.util.MemUtil;
 import roart.common.util.ServiceConnectionUtil;
 import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
+import roart.aggregator.util.AggregatorUtils;
 import roart.etl.CleanETL;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.IclijServiceParam;
@@ -64,7 +65,9 @@ import roart.pipeline.common.aggregate.Aggregator;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.result.model.ResultItem;
 import roart.service.util.ServiceUtil;
+import roart.stockutil.StockUtil;
 import roart.model.data.StockData;
+import roart.predictor.util.PredictorUtils;
 
 public class ControlService {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -103,7 +106,7 @@ public class ControlService {
         List<ResultItem> retlist = result.getList();
         PipelineData[] pipelineData = result.getPipelineData();
         
-        StockData stockData = getStockData(conf, pipelineData);
+        StockData stockData = new StockUtil().getStockData(conf, pipelineData);
 
         try {
             String mydate = TimeUtil.format(conf.getConfigData().getDate());
@@ -112,12 +115,14 @@ public class ControlService {
                 mydate = stockData.stockdates.get(dateIndex);
             }
             
-            AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, pipelineData,
+            // TODO split
+            
+            AbstractPredictor[] predictors = new PredictorUtils().getPredictors(conf, pipelineData,
                     stockData.catName, stockData.cat, neuralnetcommand);
             //new ServiceUtil().createPredictors(categories);
-            new ServiceUtil().calculatePredictors(predictors);
+            new PredictorUtils().calculatePredictors(predictors);
             
-            Aggregator[] aggregates = getAggregates(conf, pipelineData,
+            Aggregator[] aggregates = new AggregatorUtils().getAggregates(conf, pipelineData,
                     disableList, stockData.idNameMap, stockData.catName, stockData.cat, neuralnetcommand, stockData.stockdates);
 
             /*
@@ -234,29 +239,6 @@ public class ControlService {
         }
     }
 
-    private Aggregator[] getAggregates(IclijConfig conf, PipelineData[] pipelineData,
-            List<String> disableList,
-            Map<String, String> idNameMap,
-            String catName, Integer cat, NeuralNetCommand neuralnetcommand, List<String> stockDates) throws Exception {
-        Aggregator[] aggregates = new Aggregator[10];
-        aggregates[0] = new MACDBase(conf, catName, catName, cat, pipelineData, stockDates);
-        //aggregates[1] = new AggregatorRecommenderIndicator(conf, catName, marketdatamap, categories, pipelineData, disableList);
-        //aggregates[2] = new RecommenderRSI(conf, catName, marketdatamap, categories);
-        aggregates[3] = new MLMACD(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand, stockDates);
-        aggregates[4] = new MLRSI(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand, stockDates);
-        aggregates[5] = new MLATR(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand, stockDates);
-        aggregates[6] = new MLCCI(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand, stockDates);
-        aggregates[7] = new MLSTOCH(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand, stockDates);
-        aggregates[8] = new MLMulti(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand, stockDates);
-        aggregates[9] = new MLIndicator(conf, catName, catName, cat, pipelineData, neuralnetcommand, stockDates);
-        log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.MACHINELEARNING));
-        log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.AGGREGATORSMLMACD));
-        log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.INDICATORSMACD));
-        log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.INDICATORSRSI));
-        log.info("Aggregate {}", conf.getConfigData().getConfigValueMap().get(ConfigConstants.INDICATORS));
-        return aggregates;
-    }
-
     public static void configCurator(IclijConfig conf) {
         if (true) {
             RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);        
@@ -268,16 +250,6 @@ public class ControlService {
         }
     }
     
-    public StockData getStockData(IclijConfig conf, PipelineData[] pipelineData) {
-        StockData stockData = new StockData();
-        PipelineData pipelineDatum = PipelineUtils.getPipeline(pipelineData, PipelineConstants.META);
-        stockData.cat = PipelineUtils.getWantedcat(pipelineDatum);
-        stockData.catName = PipelineUtils.getMetaCat(pipelineDatum);
-        stockData.idNameMap = PipelineUtils.getNamemap(pipelineDatum);
-        stockData.stockdates = PipelineUtils.getDatelist(pipelineDatum);
-        return stockData;
-    }
-
     public void send(String service, Object object, IclijConfig config) {
         IclijConfig iclijConfig = config; // TODO check
         Inmemory inmemory = InmemoryFactory.get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());

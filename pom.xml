@@ -43,6 +43,7 @@
 		    --add-reads pipeline.category=spring.context
 		    --add-reads pipeline.category=spring.core
 		    --add-reads pipeline.category=spring.beans
+		    --add-reads iclij.core=model
 		  </argLine>
 		</configuration>
          </plugin>

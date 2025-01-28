@@ -7,6 +7,7 @@
  */
 open module aggregate {
     exports roart.aggregator.impl;
+    exports roart.aggregator.util;
     exports roart.aggregatorindicator.impl;
     
     requires iclij.common.config;

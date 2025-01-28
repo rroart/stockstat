@@ -7,6 +7,7 @@
  */
 open module pipeline.predictor {
     exports roart.predictor.impl;
+    exports roart.predictor.util;
 
     requires common.constants;
     requires commons.math3;
