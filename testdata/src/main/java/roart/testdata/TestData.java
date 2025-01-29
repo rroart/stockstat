@@ -189,7 +189,7 @@ public class TestData {
         List<StockItem> list = new ArrayList<>();
         LocalDate startdate = TimeUtil.convertDate(startDate);
         LocalDate enddate = TimeUtil.convertDate(endDate);
-        long days = Duration.between(startdate, enddate).toDaysPart();
+        long days = Duration.between(startdate.atStartOfDay(), enddate.atStartOfDay()).toDaysPart();
         for (int i = 0; i < size; i++) {
             String id = UUID.randomUUID().toString();
             double split = random.nextDouble();

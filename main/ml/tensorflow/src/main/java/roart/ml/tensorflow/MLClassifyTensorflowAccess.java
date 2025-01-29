@@ -44,6 +44,8 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
 
     private List<MLClassifyModel>  mymodels;
 
+    private WebFluxUtil webFluxUtil = new WebFluxUtil();
+    
     public MLClassifyTensorflowAccess(IclijConfig conf) {
         this.conf = conf;
         findModels();
@@ -149,7 +151,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         param.setSize(size);
         param.setClasses(classes);
         log.info("evalin {} {} {}", param.getModelInt());
-        LearnTestClassify test = WebFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServers.get(0) + "/learntest");
+        LearnTestClassify test = webFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServers.get(0) + "/learntest");
         return test.getAccuracy();
     }
 
@@ -179,7 +181,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         LearnTestClassify param = new LearnTestClassify();
         param.setModelInt(modelInt);
         log.info("evalout {}", modelInt);
-        LearnTestClassify test = WebFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServers.get(0) + "/eval");
+        LearnTestClassify test = webFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServers.get(0) + "/eval");
         return test.getAccuracy();
     }
 
@@ -208,7 +210,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         }
         LearnTestClassify ret = null;
         try {
-            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServers.get(0) + "/classify");
+            ret = webFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServers.get(0) + "/classify");
         } catch (Exception e) {
             log.error("Exception", e);
         }
@@ -284,7 +286,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         for (String tensorflowServer : tensorflowServers) {
         try {
             LearnTestClassify ret = null;
-            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/filename");
+            ret = webFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/filename");
             boolean exists = ret.getExists();
             if (!exists && (!neuralnetcommand.isMldynamic() && neuralnetcommand.isMlclassify())) {
                 return result;
@@ -326,7 +328,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         LearnTestClassify ret = null;
         for (String tensorflowServer : tensorflowServers) {
         try {
-            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/learntestclassify");
+            ret = webFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/learntestclassify");
             boolean exception = ret.getException() != null && ret.getException();
             boolean gpu = ret.getGpu() != null && ret.getGpu();
             boolean cudnn = ret.getCudnn() != null && ret.getCudnn();
@@ -391,7 +393,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         LearnTestClassify ret = null;
         for (String tensorflowServer : tensorflowServers) {
         try {
-            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/dataset");
+            ret = webFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/dataset");
             boolean exception = ret.getException() != null && ret.getException();
             boolean gpu = ret.getGpu() != null && ret.getGpu();
             boolean cudnn = ret.getCudnn() != null && ret.getCudnn();

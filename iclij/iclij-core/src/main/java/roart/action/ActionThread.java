@@ -34,6 +34,7 @@ import roart.common.model.TimingBLItem;
 import roart.common.model.TimingItem;
 import roart.common.util.JsonUtil;
 import roart.common.util.MemUtil;
+import roart.common.webflux.WebFluxUtil;
 import roart.iclij.component.Component;
 import roart.iclij.component.factory.ComponentFactory;
 import roart.component.model.ComponentData;
@@ -193,7 +194,7 @@ public class ActionThread extends Thread {
                 }
                 boolean finished = false;
                 try {
-                    finished = thread.runAction(iclijConfig, item, dblist);
+                    finished = thread.runAction(iclijConfig, item, dblist, null);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -230,18 +231,19 @@ public class ActionThread extends Thread {
         }
     }
 
-    public boolean runAction(IclijConfig instance, ActionComponentItem item, List<ActionComponentItem> dblist) {
+    public boolean runAction(IclijConfig instance, ActionComponentItem item, List<ActionComponentItem> dblist, WebFluxUtil webFluxUtil) {
         boolean finished = false;
         IclijConfig myConfig = new IclijConfig(instance);
         myConfig.getConfigData().setMarket(item.getMarket());
         MarketAction action = ActionFactory.get(item.getAction(), dbDao, myConfig);
+        action.setWebFluxUtil(webFluxUtil);
         action.setParent(action);
         Market market = new MarketUtil().findMarket(item.getMarket(), myConfig);
         //ComponentInput input = new ComponentInput(new IclijConfig(IclijXMLConfig.getConfigInstance()), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>());
         ComponentInput input = new ComponentInput(myConfig.getConfigData(), null, item.getMarket(), null, null, true, false, new ArrayList<>(), new HashMap<>());
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(myConfig, input, 0, market);
+            param = ComponentData.getParam(myConfig, input, 0, market, webFluxUtil);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

@@ -44,6 +44,8 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
 
     private List<MLClassifyModel>  mymodels;
 
+    private WebFluxUtil webFluxUtil = new WebFluxUtil();
+    
     public MLClassifyPytorchAccess(IclijConfig conf) {
         this.conf = conf;
         findModels();
@@ -131,7 +133,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         param.setSize(size);
         param.setClasses(classes);
         log.info("evalin {} {} {}", param.getModelInt());
-        LearnTestClassify test = WebFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServers.get(0) + "/learntest");
+        LearnTestClassify test = webFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServers.get(0) + "/learntest");
         return test.getAccuracy();
     }
 
@@ -161,7 +163,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         LearnTestClassify param = new LearnTestClassify();
         param.setModelInt(modelInt);
         log.info("evalout {}", modelInt);
-        LearnTestClassify test = WebFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServers.get(0) + "/eval");
+        LearnTestClassify test = webFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServers.get(0) + "/eval");
         return test.getAccuracy();
     }
 
@@ -190,7 +192,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         }
         LearnTestClassify ret = null;
         try {
-            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServers.get(0) + "/classify");
+            ret = webFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServers.get(0) + "/classify");
         } catch (Exception e) {
             log.error("Exception", e);
         }
@@ -266,7 +268,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         for (String pytorchServer : pytorchServers) {
         try {
             LearnTestClassify ret = null;
-            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/filename");
+            ret = webFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/filename");
             boolean exists = ret.getExists();
             if (!exists && (!neuralnetcommand.isMldynamic() && neuralnetcommand.isMlclassify())) {
                 return result;
@@ -308,7 +310,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         LearnTestClassify ret = null;
         for (String pytorchServer : pytorchServers) {
         try {
-            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/learntestclassify");
+            ret = webFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/learntestclassify");
             boolean exception = ret.getException() != null && ret.getException();
             boolean gpu = ret.getGpu() != null && ret.getGpu();
             boolean memory = ret.getMemory() != null && ret.getMemory();
@@ -366,7 +368,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         LearnTestClassify ret = null;
         for (String pytorchServer : pytorchServers) {
         try {
-            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/dataset");
+            ret = webFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/dataset");
             boolean exception = ret.getException() != null && ret.getException();
             boolean gpu = ret.getGpu() != null && ret.getGpu();
             boolean memory = ret.getMemory() != null && ret.getMemory();

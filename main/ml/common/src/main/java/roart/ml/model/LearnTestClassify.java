@@ -100,7 +100,7 @@ public class LearnTestClassify {
     
     private String mapname;
     
-    private int classes;
+    private int classes; // used for number of predicted classes, number of predicted sequence or generated words
     
     private Double accuracy;
 

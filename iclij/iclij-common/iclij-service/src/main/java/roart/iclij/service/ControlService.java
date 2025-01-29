@@ -67,7 +67,14 @@ public class ControlService {
     
     public static CuratorFramework curatorClient;
 
+    private WebFluxUtil webFluxUtil = new WebFluxUtil();
+    
     private static final ObjectMapper mapper = new JsonMapper().builder().addModule(new JavaTimeModule()).build();
+
+    public ControlService(IclijConfig iclijConfig, WebFluxUtil webFluxUtil) {
+        this(iclijConfig);
+        this.webFluxUtil = webFluxUtil;
+    }
 
     public ControlService( IclijConfig iclijConfig) {
     	//conf = MyConfig.instance();
@@ -149,7 +156,7 @@ public class ControlService {
         //IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
         T[] result;// = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG        
-        Communication c = CommunicationFactory.get(sc.getLeft(), myclass, service, objectMapper, true, true, true, sc.getRight(), zkRegister);
+        Communication c = CommunicationFactory.get(sc.getLeft(), myclass, service, objectMapper, true, true, true, sc.getRight(), zkRegister, webFluxUtil);
         param.setWebpath(c.getReturnService());
         result = c.sendReceive(param);
         return result[0];
@@ -160,7 +167,7 @@ public class ControlService {
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
         T[] result;// = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG        
         zkRegister = (new QueueUtils(this.curatorClient))::zkRegister;
-        Communication c = CommunicationFactory.get(sc.getLeft(), myclass, service, objectMapper, true, true, true, sc.getRight(), zkRegister);
+        Communication c = CommunicationFactory.get(sc.getLeft(), myclass, service, objectMapper, true, true, true, sc.getRight(), zkRegister, webFluxUtil);
         param.setWebpath(c.getReturnService());
         result = c.sendReceive(param);
         return result[0];
@@ -174,7 +181,7 @@ public class ControlService {
             service = service + appid; // can not handle domain, only eureka
         }
         zkRegister = (new QueueUtils(this.curatorClient))::zkRegister;
-        Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister);
+        Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, webFluxUtil);
         c.send(object);
     }
 
@@ -214,7 +221,7 @@ public class ControlService {
     public List<String> getMarkets() {
         IclijServiceParam param = new IclijServiceParam();
         //param.setConfigData(conf.getConfigData());
-        IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETMARKETS);
+        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETMARKETS);
         return result.getMarkets();    	
     }
     
@@ -226,7 +233,7 @@ public class ControlService {
         }
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(conf.getConfigData());
-        IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETMETAS);
+        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETMETAS);
         list = result.getMetas();
         MyCache.getInstance().put(key, list);
         return list;
@@ -237,7 +244,7 @@ public class ControlService {
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(conf.getConfigData());
         param.setMarket(market);
-        IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETSTOCKS);
+        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETSTOCKS);
         return result.getStocks();   	
     }
     
@@ -252,7 +259,7 @@ public class ControlService {
         param.setConfigData(conf.getConfigData());
         param.setWantMaps(true);
         param.setMarket(market);
-        IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETDATES);
+        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETDATES);
         list = PipelineUtils.getDatelist(PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.DATELIST));      
         MyCache.getInstance().put(key, list);
         return list;
@@ -293,10 +300,10 @@ public class ControlService {
         // TODO retry or queue
         if (useMl) {
             // todo send queue ml
-            result = WebFluxUtil.sendMMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
+            result = webFluxUtil.sendMMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
         } else {
             // todo send queue core
-            result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
+            result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
         }
         // todo icore queue listen
         //log.info("blblbl" + JsonUtil.convert(result).length());
@@ -335,7 +342,7 @@ public class ControlService {
     public List getContentGraph() {
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(conf.getConfigData());
-        IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH);
+        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH);
         return result.getList();
     }
 
@@ -355,7 +362,7 @@ public class ControlService {
     	IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(conf.getConfigData());
         param.setIds(idset);
-        IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH2);
+        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH2);
         return result.getList();
     }
 
@@ -371,7 +378,7 @@ public class ControlService {
         neuralnetcommand.setMldynamic(conf.wantMLDynamic());
         neuralnetcommand.setMlcross(conf.wantMLCross());
         param.setNeuralnetcommand(neuralnetcommand);
-        IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, "/findprofit");
+        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, "/findprofit");
         return result.getPipelineData();
     }
 
@@ -388,14 +395,14 @@ public class ControlService {
     public List getContentStat() {
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(conf.getConfigData());
-        IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENTSTAT);
+        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENTSTAT);
         return result.getList();
     }
 
     public void dbengine(Boolean useSpark) throws Exception {
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(conf.getConfigData());
-        IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.SETCONFIG);
+        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.SETCONFIG);
         getAndSetCoreConfig();
     }
 
@@ -403,7 +410,7 @@ public class ControlService {
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(conf.getConfigData());
         param.setConfList(disableList);
-        IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVERECOMMENDER);
+        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVERECOMMENDER);
         if (doSet) {
             //conf = new MyMyConfig(result.getConfig());
             PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE);  
@@ -431,7 +438,7 @@ public class ControlService {
         neuralnetcommand.setMldynamic(true);
         param.setNeuralnetcommand(neuralnetcommand);
         // TODO retry or queue
-        IclijServiceResult result = WebFluxUtil.sendMMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVENN);
+        IclijServiceResult result = webFluxUtil.sendMMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVENN);
         if (doSet) {
             PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE);  
             updateMap.putAll(datum.getMap(PipelineConstants.UPDATE));
@@ -459,7 +466,7 @@ public class ControlService {
         neuralnetcommand.setMldynamic(true);
         param.setNeuralnetcommand(neuralnetcommand);
         // TODO retry or queue
-        IclijServiceResult result = WebFluxUtil.sendMMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVENN);
+        IclijServiceResult result = webFluxUtil.sendMMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVENN);
         return null;
     }
 
@@ -485,7 +492,7 @@ public class ControlService {
         param.setConfigData(componentInput.getConfigData());
         param.setWebpath(EurekaConstants.ACTION + "/" + action);
         param.setOffset(componentInput.getLoopoffset());
-        IclijServiceResult result = WebFluxUtil.sendAMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
+        IclijServiceResult result = webFluxUtil.sendAMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
 
         WebDataJson dataJson = result.getWebdatajson();
         WebData data = convert(dataJson);

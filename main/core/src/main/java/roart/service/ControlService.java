@@ -706,7 +706,7 @@ public class ControlService {
         if (appid != null) {
             service = service + appid; // can not handle domain, only eureka
         }
-        Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister);
+        Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, null);
         c.send(object);
     }
 

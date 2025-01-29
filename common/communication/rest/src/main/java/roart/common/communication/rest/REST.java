@@ -31,8 +31,13 @@ public class REST extends Communication {
 
     private String postfix;
     
-    public REST(String myname, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection, Function<String, Boolean> storeMessage) {
+    private WebFluxUtil webFluxUtil = new WebFluxUtil();
+    
+    public REST(String myname, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection, Function<String, Boolean> storeMessage, WebFluxUtil webFluxUtil) {
         super(myname, myclass, service, mapper, send, receive, sendreceive, connection, storeMessage);
+        if (webFluxUtil != null) {
+            this.webFluxUtil = webFluxUtil;
+        }
     }
     
     /*
@@ -94,7 +99,7 @@ public class REST extends Communication {
     @Override
     public <T> T[] sendReceive(Object param) {
         String url = connection; // getUrl();
-        T t = (T) WebFluxUtil.sendMeInner(myclass, param, url, mapper);
+        T t = (T) webFluxUtil.sendMeInner(myclass, param, url, mapper);
         T[] ts = (T[]) Array.newInstance(myclass, 1);
         //Object[] ts = new Object[1];
         ts[0] = t;

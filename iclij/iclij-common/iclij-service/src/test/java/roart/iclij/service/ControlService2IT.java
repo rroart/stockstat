@@ -9,12 +9,15 @@ import roart.common.communication.factory.CommunicationFactory;
 import roart.common.communication.model.Communication;
 import roart.common.constants.CommunicationConstants;
 import roart.common.util.ServiceConnectionUtil;
+import roart.common.webflux.WebFluxUtil;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
 
 public class ControlService2IT {
 
+    private WebFluxUtil webFluxUtil = new WebFluxUtil();
+    
     private static final boolean SENDRECEIVE = true;
     private IclijConfig iclijConfig;
     public void t0(String service) {
@@ -25,14 +28,14 @@ public class ControlService2IT {
         ObjectMapper objectMapper = new ObjectMapper();
         IclijServiceParam param = new IclijServiceParam();
         param.setWebpath(service);
-        Communication c = CommunicationFactory.get(sc.getLeft(), IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, sc.getRight(), null);
+        Communication c = CommunicationFactory.get(sc.getLeft(), IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, sc.getRight(), null, webFluxUtil);
         System.out.println("zzz0");
         IclijServiceResult[] result = new ControlService(iclijConfig).sendReceive(c, param);
         //if (true) return;
         System.out.println("zzz"+result[0]);
         System.out.println(param.getWebpath());
         param.setWebpath(service);
-        Communication c2 = CommunicationFactory.get(sc.getLeft(), IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, sc.getRight(), null);
+        Communication c2 = CommunicationFactory.get(sc.getLeft(), IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, sc.getRight(), null, webFluxUtil);
         IclijServiceResult[] result2 = new ControlService(iclijConfig).sendReceive(c2, param);
         System.out.println("zzz"+result2[0]);
         System.out.println(param.getWebpath());
@@ -49,7 +52,7 @@ public class ControlService2IT {
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, "{}", "{}");
         T[] result;// = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG        
         System.out.println("mnc"+myclass);
-        Communication c = CommunicationFactory.get(sc.getLeft(), myclass, service, new ObjectMapper(), true, true, true, sc.getRight(), null);
+        Communication c = CommunicationFactory.get(sc.getLeft(), myclass, service, new ObjectMapper(), true, true, true, sc.getRight(), null, webFluxUtil);
         param.setWebpath(c.getReturnService());
         //result = sendReceive(c, param);
         result = (T[]) c.sendReceive(param);
@@ -69,7 +72,7 @@ public class ControlService2IT {
         IclijServiceParam param = new IclijServiceParam();
         param.setWebpath("TST");
         ObjectMapper objectMapper = new ObjectMapper();
-        Communication c = CommunicationFactory.get(CommunicationConstants.SPRING, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "localhost", null);
+        Communication c = CommunicationFactory.get(CommunicationConstants.SPRING, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "localhost", null, webFluxUtil);
         IclijServiceResult result[] = new ControlService(iclijConfig).sendReceive(c, param);
         System.out.println("zzz"+result[0]);
         System.out.println("t2" + param.getWebpath());
@@ -80,7 +83,7 @@ public class ControlService2IT {
         IclijServiceParam param = new IclijServiceParam();
         param.setWebpath("TST");
         ObjectMapper objectMapper = new ObjectMapper();
-        Communication c = CommunicationFactory.get(CommunicationConstants.KAFKA, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "kafka9:9092", null);
+        Communication c = CommunicationFactory.get(CommunicationConstants.KAFKA, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "kafka9:9092", null, webFluxUtil);
         IclijServiceResult[] result = new ControlService(iclijConfig).sendReceive(c, param);
         System.out.println("t3" + param.getWebpath());
     }
@@ -90,7 +93,7 @@ public class ControlService2IT {
         IclijServiceParam param = new IclijServiceParam();
         param.setWebpath("TST");
         ObjectMapper objectMapper = new ObjectMapper();
-        Communication c = CommunicationFactory.get(CommunicationConstants.PULSAR, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "pulsar://kafka9:6650", null);
+        Communication c = CommunicationFactory.get(CommunicationConstants.PULSAR, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "pulsar://kafka9:6650", null, webFluxUtil);
         IclijServiceResult[] result = new ControlService(iclijConfig).sendReceive(c, param);
         System.out.println("t4" + param.getWebpath());
     }

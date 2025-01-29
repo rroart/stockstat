@@ -37,6 +37,8 @@ public class FileSystemAccess {
 
     private ConfigData configData;
     
+    private WebFluxUtil webFluxUtil = new WebFluxUtil();
+    
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public FileSystemAccess(ConfigData conf) {
@@ -50,8 +52,8 @@ public class FileSystemAccess {
         FileSystemConstructorParam param = new FileSystemConstructorParam();
         param.configid = "myid";
         param.configData = configData;
-        //FileSystemConstructorResult result = WebFluxUtil.sendMe(FileSystemConstructorResult.class, param, getAppName(), EurekaConstants.CONSTRUCTOR);
-        FileSystemConstructorResult result = WebFluxUtil.sendMe(FileSystemConstructorResult.class, url, param, EurekaConstants.CONSTRUCTOR);
+        //FileSystemConstructorResult result = webFluxUtil.sendMe(FileSystemConstructorResult.class, param, getAppName(), EurekaConstants.CONSTRUCTOR);
+        FileSystemConstructorResult result = webFluxUtil.sendMe(FileSystemConstructorResult.class, url, param, EurekaConstants.CONSTRUCTOR);
         return result.error;
     }
 
@@ -59,7 +61,7 @@ public class FileSystemAccess {
         FileSystemConstructorParam param = new FileSystemConstructorParam();
         param.configid = "myid";
         param.configData = configData;
-        FileSystemConstructorResult result = WebFluxUtil.sendMe(FileSystemConstructorResult.class, url, param, EurekaConstants.DESTRUCTOR);
+        FileSystemConstructorResult result = webFluxUtil.sendMe(FileSystemConstructorResult.class, url, param, EurekaConstants.DESTRUCTOR);
         return result.error;
     }
     public List<FileObject> listFiles(FileObject f) {
@@ -67,7 +69,7 @@ public class FileSystemAccess {
         param.configid = "myid";
         param.configData = configData;
         param.fo = f;
-        FileSystemFileObjectResult result = WebFluxUtil.sendMe(FileSystemFileObjectResult.class, url, param, EurekaConstants.LISTFILES);
+        FileSystemFileObjectResult result = webFluxUtil.sendMe(FileSystemFileObjectResult.class, url, param, EurekaConstants.LISTFILES);
         return Arrays.asList(result.getFileObject());
 
     }
@@ -77,7 +79,7 @@ public class FileSystemAccess {
         param.configid = "myid";
         param.configData = configData;
         param.fo = f;
-        FileSystemMyFileResult result = WebFluxUtil.sendMe(FileSystemMyFileResult.class, url, param, EurekaConstants.LISTFILESFULL);
+        FileSystemMyFileResult result = webFluxUtil.sendMe(FileSystemMyFileResult.class, url, param, EurekaConstants.LISTFILESFULL);
         return new ArrayList<>(result.map.values());
 
     }
@@ -87,7 +89,7 @@ public class FileSystemAccess {
         param.configid = "myid";
         param.configData = configData;
         param.fo = f;
-        FileSystemBooleanResult result = WebFluxUtil.sendMe(FileSystemBooleanResult.class, url, param, EurekaConstants.EXIST);
+        FileSystemBooleanResult result = webFluxUtil.sendMe(FileSystemBooleanResult.class, url, param, EurekaConstants.EXIST);
         return result.bool;
 
     }
@@ -97,7 +99,7 @@ public class FileSystemAccess {
         param.configid = "myid";
         param.configData = configData;
         param.fo = f;
-        FileSystemPathResult result = WebFluxUtil.sendMe(FileSystemPathResult.class, url, param, EurekaConstants.GETABSOLUTEPATH);
+        FileSystemPathResult result = webFluxUtil.sendMe(FileSystemPathResult.class, url, param, EurekaConstants.GETABSOLUTEPATH);
         return result.getPath();
 
     }
@@ -107,7 +109,7 @@ public class FileSystemAccess {
         param.configid = "myid";
         param.configData = configData;
         param.fo = f;
-        FileSystemBooleanResult result = WebFluxUtil.sendMe(FileSystemBooleanResult.class, url, param, EurekaConstants.ISDIRECTORY);
+        FileSystemBooleanResult result = webFluxUtil.sendMe(FileSystemBooleanResult.class, url, param, EurekaConstants.ISDIRECTORY);
         return result.bool;
 
     }
@@ -117,7 +119,7 @@ public class FileSystemAccess {
         param.configid = "myid";
         param.configData = configData;
         param.fo = f;
-        FileSystemByteResult result = WebFluxUtil.sendMe(FileSystemByteResult.class, url, param, EurekaConstants.GETINPUTSTREAM);
+        FileSystemByteResult result = webFluxUtil.sendMe(FileSystemByteResult.class, url, param, EurekaConstants.GETINPUTSTREAM);
         return new ByteArrayInputStream(result.bytes);
 
     }
@@ -127,7 +129,7 @@ public class FileSystemAccess {
         param.configid = "myid";
         param.configData = configData;
         param.paths = filenames;
-        FileSystemMyFileResult result = WebFluxUtil.sendMe(FileSystemMyFileResult.class, url, param, EurekaConstants.GETWITHINPUTSTREAM);
+        FileSystemMyFileResult result = webFluxUtil.sendMe(FileSystemMyFileResult.class, url, param, EurekaConstants.GETWITHINPUTSTREAM);
         return result.map;
 
     }
@@ -137,7 +139,7 @@ public class FileSystemAccess {
         param.configid = "myid";
         param.configData = configData;
         param.paths = filenames;
-        FileSystemMyFileResult result = WebFluxUtil.sendMe(FileSystemMyFileResult.class, url, param, EurekaConstants.GETWITHOUTINPUTSTREAM);
+        FileSystemMyFileResult result = webFluxUtil.sendMe(FileSystemMyFileResult.class, url, param, EurekaConstants.GETWITHOUTINPUTSTREAM);
         return result.map;
 
     }
@@ -147,7 +149,7 @@ public class FileSystemAccess {
         param.configid = "myid";
         param.configData = configData;
         param.fo = f;
-        FileSystemFileObjectResult result = WebFluxUtil.sendMe(FileSystemFileObjectResult.class, url, param, EurekaConstants.GETPARENT);
+        FileSystemFileObjectResult result = webFluxUtil.sendMe(FileSystemFileObjectResult.class, url, param, EurekaConstants.GETPARENT);
         return result.getFileObject()[0];
 
     }
@@ -157,7 +159,7 @@ public class FileSystemAccess {
         param.configid = "myid";
         param.configData = configData;
         param.path = fo;
-        FileSystemFileObjectResult result = WebFluxUtil.sendMe(FileSystemFileObjectResult.class, url, param, EurekaConstants.GET);
+        FileSystemFileObjectResult result = webFluxUtil.sendMe(FileSystemFileObjectResult.class, url, param, EurekaConstants.GET);
         return result.getFileObject()[0];
 
     }
@@ -178,7 +180,7 @@ public class FileSystemAccess {
         param.configid = "myid";
         param.configData = configData;
         param.fos = f;
-        FileSystemMessageResult result = WebFluxUtil.sendMe(FileSystemMessageResult.class, url, param, EurekaConstants.READFILE);
+        FileSystemMessageResult result = webFluxUtil.sendMe(FileSystemMessageResult.class, url, param, EurekaConstants.READFILE);
         return result.message;
     }
 
@@ -189,7 +191,7 @@ public class FileSystemAccess {
         param.configid = "myid";
         param.configData = configData;
         param.map = map;
-        FileSystemMessageResult result = WebFluxUtil.sendMe(FileSystemMessageResult.class, url, param, EurekaConstants.WRITEFILE);
+        FileSystemMessageResult result = webFluxUtil.sendMe(FileSystemMessageResult.class, url, param, EurekaConstants.WRITEFILE);
         return true;
     }
 
@@ -198,7 +200,7 @@ public class FileSystemAccess {
         param.configid = "myid";
         param.configData = configData;
         param.fos = f;
-        FileSystemStringResult result = WebFluxUtil.sendMe(FileSystemStringResult.class, url, param, EurekaConstants.GETMD5);
+        FileSystemStringResult result = webFluxUtil.sendMe(FileSystemStringResult.class, url, param, EurekaConstants.GETMD5);
         return result.map;
     }
 

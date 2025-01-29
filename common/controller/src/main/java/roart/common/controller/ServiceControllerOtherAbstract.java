@@ -115,7 +115,7 @@ public abstract class ServiceControllerOtherAbstract {
             }
             configCurator(iclijConfig);
             zkRegister = (new QueueUtils(curatorClient))::zkRegister;
-            Communication comm = CommunicationFactory.get(communication, myclass, myservice, objectMapper, false, true, false, connection, zkRegister);
+            Communication comm = CommunicationFactory.get(communication, myclass, myservice, objectMapper, false, true, false, connection, zkRegister, null);
             get(comm);
         }        
     }
@@ -127,7 +127,7 @@ public abstract class ServiceControllerOtherAbstract {
             String service = replypath;
             Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(c.getService(), services, communications);
             log.info("ServiceConnection {} {}", sc.getLeft(), sc.getRight());
-            Communication c2 = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister);
+            Communication c2 = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, null);
             c2.send(r);
             c2.destroy();
         }

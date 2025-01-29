@@ -26,6 +26,7 @@ import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.MapUtil;
 import roart.common.util.TimeUtil;
+import roart.common.webflux.WebFluxUtil;
 import roart.constants.IclijConstants;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
@@ -113,16 +114,21 @@ public class ComponentData {
     }
 
     public static ComponentData getParam(IclijConfig iclijConfig, ComponentInput input, int days) throws Exception {
-        return getParam(iclijConfig, input, days, null);
+        return getParam(iclijConfig, input, days, null, null);
     }
 
-    public static ComponentData getParam(IclijConfig iclijConfig, ComponentInput input, int days, Market aMarket) throws Exception {
+    public static ComponentData getParam(IclijConfig iclijConfig, ComponentInput input, int days, Market aMarket, WebFluxUtil webFluxUtil) throws Exception {
         ComponentData param = new ComponentData(input);
         //param.setAction(IclijConstants.FINDPROFIT);
         String market = input.getConfigData().getMarket();
         String mlmarket = input.getConfigData().getMlmarket();
         param.config = iclijConfig;
-        ControlService srv = new ControlService(iclijConfig);
+        ControlService srv;
+        if (webFluxUtil != null) {
+            srv = new ControlService(iclijConfig, webFluxUtil);
+        } else {
+            srv = new ControlService(iclijConfig);
+        }
         param.setService(srv);
         if (market != null) {
             srv.conf.getConfigData().setMarket(market);

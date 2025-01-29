@@ -76,6 +76,8 @@ public class ControlService {
 
     private static final ObjectMapper mapper = new JsonMapper().builder().addModule(new JavaTimeModule()).build();
 
+    private WebFluxUtil webFluxUtil = new WebFluxUtil();
+    
     public static CuratorFramework curatorClient;
 
     public ControlService() {
@@ -201,7 +203,7 @@ public class ControlService {
         param.setWantMaps(origparam.isWantMaps());
         param.setConfList(disableList);
         // TODO retry or queue
-        IclijServiceResult result = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
+        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
 
         /// TODO list2 = ImmutabilityUtil.immute(list2);
         MyCache.getInstance().put(key, result);
@@ -274,7 +276,7 @@ public class ControlService {
         if (appid != null) {
             service = service + appid; // can not handle domain, only eureka
         }
-        Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister);
+        Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, webFluxUtil);
         c.send(object);
     }
 

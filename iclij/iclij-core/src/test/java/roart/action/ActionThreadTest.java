@@ -115,7 +115,7 @@ public class ActionThreadTest {
         //.getPicksFilteredOuter(any(), any(), any(), any(), any(), any(), any());                
         doThrow(IllegalArgumentException.class)
         .when(thread)
-        .runAction(any(), any(), any());
+        .runAction(any(), any(), any(), null);
         //when(thread.runAction(any(), any(), any()).thenReturn(true);
         ActionThread t = new ActionThread(iclijConfig, dbDao);
         System.out.println("Thr" +t );

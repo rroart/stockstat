@@ -6,12 +6,16 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import roart.common.constants.Constants;
+import roart.common.constants.EurekaConstants;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;
@@ -22,18 +26,24 @@ import roart.pipeline.common.aggregate.Aggregator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.util.TimeUtil;
+import roart.common.webflux.WebFluxUtil;
+import roart.constants.IclijConstants;
 import roart.common.util.ArraysUtil;
+import roart.action.ActionThread;
 import roart.action.FindProfitAction;
 import roart.category.AbstractCategory;
 import roart.category.util.CategoryUtil;
 import roart.common.communication.factory.CommunicationFactory;
 import roart.common.communication.model.Communication;
+import roart.common.config.MLConstants;
 import roart.common.ml.NeuralNetCommand;
+import roart.common.model.ActionComponentItem;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMapTA;
 import roart.common.util.JsonUtil;
+import roart.common.util.MemUtil;
 import roart.common.util.ServiceConnectionUtil;
 import roart.common.util.TimeUtil;
 import roart.db.dao.IclijDbDao;
@@ -60,6 +70,8 @@ import org.springframework.context.annotation.ComponentScan;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.predictor.util.PredictorUtils;
 import roart.aggregator.util.AggregatorUtils;
+import static org.mockito.Mockito.*;
+import roart.iclij.model.Parameters;
 
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
 @SpringJUnitConfig
@@ -77,13 +89,13 @@ public class AllTest {
     @Test
     public void test() {
         IclijServiceResult result = new IclijServiceResult();
-        getContentC(result);
+        //getContentOuterC(result);
         String json = JsonUtil.convert(result);
         IclijServiceResult resultC = JsonUtil.convertnostrip(json, IclijServiceResult.class);
         // TODO getContentM(resultC);
     }
     
-    public void getContentC(IclijServiceResult result) {
+    public void getContentC(IclijConfig conf, List<String> disableList, IclijServiceResult result) {
         IndicatorUtils iu = new IndicatorUtils();
         try {  
           List<String> indicators = List.of(PipelineConstants.INDICATORATR, PipelineConstants.INDICATORCCI, PipelineConstants.INDICATORMACD, PipelineConstants.INDICATORRSI, PipelineConstants.INDICATORSTOCH, PipelineConstants.INDICATORSTOCHRSI);
@@ -125,7 +137,7 @@ public class AllTest {
 
     }
     
-    public IclijServiceResult getContentM(List<String> disableList, IclijServiceParam origparam) {
+    public IclijServiceResult getContentM(List<String> disableList, IclijServiceParam origparam) throws Exception {
         IclijConfig conf = new IclijConfig(origparam.getConfigData());
         NeuralNetCommand neuralnetcommand = origparam.getNeuralnetcommand();
         log.info("mydate {}", conf.getConfigData().getDate());
@@ -133,7 +145,13 @@ public class AllTest {
         //createOtherTables();
         
 
-        IclijServiceResult result = null; // TODO getContent(conf, origparam, disableList);
+        String json = JsonUtil.convert(origparam);
+        IclijServiceParam myparam = JsonUtil.convertnostrip(json, IclijServiceParam.class);
+        IclijServiceResult result = getContentOuterC(origparam);        
+        json = JsonUtil.convert(result);
+        result = JsonUtil.convertnostrip(json, IclijServiceResult.class);
+        //IclijServiceParam origparam = (IclijServiceParam) myparam;
+        //IclijServiceResult result = getContentM(new ArrayList<>(), origparam );
         
         List<ResultItem> retlist = result.getList();
         PipelineData[] pipelineData = result.getPipelineData();
@@ -203,6 +221,129 @@ public class AllTest {
         result.setPipelineData(pipelineData);
         result.setConfigData(conf.getConfigData());
         
+        return result;
+    }
+
+    @Test
+    public void test2() {
+        WebFluxUtil webFluxUtil = spy(new WebFluxUtil());
+        //do(sendMMe(IclijServiceResult.class, any(), EurekaConstants.GETCONTENT)).when(webFluxUtil).sendMMe(IclijServiceResult.class, any(), EurekaConstants.GETCONTENT);
+        WebFluxUtil webFluxUtil2 = new MyWebFluxUtil();
+
+        Parameters parameters = new Parameters();
+        parameters.setThreshold(1.0);
+        parameters.setFuturedays(10);
+        ActionThread ac = new ActionThread(conf, null);
+        ActionComponentItem aci = new ActionComponentItem();
+        aci.setMarket(TestConstants.MARKET);
+        aci.setAction(IclijConstants.FINDPROFIT);
+        aci.setComponent(PipelineConstants.MLRSI);
+        aci.setSubcomponent(MLConstants.TENSORFLOW + " " + MLConstants.GRU);
+        aci.setParameters(JsonUtil.convert(parameters));
+        aci.setBuy(null);
+        aci.setPriority(40);
+        aci.setRecord(LocalDate.now());
+        try {
+        ac.runAction(conf, aci, new ArrayList<>(), webFluxUtil2);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Object sendMMe(Class<IclijServiceResult> class1, Object any, String getcontent) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public class MyWebFluxUtil extends WebFluxUtil {
+        public <T> T sendMMe(Class<T> clazz, Object param, String path) {
+            log.info("Calling {}", path);
+            if (EurekaConstants.GETCONTENT.equals(path)) {
+                String json = JsonUtil.convert(param);
+                T myparam = JsonUtil.convertnostrip(json, clazz);
+                IclijServiceParam origparam = (IclijServiceParam) myparam;
+                IclijServiceResult result = getContentOuterM(origparam );
+                json = JsonUtil.convert(result);
+                myparam = JsonUtil.convertnostrip(json, clazz);
+                //json = JsonUtil.convert(param);
+                //T myparam = JsonUtil.convertnostrip(json, clazz);
+                return myparam;
+            }
+            return null;
+        }
+        
+        public <T> T sendCMe(Class<T> clazz, Object param, String path) {
+            log.info("Calling {}", path);
+            return null;
+        }
+        
+        public <T> T sendMeInner(Class<T> myclass, Object param, String url, ObjectMapper objectMapper) {
+            log.info("Calling {}", url);
+            IclijServiceResult result = new IclijServiceResult();
+            result.setConfigData(conf.getConfigData());
+            return (T) result;           
+        }
+
+    }
+    public IclijServiceResult getContentOuterC(IclijServiceParam param)
+            throws Exception {
+        IclijServiceResult result = new IclijServiceResult();
+        Map<String, Map<String, Object>> maps = null;
+        if (param.isWantMaps()) {
+            maps = new HashMap<>();
+        }
+        try {
+            long[] mem0 = MemUtil.mem();
+            log.info("MEM {}", MemUtil.print(mem0));
+            List<String> disableList = param.getConfList();
+            if (disableList == null) {
+                disableList = new ArrayList<>();
+            }
+            getContentC( new IclijConfig(param.getConfigData()), disableList, result);
+            long[] mem1 = MemUtil.mem();
+            long[] memdiff = MemUtil.diff(mem1, mem0);
+            log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
+            if (maps != null) {
+                //log.info("Length {}", JsonUtil.convert(maps).length());
+            }
+            //System.out.println(VM.current().details());
+            //System.out.println(GraphLayout.parseInstance(maps).toFootprint());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            result.setError(e.getMessage());
+        }
+        return result;
+    }
+    
+    public IclijServiceResult getContentOuterM(IclijServiceParam param) {
+        IclijServiceResult result = new IclijServiceResult();
+        Map<String, Map<String, Object>> maps = null;
+        if (param.isWantMaps()) {
+            maps = new HashMap<>();
+        }
+        try {
+            long[] mem0 = MemUtil.mem();
+            log.info("MEM {}", MemUtil.print(mem0));
+            List<String> disableList = param.getConfList();
+            if (disableList == null) {
+                disableList = new ArrayList<>();
+            }
+            result = getContentM( disableList, param);
+            if (!param.isWantMaps()) {
+                result.setMaps(null);
+            }
+            long[] mem1 = MemUtil.mem();
+            long[] memdiff = MemUtil.diff(mem1, mem0);
+            log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
+            if (maps != null) {
+                //log.info("Length {}", JsonUtil.convert(maps).length());
+            }
+            //System.out.println(VM.current().details());
+            //System.out.println(GraphLayout.parseInstance(maps).toFootprint());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            result.setError(e.getMessage());
+        }
         return result;
     }
 

@@ -46,6 +46,8 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
 
     private String gemServer;
 
+    private WebFluxUtil webFluxUtil = new WebFluxUtil();
+    
     public MLClassifyGemAccess(IclijConfig conf) {
         this.conf = conf;
         findModels();
@@ -109,7 +111,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         param.setSize(size);
         param.setClasses(classes);
         log.info("evalin {} {} {}", param.getModelInt());
-        LearnTestClassify test = WebFluxUtil.sendMe(LearnTestClassify.class, param, gemServer + "/learntest");
+        LearnTestClassify test = webFluxUtil.sendMe(LearnTestClassify.class, param, gemServer + "/learntest");
         return test.getAccuracy();
     }
 
@@ -143,7 +145,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         LearnTestClassify param = new LearnTestClassify();
         param.setModelInt(modelInt);
         log.info("evalout {}", modelInt);
-        LearnTestClassify test = WebFluxUtil.sendMe(LearnTestClassify.class, param, gemServer + "/eval");
+        LearnTestClassify test = webFluxUtil.sendMe(LearnTestClassify.class, param, gemServer + "/eval");
         return test.getAccuracy();
     }
 
@@ -172,7 +174,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         }
         LearnTestClassify ret = null;
         try {
-            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, gemServer + "/classify");
+            ret = webFluxUtil.sendMe(LearnTestClassify.class, param, gemServer + "/classify");
         } catch (Exception e) {
             log.error("Exception", e);
         }
@@ -247,7 +249,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         param.setNeuralnetcommand(neuralnetcommand);
         try {
             LearnTestClassify ret = null;
-            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, gemServer + "/filename");
+            ret = webFluxUtil.sendMe(LearnTestClassify.class, param, gemServer + "/filename");
             boolean exists = ret.getExists();
             if (neuralnetcommand.isMldynamic() == true) {
                 return result;
@@ -331,7 +333,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         }
         LearnTestClassify ret = null;
         try {
-            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, gemServer + "/learntestclassify");
+            ret = webFluxUtil.sendMe(LearnTestClassify.class, param, gemServer + "/learntestclassify");
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
@@ -424,7 +426,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         param.setZero(true);
         LearnTestClassify ret = null;
         try {
-            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, gemServer + "/dataset");
+            ret = webFluxUtil.sendMe(LearnTestClassify.class, param, gemServer + "/dataset");
         } catch (Exception e) {
             log.error("Exception", e);
             return result;

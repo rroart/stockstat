@@ -40,6 +40,7 @@ import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
+import roart.common.webflux.WebFluxUtil;
 import roart.iclij.component.Component;
 import roart.iclij.component.factory.ComponentFactory;
 import roart.component.model.ComponentData;
@@ -77,6 +78,8 @@ public abstract class MarketAction extends Action {
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
     private MarketActionData actionData;
+    
+    private WebFluxUtil webFluxUtil;
     
     protected abstract List<IncDecItem> getIncDecItems();
 
@@ -172,12 +175,17 @@ public abstract class MarketAction extends Action {
             ComponentInput input = new ComponentInput(config.getConfigData(), null, marketName, null, 0, paramTemplate.getInput().isDoSave(), false, new ArrayList<>(), paramTemplate.getInput().getValuemap());
             ComponentData param = null;
             try {
-                param = ComponentData.getParam(iclijConfig, input, 0, market);
+                param = ComponentData.getParam(iclijConfig, input, 0, market, null);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
             param.setAction(getName());
-            ControlService srv = new ControlService(iclijConfig);
+            ControlService srv;
+            if (webFluxUtil != null) {
+                srv = new ControlService(iclijConfig, webFluxUtil);
+            } else {
+                srv = new ControlService(iclijConfig);
+            }
             //srv.getConfig();
             param.setService(srv);
             srv.conf.getConfigData().setMarket(market.getConfig().getMarket());
@@ -868,6 +876,14 @@ public abstract class MarketAction extends Action {
             new MiscUtil().listGetterAdder(moreReturnedTiming, key, metric);  
         }
         return moreReturnedTiming;
+    }
+
+    public WebFluxUtil getWebFluxUtil() {
+        return webFluxUtil;
+    }
+
+    public void setWebFluxUtil(WebFluxUtil webFluxUtil) {
+        this.webFluxUtil = webFluxUtil;
     }
 
 }

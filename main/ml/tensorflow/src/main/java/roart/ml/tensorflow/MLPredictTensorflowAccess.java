@@ -29,6 +29,8 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
 
     private String tensorflowServer;
     
+    private WebFluxUtil webFluxUtil = new WebFluxUtil();
+    
     public MLPredictTensorflowAccess(IclijConfig conf) {
         this.conf = conf;
         findModels();
@@ -64,7 +66,7 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
         param.outcomes = outcomes;
         param.array = list;
         log.info("evalin {} {}", param.modelInt, period);
-        LearnTestPredictResult result = WebFluxUtil.sendMe(LearnTestPredictResult.class, param, tensorflowServer + "/predictone");
+        LearnTestPredictResult result = webFluxUtil.sendMe(LearnTestPredictResult.class, param, tensorflowServer + "/predictone");
         return result;
     }
 
@@ -76,7 +78,7 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
         param.mapname = mapname;
         log.info("evalout {} {} {}", modelInt, period, mapname);
         System.out.println("NOTHERE0");
-        LearnTestPredict test = WebFluxUtil.sendMe(LearnTestPredict.class, param, tensorflowServer + "/eval");
+        LearnTestPredict test = webFluxUtil.sendMe(LearnTestPredict.class, param, tensorflowServer + "/eval");
         return test.prob;
     }
 
@@ -113,7 +115,7 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
         param.arraylist = objobj;
         log.info("evalin {} {}", param.modelInt, size);
         log.info("Used ML config {}", nnconfigs.getTensorflowConfig().getTensorflowLSTMConfig());
-        LearnTestPredictResult ret = WebFluxUtil.sendMe(LearnTestPredictResult.class, param, tensorflowServer + "/predict");
+        LearnTestPredictResult ret = webFluxUtil.sendMe(LearnTestPredictResult.class, param, tensorflowServer + "/predict");
         List<Double[]> arraylist = ret.predictedlist;
         List<Double> accuracylist = ret.accuracylist;
         Map<String, Double[]> predictMap = new HashMap<>();
