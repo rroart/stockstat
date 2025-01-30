@@ -250,4 +250,8 @@ public class TestData {
         return datum;
     }
     
+    public List<MetaItem> getMetas() {
+        MetaItem meta = new MetaItem(TestConstants.MARKET, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
+        return List.of(meta);
+    }
 }

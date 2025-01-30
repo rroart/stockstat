@@ -68,6 +68,10 @@ public class IclijXMLConfig {
     private IclijConfig configInstance;
 
     public IclijXMLConfig(IclijConfig configInstance, ConfigMaps configMaps) {
+        this(configInstance, configMaps, null);
+    }
+
+    public IclijXMLConfig(IclijConfig configInstance, ConfigMaps configMaps, String other) {
         log.error("confMapps" + configMaps);
         this.configMaps = configMaps;
         this.configInstance = configInstance;
@@ -78,6 +82,14 @@ public class IclijXMLConfig {
             }
             if (!configFile.contains("/")) {
                 configFile = "../conf/" + configFile;
+            } else {
+                if (other != null) {
+                    String otherConfigFile = System.getProperty(other);
+                    if (otherConfigFile != null) {
+                        int index = configFile.lastIndexOf('/');
+                        configFile = configFile.substring(0, index + 1) + otherConfigFile;
+                    }
+                }
             }
             //config = new PropertiesConfiguration(ConfigConstants.PROPFILE);
             configxml = new XMLConfiguration();

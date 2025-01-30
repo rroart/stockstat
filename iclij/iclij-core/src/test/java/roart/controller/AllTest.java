@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -35,12 +36,16 @@ import roart.category.AbstractCategory;
 import roart.category.util.CategoryUtil;
 import roart.common.communication.factory.CommunicationFactory;
 import roart.common.communication.model.Communication;
+import roart.common.config.ConfigConstants;
+import roart.common.config.ConfigMaps;
 import roart.common.config.MLConstants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.model.ActionComponentItem;
+import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialMapTA;
 import roart.common.util.JsonUtil;
 import roart.common.util.MemUtil;
@@ -72,6 +77,14 @@ import roart.predictor.util.PredictorUtils;
 import roart.aggregator.util.AggregatorUtils;
 import static org.mockito.Mockito.*;
 import roart.iclij.model.Parameters;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.Collection;
+import java.util.Collections;
 
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
 @SpringJUnitConfig
@@ -226,6 +239,10 @@ public class AllTest {
 
     @Test
     public void test2() {
+        ConfigMaps configMaps = IclijConfig.instanceI();
+        IclijConfig iconf = new IclijConfig(configMaps);
+        new IclijXMLConfig(iconf, configMaps, "config2");
+        
         WebFluxUtil webFluxUtil = spy(new WebFluxUtil());
         //do(sendMMe(IclijServiceResult.class, any(), EurekaConstants.GETCONTENT)).when(webFluxUtil).sendMMe(IclijServiceResult.class, any(), EurekaConstants.GETCONTENT);
         WebFluxUtil webFluxUtil2 = new MyWebFluxUtil();
@@ -233,7 +250,7 @@ public class AllTest {
         Parameters parameters = new Parameters();
         parameters.setThreshold(1.0);
         parameters.setFuturedays(10);
-        ActionThread ac = new ActionThread(conf, null);
+        ActionThread ac = new ActionThread(iconf, null);
         ActionComponentItem aci = new ActionComponentItem();
         aci.setMarket(TestConstants.MARKET);
         aci.setAction(IclijConstants.FINDPROFIT);
@@ -244,7 +261,8 @@ public class AllTest {
         aci.setPriority(40);
         aci.setRecord(LocalDate.now());
         try {
-        ac.runAction(conf, aci, new ArrayList<>(), webFluxUtil2);
+            log.info("serv" + iconf.getServices() + " " + iconf.getCommunications());
+        ac.runAction(iconf, aci, new ArrayList<>(), webFluxUtil2);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -274,14 +292,24 @@ public class AllTest {
         
         public <T> T sendCMe(Class<T> clazz, Object param, String path) {
             log.info("Calling {}", path);
+            //
+            if (EurekaConstants.GETDATES.equals(path)) {
+            return (T) getDatesOuter((IclijServiceParam) param);
+            }
+            if (EurekaConstants.GETMETAS.equals(path)) {
+            return (T) getMetasOuter((IclijServiceParam) param);
+            }
             return null;
         }
         
         public <T> T sendMeInner(Class<T> myclass, Object param, String url, ObjectMapper objectMapper) {
             log.info("Calling {}", url);
-            IclijServiceResult result = new IclijServiceResult();
-            result.setConfigData(conf.getConfigData());
-            return (T) result;           
+            if (url.contains("getconfig")) {
+                IclijServiceResult result = new IclijServiceResult();
+                result.setConfigData(conf.getConfigData());
+                return (T) result;    
+            }
+            return null;
         }
 
     }
@@ -345,6 +373,99 @@ public class AllTest {
             result.setError(e.getMessage());
         }
         return result;
+    }
+
+    public IclijServiceResult getDatesOuter(IclijServiceParam param) {
+        IclijServiceResult result = new IclijServiceResult();
+        try {
+            getDates( new IclijConfig(param.getConfigData()), result);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            result.setError(e.getMessage());
+        }
+        return result;
+    }
+    
+    /// TODO too big
+    public void getDates(IclijConfig conf, IclijServiceResult result) throws Exception {
+        PipelineData[] pipelineData = new PipelineData[0];
+        Map<String, Object> aMap = new HashMap<>();
+        /*
+        aMap.put(ConfigConstants.MACHINELEARNING, false);
+        aMap.put(ConfigConstants.AGGREGATORS, false);
+        aMap.put(ConfigConstants.INDICATORS, false);
+        aMap.put(ConfigConstants.MISCTHRESHOLD, null);
+        */        
+        aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
+        aMap.put(ConfigConstants.MISCMYDAYS, 0);
+        /*
+        aMap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, true);
+        aMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
+        aMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
+        aMap.put(ConfigConstants.MISCMERGECY, false);        
+        conf.setConfigValueMap(new HashMap<>(conf.getConfigValueMap()));
+        */
+        conf.getConfigData().getConfigValueMap().putAll(aMap);
+        StockData stockData = new TestData().getStockdata(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), TestConstants.MARKET, 26, false, Constants.INDEXVALUECOLUMN, false);
+        //StockData stockData = new Extract(dbDao).getStockData(conf);
+        if (stockData != null) {
+            PipelineData map = new PipelineData();
+            map.setName(PipelineConstants.DATELIST);
+            map.put(PipelineConstants.DATELIST, new SerialListPlain(stockData.stockdates));
+            pipelineData = ArrayUtils.add(pipelineData, map);
+            result.setPipelineData(pipelineData);
+            return;
+        }
+        
+        // TODO not used anymore?
+        List<String> dates = null;
+        try {
+            if ("0".equals(conf.getConfigData().getMarket())) {
+                int jj = 0;
+            }
+            // TODO dates = dbDao.getDates(conf.getConfigData().getMarket(), conf);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        if (dates == null) {
+            return;
+        }
+        log.info("stocks {}", dates.size());
+        Set<String> markets = new HashSet<>();
+        markets.add(conf.getConfigData().getMarket());
+
+        try {
+            Collections.sort(dates);
+            PipelineData map = new PipelineData();
+            map.setName(PipelineConstants.DATELIST);
+            map.put(PipelineConstants.DATELIST, new SerialListPlain(dates));
+            pipelineData = ArrayUtils.add(pipelineData, map);
+            result.setPipelineData(pipelineData);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return;
+        }
+    }
+    
+    public IclijServiceResult getMetasOuter(IclijServiceParam param) {
+        IclijServiceResult result = new IclijServiceResult();
+        try {
+            result.setMetas(getMetas());
+            log.info("Metasize {}", result.getMetas().size());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            result.setError(e.getMessage());
+        }
+        return result;
+    }
+    
+    public List<MetaItem> getMetas() {
+        try {
+            return new TestData().getMetas();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return new ArrayList<>();
     }
 
 }
