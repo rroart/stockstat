@@ -67,6 +67,28 @@ public class IclijConfig extends MyMyConfig {
         log.error("confMapps2" + myConfigMaps);
     }
 
+    public IclijConfig(ConfigMaps configMaps, String other, String notnow) {
+        ConfigMaps myConfigMaps = instanceC();
+        log.error("confMapps" + myConfigMaps);
+        myConfigMaps.add(instanceI());
+        myConfigMaps.keys(configMaps.keys);
+        log.error("confMapps" + myConfigMaps);
+        new IclijXMLConfig(this, myConfigMaps, other);
+        //this.getConfigData().mute();
+        log.error("confMapps2" + myConfigMaps);
+    }
+
+    public IclijConfig(ConfigMaps configMaps, String other) {
+        //ConfigMaps myConfigMaps = instanceC();
+        ///log.error("confMapps" + myConfigMaps);
+        //myConfigMaps.add(instanceI());
+        //myConfigMaps.keys(configMaps.keys);
+        //log.error("confMapps" + myConfigMaps);
+        new IclijXMLConfig(this, configMaps, other);
+        //this.getConfigData().mute();
+        //log.error("confMapps2" + myConfigMaps);
+    }
+
     public IclijConfig(ConfigData data) {
         super(data);
     }
