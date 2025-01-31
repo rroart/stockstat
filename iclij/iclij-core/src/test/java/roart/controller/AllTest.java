@@ -56,6 +56,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.bean.ConfigC;
+import roart.iclij.config.bean.ConfigI;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 import roart.indicator.util.IndicatorUtils;
@@ -91,13 +92,13 @@ import java.util.Collections;
 //@TestPropertySource("file:${user.dir}/../../../../config/test/application.properties") 
 //@ComponentScan(basePackages = "roart.testdata")
 //@SpringBootTest(classes = TestConfiguration.class)
-@SpringBootTest(classes = { IclijConfig.class, ConfigC.class } )
+@SpringBootTest(classes = { IclijConfig.class, ConfigI.class } )
 public class AllTest {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    IclijConfig conf;
+    IclijConfig iconf;
 
     @Test
     public void test() {
@@ -109,6 +110,10 @@ public class AllTest {
     }
     
     public void getContentC(IclijConfig conf, List<String> disableList, IclijServiceResult result) {
+        System.out.println("conff" + conf.getConfigData().getConfigMaps().keys.size());
+        String str = conf.getAggregatorsIndicatorExtras();
+        System.out.println("strstrr " + str );
+        System.out.println("strstrr2 " + conf.getAbnormalChange() );
         IndicatorUtils iu = new IndicatorUtils();
         try {  
           List<String> indicators = List.of(PipelineConstants.INDICATORATR, PipelineConstants.INDICATORCCI, PipelineConstants.INDICATORMACD, PipelineConstants.INDICATORRSI, PipelineConstants.INDICATORSTOCH, PipelineConstants.INDICATORSTOCHRSI);
@@ -239,9 +244,27 @@ public class AllTest {
 
     @Test
     public void test2() {
-        ConfigMaps configMaps = IclijConfig.instanceI();
-        IclijConfig iconf = new IclijConfig(configMaps);
-        new IclijXMLConfig(iconf, configMaps, "config2");
+        
+        ConfigMaps configMaps = IclijConfig.instanceC();
+        IclijConfig conf = new IclijConfig(configMaps, "config2");
+        String str = iconf.getAggregatorsIndicatorExtras();
+        System.out.println("strstr " + str);
+        String str2 = conf.getAggregatorsIndicatorExtras();
+        System.out.println("strstr " + str2 );
+        System.out.println("strstr " + iconf.getAbnormalChange() );
+        System.out.println("strstr " + conf.getAbnormalChange() );
+        //System.out.println("strstr " + conf.getConfigData().getConfigMaps().keys);
+        if (true) return;
+        
+        IclijDbDao dbDao = mock(IclijDbDao.class);
+        //new IclijXMLConfig(conf, configMaps, "config2");
+        log.info("serv" + iconf.getServices() + " " + iconf.getCommunications());
+        log.info("serv" + conf.getServices() + " " + conf.getCommunications());
+        System.out.println("conf" + iconf.getConfigData().getConfigMaps().keys.size());
+        System.out.println("conf" + conf.getConfigData().getConfigMaps().keys.size());
+        iconf.getConfigData().getConfigMaps().keys.retainAll(conf.getConfigData().getConfigMaps().keys);
+        System.out.println("conf" + iconf.getConfigData().getConfigMaps().keys.size());
+        //if (true) return;
         
         WebFluxUtil webFluxUtil = spy(new WebFluxUtil());
         //do(sendMMe(IclijServiceResult.class, any(), EurekaConstants.GETCONTENT)).when(webFluxUtil).sendMMe(IclijServiceResult.class, any(), EurekaConstants.GETCONTENT);
@@ -250,7 +273,7 @@ public class AllTest {
         Parameters parameters = new Parameters();
         parameters.setThreshold(1.0);
         parameters.setFuturedays(10);
-        ActionThread ac = new ActionThread(iconf, null);
+        ActionThread ac = new ActionThread(conf, dbDao);
         ActionComponentItem aci = new ActionComponentItem();
         aci.setMarket(TestConstants.MARKET);
         aci.setAction(IclijConstants.FINDPROFIT);
@@ -262,7 +285,8 @@ public class AllTest {
         aci.setRecord(LocalDate.now());
         try {
             log.info("serv" + iconf.getServices() + " " + iconf.getCommunications());
-        ac.runAction(iconf, aci, new ArrayList<>(), webFluxUtil2);
+            log.info("serv" + conf.getServices() + " " + conf.getCommunications());
+        ac.runAction(conf, aci, new ArrayList<>(), webFluxUtil2);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -299,6 +323,11 @@ public class AllTest {
             if (EurekaConstants.GETMETAS.equals(path)) {
             return (T) getMetasOuter((IclijServiceParam) param);
             }
+            if (EurekaConstants.GETCONTENT.equals(path)) {
+                //String n = null;
+                //if (n.isEmpty()) return null;
+                return (T) getContentOuterC((IclijServiceParam) param);
+            }
             return null;
         }
         
@@ -306,15 +335,16 @@ public class AllTest {
             log.info("Calling {}", url);
             if (url.contains("getconfig")) {
                 IclijServiceResult result = new IclijServiceResult();
-                result.setConfigData(conf.getConfigData());
+                result.setConfigData(iconf.getConfigData());
+                System.out.println("strstrr3 " + iconf.getAbnormalChange() );
+
                 return (T) result;    
             }
             return null;
         }
 
     }
-    public IclijServiceResult getContentOuterC(IclijServiceParam param)
-            throws Exception {
+    public IclijServiceResult getContentOuterC(IclijServiceParam param) {
         IclijServiceResult result = new IclijServiceResult();
         Map<String, Map<String, Object>> maps = null;
         if (param.isWantMaps()) {
