@@ -63,6 +63,8 @@ public class FitnessNeuralNet extends Fitness {
         pipelineData = new PipelineFactory().myfactory(conf, ml, dataReaders, catName, cat, neuralnetcommand, ((NeuralNetChromosome) chromosome), key);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
+            // TODO null MyMyConfig.getAggregatorsIndicatorIntervaldays
+            return 0;
         }
         Map<String, Object> accuracyMap = PipelineUtils.getAccuracyMap(pipelineData.putData());
         if (accuracyMap == null) {
