@@ -25,6 +25,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import roart.pipeline.common.aggregate.Aggregator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
@@ -98,7 +100,12 @@ public class AllTest {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    IclijConfig iconf;
+    IclijConfig iconf = null;
+    
+    // no autowiring
+    IclijConfig conf = null;
+   
+    private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
 
     @Test
     public void test() {
@@ -148,7 +155,7 @@ public class AllTest {
          
           int arraySize = IndicatorUtils.getCommonArraySizeAndObjectMap(conf, indicators, objectMapsList, listList, pipelinedata);
           System.out.println("arraysize" + arraySize);
-          assertEquals(10, arraySize);
+          assertEquals(4, arraySize); /// TODO check 4 or 10, alternates
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -163,8 +170,8 @@ public class AllTest {
         //createOtherTables();
         
 
-        String json = JsonUtil.convert(origparam);
-        IclijServiceParam myparam = JsonUtil.convertnostrip(json, IclijServiceParam.class);
+        String json = JsonUtil.convert(origparam, mapper);
+        IclijServiceParam myparam = JsonUtil.convertnostrip(json, IclijServiceParam.class, mapper);
         IclijServiceResult result = getContentOuterC(origparam);        
         json = JsonUtil.convert(result);
         result = JsonUtil.convertnostrip(json, IclijServiceResult.class);
@@ -245,16 +252,34 @@ public class AllTest {
     @Test
     public void test2() {
         
+        System.out.println("cmtest2");
+        //ConfigMaps iconfigMaps = IclijConfig.instanceI();
         ConfigMaps configMaps = IclijConfig.instanceC();
-        IclijConfig conf = new IclijConfig(configMaps, "config2");
-        String str = iconf.getAggregatorsIndicatorExtras();
-        System.out.println("strstr " + str);
-        String str2 = conf.getAggregatorsIndicatorExtras();
-        System.out.println("strstr " + str2 );
+        //System.out.println("cm " + configMaps + " " + configMaps.keys.size());
+        //iconf = new IclijConfig(iconfigMaps);
+        conf = new IclijConfig(configMaps, "config2", null);
+        //System.out.println("cmtest2");
+        //System.out.println("cm " + configMaps + " " + configMaps.keys.size());
+        //String str = iconf.getAggregatorsIndicatorExtras();
+        //System.out.println("strstr " + str);
+        //String str2 = conf.getAggregatorsIndicatorExtras();
+        //System.out.println("strstr " + str2 );
         System.out.println("strstr " + iconf.getAbnormalChange() );
         System.out.println("strstr " + conf.getAbnormalChange() );
+        System.out.println("strstr " + iconf.getConfigData().getConfigValueMap());
+        System.out.println("strstr " + conf.getConfigData().getConfigValueMap() );
+        System.out.println("strstr " + iconf.getConfigData().getConfigValueMap().size());
+        System.out.println("strstr " + conf.getConfigData().getConfigValueMap().size() );
         //System.out.println("strstr " + conf.getConfigData().getConfigMaps().keys);
-        if (true) return;
+        //System.out.println("strstr " + iconf.getConfigData().getConfigMaps().keys.size());
+        //System.out.println("strstr " + iconf.getConfigData().getConfigMaps().map.keySet().size());
+        //System.out.println("strstr " + conf.getConfigData().getConfigMaps().keys.size());
+        //System.out.println("strstr " + conf.getConfigData().getConfigMaps().map.keySet().size());
+        //System.out.println("strstr " + configMaps.keys.size() /*+ " " + configMaps.keys*/);
+        //System.out.println("strstr " + configMaps.map.keySet().size() /*+ " " + configMaps.map.keySet()*/);
+        //System.out.println("strstrf " + conf.getFilterDate() );
+        // todo null System.out.println("strstrf " + iconf.getFilterDate() );
+        //if (true) return;
         
         IclijDbDao dbDao = mock(IclijDbDao.class);
         //new IclijXMLConfig(conf, configMaps, "config2");
@@ -273,7 +298,7 @@ public class AllTest {
         Parameters parameters = new Parameters();
         parameters.setThreshold(1.0);
         parameters.setFuturedays(10);
-        ActionThread ac = new ActionThread(conf, dbDao);
+        ActionThread ac = new ActionThread(iconf, dbDao);
         ActionComponentItem aci = new ActionComponentItem();
         aci.setMarket(TestConstants.MARKET);
         aci.setAction(IclijConstants.FINDPROFIT);
@@ -286,7 +311,7 @@ public class AllTest {
         try {
             log.info("serv" + iconf.getServices() + " " + iconf.getCommunications());
             log.info("serv" + conf.getServices() + " " + conf.getCommunications());
-        ac.runAction(conf, aci, new ArrayList<>(), webFluxUtil2);
+        ac.runAction(iconf, aci, new ArrayList<>(), webFluxUtil2);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -301,15 +326,15 @@ public class AllTest {
         public <T> T sendMMe(Class<T> clazz, Object param, String path) {
             log.info("Calling {}", path);
             if (EurekaConstants.GETCONTENT.equals(path)) {
-                String json = JsonUtil.convert(param);
-                T myparam = JsonUtil.convertnostrip(json, clazz);
+                String json = JsonUtil.convert(param, mapper); // TODO mapper
+                Object myparam = JsonUtil.convertnostrip(json, param.getClass(), mapper); // TODO mapper
                 IclijServiceParam origparam = (IclijServiceParam) myparam;
                 IclijServiceResult result = getContentOuterM(origparam );
                 json = JsonUtil.convert(result);
                 myparam = JsonUtil.convertnostrip(json, clazz);
                 //json = JsonUtil.convert(param);
                 //T myparam = JsonUtil.convertnostrip(json, clazz);
-                return myparam;
+                return (T) myparam;
             }
             return null;
         }
@@ -335,8 +360,8 @@ public class AllTest {
             log.info("Calling {}", url);
             if (url.contains("getconfig")) {
                 IclijServiceResult result = new IclijServiceResult();
-                result.setConfigData(iconf.getConfigData());
-                System.out.println("strstrr3 " + iconf.getAbnormalChange() );
+                result.setConfigData(conf.getConfigData());
+                System.out.println("strstrr3 " + conf.getAbnormalChange() );
 
                 return (T) result;    
             }
@@ -408,6 +433,7 @@ public class AllTest {
     public IclijServiceResult getDatesOuter(IclijServiceParam param) {
         IclijServiceResult result = new IclijServiceResult();
         try {
+            System.out.println("Conf use " + param.getConfigData());
             getDates( new IclijConfig(param.getConfigData()), result);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

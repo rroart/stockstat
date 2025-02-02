@@ -388,6 +388,7 @@ public class ComponentData {
         PipelineData[] result = getService().getContent(useMl);
         this.resultMaps = result;
         try {
+            // TODO null name, fix later
             // TODO needed where, reread?
             List<String> stockdates = PipelineUtils.getDatelist(PipelineUtils.getPipeline(result, this.getCategoryTitle()));
             this.setStockDates(stockdates);
@@ -399,7 +400,11 @@ public class ComponentData {
             this.setVolumeMap(aVolumeMap);
         } catch (Exception e) {
             int jj = 0;
+            if (this.getCategoryTitle() != null) {
             log.error("Ex", e);
+            } else {
+                log.error("Ex null cat title");
+            }
         }        
     }
 

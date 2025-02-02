@@ -33,6 +33,12 @@ public class ConfigMaps {
         this.conv = conv;
     }
 
+    public ConfigMaps copy() {
+        ConfigMaps copy = new ConfigMaps(new HashMap<>(map), new HashMap<>(deflt), new HashMap<>(text), new HashMap<>(range), new HashMap<>(conv));
+        copy.keys = new HashSet<>(keys);
+        return copy;
+    }
+    
     public void add(ConfigMaps instance) {
         intersect(new HashSet(map.keySet()), new HashSet(instance.map.keySet()));
         intersect(new HashSet(deflt.keySet()), new HashSet(instance.deflt.keySet()));

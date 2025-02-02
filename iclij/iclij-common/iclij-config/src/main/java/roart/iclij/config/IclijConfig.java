@@ -28,11 +28,11 @@ public class IclijConfig extends MyMyConfig {
     }
 
     public static ConfigMaps instanceC() {
-        return ConfigConstantMaps.instance();
+        return ConfigConstantMaps.instance().copy();
     }
 
     public static ConfigMaps instanceI() {
-        return IclijConfigConstantMaps.instance();
+        return IclijConfigConstantMaps.instance().copy();
     }
 
     /*
