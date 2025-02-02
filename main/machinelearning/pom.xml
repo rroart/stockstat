@@ -48,6 +48,7 @@
 	    <goals>
 	      <goal>repackage</goal>
 	    </goals>
+	    <phase>install</phase>
 	  </execution>
 	</executions>
       </plugin>
@@ -56,7 +57,7 @@
 	<artifactId>maven-install-plugin</artifactId>
 	<version>${maveninstall.version}</version>
 	<configuration>
-	  <skip>true</skip>
+	  <!--skip>true</skip-->
 	</configuration>
       </plugin>
     </plugins>
@@ -258,11 +259,6 @@
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <version>${postgresql.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>1.10.19</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>

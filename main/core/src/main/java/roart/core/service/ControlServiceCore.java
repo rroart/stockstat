@@ -1,4 +1,4 @@
-package roart.service;
+package roart.core.service;
 
 import java.util.Arrays;
 import java.io.ByteArrayInputStream;
@@ -72,6 +72,9 @@ import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
 import roart.common.util.TimeUtil;
+import roart.core.model.MyDataSource;
+import roart.core.model.impl.DbDataSource;
+import roart.core.service.util.ServiceUtil;
 import roart.db.dao.DbDao;
 import roart.etl.CleanETL;
 import roart.etl.PeriodDataETL;
@@ -93,11 +96,10 @@ import roart.result.model.GUISize;
 import roart.result.model.ResultItem;
 import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
-import roart.service.util.ServiceUtil;
 import roart.stockutil.StockUtil;
 import roart.util.Math3Util;
 
-public class ControlService {
+public class ControlServiceCore {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public static CuratorFramework curatorClient;
@@ -124,7 +126,7 @@ public class ControlService {
 
     private DbDao dbDao;
 
-    public ControlService(DbDao dbDao) {
+    public ControlServiceCore(DbDao dbDao) {
         super();
         this.dbDao = dbDao;
     }
@@ -158,12 +160,13 @@ public class ControlService {
 
     /**
      * Create result lists
+     * @param dbDataSource 
      * @param maps 
      * @param pipelinedata TODO
      * @return the tabular result lists
      */
 
-    public List<ResultItem> getContent(IclijConfig conf, List<String> disableList, IclijServiceResult result) {
+    public List<ResultItem> getContent(IclijConfig conf, List<String> disableList, IclijServiceResult result, MyDataSource dataSource) {
         log.info("mydate {}", conf.getConfigData().getDate());
         log.info("mydate {}", conf.getDays());
         //createOtherTables();
@@ -176,14 +179,14 @@ public class ControlService {
         List<AbstractCategory> categories = new ArrayList<>();
         List<Aggregator> aggregates = new ArrayList<>();
         try {
-            StockData stockData = new Extract(dbDao).getStockData(conf);
+            StockData stockData = dataSource.getStockData();
             if (stockData == null) {
                 return new ArrayList<>();
             }
 
             IndicatorUtils iu = new IndicatorUtils();
             ExtraReader extraReader = new ExtraReader(conf, stockData.marketdatamap, 0, stockData);
-            Map<String, StockData> extraStockDataMap = iu.getExtraStockDataMap(conf, dbDao, extraReader);
+            Map<String, StockData> extraStockDataMap = dataSource.getExtraStockData(extraReader);
 
             Pipeline[] datareaders = iu.getDataReaders(conf, stockData.periodText,
                     stockData.marketdatamap, stockData, extraStockDataMap, extraReader);
@@ -642,6 +645,7 @@ public class ControlService {
             return;
         }
         
+        // TODO not used anymore?
         List<String> dates = null;
         try {
             if ("0".equals(conf.getConfigData().getMarket())) {

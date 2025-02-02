@@ -9,11 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.iclij.config.IclijConfig;
+import roart.core.service.ControlServiceCore;
 import roart.graphindicator.GraphIndicator;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.result.model.GUISize;
 import roart.result.model.ResultItem;
-import roart.service.ControlService;
 
 public abstract class GraphCategory {
 

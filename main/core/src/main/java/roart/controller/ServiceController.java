@@ -56,10 +56,12 @@ import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
 import roart.common.util.JsonUtil;
 import roart.common.util.MemUtil;
+import roart.core.model.impl.DbDataSource;
+import roart.core.service.ControlServiceCore;
+import roart.core.service.evolution.EvolutionServiceCore;
 import roart.db.thread.DatabaseThread;
 import roart.executor.MyExecutors;
-import roart.service.ControlService;
-import roart.service.evolution.EvolutionService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import roart.db.dao.DbDao;
 import roart.iclij.service.IclijServiceParam;
@@ -78,7 +80,7 @@ public class ServiceController implements CommandLineRunner {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private ControlService instance;
+    private ControlServiceCore instance;
 
     public static List<String> taskList;
 
@@ -91,9 +93,9 @@ public class ServiceController implements CommandLineRunner {
     @Autowired
     DbDao dao;
 
-    private ControlService getInstance() {
+    private ControlServiceCore getInstance() {
         if (instance == null) {
-            instance = new ControlService(dao);
+            instance = new ControlServiceCore(dao);
         }
         return instance;
     }
@@ -209,7 +211,7 @@ public class ServiceController implements CommandLineRunner {
             if (disableList == null) {
                 disableList = new ArrayList<>();
             }
-            getInstance().getContent( new IclijConfig(param.getConfigData()), disableList, result);
+            getInstance().getContent( new IclijConfig(param.getConfigData()), disableList, result, new DbDataSource(dao, iclijConfig));
             long[] mem1 = MemUtil.mem();
             long[] memdiff = MemUtil.diff(mem1, mem0);
             log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
@@ -284,7 +286,7 @@ public class ServiceController implements CommandLineRunner {
             if (disableList == null) {
                 disableList = new ArrayList<>();
             }
-            result = new EvolutionService(dao).getEvolveRecommender( aConfig, disableList);
+            result = new EvolutionServiceCore(dao).getEvolveRecommender( aConfig, disableList);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());

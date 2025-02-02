@@ -1,4 +1,4 @@
-package roart.service.evolution;
+package roart.core.service.evolution;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,6 +28,8 @@ import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.data.SerialString;
 import roart.common.util.JsonUtil;
+import roart.core.service.ControlServiceCore;
+import roart.core.service.util.ServiceUtil;
 import roart.db.dao.DbDao;
 import roart.etl.db.Extract;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
@@ -49,12 +51,10 @@ import roart.pipeline.impl.DataReader;
 import roart.result.model.ResultItem;
 import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
-import roart.service.ControlService;
-import roart.service.util.ServiceUtil;
 
-public class EvolutionService {
+public class EvolutionServiceCore {
     private Logger log = LoggerFactory.getLogger(this.getClass());
-    private static Logger log2 = LoggerFactory.getLogger(EvolutionService.class);
+    private static Logger log2 = LoggerFactory.getLogger(EvolutionServiceCore.class);
 
     Map<Integer, ResultItemTable> otherTableMap = new HashMap<>();
 
@@ -62,7 +62,7 @@ public class EvolutionService {
     ResultItemTable eventTable = ServiceUtil.createEventTable(otherTableMap);
     private DbDao dao;
 
-    public EvolutionService(DbDao dao) {
+    public EvolutionServiceCore(DbDao dao) {
         this.dao = dao;
     }
 
@@ -203,8 +203,8 @@ public class EvolutionService {
                 String text = evolution.printtext(conf.getConfigData().getMarket() + " " + "recommend" + " " + i, "recommend", individuals);
                 String node = conf.getEvolveSaveLocation();
                 String mypath = conf.getEvolveSavePath();
-                ControlService.configCurator(conf);
-                String filename = new FileSystemDao(conf, ControlService.curatorClient).writeFile(node, mypath, null, text);
+                ControlServiceCore.configCurator(conf);
+                String filename = new FileSystemDao(conf, ControlServiceCore.curatorClient).writeFile(node, mypath, null, text);
     
                 for (String id : scoreList) {
                     ResultItemTableRow row = new ResultItemTableRow();

@@ -6,6 +6,9 @@
  *
  */
 module machinelearning {
+    exports roart.machinelearning.service;
+    exports roart.machinelearning.service.evolution;
+
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
@@ -25,7 +28,6 @@ module machinelearning {
     requires java.desktop;
     requires jcommon;
     requires jfreechart;
-    requires mockito.all;
     requires org.apache.commons.lang3;
     requires scala.library;
     //requires scala.reflect;

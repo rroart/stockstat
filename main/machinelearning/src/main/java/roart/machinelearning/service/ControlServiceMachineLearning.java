@@ -1,4 +1,4 @@
-package roart.service;
+package roart.machinelearning.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -60,16 +60,16 @@ import roart.etl.CleanETL;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
+import roart.machinelearning.service.util.ServiceUtil;
 import roart.model.data.MarketData;
 import roart.pipeline.common.aggregate.Aggregator;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.result.model.ResultItem;
-import roart.service.util.ServiceUtil;
 import roart.stockutil.StockUtil;
 import roart.model.data.StockData;
 import roart.predictor.util.PredictorUtils;
 
-public class ControlService {
+public class ControlServiceMachineLearning {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private Function<String, Boolean> zkRegister;
@@ -80,7 +80,7 @@ public class ControlService {
     
     public static CuratorFramework curatorClient;
 
-    public ControlService() {
+    public ControlServiceMachineLearning() {
         super();
     }
 

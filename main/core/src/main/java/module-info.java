@@ -6,6 +6,10 @@
  *
  */
 open module core {
+    exports roart.core.model;
+    exports roart.core.service;
+    exports roart.core.service.evolution;
+    
     requires batik.awt.util;
     requires batik.dom;
     requires batik.svggen;
@@ -29,7 +33,6 @@ open module core {
     requires java.desktop;
     requires jcommon;
     requires jfreechart;
-    requires mockito.all;
     requires org.apache.commons.lang3;
     requires scala.library;
     //requires scala.reflect;

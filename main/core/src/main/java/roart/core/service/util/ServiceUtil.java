@@ -1,4 +1,4 @@
-package roart.service.util;
+package roart.core.service.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

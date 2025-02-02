@@ -1,4 +1,4 @@
-package roart.service.evolution;
+package roart.machinelearning.service.evolution;
 
 import java.util.HashMap;
 import java.util.List;
@@ -76,7 +76,7 @@ public class PipelineFactory {
             conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGPREDICTORSMLCONFIG, value);
             //value = mapper.writeValueAsString(nnConfigs.getTensorflowConfig().getTensorflowLSTMConfig());
             //conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTMCONFIG, value);
-            List<String> foundkeys = EvolutionService.getFoundKeys(conf, nnConfigs);
+            List<String> foundkeys = EvolutionServiceMachineLearning.getFoundKeys(conf, nnConfigs);
             pipelineData = null;
             for (String aKey : foundkeys) {
                 switch (aKey) {

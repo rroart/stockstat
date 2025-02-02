@@ -1,4 +1,4 @@
-package roart.service.evolution;
+package roart.machinelearning.service.evolution;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,25 +45,25 @@ import roart.gene.NeuralNetConfigGeneFactory;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
+import roart.machinelearning.service.ControlServiceMachineLearning;
+import roart.machinelearning.service.util.ServiceUtil;
 import roart.model.data.StockData;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.predictor.util.PredictorUtils;
 import roart.result.model.ResultItem;
 import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
-import roart.service.ControlService;
-import roart.service.util.ServiceUtil;
 
-public class EvolutionService {
+public class EvolutionServiceMachineLearning {
     private Logger log = LoggerFactory.getLogger(this.getClass());
-    private static Logger log2 = LoggerFactory.getLogger(EvolutionService.class);
+    private static Logger log2 = LoggerFactory.getLogger(EvolutionServiceMachineLearning.class);
 
     Map<Integer, ResultItemTable> otherTableMap = new HashMap<>();
 
     ResultItemTable mlTimesTable = ServiceUtil.createMLTimesTable(otherTableMap);
     ResultItemTable eventTable = ServiceUtil.createEventTable(otherTableMap);
 
-    public EvolutionService() {
+    public EvolutionServiceMachineLearning() {
     }
 
     private Double[] getThresholds(IclijConfig conf, String thresholdString) {
@@ -127,7 +127,7 @@ public class EvolutionService {
         headrow.add("New value");
         table.add(headrow);
     
-        IclijServiceResult result = new ControlService().getContent(conf, origparam, disableList);
+        IclijServiceResult result = new ControlServiceMachineLearning().getContent(conf, origparam, disableList);
         
         List<ResultItem> retlist = result.getList();
         PipelineData[] pipelineData = result.getPipelineData();
@@ -210,8 +210,8 @@ public class EvolutionService {
             String text = evolution.printtext(title, null, individuals);
             String node = conf.getEvolveSaveLocation();
             String mypath = conf.getEvolveSavePath();
-            ControlService.configCurator(conf);
-            String filename = new FileSystemDao(conf, ControlService.curatorClient).writeFile(node, mypath, null, text);
+            ControlServiceMachineLearning.configCurator(conf);
+            String filename = new FileSystemDao(conf, ControlServiceMachineLearning.curatorClient).writeFile(node, mypath, null, text);
                      
             NeuralNetChromosome bestEval2 = (NeuralNetChromosome) best.getEvaluation();
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();
@@ -301,8 +301,8 @@ public class EvolutionService {
             String text = evolution.printtext(title, null, individuals);
             String node = conf.getEvolveSaveLocation();
             String mypath = conf.getEvolveSavePath();
-            ControlService.configCurator(conf);
-            String filename = new FileSystemDao(conf, ControlService.curatorClient).writeFile(node, mypath, null, text);
+            ControlServiceMachineLearning.configCurator(conf);
+            String filename = new FileSystemDao(conf, ControlServiceMachineLearning.curatorClient).writeFile(node, mypath, null, text);
             
             NeuralNetChromosome bestEval2 = (NeuralNetChromosome) best.getEvaluation();
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();
