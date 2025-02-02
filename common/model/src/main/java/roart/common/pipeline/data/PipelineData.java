@@ -67,6 +67,7 @@ public class PipelineData extends SerialObject {
             smap.put(key, new SerialDouble(serialobject));
             return;
         }
+        log.error("Should not use ordinary map");
         map.put(key, object);
     }
     

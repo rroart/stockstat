@@ -88,6 +88,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Collection;
 import java.util.Collections;
+import roart.core.service.ControlServiceCore;
+import roart.machinelearning.service.ControlServiceMachineLearning;
 
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
 @SpringJUnitConfig
@@ -105,6 +107,8 @@ public class AllTest {
     // no autowiring
     IclijConfig conf = null;
    
+    TestDataSource dataSource;
+    
     private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
 
     @Test
@@ -122,16 +126,19 @@ public class AllTest {
         System.out.println("strstrr " + str );
         System.out.println("strstrr2 " + conf.getAbnormalChange() );
         IndicatorUtils iu = new IndicatorUtils();
-        try {  
+        try {
+            /*
           List<String> indicators = List.of(PipelineConstants.INDICATORATR, PipelineConstants.INDICATORCCI, PipelineConstants.INDICATORMACD, PipelineConstants.INDICATORRSI, PipelineConstants.INDICATORSTOCH, PipelineConstants.INDICATORSTOCHRSI);
           List<SerialMapTA> objectMapsList = new ArrayList<>();
           List<Map<String, Double[][]>> listList = new ArrayList<>();
           conf.getConfigData().setMarket(TestConstants.MARKET);
-          StockData stockData = new TestData().getStockdata(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), TestConstants.MARKET, 26, false, Constants.INDEXVALUECOLUMN, false);
+          */
+          String market = conf.getConfigData().getMarket();
+          StockData stockData = new TestData().getStockdata(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), market, 26, false, Constants.INDEXVALUECOLUMN, false);
           
           // TODO check when this is modified
+          System.out.println("mark" + market);
           Map<String, StockData> extraStockDataMap = new TestData().getExtraStockdataMap(conf);
-          System.out.println("mark" + conf.getConfigData().getMarket());
           
           PipelineData[] pipelinedata = new PipelineData[0];
 
@@ -153,9 +160,11 @@ public class AllTest {
           pipelinedata = iu.createPipelineDataCategories(pipelinedata, categories, stockData);
           result.setPipelineData(pipelinedata);
          
+          /*
           int arraySize = IndicatorUtils.getCommonArraySizeAndObjectMap(conf, indicators, objectMapsList, listList, pipelinedata);
           System.out.println("arraysize" + arraySize);
           assertEquals(4, arraySize); /// TODO check 4 or 10, alternates
+          */
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -250,7 +259,7 @@ public class AllTest {
     }
 
     @Test
-    public void test2() {
+    public void test2() throws Exception {
         
         System.out.println("cmtest2");
         //ConfigMaps iconfigMaps = IclijConfig.instanceI();
@@ -258,6 +267,10 @@ public class AllTest {
         //System.out.println("cm " + configMaps + " " + configMaps.keys.size());
         //iconf = new IclijConfig(iconfigMaps);
         conf = new IclijConfig(configMaps, "config2", null);
+        conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.TRUE);
+        String market = TestConstants.MARKET;
+        dataSource = new TestDataSource(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), market, 26, false, Constants.INDEXVALUECOLUMN, false);
+
         //System.out.println("cmtest2");
         //System.out.println("cm " + configMaps + " " + configMaps.keys.size());
         //String str = iconf.getAggregatorsIndicatorExtras();
@@ -330,8 +343,8 @@ public class AllTest {
                 Object myparam = JsonUtil.convertnostrip(json, param.getClass(), mapper); // TODO mapper
                 IclijServiceParam origparam = (IclijServiceParam) myparam;
                 IclijServiceResult result = getContentOuterM(origparam );
-                json = JsonUtil.convert(result);
-                myparam = JsonUtil.convertnostrip(json, clazz);
+                json = JsonUtil.convert(result, mapper);
+                myparam = JsonUtil.convertnostrip(json, clazz, mapper);
                 //json = JsonUtil.convert(param);
                 //T myparam = JsonUtil.convertnostrip(json, clazz);
                 return (T) myparam;
@@ -382,7 +395,9 @@ public class AllTest {
             if (disableList == null) {
                 disableList = new ArrayList<>();
             }
-            getContentC( new IclijConfig(param.getConfigData()), disableList, result);
+            //getContentC( new IclijConfig(param.getConfigData()), disableList, result);
+            new ControlServiceCore(null).getContent( new IclijConfig(param.getConfigData()), disableList, result, dataSource);
+
             long[] mem1 = MemUtil.mem();
             long[] memdiff = MemUtil.diff(mem1, mem0);
             log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));

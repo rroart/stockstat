@@ -38,7 +38,10 @@ public class MLClassifyDao {
         if (type == null) {
             return;
         }
-        // temp fix
+        if (Boolean.TRUE.equals(conf.wantsMachineLearningRandom())) {
+            type = MLConstants.RANDOM;
+            log.info("Config for random");
+        }
         if (true || access == null) {
             if (type.equals(MLConstants.SPARK)) {
                 access = new MLClassifySparkAccess(conf);

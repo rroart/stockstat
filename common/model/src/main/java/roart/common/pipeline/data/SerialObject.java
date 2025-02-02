@@ -1,7 +1,13 @@
 package roart.common.pipeline.data;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+
+import roart.common.pipeline.util.PipelineUtils;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /*
@@ -45,6 +51,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @Type(value = TwoDimD.class, name = "TwoDimD")
 })
 public abstract class SerialObject {
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     protected SerialObject() {
         super();

@@ -1625,6 +1625,10 @@ public abstract class MyMyConfig extends MyConfig {
         }
     }
 
+    public Boolean wantsMachineLearningRandom() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGRANDOM);
+    }
+
     public Object getValue(String key) {
         return getConfigData().getConfigValueMap().get(key);
     }

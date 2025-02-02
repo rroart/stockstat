@@ -44,6 +44,8 @@
 		    --add-reads pipeline.category=spring.core
 		    --add-reads pipeline.category=spring.beans
 		    --add-reads iclij.core=model
+		    --add-reads iclij.core=pipeline.model
+		    --add-reads iclij.core=stockutil
 		  </argLine>
 		</configuration>
          </plugin>

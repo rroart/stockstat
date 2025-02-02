@@ -323,6 +323,18 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
+      <artifactId>stockstat-core</artifactId>
+      <version>${stockstat.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-machinelearning</artifactId>
+      <version>${stockstat.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
       <artifactId>stockstat-pipeline-indicator</artifactId>
       <version>${stockstat.version}</version>
       <scope>test</scope>
