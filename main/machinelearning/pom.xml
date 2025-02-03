@@ -48,7 +48,6 @@
 	    <goals>
 	      <goal>repackage</goal>
 	    </goals>
-	    <phase>install</phase>
 	  </execution>
 	</executions>
       </plugin>
@@ -57,7 +56,7 @@
 	<artifactId>maven-install-plugin</artifactId>
 	<version>${maveninstall.version}</version>
 	<configuration>
-	  <!--skip>true</skip-->
+	  <skip>true</skip>
 	</configuration>
       </plugin>
     </plugins>
@@ -139,6 +138,11 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-machinelearning-service</artifactId>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>

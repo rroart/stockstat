@@ -22,6 +22,21 @@ public class ActionComponentItem {
     private BlockingQueue result;
     private LocalDate date;
     
+    public ActionComponentItem() {
+        super();
+    }
+
+    public ActionComponentItem(String market, String action, String component, String subcomponent, int priority,
+            String parameters) {
+        super();
+        this.market = market;
+        this.action = action;
+        this.component = component;
+        this.subcomponent = subcomponent;
+        this.priority = priority;
+        this.parameters = parameters;
+    }
+
     public Long getDbid() {
         return dbid;
     }

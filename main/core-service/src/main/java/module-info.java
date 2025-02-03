@@ -5,8 +5,17 @@
  * @author roart
  *
  */
-module machinelearning {
-    requires machinelearningservice;
+open module coreservice {
+    exports roart.core.model;
+    exports roart.core.model.impl;
+    exports roart.core.service;
+    exports roart.core.service.evolution;
+    exports roart.core.util;
+
+    requires batik.awt.util;
+    requires batik.dom;
+    requires batik.svggen;
+    requires batik.util;
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
@@ -28,13 +37,6 @@ module machinelearning {
     requires jfreechart;
     requires org.apache.commons.lang3;
     requires scala.library;
-    //requires scala.reflect;
-    requires spring.beans;
-    requires spring.boot.autoconfigure;
-    requires spring.cloud.commons;
-    requires spring.context;
-    requires spring.web;
-    requires spring.webmvc;
     requires ta.lib;
     requires model;
     requires common.constants;
@@ -80,9 +82,7 @@ module machinelearning {
     requires iclij.common.config;
     requires iclij.common.service;
     requires ml.spark;
-    requires common.webflux;
     requires common.inmemory.factory;
     requires common.inmemory.model;
     requires com.fasterxml.jackson.datatype.jsr310;
-    requires common.queue;
 }

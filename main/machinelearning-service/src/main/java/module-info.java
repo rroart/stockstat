@@ -5,8 +5,10 @@
  * @author roart
  *
  */
-module machinelearning {
-    requires machinelearningservice;
+module machinelearningservice {
+    exports roart.machinelearning.service;
+    exports roart.machinelearning.service.evolution;
+
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
@@ -28,13 +30,6 @@ module machinelearning {
     requires jfreechart;
     requires org.apache.commons.lang3;
     requires scala.library;
-    //requires scala.reflect;
-    requires spring.beans;
-    requires spring.boot.autoconfigure;
-    requires spring.cloud.commons;
-    requires spring.context;
-    requires spring.web;
-    requires spring.webmvc;
     requires ta.lib;
     requires model;
     requires common.constants;

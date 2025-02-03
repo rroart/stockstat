@@ -142,6 +142,11 @@ public class JsonUtil {
         return null;
     }
 
+    public static <T> T convertAndBack(T object, ObjectMapper mapper) {
+        String json = convert(object, mapper);
+        return (T) convertnostrip(json, object.getClass(), mapper);
+    }
+
     public static String convert(Object object, ObjectMapper mapper) {
         if (mapper == null) {
             mapper = new ObjectMapper();

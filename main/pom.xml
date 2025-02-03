@@ -16,12 +16,14 @@
     <module>aggregate</module>
     <!--module>config</module-->
     <module>core</module>
+    <module>core-service</module>
     <module>coredb</module>
     <module>dbdao</module>
     <module>etl</module>
     <module>evolution</module>
     <!--module>evolve</module-->
     <module>machinelearning</module>
+    <module>machinelearning-service</module>
     <module>ml</module>
     <module>mldao</module>
     <module>model</module>

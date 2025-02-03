@@ -42,8 +42,8 @@ import roart.executor.MyExecutors;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
-import roart.machinelearning.service.ControlServiceMachineLearning;
-import roart.machinelearning.service.evolution.EvolutionServiceMachineLearning;
+import roart.machinelearning.service.MachineLearningControlService;
+import roart.machinelearning.service.evolution.MachineLearningEvolutionService;
 
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.common.config,roart.iclij.config")
 @EnableJdbcRepositories("roart.common.springdata.repository")
@@ -55,7 +55,7 @@ public class ServiceController implements CommandLineRunner {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private ControlServiceMachineLearning instance;
+    private MachineLearningControlService instance;
 
     public static List<String> taskList;
 
@@ -65,9 +65,9 @@ public class ServiceController implements CommandLineRunner {
     @Autowired
     IclijConfig iclijConfig;
     
-    private ControlServiceMachineLearning getInstance() {
+    private MachineLearningControlService getInstance() {
         if (instance == null) {
-            instance = new ControlServiceMachineLearning();
+            instance = new MachineLearningControlService();
         }
         return instance;
     }
@@ -157,7 +157,7 @@ public class ServiceController implements CommandLineRunner {
             }
             Set<String> ids = param.getIds();
             String ml = ids.iterator().next();
-            result = new EvolutionServiceMachineLearning().getEvolveML( disableList, ml, param);
+            result = new MachineLearningEvolutionService().getEvolveML( disableList, ml, param);
             if (!param.isWantMaps()) {
                 result.setMaps(null);
             }

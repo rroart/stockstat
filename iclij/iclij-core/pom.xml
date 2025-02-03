@@ -323,13 +323,13 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-core</artifactId>
+      <artifactId>stockstat-core-service</artifactId>
       <version>${stockstat.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-machinelearning</artifactId>
+      <artifactId>stockstat-machinelearning-service</artifactId>
       <version>${stockstat.version}</version>
       <scope>test</scope>
     </dependency>

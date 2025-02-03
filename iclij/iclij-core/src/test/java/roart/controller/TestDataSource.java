@@ -1,11 +1,13 @@
 package roart.controller;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.model.MetaItem;
 import roart.core.model.MyDataSource;
 import roart.db.dao.DbDao;
 import roart.etl.db.Extract;
@@ -19,8 +21,6 @@ import roart.common.util.TimeUtil;
 import roart.common.constants.Constants;
 
 public class TestDataSource extends MyDataSource {
-
-    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private IclijConfig conf;
     private Date startDate;
@@ -55,6 +55,16 @@ public class TestDataSource extends MyDataSource {
     }
 
     @Override
+    public StockData getStockData(String market) {
+        try {
+            return new TestData().getStockdata(conf, startDate, endDate, market, size, weekdays, column, ohlc);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+
+    @Override
     public Map<String, StockData> getExtraStockData(ExtraReader extraReader) {
         try {
             return new TestData().getExtraStockdataMap(conf);
@@ -63,4 +73,10 @@ public class TestDataSource extends MyDataSource {
             return null;
         }
     }
+    
+    @Override
+    public List<MetaItem> getMetas() {
+        return new TestData().getMetas();
+    }
+    
 }

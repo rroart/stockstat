@@ -6,10 +6,7 @@
  *
  */
 open module core {
-    exports roart.core.model;
-    exports roart.core.service;
-    exports roart.core.service.evolution;
-    
+    requires coreservice;
     requires batik.awt.util;
     requires batik.dom;
     requires batik.svggen;
