@@ -40,7 +40,7 @@ public class ActionThreadTest {
     @Test
     public void test() {
         //IclijDbDao dbDao = mock(IclijDbDao.class);
-        ActionThread t = new ActionThread(iclijConfig, dbDao);
+        ActionThread t = new ActionThread(iclijConfig, dbDao, null);
 
         ActionComponentItem item1 = new ActionComponentItem();
         item1.setPriority(-20);
@@ -117,7 +117,7 @@ public class ActionThreadTest {
         .when(thread)
         .runAction(any(), any(), any(), null);
         //when(thread.runAction(any(), any(), any()).thenReturn(true);
-        ActionThread t = new ActionThread(iclijConfig, dbDao);
+        ActionThread t = new ActionThread(iclijConfig, dbDao, null);
         System.out.println("Thr" +t );
         System.out.println("Thr" +thread );
         t.thread = thread;

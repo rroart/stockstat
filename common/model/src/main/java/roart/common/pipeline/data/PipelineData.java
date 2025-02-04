@@ -124,4 +124,7 @@ public class PipelineData extends SerialObject {
         }
     }
 
+    public String toString() {
+        return "PipelineData " + name + " " + map + " " + smap();
+    }
 }

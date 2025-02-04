@@ -101,7 +101,7 @@ public class ImproveProfitAction extends MarketAction {
             List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
             ConfigMapGene gene = new ConfigMapGene(component.getConflist(), param.getService().conf);
             Fitness fitness = new FitnessConfigMap(action.getActionData(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, stockDates);
-            ComponentData componentData = component.improve(action.getActionData(), param, market, profitdata, null, buy, subcomponent, parameters, wantThree, mlTests, fitness, action.getParent() != null);
+            ComponentData componentData = component.improve(action.getActionData(), param, market, profitdata, null, buy, subcomponent, parameters, wantThree, mlTests, fitness, action.getParent() != null, fileSystemDao);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);

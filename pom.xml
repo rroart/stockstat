@@ -46,6 +46,7 @@
 		    --add-reads iclij.core=model
 		    --add-reads iclij.core=pipeline.model
 		    --add-reads iclij.core=stockutil
+		    --add-reads iclij.core=common.filesystem.client
 		  </argLine>
 		</configuration>
          </plugin>

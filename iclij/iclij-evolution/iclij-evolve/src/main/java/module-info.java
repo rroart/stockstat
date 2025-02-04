@@ -29,4 +29,5 @@ module iclij.evolutionevolve {
 	requires dbdao;
     requires evolution.model;
     requires evolution.gene;
+    requires common.filesystem.client;
 }

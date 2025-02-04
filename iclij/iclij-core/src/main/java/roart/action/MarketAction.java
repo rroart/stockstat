@@ -48,6 +48,7 @@ import roart.component.util.IncDecUtil;
 import roart.constants.IclijConstants;
 import roart.controller.IclijController;
 import roart.db.dao.IclijDbDao;
+import roart.filesystem.FileSystemDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
@@ -80,6 +81,8 @@ public abstract class MarketAction extends Action {
     private MarketActionData actionData;
     
     private WebFluxUtil webFluxUtil;
+    
+    protected FileSystemDao fileSystemDao;
     
     protected abstract List<IncDecItem> getIncDecItems();
 
@@ -884,6 +887,14 @@ public abstract class MarketAction extends Action {
 
     public void setWebFluxUtil(WebFluxUtil webFluxUtil) {
         this.webFluxUtil = webFluxUtil;
+    }
+
+    public FileSystemDao getFileSystemDao() {
+        return fileSystemDao;
+    }
+
+    public void setFileSystemDao(FileSystemDao fileSystemDao) {
+        this.fileSystemDao = fileSystemDao;;
     }
 
 }

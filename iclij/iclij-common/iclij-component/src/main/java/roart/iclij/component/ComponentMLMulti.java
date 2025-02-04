@@ -14,6 +14,7 @@ import roart.common.model.MLMetricsItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.component.model.ComponentData;
 import roart.evolution.fitness.Fitness;
+import roart.filesystem.FileSystemDao;
 import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.iclij.evolution.chromosome.impl.MLMultiChromosome;
 import roart.iclij.evolution.chromosome.winner.ConfigMapChromosomeWinner;
@@ -105,7 +106,7 @@ public class ComponentMLMulti extends ComponentMLAggregator {
     }
 
     @Override
-    public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
+    public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save, FileSystemDao fileSystemDao) {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         Map<String, List<List<Double>>> listMap = param.getCategoryValueMap();
@@ -115,7 +116,7 @@ public class ComponentMLMulti extends ComponentMLAggregator {
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
         ConfigMapChromosome2 chromosome = new MLMultiChromosome(gene);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
-        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fitness, save, null);
+        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fitness, save, null, fileSystemDao);
     }
 
     @Override

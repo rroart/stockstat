@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.curator.framework.CuratorFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,12 +67,17 @@ public class MachineLearningEvolutionService {
 
     private WebFluxUtil webFluxUtil = new WebFluxUtil();
     
-    public MachineLearningEvolutionService() {
-    }
+    private FileSystemDao fileSystemDao;
 
     public MachineLearningEvolutionService(WebFluxUtil webFluxUtil) {
         super();
         this.webFluxUtil = webFluxUtil;
+    }
+
+    public MachineLearningEvolutionService(WebFluxUtil webFluxUtil, FileSystemDao fileSystemDao) {
+        super();
+        this.webFluxUtil = webFluxUtil;
+        this.fileSystemDao = fileSystemDao;
     }
 
     private Double[] getThresholds(IclijConfig conf, String thresholdString) {
@@ -219,8 +225,8 @@ public class MachineLearningEvolutionService {
             String node = conf.getEvolveSaveLocation();
             String mypath = conf.getEvolveSavePath();
             MachineLearningControlService.configCurator(conf);
-            String filename = new FileSystemDao(conf, MachineLearningControlService.curatorClient).writeFile(node, mypath, null, text);
-                     
+            String filename = getFileSystemDao(conf, MachineLearningControlService.curatorClient).writeFile(node, mypath, null, text);
+
             NeuralNetChromosome bestEval2 = (NeuralNetChromosome) best.getEvaluation();
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();
             NeuralNetConfig newnnconf = newnnconfgene.getConfig();
@@ -310,7 +316,7 @@ public class MachineLearningEvolutionService {
             String node = conf.getEvolveSaveLocation();
             String mypath = conf.getEvolveSavePath();
             MachineLearningControlService.configCurator(conf);
-            String filename = new FileSystemDao(conf, MachineLearningControlService.curatorClient).writeFile(node, mypath, null, text);
+            String filename = getFileSystemDao(conf, MachineLearningControlService.curatorClient).writeFile(node, mypath, null, text);
             
             NeuralNetChromosome bestEval2 = (NeuralNetChromosome) best.getEvaluation();
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();
@@ -334,6 +340,13 @@ public class MachineLearningEvolutionService {
             row.add(newnnconf);
             table.add(row);
         }
+    }
+
+    private FileSystemDao getFileSystemDao(IclijConfig conf, CuratorFramework curatorClient) {
+        if (fileSystemDao != null) {
+            return fileSystemDao;
+        }
+        return new FileSystemDao(conf, curatorClient);
     }
 
     public static List<String> getFoundKeys(IclijConfig conf, NeuralNetConfigs nnConfigs) {

@@ -257,7 +257,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                     List<String> confList = new ArrayList<>();
                     //Boolean buy = null;
                     //List<MLMetricsItem> mlTests = null;
-                    ComponentData componentData = evolve2.evolve(action.getActionData(), param, market, profitdata, buy, subcomponent, parameters, mlTests , confMap , evolutionConfig, component.getPipeline(), component, confList );
+                    ComponentData componentData = evolve2.evolve(action.getActionData(), param, market, profitdata, buy, subcomponent, parameters, mlTests , confMap , evolutionConfig, component.getPipeline(), component, confList, null );
 
                     //component.handle(this, market, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null);
                     //ComponentData componentData = component.handle(getActionData(), market, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null, getParent() != null);

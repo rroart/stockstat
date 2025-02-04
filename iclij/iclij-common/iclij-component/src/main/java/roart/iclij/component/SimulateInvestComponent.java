@@ -51,6 +51,7 @@ import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.constants.SimConstants;
 import roart.evolution.fitness.Fitness;
+import roart.filesystem.FileSystemDao;
 import roart.iclij.component.adviser.Adviser;
 import roart.iclij.component.adviser.AdviserFactory;
 import roart.iclij.config.AutoSimulateInvestConfig;
@@ -2230,7 +2231,7 @@ public class SimulateInvestComponent extends ComponentML {
     @Override
     public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata,
             Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree,
-            List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
+            List<MLMetricsItem> mlTests, Fitness fitness, boolean save, FileSystemDao fileSystemDao) {
         return null;
     }
 

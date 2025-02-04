@@ -16,6 +16,7 @@ import roart.iclij.evolution.chromosome.winner.MarketFilterChromosomeWinner;
 import roart.evolution.config.EvolutionConfig;
 import roart.iclij.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
 import roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene;
+import roart.filesystem.FileSystemDao;
 import roart.iclij.component.Component;
 import roart.iclij.config.Market;
 import roart.iclij.evolution.fitness.impl.FitnessMarketFilter;
@@ -31,7 +32,7 @@ public class EvolveFilterMy extends EvolveMy {
     public ComponentData evolve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata,
             Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests,
             Map<String, Object> confMap, EvolutionConfig evolutionConfig, String pipeline, Component component,
-            List<String> confList) {
+            List<String> confList, FileSystemDao fileSystemDao) {
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
         int verificationdays = param.getConfig().verificationDays();
 
@@ -57,7 +58,7 @@ public class EvolveFilterMy extends EvolveMy {
         MarketFilterChromosome2 chromosome2 = new MarketFilterChromosome2(new ArrayList<>(), gene);
         FitnessMarketFilter fit = new FitnessMarketFilter(action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, mlTests, stockDates, incdecsP);
         boolean save = false;
-        ComponentData componentData = component.improve(action, param, chromosome2, subcomponent, new MarketFilterChromosomeWinner(), buy, fit, save, null);
+        ComponentData componentData = component.improve(action, param, chromosome2, subcomponent, new MarketFilterChromosomeWinner(), buy, fit, save, null, fileSystemDao);
         param = componentData;
         }
         return param;

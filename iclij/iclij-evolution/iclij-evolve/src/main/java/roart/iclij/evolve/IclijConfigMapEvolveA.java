@@ -34,6 +34,7 @@ import roart.component.model.SimulateInvestData;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapChromosome;
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapGene;
+import roart.filesystem.FileSystemDao;
 import roart.iclij.component.Component;
 import roart.iclij.config.Market;
 import roart.iclij.evolution.fitness.impl.FitnessIclijConfigMap;
@@ -55,7 +56,7 @@ public class IclijConfigMapEvolveA extends EvolveA {
     @Override
     public ComponentData evolve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata, Boolean buy,
             String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, Map<String, Object> confMap,
-            EvolutionConfig evolutionConfig, String pipeline, Component component, List<String> confList) {
+            EvolutionConfig evolutionConfig, String pipeline, Component component, List<String> confList, FileSystemDao fileSystemDao) {
         double score = -1;
         long startTime = System.currentTimeMillis();
 

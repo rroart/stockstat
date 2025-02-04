@@ -120,7 +120,7 @@ public class ImproveFilterAction extends MarketAction {
 
             Map<String, Object> confMap = new HashMap<>();
             List<String> confList = new ArrayList<>();
-            ComponentData componentData = evolve.evolve(getActionData(), param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap , evolutionConfig, component.getPipeline(), component, confList );
+            ComponentData componentData = evolve.evolve(getActionData(), param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap , evolutionConfig, component.getPipeline(), component, confList, null );
        
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {

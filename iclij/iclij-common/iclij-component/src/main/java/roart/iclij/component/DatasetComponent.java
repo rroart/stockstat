@@ -12,6 +12,7 @@ import roart.component.model.ComponentMLData;
 import roart.component.model.DatasetData;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.Fitness;
+import roart.filesystem.FileSystemDao;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
@@ -50,7 +51,7 @@ public class DatasetComponent extends ComponentML {
 
     @Override
     public ComponentData improve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata,
-            Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
+            Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save, FileSystemDao fileSystemDao) {
         return null;
     }
 

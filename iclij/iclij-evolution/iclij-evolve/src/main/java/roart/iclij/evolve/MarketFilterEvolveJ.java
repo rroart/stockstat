@@ -29,6 +29,7 @@ import roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome;
 import roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterCrossover;
 import roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene;
 import roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterMutate;
+import roart.filesystem.FileSystemDao;
 import roart.iclij.component.Component;
 import roart.iclij.config.Market;
 import roart.iclij.config.MarketFilter;
@@ -44,7 +45,7 @@ public class MarketFilterEvolveJ extends EvolveJ {
     @Override
     public ComponentData evolve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata, Boolean buy,
             String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, Map<String, Object> confMap,
-            EvolutionConfig evolutionConfig, String pipeline, Component component, List<String> confList) {
+            EvolutionConfig evolutionConfig, String pipeline, Component component, List<String> confList, FileSystemDao fileSystemDao) {
         List<MetaItem> metas = param.getService().getMetas();
         MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
         List<String> categories = new MetaUtil().getCategories(meta);

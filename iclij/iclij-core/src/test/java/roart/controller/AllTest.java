@@ -89,6 +89,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Collection;
 import java.util.Collections;
+import roart.filesystem.FileSystemDao;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
@@ -279,7 +280,11 @@ public class AllTest {
         parameters = new Parameters();
         parameters.setThreshold(1.0);
         parameters.setFuturedays(10);
-        ac = new ActionThread(iconf, dbDao);
+
+        FileSystemDao fileSystemDao = mock(FileSystemDao.class);
+        doReturn("dummy.txt").when(fileSystemDao).writeFile(any(), any(), any(), any());
+
+        ac = new ActionThread(iconf, dbDao, null);
     }
 
     @Test

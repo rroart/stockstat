@@ -52,6 +52,7 @@ import roart.populate.PopulateThread;
 import roart.constants.IclijConstants;
 import roart.controller.IclijController;
 import roart.db.dao.IclijDbDao;
+import roart.filesystem.FileSystemDao;
 
 public class ActionThread extends Thread {
 
@@ -73,9 +74,12 @@ public class ActionThread extends Thread {
 
     private IclijConfig iclijConfig;
 
-    public ActionThread(IclijConfig iclijConfig, IclijDbDao dbDao) {
+    private FileSystemDao fileSystemDao;
+    
+    public ActionThread(IclijConfig iclijConfig, IclijDbDao dbDao, FileSystemDao fileSystemDao) {
         this.iclijConfig = iclijConfig;
         this.dbDao = dbDao;
+        this.fileSystemDao = fileSystemDao;
         this.thread = this;
     }
 
@@ -237,6 +241,7 @@ public class ActionThread extends Thread {
         myConfig.getConfigData().setMarket(item.getMarket());
         MarketAction action = ActionFactory.get(item.getAction(), dbDao, myConfig);
         action.setWebFluxUtil(webFluxUtil);
+        action.setFileSystemDao(fileSystemDao);
         action.setParent(action);
         Market market = new MarketUtil().findMarket(item.getMarket(), myConfig);
         //ComponentInput input = new ComponentInput(new IclijConfig(IclijXMLConfig.getConfigInstance()), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>());

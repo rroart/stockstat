@@ -26,6 +26,7 @@ import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.MLIndicatorData;
 import roart.evolution.fitness.Fitness;
+import roart.filesystem.FileSystemDao;
 import roart.gene.impl.ConfigMapGene;
 import roart.gene.impl.MLIndicatorConfigMapGene;
 import roart.iclij.component.constants.ServiceUtilConstants;
@@ -207,7 +208,7 @@ public class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
+    public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save, FileSystemDao fileSystemDao) {
         List<Extra> mses = null;
         try {
             mses = IclijXMLConfig.getMarketImportants(action.getIclijConfig());
@@ -228,7 +229,7 @@ public class ComponentMLIndicator extends ComponentML {
         ConfigMapChromosome2 defaultChromosome = new MLIndicatorChromosome(defaultGene);
         defaultGene.getMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST, JsonUtil.convert(mses));
         defaultGene.getMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRASBITS, "1".repeat(mses.size()));
-        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fitness, save, defaultChromosome);
+        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fitness, save, defaultChromosome, fileSystemDao);
     }
 
     @Override

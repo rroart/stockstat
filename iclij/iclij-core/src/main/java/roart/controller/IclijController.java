@@ -87,7 +87,7 @@ public class IclijController implements CommandLineRunner {
             if (iclijConfig.wantDbHibernate()) {
                 new DatabaseThread().start();
             }
-            new ActionThread(iclijConfig, dbDao).start();
+            new ActionThread(iclijConfig, dbDao, null).start();
             new MemRunner().start();
             MyCache.setCache(instance.wantCache());
             MyCache.setCacheTTL(instance.getCacheTTL());

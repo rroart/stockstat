@@ -83,4 +83,5 @@ open module iclij.core {
     requires curator.framework;
     requires stockstat.shadow.zookeeper;
     requires common.webflux;
+    requires common.filesystem.client;
 }

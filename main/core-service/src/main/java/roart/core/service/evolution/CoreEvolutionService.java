@@ -209,7 +209,7 @@ public class CoreEvolutionService {
                 String node = conf.getEvolveSaveLocation();
                 String mypath = conf.getEvolveSavePath();
                 CoreControlService.configCurator(conf);
-                String filename = new FileSystemDao(conf, CoreControlService.curatorClient).writeFile(node, mypath, null, text);
+                // TODO? String filename = new FileSystemDao(conf, CoreControlService.curatorClient).writeFile(node, mypath, null, text);
     
                 for (String id : scoreList) {
                     ResultItemTableRow row = new ResultItemTableRow();

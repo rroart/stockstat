@@ -35,6 +35,7 @@ import roart.iclij.evolution.chromosome.winner.ConfigMapChromosomeWinner;
 import roart.evolution.fitness.AbstractScore;
 import roart.evolution.fitness.Fitness;
 import roart.evolution.fitness.impl.ProportionScore;
+import roart.filesystem.FileSystemDao;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
@@ -329,7 +330,7 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
+    public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save, FileSystemDao fileSystemDao) {
 	ComponentData param = new ComponentData(componentparam);
         //Map<String, String> retMap = new HashMap<>();
         //List<String> list = getBuy();
@@ -366,7 +367,7 @@ public class ComponentRecommender extends ComponentNoML {
 
         //chromosome.setConfList(confList);
 
-        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), chromosome.getBuy(), fitness, save, null);
+        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), chromosome.getBuy(), fitness, save, null, fileSystemDao);
         //return handleBuySell(param, market, profitdata, profitdata.getInputdata().getListMap(), list);
         //list = getSell();
         //retMap.putAll(handleBuySell(param, market, profitdata, conf, profitdata.getInputdata().getListMap(), list));

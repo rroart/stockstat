@@ -28,6 +28,7 @@ import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.db.dao.IclijDbDao;
 import roart.evolution.config.EvolutionConfig;
+import roart.filesystem.FileSystemDao;
 import roart.iclij.component.Component;
 import roart.iclij.config.Market;
 import roart.iclij.evolution.fitness.impl.FitnessAboveBelow2;
@@ -41,7 +42,7 @@ public class AboveBelowEvolveJ extends EvolveJ {
     @Override
     public ComponentData evolve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata, Boolean buy,
             String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, Map<String, Object> confMap,
-            EvolutionConfig evolutionConfig, String pipeline, Component component, List<String> confList) {
+            EvolutionConfig evolutionConfig, String pipeline, Component component, List<String> confList, FileSystemDao fileSystemDao) {
         double score = -1;
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
         int verificationdays = param.getConfig().verificationDays();

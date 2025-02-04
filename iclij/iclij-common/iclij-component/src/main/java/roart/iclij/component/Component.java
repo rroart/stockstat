@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.curator.framework.CuratorFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +95,7 @@ public abstract class Component {
     
     public abstract ComponentData handle(MarketActionData action, Market market, ComponentData param, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters, boolean hasParent);
     
-    public abstract ComponentData improve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save);
+    public abstract ComponentData improve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save, FileSystemDao fileSystemDao);
 
     public abstract void handleMLMeta(ComponentData param, PipelineData mlMaps);
 
@@ -309,7 +310,7 @@ public abstract class Component {
     
     // the current implementation
     
-    public ComponentData improve(MarketActionData action, ComponentData param, AbstractChromosome chromosome, String subcomponent, ChromosomeWinner winner, Boolean buy, Fitness fitness, boolean save, AbstractChromosome defaultChromosome) {
+    public ComponentData improve(MarketActionData action, ComponentData param, AbstractChromosome chromosome, String subcomponent, ChromosomeWinner winner, Boolean buy, Fitness fitness, boolean save, AbstractChromosome defaultChromosome, FileSystemDao fileSystemDao) {
         long time0 = System.currentTimeMillis();
         EvolutionConfig evolutionConfig = JsonUtil.convert(action.getEvolutionConfig(param.getConfig()), EvolutionConfig.class);
         EvolutionConfig evolveConfig = getEvolutionConfig(param, evolutionConfig);
@@ -331,7 +332,7 @@ public abstract class Component {
             String text = evolution.printtext(title + nullString(fitness.titleText()), fitness.subTitleText(), individuals);
             String node = param.getService().conf.getEvolveSaveLocation();
             String mypath = param.getService().conf.getEvolveSavePath();
-            String filename = new FileSystemDao(param.getService().conf, ControlService.curatorClient).writeFile(node, mypath, null, text);
+            String filename = getFileSystemDao(param.getService().conf, ControlService.curatorClient, fileSystemDao).writeFile(node, mypath, null, text);
             Map<String, Object> confMap = new HashMap<>();
             double score = winner.handleWinner(param, best, confMap);
             //confMap.put("score", "" + score);
@@ -363,6 +364,13 @@ public abstract class Component {
             log.error(Constants.EXCEPTION, e);
         }
         return param;
+    }
+
+    private FileSystemDao getFileSystemDao(IclijConfig conf, CuratorFramework curatorClient, FileSystemDao fileSystemDao) {
+        if (fileSystemDao != null) {
+            return fileSystemDao;
+        }
+        return new FileSystemDao(conf, curatorClient);
     }
 
     private String nullString(String string) {
@@ -567,6 +575,7 @@ public abstract class Component {
         }
         PipelineData results = param.getResultMap();
         String id = PipelineUtils.getString(results, EvolveConstants.ID);
+        // TODO
         List<SerialScoreChromosome> myList = PipelineUtils.getList(results, id);
         double score = myList.get(0).getLeft();
         

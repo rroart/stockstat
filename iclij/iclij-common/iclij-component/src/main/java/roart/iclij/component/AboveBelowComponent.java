@@ -12,6 +12,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.evolution.fitness.Fitness;
+import roart.filesystem.FileSystemDao;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
@@ -62,7 +63,7 @@ public class AboveBelowComponent extends ComponentML {
     @Override
     public ComponentData improve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata,
             Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree,
-            List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
+            List<MLMetricsItem> mlTests, Fitness fitness, boolean save, FileSystemDao fileSystemDao) {
         return null;
     }
 

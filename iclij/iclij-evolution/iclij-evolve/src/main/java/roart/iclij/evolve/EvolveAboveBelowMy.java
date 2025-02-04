@@ -16,6 +16,7 @@ import roart.component.model.ComponentData;
 import roart.db.dao.IclijDbDao;
 import roart.iclij.evolution.chromosome.winner.AboveBelowChromosomeWinner;
 import roart.evolution.config.EvolutionConfig;
+import roart.filesystem.FileSystemDao;
 import roart.iclij.evolution.marketfilter.chromosome.impl.AboveBelowChromosome;
 import roart.iclij.component.Component;
 import roart.iclij.config.Market;
@@ -32,7 +33,7 @@ public class EvolveAboveBelowMy extends EvolveMy {
     public ComponentData evolve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata,
             Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests,
             Map<String, Object> confMap, EvolutionConfig evolutionConfig, String pipeline, Component component,
-            List<String> confList) {
+            List<String> confList, FileSystemDao fileSystemDao) {
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
         int verificationdays = param.getConfig().verificationDays();
 
@@ -67,7 +68,7 @@ public class EvolveAboveBelowMy extends EvolveMy {
         compsub.addAll(subcomponents);
         
        boolean save = false;
-       ComponentData componentData = component.improve(action, param, chromosome, subcomponent, new AboveBelowChromosomeWinner(aParameter, compsub), null, fit, save, null);
+       ComponentData componentData = component.improve(action, param, chromosome, subcomponent, new AboveBelowChromosomeWinner(aParameter, compsub), null, fit, save, null, fileSystemDao);
 
         //ComponentData componentData2 = component.improve(action, param, chromosome2, subcomponent, new MarketFilterChromosomeWinner(), buy, fit);
         param = componentData;

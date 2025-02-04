@@ -27,6 +27,7 @@ import roart.evolution.iclijconfigmap.jenetics.gene.impl.IclijConfigMapChromosom
 import roart.evolution.iclijconfigmap.jenetics.gene.impl.IclijConfigMapCrossover;
 import roart.evolution.iclijconfigmap.jenetics.gene.impl.IclijConfigMapGene;
 import roart.evolution.iclijconfigmap.jenetics.gene.impl.IclijConfigMapMutate;
+import roart.filesystem.FileSystemDao;
 import roart.iclij.component.Component;
 import roart.iclij.config.Market;
 import roart.iclij.config.MarketFilter;
@@ -41,7 +42,7 @@ public class IclijConfigMapEvolveJ extends EvolveJ {
     @Override
     public ComponentData evolve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata, Boolean buy,
             String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, Map<String, Object> confMap,
-            EvolutionConfig evolutionConfig, String pipeline, Component component, List<String> confList) {
+            EvolutionConfig evolutionConfig, String pipeline, Component component, List<String> confList, FileSystemDao fileSystemDao) {
         double score = -1;
         Map<String, Object> map = new HashMap<>();
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
