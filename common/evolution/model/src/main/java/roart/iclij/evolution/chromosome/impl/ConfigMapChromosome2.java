@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -12,6 +15,15 @@ import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
 import roart.gene.impl.ConfigMapGene;
 
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        property = "_class")
+@JsonSubTypes({  
+    @Type(value = MLAggregatorChromosome.class, name = "MLAggregatorChromosome"),
+    @Type(value = MLIndicatorChromosome.class, name = "MLIndicatorChromosome"),
+    @Type(value = PredictorChromosome.class, name = "PredictorChromosome"),
+    @Type(value = RecommenderChromosome2.class, name = "RecommenderChromosome2")
+})
 public class ConfigMapChromosome2 extends AbstractChromosome {
     protected ConfigMapGene gene;
     

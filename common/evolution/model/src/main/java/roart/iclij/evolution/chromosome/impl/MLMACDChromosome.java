@@ -8,6 +8,10 @@ import roart.gene.impl.ConfigMapGene;
 
 public class MLMACDChromosome extends MLAggregatorChromosome {
 
+    public MLMACDChromosome() {
+        super();
+    }
+
     public MLMACDChromosome(ConfigMapGene gene) {
         super(gene);
     }

@@ -56,7 +56,7 @@ public class IclijController implements CommandLineRunner {
     @Value("${spring.profiles.active:}")
     private String activeProfile;
 
-    private static CuratorFramework curatorClient;
+    public static CuratorFramework curatorClient;
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(IclijController.class, args);

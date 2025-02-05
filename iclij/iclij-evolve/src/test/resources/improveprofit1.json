@@ -1,0 +1,462 @@
+{
+  "_class": "PipelineData",
+  "id": null,
+  "name": "mlrsi",
+  "map": {},
+  "smap": {
+    "_class": "SerialMap",
+    "map": {
+      "default": {
+        "_class": "SerialMap",
+        "map": {
+          "aggregators.mlrsi.daysafterlimit": null,
+          "aggregators.mlrsi.sell.rsilimit": null,
+          "aggregators.mlrsi.sell.srsilimit": null,
+          "aggregators.mlrsi.buy.srsilimit": null,
+          "aggregators.mlrsi.buy.rsilimit": null,
+          "aggregators.mlrsi.daysbeforelimit": null
+        }
+      },
+      "titletext": {
+        "_class": "SerialString",
+        "string": "improveprofit mark1 mlrsi tensorflow gru"
+      },
+      "dummy.txt": {
+        "_class": "SerialList",
+        "list": [
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.9989536022660066,
+            "chromosome": {
+              "_class": "MLRSIChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "ConfigMapGene",
+                "className": null,
+                "map": {
+                  "aggregators.mlrsi.sell.rsilimit": 56,
+                  "machinelearning.mlclassify": true,
+                  "machinelearning.mldynamic": true,
+                  "aggregators.mlrsi.buy.rsilimit": 60,
+                  "misc.mydays": 0,
+                  "aggregators.mlrsi.daysbeforelimit": 16,
+                  "aggregators.mlrsi.threshold": "[1.0]",
+                  "aggregators.mlrsi.daysafterlimit": 7,
+                  "machinelearning.mlcross": false,
+                  "misc.threshold": null,
+                  "aggregators.mlrsi.sell.srsilimit": 0.4082466368938399,
+                  "machinelearning.mllearn": true,
+                  "aggregators.mlrsi.buy.srsilimit": 0.04326193487378327,
+                  "misc.mytabledays": 0
+                },
+                "confList": [
+                  "aggregators.mlrsi.daysafterlimit",
+                  "aggregators.mlrsi.daysbeforelimit",
+                  "aggregators.mlrsi.buy.rsilimit",
+                  "aggregators.mlrsi.buy.srsilimit",
+                  "aggregators.mlrsi.sell.rsilimit",
+                  "aggregators.mlrsi.sell.srsilimit"
+                ]
+              },
+              "map": {
+                "aggregators.mlrsi.sell.rsilimit": 56,
+                "machinelearning.mlclassify": true,
+                "machinelearning.mldynamic": true,
+                "aggregators.mlrsi.buy.rsilimit": 60,
+                "misc.mydays": 0,
+                "aggregators.mlrsi.daysbeforelimit": 16,
+                "aggregators.mlrsi.threshold": "[1.0]",
+                "aggregators.mlrsi.daysafterlimit": 7,
+                "machinelearning.mlcross": false,
+                "misc.threshold": null,
+                "aggregators.mlrsi.sell.srsilimit": 0.4082466368938399,
+                "machinelearning.mllearn": true,
+                "aggregators.mlrsi.buy.srsilimit": 0.04326193487378327,
+                "misc.mytabledays": 0
+              },
+              "confList": [
+                "aggregators.mlrsi.daysafterlimit",
+                "aggregators.mlrsi.daysbeforelimit",
+                "aggregators.mlrsi.buy.rsilimit",
+                "aggregators.mlrsi.buy.srsilimit",
+                "aggregators.mlrsi.sell.rsilimit",
+                "aggregators.mlrsi.sell.srsilimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.9929676476723567,
+            "chromosome": {
+              "_class": "MLRSIChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "ConfigMapGene",
+                "className": null,
+                "map": {
+                  "aggregators.mlrsi.sell.rsilimit": 56,
+                  "machinelearning.mlclassify": true,
+                  "machinelearning.mldynamic": true,
+                  "aggregators.mlrsi.buy.rsilimit": 54,
+                  "misc.mydays": 0,
+                  "aggregators.mlrsi.daysbeforelimit": 16,
+                  "aggregators.mlrsi.threshold": "[1.0]",
+                  "aggregators.mlrsi.daysafterlimit": 4,
+                  "machinelearning.mlcross": false,
+                  "misc.threshold": null,
+                  "aggregators.mlrsi.sell.srsilimit": 0.666868800201555,
+                  "machinelearning.mllearn": true,
+                  "aggregators.mlrsi.buy.srsilimit": 0.5546368326781357,
+                  "misc.mytabledays": 0
+                },
+                "confList": [
+                  "aggregators.mlrsi.daysafterlimit",
+                  "aggregators.mlrsi.daysbeforelimit",
+                  "aggregators.mlrsi.buy.rsilimit",
+                  "aggregators.mlrsi.buy.srsilimit",
+                  "aggregators.mlrsi.sell.rsilimit",
+                  "aggregators.mlrsi.sell.srsilimit"
+                ]
+              },
+              "map": {
+                "aggregators.mlrsi.sell.rsilimit": 56,
+                "machinelearning.mlclassify": true,
+                "machinelearning.mldynamic": true,
+                "aggregators.mlrsi.buy.rsilimit": 54,
+                "misc.mydays": 0,
+                "aggregators.mlrsi.daysbeforelimit": 16,
+                "aggregators.mlrsi.threshold": "[1.0]",
+                "aggregators.mlrsi.daysafterlimit": 4,
+                "machinelearning.mlcross": false,
+                "misc.threshold": null,
+                "aggregators.mlrsi.sell.srsilimit": 0.666868800201555,
+                "machinelearning.mllearn": true,
+                "aggregators.mlrsi.buy.srsilimit": 0.5546368326781357,
+                "misc.mytabledays": 0
+              },
+              "confList": [
+                "aggregators.mlrsi.daysafterlimit",
+                "aggregators.mlrsi.daysbeforelimit",
+                "aggregators.mlrsi.buy.rsilimit",
+                "aggregators.mlrsi.buy.srsilimit",
+                "aggregators.mlrsi.sell.rsilimit",
+                "aggregators.mlrsi.sell.srsilimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.9906614812266819,
+            "chromosome": {
+              "_class": "MLRSIChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "ConfigMapGene",
+                "className": null,
+                "map": {
+                  "aggregators.mlrsi.sell.rsilimit": 56,
+                  "machinelearning.mlclassify": true,
+                  "machinelearning.mldynamic": true,
+                  "aggregators.mlrsi.buy.rsilimit": 54,
+                  "misc.mydays": 0,
+                  "aggregators.mlrsi.daysbeforelimit": 16,
+                  "aggregators.mlrsi.threshold": "[1.0]",
+                  "aggregators.mlrsi.daysafterlimit": 4,
+                  "machinelearning.mlcross": false,
+                  "misc.threshold": null,
+                  "aggregators.mlrsi.sell.srsilimit": 0.666868800201555,
+                  "machinelearning.mllearn": true,
+                  "aggregators.mlrsi.buy.srsilimit": 0.5546368326781357,
+                  "misc.mytabledays": 0
+                },
+                "confList": [
+                  "aggregators.mlrsi.daysafterlimit",
+                  "aggregators.mlrsi.daysbeforelimit",
+                  "aggregators.mlrsi.buy.rsilimit",
+                  "aggregators.mlrsi.buy.srsilimit",
+                  "aggregators.mlrsi.sell.rsilimit",
+                  "aggregators.mlrsi.sell.srsilimit"
+                ]
+              },
+              "map": {
+                "aggregators.mlrsi.sell.rsilimit": 56,
+                "machinelearning.mlclassify": true,
+                "machinelearning.mldynamic": true,
+                "aggregators.mlrsi.buy.rsilimit": 54,
+                "misc.mydays": 0,
+                "aggregators.mlrsi.daysbeforelimit": 16,
+                "aggregators.mlrsi.threshold": "[1.0]",
+                "aggregators.mlrsi.daysafterlimit": 4,
+                "machinelearning.mlcross": false,
+                "misc.threshold": null,
+                "aggregators.mlrsi.sell.srsilimit": 0.666868800201555,
+                "machinelearning.mllearn": true,
+                "aggregators.mlrsi.buy.srsilimit": 0.5546368326781357,
+                "misc.mytabledays": 0
+              },
+              "confList": [
+                "aggregators.mlrsi.daysafterlimit",
+                "aggregators.mlrsi.daysbeforelimit",
+                "aggregators.mlrsi.buy.rsilimit",
+                "aggregators.mlrsi.buy.srsilimit",
+                "aggregators.mlrsi.sell.rsilimit",
+                "aggregators.mlrsi.sell.srsilimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.9854392561964528,
+            "chromosome": {
+              "_class": "MLRSIChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "ConfigMapGene",
+                "className": null,
+                "map": {
+                  "aggregators.mlrsi.sell.rsilimit": 32,
+                  "machinelearning.mlclassify": true,
+                  "machinelearning.mldynamic": true,
+                  "aggregators.mlrsi.buy.rsilimit": 60,
+                  "misc.mydays": 0,
+                  "aggregators.mlrsi.daysbeforelimit": 16,
+                  "aggregators.mlrsi.threshold": "[1.0]",
+                  "aggregators.mlrsi.daysafterlimit": 7,
+                  "machinelearning.mlcross": false,
+                  "misc.threshold": null,
+                  "aggregators.mlrsi.sell.srsilimit": 0.4082466368938399,
+                  "machinelearning.mllearn": true,
+                  "aggregators.mlrsi.buy.srsilimit": 0.04326193487378327,
+                  "misc.mytabledays": 0
+                },
+                "confList": [
+                  "aggregators.mlrsi.daysafterlimit",
+                  "aggregators.mlrsi.daysbeforelimit",
+                  "aggregators.mlrsi.buy.rsilimit",
+                  "aggregators.mlrsi.buy.srsilimit",
+                  "aggregators.mlrsi.sell.rsilimit",
+                  "aggregators.mlrsi.sell.srsilimit"
+                ]
+              },
+              "map": {
+                "aggregators.mlrsi.sell.rsilimit": 32,
+                "machinelearning.mlclassify": true,
+                "machinelearning.mldynamic": true,
+                "aggregators.mlrsi.buy.rsilimit": 60,
+                "misc.mydays": 0,
+                "aggregators.mlrsi.daysbeforelimit": 16,
+                "aggregators.mlrsi.threshold": "[1.0]",
+                "aggregators.mlrsi.daysafterlimit": 7,
+                "machinelearning.mlcross": false,
+                "misc.threshold": null,
+                "aggregators.mlrsi.sell.srsilimit": 0.4082466368938399,
+                "machinelearning.mllearn": true,
+                "aggregators.mlrsi.buy.srsilimit": 0.04326193487378327,
+                "misc.mytabledays": 0
+              },
+              "confList": [
+                "aggregators.mlrsi.daysafterlimit",
+                "aggregators.mlrsi.daysbeforelimit",
+                "aggregators.mlrsi.buy.rsilimit",
+                "aggregators.mlrsi.buy.srsilimit",
+                "aggregators.mlrsi.sell.rsilimit",
+                "aggregators.mlrsi.sell.srsilimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.9810313357044388,
+            "chromosome": {
+              "_class": "MLRSIChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "ConfigMapGene",
+                "className": null,
+                "map": {
+                  "aggregators.mlrsi.sell.rsilimit": 87,
+                  "machinelearning.mlclassify": true,
+                  "machinelearning.mldynamic": true,
+                  "aggregators.mlrsi.buy.rsilimit": 51,
+                  "misc.mydays": 0,
+                  "aggregators.mlrsi.daysbeforelimit": 6,
+                  "aggregators.mlrsi.threshold": "[1.0]",
+                  "aggregators.mlrsi.daysafterlimit": 7,
+                  "machinelearning.mlcross": false,
+                  "misc.threshold": null,
+                  "aggregators.mlrsi.sell.srsilimit": 0.4082466368938399,
+                  "machinelearning.mllearn": true,
+                  "aggregators.mlrsi.buy.srsilimit": 0.04326193487378327,
+                  "misc.mytabledays": 0
+                },
+                "confList": [
+                  "aggregators.mlrsi.daysafterlimit",
+                  "aggregators.mlrsi.daysbeforelimit",
+                  "aggregators.mlrsi.buy.rsilimit",
+                  "aggregators.mlrsi.buy.srsilimit",
+                  "aggregators.mlrsi.sell.rsilimit",
+                  "aggregators.mlrsi.sell.srsilimit"
+                ]
+              },
+              "map": {
+                "aggregators.mlrsi.sell.rsilimit": 87,
+                "machinelearning.mlclassify": true,
+                "machinelearning.mldynamic": true,
+                "aggregators.mlrsi.buy.rsilimit": 51,
+                "misc.mydays": 0,
+                "aggregators.mlrsi.daysbeforelimit": 6,
+                "aggregators.mlrsi.threshold": "[1.0]",
+                "aggregators.mlrsi.daysafterlimit": 7,
+                "machinelearning.mlcross": false,
+                "misc.threshold": null,
+                "aggregators.mlrsi.sell.srsilimit": 0.4082466368938399,
+                "machinelearning.mllearn": true,
+                "aggregators.mlrsi.buy.srsilimit": 0.04326193487378327,
+                "misc.mytabledays": 0
+              },
+              "confList": [
+                "aggregators.mlrsi.daysafterlimit",
+                "aggregators.mlrsi.daysbeforelimit",
+                "aggregators.mlrsi.buy.rsilimit",
+                "aggregators.mlrsi.buy.srsilimit",
+                "aggregators.mlrsi.sell.rsilimit",
+                "aggregators.mlrsi.sell.srsilimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.9495192738483068,
+            "chromosome": {
+              "_class": "MLRSIChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "ConfigMapGene",
+                "className": null,
+                "map": {
+                  "aggregators.mlrsi.sell.rsilimit": 56,
+                  "machinelearning.mlclassify": true,
+                  "machinelearning.mldynamic": true,
+                  "aggregators.mlrsi.buy.rsilimit": 60,
+                  "misc.mydays": 0,
+                  "aggregators.mlrsi.daysbeforelimit": 16,
+                  "aggregators.mlrsi.threshold": "[1.0]",
+                  "aggregators.mlrsi.daysafterlimit": 7,
+                  "machinelearning.mlcross": false,
+                  "misc.threshold": null,
+                  "aggregators.mlrsi.sell.srsilimit": 0.4082466368938399,
+                  "machinelearning.mllearn": true,
+                  "aggregators.mlrsi.buy.srsilimit": 0.04326193487378327,
+                  "misc.mytabledays": 0
+                },
+                "confList": [
+                  "aggregators.mlrsi.daysafterlimit",
+                  "aggregators.mlrsi.daysbeforelimit",
+                  "aggregators.mlrsi.buy.rsilimit",
+                  "aggregators.mlrsi.buy.srsilimit",
+                  "aggregators.mlrsi.sell.rsilimit",
+                  "aggregators.mlrsi.sell.srsilimit"
+                ]
+              },
+              "map": {
+                "aggregators.mlrsi.sell.rsilimit": 56,
+                "machinelearning.mlclassify": true,
+                "machinelearning.mldynamic": true,
+                "aggregators.mlrsi.buy.rsilimit": 60,
+                "misc.mydays": 0,
+                "aggregators.mlrsi.daysbeforelimit": 16,
+                "aggregators.mlrsi.threshold": "[1.0]",
+                "aggregators.mlrsi.daysafterlimit": 7,
+                "machinelearning.mlcross": false,
+                "misc.threshold": null,
+                "aggregators.mlrsi.sell.srsilimit": 0.4082466368938399,
+                "machinelearning.mllearn": true,
+                "aggregators.mlrsi.buy.srsilimit": 0.04326193487378327,
+                "misc.mytabledays": 0
+              },
+              "confList": [
+                "aggregators.mlrsi.daysafterlimit",
+                "aggregators.mlrsi.daysbeforelimit",
+                "aggregators.mlrsi.buy.rsilimit",
+                "aggregators.mlrsi.buy.srsilimit",
+                "aggregators.mlrsi.sell.rsilimit",
+                "aggregators.mlrsi.sell.srsilimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.7440387314825386,
+            "chromosome": {
+              "_class": "MLRSIChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "gene": {
+                "_class": "ConfigMapGene",
+                "className": null,
+                "map": {
+                  "aggregators.mlrsi.sell.rsilimit": 11,
+                  "machinelearning.mlclassify": true,
+                  "machinelearning.mldynamic": true,
+                  "aggregators.mlrsi.buy.rsilimit": 87,
+                  "misc.mydays": 0,
+                  "aggregators.mlrsi.daysbeforelimit": 17,
+                  "aggregators.mlrsi.threshold": "[1.0]",
+                  "aggregators.mlrsi.daysafterlimit": 17,
+                  "machinelearning.mlcross": false,
+                  "misc.threshold": null,
+                  "aggregators.mlrsi.sell.srsilimit": 0.3054686707686699,
+                  "machinelearning.mllearn": true,
+                  "aggregators.mlrsi.buy.srsilimit": 0.39661262323203184,
+                  "misc.mytabledays": 0
+                },
+                "confList": [
+                  "aggregators.mlrsi.daysafterlimit",
+                  "aggregators.mlrsi.daysbeforelimit",
+                  "aggregators.mlrsi.buy.rsilimit",
+                  "aggregators.mlrsi.buy.srsilimit",
+                  "aggregators.mlrsi.sell.rsilimit",
+                  "aggregators.mlrsi.sell.srsilimit"
+                ]
+              },
+              "map": {
+                "aggregators.mlrsi.sell.rsilimit": 11,
+                "machinelearning.mlclassify": true,
+                "machinelearning.mldynamic": true,
+                "aggregators.mlrsi.buy.rsilimit": 87,
+                "misc.mydays": 0,
+                "aggregators.mlrsi.daysbeforelimit": 17,
+                "aggregators.mlrsi.threshold": "[1.0]",
+                "aggregators.mlrsi.daysafterlimit": 17,
+                "machinelearning.mlcross": false,
+                "misc.threshold": null,
+                "aggregators.mlrsi.sell.srsilimit": 0.3054686707686699,
+                "machinelearning.mllearn": true,
+                "aggregators.mlrsi.buy.srsilimit": 0.39661262323203184,
+                "misc.mytabledays": 0
+              },
+              "confList": [
+                "aggregators.mlrsi.daysafterlimit",
+                "aggregators.mlrsi.daysbeforelimit",
+                "aggregators.mlrsi.buy.rsilimit",
+                "aggregators.mlrsi.buy.srsilimit",
+                "aggregators.mlrsi.sell.rsilimit",
+                "aggregators.mlrsi.sell.srsilimit"
+              ]
+            }
+          }
+        ]
+      },
+      "id": {
+        "_class": "SerialString",
+        "string": "dummy.txt"
+      }
+    }
+  }
+}

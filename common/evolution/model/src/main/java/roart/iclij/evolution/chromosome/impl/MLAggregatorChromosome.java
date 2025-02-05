@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -11,7 +14,22 @@ import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
 import roart.gene.impl.ConfigMapGene;
 
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        property = "_class")
+@JsonSubTypes({  
+    @Type(value = MLATRChromosome.class, name = "MLATRChromosome"),
+    @Type(value = MLCCIChromosome.class, name = "MLCCIChromosome"),
+    @Type(value = MLMACDChromosome.class, name = "MLMACDChromosome"),
+    @Type(value = MLMultiChromosome.class, name = "MLMultiChromosome"),
+    @Type(value = MLRSIChromosome.class, name = "MLRSIChromosome"),
+    @Type(value = MLSTOCHChromosome.class, name = "MLSTOCHChromosome")
+})
 public abstract class MLAggregatorChromosome extends ConfigMapChromosome2 {
+    public MLAggregatorChromosome() {
+        super();
+    }
+
     public MLAggregatorChromosome(ConfigMapGene gene) {
         super(gene);
     }

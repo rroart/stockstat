@@ -38,6 +38,7 @@ import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.util.MemUtil;
+import roart.common.webflux.WebFluxUtil;
 import roart.executor.MyExecutors;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.IclijServiceParam;
@@ -157,7 +158,7 @@ public class ServiceController implements CommandLineRunner {
             }
             Set<String> ids = param.getIds();
             String ml = ids.iterator().next();
-            result = new MachineLearningEvolutionService().getEvolveML( disableList, ml, param);
+            result = new MachineLearningEvolutionService(new WebFluxUtil()).getEvolveML( disableList, ml, param);
             if (!param.isWantMaps()) {
                 result.setMaps(null);
             }

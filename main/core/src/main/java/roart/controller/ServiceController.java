@@ -80,8 +80,6 @@ public class ServiceController implements CommandLineRunner {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private CoreControlService instance;
-
     public static List<String> taskList;
 
     @Value("${spring.profiles.active:}")
@@ -93,11 +91,8 @@ public class ServiceController implements CommandLineRunner {
     @Autowired
     DbDao dao;
 
-    private CoreControlService getInstance() {
-        if (instance == null) {
-            instance = new CoreControlService(dao, new DbDataSource(dao, iclijConfig));
-        }
-        return instance;
+    private CoreControlService getInstance(IclijServiceParam param) {
+        return new CoreControlService(dao, new DbDataSource(dao, new IclijConfig(param.getConfigData())));
     }
 
     @GetMapping(path = "/")
@@ -143,7 +138,7 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            result.setMarkets(getInstance().getMarkets());
+            result.setMarkets(getInstance(param).getMarkets());
             log.info("Marketsize {}", result.getMarkets().size());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -158,7 +153,7 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            result.setMetas(getInstance().getMetas());
+            result.setMetas(getInstance(param).getMetas());
             log.info("Metasize {}", result.getMetas().size());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -173,7 +168,7 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            getInstance().getDates( new IclijConfig(param.getConfigData()), result);
+            getInstance(param).getDates( new IclijConfig(param.getConfigData()), result);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -187,7 +182,7 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            result.setStocks(getInstance().getStocks(param.getMarket(),  new IclijConfig(param.getConfigData())));
+            result.setStocks(getInstance(param).getStocks(param.getMarket(),  new IclijConfig(param.getConfigData())));
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -211,7 +206,7 @@ public class ServiceController implements CommandLineRunner {
             if (disableList == null) {
                 disableList = new ArrayList<>();
             }
-            getInstance().getContent( new IclijConfig(param.getConfigData()), disableList, result);
+            getInstance(param).getContent( new IclijConfig(param.getConfigData()), disableList, result);
             long[] mem1 = MemUtil.mem();
             long[] memdiff = MemUtil.diff(mem1, mem0);
             log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
@@ -233,7 +228,7 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            result.setList(getInstance().getContentStat( new IclijConfig(param.getConfigData())));
+            result.setList(getInstance(param).getContentStat( new IclijConfig(param.getConfigData())));
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -247,7 +242,7 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            result.setList(getInstance().getContentGraph( new IclijConfig(param.getConfigData()), param.getGuiSize()));
+            result.setList(getInstance(param).getContentGraph( new IclijConfig(param.getConfigData()), param.getGuiSize()));
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -267,7 +262,7 @@ public class ServiceController implements CommandLineRunner {
                 Pair<String, String> pair = new ImmutablePair(idsplit[0], idsplit[1]);
                 ids.add(pair);
             }
-            result.setList(getInstance().getContentGraph( new IclijConfig(param.getConfigData()), ids, param.getGuiSize()));
+            result.setList(getInstance(param).getContentGraph( new IclijConfig(param.getConfigData()), ids, param.getGuiSize()));
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());

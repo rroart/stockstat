@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -110,7 +111,7 @@ public class Evolve {
         this.dbDao = dbDao;
     }
     
-    public void method(String param) {
+    public void handleEvolve(String param) {
         
         //param = getParam(param);
         List<String> output = new ArrayList<>();
@@ -122,8 +123,8 @@ public class Evolve {
         if (myList0 == null) {
         	return;
         }
-        List<ImmutablePair<Double, String>> myList = myList0.stream().map(e -> new ImmutablePair<Double, String>(e.getLeft(), "" + e.getRight())).toList();
-        Map<String, Object> aconf = PipelineUtils.getMap(data, EvolveConstants.DEFAULT);
+        List<ImmutablePair<Double, String>> myList = myList0.stream().map(e -> new ImmutablePair<Double, String>(e.getLeft(), "" + e.getRight())).collect(Collectors.toList());
+        //Map<String, Object> aconf = PipelineUtils.getMap(data, EvolveConstants.DEFAULT);
         //System.out.println("aconf" + aconf);
         //if (true) return;
         String title = PipelineUtils.getString(data, EvolveConstants.TITLETEXT);
@@ -273,7 +274,7 @@ public class Evolve {
         mlTests.add(test);
     }
 
-    public void method2(String param) {
+    public void handleProfit(String param) {
         //param = getParam(param);
         List<String> output = new ArrayList<>();
         PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class);
@@ -283,11 +284,11 @@ public class Evolve {
         }
         String id = PipelineUtils.getString(data, EvolveConstants.ID);
         // TODO
-        List<SerialScoreChromosome> myList0 = PipelineUtils.getListPlain(data, id);
+        List<SerialScoreChromosome> myList0 = PipelineUtils.getList(data, id);
         for (SerialScoreChromosome my : myList0) {
             //System.out.println(my.getKey() + " " + my.getRight());
         }
-        List<ImmutablePair<Double, String>> myList = myList0.stream().map(e -> new ImmutablePair<Double, String>(e.getLeft(), "" + e.getRight())).toList();
+        List<ImmutablePair<Double, String>> myList = myList0.stream().map(e -> new ImmutablePair<Double, String>(e.getLeft(), "" + e.getRight())).collect(Collectors.toList());
         Map<String, Object> aconf = PipelineUtils.getMap(data, EvolveConstants.DEFAULT);
         //System.out.println("aconf" + aconf);
         String title = PipelineUtils.getString(data, EvolveConstants.TITLETEXT);
@@ -383,7 +384,7 @@ public class Evolve {
         }
     }
 
-    public void method3(String param) {
+    public void handleFilter(String param) {
         //param = getParam(param);
         //Map<String, Object> myMap = convert(param, new TypeReference<List<LinkedHashMap<Double, MarketFilterChromosome2>>>(){});
         PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class);
@@ -391,12 +392,12 @@ public class Evolve {
         // TODO
         List<SerialScoreChromosome> myList = PipelineUtils.getList(data, id);
         //List<SerialScoreChromosome> myList = (List<SerialScoreChromosome>) myMap.get(id);
-        List myList0 = PipelineUtils.getListPlain(data, id);
-        System.out.println("myl"+ myList0.size() + " " + myList0.get(0).getClass().getCanonicalName());
-        System.out.println("myl"+ myList0.get(0));
+        //List myList0 = PipelineUtils.getListPlain(data, id);
+        //System.out.println("myl"+ myList0.size() + " " + myList0.get(0).getClass().getCanonicalName());
+        //System.out.println("myl"+ myList0.get(0));
    }
 
-    public void method4(String param) {
+    public void handleAboveBelow(String param) {
         //param = getParam(param);
         List<String> output = new ArrayList<>();
         PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class);
@@ -685,7 +686,7 @@ public class Evolve {
         String node = iclijConfig.getEvolveSaveLocation();
         String mypath = iclijConfig.getEvolveSavePath();
         configCurator(iclijConfig);
-        new FileSystemDao(iclijConfig, curatorClient).writeFile(node, mypath, null, text);
+        new FileSystemDao(iclijConfig, IclijController.curatorClient).writeFile(node, mypath, null, text);
     }
 
     public static void configCurator(IclijConfig conf) {

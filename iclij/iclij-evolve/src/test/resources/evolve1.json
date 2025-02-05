@@ -1,0 +1,494 @@
+{
+  "_class": "PipelineData",
+  "id": null,
+  "name": "mlrsi",
+  "map": {},
+  "smap": {
+    "_class": "SerialMap",
+    "map": {
+      "default": {
+        "_class": "SerialNeuralNetworkConfig",
+        "neuralNetConfig": {
+          "_class": "TensorflowGRUConfig",
+          "steps": 1000,
+          "layers": 2,
+          "hidden": 100,
+          "lr": 0.01,
+          "slide": 0,
+          "dropout": 0.0,
+          "dropoutin": 0.0,
+          "name": "gru"
+        }
+      },
+      "titletext": {
+        "_class": "SerialString",
+        "string": "evolve mark1 mlrsi TensorflowGRUConfig"
+      },
+      "dummy.txt": {
+        "_class": "SerialList",
+        "list": [
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.384918382607288,
+            "chromosome": {
+              "_class": "NeuralNetChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "nnConfig": {
+                "_class": "TensorflowGRUConfigGene",
+                "className": null,
+                "config": {
+                  "_class": "TensorflowGRUConfig",
+                  "steps": 900,
+                  "layers": 2,
+                  "hidden": 20,
+                  "lr": 0.1,
+                  "slide": 3,
+                  "dropout": 0.5,
+                  "dropoutin": 0.0,
+                  "name": "gru"
+                }
+              }
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.35367070037641124,
+            "chromosome": {
+              "_class": "NeuralNetChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "nnConfig": {
+                "_class": "TensorflowGRUConfigGene",
+                "className": null,
+                "config": {
+                  "_class": "TensorflowGRUConfig",
+                  "steps": 1000,
+                  "layers": 1,
+                  "hidden": 70,
+                  "lr": 0.000010000000000000003,
+                  "slide": 3,
+                  "dropout": 0.2,
+                  "dropoutin": 0.0,
+                  "name": "gru"
+                }
+              }
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.3299804504667816,
+            "chromosome": {
+              "_class": "NeuralNetChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "nnConfig": {
+                "_class": "TensorflowGRUConfigGene",
+                "className": null,
+                "config": {
+                  "_class": "TensorflowGRUConfig",
+                  "steps": 100,
+                  "layers": 2,
+                  "hidden": 60,
+                  "lr": 0.0000010000000000000004,
+                  "slide": 2,
+                  "dropout": 0.5,
+                  "dropoutin": 0.1,
+                  "name": "gru"
+                }
+              }
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.3283810538958904,
+            "chromosome": {
+              "_class": "NeuralNetChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "nnConfig": {
+                "_class": "TensorflowGRUConfigGene",
+                "className": null,
+                "config": {
+                  "_class": "TensorflowGRUConfig",
+                  "steps": 1000,
+                  "layers": 3,
+                  "hidden": 70,
+                  "lr": 1.0000000000000005E-8,
+                  "slide": 4,
+                  "dropout": 0.4,
+                  "dropoutin": 0.1,
+                  "name": "gru"
+                }
+              }
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.3149180510793695,
+            "chromosome": {
+              "_class": "NeuralNetChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "nnConfig": {
+                "_class": "TensorflowGRUConfigGene",
+                "className": null,
+                "config": {
+                  "_class": "TensorflowGRUConfig",
+                  "steps": 1000,
+                  "layers": 4,
+                  "hidden": 100,
+                  "lr": 0.0010000000000000002,
+                  "slide": 4,
+                  "dropout": 0.2,
+                  "dropoutin": 0.1,
+                  "name": "gru"
+                }
+              }
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.31081549549930215,
+            "chromosome": {
+              "_class": "NeuralNetChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "nnConfig": {
+                "_class": "TensorflowGRUConfigGene",
+                "className": null,
+                "config": {
+                  "_class": "TensorflowGRUConfig",
+                  "steps": 600,
+                  "layers": 1,
+                  "hidden": 70,
+                  "lr": 0.1,
+                  "slide": 2,
+                  "dropout": 0.2,
+                  "dropoutin": 0.0,
+                  "name": "gru"
+                }
+              }
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.3095073236825329,
+            "chromosome": {
+              "_class": "NeuralNetChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "nnConfig": {
+                "_class": "TensorflowGRUConfigGene",
+                "className": null,
+                "config": {
+                  "_class": "TensorflowGRUConfig",
+                  "steps": 500,
+                  "layers": 2,
+                  "hidden": 100,
+                  "lr": 0.1,
+                  "slide": 2,
+                  "dropout": 0.30000000000000004,
+                  "dropoutin": 0.2,
+                  "name": "gru"
+                }
+              }
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.28741557965021675,
+            "chromosome": {
+              "_class": "NeuralNetChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "nnConfig": {
+                "_class": "TensorflowGRUConfigGene",
+                "className": null,
+                "config": {
+                  "_class": "TensorflowGRUConfig",
+                  "steps": 800,
+                  "layers": 3,
+                  "hidden": 30,
+                  "lr": 0.0000010000000000000004,
+                  "slide": 3,
+                  "dropout": 0.2,
+                  "dropoutin": 0.2,
+                  "name": "gru"
+                }
+              }
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.28498981280045177,
+            "chromosome": {
+              "_class": "NeuralNetChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "nnConfig": {
+                "_class": "TensorflowGRUConfigGene",
+                "className": null,
+                "config": {
+                  "_class": "TensorflowGRUConfig",
+                  "steps": 1000,
+                  "layers": 2,
+                  "hidden": 100,
+                  "lr": 0.010000000000000002,
+                  "slide": 4,
+                  "dropout": 0.0,
+                  "dropoutin": 0.1,
+                  "name": "gru"
+                }
+              }
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.28419287054432346,
+            "chromosome": {
+              "_class": "NeuralNetChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "nnConfig": {
+                "_class": "TensorflowGRUConfigGene",
+                "className": null,
+                "config": {
+                  "_class": "TensorflowGRUConfig",
+                  "steps": 1000,
+                  "layers": 3,
+                  "hidden": 50,
+                  "lr": 0.010000000000000002,
+                  "slide": 2,
+                  "dropout": 0.4,
+                  "dropoutin": 0.0,
+                  "name": "gru"
+                }
+              }
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.2671175312330924,
+            "chromosome": {
+              "_class": "NeuralNetChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "nnConfig": {
+                "_class": "TensorflowGRUConfigGene",
+                "className": null,
+                "config": {
+                  "_class": "TensorflowGRUConfig",
+                  "steps": 900,
+                  "layers": 1,
+                  "hidden": 10,
+                  "lr": 0.0000010000000000000004,
+                  "slide": 3,
+                  "dropout": 0.2,
+                  "dropoutin": 0.1,
+                  "name": "gru"
+                }
+              }
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.24779800625827034,
+            "chromosome": {
+              "_class": "NeuralNetChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "nnConfig": {
+                "_class": "TensorflowGRUConfigGene",
+                "className": null,
+                "config": {
+                  "_class": "TensorflowGRUConfig",
+                  "steps": 900,
+                  "layers": 2,
+                  "hidden": 70,
+                  "lr": 0.010000000000000002,
+                  "slide": 3,
+                  "dropout": 0.30000000000000004,
+                  "dropoutin": 0.1,
+                  "name": "gru"
+                }
+              }
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.24548050016542552,
+            "chromosome": {
+              "_class": "NeuralNetChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "nnConfig": {
+                "_class": "TensorflowGRUConfigGene",
+                "className": null,
+                "config": {
+                  "_class": "TensorflowGRUConfig",
+                  "steps": 900,
+                  "layers": 1,
+                  "hidden": 10,
+                  "lr": 0.0000010000000000000004,
+                  "slide": 3,
+                  "dropout": 0.2,
+                  "dropoutin": 0.1,
+                  "name": "gru"
+                }
+              }
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.22898404572673714,
+            "chromosome": {
+              "_class": "NeuralNetChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "nnConfig": {
+                "_class": "TensorflowGRUConfigGene",
+                "className": null,
+                "config": {
+                  "_class": "TensorflowGRUConfig",
+                  "steps": 100,
+                  "layers": 2,
+                  "hidden": 40,
+                  "lr": 0.00010000000000000002,
+                  "slide": 3,
+                  "dropout": 0.2,
+                  "dropoutin": 0.0,
+                  "name": "gru"
+                }
+              }
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.20922516232243582,
+            "chromosome": {
+              "_class": "NeuralNetChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "nnConfig": {
+                "_class": "TensorflowGRUConfigGene",
+                "className": null,
+                "config": {
+                  "_class": "TensorflowGRUConfig",
+                  "steps": 1000,
+                  "layers": 2,
+                  "hidden": 100,
+                  "lr": 0.010000000000000002,
+                  "slide": 4,
+                  "dropout": 0.0,
+                  "dropoutin": 0.1,
+                  "name": "gru"
+                }
+              }
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.20095056018978844,
+            "chromosome": {
+              "_class": "NeuralNetChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "nnConfig": {
+                "_class": "TensorflowGRUConfigGene",
+                "className": null,
+                "config": {
+                  "_class": "TensorflowGRUConfig",
+                  "steps": 800,
+                  "layers": 4,
+                  "hidden": 100,
+                  "lr": 0.010000000000000002,
+                  "slide": 1,
+                  "dropout": 0.2,
+                  "dropoutin": 0.1,
+                  "name": "gru"
+                }
+              }
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.19069929043244738,
+            "chromosome": {
+              "_class": "NeuralNetChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "nnConfig": {
+                "_class": "TensorflowGRUConfigGene",
+                "className": null,
+                "config": {
+                  "_class": "TensorflowGRUConfig",
+                  "steps": 800,
+                  "layers": 4,
+                  "hidden": 50,
+                  "lr": 0.000010000000000000003,
+                  "slide": 2,
+                  "dropout": 0.4,
+                  "dropoutin": 0.1,
+                  "name": "gru"
+                }
+              }
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.18015258579078272,
+            "chromosome": {
+              "_class": "NeuralNetChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "nnConfig": {
+                "_class": "TensorflowGRUConfigGene",
+                "className": null,
+                "config": {
+                  "_class": "TensorflowGRUConfig",
+                  "steps": 700,
+                  "layers": 2,
+                  "hidden": 10,
+                  "lr": 0.0010000000000000002,
+                  "slide": 1,
+                  "dropout": 0.5,
+                  "dropoutin": 0.2,
+                  "name": "gru"
+                }
+              }
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 0.09949023969942412,
+            "chromosome": {
+              "_class": "NeuralNetChromosome",
+              "resultMap": null,
+              "ascending": true,
+              "nnConfig": {
+                "_class": "TensorflowGRUConfigGene",
+                "className": null,
+                "config": {
+                  "_class": "TensorflowGRUConfig",
+                  "steps": 500,
+                  "layers": 1,
+                  "hidden": 90,
+                  "lr": 0.000010000000000000003,
+                  "slide": 4,
+                  "dropout": 0.2,
+                  "dropoutin": 0.1,
+                  "name": "gru"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "id": {
+        "_class": "SerialString",
+        "string": "dummy.txt"
+      }
+    }
+  }
+}

@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,11 +22,14 @@ import roart.db.dao.IclijDbDao;
 import roart.iclij.config.SimulateFilter;
 import roart.simulate.model.SimulateStock;
 import roart.iclij.config.IclijConfig;
+import roart.common.constants.Constants;
 
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
 @SpringJUnitConfig
 @SpringBootTest(classes = { IclijConfig.class, Config.class } )
 public class SimTest {
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     IclijConfig iclijConfig;
 
@@ -47,7 +52,7 @@ public class SimTest {
         try {
             str = mapper.writeValueAsString(s);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         }
 
         System.out.println("str " + str);
@@ -56,7 +61,7 @@ public class SimTest {
         try {
             str2 = mapper2.writeValueAsString(s);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         }
 
         System.out.println("str2 " + str2);
@@ -65,7 +70,7 @@ public class SimTest {
         try {
             res = mapper.readValue(str, SimulateStock.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         }
 
         Object res2 = null;
@@ -73,7 +78,7 @@ public class SimTest {
         try {
             res2 = mapper2.readValue(str2, SimulateStock.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         }
 
         System.out.println("res " + String.valueOf(res));
@@ -84,13 +89,13 @@ public class SimTest {
         try {
             res = mapper.readValue(str2, SimulateStock.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         }
 
         try {
             res2 = mapper2.readValue(str, SimulateStock.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         }
 
         System.out.println("res " + String.valueOf(res));
@@ -107,19 +112,29 @@ public class SimTest {
         InputStream is = getClass().getClassLoader().getResourceAsStream(file);
         return new String(is.readAllBytes());        
     }
+    
     @Test
     public void test() throws IOException {
-        String s1 = string("s1.json");
-        String s2 = string("s2.json");
-        PipelineData d1 = JsonUtil.convert(s1, PipelineData.class);
-        PipelineData d2 = JsonUtil.convert(s2, PipelineData.class);
-        System.out.println("" + d1);
         Sim sim = new Sim(iclijConfig, dbDao);
-        try {
-        sim.method(s1, "sim", true);
-        sim.method(s2, "simauto", true);
-        } catch (Exception e) {
-            e.printStackTrace();
+        for (int i = 1; i <= 3; i++) {
+            try {
+                String s = string("improve" + i + ".json");
+                sim.method(s, "sim", true);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
+    }
+    @Test
+    public void testAuto() throws IOException {
+        Sim sim = new Sim(iclijConfig, dbDao);
+        for (int i = 1; i <= 2; i++) {
+            try {
+                String s = string("improveauto" + i + ".json");
+                sim.method(s, "simauto", true);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
         }
     }
 }

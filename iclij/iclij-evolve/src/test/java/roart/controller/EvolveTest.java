@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import static org.mockito.Mockito.*;
 
+import roart.common.constants.Constants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialScoreChromosome;
 import roart.common.util.JsonUtil;
@@ -28,6 +31,8 @@ import roart.iclij.config.MarketFilter;
 @SpringJUnitConfig
 @SpringBootTest(classes = { IclijConfig.class, Config.class } )
 public class EvolveTest {
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     IclijConfig iclijConfig;
 
@@ -56,30 +61,69 @@ public class EvolveTest {
     }
     
     @Test
-    public void test() throws IOException {
-        String s1 = string("e1.json");
-        String s2 = string("e2.json");
-        PipelineData d1 = convert(s1, PipelineData.class);
-        PipelineData d2 = JsonUtil.convert(s2, PipelineData.class);
+    public void testEvolve() throws IOException {
+        String evolve1 = string("evolve1.json");
+        PipelineData d1 = JsonUtil.convert(evolve1, PipelineData.class);
         System.out.println("" + d1);
+        Evolve evolve = spy(new Evolve(dbDao, iclijConfig));
+        doNothing().when(evolve).print(anyString());
+        try {
+            evolve.handleEvolve(evolve1);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+    
+    @Test
+    public void testImproveProfit() throws IOException {
+        String evolve1 = string("improveprofit1.json");
+        PipelineData d1 = JsonUtil.convert(evolve1, PipelineData.class);
+        System.out.println("" + d1);
+        Evolve evolve = spy(new Evolve(dbDao, iclijConfig));
+        doNothing().when(evolve).print(anyString());
+        try {
+            evolve.handleProfit(evolve1);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+    
+    @Test
+    public void testFilter() throws IOException {
+        String s2 = string("filter1.json");
+        PipelineData d2 = JsonUtil.convert(s2, PipelineData.class);
         System.out.println("" + d2);
         Evolve evolve = spy(new Evolve(dbDao, iclijConfig));
         doNothing().when(evolve).print(anyString());
         try {
-        //evolve.method3(s2);
-         evolve.method4(s1);
+            evolve.handleFilter(s2);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         }
     }
     
-    public static <T> T convert(String text, Class<T> myclass) {
+    @Test
+    public void testAboveBelow() throws IOException {
+        String s1 = string("abovebelow1.json");
+        PipelineData d1 = JsonUtil.convert(s1, PipelineData.class);
+        System.out.println("" + d1);
+        Evolve evolve = spy(new Evolve(dbDao, iclijConfig));
+        doNothing().when(evolve).print(anyString());
+        try {
+            evolve.handleAboveBelow(s1);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+    
+    public <T> T convert(String text, Class<T> myclass) {
         if (text != null) {
             try {
                 String strippedtext = (text);
                 return new ObjectMapper().readValue(strippedtext, myclass);
             } catch (Exception e) {
-                e.printStackTrace();            }
+                log.error(Constants.EXCEPTION, e);
+            }
         }
         return null;
     }

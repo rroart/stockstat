@@ -52,13 +52,14 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
         inmemory.delete(element.getMessage());
         IclijServiceResult r = null;
         log.debug("Cserv {}", c.getService());
+        log.info("Content {}", content);
         if (serviceMatch(ServiceConstants.SIMFILTER, c)) {
             new Sim(iclijConfig, dbDao).method((String) content, "sim", true);
         }
         if (serviceMatch(ServiceConstants.SIMAUTO, c)) {
             new Sim(iclijConfig, dbDao).method((String) content, "simauto", false);
         }
-        new QueueUtils(Sim.curatorClient).zkUnregister((String) param);
+        new QueueUtils(IclijController.curatorClient).zkUnregister((String) param);
         if (param instanceof IclijServiceParam) {
             sendReply(((IclijServiceParam) param).getWebpath(), c, r);
         }

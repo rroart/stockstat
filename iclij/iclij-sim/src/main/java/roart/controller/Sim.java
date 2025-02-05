@@ -241,9 +241,9 @@ public class Sim {
             String node = iclijConfig.getEvolveSaveLocation();
             String mypath = iclijConfig.getEvolveSavePath();
             // TODO_
-            configCurator(iclijConfig);
+            // configCurator(iclijConfig);
             String text = printtext(string + " " + simtext, "File " + id, output);
-            String filename = new FileSystemDao(iclijConfig, curatorClient).writeFile(node, mypath, null, text);
+            String filename = new FileSystemDao(iclijConfig, IclijController.curatorClient).writeFile(node, mypath, null, text);
             
             //Map<String, Object> resultMap = winnerChromosome.getResultMap();
             String[] parts = simtext.split(" ");
@@ -373,9 +373,9 @@ public class Sim {
             String node = iclijConfig.getEvolveSaveLocation();
             String mypath = iclijConfig.getEvolveSavePath();
             // TODO_
-            configCurator(iclijConfig);
+            // configCurator(iclijConfig);
             String text = printtext("simauto " + simtext, "File " + id, output);
-            String filename = new FileSystemDao(iclijConfig, curatorClient).writeFile(node, mypath, null, text);
+            String filename = new FileSystemDao(iclijConfig, IclijController.curatorClient).writeFile(node, mypath, null, text);
         }
     }
 

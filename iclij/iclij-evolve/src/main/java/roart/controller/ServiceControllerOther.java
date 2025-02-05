@@ -45,24 +45,25 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
         String content = inmemory.read(element.getMessage());
         inmemory.delete(element.getMessage());
         IclijServiceResult r = null;
+        log.info("Content {}", content);
         log.debug("Cserv {}", c.getService());
         if (serviceMatch(ServiceConstants.EVOLVEFILTEREVOLVE, c)) {
             r = new IclijServiceResult();
-            new Evolve(dbDao, iclijConfig).method((String) content);
+            new Evolve(dbDao, iclijConfig).handleEvolve((String) content);
         }
         if (serviceMatch(ServiceConstants.EVOLVEFILTERPROFIT, c)) {
             r = new IclijServiceResult();
-            new Evolve(dbDao, iclijConfig).method2((String) content);
+            new Evolve(dbDao, iclijConfig).handleProfit((String) content);
         }
         if (serviceMatch(ServiceConstants.EVOLVEFILTERFILTER, c)) {
             r = new IclijServiceResult();
-            new Evolve(dbDao, iclijConfig).method3((String) content);
+            new Evolve(dbDao, iclijConfig).handleFilter((String) content);
         }
         if (serviceMatch(ServiceConstants.EVOLVEFILTERABOVEBELOW, c)) {
             r = new IclijServiceResult();
-            new Evolve(dbDao, iclijConfig).method4((String) content);
+            new Evolve(dbDao, iclijConfig).handleAboveBelow((String) content);
         }
-        new QueueUtils(Evolve.curatorClient).zkUnregister((String) param);
+        new QueueUtils(IclijController.curatorClient).zkUnregister((String) param);
 
         if (param instanceof IclijServiceParam) {
             sendReply(((IclijServiceParam) param).getWebpath(), c, r);
