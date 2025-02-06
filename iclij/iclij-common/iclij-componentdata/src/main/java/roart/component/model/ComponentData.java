@@ -117,6 +117,10 @@ public class ComponentData {
         return getParam(iclijConfig, input, days, null, null);
     }
 
+    public static ComponentData getParam(IclijConfig iclijConfig, ComponentInput input, int days, WebFluxUtil webFluxUtil) throws Exception {
+        return getParam(iclijConfig, input, days, null, webFluxUtil);
+    }
+
     public static ComponentData getParam(IclijConfig iclijConfig, ComponentInput input, int days, Market aMarket, WebFluxUtil webFluxUtil) throws Exception {
         ComponentData param = new ComponentData(input);
         //param.setAction(IclijConstants.FINDPROFIT);

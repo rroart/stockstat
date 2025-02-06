@@ -70,6 +70,8 @@ import roart.result.model.ResultItem;
 import roart.stockutil.StockUtil;
 import roart.testdata.TestConstants;
 import roart.testdata.TestData;
+import roart.util.ServiceUtil;
+
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +83,8 @@ import roart.predictor.util.PredictorUtils;
 import roart.aggregator.util.AggregatorUtils;
 import static org.mockito.Mockito.*;
 import roart.iclij.model.Parameters;
+import roart.iclij.model.component.ComponentInput;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -90,6 +94,8 @@ import java.util.TreeSet;
 import java.util.Collection;
 import java.util.Collections;
 import roart.filesystem.FileSystemDao;
+import roart.iclij.config.SimulateInvestConfig;
+import roart.util.ServiceUtil;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
@@ -337,6 +343,64 @@ public class AllTest {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+    }
+
+    @Test
+    public void testSim() throws Exception {
+        SimulateInvestConfig simConfig = getSimConfigDefault();
+        String market = TestConstants.MARKET;
+        simConfig.setStartdate("2024-11-01");
+        simConfig.setEnddate("2024-12-01");
+        IclijServiceResult result = null;
+        try {
+            result = getSimulateInvestMarket(simConfig, market);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        System.out.println("map" + result.getWebdatajson().getUpdateMap());
+        System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+    }
+
+    private IclijServiceResult getSimulateInvestMarket(SimulateInvestConfig simConfig, String market) {
+        Map<String, Object> map = simConfig.asMap();
+        IclijConfig myConfig = iconf.copy();
+        myConfig.getConfigData().getConfigValueMap().putAll(map);
+        return ServiceUtil.getSimulateInvest(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), dbDao, myConfig, webFluxUtil);
+    }
+
+    private SimulateInvestConfig getSimConfigDefault() {
+        SimulateInvestConfig simConfig = new SimulateInvestConfig();
+        simConfig.setConfidence(false);
+        simConfig.setConfidenceValue(0.7);
+        simConfig.setConfidenceFindTimes(4);
+        simConfig.setStoploss(true);
+        simConfig.setStoplossValue(0.9);
+        simConfig.setIndicatorPure(false);
+        simConfig.setIndicatorRebase(false);
+        simConfig.setIndicatorReverse(false);
+        simConfig.setMldate(false);
+        simConfig.setStocks(5);
+        simConfig.setBuyweight(false);
+        simConfig.setInterval(7);
+        simConfig.setAdviser(0);
+        simConfig.setPeriod(0);
+        simConfig.setInterpolate(false);
+        simConfig.setIntervalStoploss(true);
+        simConfig.setIntervalStoplossValue(0.9);
+        simConfig.setDay(1);
+        simConfig.setDelay(null);
+        simConfig.setIntervalwhole(false);
+        simConfig.setConfidenceholdincrease(false);
+        simConfig.setNoconfidenceholdincrease(true);
+        simConfig.setNoconfidencetrenddecrease(false);
+        simConfig.setNoconfidencetrenddecreaseTimes(1);
+        simConfig.setConfidencetrendincrease(false);
+        simConfig.setConfidencetrendincreaseTimes(1);
+        simConfig.setIndicatorDirection(false);
+        simConfig.setIndicatorDirectionUp(true);
+        simConfig.setVolumelimits(null);
+        simConfig.setAbovebelow(false);
+        return simConfig;
     }
 
     @Deprecated

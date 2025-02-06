@@ -178,7 +178,7 @@ public abstract class MarketAction extends Action {
             ComponentInput input = new ComponentInput(config.getConfigData(), null, marketName, null, 0, paramTemplate.getInput().isDoSave(), false, new ArrayList<>(), paramTemplate.getInput().getValuemap());
             ComponentData param = null;
             try {
-                param = ComponentData.getParam(iclijConfig, input, 0, market, null);
+                param = ComponentData.getParam(iclijConfig, input, 0, market, webFluxUtil);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }

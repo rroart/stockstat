@@ -26,6 +26,7 @@ import roart.common.model.ActionComponentItem;
 import roart.common.model.MetaItem;
 import roart.common.model.TimingItem;
 import roart.common.util.TimeUtil;
+import roart.common.webflux.WebFluxUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.db.dao.IclijDbDao;
@@ -153,18 +154,19 @@ public class ServiceUtil {
         return result;
     }
 
-    public static IclijServiceResult getSimulateInvest(ComponentInput componentInput, IclijDbDao dbDao, IclijConfig iclijConfig) {
+    public static IclijServiceResult getSimulateInvest(ComponentInput componentInput, IclijDbDao dbDao, IclijConfig iclijConfig, WebFluxUtil webFluxUtil) {
         actionThreadReady();
         IclijServiceResult result = new IclijServiceResult();
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(iclijConfig, componentInput, 0);
+            param = ComponentData.getParam(iclijConfig, componentInput, 0, webFluxUtil);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
 
         MarketAction simulateInvestAction = new SimulateInvestAction(dbDao, iclijConfig);
+        simulateInvestAction.setWebFluxUtil(webFluxUtil);
         Market market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
         param.setMarket(market);
         LocalDate date = null;

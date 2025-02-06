@@ -29,6 +29,7 @@ import roart.common.cache.MyCache;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.model.TimingItem;
+import roart.common.webflux.WebFluxUtil;
 import roart.db.dao.DbAccessFactory;
 import roart.db.dao.IclijDbDao;
 import roart.db.spring.DbSpringAccess;
@@ -61,6 +62,8 @@ public class ServiceController {
     
     private ControlService instance;
 
+    private WebFluxUtil webFluxUtil = new WebFluxUtil();
+    
     private ControlService getInstance() {
         if (instance == null) {
             instance = new ControlService(iclijConfig);
@@ -161,7 +164,7 @@ public class ServiceController {
         //MainAction.goals.add(new ImproveProfitAction());
         //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
         IclijConfig myConfig = new IclijConfig(param.getConfigData());
-        return ServiceUtil.getSimulateInvest(new ComponentInput(param.getConfigData(), null, null, null, param.getOffset(), true, false, new ArrayList<>(), new HashMap<>()), dbDao, myConfig);
+        return ServiceUtil.getSimulateInvest(new ComponentInput(param.getConfigData(), null, null, null, param.getOffset(), true, false, new ArrayList<>(), new HashMap<>()), dbDao, myConfig, webFluxUtil);
     }
 
     @RequestMapping(value = "action/simulateinvest/market/{market}",
@@ -173,7 +176,7 @@ public class ServiceController {
         Map<String, Object> map = simConfig.asMap();
         IclijConfig myConfig = iclijConfig.copy();
         myConfig.getConfigData().getConfigValueMap().putAll(map);
-        return ServiceUtil.getSimulateInvest(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), dbDao, myConfig);
+        return ServiceUtil.getSimulateInvest(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), dbDao, myConfig, webFluxUtil);
     }
 
     @RequestMapping(value = "action/improvesimulateinvest/market/{market}",
