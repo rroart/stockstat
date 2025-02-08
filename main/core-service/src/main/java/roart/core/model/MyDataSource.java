@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.model.MetaItem;
+import roart.common.model.StockItem;
+import roart.iclij.config.IclijConfig;
 import roart.model.data.StockData;
 import roart.pipeline.impl.ExtraReader;
 
@@ -21,4 +23,5 @@ public abstract class MyDataSource {
 
     public abstract List<MetaItem> getMetas();
 
+    public abstract List<StockItem> getAll(String market, IclijConfig conf);
 }

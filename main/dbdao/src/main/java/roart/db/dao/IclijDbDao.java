@@ -38,10 +38,10 @@ public class IclijDbDao {
     
     private DbAccess access;
 
-    DbSpringAccess dbSpringAccess;
+    DbAccess dbSpringAccess;
 
     @Autowired
-    public IclijDbDao(IclijConfig iclijConfig, DbSpringAccess dbSpringAccess) {
+    public IclijDbDao(IclijConfig iclijConfig, DbAccess dbSpringAccess) {
         boolean hibernate = iclijConfig.wantDbHibernate();
 
         this.dbSpringAccess = dbSpringAccess;

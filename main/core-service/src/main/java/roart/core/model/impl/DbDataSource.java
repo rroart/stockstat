@@ -1,10 +1,13 @@
 package roart.core.model.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
+import roart.common.model.StockItem;
 import roart.core.model.MyDataSource;
 import roart.db.dao.DbDao;
 import roart.etl.db.Extract;
@@ -46,5 +49,15 @@ public class DbDataSource extends MyDataSource {
             log.error(Constants.EXCEPTION, e);        
         }
         return null;
+    }
+
+    @Override
+    public List<StockItem> getAll(String market, IclijConfig conf) {
+        try {
+            return dbDao.getAll(market, conf);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return new ArrayList<>();
+        }        
     }
 }

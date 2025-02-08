@@ -33,6 +33,7 @@ import roart.iclij.config.Market;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.ControlService;
+import roart.filesystem.FileSystemDao;
 
 public class ComponentData {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
@@ -114,22 +115,22 @@ public class ComponentData {
     }
 
     public static ComponentData getParam(IclijConfig iclijConfig, ComponentInput input, int days) throws Exception {
-        return getParam(iclijConfig, input, days, null, null);
+        return getParam(iclijConfig, input, days, null, null, null);
     }
 
-    public static ComponentData getParam(IclijConfig iclijConfig, ComponentInput input, int days, WebFluxUtil webFluxUtil) throws Exception {
-        return getParam(iclijConfig, input, days, null, webFluxUtil);
+    public static ComponentData getParam(IclijConfig iclijConfig, ComponentInput input, int days, WebFluxUtil webFluxUtil, FileSystemDao fileSystemDao) throws Exception {
+        return getParam(iclijConfig, input, days, null, webFluxUtil, fileSystemDao);
     }
 
-    public static ComponentData getParam(IclijConfig iclijConfig, ComponentInput input, int days, Market aMarket, WebFluxUtil webFluxUtil) throws Exception {
+    public static ComponentData getParam(IclijConfig iclijConfig, ComponentInput input, int days, Market aMarket, WebFluxUtil webFluxUtil, FileSystemDao fileSystemDao) throws Exception {
         ComponentData param = new ComponentData(input);
         //param.setAction(IclijConstants.FINDPROFIT);
         String market = input.getConfigData().getMarket();
         String mlmarket = input.getConfigData().getMlmarket();
         param.config = iclijConfig;
         ControlService srv;
-        if (webFluxUtil != null) {
-            srv = new ControlService(iclijConfig, webFluxUtil);
+        if (webFluxUtil != null || fileSystemDao != null) {
+            srv = new ControlService(iclijConfig, webFluxUtil, fileSystemDao);
         } else {
             srv = new ControlService(iclijConfig);
         }

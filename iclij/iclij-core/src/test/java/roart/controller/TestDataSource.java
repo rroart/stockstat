@@ -1,6 +1,8 @@
 package roart.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.model.MetaItem;
+import roart.common.model.StockItem;
 import roart.core.model.MyDataSource;
 import roart.db.dao.DbDao;
 import roart.etl.db.Extract;
@@ -79,4 +82,8 @@ public class TestDataSource extends MyDataSource {
         return new TestData().getMetas();
     }
     
+    @Override
+    public List<StockItem> getAll(String market, IclijConfig conf) {
+        return new ArrayList<>(); // TODO
+    }
 }

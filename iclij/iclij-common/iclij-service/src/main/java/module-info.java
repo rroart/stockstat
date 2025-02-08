@@ -29,6 +29,7 @@ module iclij.common.service {
     requires common.inmemory.model;
     requires common.webflux;
     requires common.queueutil;
+    requires common.filesystem.client;
     requires curator.client;
     requires curator.framework;
     requires pipeline.model;

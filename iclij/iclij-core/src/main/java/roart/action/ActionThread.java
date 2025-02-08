@@ -248,7 +248,7 @@ public class ActionThread extends Thread {
         ComponentInput input = new ComponentInput(myConfig.getConfigData(), null, item.getMarket(), null, null, true, false, new ArrayList<>(), new HashMap<>());
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(myConfig, input, 0, market, webFluxUtil);
+            param = ComponentData.getParam(myConfig, input, 0, market, webFluxUtil, fileSystemDao);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

@@ -52,5 +52,10 @@
       <artifactId>stockstat-iclij-common-service</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-filesystem-client</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
   </dependencies>
 </project>

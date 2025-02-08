@@ -45,6 +45,7 @@ import roart.common.util.ImmutabilityUtil;
 import roart.common.util.MemUtil;
 import roart.common.util.ServiceConnectionUtil;
 import roart.common.webflux.WebFluxUtil;
+import roart.filesystem.FileSystemDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.model.WebData;
 import roart.iclij.model.WebDataJson;
@@ -69,7 +70,19 @@ public class ControlService {
 
     private WebFluxUtil webFluxUtil = new WebFluxUtil();
     
+    private FileSystemDao fileSystemDao = new FileSystemDao(conf, curatorClient);
+    
     private static final ObjectMapper mapper = new JsonMapper().builder().addModule(new JavaTimeModule()).build();
+
+    public ControlService(IclijConfig iclijConfig, WebFluxUtil webFluxUtil, FileSystemDao fileSystemDao) {
+        this(iclijConfig);
+        if (webFluxUtil != null) {
+            this.webFluxUtil = webFluxUtil;
+        }
+        if (fileSystemDao != null) {
+            this.fileSystemDao = fileSystemDao;
+        }
+    }
 
     public ControlService(IclijConfig iclijConfig, WebFluxUtil webFluxUtil) {
         this(iclijConfig);
@@ -83,6 +96,10 @@ public class ControlService {
         objectMapper = jsonObjectMapper();
     }
   
+    public FileSystemDao getFileSystemDao() {
+        return fileSystemDao;
+    }
+
     public List<String> getTasks() {
         try {
             return sendAMe(List.class, null, EurekaConstants.GETTASKS, null);
@@ -239,7 +256,7 @@ public class ControlService {
         return list;
     }
     
-    // Unused
+    // (Un)used
     public Map<String, String> getStocks(String market) {
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(conf.getConfigData());

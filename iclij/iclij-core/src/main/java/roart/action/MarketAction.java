@@ -178,14 +178,14 @@ public abstract class MarketAction extends Action {
             ComponentInput input = new ComponentInput(config.getConfigData(), null, marketName, null, 0, paramTemplate.getInput().isDoSave(), false, new ArrayList<>(), paramTemplate.getInput().getValuemap());
             ComponentData param = null;
             try {
-                param = ComponentData.getParam(iclijConfig, input, 0, market, webFluxUtil);
+                param = ComponentData.getParam(iclijConfig, input, 0, market, webFluxUtil, fileSystemDao);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
             param.setAction(getName());
             ControlService srv;
-            if (webFluxUtil != null) {
-                srv = new ControlService(iclijConfig, webFluxUtil);
+            if (webFluxUtil != null || fileSystemDao != null) {
+                srv = new ControlService(iclijConfig, webFluxUtil, fileSystemDao);
             } else {
                 srv = new ControlService(iclijConfig);
             }

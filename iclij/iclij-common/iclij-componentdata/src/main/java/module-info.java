@@ -22,5 +22,6 @@ module iclij.common.componentdata {
     requires common.inmemory.model;
     requires common.inmemory.factory;
     requires common.webflux;
+    requires common.filesystem.client;
 }
 

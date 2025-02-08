@@ -196,12 +196,12 @@ public class TestData {
             int startsplit = (int) (days * split);
             int endsplit = (int) (days - startsplit);
             LocalDate mystartdate = startdate;
-            if (random.nextLong(10) < 2) {
+            if (startsplit > 0 && random.nextLong(10) < 2) {
                 mystartdate = mystartdate.plus(random.nextLong(startsplit), ChronoUnit.DAYS);                
                 mystartdate = TimeUtil.add(mystartdate, weekdays);
             }
             LocalDate myenddate = enddate;
-            if (random.nextLong(10) < 2) {
+            if (startsplit > 0 && random.nextLong(10) < 2) {
                 myenddate = myenddate.minus(random.nextLong(startsplit), ChronoUnit.DAYS);
                 myenddate = TimeUtil.add(myenddate, weekdays);
             }

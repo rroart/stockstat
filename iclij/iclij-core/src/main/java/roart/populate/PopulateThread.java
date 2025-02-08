@@ -102,7 +102,7 @@ public class PopulateThread extends Thread {
                 }
                 ComponentData param = null;
                 try {
-                    param = ComponentData.getParam(iclijConfig, new ComponentInput(config.getConfigData(), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), 0, market, null);
+                    param = ComponentData.getParam(iclijConfig, new ComponentInput(config.getConfigData(), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), 0, market, null, null);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
