@@ -1,0 +1,15 @@
+name: ptl
+channels:
+  - conda-forge
+dependencies:
+  - lightning=2.5.0
+  - pip:
+    - torchdata==0.7.1
+    - pretty-midi==0.2.10
+    - pandas
+    - scikit-learn
+    - scipy
+    - transformers
+    - Flask
+    - Werkzeug
+    - cyclonedx-bom
