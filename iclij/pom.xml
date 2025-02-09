@@ -19,11 +19,13 @@
   <module>iclij-core</module>
   <module>iclij-evolution</module>
   <module>iclij-evolve</module>
+  <module>iclij-evolve-service</module>
   <!--module>iclij-web</module-->
   <module>iclij-webcore</module>
   <!--module>iclij-weba</module>
   <module>iclij-webr</module-->
   <module>iclij-sim</module>
+  <module>iclij-sim-service</module>
 </modules>
 </project>
 

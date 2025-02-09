@@ -25,6 +25,8 @@ import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
 import roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene;
+import roart.evolve.Evolve;
+import roart.filesystem.FileSystemDao;
 import roart.iclij.config.MarketFilter;
 
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
@@ -40,6 +42,8 @@ public class EvolveTest {
     //public IclijDbDao dbDao;
     IclijDbDao dbDao = mock(IclijDbDao.class);
     
+    FileSystemDao fileSystemDao = null;
+
     public String string(String file) throws IOException {
         InputStream is = getClass().getClassLoader().getResourceAsStream(file);
         return new String(is.readAllBytes());        
@@ -65,7 +69,7 @@ public class EvolveTest {
         String evolve1 = string("evolve1.json");
         PipelineData d1 = JsonUtil.convert(evolve1, PipelineData.class);
         System.out.println("" + d1);
-        Evolve evolve = spy(new Evolve(dbDao, iclijConfig));
+        Evolve evolve = spy(new Evolve(dbDao, iclijConfig, fileSystemDao));
         doNothing().when(evolve).print(anyString());
         try {
             evolve.handleEvolve(evolve1);
@@ -79,7 +83,7 @@ public class EvolveTest {
         String evolve1 = string("improveprofit1.json");
         PipelineData d1 = JsonUtil.convert(evolve1, PipelineData.class);
         System.out.println("" + d1);
-        Evolve evolve = spy(new Evolve(dbDao, iclijConfig));
+        Evolve evolve = spy(new Evolve(dbDao, iclijConfig, fileSystemDao));
         doNothing().when(evolve).print(anyString());
         try {
             evolve.handleProfit(evolve1);
@@ -93,7 +97,7 @@ public class EvolveTest {
         String s2 = string("filter1.json");
         PipelineData d2 = JsonUtil.convert(s2, PipelineData.class);
         System.out.println("" + d2);
-        Evolve evolve = spy(new Evolve(dbDao, iclijConfig));
+        Evolve evolve = spy(new Evolve(dbDao, iclijConfig, fileSystemDao));
         doNothing().when(evolve).print(anyString());
         try {
             evolve.handleFilter(s2);
@@ -107,7 +111,7 @@ public class EvolveTest {
         String s1 = string("abovebelow1.json");
         PipelineData d1 = JsonUtil.convert(s1, PipelineData.class);
         System.out.println("" + d1);
-        Evolve evolve = spy(new Evolve(dbDao, iclijConfig));
+        Evolve evolve = spy(new Evolve(dbDao, iclijConfig, fileSystemDao));
         doNothing().when(evolve).print(anyString());
         try {
             evolve.handleAboveBelow(s1);

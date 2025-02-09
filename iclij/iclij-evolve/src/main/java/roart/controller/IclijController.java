@@ -16,6 +16,7 @@ import roart.common.queueutil.QueueLiveThread;
 import roart.db.dao.IclijDbDao;
 import roart.db.thread.DatabaseThread;
 import roart.executor.MyExecutors;
+import roart.filesystem.FileSystemDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.service.ControlService;
@@ -58,6 +59,8 @@ public class IclijController implements CommandLineRunner {
 
     public static CuratorFramework curatorClient;
 
+    private FileSystemDao fileSystemDao;
+    
     public static void main(String[] args) throws Exception {
         SpringApplication.run(IclijController.class, args);
     }
@@ -69,16 +72,17 @@ public class IclijController implements CommandLineRunner {
         try {
             MyExecutors.initThreads("dev".equals(activeProfile));
             MyExecutors.init(new double[] { instance.mpServerCpu() } );
+            configCurator(iclijConfig);
+            fileSystemDao = new FileSystemDao(iclijConfig, curatorClient);
             String myservices = instance.getMyservices();
             String services = instance.getServices();
             String communications = instance.getCommunications();
-            new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig, dbDao).start();
+            new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig, dbDao, fileSystemDao).start();
             if (iclijConfig.wantDbHibernate()) {
                 new DatabaseThread().start();
             }
             MyCache.setCache(instance.wantCache());
             MyCache.setCacheTTL(instance.getCacheTTL());
-            configCurator(iclijConfig);
             new QueueLiveThread(ServiceConstants.EVOLVE, curatorClient).start();            
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

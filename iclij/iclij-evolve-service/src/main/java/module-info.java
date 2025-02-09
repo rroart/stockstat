@@ -5,12 +5,14 @@
  * @author roart
  *
  */
-open module iclij.sim {
-    requires iclij.sim.service;
+open module iclij.evolve.service {
+    exports roart.evolve;
+    
     requires iclij.common.service;
     requires common.communication.model;
     requires iclij.common.config;
-    requires iclij.common.simulate;
+    requires iclij.evolutionchromosome;
+    requires iclij.common.constants;
     requires common.constants;
     requires com.fasterxml.jackson.databind;
     requires common.communication.factory;
@@ -24,29 +26,29 @@ open module iclij.sim {
     requires myexecutor;
     requires common.cache;
     requires common.controller;
-    requires common.queue;
     requires spring.context;
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.datatype.jsr310;
     requires com.fasterxml.jackson.core;
+    requires java.base;
     requires evolution.model;
-    requires iclij.evolutioniclijconfigmap;
+    requires evolution.chromosome;
+    requires common.config;
+    requires iclij.common.model;
     requires iclij.common.util;
-    //requires guava;
-    requires iclij.common.constants;
     requires common.inmemory.factory;
     requires common.inmemory.model;
     requires common.filesystem.client;
-    requires iclij.common.model;
+    requires evolution.gene;
     requires db;
-    requires commons.math3;
     //requires com.google.common;
     requires org.slf4j;
-    requires common.config;
     requires curator.client;
     requires curator.framework;
-    requires dbdao;
     requires common.model;
+    requires dbdao;
     requires spring.data.jdbc;
+    requires common.queue;
     requires common.queueutil;
+    requires iclij.evolutionmarketfilter;
 }

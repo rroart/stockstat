@@ -24,7 +24,7 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     public ServiceControllerOther(String myservices, String services, String communications, Class replyclass, IclijConfig iclijConfig, IclijDbDao dbDao) {
-        super(myservices, services, communications, replyclass, iclijConfig, dbDao);
+        super(myservices, services, communications, replyclass, iclijConfig, dbDao, null);
     }
 
     public void get(Object param, Communication c) { 

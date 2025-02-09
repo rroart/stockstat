@@ -23,11 +23,13 @@ import roart.common.constants.ServiceConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
 import roart.db.dao.IclijDbDao;
+import roart.filesystem.FileSystemDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
+import roart.sim.Sim;
 import roart.common.controller.ServiceControllerOtherAbstract;
 import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
@@ -40,8 +42,8 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
     //@Autowired
     //IclijConfig iclijConfig;
     
-    public ServiceControllerOther(String myservices, String services, String communications, Class replyclass, IclijConfig iclijConfig, IclijDbDao dbDao) {
-        super(myservices, services, communications, replyclass, iclijConfig, dbDao);
+    public ServiceControllerOther(String myservices, String services, String communications, Class replyclass, IclijConfig iclijConfig, IclijDbDao dbDao, FileSystemDao fileSystemDao) {
+        super(myservices, services, communications, replyclass, iclijConfig, dbDao, fileSystemDao);
     }
 
     public void get(Object param, Communication c) {
@@ -54,10 +56,10 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
         log.debug("Cserv {}", c.getService());
         log.info("Content {}", content);
         if (serviceMatch(ServiceConstants.SIMFILTER, c)) {
-            new Sim(iclijConfig, dbDao).method((String) content, "sim", true);
+            new Sim(iclijConfig, dbDao, fileSystemDao).method((String) content, "sim", true);
         }
         if (serviceMatch(ServiceConstants.SIMAUTO, c)) {
-            new Sim(iclijConfig, dbDao).method((String) content, "simauto", false);
+            new Sim(iclijConfig, dbDao, fileSystemDao).method((String) content, "simauto", false);
         }
         new QueueUtils(IclijController.curatorClient).zkUnregister((String) param);
         if (param instanceof IclijServiceParam) {

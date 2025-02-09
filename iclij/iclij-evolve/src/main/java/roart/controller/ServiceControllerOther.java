@@ -22,6 +22,8 @@ import roart.common.constants.ServiceConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
 import roart.db.dao.IclijDbDao;
+import roart.evolve.Evolve;
+import roart.filesystem.FileSystemDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.model.component.ComponentInput;
@@ -35,8 +37,8 @@ import roart.common.queueutil.QueueUtils;
 
 public class ServiceControllerOther extends ServiceControllerOtherAbstract {
 
-    public ServiceControllerOther(String myservices, String services, String communications, Class replyclass, IclijConfig iclijConfig, IclijDbDao dbDao) {
-        super(myservices, services, communications, replyclass, iclijConfig, dbDao);
+    public ServiceControllerOther(String myservices, String services, String communications, Class replyclass, IclijConfig iclijConfig, IclijDbDao dbDao, FileSystemDao fileSystemDao) {
+        super(myservices, services, communications, replyclass, iclijConfig, dbDao, fileSystemDao);
     }
 
     public void get(Object param, Communication c) { 
@@ -49,19 +51,19 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
         log.debug("Cserv {}", c.getService());
         if (serviceMatch(ServiceConstants.EVOLVEFILTEREVOLVE, c)) {
             r = new IclijServiceResult();
-            new Evolve(dbDao, iclijConfig).handleEvolve((String) content);
+            new Evolve(dbDao, iclijConfig, fileSystemDao).handleEvolve((String) content);
         }
         if (serviceMatch(ServiceConstants.EVOLVEFILTERPROFIT, c)) {
             r = new IclijServiceResult();
-            new Evolve(dbDao, iclijConfig).handleProfit((String) content);
+            new Evolve(dbDao, iclijConfig, fileSystemDao).handleProfit((String) content);
         }
         if (serviceMatch(ServiceConstants.EVOLVEFILTERFILTER, c)) {
             r = new IclijServiceResult();
-            new Evolve(dbDao, iclijConfig).handleFilter((String) content);
+            new Evolve(dbDao, iclijConfig, fileSystemDao).handleFilter((String) content);
         }
         if (serviceMatch(ServiceConstants.EVOLVEFILTERABOVEBELOW, c)) {
             r = new IclijServiceResult();
-            new Evolve(dbDao, iclijConfig).handleAboveBelow((String) content);
+            new Evolve(dbDao, iclijConfig, fileSystemDao).handleAboveBelow((String) content);
         }
         new QueueUtils(IclijController.curatorClient).zkUnregister((String) param);
 

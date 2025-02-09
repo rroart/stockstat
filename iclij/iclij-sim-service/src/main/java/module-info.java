@@ -5,8 +5,9 @@
  * @author roart
  *
  */
-open module iclij.sim {
-    requires iclij.sim.service;
+open module iclij.sim.service {
+    exports roart.sim;
+    
     requires iclij.common.service;
     requires common.communication.model;
     requires iclij.common.config;

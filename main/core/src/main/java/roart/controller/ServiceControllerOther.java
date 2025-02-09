@@ -11,6 +11,7 @@ import roart.common.constants.EurekaConstants;
 import roart.common.controller.ServiceControllerOtherAbstract;
 import roart.common.service.ServiceParam;
 import roart.db.dao.DbDao;
+import roart.filesystem.FileSystemDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.IclijServiceResult;
 
@@ -21,8 +22,8 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
     @Autowired
     IclijConfig iclijConfig;
     
-    public ServiceControllerOther(String myservices, String services, String communications, Class replyclass, IclijConfig iclijConfig, DbDao dao) {
-        super(myservices, services, communications, replyclass, iclijConfig, null);
+    public ServiceControllerOther(String myservices, String services, String communications, Class replyclass, IclijConfig iclijConfig, DbDao dao, FileSystemDao fileSystemDao) {
+        super(myservices, services, communications, replyclass, iclijConfig, null, fileSystemDao);
     }
 
     public void get(Object param, Communication c) { 

@@ -25,6 +25,7 @@ import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
 import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
+import roart.filesystem.FileSystemDao;
 
 public abstract class ServiceControllerOtherAbstract {
 
@@ -36,18 +37,20 @@ public abstract class ServiceControllerOtherAbstract {
     private Class replyclass;
     protected IclijConfig iclijConfig;
     protected IclijDbDao dbDao;
-
+    protected FileSystemDao fileSystemDao;
+    
     private static CuratorFramework curatorClient;
 
     private Function<String, Boolean> zkRegister;
     
-    public ServiceControllerOtherAbstract(String myservices, String services, String communications, Class replyclass, IclijConfig iclijConfig, IclijDbDao dbDao) {
+    public ServiceControllerOtherAbstract(String myservices, String services, String communications, Class replyclass, IclijConfig iclijConfig, IclijDbDao dbDao, FileSystemDao fileSystemDao) {
         this.myservices = myservices;
         this.services = services;
         this.communications = communications;
         this.replyclass = replyclass;
         this.iclijConfig = iclijConfig;
         this.dbDao = dbDao;
+        this.fileSystemDao = fileSystemDao; 
     }
 
     public void get(final Communication c) {

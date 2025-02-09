@@ -1,4 +1,4 @@
-package roart.controller;
+package roart.sim;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -81,11 +81,14 @@ public class Sim {
 
     private IclijDbDao dbDao;
     
+    private FileSystemDao fileSystemDao;
+
     private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
 
-    public Sim(IclijConfig iclijConfig, IclijDbDao dbDao) {
+    public Sim(IclijConfig iclijConfig, IclijDbDao dbDao, FileSystemDao fileSystemDao) {
         this.iclijConfig = iclijConfig;
         this.dbDao = dbDao;
+        this.fileSystemDao = fileSystemDao;
     }
     
     public static CuratorFramework curatorClient;
@@ -243,7 +246,7 @@ public class Sim {
             // TODO_
             // configCurator(iclijConfig);
             String text = printtext(string + " " + simtext, "File " + id, output);
-            String filename = new FileSystemDao(iclijConfig, IclijController.curatorClient).writeFile(node, mypath, null, text);
+            fileSystemDao.writeFile(node, mypath, null, text);
             
             //Map<String, Object> resultMap = winnerChromosome.getResultMap();
             String[] parts = simtext.split(" ");
@@ -375,7 +378,7 @@ public class Sim {
             // TODO_
             // configCurator(iclijConfig);
             String text = printtext("simauto " + simtext, "File " + id, output);
-            String filename = new FileSystemDao(iclijConfig, IclijController.curatorClient).writeFile(node, mypath, null, text);
+            //String filename = new FileSystemDao(iclijConfig, IclijController.curatorClient).writeFile(node, mypath, null, text);
         }
     }
 

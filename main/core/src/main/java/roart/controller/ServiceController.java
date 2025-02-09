@@ -306,7 +306,7 @@ public class ServiceController implements CommandLineRunner {
         String myservices = instance.getMyservices();
         String services = instance.getServices();
         String communications = instance.getCommunications();
-        new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig.copy(), dao).start();
+        new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig.copy(), dao, null).start();
         if (iclijConfig.wantDbHibernate()) {
             new DatabaseThread().start();
         }

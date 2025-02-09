@@ -6,7 +6,7 @@
  *
  */
 open module iclij.evolve {
-
+    requires iclij.evolve.service;
     requires iclij.common.service;
     requires common.communication.model;
     requires iclij.common.config;

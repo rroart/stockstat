@@ -1,4 +1,4 @@
-package roart.controller;
+package roart.evolve;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -102,13 +102,16 @@ public class Evolve {
 
     private IclijDbDao dbDao;
 
+    private FileSystemDao fileSystemDao;
+
     private Function<String, Boolean> zkRegister;
     
     private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
 
-    public Evolve(IclijDbDao dbDao, IclijConfig iclijConfig) {
+    public Evolve(IclijDbDao dbDao, IclijConfig iclijConfig, FileSystemDao fileSystemDao) {
         this.iclijConfig = iclijConfig;
         this.dbDao = dbDao;
+        this.fileSystemDao = fileSystemDao;
     }
     
     public void handleEvolve(String param) {
@@ -682,11 +685,11 @@ public class Evolve {
         send(service, object, mapper);
     }
 
-    void print(String text) {
+    public void print(String text) {
         String node = iclijConfig.getEvolveSaveLocation();
         String mypath = iclijConfig.getEvolveSavePath();
         configCurator(iclijConfig);
-        new FileSystemDao(iclijConfig, IclijController.curatorClient).writeFile(node, mypath, null, text);
+        fileSystemDao.writeFile(node, mypath, null, text);
     }
 
     public static void configCurator(IclijConfig conf) {
