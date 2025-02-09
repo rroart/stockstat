@@ -183,12 +183,7 @@ public abstract class MarketAction extends Action {
                 log.error(Constants.EXCEPTION, e);
             }
             param.setAction(getName());
-            ControlService srv;
-            if (webFluxUtil != null || fileSystemDao != null) {
-                srv = new ControlService(iclijConfig, webFluxUtil, fileSystemDao);
-            } else {
-                srv = new ControlService(iclijConfig);
-            }
+            ControlService srv = new ControlService(iclijConfig, webFluxUtil, fileSystemDao, null /*inmemory*/);
             //srv.getConfig();
             param.setService(srv);
             srv.conf.getConfigData().setMarket(market.getConfig().getMarket());

@@ -59,6 +59,7 @@ import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.MetaItem;
+import roart.common.model.MyDataSource;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
@@ -77,7 +78,6 @@ import roart.core.graphcategory.GraphCategoryIndex;
 import roart.core.graphcategory.GraphCategoryPeriod;
 import roart.core.graphcategory.GraphCategoryPeriodTopBottom;
 import roart.core.graphcategory.GraphCategoryPrice;
-import roart.core.model.MyDataSource;
 import roart.core.model.impl.DbDataSource;
 import roart.core.service.util.ServiceUtil;
 import roart.db.dao.DbDao;
@@ -137,7 +137,7 @@ public class CoreControlService {
     public Map<String, String> getStocks(String market, IclijConfig conf) {
         try {
             Map<String, String> stockMap = new HashMap<>();
-            List<StockItem> stocks = dbDao.getAll(market, conf);
+            List<StockItem> stocks = dataSource.getAll(market, conf);
             stocks.remove(null);
             for (StockItem stock : stocks) {
                 String name = stock.getName();
@@ -182,14 +182,14 @@ public class CoreControlService {
         List<AbstractCategory> categories = new ArrayList<>();
         List<Aggregator> aggregates = new ArrayList<>();
         try {
-            StockData stockData = dataSource.getStockData();
+            StockData stockData = new Extract(dataSource).getStockData(conf);;
             if (stockData == null) {
                 return new ArrayList<>();
             }
 
             IndicatorUtils iu = new IndicatorUtils();
             ExtraReader extraReader = new ExtraReader(conf, stockData.marketdatamap, 0, stockData);
-            Map<String, StockData> extraStockDataMap = dataSource.getExtraStockData(extraReader);
+            Map<String, StockData> extraStockDataMap = new IndicatorUtils().getExtraStockDataMap(conf, dataSource, extraReader);;
 
             Pipeline[] datareaders = iu.getDataReaders(conf, stockData.periodText,
                     stockData.marketdatamap, stockData, extraStockDataMap, extraReader);
@@ -486,7 +486,7 @@ public class CoreControlService {
         try {
             log.info("mydate {}", conf.getConfigData().getDate());
             log.info("mydate {}", conf.getDays());
-            StockData stockData = dataSource.getStockData();
+            StockData stockData = new Extract(dbDao).getStockData(conf);
             if (stockData == null) {
                 return new ArrayList<>();
             }
@@ -533,7 +533,7 @@ public class CoreControlService {
             Map<String, StockData> stockDataMap = new HashMap<>();
             Set<String> markets = new ServiceUtil().getMarkets(ids);
             for (String market : markets) {
-                StockData stockData = dataSource.getStockData(market);
+                StockData stockData = new Extract(dbDao).getStockData(conf, market);
                 if (stockData == null) {
                     return new ArrayList<>();
                 }
@@ -638,7 +638,7 @@ public class CoreControlService {
         conf.setConfigValueMap(new HashMap<>(conf.getConfigValueMap()));
         */
         conf.getConfigData().getConfigValueMap().putAll(aMap);
-        StockData stockData = dataSource.getStockData();
+        StockData stockData = new Extract(dataSource).getStockData(conf);
         if (stockData != null) {
             PipelineData map = new PipelineData();
             map.setName(PipelineConstants.DATELIST);

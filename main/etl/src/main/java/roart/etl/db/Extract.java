@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
+import roart.common.model.MyDataSource;
 import roart.common.model.StockItem;
 import roart.common.util.TimeUtil;
 import roart.common.util.ValidateUtil;
@@ -38,15 +39,26 @@ public class Extract {
 
     private DbDao dbDao;
     
+    private MyDataSource dataSource;
+    
     public Extract(DbDao dbDao) {
         super();
         this.dbDao = dbDao;
     }
 
+    public Extract(MyDataSource dataSource) {
+        super();
+        this.dataSource = dataSource;
+    }
+    
     public StockData getStockData(IclijConfig conf, String market) {
         List<StockItem> stocks = null;
         try {
-            stocks = dbDao.getAll(market, conf);
+            if (dbDao != null) {
+                stocks = dbDao.getAll(market, conf);
+            } else {
+                stocks = dataSource.getAll(market, conf);
+            }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

@@ -24,6 +24,7 @@
     <module>eureka</module>
     <module>filesystem</module>
     <module>inmemory</module>
+    <module>io</module>
     <module>leader</module>
     <module>myexecutor</module>
     <module>evolution</module>

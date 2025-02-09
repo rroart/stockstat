@@ -55,6 +55,7 @@ import roart.model.data.StockData;
 import roart.result.model.ResultItem;
 import roart.common.queueutil.QueueUtils;
 
+// TODO not a component, many 
 public class ControlService {
     private static Logger log = LoggerFactory.getLogger(ControlService.class);
 
@@ -72,15 +73,23 @@ public class ControlService {
     
     private FileSystemDao fileSystemDao = new FileSystemDao(conf, curatorClient);
     
+    private Inmemory inmemory;
+    
     private static final ObjectMapper mapper = new JsonMapper().builder().addModule(new JavaTimeModule()).build();
 
-    public ControlService(IclijConfig iclijConfig, WebFluxUtil webFluxUtil, FileSystemDao fileSystemDao) {
+    public ControlService(IclijConfig iclijConfig, WebFluxUtil webFluxUtil, FileSystemDao fileSystemDao, Inmemory inmemory) {
         this(iclijConfig);
         if (webFluxUtil != null) {
             this.webFluxUtil = webFluxUtil;
         }
         if (fileSystemDao != null) {
             this.fileSystemDao = fileSystemDao;
+        }
+        if (inmemory != null) {
+            this.inmemory = inmemory;
+        } else {
+            IclijConfig config = iclijConfig;
+            this.inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
         }
     }
 

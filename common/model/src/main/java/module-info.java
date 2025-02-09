@@ -18,4 +18,5 @@ module common.model {
     requires com.fasterxml.jackson.annotation;
     requires org.slf4j;
     requires common.config;
+    requires iclij.common.config;
 }

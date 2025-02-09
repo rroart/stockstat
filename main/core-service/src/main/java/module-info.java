@@ -6,7 +6,6 @@
  *
  */
 open module coreservice {
-    exports roart.core.model;
     exports roart.core.model.impl;
     exports roart.core.service;
     exports roart.core.service.evolution;

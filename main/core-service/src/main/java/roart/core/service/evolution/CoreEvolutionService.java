@@ -18,6 +18,7 @@ import roart.aggregatorindicator.impl.Recommend;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.model.MetaItem;
+import roart.common.model.MyDataSource;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialInteger;
@@ -28,7 +29,6 @@ import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.data.SerialString;
 import roart.common.util.JsonUtil;
-import roart.core.model.MyDataSource;
 import roart.core.service.CoreControlService;
 import roart.core.service.util.ServiceUtil;
 import roart.db.dao.DbDao;
@@ -80,7 +80,7 @@ public class CoreEvolutionService {
         log.info("mydate {}", conf.getDays());
         EvolutionConfig evolutionConfig = JsonUtil.convertnostrip(conf.getEvolveIndicatorrecommenderEvolutionConfig(), EvolutionConfig.class);
     
-        StockData stockData = dataSource.getStockData();
+        StockData stockData = new Extract(dataSource).getStockData(conf);
         if (stockData == null) {
             return result;
         }

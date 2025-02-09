@@ -10,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.model.MetaItem;
+import roart.common.model.MyDataSource;
 import roart.common.model.StockItem;
-import roart.core.model.MyDataSource;
 import roart.db.dao.DbDao;
 import roart.etl.db.Extract;
 import roart.iclij.config.IclijConfig;
@@ -47,6 +47,7 @@ public class TestDataSource extends MyDataSource {
         this.ohlc = ohlc;
     }
 
+    /*
     @Override
     public StockData getStockData() {
         try {
@@ -76,6 +77,7 @@ public class TestDataSource extends MyDataSource {
             return null;
         }
     }
+    */
     
     @Override
     public List<MetaItem> getMetas() {

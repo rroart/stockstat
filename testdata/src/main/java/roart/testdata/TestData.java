@@ -25,6 +25,7 @@ import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.data.SerialVolume;
 import roart.common.util.TimeUtil;
+import roart.db.dao.DbDao;
 import roart.model.data.StockData;
 import roart.etl.db.Extract;
 
@@ -146,21 +147,21 @@ public class TestData {
         List<StockItem> stocks = getStockItem(TestConstants.MARKET, true, null, Constants.INDEXVALUECOLUMN);
         MetaItem meta = new MetaItem(TestConstants.MARKET, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
         String[] periodText = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
-        return new Extract(null).getStockData(conf, TestConstants.MARKET, stocks, meta, periodText);
+        return new Extract((DbDao)null).getStockData(conf, TestConstants.MARKET, stocks, meta, periodText);
     }
     
     public StockData getStockdata2(IclijConfig conf) throws Exception {
         List<StockItem> stocks = getStockItem(TestConstants.MARKET2, true, null, Constants.INDEXVALUECOLUMN);
         MetaItem meta = new MetaItem(TestConstants.MARKET2, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
         String[] periodText = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
-        return new Extract(null).getStockData(conf, TestConstants.MARKET2, stocks, meta, periodText);
+        return new Extract((DbDao)null).getStockData(conf, TestConstants.MARKET2, stocks, meta, periodText);
     }
     
     public StockData getStockdata3(IclijConfig conf) throws Exception {
         List<StockItem> stocks = getStockItem(TestConstants.MARKET3, true, null, Constants.INDEXVALUECOLUMN);
         MetaItem meta = new MetaItem(TestConstants.MARKET3, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
         String[] periodText = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
-        return new Extract(null).getStockData(conf, TestConstants.MARKET3, stocks, meta, periodText);
+        return new Extract((DbDao)null).getStockData(conf, TestConstants.MARKET3, stocks, meta, periodText);
     }
 
     public Map<String, StockData> getExtraStockdataMap(IclijConfig conf) throws Exception {
@@ -169,19 +170,19 @@ public class TestData {
         map.put(TestConstants.MARKET3, getStockdata3(conf));
         return map;
     }
-    
+
     public StockData getStockdata(IclijConfig conf, Date startDate, Date endDate, String marketName, int size, int column, boolean ohlc) throws Exception {
         List<StockItem> stocks = getStockItem(startDate, endDate, marketName, size, true, column, ohlc);
         MetaItem meta = new MetaItem(marketName, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
         String[] periodText = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
-        return new Extract(null).getStockData(conf, marketName, stocks, meta, periodText);
+        return new Extract((DbDao)null).getStockData(conf, marketName, stocks, meta, periodText);
     }
     
     public StockData getStockdata(IclijConfig conf, Date startDate, Date endDate, String market, int size, boolean weekdays, int period, boolean ohlc) throws Exception {
         List<StockItem> stocks = getStockItem(startDate, endDate, market, size, weekdays, period, ohlc);
         MetaItem meta = new MetaItem(TestConstants.MARKET, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
         String[] periodText = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
-        return new Extract(null).getStockData(conf, market, stocks, meta, periodText);
+        return new Extract((DbDao)null).getStockData(conf, market, stocks, meta, periodText);
     }
     
     public List<StockItem> getStockItem(Date startDate, Date endDate, String market, int size, boolean weekdays, int period, boolean ohlc) throws Exception {

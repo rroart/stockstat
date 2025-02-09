@@ -381,6 +381,18 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
+      <artifactId>stockstat-common-inmemory-redis</artifactId>
+      <version>${stockstat.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-io</artifactId>
+      <version>${stockstat.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
       <artifactId>stockstat-testdata</artifactId>
       <version>${stockstat.version}</version>
       <scope>test</scope>

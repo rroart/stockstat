@@ -72,6 +72,8 @@ import roart.stockutil.StockUtil;
 import roart.testdata.TestConstants;
 import roart.testdata.TestData;
 import roart.util.ServiceUtil;
+import roart.sim.Sim;
+import roart.model.io.IO;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -132,6 +134,8 @@ public class AllTest {
     Parameters parameters;
     
     ActionThread ac;
+    
+    IO io;
     
     @Test
     public void test() {
@@ -298,6 +302,12 @@ public class AllTest {
         doReturn("dummy.txt").when(fileSystemDao).writeFile(any(), any(), any(), any());
 
         ac = new ActionThread(iconf, dbDao, fileSystemDao);
+        
+        
+        
+        //String content = "";
+        //new Sim(iconf, dbDao, fileSystemDao).method((String) content, "sim", true);
+
     }
 
     @Test

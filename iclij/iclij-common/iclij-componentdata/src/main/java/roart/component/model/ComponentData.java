@@ -128,12 +128,7 @@ public class ComponentData {
         String market = input.getConfigData().getMarket();
         String mlmarket = input.getConfigData().getMlmarket();
         param.config = iclijConfig;
-        ControlService srv;
-        if (webFluxUtil != null || fileSystemDao != null) {
-            srv = new ControlService(iclijConfig, webFluxUtil, fileSystemDao);
-        } else {
-            srv = new ControlService(iclijConfig);
-        }
+        ControlService srv = new ControlService(iclijConfig, webFluxUtil, fileSystemDao, null /*inmemory*/);
         param.setService(srv);
         if (market != null) {
             srv.conf.getConfigData().setMarket(market);

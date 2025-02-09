@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import roart.category.AbstractCategory;
 import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
+import roart.common.model.MyDataSource;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
@@ -882,6 +883,16 @@ public class IndicatorUtils {
     }
 
     public Map<String, StockData> getExtraStockDataMap(IclijConfig conf, DbDao dbDao,ExtraReader extraReader) {
+        Map<String, StockData> stockDataMap;
+        stockDataMap = new HashMap<>();
+        for (String market : extraReader.getMarkets()) {
+            StockData stockData2 = new Extract(dbDao).getStockData(conf, market);
+            stockDataMap.put(market, stockData2);
+        }
+        return stockDataMap;
+    }
+    
+    public Map<String, StockData> getExtraStockDataMap(IclijConfig conf, MyDataSource dbDao,ExtraReader extraReader) {
         Map<String, StockData> stockDataMap;
         stockDataMap = new HashMap<>();
         for (String market : extraReader.getMarkets()) {
