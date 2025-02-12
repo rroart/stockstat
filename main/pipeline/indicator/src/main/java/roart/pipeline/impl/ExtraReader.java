@@ -184,7 +184,7 @@ public class ExtraReader extends Pipeline {
             }
              */
         }
-        if (!extra.getComplex().isEmpty()) {
+        if (extra != null && !extra.getComplex().isEmpty()) {
             Map<String, List<Double>> newMap = new HashMap<>();
             for (MarketStockExpression mse : extra.getComplex()) {
                 new ComplexETL().method(mse, commonDates, stockDataMap, dataReaderMap, newMap);
