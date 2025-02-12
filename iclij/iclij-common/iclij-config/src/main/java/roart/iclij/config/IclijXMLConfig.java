@@ -148,13 +148,13 @@ public class IclijXMLConfig {
 
     private void setValues(ConfigMaps configMaps) {
         String root = configxml.getRootElementName();
-        log.info("Root {}", root);
+        log.debug("Root {}", root);
         List<HierarchicalConfiguration<ImmutableNode>> iter2 = configxml.childConfigurationsAt(".");
         for            (HierarchicalConfiguration<ImmutableNode> i : iter2 ) {
-            log.info("Elemwnt {}", i.getRootElementName());
+            log.debug("Element {}", i.getRootElementName());
         }
         HierarchicalConfiguration<ImmutableNode> iter = configxml.configurationAt(".");
-        log.info("Elem {}", iter.getRootElementName());
+        log.debug("Elem {}", iter.getRootElementName());
         //iter.c
         setValues(iter, "" /*root*/, configMaps);
         //iter.get
@@ -162,7 +162,7 @@ public class IclijXMLConfig {
         Set<String> setKeys = configInstance.getConfigData().getConfigValueMap().keySet();
         Set<String> dfltKeys = configInstance.getConfigData().getConfigMaps().deflt.keySet();
         dfltKeys.removeAll(setKeys);
-        log.info("keys to set {}", dfltKeys);
+        log.debug("keys to set {}", dfltKeys);
         for (String key : dfltKeys) {
             ConfigTreeMap map = configInstance.getConfigData().getConfigTreeMap();
             ConfigTreeMap.insert(map.getConfigTreeMap(), key, key, "", configMaps.deflt);
@@ -182,7 +182,7 @@ public class IclijXMLConfig {
     }
 
     private void setValues(HierarchicalConfiguration<ImmutableNode> elem, String base, ConfigMaps configMaps) {
-        log.info("base {}", base);
+        log.debug("base {}", base);
         List<HierarchicalConfiguration<ImmutableNode>> iter3 = elem.childConfigurationsAt(".");
         for (HierarchicalConfiguration<ImmutableNode> elem2 : iter3) {
             String here = elem2.getRootElementName();
@@ -197,7 +197,7 @@ public class IclijXMLConfig {
             //String fullnode = node;
             // node is for nodes with eventual children, need id=..., but no enable
             // node0 is for map get put
-            log.info("base {}", node);
+            log.debug("base {}", node);
             String enable = (String) elem2.getProperty("[@enable]");
             if (enable != null) {
                 //node = node + "[@enable]";
@@ -205,7 +205,7 @@ public class IclijXMLConfig {
                 //fullnode = node;
                 key = "[@enable]";
             }
-            log.info("enable {}", enable);
+            log.debug("enable {}", enable);
             String id = (String) elem2.getProperty("[@id]");
             if (id != null) {
                 node0 = node0 + "[@id=" + id + "]";
@@ -213,7 +213,7 @@ public class IclijXMLConfig {
                 //fullnode = fullnode + "[@id=" + id + "]";
                 key = key + "[@id=" + id + "]";
             }
-            log.info("id {}", id);
+            log.debug("id {}", id);
             //Properties i = elem2.getProperties("[]");
             //System.out.println(i);
             //System.out.println("s " + s + " " + configxml.getString(s) + " " + configxml.getProperty(s));
@@ -221,7 +221,7 @@ public class IclijXMLConfig {
             Iterator<String> grr = elem2.getKeys();
             while (grr.hasNext()) {
                 String s0 = grr.next();
-                log.info("s0 {}", s0);
+                log.debug("s0 {}", s0);
             }
             String text = node;
             if (text.equals("findprofit.mlindicator.mlconfig")) {
@@ -249,7 +249,7 @@ public class IclijXMLConfig {
                 //System.out.println(configxml.getProperties(s));
                 //System.out.println(j);
                 //o = configxml.getString(s);
-                log.info("Unknown {}", text);
+                log.debug("Unknown {}", text);
                 //continue;
                 String pri = (String) elem2.getProperty("[@priority]");
                 if (pri != null) {
@@ -278,15 +278,15 @@ public class IclijXMLConfig {
                     break;
                 default:
                     //System.out.println("unknown " + myclass.getName());
-                    log.info("unknown {}", myclass.getName());
+                    log.debug("unknown {}", myclass.getName());
                 }
-                log.info("Node value {} {}", node0, o);
+                log.debug("Node value {} {}", node0, o);
                 configInstance.getConfigData().getConfigValueMap().put(node0, o);
                 String pri = (String) elem2.getProperty("[@priority]");
                 if (pri != null) {
                     Integer priority = Integer.valueOf(pri);
                     configInstance.getConfigData().getConfigValueMap().put(node0 + "[@priority]", priority);
-                    log.info("Pri {} {} ", node0, pri);
+                    log.debug("Pri {} {} ", node0, pri);
                 }
             }
             setValues(elem2, node, configMaps);
@@ -462,7 +462,7 @@ public class IclijXMLConfig {
                 configMap.getConfigTreeMap().put(text, newMap);
             }
         }
-        log.info("keys {}", configMap.getConfigTreeMap().keySet());
+        log.debug("keys {}", configMap.getConfigTreeMap().keySet());
         /*
         Set<String> defKeys = IclijConfigConstantMaps.deflt.keySet();
         System.out.println("defkeys " + defKeys);
@@ -812,7 +812,7 @@ public class IclijXMLConfig {
     public static List<MarketFilter> getFilterMarkets(IclijConfig config) throws JsonParseException, JsonMappingException, IOException {
         List<MarketFilter> retList = new ArrayList<>();
         ConfigTreeMap map = config.getConfigData().getConfigTreeMap().search("markets.filtermarkets");
-        log.info("Keyset {}", config.getConfigData().getConfigValueMap().keySet());
+        log.debug("Keyset {}", config.getConfigData().getConfigValueMap().keySet());
         for (Entry<String, ConfigTreeMap> entry : map.getConfigTreeMap().entrySet()) {
             ConfigTreeMap value = entry.getValue();
             String text = entry.getValue().getName();
