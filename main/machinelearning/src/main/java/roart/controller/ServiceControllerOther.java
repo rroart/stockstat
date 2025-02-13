@@ -12,11 +12,10 @@ import roart.common.controller.ServiceControllerOtherAbstract;
 import roart.common.queue.QueueElement;
 import roart.common.service.ServiceParam;
 import roart.common.util.JsonUtil;
-import roart.db.dao.DbDao;
-import roart.filesystem.FileSystemDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
+import roart.model.io.IO;
 
 public class ServiceControllerOther extends ServiceControllerOtherAbstract {
 
@@ -25,8 +24,8 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
     @Autowired
     IclijConfig iclijConfig;
     
-    public ServiceControllerOther(String myservices, String services, String communications, Class replyclass, IclijConfig iclijConfig, DbDao dao, FileSystemDao fileSystemDao) {
-        super(myservices, services, communications, replyclass, iclijConfig, null, fileSystemDao);
+    public ServiceControllerOther(String myservices, String services, String communications, Class replyclass, IclijConfig iclijConfig, IO io) {
+        super(myservices, services, communications, replyclass, iclijConfig, io);
     }
 
     public void get(Object param, Communication c) { 

@@ -34,6 +34,10 @@ public class TestDataSource extends MyDataSource {
     private int column;
     private boolean ohlc;
     
+    private TestData testData;
+    private List<MetaItem> metas;
+    private List<StockItem> stocks;
+    
     public TestDataSource(IclijConfig conf, Date startDate, Date endDate, String marketName, int size, boolean weekdays, int column,
             boolean ohlc) {
         super();
@@ -45,6 +49,15 @@ public class TestDataSource extends MyDataSource {
         this.weekdays = weekdays;
         this.column = column;
         this.ohlc = ohlc;
+        
+        this.testData = new TestData(conf);
+        
+        metas = testData.getMetas(marketName);
+        try {
+            stocks = testData.getStockItem(startDate, endDate, marketName, size, weekdays, column, ohlc);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
     }
 
     /*
@@ -81,11 +94,11 @@ public class TestDataSource extends MyDataSource {
     
     @Override
     public List<MetaItem> getMetas() {
-        return new TestData().getMetas();
+        return metas;
     }
     
     @Override
     public List<StockItem> getAll(String market, IclijConfig conf) {
-        return new ArrayList<>(); // TODO
+        return stocks;
     }
 }

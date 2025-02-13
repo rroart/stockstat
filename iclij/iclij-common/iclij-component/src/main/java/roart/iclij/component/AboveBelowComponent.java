@@ -12,7 +12,6 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.evolution.fitness.Fitness;
-import roart.filesystem.FileSystemDao;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
@@ -47,7 +46,7 @@ public class AboveBelowComponent extends ComponentML {
         date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
         LocalDate prevDate = date.minusDays(market.getConfig().getFindtime());
         try {
-            allIncDecs = action.getDbDao().getAllIncDecs(market.getConfig().getMarket(), prevDate, date, null);
+            allIncDecs = param.getService().getIo().getIdbDao().getAllIncDecs(market.getConfig().getMarket(), prevDate, date, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -63,7 +62,7 @@ public class AboveBelowComponent extends ComponentML {
     @Override
     public ComponentData improve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata,
             Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree,
-            List<MLMetricsItem> mlTests, Fitness fitness, boolean save, FileSystemDao fileSystemDao) {
+            List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
         return null;
     }
 

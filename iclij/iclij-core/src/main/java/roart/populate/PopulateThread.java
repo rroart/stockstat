@@ -23,28 +23,28 @@ import roart.common.model.TimingItem;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.constants.IclijConstants;
-import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.Market;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.ControlService;
 import roart.iclij.service.util.MarketUtil;
+import roart.model.io.IO;
 import roart.util.ServiceUtil;
 
 public class PopulateThread extends Thread {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private IclijDbDao dbDao;
-
     private IclijConfig iclijConfig;
 
+    private IO io;
+    
     public static volatile List<Triple<String, String, String>> queue = Collections.synchronizedList(new ArrayList<>());
 
-    public PopulateThread(IclijConfig iclijConfig, IclijDbDao dbDao) {
+    public PopulateThread(IclijConfig iclijConfig, IO io) {
         this.iclijConfig = iclijConfig;
-        this.dbDao = dbDao;
+        this.io = io;
     }
 
     @Override
@@ -64,7 +64,7 @@ public class PopulateThread extends Thread {
             log.error(Constants.EXCEPTION, e);
         }
         long lastMain = 0;
-        MyLeader leader = new MyLeaderFactory().create("populate",  hostname, iclijConfig, ControlService.curatorClient, null /*GetHazelcastInstance.instance(conf.getInmemoryHazelcast())*/);
+        MyLeader leader = new MyLeaderFactory().create("populate",  hostname, iclijConfig, io.getCuratorClient(), null /*GetHazelcastInstance.instance(conf.getInmemoryHazelcast())*/);
 
         IclijConfig instance = iclijConfig;
         List<Triple<Market, String, String>> markets = new ArrayList<>();
@@ -102,7 +102,7 @@ public class PopulateThread extends Thread {
                 }
                 ComponentData param = null;
                 try {
-                    param = ComponentData.getParam(iclijConfig, new ComponentInput(config.getConfigData(), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), 0, market, null, null);
+                    param = ComponentData.getParam(iclijConfig, new ComponentInput(config.getConfigData(), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), 0, market, null);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -121,7 +121,7 @@ public class PopulateThread extends Thread {
                     LocalDate oldDate = currentDate.minusDays(findTime);
                     List<TimingItem> timingitems = null;
                     try {
-                        timingitems = dbDao.getAllTiming(market.getConfig().getMarket(), IclijConstants.FINDPROFIT, oldDate, currentDate);
+                        timingitems = io.getIdbDao().getAllTiming(market.getConfig().getMarket(), IclijConstants.FINDPROFIT, oldDate, currentDate);
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
                     }
@@ -142,10 +142,10 @@ public class PopulateThread extends Thread {
                         continue;
                     }
                     ComponentInput componentInput = new ComponentInput(config.getConfigData(), null, null, lastStockdate, null, true, false, new ArrayList<>(), new HashMap<>());
-                    ServiceUtil.getFindProfit(componentInput, timingitems, dbDao, iclijConfig);
+                    ServiceUtil.getFindProfit(componentInput, timingitems, iclijConfig, io);
                     if (config.getFindProfitMemoryFilter()) {
                         try {
-                            timingitems = dbDao.getAllTiming(market.getConfig().getMarket(), IclijConstants.IMPROVEABOVEBELOW, oldDate, currentDate);
+                            timingitems = io.getIdbDao().getAllTiming(market.getConfig().getMarket(), IclijConstants.IMPROVEABOVEBELOW, oldDate, currentDate);
                         } catch (Exception e) {
                             log.error(Constants.EXCEPTION, e);
                         }
@@ -155,7 +155,7 @@ public class PopulateThread extends Thread {
                             config.getConfigData().setDate(aCurrentDate);
                             ComponentInput componentInput3 = new ComponentInput(config.getConfigData(), null, null, aCurrentDate, null, true, false, new ArrayList<>(), new HashMap<>());
                             try {
-                                ServiceUtil.getImproveAboveBelow(componentInput3, dbDao, iclijConfig);
+                                ServiceUtil.getImproveAboveBelow(componentInput3, iclijConfig, io);
                             } catch (Exception e) {
                                 log.error(Constants.EXCEPTION, e);
                             }
@@ -163,7 +163,7 @@ public class PopulateThread extends Thread {
                     }
                     if (config.getFindProfitMemoryFilter()) {
                         try {
-                            timingitems = dbDao.getAllTiming(market.getConfig().getMarket(), IclijConstants.IMPROVEFILTER, oldDate, currentDate);
+                            timingitems = io.getIdbDao().getAllTiming(market.getConfig().getMarket(), IclijConstants.IMPROVEFILTER, oldDate, currentDate);
                         } catch (Exception e) {
                             log.error(Constants.EXCEPTION, e);
                         }
@@ -173,7 +173,7 @@ public class PopulateThread extends Thread {
                             config.getConfigData().setDate(aCurrentDate);
                             ComponentInput componentInput3 = new ComponentInput(config.getConfigData(), null, null, aCurrentDate, null, true, false, new ArrayList<>(), new HashMap<>());
                             try {
-                                ServiceUtil.getImproveFilter(componentInput3, dbDao, iclijConfig);
+                                ServiceUtil.getImproveFilter(componentInput3, iclijConfig, io);
                             } catch (Exception e) {
                                 log.error(Constants.EXCEPTION, e);
                             }

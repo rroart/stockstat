@@ -1,5 +1,7 @@
 package roart.model.io;
 
+import org.apache.curator.framework.CuratorFramework;
+
 import roart.common.communication.factory.CommunicationFactory;
 import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.model.MyDataSource;
@@ -20,14 +22,23 @@ public class IO {
     
     private FileSystemDao fileSystemDao;
 
+    private InmemoryFactory inmemoryFactory;
+    
+    private CommunicationFactory communicationFactory;
+    
+    private CuratorFramework curatorClient;
+ 
     public IO(IclijDbDao idbDao, DbDao dbDao, MyDataSource dataSource, WebFluxUtil webFluxUtil,
-            FileSystemDao fileSystemDao) {
+            FileSystemDao fileSystemDao, InmemoryFactory inmemoryFactory, CommunicationFactory communicationFactory, CuratorFramework curatorClient) {
         super();
         this.idbDao = idbDao;
         this.dbDao = dbDao;
         this.dataSource = dataSource;
         this.webFluxUtil = webFluxUtil;
         this.fileSystemDao = fileSystemDao;
+        this.inmemoryFactory = inmemoryFactory;
+        this.communicationFactory = communicationFactory;
+        this.curatorClient = curatorClient;
     }
 
     public IclijDbDao getIdbDao() {
@@ -68,6 +79,30 @@ public class IO {
 
     public void setFileSystemDao(FileSystemDao fileSystemDao) {
         this.fileSystemDao = fileSystemDao;
+    }
+
+    public InmemoryFactory getInmemoryFactory() {
+        return inmemoryFactory;
+    }
+
+    public void setInmemoryFactory(InmemoryFactory inmemoryFactory) {
+        this.inmemoryFactory = inmemoryFactory;
+    }
+
+    public CommunicationFactory getCommunicationFactory() {
+        return communicationFactory;
+    }
+
+    public void setCommunicationFactory(CommunicationFactory communicationFactory) {
+        this.communicationFactory = communicationFactory;
+    }
+
+    public CuratorFramework getCuratorClient() {
+        return curatorClient;
+    }
+
+    public void setCuratorClient(CuratorFramework curatorClient) {
+        this.curatorClient = curatorClient;
     }
     
     

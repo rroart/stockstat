@@ -46,7 +46,7 @@ public class ComponentMLRSI extends ComponentMLAggregator {
 
     @Override
     protected int getDaysAfterLimit(ComponentData componentparam) {
-        return componentparam.getService().conf.getMLRSIDaysAfterLimit();
+        return componentparam.getService().coremlconf.getMLRSIDaysAfterLimit();
     }
     
     @Deprecated

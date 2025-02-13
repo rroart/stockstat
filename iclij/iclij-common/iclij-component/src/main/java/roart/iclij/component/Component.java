@@ -95,7 +95,7 @@ public abstract class Component {
     
     public abstract ComponentData handle(MarketActionData action, Market market, ComponentData param, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters, boolean hasParent);
     
-    public abstract ComponentData improve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save, FileSystemDao fileSystemDao);
+    public abstract ComponentData improve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save);
 
     public abstract void handleMLMeta(ComponentData param, PipelineData mlMaps);
 
@@ -160,7 +160,7 @@ public abstract class Component {
         	valueMap.putAll(getValueMap(action, param.getAction(), market, param, subcomponent, mlmarket, parameters));
         }
         String pipeline = getPipeline();
-        param.getService().conf.getConfigData().getConfigValueMap().putAll(valueMap);
+        param.getService().coremlconf.getConfigData().getConfigValueMap().putAll(valueMap);
         Map<String, Object> scoreMap = new HashMap<>();
         Object[] scoreDescription = new Object[] { null, null };
         long time0 = System.currentTimeMillis();
@@ -261,7 +261,7 @@ public abstract class Component {
         timing.setDescription(description);
         try {
             if (param.isDoSave() || save) {
-                actionData.getDbDao().save(timing);
+                param.getService().getIo().getIdbDao().save(timing);
             } else {
                 int jj = 0;
             }
@@ -310,7 +310,7 @@ public abstract class Component {
     
     // the current implementation
     
-    public ComponentData improve(MarketActionData action, ComponentData param, AbstractChromosome chromosome, String subcomponent, ChromosomeWinner winner, Boolean buy, Fitness fitness, boolean save, AbstractChromosome defaultChromosome, FileSystemDao fileSystemDao) {
+    public ComponentData improve(MarketActionData action, ComponentData param, AbstractChromosome chromosome, String subcomponent, ChromosomeWinner winner, Boolean buy, Fitness fitness, boolean save, AbstractChromosome defaultChromosome) {
         long time0 = System.currentTimeMillis();
         EvolutionConfig evolutionConfig = JsonUtil.convert(action.getEvolutionConfig(param.getConfig()), EvolutionConfig.class);
         EvolutionConfig evolveConfig = getEvolutionConfig(param, evolutionConfig);
@@ -330,9 +330,9 @@ public abstract class Component {
             String title = action.getName() + " " + param.getMarket() + " " + getPipeline() + mysubcomponent;
             String subtitle = fitness.subTitleText();
             String text = evolution.printtext(title + nullString(fitness.titleText()), fitness.subTitleText(), individuals);
-            String node = param.getService().conf.getEvolveSaveLocation();
-            String mypath = param.getService().conf.getEvolveSavePath();
-            String filename = param.getService().getFileSystemDao().writeFile(node, mypath, null, text);
+            String node = param.getService().coremlconf.getEvolveSaveLocation();
+            String mypath = param.getService().coremlconf.getEvolveSavePath();
+            String filename = param.getService().getIo().getFileSystemDao().writeFile(node, mypath, null, text);
             Map<String, Object> confMap = new HashMap<>();
             double score = winner.handleWinner(param, best, confMap);
             //confMap.put("score", "" + score);
@@ -366,13 +366,6 @@ public abstract class Component {
         return param;
     }
 
-    private FileSystemDao getFileSystemDao(IclijConfig conf, CuratorFramework curatorClient, FileSystemDao fileSystemDao) {
-        if (fileSystemDao != null) {
-            return fileSystemDao;
-        }
-        return new FileSystemDao(conf, curatorClient);
-    }
-
     private String nullString(String string) {
         if (string == null) {
             return "";
@@ -401,7 +394,7 @@ public abstract class Component {
             String value = JsonUtil.convert(object);
             configItem.setValue(value);
             try {
-                actionData.getDbDao().save(configItem);
+                param.getService().getIo().getIdbDao().save(configItem);
             } catch (Exception e) {
                 log.info(Constants.EXCEPTION, e);
             }
@@ -564,7 +557,7 @@ public abstract class Component {
             item.setTrainAccuracy(meta.getTrainAccuracy());
             item.setLoss(meta.getLoss());
             item.setThreshold(meta.getThreshold());
-            actionData.getDbDao().save(item);
+            param.getService().getIo().getIdbDao().save(item);
         }
     }
 
@@ -589,7 +582,7 @@ public abstract class Component {
         //item.setTrainAccuracy();
         //item.setLoss();
         item.setThreshold(1.0);
-        actionData.getDbDao().save(item);
+        param.getService().getIo().getIdbDao().save(item);
     }
 
     protected IncDecItem mapAdder(Map<String, IncDecItem> map, String key, Double add, Map<String, String> nameMap, LocalDate date, String market, String subcomponent, String localcomponent, String parameters) {

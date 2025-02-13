@@ -26,7 +26,6 @@ import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.MLIndicatorData;
 import roart.evolution.fitness.Fitness;
-import roart.filesystem.FileSystemDao;
 import roart.gene.impl.ConfigMapGene;
 import roart.gene.impl.MLIndicatorConfigMapGene;
 import roart.iclij.component.constants.ServiceUtilConstants;
@@ -103,7 +102,7 @@ public class ComponentMLIndicator extends ComponentML {
 
         MLIndicatorData param = new MLIndicatorData(componentparam);
 
-        int futuredays = (int) param.getService().conf.getAggregatorsIndicatorFuturedays();
+        int futuredays = (int) param.getService().coremlconf.getAggregatorsIndicatorFuturedays();
         futuredays = 0;
         param.setFuturedays(futuredays);
         //double threshold = param.getService().conf.getAggregatorsIndicatorThreshold();
@@ -208,7 +207,7 @@ public class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save, FileSystemDao fileSystemDao) {
+    public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
         List<Extra> mses = null;
         try {
             mses = IclijXMLConfig.getMarketImportants(action.getIclijConfig());
@@ -222,14 +221,14 @@ public class ComponentMLIndicator extends ComponentML {
         if (wantThree) {
             confList.addAll(getThreeConfList());
         }
-        ConfigMapGene gene = new MLIndicatorConfigMapGene(confList, param.getService().conf);
+        ConfigMapGene gene = new MLIndicatorConfigMapGene(confList, param.getService().coremlconf);
         ConfigMapChromosome2 chromosome = new MLIndicatorChromosome(gene);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
-        ConfigMapGene defaultGene = new MLIndicatorConfigMapGene(confList, param.getService().conf);
+        ConfigMapGene defaultGene = new MLIndicatorConfigMapGene(confList, param.getService().coremlconf);
         ConfigMapChromosome2 defaultChromosome = new MLIndicatorChromosome(defaultGene);
         defaultGene.getMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST, JsonUtil.convert(mses));
         defaultGene.getMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRASBITS, "1".repeat(mses.size()));
-        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fitness, save, defaultChromosome, fileSystemDao);
+        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fitness, save, defaultChromosome);
     }
 
     @Override
@@ -438,7 +437,7 @@ public class ComponentMLIndicator extends ComponentML {
             memory.setLearnConfidence(learnConfidence);
             //memory.setPosition(count);
             if (param.isDoSave()) {
-                actionData.getDbDao().save(memory);
+                param.getService().getIo().getIdbDao().save(memory);
             }
             if (param.isDoPrint()) {
                 log.debug("" + memory);

@@ -13,9 +13,9 @@ import org.slf4j.LoggerFactory;
 import roart.common.leader.MyLeader;
 import roart.common.leader.impl.MyLeaderFactory;
 import roart.common.webflux.WebFluxUtil;
-import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.ControlService;
+import roart.model.io.IO;
 
 public class LeaderRunner implements Runnable {
     static Logger log = LoggerFactory.getLogger(LeaderRunner.class);
@@ -26,13 +26,13 @@ public class LeaderRunner implements Runnable {
 
     private ControlService controlService;
     
-    private IclijDbDao dbDao;
+    private IO io;
     
-    public LeaderRunner(IclijConfig conf, ControlService controlService, IclijDbDao dbDao) {
+    public LeaderRunner(IclijConfig conf, ControlService controlService, IO io) {
         super();
         this.iclijConfig = conf;
         this.controlService = controlService;
-        this.dbDao = dbDao;
+        this.io = io;
     }
 
     @SuppressWarnings("squid:S2189")
@@ -44,7 +44,7 @@ public class LeaderRunner implements Runnable {
             log.error(Constants.EXCEPTION, e);
         }
         long lastMain = 0;
-        MyLeader leader = new MyLeaderFactory().create("leader", hostname, iclijConfig, ControlService.curatorClient, null /*GetHazelcastInstance.instance(conf.getInmemoryHazelcast())*/);
+        MyLeader leader = new MyLeaderFactory().create("leader", hostname, iclijConfig, io.getCuratorClient(), null /*GetHazelcastInstance.instance(conf.getInmemoryHazelcast())*/);
         while (true) {
             boolean leading = leader.await(1, TimeUnit.SECONDS);
             commonleader = leading;
@@ -52,8 +52,8 @@ public class LeaderRunner implements Runnable {
                 log.info("I am not leader");
             } else {
                 log.info("I am leader");
-                CuratorFramework curatorClient = controlService.curatorClient;
-                Action action = new MainAction(iclijConfig, dbDao);
+                CuratorFramework curatorClient = io.getCuratorClient();
+                Action action = new MainAction(iclijConfig, io);
                 while (true) {
                     try {
                         String path = "/" + Constants.STOCKSTAT + "/" + Constants.DB;
@@ -80,7 +80,7 @@ public class LeaderRunner implements Runnable {
                         if (MainAction.wantsGoals(iclijConfig)) {
                             long time0 = System.currentTimeMillis();
                             try {
-                                action.goal(null, null, null, iclijConfig);
+                                action.goal(null, null, null, iclijConfig, io);
                             } catch (InterruptedException e) {
                                 log.error(Constants.EXCEPTION, e);
                             } catch (NullPointerException e) {

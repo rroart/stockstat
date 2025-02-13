@@ -5,15 +5,14 @@ import java.util.List;
 
 import roart.common.pipeline.PipelineConstants;
 import roart.constants.IclijConstants;
-import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
 
 public class FindProfitActionData extends MarketActionData {
 
-    public FindProfitActionData(IclijConfig iclijConfig, IclijDbDao dbDao) {
-        super(iclijConfig, dbDao);
+    public FindProfitActionData(IclijConfig iclijConfig) {
+        super(iclijConfig);
     }
 
     @Override

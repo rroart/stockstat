@@ -29,11 +29,12 @@ import roart.common.model.MemoryItem;
 import roart.common.model.TimingItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.common.queue.QueueElement;
+import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
-import roart.db.dao.IclijDbDao;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
@@ -51,8 +52,8 @@ public class EvolveAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public EvolveAction(IclijConfig iclijConfig, IclijDbDao dbDao) {
-        setActionData(new EvolveActionData(iclijConfig, dbDao));
+    public EvolveAction(IclijConfig iclijConfig) {
+        setActionData(new EvolveActionData(iclijConfig));
     }
     
     @Override
@@ -101,8 +102,12 @@ public class EvolveAction extends MarketAction {
                 return;
             }
             if (results != null) {
-                Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
+                Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 QueueElement element = new QueueElement();
+                System.out.println("mmm"+results.toString());
+                System.out.println("mmm"+results.getMap().keySet());
+                System.out.println("mmm"+results.getSmap().keySet());
+                log.info("Content {}", JsonUtil.convert(results));
                 InmemoryMessage msg = inmemory.send(ServiceConstants.EVOLVEFILTEREVOLVE + UUID.randomUUID(), results, null);
                 element.setOpid(ServiceConstants.EVOLVE);
                 element.setMessage(msg);

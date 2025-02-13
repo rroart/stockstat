@@ -44,7 +44,7 @@ public class ComponentMLMACD extends ComponentMLAggregator {
 
     @Override
     protected int getDaysAfterLimit(ComponentData componentparam) {
-        return componentparam.getService().conf.getMACDDaysAfterZero();
+        return componentparam.getService().coremlconf.getMACDDaysAfterZero();
     }
     
     @Deprecated

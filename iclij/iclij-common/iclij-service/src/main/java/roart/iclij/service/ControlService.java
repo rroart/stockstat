@@ -15,6 +15,7 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -45,6 +46,8 @@ import roart.common.util.ImmutabilityUtil;
 import roart.common.util.MemUtil;
 import roart.common.util.ServiceConnectionUtil;
 import roart.common.webflux.WebFluxUtil;
+import roart.db.dao.IclijDbDao;
+import roart.db.spring.DbSpringAccess;
 import roart.filesystem.FileSystemDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.model.WebData;
@@ -54,59 +57,29 @@ import roart.model.data.MarketData;
 import roart.model.data.StockData;
 import roart.result.model.ResultItem;
 import roart.common.queueutil.QueueUtils;
+import roart.model.io.IO;
 
 // TODO not a component, many 
 public class ControlService {
     private static Logger log = LoggerFactory.getLogger(ControlService.class);
 
     // Config for the core, not iclij
-    public IclijConfig conf;
+    public IclijConfig coremlconf;
+
     ObjectMapper objectMapper;
 
     private IclijConfig iclijConfig;
 
     private Function<String, Boolean> zkRegister;
     
-    public static CuratorFramework curatorClient;
-
-    private WebFluxUtil webFluxUtil = new WebFluxUtil();
-    
-    private FileSystemDao fileSystemDao = new FileSystemDao(conf, curatorClient);
-    
-    private Inmemory inmemory;
+    private IO io;
     
     private static final ObjectMapper mapper = new JsonMapper().builder().addModule(new JavaTimeModule()).build();
 
-    public ControlService(IclijConfig iclijConfig, WebFluxUtil webFluxUtil, FileSystemDao fileSystemDao, Inmemory inmemory) {
-        this(iclijConfig);
-        if (webFluxUtil != null) {
-            this.webFluxUtil = webFluxUtil;
-        }
-        if (fileSystemDao != null) {
-            this.fileSystemDao = fileSystemDao;
-        }
-        if (inmemory != null) {
-            this.inmemory = inmemory;
-        } else {
-            IclijConfig config = iclijConfig;
-            this.inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
-        }
-    }
-
-    public ControlService(IclijConfig iclijConfig, WebFluxUtil webFluxUtil) {
-        this(iclijConfig);
-        this.webFluxUtil = webFluxUtil;
-    }
-
-    public ControlService( IclijConfig iclijConfig) {
-    	//conf = MyConfig.instance();
-    	//getConfig();
+    public ControlService(IclijConfig iclijConfig, IO io) {
         this.iclijConfig = iclijConfig;
-        objectMapper = jsonObjectMapper();
-    }
-  
-    public FileSystemDao getFileSystemDao() {
-        return fileSystemDao;
+        this.io = io;
+        this.objectMapper = jsonObjectMapper();
     }
 
     public List<String> getTasks() {
@@ -129,8 +102,8 @@ public class ControlService {
         result = (ServiceResult) c.sendReceive(param);
          */
         //ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONFIG);
-        this.conf = new IclijConfig(list.copy());
-        Map<String, Object> map = this.conf.getConfigData().getConfigValueMap();
+        this.coremlconf = new IclijConfig(list.copy());
+        Map<String, Object> map = this.coremlconf.getConfigData().getConfigValueMap();
         for (String akey : map.keySet()) {
             Object value = map.get(akey);
             //System.out.println("k " + key + " " + value + " " + value.getClass().getName());
@@ -139,7 +112,7 @@ public class ControlService {
                 //System.out.println("cls " + value.getClass().getName());
             }
         }
-        ConfigTreeMap map2 = conf.getConfigData().getConfigTreeMap();
+        ConfigTreeMap map2 = coremlconf.getConfigData().getConfigTreeMap();
         print(map2, 0);
 
     }
@@ -182,7 +155,7 @@ public class ControlService {
         //IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
         T[] result;// = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG        
-        Communication c = CommunicationFactory.get(sc.getLeft(), myclass, service, objectMapper, true, true, true, sc.getRight(), zkRegister, webFluxUtil);
+        Communication c = new CommunicationFactory().get(sc.getLeft(), myclass, service, objectMapper, true, true, true, sc.getRight(), zkRegister, io.getWebFluxUtil());
         param.setWebpath(c.getReturnService());
         result = c.sendReceive(param);
         return result[0];
@@ -191,9 +164,9 @@ public class ControlService {
     private <T> T sendAMe(Class<T> myclass, IclijServiceParam param, String service, ObjectMapper objectMapper) {
         //IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
-        T[] result;// = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG        
-        zkRegister = (new QueueUtils(this.curatorClient))::zkRegister;
-        Communication c = CommunicationFactory.get(sc.getLeft(), myclass, service, objectMapper, true, true, true, sc.getRight(), zkRegister, webFluxUtil);
+        T[] result;// = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG        
+        zkRegister = (new QueueUtils(io.getCuratorClient()))::zkRegister;
+        Communication c = io.getCommunicationFactory().get(sc.getLeft(), myclass, service, objectMapper, true, true, true, sc.getRight(), zkRegister, io.getWebFluxUtil());
         param.setWebpath(c.getReturnService());
         result = c.sendReceive(param);
         return result[0];
@@ -206,8 +179,8 @@ public class ControlService {
         if (appid != null) {
             service = service + appid; // can not handle domain, only eureka
         }
-        zkRegister = (new QueueUtils(this.curatorClient))::zkRegister;
-        Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, webFluxUtil);
+        zkRegister = (new QueueUtils(io.getCuratorClient()))::zkRegister;
+        Communication c = io.getCommunicationFactory().get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, io.getWebFluxUtil());
         c.send(object);
     }
 
@@ -217,7 +190,7 @@ public class ControlService {
     }
 
     public void send(String service, Object object, IclijConfig config) {
-        Inmemory inmemory = InmemoryFactory.get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
         String id = service + System.currentTimeMillis() + UUID.randomUUID();
         InmemoryMessage message = inmemory.send(id, object);
         send(service, message);
@@ -247,7 +220,7 @@ public class ControlService {
     public List<String> getMarkets() {
         IclijServiceParam param = new IclijServiceParam();
         //param.setConfigData(conf.getConfigData());
-        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETMARKETS);
+        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETMARKETS);
         return result.getMarkets();    	
     }
     
@@ -258,8 +231,8 @@ public class ControlService {
             return list;
         }
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfigData(conf.getConfigData());
-        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETMETAS);
+        param.setConfigData(coremlconf.getConfigData());
+        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETMETAS);
         list = result.getMetas();
         MyCache.getInstance().put(key, list);
         return list;
@@ -268,24 +241,24 @@ public class ControlService {
     // (Un)used
     public Map<String, String> getStocks(String market) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfigData(conf.getConfigData());
+        param.setConfigData(coremlconf.getConfigData());
         param.setMarket(market);
-        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETSTOCKS);
+        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETSTOCKS);
         return result.getStocks();   	
     }
     
     public List<String> getDates(String market) {
-        String key = CacheConstants.DATES + conf.getConfigData().getMarket() + conf.getConfigData().getDate();
+        String key = CacheConstants.DATES + coremlconf.getConfigData().getMarket() + coremlconf.getConfigData().getDate();
         List<String> list =  (List<String>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
                 
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfigData(conf.getConfigData());
+        param.setConfigData(coremlconf.getConfigData());
         param.setWantMaps(true);
         param.setMarket(market);
-        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETDATES);
+        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETDATES);
         list = PipelineUtils.getDatelist(PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.DATELIST));      
         MyCache.getInstance().put(key, list);
         return list;
@@ -306,30 +279,30 @@ public class ControlService {
         long[] mem0 = MemUtil.mem();
         log.info("MEM {}", MemUtil.print(mem0));
 
-        String key = CacheConstants.CONTENT + conf.getConfigData().getMarket() + conf.getConfigData().getMlmarket() + conf.getConfigData().getDate() + conf.getConfigData().getConfigValueMap();
+        String key = CacheConstants.CONTENT + coremlconf.getConfigData().getMarket() + coremlconf.getConfigData().getMlmarket() + coremlconf.getConfigData().getDate() + coremlconf.getConfigData().getConfigValueMap();
         PipelineData[] list = (PipelineData[]) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfigData(conf.getConfigData());
+        param.setConfigData(coremlconf.getConfigData());
         param.setWantMaps(true);
         param.setConfList(disableList);
         NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
-        neuralnetcommand.setMllearn(conf.wantMLLearn());
-        neuralnetcommand.setMlclassify(conf.wantMLClassify());
-        neuralnetcommand.setMldynamic(conf.wantMLDynamic());
-        neuralnetcommand.setMlcross(conf.wantMLCross());
+        neuralnetcommand.setMllearn(coremlconf.wantMLLearn());
+        neuralnetcommand.setMlclassify(coremlconf.wantMLClassify());
+        neuralnetcommand.setMldynamic(coremlconf.wantMLDynamic());
+        neuralnetcommand.setMlcross(coremlconf.wantMLCross());
         param.setNeuralnetcommand(neuralnetcommand);
         IclijServiceResult result;
         
         // TODO retry or queue
         if (useMl) {
             // todo send queue ml
-            result = webFluxUtil.sendMMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
+            result = io.getWebFluxUtil().sendMMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
         } else {
             // todo send queue core
-            result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
+            result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
         }
         // todo icore queue listen
         //log.info("blblbl" + JsonUtil.convert(result).length());
@@ -367,8 +340,8 @@ public class ControlService {
 
     public List getContentGraph() {
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfigData(conf.getConfigData());
-        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH);
+        param.setConfigData(coremlconf.getConfigData());
+        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH);
         return result.getList();
     }
 
@@ -386,25 +359,25 @@ public class ControlService {
     		idset.add(pair.getLeft() + "," + pair.getRight());
     	}
     	IclijServiceParam param = new IclijServiceParam();
-        param.setConfigData(conf.getConfigData());
+        param.setConfigData(coremlconf.getConfigData());
         param.setIds(idset);
-        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH2);
+        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH2);
         return result.getList();
     }
 
     @Deprecated
     public PipelineData[] getRerun(List<String> disableList) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfigData(conf.getConfigData());
+        param.setConfigData(coremlconf.getConfigData());
         param.setWantMaps(true);
         param.setConfList(disableList);
         NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
-        neuralnetcommand.setMllearn(conf.wantMLLearn());
-        neuralnetcommand.setMlclassify(conf.wantMLClassify());
-        neuralnetcommand.setMldynamic(conf.wantMLDynamic());
-        neuralnetcommand.setMlcross(conf.wantMLCross());
+        neuralnetcommand.setMllearn(coremlconf.wantMLLearn());
+        neuralnetcommand.setMlclassify(coremlconf.wantMLClassify());
+        neuralnetcommand.setMldynamic(coremlconf.wantMLDynamic());
+        neuralnetcommand.setMlcross(coremlconf.wantMLCross());
         param.setNeuralnetcommand(neuralnetcommand);
-        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, "/findprofit");
+        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, "/findprofit");
         return result.getPipelineData();
     }
 
@@ -420,23 +393,23 @@ public class ControlService {
 
     public List getContentStat() {
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfigData(conf.getConfigData());
-        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENTSTAT);
+        param.setConfigData(coremlconf.getConfigData());
+        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENTSTAT);
         return result.getList();
     }
 
     public void dbengine(Boolean useSpark) throws Exception {
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfigData(conf.getConfigData());
-        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.SETCONFIG);
+        param.setConfigData(coremlconf.getConfigData());
+        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.SETCONFIG);
         getAndSetCoreConfig();
     }
 
     public List<ResultItem> getEvolveRecommender(boolean doSet, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, PipelineData resultMap) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setConfigData(conf.getConfigData());
+        param.setConfigData(coremlconf.getConfigData());
         param.setConfList(disableList);
-        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVERECOMMENDER);
+        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVERECOMMENDER);
         if (doSet) {
             //conf = new MyMyConfig(result.getConfig());
             PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE);  
@@ -464,7 +437,7 @@ public class ControlService {
         neuralnetcommand.setMldynamic(true);
         param.setNeuralnetcommand(neuralnetcommand);
         // TODO retry or queue
-        IclijServiceResult result = webFluxUtil.sendMMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVENN);
+        IclijServiceResult result = io.getWebFluxUtil().sendMMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVENN);
         if (doSet) {
             PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE);  
             updateMap.putAll(datum.getMap(PipelineConstants.UPDATE));
@@ -492,7 +465,7 @@ public class ControlService {
         neuralnetcommand.setMldynamic(true);
         param.setNeuralnetcommand(neuralnetcommand);
         // TODO retry or queue
-        IclijServiceResult result = webFluxUtil.sendMMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVENN);
+        IclijServiceResult result = io.getWebFluxUtil().sendMMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVENN);
         return null;
     }
 
@@ -518,7 +491,7 @@ public class ControlService {
         param.setConfigData(componentInput.getConfigData());
         param.setWebpath(EurekaConstants.ACTION + "/" + action);
         param.setOffset(componentInput.getLoopoffset());
-        IclijServiceResult result = webFluxUtil.sendAMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
+        IclijServiceResult result = io.getWebFluxUtil().sendAMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
 
         WebDataJson dataJson = result.getWebdatajson();
         WebData data = convert(dataJson);
@@ -567,14 +540,9 @@ public class ControlService {
                 .build();
     }
     
-    public static void configCurator(IclijConfig conf) {
-        if (true) {
-            RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);        
-            String zookeeperConnectionString = conf.getZookeeper();
-            if (curatorClient == null) {
-                curatorClient = CuratorFrameworkFactory.newClient(zookeeperConnectionString, retryPolicy);
-                curatorClient.start();
-            }
-        }
+    public IO getIo() {
+        return io;
     }
+    
+    
 }

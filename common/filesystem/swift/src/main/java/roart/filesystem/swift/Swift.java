@@ -356,7 +356,7 @@ public class Swift extends FileSystemOperations {
                 log.error(Constants.EXCEPTION, e);
                 return null;
             }
-            Inmemory inmemory = InmemoryFactory.get(nodeConf.getInmemoryServer(), nodeConf.getInmemoryHazelcast(), nodeConf.getInmemoryRedis());
+            Inmemory inmemory = new InmemoryFactory().get(nodeConf.getInmemoryServer(), nodeConf.getInmemoryHazelcast(), nodeConf.getInmemoryRedis());
             InmemoryMessage msg = inmemory.send(EurekaConstants.READFILE + filename.toString(), inputStream, md5);
             map.put(filename.object, msg);
         }
@@ -414,7 +414,7 @@ public class Swift extends FileSystemOperations {
     @Override
     public FileSystemMessageResult writeFile(FileSystemFileObjectParam param) throws Exception {
         Map<String, InmemoryMessage> map = new HashMap<>();
-        Inmemory inmemory = InmemoryFactory.get(nodeConf.getInmemoryServer(), nodeConf.getInmemoryHazelcast(), nodeConf.getInmemoryRedis());
+        Inmemory inmemory = new InmemoryFactory().get(nodeConf.getInmemoryServer(), nodeConf.getInmemoryHazelcast(), nodeConf.getInmemoryRedis());
         for (Entry<String, InmemoryMessage> entry : param.map.entrySet()) {
             FileObject filename = FsUtil.getFileObject(entry.getKey());
             InmemoryMessage msg = entry.getValue();

@@ -31,10 +31,10 @@ import roart.common.model.TimingItem;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMap;
 import roart.common.queue.QueueElement;
+import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
-import roart.db.dao.IclijDbDao;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.fitness.Fitness;
 import roart.gene.impl.ConfigMapGene;
@@ -58,8 +58,8 @@ public class ImproveProfitAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
-    public ImproveProfitAction(IclijDbDao dbDao, IclijConfig iclijConfig) {
-        setActionData(new ImproveProfitActionData(iclijConfig, dbDao));
+    public ImproveProfitAction(IclijConfig iclijConfig) {
+        setActionData(new ImproveProfitActionData(iclijConfig));
     }
     
     private List<Market> getMarkets(IclijConfig instance) {
@@ -99,15 +99,15 @@ public class ImproveProfitAction extends MarketAction {
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
 
             List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
-            ConfigMapGene gene = new ConfigMapGene(component.getConflist(), param.getService().conf);
+            ConfigMapGene gene = new ConfigMapGene(component.getConflist(), param.getService().coremlconf);
             Fitness fitness = new FitnessConfigMap(action.getActionData(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, stockDates);
-            ComponentData componentData = component.improve(action.getActionData(), param, market, profitdata, null, buy, subcomponent, parameters, wantThree, mlTests, fitness, action.getParent() != null, fileSystemDao);
+            ComponentData componentData = component.improve(action.getActionData(), param, market, profitdata, null, buy, subcomponent, parameters, wantThree, mlTests, fitness, action.getParent() != null);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
             }
             List<String> confList = component.getConflist();
-            Map<String, Object> myConfig = componentData.getService().conf.getConfigData().getConfigMaps().deflt;
+            Map<String, Object> myConfig = componentData.getService().coremlconf.getConfigData().getConfigMaps().deflt;
             Map<String, Object> defaults = new HashMap<>();
             for (String key : confList) {
                 Object value = myConfig.get(key);
@@ -119,8 +119,9 @@ public class ImproveProfitAction extends MarketAction {
                 // TODO TODO
             	results.put(EvolveConstants.DEFAULT, new SerialMap(defaults));
             	// TODO?
-                Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
+                Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 QueueElement element = new QueueElement();
+                log.info("Content {}", JsonUtil.convert(results));
                 InmemoryMessage msg = inmemory.send(ServiceConstants.EVOLVEFILTERPROFIT + UUID.randomUUID(), results, null);
                 element.setOpid(ServiceConstants.EVOLVE);
                 element.setMessage(msg);

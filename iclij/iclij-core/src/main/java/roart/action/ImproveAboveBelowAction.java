@@ -38,7 +38,6 @@ import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
 import roart.constants.IclijConstants;
-import roart.db.dao.IclijDbDao;
 import roart.evolution.config.EvolutionConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
@@ -62,8 +61,8 @@ public class ImproveAboveBelowAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public ImproveAboveBelowAction(IclijConfig iclijConfig, IclijDbDao dbDao) {
-        setActionData(new ImproveAboveBelowActionData(iclijConfig, dbDao));
+    public ImproveAboveBelowAction(IclijConfig iclijConfig) {
+        setActionData(new ImproveAboveBelowActionData(iclijConfig));
     }
     
     @Override
@@ -143,7 +142,7 @@ public class ImproveAboveBelowAction extends MarketAction {
             date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
             LocalDate prevDate = date.minusDays(market.getConfig().getFindtime());
             try {
-                allIncDecs = getActionData().getDbDao().getAllIncDecs(market.getConfig().getMarket(), prevDate, date, null);
+                allIncDecs = param.getService().getIo().getIdbDao().getAllIncDecs(market.getConfig().getMarket(), prevDate, date, null);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
@@ -296,7 +295,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                 memory.setTestaccuracy(scoreFilter);
                 if (true || param.isDoSave()) {
                     try {
-                        getActionData().getDbDao().save(memory);
+                        param.getService().getIo().getIdbDao().save(memory);
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
                     }
@@ -305,7 +304,8 @@ public class ImproveAboveBelowAction extends MarketAction {
 
             PipelineData results = param.getResultMap();
             if (results != null) {
-                Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
+                log.info("Content {}", JsonUtil.convert(results));
+                Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 QueueElement element = new QueueElement();
                 InmemoryMessage msg = inmemory.send(ServiceConstants.EVOLVEFILTERABOVEBELOW + UUID.randomUUID(), results, null);
                 element.setOpid(ServiceConstants.EVOLVE);
@@ -539,7 +539,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                 //memory.setSize((long) incIds.size());
                 //List<Double> list = new ArrayList<>(param.getScoreMap().values());
                 try {
-                    getActionData().getDbDao().save(memory);
+                    param.getService().getIo().getIdbDao().save(memory);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -575,7 +575,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                 memory.setSize((long) incIds.size());
                 //List<Double> list = new ArrayList<>(param.getScoreMap().values());
                 try {
-                    getActionData().getDbDao().save(memory);
+                    param.getService().getIo().getIdbDao().save(memory);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -605,7 +605,7 @@ public class ImproveAboveBelowAction extends MarketAction {
     public void getListComponents(MarketActionData action, WebData myData, ComponentData param, IclijConfig config,
             Parameters parameters, Boolean evolve, Market market, Map<String, ComponentData> dataMap,
             Memories memories, LocalDate olddate, LocalDate prevdate) {
-        List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market, IclijConstants.IMPROVEABOVEBELOW, null, null, JsonUtil.convert(parameters), olddate, prevdate, getActionData().getDbDao());
+        List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market, IclijConstants.IMPROVEABOVEBELOW, null, null, JsonUtil.convert(parameters), olddate, prevdate, param.getService().getIo().getIdbDao());
         marketMemory = marketMemory.stream().filter(e -> "Confidence".equals(e.getType())).collect(Collectors.toList());
         if (!marketMemory.isEmpty()) {
             int jj = 0;

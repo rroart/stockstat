@@ -33,7 +33,5 @@ public class Test15 {
             assertEquals(2, g1.size());
             System.out.println("g1 " + g1);            
         }
-        //g.
-        //assertEquals(GraphUtil.enumerateChordlessCircuits(g).size(),4);
     }
 }

@@ -54,7 +54,7 @@ public abstract class ComponentML extends Component {
         if (evolve) {
             EvolutionConfig evolveConfig = getEvolutionConfig(param, actionEvolveConfig);
             String newConfStr = JsonUtil.convert(evolveConfig);
-            param.getService().conf.getConfigData().getConfigValueMap().put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, newConfStr);
+            param.getService().coremlconf.getConfigData().getConfigValueMap().put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, newConfStr);
 
             // We do not need this with the other subcomp settings?
             //Map<String, Object> evolveMap = setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, true);
@@ -63,8 +63,8 @@ public abstract class ComponentML extends Component {
             Map<String, Object> aScoreMap = new HashMap<>();
             PipelineData resultMap = new PipelineData();
             resultMap.setName(getPipeline());
-            param.getService().conf.getConfigData().setDate(param.getFutureDate());
-            List<ResultItem> retlist = param.getService().getEvolveML(true, param.getDisableList(), pipeline, param.getService().conf, anUpdateMap, aScoreMap, resultMap);
+            param.getService().coremlconf.getConfigData().setDate(param.getFutureDate());
+            List<ResultItem> retlist = param.getService().getEvolveML(true, param.getDisableList(), pipeline, param.getService().coremlconf, anUpdateMap, aScoreMap, resultMap);
             mlSaves(action, mlConfigMap, param, anUpdateMap, subcomponent, parameters);
             if (param.getUpdateMap() != null) {
                 param.getUpdateMap().putAll(anUpdateMap); 
@@ -143,7 +143,7 @@ public abstract class ComponentML extends Component {
             configItem.setParameters(JsonUtil.convert(parameters));
             configItem.setValue(nnconfigString);
             try {
-                actionData.getDbDao().save(configItem);
+                param.getService().getIo().getIdbDao().save(configItem);
             } catch (Exception e) {
                 log.info(Constants.EXCEPTION, e);
             }

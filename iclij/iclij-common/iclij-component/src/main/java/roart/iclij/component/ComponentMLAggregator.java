@@ -26,7 +26,6 @@ import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
 import roart.component.model.MLAggregatorData;
 import roart.evolution.fitness.Fitness;
-import roart.filesystem.FileSystemDao;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.component.constants.ServiceUtilConstants;
 import roart.iclij.config.Market;
@@ -54,13 +53,13 @@ public abstract class ComponentMLAggregator extends ComponentML {
     }
 
     @Override
-    public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save, FileSystemDao fileSystemDao) {
+    public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
-        ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
+        ConfigMapGene gene = new ConfigMapGene(confList, param.getService().coremlconf);
         ConfigMapChromosome2 chromosome = getNewChromosome(action, market, profitdata, positions, buy, param, subcomponent, parameters, gene, mlTests);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
-        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fitness, save, null, fileSystemDao);
+        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fitness, save, null);
     }
 
     @Override
@@ -169,7 +168,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                         continue;
                     }
                     int offsetZero = (int) Math.round(off[0]);
-                    LocalDate confdate0 = param.getService().conf.getConfigData().getDate();
+                    LocalDate confdate0 = param.getService().coremlconf.getConfigData().getDate();
                     LocalDate confdate = param.getBaseDate();
                     LocalDate date = TimeUtil.getBackEqualBefore2(confdate, offsetZero, stockDates);
                     
@@ -464,7 +463,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
             memory.setLearnConfidence(learnConfidence);
             //memory.setPosition(count);
             if (param.isDoSave()) {
-                actionData.getDbDao().save(memory);
+                param.getService().getIo().getIdbDao().save(memory);
             }
             memoryList.add(memory);
             if (param.isDoPrint()) {

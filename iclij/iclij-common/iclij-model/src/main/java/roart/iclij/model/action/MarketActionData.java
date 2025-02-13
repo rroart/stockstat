@@ -17,8 +17,6 @@ public abstract class MarketActionData {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
     
-    private IclijDbDao dbDao;
-    
     private IclijConfig iclijConfig;
     
     public abstract String getName();
@@ -33,9 +31,8 @@ public abstract class MarketActionData {
         return false;
     }
     
-    public MarketActionData(IclijConfig iclijConfig, IclijDbDao dbDao) {
+    public MarketActionData(IclijConfig iclijConfig) {
         super();
-        this.dbDao = dbDao;
         this.iclijConfig = iclijConfig;
     }
 
@@ -81,10 +78,6 @@ public abstract class MarketActionData {
 	
     public Object[] getScoreDescription(Object[] accuracy, Map<String, Object> scoreMap) {
         return new Object[] { null, null };
-    }
-
-    public IclijDbDao getDbDao() {
-        return dbDao;
     }
 
     public IclijConfig getIclijConfig() {

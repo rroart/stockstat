@@ -15,6 +15,7 @@ import roart.executor.MyExecutors;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.service.ControlService;
+import roart.model.io.IO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,9 @@ public class IclijController implements CommandLineRunner {
     @Autowired
     IclijConfig iclijConfig;
     
+    @Autowired
+    private IO io;
+
     @Value("${spring.profiles.active:}")
     private String activeProfile;
 

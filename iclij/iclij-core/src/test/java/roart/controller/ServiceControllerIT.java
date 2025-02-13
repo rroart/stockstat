@@ -14,12 +14,13 @@ import roart.common.model.TimingBLItem;
 import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
+import roart.iclij.config.bean.ConfigI;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfig;
 import roart.common.config.MyXMLConfig;
 
 @Import(DbDaoUtil.class)
-@SpringBootTest
+@SpringBootTest(classes=Config.class)
 public class ServiceControllerIT {
 
     @Autowired
@@ -36,18 +37,18 @@ public class ServiceControllerIT {
     
     @Test
     public void t() {
-        MarketAction c = new FindProfitAction(iclijConfig, dbDao);
+        MarketAction c = new FindProfitAction(iclijConfig);
         TimingBLItem t = new TimingBLItem();
-        List l = c.getActionData().getDbDao().getAllTimingBLItem();
-        c.getActionData().getDbDao().save(t);
-        List l2 = c.getActionData().getDbDao().getAllTimingBLItem();
+        List l = dbDao.getAllTimingBLItem();
+        dbDao.save(t);
+        List l2 = dbDao.getAllTimingBLItem();
         System.out.println("" + l.size() + " " + l2.size());
     }
 
     @Test
     public void t2() {
-        MarketAction c = new FindProfitAction(iclijConfig, dbDao);
-        List<TimingBLItem> cs = c.getActionData().getDbDao().getAllTimingBLItem();
+        MarketAction c = new FindProfitAction(iclijConfig);
+        List<TimingBLItem> cs = dbDao.getAllTimingBLItem();
     }
 
     @Test

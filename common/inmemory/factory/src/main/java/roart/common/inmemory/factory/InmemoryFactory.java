@@ -7,7 +7,7 @@ import roart.common.inmemory.redis.InmemoryJedis;
 
 public class InmemoryFactory {
 
-    public static Inmemory get(String server, String hz, String redis) {
+    public Inmemory get(String server, String hz, String redis) {
         switch (server) {
         case Constants.REDIS:
             return new InmemoryJedis(redis);

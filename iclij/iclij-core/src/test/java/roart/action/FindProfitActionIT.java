@@ -7,19 +7,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
+import roart.model.io.IO;
 
 @SpringBootTest
 public class FindProfitActionIT {
     
     @Autowired
-    private IclijDbDao dbDao;
+    private IO io;
 
     @Autowired
     public IclijConfig iclijConfig;
     
     @Test
     public void test() {
-        new FindProfitAction(iclijConfig, dbDao).goal(null, null, null, iclijConfig);
+        new FindProfitAction(iclijConfig).goal(null, null, null, iclijConfig, io);
     }
     
 }

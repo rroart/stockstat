@@ -44,7 +44,7 @@ public class ComponentMLSTOCH extends ComponentMLAggregator {
 
     @Override
     protected int getDaysAfterLimit(ComponentData componentparam) {
-        return componentparam.getService().conf.getMLSTOCHDaysAfterLimit();
+        return componentparam.getService().coremlconf.getMLSTOCHDaysAfterLimit();
     }
     
     @Deprecated

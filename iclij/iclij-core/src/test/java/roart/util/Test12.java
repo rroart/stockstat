@@ -19,6 +19,9 @@ public class Test12 {
 		DeductiveKnowledgeBase k = new DeductiveKnowledgeBase();
 		PlParser parser = new PlParser();
 		
+                Proposition p1 = (Proposition) parser.parseFormula("ose will rise, then equi will rise");
+                Proposition p = (Proposition) parser.parseFormula("equi will rise");
+                Proposition p2 = (Proposition) parser.parseFormula("equi will sink");
 		Proposition a = (Proposition) parser.parseFormula("a");
 		Proposition b = (Proposition) parser.parseFormula("b");
 		k.add(a);

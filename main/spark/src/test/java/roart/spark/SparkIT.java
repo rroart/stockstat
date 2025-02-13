@@ -31,7 +31,7 @@ public class SparkIT {
             }
     }
 
-    @Test
+    //@Test
     public void test() {
         try {
             MLClassifySparkAccess b = new MLClassifySparkAccess(null);

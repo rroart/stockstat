@@ -38,13 +38,13 @@ import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.util.MemUtil;
-import roart.common.webflux.WebFluxUtil;
 import roart.executor.MyExecutors;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 import roart.machinelearning.service.MachineLearningControlService;
 import roart.machinelearning.service.evolution.MachineLearningEvolutionService;
+import roart.model.io.IO;
 
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.common.config,roart.iclij.config")
 @EnableJdbcRepositories("roart.common.springdata.repository")
@@ -66,9 +66,12 @@ public class ServiceController implements CommandLineRunner {
     @Autowired
     IclijConfig iclijConfig;
     
+    @Autowired
+    IO io;
+
     private MachineLearningControlService getInstance() {
         if (instance == null) {
-            instance = new MachineLearningControlService();
+            instance = new MachineLearningControlService(io);
         }
         return instance;
     }
@@ -158,7 +161,7 @@ public class ServiceController implements CommandLineRunner {
             }
             Set<String> ids = param.getIds();
             String ml = ids.iterator().next();
-            result = new MachineLearningEvolutionService(new WebFluxUtil()).getEvolveML( disableList, ml, param);
+            result = new MachineLearningEvolutionService(io).getEvolveML( disableList, ml, param);
             if (!param.isWantMaps()) {
                 result.setMaps(null);
             }
@@ -184,7 +187,7 @@ public class ServiceController implements CommandLineRunner {
         String myservices = instance.getMyservices();
         String services = instance.getServices();
         String communications = instance.getCommunications();
-        new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig.copy(), null, null).start();
+        new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig.copy(), io).start();
         MyCache.setCache(instance.wantCache());
         MyCache.setCacheTTL(instance.getCacheTTL());
         //new MemRunner().run();

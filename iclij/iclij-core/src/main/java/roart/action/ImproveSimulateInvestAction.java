@@ -32,7 +32,6 @@ import roart.iclij.component.ImproveSimulateInvestComponent;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.constants.SimConstants;
-import roart.db.dao.IclijDbDao;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.Fitness;
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapChromosome;
@@ -59,8 +58,8 @@ public class ImproveSimulateInvestAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public ImproveSimulateInvestAction(IclijConfig iclijConfig, IclijDbDao dbDao) {
-        setActionData(new ImproveSimulateInvestActionData(iclijConfig, dbDao));
+    public ImproveSimulateInvestAction(IclijConfig iclijConfig) {
+        setActionData(new ImproveSimulateInvestActionData(iclijConfig));
     }
     
     @Override
@@ -118,7 +117,7 @@ public class ImproveSimulateInvestAction extends MarketAction {
         }
         //List<MemoryItem> memories = findAllMarketComponentsToCheckNew(myData, param, 0, config, false, dataMap, componentMap, subcomponent, parameters, market);
         
-        Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
+        Inmemory inmemory = componentparam.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
         
         for (Entry<String, Component> entry : componentMap.entrySet()) {
             Component component = entry.getValue();
@@ -160,10 +159,11 @@ public class ImproveSimulateInvestAction extends MarketAction {
 
     }
 
+    @Deprecated // ?
     public List<IncDecItem> getAllIncDecs(Market market, LocalDate investStart,
             LocalDate investEnd) {
         try {
-            return getActionData().getDbDao().getAllIncDecs(market.getConfig().getMarket(), investStart, investEnd, null);
+            return null; //param.getService().getIo().getIdbDao().getAllIncDecs(market.getConfig().getMarket(), investStart, investEnd, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

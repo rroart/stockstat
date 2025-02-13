@@ -21,6 +21,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.service.ControlService;
 import roart.iclij.service.IclijServiceParam;
+import roart.model.io.IO;
 
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
@@ -52,15 +53,11 @@ public class IclijController implements CommandLineRunner {
     IclijConfig iclijConfig;
     
     @Autowired
-    private IclijDbDao dbDao;
+    private IO io;
 
     @Value("${spring.profiles.active:}")
     private String activeProfile;
 
-    public static CuratorFramework curatorClient;
-
-    private FileSystemDao fileSystemDao;
-    
     public static void main(String[] args) throws Exception {
         SpringApplication.run(IclijController.class, args);
     }
@@ -72,18 +69,16 @@ public class IclijController implements CommandLineRunner {
         try {
             MyExecutors.initThreads("dev".equals(activeProfile));
             MyExecutors.init(new double[] { instance.mpServerCpu() } );
-            configCurator(iclijConfig);
-            fileSystemDao = new FileSystemDao(iclijConfig, curatorClient);
             String myservices = instance.getMyservices();
             String services = instance.getServices();
             String communications = instance.getCommunications();
-            new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig, dbDao, fileSystemDao).start();
+            new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig, io).start();
             if (iclijConfig.wantDbHibernate()) {
                 new DatabaseThread().start();
             }
             MyCache.setCache(instance.wantCache());
             MyCache.setCacheTTL(instance.getCacheTTL());
-            new QueueLiveThread(ServiceConstants.EVOLVE, curatorClient).start();            
+            new QueueLiveThread(ServiceConstants.EVOLVE, io.getCuratorClient()).start();            
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -96,17 +91,6 @@ public class IclijController implements CommandLineRunner {
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .modules(new JavaTimeModule())
                 .build();
-    }
-
-    public static void configCurator(IclijConfig conf) {
-        if (true) {
-            RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);        
-            String zookeeperConnectionString = conf.getZookeeper();
-            if (curatorClient == null) {
-                curatorClient = CuratorFrameworkFactory.newClient(zookeeperConnectionString, retryPolicy);
-                curatorClient.start();
-            }
-        }
     }
 
 }

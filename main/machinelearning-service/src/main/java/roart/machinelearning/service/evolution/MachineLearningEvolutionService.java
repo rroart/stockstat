@@ -55,6 +55,7 @@ import roart.predictor.util.PredictorUtils;
 import roart.result.model.ResultItem;
 import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
+import roart.model.io.IO;
 
 public class MachineLearningEvolutionService {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -65,19 +66,11 @@ public class MachineLearningEvolutionService {
     ResultItemTable mlTimesTable = ServiceUtil.createMLTimesTable(otherTableMap);
     ResultItemTable eventTable = ServiceUtil.createEventTable(otherTableMap);
 
-    private WebFluxUtil webFluxUtil = new WebFluxUtil();
+    private IO io;
     
-    private FileSystemDao fileSystemDao;
-
-    public MachineLearningEvolutionService(WebFluxUtil webFluxUtil) {
+    public MachineLearningEvolutionService(IO io) {
         super();
-        this.webFluxUtil = webFluxUtil;
-    }
-
-    public MachineLearningEvolutionService(WebFluxUtil webFluxUtil, FileSystemDao fileSystemDao) {
-        super();
-        this.webFluxUtil = webFluxUtil;
-        this.fileSystemDao = fileSystemDao;
+        this.io = io;
     }
 
     private Double[] getThresholds(IclijConfig conf, String thresholdString) {
@@ -141,7 +134,7 @@ public class MachineLearningEvolutionService {
         headrow.add("New value");
         table.add(headrow);
     
-        IclijServiceResult result = new MachineLearningControlService(webFluxUtil).getContent(conf, origparam, disableList);
+        IclijServiceResult result = new MachineLearningControlService(io).getContent(conf, origparam, disableList);
         
         List<ResultItem> retlist = result.getList();
         PipelineData[] pipelineData = result.getPipelineData();
@@ -224,8 +217,7 @@ public class MachineLearningEvolutionService {
             String text = evolution.printtext(title, null, individuals);
             String node = conf.getEvolveSaveLocation();
             String mypath = conf.getEvolveSavePath();
-            MachineLearningControlService.configCurator(conf);
-            String filename = getFileSystemDao(conf, MachineLearningControlService.curatorClient).writeFile(node, mypath, null, text);
+            String filename = io.getFileSystemDao().writeFile(node, mypath, null, text);
 
             NeuralNetChromosome bestEval2 = (NeuralNetChromosome) best.getEvaluation();
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();
@@ -315,8 +307,7 @@ public class MachineLearningEvolutionService {
             String text = evolution.printtext(title, null, individuals);
             String node = conf.getEvolveSaveLocation();
             String mypath = conf.getEvolveSavePath();
-            MachineLearningControlService.configCurator(conf);
-            String filename = getFileSystemDao(conf, MachineLearningControlService.curatorClient).writeFile(node, mypath, null, text);
+            String filename = io.getFileSystemDao().writeFile(node, mypath, null, text);
             
             NeuralNetChromosome bestEval2 = (NeuralNetChromosome) best.getEvaluation();
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();
@@ -340,13 +331,6 @@ public class MachineLearningEvolutionService {
             row.add(newnnconf);
             table.add(row);
         }
-    }
-
-    private FileSystemDao getFileSystemDao(IclijConfig conf, CuratorFramework curatorClient) {
-        if (fileSystemDao != null) {
-            return fileSystemDao;
-        }
-        return new FileSystemDao(conf, curatorClient);
     }
 
     public static List<String> getFoundKeys(IclijConfig conf, NeuralNetConfigs nnConfigs) {

@@ -72,6 +72,7 @@ import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
+import roart.model.io.IO;
 
 public class Sim {
 
@@ -79,16 +80,13 @@ public class Sim {
 
     private IclijConfig iclijConfig;
 
-    private IclijDbDao dbDao;
-    
-    private FileSystemDao fileSystemDao;
+    private IO io;
 
     private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
 
-    public Sim(IclijConfig iclijConfig, IclijDbDao dbDao, FileSystemDao fileSystemDao) {
+    public Sim(IclijConfig iclijConfig, IO io) {
         this.iclijConfig = iclijConfig;
-        this.dbDao = dbDao;
-        this.fileSystemDao = fileSystemDao;
+        this.io = io;
     }
     
     public static CuratorFramework curatorClient;
@@ -97,12 +95,13 @@ public class Sim {
         //param = getParam(param);
         PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class);
         // TODO
-        if (data.getMap().isEmpty()) {
+        if (data.getSmap().getMap().isEmpty()) {
+            log.info("Empty map");
             return;
         }
         String id = PipelineUtils.getString(data, EvolveConstants.ID);
         // TODO
-        List<SerialScoreChromosome> myList = PipelineUtils.getListPlain(data, id);
+        List<SerialScoreChromosome> myList = PipelineUtils.getList(data, id);
         if (myList.size() > 0) {
             //for ()
             for (SerialScoreChromosome aPair : myList) {
@@ -139,6 +138,7 @@ public class Sim {
             {
                 SimulateFilter[] listoverrides = null;
                 Object o = data.get(SimConstants.FILTER);
+                // TODO if o null
                 System.out.println("ooo" + o.getClass().getCanonicalName());
                 SimulateFilter[] listoverrides2 = JsonUtil.convert((String)o, SimulateFilter[].class);
                 SimulateFilter[] listoverride = listoverrides2;
@@ -246,7 +246,7 @@ public class Sim {
             // TODO_
             // configCurator(iclijConfig);
             String text = printtext(string + " " + simtext, "File " + id, output);
-            fileSystemDao.writeFile(node, mypath, null, text);
+            io.getFileSystemDao().writeFile(node, mypath, null, text);
             
             //Map<String, Object> resultMap = winnerChromosome.getResultMap();
             String[] parts = simtext.split(" ");
@@ -291,7 +291,7 @@ public class Sim {
                 simdata.setFilter(JsonUtil.convert(filter));
                 simdata.setConfig(JsonUtil.convert(chromosome.getMap()));
                 try {
-                    dbDao.save(simdata);
+                    io.getIdbDao().save(simdata);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -317,7 +317,7 @@ public class Sim {
             simdata.setFilter(JsonUtil.convert(filter));
             simdata.setConfig(JsonUtil.convert(chromosome.getMap()));
             try {
-                dbDao.save(simdata);
+                io.getIdbDao().save(simdata);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
@@ -451,7 +451,7 @@ public class Sim {
 
     private String getParam(String param) {
         InmemoryMessage message = JsonUtil.convert(param, InmemoryMessage.class);
-        Inmemory inmemory = InmemoryFactory.get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
         String newparam = inmemory.read(message);
         inmemory.delete(message);
         return newparam;

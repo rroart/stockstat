@@ -26,6 +26,7 @@ open module coreservice {
     requires common.service;
     requires common.cache;
     requires common.filesystem.client;
+    requires common.io;
     //requires common.util;
     //requires commons.lang;
     requires commons.math3;

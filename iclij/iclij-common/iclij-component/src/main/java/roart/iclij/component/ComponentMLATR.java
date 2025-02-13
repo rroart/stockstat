@@ -44,7 +44,7 @@ public class ComponentMLATR extends ComponentMLAggregator {
 
     @Override
     protected int getDaysAfterLimit(ComponentData componentparam) {
-        return componentparam.getService().conf.getMLATRDaysAfterLimit();
+        return componentparam.getService().coremlconf.getMLATRDaysAfterLimit();
     }
     
     @Deprecated

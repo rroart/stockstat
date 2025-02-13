@@ -34,7 +34,6 @@ import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
 import roart.component.model.PredictorData;
 import roart.evolution.fitness.Fitness;
-import roart.filesystem.FileSystemDao;
 import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.iclij.evolution.chromosome.impl.PredictorChromosome;
 import roart.iclij.evolution.chromosome.winner.ConfigMapChromosomeWinner;
@@ -116,7 +115,7 @@ public class ComponentPredictor extends ComponentML {
         
         PredictorData param = new PredictorData(componentparam);
         
-        int futuredays = (int) param.getService().conf.getPredictorsFuturedays();
+        int futuredays = (int) param.getService().coremlconf.getPredictorsFuturedays();
         futuredays = 0;
         param.setFuturedays(futuredays);
 
@@ -182,13 +181,13 @@ public class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save, FileSystemDao fileSystemDao) {
+    public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
 	ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
-        ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
+        ConfigMapGene gene = new ConfigMapGene(confList, param.getService().coremlconf);
         ConfigMapChromosome2 chromosome = new PredictorChromosome(gene);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
-        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fitness, save, null, fileSystemDao);
+        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fitness, save, null);
     }
 
     @Override
@@ -326,7 +325,7 @@ public class ComponentPredictor extends ComponentML {
             incMemory.setSize(total);
             incMemory.setConfidence((double) goodInc / totalInc);
             if (param.isDoSave()) {
-                actionData.getDbDao().save(incMemory);
+                param.getService().getIo().getIdbDao().save(incMemory);
             }
             MemoryItem decMemory = new MemoryItem();
             decMemory.setAction(param.getAction());
@@ -346,7 +345,7 @@ public class ComponentPredictor extends ComponentML {
             decMemory.setSize(total);
             decMemory.setConfidence((double) goodDec / totalDec);
             if (param.isDoSave()) {
-                actionData.getDbDao().save(decMemory);
+                param.getService().getIo().getIdbDao().save(decMemory);
             }
             if (param.isDoPrint()) {
                 log.debug("" + incMemory);
@@ -380,7 +379,7 @@ public class ComponentPredictor extends ComponentML {
             //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(true);
             //buys.put(element.getKey(), incdec);
-            IncDecItem incdec = mapAdder(profitdata.getBuys(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), srv.conf.getConfigData().getDate(), srv.conf.getConfigData().getMarket(), subcomponent, null, JsonUtil.convert(parameters));
+            IncDecItem incdec = mapAdder(profitdata.getBuys(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), srv.coremlconf.getConfigData().getDate(), srv.coremlconf.getConfigData().getMarket(), subcomponent, null, JsonUtil.convert(parameters));
             incdec.setIncrease(true);
         }
         for (MyElement element : bottomList) {
@@ -392,7 +391,7 @@ public class ComponentPredictor extends ComponentML {
             String recommendation = "recommend sell";
             //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(false);
-            IncDecItem incdec = mapAdder(profitdata.getSells(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), srv.conf.getConfigData().getDate(), srv.conf.getConfigData().getMarket(), subcomponent, null, JsonUtil.convert(parameters));
+            IncDecItem incdec = mapAdder(profitdata.getSells(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), srv.coremlconf.getConfigData().getDate(), srv.coremlconf.getConfigData().getMarket(), subcomponent, null, JsonUtil.convert(parameters));
             incdec.setIncrease(false);
         }
     }

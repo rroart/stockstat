@@ -281,7 +281,7 @@ public class MiscUtil {
         //LocalDate date = componentInput.getEnddate();
         //LocalDate olddate = date.minusDays(2 * marketaction.getTime(market));
         List<ConfigItem> filterConfigs = new ArrayList<>();
-        List<ConfigItem> configs = marketaction.getDbDao().getAllConfigs(market.getConfig().getMarket(), action, component, subcomponent, JsonUtil.convert(parameters), null, null);
+        List<ConfigItem> configs = srv.getIo().getIdbDao().getAllConfigs(market.getConfig().getMarket(), action, component, subcomponent, JsonUtil.convert(parameters), null, null);
         for (ConfigItem config : configs) {
             if (buy != null && config.getBuy() != null && buy != config.getBuy()) {
                 continue;
@@ -289,7 +289,7 @@ public class MiscUtil {
             filterConfigs.add(config);
         }
         Collections.sort(filterConfigs, (o1, o2) -> (o2.getRecord().compareTo(o1.getRecord())));
-        Map<String, Class> type = srv.conf.getConfigData().getConfigMaps().map;
+        Map<String, Class> type = srv.coremlconf.getConfigData().getConfigMaps().map;
         Map<String, Object> updateMap = new HashMap<>();
         if (filterConfigs.isEmpty()) {
         	return updateMap;

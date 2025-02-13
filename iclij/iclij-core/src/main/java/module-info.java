@@ -25,6 +25,7 @@ open module iclij.core {
     requires common.queue;
     requires commons.math3;
     requires common.queueutil;
+    requires common.io;
     //requires guava;
     requires iclij.common.componentdata;
     requires iclij.common.component;
@@ -84,4 +85,5 @@ open module iclij.core {
     requires stockstat.shadow.zookeeper;
     requires common.webflux;
     requires common.filesystem.client;
+    requires curator.client;
 }

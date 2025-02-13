@@ -13,6 +13,7 @@ module iclij.common.component {
 	requires common.cache;
 	requires common.model;
 	requires common.util;
+	requires common.io;
 	requires common.constants;
 	requires common.filesystem.client;
 	requires iclij.common.componentdata;

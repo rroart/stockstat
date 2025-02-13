@@ -10,7 +10,6 @@ import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.Fitness;
-import roart.filesystem.FileSystemDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
@@ -48,7 +47,7 @@ public class FilterComponent extends ComponentML {
     @Override
     public ComponentData improve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata,
             Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree,
-            List<MLMetricsItem> mlTests, Fitness fitness, boolean save, FileSystemDao fileSystemDao) {
+            List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
         return null;
     }
 

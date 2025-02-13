@@ -26,14 +26,13 @@ import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.MapUtil;
 import roart.common.util.TimeUtil;
-import roart.common.webflux.WebFluxUtil;
 import roart.constants.IclijConstants;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.ControlService;
-import roart.filesystem.FileSystemDao;
+import roart.model.io.IO;
 
 public class ComponentData {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
@@ -89,7 +88,7 @@ public class ComponentData {
         this.input = componentparam.input;
         this.input.setValuemap(new HashMap<>(componentparam.input.getValuemap()));
         this.service = componentparam.service;
-        this.service.conf.getConfigData().setConfigValueMap(new HashMap<>(this.service.conf.getConfigData().getConfigValueMap()));
+        this.service.coremlconf.getConfigData().setConfigValueMap(new HashMap<>(this.service.coremlconf.getConfigData().getConfigValueMap()));
         this.category = componentparam.category;
         this.categoryTitle = componentparam.categoryTitle;
         this.setBaseDate(componentparam.getBaseDate());
@@ -103,7 +102,7 @@ public class ComponentData {
         this.volumeMap = componentparam.volumeMap;
         this.usedsec = componentparam.usedsec;
         this.updateMap = new HashMap<>(); //componentparam.updateMap;
-        this.configValueMap = new HashMap<>(this.service.conf.getConfigData().getConfigValueMap());
+        this.configValueMap = new HashMap<>(this.service.coremlconf.getConfigData().getConfigValueMap());
         this.action = componentparam.action;
         this.disableList = componentparam.disableList;
         this.timings = componentparam.timings;
@@ -114,26 +113,22 @@ public class ComponentData {
         this.input = input;
     }
 
-    public static ComponentData getParam(IclijConfig iclijConfig, ComponentInput input, int days) throws Exception {
-        return getParam(iclijConfig, input, days, null, null, null);
+    public static ComponentData getParam(IclijConfig iclijConfig, ComponentInput input, int days, IO io) throws Exception {
+        return getParam(iclijConfig, input, days, null, io);
     }
 
-    public static ComponentData getParam(IclijConfig iclijConfig, ComponentInput input, int days, WebFluxUtil webFluxUtil, FileSystemDao fileSystemDao) throws Exception {
-        return getParam(iclijConfig, input, days, null, webFluxUtil, fileSystemDao);
-    }
-
-    public static ComponentData getParam(IclijConfig iclijConfig, ComponentInput input, int days, Market aMarket, WebFluxUtil webFluxUtil, FileSystemDao fileSystemDao) throws Exception {
+    public static ComponentData getParam(IclijConfig iclijConfig, ComponentInput input, int days, Market aMarket, IO io) throws Exception {
         ComponentData param = new ComponentData(input);
         //param.setAction(IclijConstants.FINDPROFIT);
         String market = input.getConfigData().getMarket();
         String mlmarket = input.getConfigData().getMlmarket();
         param.config = iclijConfig;
-        ControlService srv = new ControlService(iclijConfig, webFluxUtil, fileSystemDao, null /*inmemory*/);
+        ControlService srv = new ControlService(iclijConfig, io);
         param.setService(srv);
         if (market != null) {
-            srv.conf.getConfigData().setMarket(market);
+            srv.coremlconf.getConfigData().setMarket(market);
             param.getInput().setMarket(market);
-            srv.conf.getConfigData().setMlmarket(mlmarket);
+            srv.coremlconf.getConfigData().setMlmarket(mlmarket);
             param.getInput().setMlmarket(mlmarket);
         }
         // verification days, 0 or something
@@ -181,7 +176,7 @@ public class ComponentData {
     public void setService(ControlService service) {
         this.service = service;
         service.getAndSetCoreConfig();
-        this.configValueMap = new HashMap<>(service.conf.getConfigData().getConfigValueMap());
+        this.configValueMap = new HashMap<>(service.coremlconf.getConfigData().getConfigValueMap());
     }
 
     public Map<String, Object> getConfigValueMap() {
@@ -368,7 +363,7 @@ public class ComponentData {
     }
     
     public void getAndSetCategoryValueMap(boolean useMl) {
-        getService().conf.getConfigData().setDate(getFutureDate());
+        getService().coremlconf.getConfigData().setDate(getFutureDate());
         Map<String, Object> setValueMap = new HashMap<>();
 	// common
         setValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
@@ -383,8 +378,8 @@ public class ComponentData {
         setValueMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
         setValueMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
 
-        service.conf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
-        service.conf.getConfigData().getConfigValueMap().putAll(setValueMap);
+        service.coremlconf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
+        service.coremlconf.getConfigData().getConfigValueMap().putAll(setValueMap);
         PipelineData[] result = getService().getContent(useMl);
         this.resultMaps = result;
         try {
@@ -409,7 +404,7 @@ public class ComponentData {
     }
 
     public void getAndSetWantedCategoryValueMap(boolean useMl) {
-        getService().conf.getConfigData().setDate(getFutureDate());
+        getService().coremlconf.getConfigData().setDate(getFutureDate());
         Map<String, Object> setValueMap = new HashMap<>();
 	// common
         setValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
@@ -426,8 +421,8 @@ public class ComponentData {
         setValueMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
         setValueMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
 	
-        service.conf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
-        service.conf.getConfigData().getConfigValueMap().putAll(setValueMap);
+        service.coremlconf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
+        service.coremlconf.getConfigData().getConfigValueMap().putAll(setValueMap);
         PipelineData[] result = getService().getContent(useMl);
         this.resultMaps = result;
         try {
@@ -453,14 +448,14 @@ public class ComponentData {
 
     public PipelineData getResultMap(String mapName, Map<String, Object> setValueMap, boolean useMl) {
         zerokey(configValueMap);
-        service.conf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
+        service.coremlconf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
         zerokey(setValueMap);
-        service.conf.getConfigData().getConfigValueMap().putAll(setValueMap);
+        service.coremlconf.getConfigData().getConfigValueMap().putAll(setValueMap);
         if (updateMap != null) {
             zerokey(updateMap);
-            service.conf.getConfigData().getConfigValueMap().putAll(updateMap);
+            service.coremlconf.getConfigData().getConfigValueMap().putAll(updateMap);
         }
-        service.conf.getConfigData().setDate(getBaseDate());
+        service.coremlconf.getConfigData().setDate(getBaseDate());
         PipelineData[] maps = service.getContent(useMl, getDisableList());
         this.resultMaps = maps;
         //System.out.println(maps.keySet());

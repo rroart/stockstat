@@ -5,7 +5,7 @@
  * @author roart
  *
  */
-module iclij.webcore {
+open module iclij.webcore {
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
@@ -16,6 +16,7 @@ module iclij.webcore {
     requires common.model;
     requires common.service;
     requires common.util;
+    requires common.io;
     requires commons.configuration2;
     requires commons.math3;
     requires iclij.common.componentdata;
@@ -46,6 +47,12 @@ module iclij.webcore {
     requires org.slf4j;
     requires dbdao;
     requires spring.data.jdbc;
+    requires common.communication.factory;
+    requires common.inmemory.factory;
+    requires common.webflux;
+    requires common.filesystem.client;
+    requires curator.client;
+    requires curator.framework;
     //requires springfox.core;
     //requires springfox.spi;
     //requires springfox.spring.web;

@@ -88,6 +88,7 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.communication.factory.CommunicationFactory;
 import roart.common.communication.model.Communication;
 import roart.common.util.ServiceConnectionUtil;
+import roart.model.io.IO;
 
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
@@ -96,22 +97,17 @@ public class Evolve {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public static CuratorFramework curatorClient;
-
     private IclijConfig iclijConfig;
 
-    private IclijDbDao dbDao;
-
-    private FileSystemDao fileSystemDao;
-
     private Function<String, Boolean> zkRegister;
+
+    private IO io;
     
     private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
 
-    public Evolve(IclijDbDao dbDao, IclijConfig iclijConfig, FileSystemDao fileSystemDao) {
+    public Evolve(IclijConfig iclijConfig, IO io) {
         this.iclijConfig = iclijConfig;
-        this.dbDao = dbDao;
-        this.fileSystemDao = fileSystemDao;
+        this.io = io;
     }
     
     public void handleEvolve(String param) {
@@ -139,7 +135,7 @@ public class Evolve {
         Pair<String, String> subcomponent = new NeuralNetConfigs().getSubcomponent(myclass);
         List<MLMetricsItem> mltests = null;
         try {
-            mltests = dbDao.getAllMLMetrics(market, null, null);
+            mltests = io.getIdbDao().getAllMLMetrics(market, null, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -202,7 +198,7 @@ public class Evolve {
         String value = JsonUtil.convert(object);
         i.setValue(value);            
         try {
-            dbDao.save(i);
+            io.getIdbDao().save(i);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -227,7 +223,7 @@ public class Evolve {
         }
         mct.setParameters(JsonUtil.convert(p));
         try {
-            dbDao.save(mct);
+            io.getIdbDao().save(mct);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -323,7 +319,7 @@ public class Evolve {
         Pair<String, String> subComponent = new ImmutablePair<>(subcomponent, subsubcomponent);
         List<MLMetricsItem> mltests = null;
         try {
-            mltests = dbDao.getAllMLMetrics(market, null, null);
+            mltests = io.getIdbDao().getAllMLMetrics(market, null, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -479,7 +475,7 @@ public class Evolve {
             abovebelow.setScore(newer);
             abovebelow.setSubcomponents(JsonUtil.convert(mysubcomponents));
             try {
-                dbDao.save(abovebelow);
+                io.getIdbDao().save(abovebelow);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
@@ -658,7 +654,7 @@ public class Evolve {
 
     private String getParam(String param) {
         InmemoryMessage message = JsonUtil.convert(param, InmemoryMessage.class);
-        Inmemory inmemory = InmemoryFactory.get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
         String newparam = inmemory.read(message);
         inmemory.delete(message);
         return newparam;
@@ -666,12 +662,12 @@ public class Evolve {
 
     public void send(String service, Object object, ObjectMapper objectMapper) {
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
-        Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, null);
+        Communication c = io.getCommunicationFactory().get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, null);
         c.send(object);
     }
 
     public void send(String service, Object object, IclijConfig config) {
-        Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
+        Inmemory inmemory = new InmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
         String id = service + System.currentTimeMillis() + UUID.randomUUID();
         InmemoryMessage message = inmemory.send(id, object);
         send(service, message);
@@ -688,19 +684,7 @@ public class Evolve {
     public void print(String text) {
         String node = iclijConfig.getEvolveSaveLocation();
         String mypath = iclijConfig.getEvolveSavePath();
-        configCurator(iclijConfig);
-        fileSystemDao.writeFile(node, mypath, null, text);
-    }
-
-    public static void configCurator(IclijConfig conf) {
-        if (true) {
-            RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);        
-            String zookeeperConnectionString = conf.getZookeeper();
-            if (curatorClient == null) {
-                curatorClient = CuratorFrameworkFactory.newClient(zookeeperConnectionString, retryPolicy);
-                curatorClient.start();
-            }
-        }
+        io.getFileSystemDao().writeFile(node, mypath, null, text);
     }
 
 }

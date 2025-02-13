@@ -99,8 +99,8 @@ public class FitnessMarketFilter extends Fitness {
         myData.setUpdateMap2(new HashMap<>());
         //myData.profitData = new ProfitData();
         myData.setTimingMap(new HashMap<>());
-        int b = param.getService().conf.hashCode();
-        boolean c = param.getService().conf.wantIndicatorRecommender();
+        int b = param.getService().coremlconf.hashCode();
+        boolean c = param.getService().coremlconf.wantIndicatorRecommender();
         Set<IncDecItem> listInc = new HashSet<>(profitdata.getBuys().values());
         Set<IncDecItem> listDec = new HashSet<>(profitdata.getSells().values());
         Set<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec);
@@ -115,7 +115,7 @@ public class FitnessMarketFilter extends Fitness {
             //ProfitData profitdata = new ProfitData();
             myData.setProfitData(profitdata);
             boolean myevolve = component.wantImproveEvolve();
-            if (!param.getService().conf.wantIndicatorRecommender()) {
+            if (!param.getService().coremlconf.wantIndicatorRecommender()) {
                 int jj2 = 0;
             }
             map.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);

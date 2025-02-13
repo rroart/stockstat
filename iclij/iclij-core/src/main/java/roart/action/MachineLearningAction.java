@@ -25,7 +25,6 @@ import roart.common.model.TimingItem;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
-import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
@@ -41,8 +40,8 @@ public class MachineLearningAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public MachineLearningAction(IclijConfig iclijConfig, IclijDbDao dbDao) {
-        setActionData(new MachineLearningActionData(iclijConfig, dbDao));
+    public MachineLearningAction(IclijConfig iclijConfig) {
+        setActionData(new MachineLearningActionData(iclijConfig));
     }
     
     @Override

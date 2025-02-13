@@ -27,7 +27,6 @@ import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
 import roart.constants.IclijConstants;
-import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
@@ -45,8 +44,8 @@ public class SimulateInvestAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public SimulateInvestAction(IclijDbDao dbDao, IclijConfig iclijConfig) {
-        setActionData(new SimulateInvestActionData(iclijConfig, dbDao));
+    public SimulateInvestAction(IclijConfig iclijConfig) {
+        setActionData(new SimulateInvestActionData(iclijConfig));
     }
     
     @Override

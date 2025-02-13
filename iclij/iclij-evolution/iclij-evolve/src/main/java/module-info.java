@@ -25,6 +25,7 @@ module iclij.evolutionevolve {
 	requires org.slf4j;
 	requires iclij.evolutionmarketfilter;
 	requires common.model;
+	requires common.io;
 	requires iclij.evolutionchromosome;
 	requires dbdao;
     requires evolution.model;

@@ -29,7 +29,6 @@ import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
-import roart.db.dao.IclijDbDao;
 import roart.evolution.config.EvolutionConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
@@ -48,8 +47,8 @@ public class ImproveFilterAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
-    public ImproveFilterAction(IclijConfig iclijConfig, IclijDbDao dbDao) {
-        setActionData(new ImproveFilterActionData(iclijConfig, dbDao));
+    public ImproveFilterAction(IclijConfig iclijConfig) {
+        setActionData(new ImproveFilterActionData(iclijConfig));
     }
     
     private List<Market> getMarkets(IclijConfig instance) {
@@ -77,7 +76,7 @@ public class ImproveFilterAction extends MarketAction {
         } catch (ParseException e) {
             log.error(Constants.EXCEPTION, e);
         }
-        Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
+        Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
         for (Entry<String, Component> entry : componentMap.entrySet()) {
             Component component = entry.getValue();
             if (component == null) {
@@ -89,7 +88,7 @@ public class ImproveFilterAction extends MarketAction {
             date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
             LocalDate prevDate = date.minusDays(market.getConfig().getFindtime());
             try {
-                allIncDecs = getActionData().getDbDao().getAllIncDecs(market.getConfig().getMarket(), prevDate, date, null);
+                allIncDecs = param.getService().getIo().getIdbDao().getAllIncDecs(market.getConfig().getMarket(), prevDate, date, null);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
@@ -127,6 +126,7 @@ public class ImproveFilterAction extends MarketAction {
                 param.getUpdateMap().putAll(updateMap);
             }
             PipelineData results = componentData.getResultMap();
+            log.info("Content {}", JsonUtil.convert(results));
             QueueElement element = new QueueElement();
             InmemoryMessage msg = inmemory.send(ServiceConstants.EVOLVEFILTERFILTER + UUID.randomUUID(), results, null);
             element.setOpid(ServiceConstants.EVOLVE);

@@ -41,7 +41,7 @@ public class EvolveFilterMy extends EvolveMy {
         date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
         LocalDate prevDate = date.minusDays(market.getConfig().getFindtime());
         try {
-            allIncDecs = action.getDbDao().getAllIncDecs(market.getConfig().getMarket(), prevDate, date, null);
+            allIncDecs = param.getService().getIo().getIdbDao().getAllIncDecs(market.getConfig().getMarket(), prevDate, date, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -58,7 +58,7 @@ public class EvolveFilterMy extends EvolveMy {
         MarketFilterChromosome2 chromosome2 = new MarketFilterChromosome2(new ArrayList<>(), gene);
         FitnessMarketFilter fit = new FitnessMarketFilter(action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, mlTests, stockDates, incdecsP);
         boolean save = false;
-        ComponentData componentData = component.improve(action, param, chromosome2, subcomponent, new MarketFilterChromosomeWinner(), buy, fit, save, null, fileSystemDao);
+        ComponentData componentData = component.improve(action, param, chromosome2, subcomponent, new MarketFilterChromosomeWinner(), buy, fit, save, null);
         param = componentData;
         }
         return param;

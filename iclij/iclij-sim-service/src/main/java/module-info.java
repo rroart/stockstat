@@ -50,4 +50,5 @@ open module iclij.sim.service {
     requires common.model;
     requires spring.data.jdbc;
     requires common.queueutil;
+    requires common.io;
 }

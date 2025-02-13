@@ -31,7 +31,6 @@ import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.constants.IclijConstants;
-import roart.db.dao.IclijDbDao;
 import roart.iclij.config.Market;
 import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.model.action.MarketActionData;
@@ -47,11 +46,8 @@ public class AboveBelowAdviser extends Adviser {
 
     private String aParameter;
 
-    private IclijDbDao dbDao;
-    
-    public AboveBelowAdviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param, SimulateInvestConfig simulateConfig, IclijDbDao dbDao) {
+    public AboveBelowAdviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param, SimulateInvestConfig simulateConfig) {
         super(market, investStart, investEnd, param, simulateConfig);
-        this.dbDao = dbDao;
         SimulateInvestData simulateParam;
         if (param instanceof SimulateInvestData) {
             simulateParam = (SimulateInvestData) param;
@@ -75,7 +71,7 @@ public class AboveBelowAdviser extends Adviser {
     private void getAllIncDecs() {
         try {
             //allIncDecs = IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), investStart, investEnd, null);
-            allIncDecs = dbDao.getAllIncDecs(market.getConfig().getMarket(), null, null, null);
+            allIncDecs = param.getService().getIo().getIdbDao().getAllIncDecs(market.getConfig().getMarket(), null, null, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -188,7 +184,7 @@ public class AboveBelowAdviser extends Adviser {
     public List<String>[] p(String market, Date startdate, Date enddate) {
         List<AboveBelowItem> list = null;
         try {
-            list = dbDao.getAllAboveBelow(market, startdate, enddate);
+            list = param.getService().getIo().getIdbDao().getAllAboveBelow(market, startdate, enddate);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

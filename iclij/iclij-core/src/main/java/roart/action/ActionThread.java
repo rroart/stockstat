@@ -34,7 +34,6 @@ import roart.common.model.TimingBLItem;
 import roart.common.model.TimingItem;
 import roart.common.util.JsonUtil;
 import roart.common.util.MemUtil;
-import roart.common.webflux.WebFluxUtil;
 import roart.iclij.component.Component;
 import roart.iclij.component.factory.ComponentFactory;
 import roart.component.model.ComponentData;
@@ -51,14 +50,11 @@ import roart.iclij.util.MetaUtil;
 import roart.populate.PopulateThread;
 import roart.constants.IclijConstants;
 import roart.controller.IclijController;
-import roart.db.dao.IclijDbDao;
-import roart.filesystem.FileSystemDao;
+import roart.model.io.IO;
 
 public class ActionThread extends Thread {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
-
-    private IclijDbDao dbDao;
 
     public static volatile List<ActionComponentItem> queue = Collections.synchronizedList(new ArrayList<>());
 
@@ -74,12 +70,11 @@ public class ActionThread extends Thread {
 
     private IclijConfig iclijConfig;
 
-    private FileSystemDao fileSystemDao;
+    private IO io;
     
-    public ActionThread(IclijConfig iclijConfig, IclijDbDao dbDao, FileSystemDao fileSystemDao) {
+    public ActionThread(IclijConfig iclijConfig, IO io) {
         this.iclijConfig = iclijConfig;
-        this.dbDao = dbDao;
-        this.fileSystemDao = fileSystemDao;
+        this.io = io;
         this.thread = this;
     }
 
@@ -108,7 +103,7 @@ public class ActionThread extends Thread {
         }
         List<TimingBLItem> blacklist = null;
         try {
-            blacklist = dbDao.getAllTimingBLItem();
+            blacklist = io.getIdbDao().getAllTimingBLItem();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -121,7 +116,7 @@ public class ActionThread extends Thread {
             log.error(Constants.EXCEPTION, e);
         }
         long lastMain = 0;
-        MyLeader leader = new MyLeaderFactory().create("action",  hostname, iclijConfig, ControlService.curatorClient, null /*GetHazelcastInstance.instance(conf.getInmemoryHazelcast())*/);
+        MyLeader leader = new MyLeaderFactory().create("action",  hostname, iclijConfig, io.getCuratorClient(), null /*GetHazelcastInstance.instance(conf.getInmemoryHazelcast())*/);
 
         while (true) {
             if (count != null && count-- < 0) {
@@ -144,7 +139,7 @@ public class ActionThread extends Thread {
             ActionComponentItem ac = null;
             List<ActionComponentItem> dblist = new ArrayList<>();
             try {
-                dblist = dbDao.getAllActionComponent();
+                dblist = io.getIdbDao().getAllActionComponent();
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
@@ -185,32 +180,32 @@ public class ActionThread extends Thread {
                     blItem.setRecord(LocalDate.now());
                 } else {
                     try {
-                        dbDao.deleteById(blItem, id);
+                        io.getIdbDao().deleteById(blItem, id);
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
                     }                	
                 }
                 blItem.setCount(1 + blItem.getCount());
                 try {
-                    dbDao.save(blItem);
+                    io.getIdbDao().save(blItem);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
                 boolean finished = false;
                 try {
-                    finished = thread.runAction(iclijConfig, item, dblist, null);
+                    finished = thread.runAction(iclijConfig, item, dblist);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
                 try {
-                    dbDao.deleteById(blItem, id);
+                    io.getIdbDao().deleteById(blItem, id);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
                 try {
                     // TODO don't delete if failed
                     if (item.getDbid() != null) {
-                        dbDao.deleteById(item, "" + item.getDbid());
+                        io.getIdbDao().deleteById(item, "" + item.getDbid());
                     }
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
@@ -218,7 +213,7 @@ public class ActionThread extends Thread {
                 if (!finished && item.getDbid() != null) {
                     try {
                         item.setPriority(100 + item.getPriority());
-                        dbDao.save(item);
+                        io.getIdbDao().save(item);
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
                     }
@@ -235,20 +230,18 @@ public class ActionThread extends Thread {
         }
     }
 
-    public boolean runAction(IclijConfig instance, ActionComponentItem item, List<ActionComponentItem> dblist, WebFluxUtil webFluxUtil) {
+    public boolean runAction(IclijConfig instance, ActionComponentItem item, List<ActionComponentItem> dblist) {
         boolean finished = false;
-        IclijConfig myConfig = new IclijConfig(instance);
+        IclijConfig myConfig = new IclijConfig(iclijConfig);
         myConfig.getConfigData().setMarket(item.getMarket());
-        MarketAction action = ActionFactory.get(item.getAction(), dbDao, myConfig);
-        action.setWebFluxUtil(webFluxUtil);
-        action.setFileSystemDao(fileSystemDao);
+        MarketAction action = ActionFactory.get(item.getAction(), io.getIdbDao(), myConfig);
         action.setParent(action);
         Market market = new MarketUtil().findMarket(item.getMarket(), myConfig);
         //ComponentInput input = new ComponentInput(new IclijConfig(IclijXMLConfig.getConfigInstance()), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>());
         ComponentInput input = new ComponentInput(myConfig.getConfigData(), null, item.getMarket(), null, null, true, false, new ArrayList<>(), new HashMap<>());
         ComponentData param = null;
         try {
-            param = ComponentData.getParam(myConfig, input, 0, market, webFluxUtil, fileSystemDao);
+            param = ComponentData.getParam(myConfig, input, 0, market, io);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -287,7 +280,7 @@ public class ActionThread extends Thread {
                                 //                            	otherAction = IclijConstants.IMPROVEPROFIT;
                                 //                        	} else {
                                 //                        		otherAction = IclijConstants.MACHINELEARNING;
-                                MarketAction anAction = ActionFactory.get(IclijConstants.IMPROVEPROFIT, dbDao, myConfig);
+                                MarketAction anAction = ActionFactory.get(IclijConstants.IMPROVEPROFIT, io.getIdbDao(), myConfig);
                                 String mypriorityKey = anAction.getActionData().getPriority();
                                 int aPriority = action.getPriority(myConfig, mypriorityKey);
                                 ActionComponentItem it = dblist.stream().filter(dbitem -> (IclijConstants.IMPROVEPROFIT.equals(dbitem.getAction()) && item.getMarket().equals(dbitem.getMarket()) && item.getComponent().equals(dbitem.getComponent()) && item.getSubcomponent().equals(item.getSubcomponent()))).findAny().orElse(null); 
@@ -300,10 +293,10 @@ public class ActionThread extends Thread {
                             // only after improveprofit?
                             try {
                                 log.info("Deleting AboveBelow etc {} {} {}", item.getMarket(), item.getComponent(), item.getSubcomponent());
-                                dbDao.delete(new TimingItem(), item.getMarket(), IclijConstants.FINDPROFIT, item.getComponent(), item.getSubcomponent(), null, null);
-                                dbDao.delete(new IncDecItem(), item.getMarket(), null, item.getComponent(), item.getSubcomponent(), null, null);
-                                dbDao.delete(new MemoryItem(), item.getMarket(), null, item.getComponent(), item.getSubcomponent(), null, null);
-                                dbDao.delete(new AboveBelowItem(), item.getMarket(), null, null, null, null, null);
+                                io.getIdbDao().delete(new TimingItem(), item.getMarket(), IclijConstants.FINDPROFIT, item.getComponent(), item.getSubcomponent(), null, null);
+                                io.getIdbDao().delete(new IncDecItem(), item.getMarket(), null, item.getComponent(), item.getSubcomponent(), null, null);
+                                io.getIdbDao().delete(new MemoryItem(), item.getMarket(), null, item.getComponent(), item.getSubcomponent(), null, null);
+                                io.getIdbDao().delete(new AboveBelowItem(), item.getMarket(), null, null, null, null, null);
                             } catch (Exception e) {
                                 log.error(Constants.EXCEPTION, e);
                             }                        
@@ -339,7 +332,7 @@ public class ActionThread extends Thread {
         mct.setPriority(priority);
         mct.setParameters(JsonUtil.convert(p));
         try {
-            dbDao.save(mct);
+            io.getIdbDao().save(mct);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

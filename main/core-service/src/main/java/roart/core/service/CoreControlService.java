@@ -59,7 +59,6 @@ import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.MetaItem;
-import roart.common.model.MyDataSource;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
@@ -80,7 +79,6 @@ import roart.core.graphcategory.GraphCategoryPeriodTopBottom;
 import roart.core.graphcategory.GraphCategoryPrice;
 import roart.core.model.impl.DbDataSource;
 import roart.core.service.util.ServiceUtil;
-import roart.db.dao.DbDao;
 import roart.etl.CleanETL;
 import roart.etl.PeriodDataETL;
 import roart.etl.db.Extract;
@@ -98,17 +96,16 @@ import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
 import roart.stockutil.StockUtil;
 import roart.core.util.Math3Util;
+import roart.model.io.IO;
 
 public class CoreControlService {
     private Logger log = LoggerFactory.getLogger(this.getClass());
-
-    public static CuratorFramework curatorClient;
 
     private static final ObjectMapper mapper = new JsonMapper().builder().addModule(new JavaTimeModule()).build();
 
     public List<String> getMarkets() {
         try {
-            return dbDao.getMarkets();
+            return io.getDbDao().getMarkets();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -117,27 +114,24 @@ public class CoreControlService {
 
     public List<MetaItem> getMetas() {
         try {
-            return dataSource.getMetas();
+            return io.getDataSource().getMetas();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
         return new ArrayList<>();
     }
 
-    private DbDao dbDao;
-
-    private MyDataSource dataSource;
+    private IO io;
     
-    public CoreControlService(DbDao dbDao, MyDataSource dataSource) {
+    public CoreControlService(IO io) {
         super();
-        this.dbDao = dbDao;
-        this.dataSource = dataSource;
+        this.io = io;
     }
 
     public Map<String, String> getStocks(String market, IclijConfig conf) {
         try {
             Map<String, String> stockMap = new HashMap<>();
-            List<StockItem> stocks = dataSource.getAll(market, conf);
+            List<StockItem> stocks = io.getDataSource().getAll(market, conf);
             stocks.remove(null);
             for (StockItem stock : stocks) {
                 String name = stock.getName();
@@ -163,7 +157,7 @@ public class CoreControlService {
 
     /**
      * Create result lists
-     * @param dbDataSource 
+     * @param dbio.getDataSource() 
      * @param maps 
      * @param pipelinedata TODO
      * @return the tabular result lists
@@ -182,14 +176,14 @@ public class CoreControlService {
         List<AbstractCategory> categories = new ArrayList<>();
         List<Aggregator> aggregates = new ArrayList<>();
         try {
-            StockData stockData = new Extract(dataSource).getStockData(conf);;
+            StockData stockData = new Extract(io.getDataSource()).getStockData(conf);;
             if (stockData == null) {
                 return new ArrayList<>();
             }
 
             IndicatorUtils iu = new IndicatorUtils();
             ExtraReader extraReader = new ExtraReader(conf, stockData.marketdatamap, 0, stockData);
-            Map<String, StockData> extraStockDataMap = new IndicatorUtils().getExtraStockDataMap(conf, dataSource, extraReader);;
+            Map<String, StockData> extraStockDataMap = new IndicatorUtils().getExtraStockDataMap(conf, io.getDataSource(), extraReader);;
 
             Pipeline[] datareaders = iu.getDataReaders(conf, stockData.periodText,
                     stockData.marketdatamap, stockData, extraStockDataMap, extraReader);
@@ -243,7 +237,7 @@ public class CoreControlService {
 
         result.setList(retlist);
         result.setPipelineData(pipelinedata);
-        Inmemory inmemory = InmemoryFactory.get(conf.getInmemoryServer(), conf.getInmemoryHazelcast(), conf.getInmemoryRedis());
+        Inmemory inmemory = io.getInmemoryFactory().get(conf.getInmemoryServer(), conf.getInmemoryHazelcast(), conf.getInmemoryRedis());
 
         if (true) return retlist;
         for (PipelineData data : pipelinedata) {
@@ -252,7 +246,7 @@ public class CoreControlService {
                 String md5 = null;
                 InmemoryMessage msg = inmemory.send(Constants.STOCKSTAT + data.getId() + data.getName(), is, md5);
                 //result.message = msg;
-                curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.DATA + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
+                io.getCuratorClient().create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.DATA + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
@@ -486,7 +480,7 @@ public class CoreControlService {
         try {
             log.info("mydate {}", conf.getConfigData().getDate());
             log.info("mydate {}", conf.getDays());
-            StockData stockData = new Extract(dbDao).getStockData(conf);
+            StockData stockData = new Extract(io.getDbDao()).getStockData(conf);
             if (stockData == null) {
                 return new ArrayList<>();
             }
@@ -533,7 +527,7 @@ public class CoreControlService {
             Map<String, StockData> stockDataMap = new HashMap<>();
             Set<String> markets = new ServiceUtil().getMarkets(ids);
             for (String market : markets) {
-                StockData stockData = new Extract(dbDao).getStockData(conf, market);
+                StockData stockData = new Extract(io.getDbDao()).getStockData(conf, market);
                 if (stockData == null) {
                     return new ArrayList<>();
                 }
@@ -581,7 +575,7 @@ public class CoreControlService {
         row.add("Pearson (e)");
         table.add(row);
         try {
-            List<StockItem> stocks = dbDao.getAll(conf.getConfigData().getMarket(), conf);
+            List<StockItem> stocks = io.getDbDao().getAll(conf.getConfigData().getMarket(), conf);
             log.info("stocks {}", stocks.size());
             Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
             Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
@@ -638,7 +632,7 @@ public class CoreControlService {
         conf.setConfigValueMap(new HashMap<>(conf.getConfigValueMap()));
         */
         conf.getConfigData().getConfigValueMap().putAll(aMap);
-        StockData stockData = new Extract(dataSource).getStockData(conf);
+        StockData stockData = new Extract(io.getDataSource()).getStockData(conf);
         if (stockData != null) {
             PipelineData map = new PipelineData();
             map.setName(PipelineConstants.DATELIST);
@@ -654,7 +648,7 @@ public class CoreControlService {
             if ("0".equals(conf.getConfigData().getMarket())) {
                 int jj = 0;
             }
-            dates = dbDao.getDates(conf.getConfigData().getMarket(), conf);
+            dates = io.getDbDao().getDates(conf.getConfigData().getMarket(), conf);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -678,20 +672,9 @@ public class CoreControlService {
         }
     }
     
-    public static void configCurator(IclijConfig conf) {
-        if (true) {
-            RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);        
-            String zookeeperConnectionString = conf.getZookeeper();
-            if (curatorClient == null) {
-                curatorClient = CuratorFrameworkFactory.newClient(zookeeperConnectionString, retryPolicy);
-                curatorClient.start();
-            }
-        }
-    }
-
     public void send(String service, Object object, IclijConfig config) {
         IclijConfig iclijConfig = config; // TODO check
-        Inmemory inmemory = InmemoryFactory.get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
         String id = service + System.currentTimeMillis() + UUID.randomUUID();
         InmemoryMessage message = inmemory.send(id, object);
         send(service, message);
@@ -713,7 +696,7 @@ public class CoreControlService {
         if (appid != null) {
             service = service + appid; // can not handle domain, only eureka
         }
-        Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, null);
+        Communication c = io.getCommunicationFactory().get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, null);
         c.send(object);
     }
 

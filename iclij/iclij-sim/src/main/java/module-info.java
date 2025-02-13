@@ -16,6 +16,7 @@ open module iclij.sim {
     requires common.communication.factory;
     requires org.apache.commons.lang3;
     requires common.util;
+    requires common.io;
     requires spring.web;
     requires spring.boot.autoconfigure;
     requires spring.boot;
@@ -49,4 +50,5 @@ open module iclij.sim {
     requires common.model;
     requires spring.data.jdbc;
     requires common.queueutil;
+    requires common.webflux;
 }

@@ -11,6 +11,7 @@ import roart.component.model.ComponentData;
 import roart.constants.IclijPipelineConstants;
 import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
+import roart.model.io.IO;
 
 public abstract class Action {
     
@@ -34,7 +35,7 @@ public abstract class Action {
         this.memory = memory;
     }
 
-    public abstract void goal(Action parent, ComponentData param, Integer priority, IclijConfig iclijConfig) throws InterruptedException;
+    public abstract void goal(Action parent, ComponentData param, Integer priority, IclijConfig iclijConfig, IO io) throws InterruptedException;
 
     public Map<String, Object> getLocalResultMap() {
         Map<String, Object> map = new HashMap<>();

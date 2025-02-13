@@ -66,10 +66,19 @@ public class Extract {
             return null;
         }
         log.info("stocks {}", stocks.size());
-        String[] periodText = DbDaoUtil.getPeriodText(market, conf, dbDao);
+        String[] periodText;
+        if (dbDao != null) {
+            periodText = DbDaoUtil.getPeriodText(market, conf, dbDao);
+        } else {
+            periodText = this.getPeriodText(market, conf, dataSource);
+        }
         MetaItem meta = null;
         try {
-            meta = dbDao.getById(market, conf);
+            if (dbDao != null) {
+                meta = dbDao.getById(market, conf);
+            } else {
+                meta = dataSource.getById(market, conf);
+            }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -178,5 +187,28 @@ public class Extract {
         conf.getConfigData().setDate(TimeUtil.convertDate(dt.parse(date)));
         log.info("mydate2 {}", conf.getConfigData().getDate());
     }
+    
+    private static String[] getPeriodText(String market, IclijConfig conf, MyDataSource dataSource) {
+        String[] periodText = { "Period1", "Period2", "Period3", "Period4", "Period5", "Period6", "Period7", "Period8", "Period9" };
+        MetaItem meta = null;
+        try {
+            meta = dataSource.getById(market, conf);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        try {
+            if (meta != null) {
+                for (int i = 0; i < Constants.PERIODS; i++) {
+                    if (meta.getPeriod(i) != null) {
+                        periodText[i] = meta.getPeriod(i);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return periodText;
+    }
+
 
 }

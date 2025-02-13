@@ -13,18 +13,18 @@ import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.util.JsonUtil;
-import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 import roart.populate.PopulateThread;
+import roart.model.io.IO;
 
 public class ServiceControllerOther extends ServiceControllerOtherAbstract {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public ServiceControllerOther(String myservices, String services, String communications, Class replyclass, IclijConfig iclijConfig, IclijDbDao dbDao) {
-        super(myservices, services, communications, replyclass, iclijConfig, dbDao, null);
+    public ServiceControllerOther(String myservices, String services, String communications, Class replyclass, IclijConfig iclijConfig, IO io) {
+        super(myservices, services, communications, replyclass, iclijConfig, io);
     }
 
     public void get(Object param, Communication c) { 
@@ -60,7 +60,7 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
 
     private String getParam(String param) {
         InmemoryMessage message = JsonUtil.convert(param, InmemoryMessage.class);
-        Inmemory inmemory = InmemoryFactory.get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
         String newparam = inmemory.read(message);
         inmemory.delete(message);
         return newparam;

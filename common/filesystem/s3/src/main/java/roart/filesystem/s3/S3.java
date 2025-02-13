@@ -326,7 +326,7 @@ public class S3 extends FileSystemOperations {
         for (FileObject filename : param.fos) {
             String md5 = getMd5(filename);
             try (InputStream inputStream  = getInputStreamInner(filename)) {
-                Inmemory inmemory = InmemoryFactory.get(nodeConf.getInmemoryServer(), nodeConf.getInmemoryHazelcast(), nodeConf.getInmemoryRedis());
+                Inmemory inmemory = new InmemoryFactory().get(nodeConf.getInmemoryServer(), nodeConf.getInmemoryHazelcast(), nodeConf.getInmemoryRedis());
                 InmemoryMessage msg = inmemory.send(EurekaConstants.READFILE + filename.toString(), inputStream, md5);
                 map.put(filename.object, msg);
             } catch (Exception e) {
@@ -384,7 +384,7 @@ public class S3 extends FileSystemOperations {
     @Override
     public FileSystemMessageResult writeFile(FileSystemFileObjectParam param) throws Exception {
         Map<String, InmemoryMessage> map = new HashMap<>();
-        Inmemory inmemory = InmemoryFactory.get(nodeConf.getInmemoryServer(), nodeConf.getInmemoryHazelcast(), nodeConf.getInmemoryRedis());
+        Inmemory inmemory = new InmemoryFactory().get(nodeConf.getInmemoryServer(), nodeConf.getInmemoryHazelcast(), nodeConf.getInmemoryRedis());
         for (Entry<String, InmemoryMessage> entry : param.map.entrySet()) {
             FileObject filename = FsUtil.getFileObject(entry.getKey());
             InmemoryMessage msg = entry.getValue();

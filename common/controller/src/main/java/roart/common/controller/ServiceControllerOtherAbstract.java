@@ -23,9 +23,8 @@ import roart.common.constants.Constants;
 import roart.common.queueutil.QueueUtils;
 import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
-import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
-import roart.filesystem.FileSystemDao;
+import roart.model.io.IO;
 
 public abstract class ServiceControllerOtherAbstract {
 
@@ -36,21 +35,20 @@ public abstract class ServiceControllerOtherAbstract {
     protected String communications;
     private Class replyclass;
     protected IclijConfig iclijConfig;
-    protected IclijDbDao dbDao;
-    protected FileSystemDao fileSystemDao;
     
     private static CuratorFramework curatorClient;
 
     private Function<String, Boolean> zkRegister;
+
+    protected IO io;
     
-    public ServiceControllerOtherAbstract(String myservices, String services, String communications, Class replyclass, IclijConfig iclijConfig, IclijDbDao dbDao, FileSystemDao fileSystemDao) {
+    public ServiceControllerOtherAbstract(String myservices, String services, String communications, Class replyclass, IclijConfig iclijConfig, IO io) {
         this.myservices = myservices;
         this.services = services;
         this.communications = communications;
         this.replyclass = replyclass;
         this.iclijConfig = iclijConfig;
-        this.dbDao = dbDao;
-        this.fileSystemDao = fileSystemDao; 
+        this.io = io;
     }
 
     public void get(final Communication c) {
@@ -118,7 +116,7 @@ public abstract class ServiceControllerOtherAbstract {
             }
             configCurator(iclijConfig);
             zkRegister = (new QueueUtils(curatorClient))::zkRegister;
-            Communication comm = CommunicationFactory.get(communication, myclass, myservice, objectMapper, false, true, false, connection, zkRegister, null);
+            Communication comm = io.getCommunicationFactory().get(communication, myclass, myservice, objectMapper, false, true, false, connection, zkRegister, null);
             get(comm);
         }        
     }
@@ -130,7 +128,7 @@ public abstract class ServiceControllerOtherAbstract {
             String service = replypath;
             Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(c.getService(), services, communications);
             log.info("ServiceConnection {} {}", sc.getLeft(), sc.getRight());
-            Communication c2 = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, null);
+            Communication c2 = io.getCommunicationFactory().get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, null);
             c2.send(r);
             c2.destroy();
         }

@@ -59,7 +59,7 @@ public class MarketFilterEvolveJ extends EvolveJ {
         date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
         LocalDate prevDate = date.minusDays(market.getConfig().getFindtime());
         try {
-            allIncDecs = action.getDbDao().getAllIncDecs(market.getConfig().getMarket(), prevDate, date, null);
+            allIncDecs = param.getService().getIo().getIdbDao().getAllIncDecs(market.getConfig().getMarket(), prevDate, date, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

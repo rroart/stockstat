@@ -27,7 +27,6 @@ import roart.common.pipeline.data.PipelineData;
 import roart.common.queue.QueueElement;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
-import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
@@ -40,8 +39,8 @@ import roart.service.model.ProfitInputData;
 
 public class DatasetAction extends MarketAction {
 
-    public DatasetAction(IclijConfig iclijConfig, IclijDbDao dbDao) {
-        setActionData(new DatasetActionData(iclijConfig, dbDao));
+    public DatasetAction(IclijConfig iclijConfig) {
+        setActionData(new DatasetActionData(iclijConfig));
     }
 
     @Override
@@ -72,7 +71,7 @@ public class DatasetAction extends MarketAction {
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
             Memories positions = null;
-            param.getService().conf.getConfigData().setDataset(true);
+            param.getService().coremlconf.getConfigData().setDataset(true);
             ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, null, null, getParent() != null);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
@@ -80,7 +79,7 @@ public class DatasetAction extends MarketAction {
             }
             PipelineData results = componentData.getResultMap();
             if (results != null) {
-                Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
+                Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 QueueElement element = new QueueElement();
                 InmemoryMessage msg = inmemory.send(ServiceConstants.EVOLVEFILTEREVOLVE + UUID.randomUUID(), results, null);
                 element.setOpid(ServiceConstants.EVOLVE);

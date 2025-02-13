@@ -27,6 +27,7 @@ import roart.iclij.service.ControlService;
 import roart.iclij.service.IclijServiceParam;
 import roart.populate.PopulateThread;
 import roart.queue.QueueThread;
+import roart.model.io.IO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +53,6 @@ public class IclijController implements CommandLineRunner {
     @Autowired
     IclijConfig iclijConfig;
     
-    @Autowired
-    private IclijDbDao dbDao;
-
     @Value("${spring.profiles.active:}")
     private String activeProfile;
 
@@ -66,6 +64,9 @@ public class IclijController implements CommandLineRunner {
 
     private ControlService instanceC;
 
+    @Autowired
+    private IO io;
+
     public static void main(String[] args) throws Exception {
         SpringApplication.run(IclijController.class, args);
     }
@@ -75,26 +76,25 @@ public class IclijController implements CommandLineRunner {
         log.info("Using profile {}", activeProfile);
         log.info("Using profile {}", iclijConfig);
         IclijConfig instance = iclijConfig;
-        ControlService.configCurator(iclijConfig);
         try {
             MyExecutors.initThreads("dev".equals(activeProfile));
             MyExecutors.init(new double[] { instance.mpServerCpu() } );
             String myservices = instance.getMyservices();
             String services = instance.getServices();
             String communications = instance.getCommunications();
-            new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig, dbDao).start();
-            new PopulateThread(iclijConfig, dbDao).start();
+            new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig, io).start();
+            new PopulateThread(iclijConfig, io).start();
             if (iclijConfig.wantDbHibernate()) {
                 new DatabaseThread().start();
             }
-            new ActionThread(iclijConfig, dbDao, null).start();
+            new ActionThread(iclijConfig, io).start();
             new MemRunner().start();
             MyCache.setCache(instance.wantCache());
             MyCache.setCacheTTL(instance.getCacheTTL());
             startLeaderWorker();
             
             getInstance();
-            new QueueThread(iclijConfig, instanceC, dbDao).start();
+            new QueueThread(iclijConfig, instanceC, io).start();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -131,7 +131,7 @@ public class IclijController implements CommandLineRunner {
     }
     
     public void startLeaderWorker() {
-        leaderRunnable = new LeaderRunner(iclijConfig, null, dbDao);
+        leaderRunnable = new LeaderRunner(iclijConfig, null, io);
         leaderWorker = new Thread(leaderRunnable);
         leaderWorker.setName("LeaderWorker");
         leaderWorker.start();
@@ -140,7 +140,7 @@ public class IclijController implements CommandLineRunner {
 
     private ControlService getInstance() {
         if (instanceC == null) {
-            instanceC = new ControlService(iclijConfig);
+            instanceC = new ControlService(iclijConfig, io);
         }
         return instanceC;
     }

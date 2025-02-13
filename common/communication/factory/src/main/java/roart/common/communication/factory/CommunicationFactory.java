@@ -13,7 +13,7 @@ import roart.common.constants.CommunicationConstants;
 import roart.common.webflux.WebFluxUtil;
 
 public class CommunicationFactory {
-    public static Communication get(String name, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection, Function<String, Boolean> storeMessage, WebFluxUtil webFluxUtil) {
+    public Communication get(String name, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection, Function<String, Boolean> storeMessage, WebFluxUtil webFluxUtil) {
         switch (name) {
         case CommunicationConstants.REST:
             return new REST(name, myclass, service, mapper, send, receive, sendreceive, connection, storeMessage, webFluxUtil);

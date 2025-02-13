@@ -73,16 +73,13 @@ import roart.iclij.util.MetaUtil;
 import roart.iclij.service.util.MiscUtil;
 import roart.iclij.verifyprofit.VerifyProfitUtil;
 import roart.util.ServiceUtil;
+import roart.model.io.IO;
 
 public abstract class MarketAction extends Action {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
     private MarketActionData actionData;
-    
-    private WebFluxUtil webFluxUtil;
-    
-    protected FileSystemDao fileSystemDao;
     
     protected abstract List<IncDecItem> getIncDecItems();
 
@@ -122,8 +119,8 @@ public abstract class MarketAction extends Action {
     }
     
     @Override
-    public void goal(Action parent, ComponentData param, Integer priority, IclijConfig iclijConfig) {
-        getMarkets(iclijConfig, parent, new ComponentInput(iclijConfig.getConfigData(), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), null, priority);
+    public void goal(Action parent, ComponentData param, Integer priority, IclijConfig iclijConfig, IO io) {
+        getMarkets(iclijConfig, parent, new ComponentInput(iclijConfig.getConfigData(), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), null, priority, io);
     }
 
     public WebData getMarket(IclijConfig iclijConfig, Action parent, ComponentData param, Market market, Boolean evolve, Integer priority, List<TimingItem> timingsdone) {
@@ -136,20 +133,20 @@ public abstract class MarketAction extends Action {
         return getMarkets(iclijConfig, parent, param, markets, new ArrayList<>(), evolve, priority, timingsdone, false);
     }        
     
-    public WebData getMarkets(IclijConfig iclijConfig, Action parent, ComponentInput input, Boolean evolve, Integer priority) {
+    public WebData getMarkets(IclijConfig iclijConfig, Action parent, ComponentInput input, Boolean evolve, Integer priority, IO io) {
+        ComponentData param = null;
+        try {
+            param = ComponentData.getParam(iclijConfig, input, 0, io);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
         List<TimingItem> timings = null;
         try {
-            timings = getActionData().getDbDao().getAllTiming();
+            timings = param.getService().getIo().getIdbDao().getAllTiming();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
         List<Market> markets = new MarketUtil().getMarkets(actionData.isDataset(), iclijConfig);
-        ComponentData param = null;
-        try {
-            param = ComponentData.getParam(iclijConfig, input, 0);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
         return getMarkets(iclijConfig, parent, param, markets, timings, evolve, priority, new ArrayList<>(), true);
     }        
     
@@ -178,15 +175,15 @@ public abstract class MarketAction extends Action {
             ComponentInput input = new ComponentInput(config.getConfigData(), null, marketName, null, 0, paramTemplate.getInput().isDoSave(), false, new ArrayList<>(), paramTemplate.getInput().getValuemap());
             ComponentData param = null;
             try {
-                param = ComponentData.getParam(iclijConfig, input, 0, market, webFluxUtil, fileSystemDao);
+                param = ComponentData.getParam(iclijConfig, input, 0, market, paramTemplate.getService().getIo());
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
             param.setAction(getName());
-            ControlService srv = new ControlService(iclijConfig, webFluxUtil, fileSystemDao, null /*inmemory*/);
+            ControlService srv = new ControlService(iclijConfig, param.getService().getIo());
             //srv.getConfig();
             param.setService(srv);
-            srv.conf.getConfigData().setMarket(market.getConfig().getMarket());
+            srv.coremlconf.getConfigData().setMarket(market.getConfig().getMarket());
             boolean skipIsDataset = !timingsdone.isEmpty();
             List<String> stockDates = null;
             if (skipIsDataset || !isDataset()) {
@@ -349,7 +346,7 @@ public abstract class MarketAction extends Action {
     private List<ActionComponentItem> getList(String action, Map<String, Component> componentMapFiltered, List<TimingItem> timings, Market market, ComponentData param, List<TimingItem> currentTimings, List<TimingItem> timingsdone, IclijConfig iclijConfig) {
         List<MLMetricsItem> mltests = null;
         try {
-            mltests = getActionData().getDbDao().getAllMLMetrics(market.getConfig().getMarket(), null, null);
+            mltests = param.getService().getIo().getIdbDao().getAllMLMetrics(market.getConfig().getMarket(), null, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -582,13 +579,13 @@ public abstract class MarketAction extends Action {
         
         List<TimingItem> timings = null;
         try {
-            timings = getActionData().getDbDao().getAllTiming(market.getConfig().getMarket(), IclijConstants.MACHINELEARNING, olddate, prevdate);
+            timings = param.getService().getIo().getIdbDao().getAllTiming(market.getConfig().getMarket(), IclijConstants.MACHINELEARNING, olddate, prevdate);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
         List<MLMetricsItem> mltests = null;
         try {
-            mltests = getActionData().getDbDao().getAllMLMetrics(market.getConfig().getMarket(), null, null);
+            mltests = param.getService().getIo().getIdbDao().getAllMLMetrics(market.getConfig().getMarket(), null, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -773,7 +770,7 @@ public abstract class MarketAction extends Action {
     public void getListComponents(WebData myData, ComponentData param, IclijConfig config,
             Parameters parameters, Boolean evolve, Market market, Map<String, ComponentData> dataMap,
             Memories memories, LocalDate olddate, LocalDate prevdate) {
-        List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market, IclijConstants.IMPROVEABOVEBELOW, null, null, JsonUtil.convert(parameters), olddate, prevdate, getActionData().getDbDao());
+        List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market, IclijConstants.IMPROVEABOVEBELOW, null, null, JsonUtil.convert(parameters), olddate, prevdate, param.getService().getIo().getIdbDao());
         marketMemory = marketMemory.stream().filter(e -> "Confidence".equals(e.getType())).collect(Collectors.toList());
         if (!marketMemory.isEmpty()) {
             int jj = 0;
@@ -874,22 +871,6 @@ public abstract class MarketAction extends Action {
             new MiscUtil().listGetterAdder(moreReturnedTiming, key, metric);  
         }
         return moreReturnedTiming;
-    }
-
-    public WebFluxUtil getWebFluxUtil() {
-        return webFluxUtil;
-    }
-
-    public void setWebFluxUtil(WebFluxUtil webFluxUtil) {
-        this.webFluxUtil = webFluxUtil;
-    }
-
-    public FileSystemDao getFileSystemDao() {
-        return fileSystemDao;
-    }
-
-    public void setFileSystemDao(FileSystemDao fileSystemDao) {
-        this.fileSystemDao = fileSystemDao;;
     }
 
 }

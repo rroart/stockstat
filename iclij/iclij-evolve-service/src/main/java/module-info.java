@@ -46,6 +46,7 @@ open module iclij.evolve.service {
     requires curator.client;
     requires curator.framework;
     requires common.model;
+    requires common.io;
     requires dbdao;
     requires spring.data.jdbc;
     requires common.queue;

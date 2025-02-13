@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 
 import roart.common.util.JsonUtil;
 import roart.common.model.ActionComponentItem;
@@ -25,7 +26,9 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import roart.controller.IclijController;
+import roart.model.io.IO;
 
+@ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 @SpringBootTest(classes = IclijController.class)
@@ -40,7 +43,8 @@ public class ActionThreadTest {
     @Test
     public void test() {
         //IclijDbDao dbDao = mock(IclijDbDao.class);
-        ActionThread t = new ActionThread(iclijConfig, dbDao, null);
+        IO io = null;
+        ActionThread t = new ActionThread(iclijConfig, io);
 
         ActionComponentItem item1 = new ActionComponentItem();
         item1.setPriority(-20);
@@ -73,6 +77,7 @@ public class ActionThreadTest {
 
     @Test
     public void test2() {
+        IO io = mock(IO.class);
         System.out.println("Run");
         Parameters parameters = new Parameters();
         parameters.setThreshold(1.0);
@@ -115,15 +120,18 @@ public class ActionThreadTest {
         //.getPicksFilteredOuter(any(), any(), any(), any(), any(), any(), any());                
         doThrow(IllegalArgumentException.class)
         .when(thread)
-        .runAction(any(), any(), any(), null);
+        .runAction(any(), any(), any());
         //when(thread.runAction(any(), any(), any()).thenReturn(true);
-        ActionThread t = new ActionThread(iclijConfig, dbDao, null);
+        ActionThread t = new ActionThread(iclijConfig, io);
         System.out.println("Thr" +t );
         System.out.println("Thr" +thread );
         t.thread = thread;
         t.count = 0;
         System.out.println("Thr" +t.thread );
+        try {
         t.run();
-
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

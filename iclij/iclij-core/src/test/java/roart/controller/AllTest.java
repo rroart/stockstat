@@ -18,6 +18,7 @@ import roart.common.constants.Constants;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.curator.framework.CuratorFramework;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -100,6 +101,7 @@ import roart.filesystem.FileSystemDao;
 import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.config.AutoSimulateInvestConfig;
 import roart.util.ServiceUtil;
+import roart.common.inmemory.factory.InmemoryFactory;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
@@ -115,8 +117,7 @@ public class AllTest {
     @Autowired
     IclijConfig iconf = null;
     
-    @Autowired
-    IclijDbDao iclijDbDao;
+    IclijDbDao iclijDbDao = mock(IclijDbDao.class);
     
     // no autowiring
     IclijConfig conf = null;
@@ -136,6 +137,10 @@ public class AllTest {
     ActionThread ac;
     
     IO io;
+
+    private InmemoryFactory inmemoryFactory = new TestInmemoryFactory();
+
+    private CommunicationFactory communicationFactory = new TestCommunicationFactory();
     
     @Test
     public void test() {
@@ -301,9 +306,14 @@ public class AllTest {
         fileSystemDao = mock(FileSystemDao.class);
         doReturn("dummy.txt").when(fileSystemDao).writeFile(any(), any(), any(), any());
 
-        ac = new ActionThread(iconf, dbDao, fileSystemDao);
+        CuratorFramework curatorClient = mock(CuratorFramework.class);
         
+        io = new IO(iclijDbDao, null, dataSource, webFluxUtil, fileSystemDao, inmemoryFactory, communicationFactory, curatorClient);
+        ((TestWebFluxUtil)webFluxUtil).setIo(io);
+        ((TestCommunicationFactory)communicationFactory).setIo(io);
+        ((TestCommunicationFactory)communicationFactory).setConfig(iconf);
         
+        ac = new ActionThread(iconf, io);
         
         //String content = "";
         //new Sim(iconf, dbDao, fileSystemDao).method((String) content, "sim", true);
@@ -316,7 +326,7 @@ public class AllTest {
         //aci.setBuy(null);
         //aci.setRecord(LocalDate.now());
         try {
-            ac.runAction(iconf, aci, new ArrayList<>(), webFluxUtil);
+            ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -326,7 +336,17 @@ public class AllTest {
     public void testEvolve() throws Exception {
         ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.EVOLVE, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
-            ac.runAction(iconf, aci, new ArrayList<>(), webFluxUtil);
+            ac.runAction(iconf, aci, new ArrayList<>());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
+    @Test
+    public void testEvolveARI() throws Exception {
+        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.EVOLVE, PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null, 0, JsonUtil.convert(parameters));
+        try {
+            ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -336,7 +356,7 @@ public class AllTest {
     public void testImproveProfit() throws Exception {
         ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.IMPROVEPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
-            ac.runAction(iconf, aci, new ArrayList<>(), webFluxUtil);
+            ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -346,7 +366,7 @@ public class AllTest {
     public void testFilter() throws Exception {
         ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.IMPROVEFILTER, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
-            ac.runAction(iconf, aci, new ArrayList<>(), webFluxUtil);
+            ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -356,7 +376,7 @@ public class AllTest {
     public void testAboveBelow() throws Exception {
         ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.IMPROVEABOVEBELOW, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
-            ac.runAction(iconf, aci, new ArrayList<>(), webFluxUtil);
+            ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -406,8 +426,8 @@ public class AllTest {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        System.out.println("map" + result.getWebdatajson().getUpdateMap());
-        System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+        //System.out.println("map" + result.getWebdatajson().getUpdateMap());
+        //System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
     }
 
     @Test
@@ -422,15 +442,15 @@ public class AllTest {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        System.out.println("map" + result.getWebdatajson().getUpdateMap());
-        System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+        //System.out.println("map" + result.getWebdatajson().getUpdateMap());
+        //System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
     }
 
     private IclijServiceResult getSimulateInvestMarket(SimulateInvestConfig simConfig, String market) {
         Map<String, Object> map = simConfig.asMap();
         IclijConfig myConfig = iconf.copy();
         myConfig.getConfigData().getConfigValueMap().putAll(map);
-        return ServiceUtil.getSimulateInvest(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), dbDao, myConfig, webFluxUtil, fileSystemDao);
+        return ServiceUtil.getSimulateInvest(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), myConfig, io);
     }
 
     public IclijServiceResult getImproveSimulateInvest(String market, SimulateInvestConfig simConfig)
@@ -464,7 +484,7 @@ public class AllTest {
             config.getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, adviser);
         }
          */
-        return ServiceUtil.getImproveSimulateInvest(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), map), dbDao, myConfig, webFluxUtil, fileSystemDao);
+        return ServiceUtil.getImproveSimulateInvest(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), map), myConfig, io);
     }
     
      public IclijServiceResult getAutoSimulateInvestMarket(String market, AutoSimulateInvestConfig simConfig)
@@ -474,7 +494,7 @@ public class AllTest {
         Map<String, Object> map = simConfig.asMap();
         IclijConfig myConfig = iconf.copy();
         myConfig.getConfigData().getConfigValueMap().putAll(map);
-        return ServiceUtil.getAutoSimulateInvest(myConfig, new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), dbDao, webFluxUtil, fileSystemDao);
+        return ServiceUtil.getAutoSimulateInvest(myConfig, new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), io);
     }
 
     public IclijServiceResult getImproveAutoSimulateInvest(String market, AutoSimulateInvestConfig simConfig)
@@ -510,7 +530,7 @@ public class AllTest {
             config.getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, adviser);
         }
          */
-        return ServiceUtil.getImproveAutoSimulateInvest(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), map), dbDao, myConfig, webFluxUtil, fileSystemDao);
+        return ServiceUtil.getImproveAutoSimulateInvest(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), map), myConfig, io);
     }
 
    private SimulateInvestConfig getSimConfigDefault() {

@@ -15,6 +15,7 @@ module iclij.common.service {
     requires common.util;
     requires org.slf4j;
     requires common.model;
+    requires common.io;
     requires common.constants;
     requires common.communication.factory;
     requires org.apache.commons.lang3;
@@ -38,4 +39,5 @@ module iclij.common.service {
     requires spring.context;
     requires common.queue;
     requires dbdao;
+    requires coredb.spring;
 }

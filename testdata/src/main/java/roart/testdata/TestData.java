@@ -26,10 +26,21 @@ import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.data.SerialVolume;
 import roart.common.util.TimeUtil;
 import roart.db.dao.DbDao;
+import roart.db.dao.util.StockETL;
 import roart.model.data.StockData;
 import roart.etl.db.Extract;
 
 public class TestData {
+    private IclijConfig conf;
+
+    public TestData() {
+        super();
+    }
+
+    public TestData(IclijConfig conf) {
+        this.conf = conf;
+    }
+
     public Map<String, List<List<Double>>> getAbnormCatValMap() {
         Map<String, List<List<Double>>> map = new HashMap<>();
         List<Double> l = Arrays.asList(new Double[] { 1.0, 10.0, 1.0 } );
@@ -238,6 +249,7 @@ public class TestData {
                 // TODO random big change
             }
         }
+        list = StockETL.filterWeekend(conf, list);
         return list;
     }
 
@@ -249,6 +261,11 @@ public class TestData {
     private double change(Random random, double datum) {
         datum = datum * (1.02 - 0.04 * random.nextDouble());
         return datum;
+    }
+    
+    public List<MetaItem> getMetas(String market) {
+        MetaItem meta = new MetaItem(market, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
+        return List.of(meta);
     }
     
     public List<MetaItem> getMetas() {

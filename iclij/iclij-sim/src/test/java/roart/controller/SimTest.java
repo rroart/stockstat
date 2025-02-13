@@ -21,6 +21,7 @@ import roart.common.util.JsonUtil;
 import roart.db.dao.IclijDbDao;
 import roart.filesystem.FileSystemDao;
 import roart.iclij.config.SimulateFilter;
+import roart.model.io.IO;
 import roart.sim.Sim;
 import roart.simulate.model.SimulateStock;
 import roart.iclij.config.IclijConfig;
@@ -40,6 +41,8 @@ public class SimTest {
     IclijDbDao dbDao = mock(IclijDbDao.class);
 
     FileSystemDao fileSystemDao = null;
+
+    IO io = null;
 
     public SimTest() {
     }
@@ -119,7 +122,7 @@ public class SimTest {
     
     @Test
     public void test() throws IOException {
-        Sim sim = new Sim(iclijConfig, dbDao, fileSystemDao);
+        Sim sim = new Sim(iclijConfig, io);
         for (int i = 1; i <= 3; i++) {
             try {
                 String s = string("improve" + i + ".json");
@@ -131,7 +134,7 @@ public class SimTest {
     }
     @Test
     public void testAuto() throws IOException {
-        Sim sim = new Sim(iclijConfig, dbDao, fileSystemDao);
+        Sim sim = new Sim(iclijConfig, io);
         for (int i = 1; i <= 2; i++) {
             try {
                 String s = string("improveauto" + i + ".json");

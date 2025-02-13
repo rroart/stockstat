@@ -30,7 +30,6 @@ import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentTimeUtil;
 import roart.component.util.IncDecUtil;
-import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
@@ -48,8 +47,8 @@ public class FindProfitAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
-    public FindProfitAction(IclijConfig iclijConfig, IclijDbDao dbDao) {
-        setActionData(new FindProfitActionData(iclijConfig, dbDao));
+    public FindProfitAction(IclijConfig iclijConfig) {
+        setActionData(new FindProfitActionData(iclijConfig));
     }
     
     //@Override
@@ -85,7 +84,7 @@ public class FindProfitAction extends MarketAction {
             //component.enableDisable(param, positions, param.getConfigValueMap(), buy);
 
             String mlmarket = market.getConfig().getMlmarket();
-            param.getService().conf.getConfigData().setMlmarket(mlmarket);
+            param.getService().coremlconf.getConfigData().setMlmarket(mlmarket);
 
             boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
             //component.set(market, param, profitdata, positions, evolve);
@@ -109,12 +108,12 @@ public class FindProfitAction extends MarketAction {
                 try {
                     for (IncDecItem item : profitdata.getBuys().values()) {
                         myitem = item;
-                        getActionData().getDbDao().save(item);
+                        param.getService().getIo().getIdbDao().save(item);
                         log.debug("" + item);
                     }
                     for (IncDecItem item : profitdata.getSells().values()) {
                         myitem = item;
-                        getActionData().getDbDao().save(item);
+                        param.getService().getIo().getIdbDao().save(item);
                         log.debug("" + item);
                     }
                 } catch (Exception e) {
@@ -173,11 +172,12 @@ public class FindProfitAction extends MarketAction {
         return allMemories;
     }
 
+    @Deprecated // ?
     @Override
     protected List<IncDecItem> getIncDecItems() {
         List<IncDecItem> incdecitems = null;
         try {
-            incdecitems = getActionData().getDbDao().getAllIncDecs();
+            incdecitems = null; //param.getService().getIo().getIdbDao().getAllIncDecs();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -208,7 +208,7 @@ public class FindProfitAction extends MarketAction {
             //List<MemoryItem> newMemories = findAllMarketComponentsToCheck(myData, param, 0, config, marketTime, evolve, dataMap, componentMap);
             LocalDate prevdate = getPrevDate(param, market);
             LocalDate olddate = prevdate.minusDays(((int) MarketAction.AVERAGE_SIZE) * getActionData().getTime(market));
-            List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market, getName(), marketTime.getComponent(), marketTime.getSubcomponent(), JsonUtil.convert(marketTime.getParameters()), olddate, prevdate, getActionData().getDbDao());
+            List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market, getName(), marketTime.getComponent(), marketTime.getSubcomponent(), JsonUtil.convert(marketTime.getParameters()), olddate, prevdate, param.getService().getIo().getIdbDao());
             return marketMemory;
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -266,7 +266,7 @@ public class FindProfitAction extends MarketAction {
 
         List<IncDecItem> incdecitems = null;
         try {
-            incdecitems = getActionData().getDbDao().getAllIncDecs(market.getConfig().getMarket(), olddate, prevdate, null);
+            incdecitems = param.getService().getIo().getIdbDao().getAllIncDecs(market.getConfig().getMarket(), olddate, prevdate, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

@@ -9,15 +9,14 @@ import java.util.stream.Collectors;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.constants.IclijConstants;
-import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
 
 public class ImproveProfitActionData extends MarketActionData {
 
-    public ImproveProfitActionData(IclijConfig iclijConfig, IclijDbDao dbDao) {
-        super(iclijConfig, dbDao);
+    public ImproveProfitActionData(IclijConfig iclijConfig) {
+        super(iclijConfig);
     }
 
     @Override

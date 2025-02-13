@@ -27,6 +27,7 @@ open module iclij.evolve {
     requires common.controller;
     requires spring.context;
     requires com.fasterxml.jackson.annotation;
+    requires common.io;
     requires com.fasterxml.jackson.datatype.jsr310;
     requires com.fasterxml.jackson.core;
     requires java.base;
@@ -50,4 +51,5 @@ open module iclij.evolve {
     requires common.queue;
     requires common.queueutil;
     requires iclij.evolutionmarketfilter;
+    requires common.webflux;
 }

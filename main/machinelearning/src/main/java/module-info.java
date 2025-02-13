@@ -5,7 +5,7 @@
  * @author roart
  *
  */
-module machinelearning {
+open module machinelearning {
     requires machinelearningservice;
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.core;
@@ -17,6 +17,7 @@ module machinelearning {
     requires common.model;
     requires common.service;
     requires common.cache;
+    requires common.io;
     requires common.filesystem.client;
     //requires common.util;
     //requires commons.lang;

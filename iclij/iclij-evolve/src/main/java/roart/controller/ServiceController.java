@@ -41,13 +41,6 @@ public class ServiceController {
     
     private ControlService instance;
 
-    private ControlService getInstance() {
-        if (instance == null) {
-            instance = new ControlService(iclijConfig);
-        }
-        return instance;
-    }
-
     @GetMapping(path = "/")
     public ResponseEntity healthCheck() throws Exception {
         return new ResponseEntity(HttpStatus.OK);

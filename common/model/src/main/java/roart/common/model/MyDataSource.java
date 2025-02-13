@@ -24,4 +24,14 @@ public abstract class MyDataSource {
     public abstract List<MetaItem> getMetas();
 
     public abstract List<StockItem> getAll(String market, IclijConfig conf);
+
+    public MetaItem getById(String market, IclijConfig conf) {
+        List<MetaItem> metas = getMetas();
+        for (MetaItem item : metas) {
+            if (market.equals(item.getMarketid())) {
+                return item;
+            }
+        }
+        return null;
+    }
 }

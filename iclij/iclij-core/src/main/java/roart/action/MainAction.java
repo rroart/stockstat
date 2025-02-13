@@ -15,25 +15,25 @@ import roart.common.constants.Constants;
 import roart.common.leader.MyLeader;
 import roart.common.leader.impl.MyLeaderFactory;
 import roart.component.model.ComponentData;
-import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.service.ControlService;
+import roart.model.io.IO;
 
 public class MainAction extends Action {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private IclijDbDao dbDao;
+    private IO io;
 
     private IclijConfig iclijConfig;
 
     private ControlService controlService;
 
-    public MainAction(IclijConfig iclijConfig, IclijDbDao dbDao) {
+    public MainAction(IclijConfig iclijConfig, IO io) {
         this.iclijConfig = iclijConfig;
-        this.dbDao = dbDao;
-        this.controlService = new ControlService(iclijConfig);
+        this.io = io;
+        this.controlService = new ControlService(iclijConfig, io);
         String updateDB = System.getProperty("updatedata");
         boolean doUpdateDB = !"false".equals(updateDB);
         if (doUpdateDB) {
@@ -46,7 +46,7 @@ public class MainAction extends Action {
 
     @SuppressWarnings("squid:S2189")
     @Override
-    public void goal(Action parent, ComponentData param, Integer priority, IclijConfig iclijConfig) throws InterruptedException {
+    public void goal(Action parent, ComponentData param, Integer priority, IclijConfig iclijConfig, IO io) throws InterruptedException {
         IclijConfig config = iclijConfig;
         if (!config.wantsIclijSchedule()) {
             return;
@@ -86,7 +86,7 @@ public class MainAction extends Action {
                 for (int pri = 0; pri < 100; pri += 10) {
                     for (Action anAction : getGoals()) {
                         MarketAction action = (MarketAction) anAction;
-                        action.goal(this, param, pri, iclijConfig);
+                        action.goal(this, param, pri, iclijConfig, io);
                     }
                 }
             }
@@ -101,34 +101,34 @@ public class MainAction extends Action {
 
     private void addGoals() {
         if (iclijConfig.wantsMachineLearningAutorun() ) {        
-            getGoals().add(new MachineLearningAction(iclijConfig, dbDao));
+            getGoals().add(new MachineLearningAction(iclijConfig));
         }
         if (iclijConfig.wantsFindProfitAutorun() ) {        
-            getGoals().add(new FindProfitAction(iclijConfig, dbDao));
+            getGoals().add(new FindProfitAction(iclijConfig));
         }
         if (iclijConfig.wantsEvolveAutorun() ) {        
-            getGoals().add(new EvolveAction(iclijConfig, dbDao));
+            getGoals().add(new EvolveAction(iclijConfig));
         }
         if (iclijConfig.wantsImproveProfitAutorun()) {        
-            getGoals().add(new ImproveProfitAction(dbDao, iclijConfig));
+            getGoals().add(new ImproveProfitAction(iclijConfig));
         }
         if (iclijConfig.wantsImproveFilterAutorun()) {        
-            getGoals().add(new ImproveFilterAction(iclijConfig, dbDao));
+            getGoals().add(new ImproveFilterAction(iclijConfig));
         }
         if (iclijConfig.wantsImproveAbovebelowAutorun()) {        
-            getGoals().add(new ImproveAboveBelowAction(iclijConfig, dbDao));
+            getGoals().add(new ImproveAboveBelowAction(iclijConfig));
         }
         if (iclijConfig.wantsCrosstestAutorun()) {        
-            getGoals().add(new CrossTestAction(iclijConfig, dbDao));
+            getGoals().add(new CrossTestAction(iclijConfig));
         }
         if (iclijConfig.wantsSimulateInvestAutorun()) {        
-            getGoals().add(new SimulateInvestAction(dbDao, iclijConfig));
+            getGoals().add(new SimulateInvestAction(iclijConfig));
         }
         if (iclijConfig.wantsImproveSimulateInvestAutorun()) {        
-            getGoals().add(new ImproveSimulateInvestAction(iclijConfig, dbDao));
+            getGoals().add(new ImproveSimulateInvestAction(iclijConfig));
         }
         if (iclijConfig.wantsDatasetAutorun()) {        
-            getGoals().add(new DatasetAction(iclijConfig, dbDao));
+            getGoals().add(new DatasetAction(iclijConfig));
         }
     }
 

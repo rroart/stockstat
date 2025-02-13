@@ -34,6 +34,7 @@ import roart.iclij.config.IclijConfig;
 public class IclijDbDao {
     private static Logger log = LoggerFactory.getLogger(IclijDbDao.class);
 
+    // for gem
     public static DbAccess badAccess;
     
     private DbAccess access;

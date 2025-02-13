@@ -36,10 +36,10 @@ public abstract class ComponentNoML extends Component {
         if (evolve) {
             String confStr = param.getConfig().getEvolveIndicatorrecommenderEvolutionConfig();
             if (confStr != null) {
-                param.getService().conf.getConfigData().getConfigValueMap().put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, confStr);
+                param.getService().coremlconf.getConfigData().getConfigValueMap().put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, confStr);
             }
-            param.getService().conf.getConfigData().getConfigValueMap().put(ConfigConstants.MISCMYTABLEDAYS, 100);
-            param.getService().conf.getConfigData().getConfigValueMap().put(ConfigConstants.MISCMYDAYS, 100);
+            param.getService().coremlconf.getConfigData().getConfigValueMap().put(ConfigConstants.MISCMYTABLEDAYS, 100);
+            param.getService().coremlconf.getConfigData().getConfigValueMap().put(ConfigConstants.MISCMYDAYS, 100);
 
             Map<String, Object> anUpdateMap = new HashMap<>();
             Map<String, Object> aScoreMap = new HashMap<>();
@@ -87,7 +87,7 @@ public abstract class ComponentNoML extends Component {
                 return;
             }
             try {
-                actionData.getDbDao().save(configItem);
+                param.getService().getIo().getIdbDao().save(configItem);
             } catch (Exception e) {
                 log.info(Constants.EXCEPTION, e);
             }

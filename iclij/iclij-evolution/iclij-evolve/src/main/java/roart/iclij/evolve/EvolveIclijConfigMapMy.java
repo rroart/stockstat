@@ -31,7 +31,7 @@ public class EvolveIclijConfigMapMy extends EvolveMy {
         //loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
         FitnessIclijConfigMap fit = new FitnessIclijConfigMap(action, param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, stockDates);
         boolean save = false;
-        ComponentData i = component.improve(action, param, chromosome, subcomponent, new IclijConfigMapChromosomeWinner(), buy, fit, save, null, fileSystemDao);
+        ComponentData i = component.improve(action, param, chromosome, subcomponent, new IclijConfigMapChromosomeWinner(), buy, fit, save, null);
         return i;
     }
 

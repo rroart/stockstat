@@ -25,7 +25,6 @@ import roart.common.model.TimingItem;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
-import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
@@ -41,8 +40,8 @@ public class CrossTestAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public CrossTestAction(IclijConfig iclijConfig, IclijDbDao dbDao) {
-        setActionData(new CrossTestActionData(iclijConfig, dbDao));
+    public CrossTestAction(IclijConfig iclijConfig) {
+        setActionData(new CrossTestActionData(iclijConfig));
     }
     
     @Override
@@ -61,7 +60,7 @@ public class CrossTestAction extends MarketAction {
                 continue;
             }
             for (String mlmarket : market.getConfig().getMlmarkets()) {
-                param.getService().conf.getConfigData().setMlmarket(mlmarket);
+                param.getService().coremlconf.getConfigData().setMlmarket(mlmarket);
                 boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
                 //component.set(market, param, profitdata, positions, evolve);
                 //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
@@ -87,7 +86,7 @@ public class CrossTestAction extends MarketAction {
                 aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
                 aMap.put(ConfigConstants.MISCMYDAYS, 0);
                 Memories positions = null;
-                param.getService().conf.getConfigData().setDate(param.getFutureDate());
+                param.getService().coremlconf.getConfigData().setDate(param.getFutureDate());
                 ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, getParent() != null);
                 Map<String, Object> updateMap = componentData.getUpdateMap();
                 if (updateMap != null) {

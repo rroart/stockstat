@@ -56,7 +56,6 @@ import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
 import roart.common.util.JsonUtil;
 import roart.common.util.MemUtil;
-import roart.core.model.impl.DbDataSource;
 import roart.core.service.CoreControlService;
 import roart.core.service.evolution.CoreEvolutionService;
 import roart.db.thread.DatabaseThread;
@@ -66,6 +65,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import roart.db.dao.DbDao;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
+import roart.model.io.IO;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
@@ -89,10 +89,10 @@ public class ServiceController implements CommandLineRunner {
     IclijConfig iclijConfig;
     
     @Autowired
-    DbDao dao;
+    IO io;
 
     private CoreControlService getInstance(IclijServiceParam param) {
-        return new CoreControlService(dao, new DbDataSource(dao, new IclijConfig(param.getConfigData())));
+        return new CoreControlService(io);
     }
 
     @GetMapping(path = "/")
@@ -281,7 +281,7 @@ public class ServiceController implements CommandLineRunner {
             if (disableList == null) {
                 disableList = new ArrayList<>();
             }
-            result = new CoreEvolutionService(dao, new DbDataSource(dao, iclijConfig)).getEvolveRecommender( aConfig, disableList);
+            result = new CoreEvolutionService(io).getEvolveRecommender( aConfig, disableList);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -306,7 +306,7 @@ public class ServiceController implements CommandLineRunner {
         String myservices = instance.getMyservices();
         String services = instance.getServices();
         String communications = instance.getCommunications();
-        new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig.copy(), dao, null).start();
+        new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig.copy(), io).start();
         if (iclijConfig.wantDbHibernate()) {
             new DatabaseThread().start();
         }

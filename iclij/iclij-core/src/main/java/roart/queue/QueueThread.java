@@ -15,9 +15,9 @@ import roart.common.constants.Constants;
 import roart.common.leader.MyLeader;
 import roart.common.leader.impl.MyLeaderFactory;
 import roart.common.util.JsonUtil;
-import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.ControlService;
+import roart.model.io.IO;
 import roart.common.queue.QueueElement;
 import roart.common.queue.QueueElement;
 import roart.common.queueutil.QueueUtils;
@@ -29,23 +29,22 @@ public class QueueThread extends Thread {
     
     public static Queue queue = new ConcurrentLinkedQueue();
     
-    private CuratorFramework curatorClient;
-    
     private IclijConfig iclijConfig;
 
     private ControlService controlService;
     
-    private IclijDbDao dbDao;
+    private IO io;
     
-    public QueueThread(IclijConfig conf, ControlService controlService, IclijDbDao dbDao) {
+    public QueueThread(IclijConfig conf, ControlService controlService, IO io) {
         super();
         this.iclijConfig = conf;
         this.controlService = controlService;
-        this.dbDao = dbDao;
-        this.curatorClient = ControlService.curatorClient;
+        this.io = io;
     }
 
     public void run() {
+        CuratorFramework curatorClient = io.getCuratorClient();
+        
         String hostname = "localhost";
         try {
             hostname = InetAddress.getLocalHost().getHostName();
@@ -53,7 +52,7 @@ public class QueueThread extends Thread {
             log.error(Constants.EXCEPTION, e);
         }
         long lastMain = 0;
-        MyLeader leader = new MyLeaderFactory().create("queue", hostname, iclijConfig, ControlService.curatorClient, null /*GetHazelcastInstance.instance(conf.getInmemoryHazelcast())*/);
+        MyLeader leader = new MyLeaderFactory().create("queue", hostname, iclijConfig, io.getCuratorClient(), null /*GetHazelcastInstance.instance(conf.getInmemoryHazelcast())*/);
         while (true) {
             // if curatorclient
             // if other queue is dead, resend

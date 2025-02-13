@@ -18,7 +18,6 @@ import roart.aggregatorindicator.impl.Recommend;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.model.MetaItem;
-import roart.common.model.MyDataSource;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialInteger;
@@ -31,7 +30,6 @@ import roart.common.pipeline.data.SerialString;
 import roart.common.util.JsonUtil;
 import roart.core.service.CoreControlService;
 import roart.core.service.util.ServiceUtil;
-import roart.db.dao.DbDao;
 import roart.etl.db.Extract;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
 //import roart.evolution.chromosome.impl.IndicatorChromosome;
@@ -52,23 +50,20 @@ import roart.pipeline.impl.DataReader;
 import roart.result.model.ResultItem;
 import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
+import roart.model.io.IO;
 
 public class CoreEvolutionService {
     private Logger log = LoggerFactory.getLogger(this.getClass());
-    private static Logger log2 = LoggerFactory.getLogger(CoreEvolutionService.class);
 
     Map<Integer, ResultItemTable> otherTableMap = new HashMap<>();
 
     ResultItemTable mlTimesTable = ServiceUtil.createMLTimesTable(otherTableMap);
     ResultItemTable eventTable = ServiceUtil.createEventTable(otherTableMap);
 
-    private DbDao dao;
-
-    private MyDataSource dataSource;
+    private IO io;
     
-   public CoreEvolutionService(DbDao dao, MyDataSource dataSource) {
-        this.dao = dao;
-        this.dataSource = dataSource;
+   public CoreEvolutionService(IO io) {
+        this.io = io;
     }
 
     public IclijServiceResult getEvolveRecommender(IclijConfig conf, List<String> disableList) throws JsonParseException, JsonMappingException, IOException {
@@ -80,7 +75,7 @@ public class CoreEvolutionService {
         log.info("mydate {}", conf.getDays());
         EvolutionConfig evolutionConfig = JsonUtil.convertnostrip(conf.getEvolveIndicatorrecommenderEvolutionConfig(), EvolutionConfig.class);
     
-        StockData stockData = new Extract(dataSource).getStockData(conf);
+        StockData stockData = new Extract(io.getDataSource()).getStockData(conf);
         if (stockData == null) {
             return result;
         }
@@ -208,7 +203,6 @@ public class CoreEvolutionService {
                 String text = evolution.printtext(conf.getConfigData().getMarket() + " " + "recommend" + " " + i, "recommend", individuals);
                 String node = conf.getEvolveSaveLocation();
                 String mypath = conf.getEvolveSavePath();
-                CoreControlService.configCurator(conf);
                 // TODO? String filename = new FileSystemDao(conf, CoreControlService.curatorClient).writeFile(node, mypath, null, text);
     
                 for (String id : scoreList) {

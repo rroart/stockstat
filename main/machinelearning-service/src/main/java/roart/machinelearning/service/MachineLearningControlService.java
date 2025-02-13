@@ -68,6 +68,7 @@ import roart.result.model.ResultItem;
 import roart.stockutil.StockUtil;
 import roart.model.data.StockData;
 import roart.predictor.util.PredictorUtils;
+import roart.model.io.IO;
 
 public class MachineLearningControlService {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -76,17 +77,15 @@ public class MachineLearningControlService {
 
     private static final ObjectMapper mapper = new JsonMapper().builder().addModule(new JavaTimeModule()).build();
 
-    private WebFluxUtil webFluxUtil = new WebFluxUtil();
+    private IO io;
     
-    public static CuratorFramework curatorClient;
-
     public MachineLearningControlService() {
         super();
     }
 
-    public MachineLearningControlService(WebFluxUtil webFluxUtil) {
+    public MachineLearningControlService(IO io) {
         super();
-        this.webFluxUtil = webFluxUtil;
+        this.io = io;
     }    
 
     //protected static int[] otherTableNames = { Constants.EVENT, Constants.MLTIMES }; 
@@ -176,7 +175,7 @@ public class MachineLearningControlService {
         result.setPipelineData(pipelineData);
         result.setConfigData(conf.getConfigData());
         
-        Inmemory inmemory = InmemoryFactory.get(conf.getInmemoryServer(), conf.getInmemoryHazelcast(), conf.getInmemoryRedis());
+        Inmemory inmemory = io.getInmemoryFactory().get(conf.getInmemoryServer(), conf.getInmemoryHazelcast(), conf.getInmemoryRedis());
 
         if (true) return result;
         for (PipelineData data : pipelineData) {
@@ -185,7 +184,7 @@ public class MachineLearningControlService {
                 String md5 = null;
                 InmemoryMessage msg = inmemory.send(Constants.STOCKSTAT + data.getId() + data.getName(), is, md5);
                 //result.message = msg;
-                curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.DATA + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
+                io.getCuratorClient().create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.DATA + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
@@ -206,7 +205,7 @@ public class MachineLearningControlService {
         param.setWantMaps(origparam.isWantMaps());
         param.setConfList(disableList);
         // TODO retry or queue
-        IclijServiceResult result = webFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
+        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
 
         /// TODO list2 = ImmutabilityUtil.immute(list2);
         MyCache.getInstance().put(key, result);
@@ -244,20 +243,9 @@ public class MachineLearningControlService {
         }
     }
 
-    public static void configCurator(IclijConfig conf) {
-        if (true) {
-            RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);        
-            String zookeeperConnectionString = conf.getZookeeper();
-            if (curatorClient == null) {
-                curatorClient = CuratorFrameworkFactory.newClient(zookeeperConnectionString, retryPolicy);
-                curatorClient.start();
-            }
-        }
-    }
-    
     public void send(String service, Object object, IclijConfig config) {
         IclijConfig iclijConfig = config; // TODO check
-        Inmemory inmemory = InmemoryFactory.get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
         String id = service + System.currentTimeMillis() + UUID.randomUUID();
         InmemoryMessage message = inmemory.send(id, object);
         send(service, message);
@@ -279,7 +267,7 @@ public class MachineLearningControlService {
         if (appid != null) {
             service = service + appid; // can not handle domain, only eureka
         }
-        Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, webFluxUtil);
+        Communication c = io.getCommunicationFactory().get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, io.getWebFluxUtil());
         c.send(object);
     }
 
