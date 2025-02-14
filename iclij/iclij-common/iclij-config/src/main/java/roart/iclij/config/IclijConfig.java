@@ -19,9 +19,9 @@ import roart.config.IclijConfigConstantMaps;
 public class IclijConfig extends MyMyConfig {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
-    protected static IclijConfig configInstance = null;
+    //protected static IclijConfig configInstance = null;
 
-    protected static IclijXMLConfig instance = null;
+    //protected static IclijXMLConfig instance = null;
 
     public IclijConfig(IclijConfig config) {
         super(config);
@@ -62,7 +62,7 @@ public class IclijConfig extends MyMyConfig {
         myConfigMaps.add(instanceI());
         myConfigMaps.keys(configMaps.keys);
         log.error("confMapps" + myConfigMaps);
-        instance = IclijXMLConfig.instance(this, myConfigMaps);
+        IclijXMLConfig.instance(this, myConfigMaps);
         //this.getConfigData().mute();
         log.error("confMapps2" + myConfigMaps);
     }

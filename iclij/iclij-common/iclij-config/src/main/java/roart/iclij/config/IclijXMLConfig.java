@@ -51,13 +51,10 @@ public class IclijXMLConfig {
 
     protected static Logger log = LoggerFactory.getLogger(IclijXMLConfig.class);
 
-    protected static IclijXMLConfig instance = null;
+    //protected static IclijXMLConfig instance = null;
 
     public static IclijXMLConfig instance(IclijConfig iclijConfig, ConfigMaps configMaps) {
-        if (instance == null) {
-            instance = new IclijXMLConfig(iclijConfig, configMaps);
-        }
-        return instance;
+        return new IclijXMLConfig(iclijConfig, configMaps);
     }
 
     private static org.apache.commons.configuration2.Configuration config = null;
