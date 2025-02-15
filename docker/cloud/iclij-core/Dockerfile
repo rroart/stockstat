@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk
+FROM openjdk:21-jdk
 MAINTAINER <roart@nvg.ntnu.no>
 ARG mywebport
 ARG myconfig
