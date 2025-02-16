@@ -1,4 +1,4 @@
-FROM maven:3-eclipse-temurin-21-alpine
+FROM maven:3-eclipse-temurin-21
 MAINTAINER <roart@nvg.ntnu.no>
 
-RUN microdnf install npm python3 make autoconf automake libtool diffutils file libpng-devel
+RUN apt update && apt install -y npm python3 make autoconf automake libtool diffutils file libpng-dev
