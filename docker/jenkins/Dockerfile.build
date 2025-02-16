@@ -1,4 +1,4 @@
-FROM maven:3.8.2-openjdk-17
+FROM maven:3-eclipse-temurin-21-alpine
 MAINTAINER <roart@nvg.ntnu.no>
 
 RUN microdnf install npm python3 make autoconf automake libtool diffutils file libpng-devel
