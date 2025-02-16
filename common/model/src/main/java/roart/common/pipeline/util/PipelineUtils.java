@@ -424,6 +424,16 @@ public class PipelineUtils {
         log.info("Total Size {}", total);
     }
     
+    public static void printkeys(PipelineData[] data) {
+        log.info("Printkeys");
+        for (PipelineData datum : data) {
+            //Set<String> keys = datum.keySet();
+            //log.info("Data {} {}", datum.getName(), keys);
+            log.info("Data {} Y: {} N: {}", datum.getName(), datum.getUsedKeys(), datum.getUnusedKeys());
+        }
+    }
+    
+    // unused?
     public static Map<String, Object[][]> getVolumeMap(PipelineData data) {
         return null;
     }

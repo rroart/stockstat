@@ -174,7 +174,9 @@ public class MachineLearningControlService {
         result.setList(retlist);
         result.setPipelineData(pipelineData);
         result.setConfigData(conf.getConfigData());
-        
+       
+        PipelineUtils.printkeys(pipelineData);
+    
         Inmemory inmemory = io.getInmemoryFactory().get(conf.getInmemoryServer(), conf.getInmemoryHazelcast(), conf.getInmemoryRedis());
 
         if (true) return result;

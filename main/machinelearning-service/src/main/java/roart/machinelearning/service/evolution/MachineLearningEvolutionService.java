@@ -158,7 +158,8 @@ public class MachineLearningEvolutionService {
             pipelineData = ArrayUtils.add(pipelineData, datum);
             result.setPipelineData(pipelineData);
             result.setConfigData(conf.getConfigData());
-           return result;
+            PipelineUtils.printkeys(pipelineData);
+            return result;
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;

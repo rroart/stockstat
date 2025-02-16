@@ -4,9 +4,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class PipelineData extends SerialObject {
@@ -19,6 +21,8 @@ public class PipelineData extends SerialObject {
 
     private SerialMap smap = new SerialMap();
 
+    private Set<String> usedKeys = new HashSet<>();
+    
     public PipelineData() {
         super();
     }
@@ -72,6 +76,7 @@ public class PipelineData extends SerialObject {
     }
     
     public Object get(String key) {
+        usedKeys.add(key);
         if (smap.containsKey(key)) {
             return smap.get(key);
         }
@@ -79,6 +84,7 @@ public class PipelineData extends SerialObject {
     }
 
     public Map<String, Object> getMap(String key) {
+        usedKeys.add(key);
         if (smap.containsKey(key)) {
             SerialMapPlain amap = (SerialMapPlain) smap.get(key);
             return amap.getMap();
@@ -111,6 +117,7 @@ public class PipelineData extends SerialObject {
     }
 
     public List<SerialKeyValue> getListMap(String key) {
+        usedKeys.add(key);
         if (smap.containsKey(key)) {
             SerialListMap amap = (SerialListMap) smap.get(key);
             return amap.getMap();
@@ -122,6 +129,23 @@ public class PipelineData extends SerialObject {
         for (SerialKeyValue entry : listMap) {
             put(entry.getKey(), entry.getValue());
         }
+    }
+
+    @JsonIgnore
+    public Set<String> getAllKeys() {
+        return smap.keySet();
+    }
+
+    @JsonIgnore
+    public Set<String> getUsedKeys() {
+        return usedKeys;
+    }
+
+    @JsonIgnore
+    public Set<String> getUnusedKeys() {
+        Set<String> unusedKeys = new HashSet<>(getAllKeys());
+        unusedKeys.removeAll(getUsedKeys());
+        return unusedKeys;
     }
 
     public String toString() {

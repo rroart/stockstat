@@ -27,6 +27,7 @@ import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.data.SerialString;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
 import roart.core.service.CoreControlService;
 import roart.core.service.util.ServiceUtil;
@@ -137,6 +138,8 @@ public class CoreEvolutionService {
             pipelineData = ArrayUtils.add(pipelineData, datum);
             result.setPipelineData(pipelineData);
             result.setConfigData(conf.getConfigData());
+
+            PipelineUtils.printkeys(pipelineData);
 
             return result;
         } catch (Exception e) {

@@ -597,6 +597,12 @@ public abstract class MarketAction extends Action {
         handleComponent(this, market, profitdata, param, listComponentMap, componentMap, dataMap, marketTime.getBuy(), marketTime.getSubcomponent(), myData, config, parameters2, wantThree, mlTests);
         //handleMLMeta(this, param, valueMap, component.getPipeline());
         //saveTiming(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, false);
+        PipelineUtils.printkeys(param.getResultMaps());
+        //log.info("Printkeys {} {}", componentMap.keySet(), dataMap.keySet());
+        for (Entry<String, ComponentData> entry : dataMap.entrySet() ) {
+            ComponentData component = entry.getValue();
+            PipelineUtils.printkeys(component.getResultMaps());
+        }
         
         if (!getActionData().isDataset()) {
         new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, null);
