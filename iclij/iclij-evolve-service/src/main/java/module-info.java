@@ -52,4 +52,5 @@ open module iclij.evolve.service {
     requires common.queue;
     requires common.queueutil;
     requires iclij.evolutionmarketfilter;
+    requires pipeline.util;
 }

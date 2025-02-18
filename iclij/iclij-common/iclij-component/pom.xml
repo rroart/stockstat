@@ -131,6 +131,11 @@
       <groupId>roart</groupId>
       <artifactId>stockstat-common-filesystem-client</artifactId>
       <version>${stockstat.version}</version>
+    </dependency> 
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-pipeline-util</artifactId>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>

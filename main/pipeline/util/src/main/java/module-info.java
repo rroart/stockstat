@@ -5,20 +5,15 @@
  * @author roart
  *
  */
-module stockutil {
-    exports roart.stockutil;
+module pipeline.util {
+    exports roart.common.pipeline.util;
 
     requires common.config;
+    requires iclij.common.config;
     requires common.constants;
     requires common.model;
     requires common.util;
     requires commons.math3;
-    requires jcommon;
-    requires jfreechart;
     requires model;
     requires org.slf4j;
-    requires org.apache.commons.lang3;
-    requires pipeline.model;
-    requires iclij.common.config;
-    requires pipeline.util;
 }

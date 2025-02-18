@@ -24,4 +24,5 @@ module stocketl {
     requires org.apache.commons.lang3;
     requires pipeline.model;
     requires spring.beans;
+    requires pipeline.util;
 }

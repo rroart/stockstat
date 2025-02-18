@@ -24,5 +24,6 @@ module iclij.common.componentdata {
     requires common.inmemory.factory;
     requires common.webflux;
     requires common.filesystem.client;
+    requires pipeline.util;
 }
 

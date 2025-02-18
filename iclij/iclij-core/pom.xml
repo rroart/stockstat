@@ -270,6 +270,11 @@
       <groupId>roart</groupId>
       <artifactId>stockstat-common-io</artifactId>
       <version>${stockstat.version}</version>
+    </dependency> 
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-pipeline-util</artifactId>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-beanutils</groupId>

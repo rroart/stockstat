@@ -81,4 +81,5 @@ module machinelearningservice {
     requires common.inmemory.model;
     requires com.fasterxml.jackson.datatype.jsr310;
     requires common.queue;
+    requires pipeline.util;
 }

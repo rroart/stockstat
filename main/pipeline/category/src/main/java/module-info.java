@@ -20,4 +20,5 @@ open module pipeline.category {
     requires iclij.common.config;
     requires common.config;
     requires common.util;
+    requires pipeline.util;
 }

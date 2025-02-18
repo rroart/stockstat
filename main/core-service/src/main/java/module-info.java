@@ -85,4 +85,5 @@ open module coreservice {
     requires common.inmemory.factory;
     requires common.inmemory.model;
     requires com.fasterxml.jackson.datatype.jsr310;
+    requires pipeline.util;
 }

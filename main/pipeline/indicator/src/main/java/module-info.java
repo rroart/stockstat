@@ -26,4 +26,5 @@ open module pipeline.indicator {
     requires common.util;
     requires common.model;
     requires dbdao;
+    requires pipeline.util;
 }

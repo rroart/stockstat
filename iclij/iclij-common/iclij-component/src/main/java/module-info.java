@@ -44,4 +44,5 @@ module iclij.common.component {
     requires spring.beans;
     requires dbdao;
     requires stockstat.shadow.zookeeper;
+    requires pipeline.util;
 }

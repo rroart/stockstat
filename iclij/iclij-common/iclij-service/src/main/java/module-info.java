@@ -40,4 +40,5 @@ module iclij.common.service {
     requires common.queue;
     requires dbdao;
     requires coredb.spring;
+    requires pipeline.util;
 }

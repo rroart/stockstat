@@ -575,4 +575,11 @@ public class PipelineUtils {
         SerialMapPlain list = (SerialMapPlain) data.get(key);
         return list.getMap();
     }
+    
+    public static void setPipelineMap(PipelineData[] datareaders, String id) {
+        for (PipelineData datareader : datareaders) {
+            datareader.setId(id);
+        }
+    }
+
 }

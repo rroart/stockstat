@@ -109,6 +109,11 @@
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-pipeline-util</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.curator</groupId>
       <artifactId>curator-framework</artifactId>
       <version>${curator.version}</version>

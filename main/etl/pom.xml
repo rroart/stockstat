@@ -61,6 +61,11 @@
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-pipeline-util</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.tictactec</groupId>
       <artifactId>ta-lib</artifactId>
       <version>${talib.version}</version>

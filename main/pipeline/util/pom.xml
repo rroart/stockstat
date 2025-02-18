@@ -2,15 +2,15 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>roart</groupId>
-    <artifactId>stockstat-iclij-common</artifactId>
+    <artifactId>stockstat-pipeline</artifactId>
     <relativePath>../pom.xml</relativePath>
     <version>0.6-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
-  <artifactId>stockstat-iclij-common-componentdata</artifactId>
+  <artifactId>stockstat-pipeline-util</artifactId>
   <packaging>jar</packaging>
   <version>0.6-SNAPSHOT</version>
-  <name>Stock Statistics Iclij Common ComponentData</name>
+  <name>Stock Statistics Pipeline Util</name>
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -19,22 +19,12 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-common-config</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
       <artifactId>stockstat-common-model</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-common-util</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-common-io</artifactId>
+      <artifactId>stockstat-common-config</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
@@ -44,28 +34,34 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-iclij-common-constants</artifactId>
+      <artifactId>stockstat-common-constants</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-iclij-common-model</artifactId>
+      <artifactId>stockstat-common-util</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-iclij-common-service</artifactId>
+      <artifactId>stockstat-model</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-common-filesystem-client</artifactId>
+      <artifactId>stockstat-common-inmemory-model</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-pipeline-util</artifactId>
-      <version>${stockstat.version}</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons.lang3.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

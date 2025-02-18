@@ -34,4 +34,5 @@ open module aggregate {
     requires stockutil;
     requires stocketl;
     requires ml.pytorch;
+    requires pipeline.util;
 }
