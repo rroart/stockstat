@@ -105,6 +105,10 @@ public class IclijConfig extends MyMyConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.MISCPOPULATE);
     }
 
+    public boolean wantsInmemoryPipeline() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.MISCINMEMORYPIPELINE);
+    }
+
     /*
     public String getMyservices() {
         return (String) getValueOrDefault(IclijConfigConstants.MISCMYSERVICES);
