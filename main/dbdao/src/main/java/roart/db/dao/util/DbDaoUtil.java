@@ -4,7 +4,6 @@ import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
 import roart.db.dao.DbDao;
-import roart.stockutil.MetaDao;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

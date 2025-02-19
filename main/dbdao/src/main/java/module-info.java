@@ -17,7 +17,6 @@ open module dbdao {
     requires pipeline.model;
     requires org.slf4j;
     requires coredb.hibernate;
-    requires stockutil;
     requires common.constants;
     requires common.model;
     requires common.cache;
