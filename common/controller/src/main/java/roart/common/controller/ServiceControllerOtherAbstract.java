@@ -36,8 +36,6 @@ public abstract class ServiceControllerOtherAbstract {
     private Class replyclass;
     protected IclijConfig iclijConfig;
     
-    private static CuratorFramework curatorClient;
-
     private Function<String, Boolean> zkRegister;
 
     protected IO io;
@@ -114,8 +112,7 @@ public abstract class ServiceControllerOtherAbstract {
             if (appid != null) {
                 myservice = myservice + appid; // can not handle domain, only eureka
             }
-            configCurator(iclijConfig);
-            zkRegister = (new QueueUtils(curatorClient))::zkRegister;
+            zkRegister = (new QueueUtils(io.getCuratorClient()))::zkRegister;
             Communication comm = io.getCommunicationFactory().get(communication, myclass, myservice, objectMapper, false, true, false, connection, zkRegister, null);
             get(comm);
         }        
@@ -140,17 +137,6 @@ public abstract class ServiceControllerOtherAbstract {
             appid = "";
         }
         return c.getService().equals(str + appid);
-    }
-    
-    public static void configCurator(IclijConfig conf) {
-        if (true) {
-            RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);        
-            String zookeeperConnectionString = conf.getZookeeper();
-            if (curatorClient == null) {
-                curatorClient = CuratorFrameworkFactory.newClient(zookeeperConnectionString, retryPolicy);
-                curatorClient.start();
-            }
-        }
     }
 
 }
