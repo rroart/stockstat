@@ -9,6 +9,8 @@ import roart.iclij.config.IclijConfig;
 import roart.result.model.GUISize;
 
 public class IclijServiceParam {
+    private String id;
+    
     private Set<String> ids;
     
     private String market;
@@ -29,6 +31,14 @@ public class IclijServiceParam {
 
     private GUISize guiSize;
     
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public Set<String> getIds() {
         return ids;
     }
