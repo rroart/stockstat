@@ -288,7 +288,7 @@ public class Evolve {
             //System.out.println(my.getKey() + " " + my.getRight());
         }
         List<ImmutablePair<Double, String>> myList = myList0.stream().map(e -> new ImmutablePair<Double, String>(e.getLeft(), "" + e.getRight())).collect(Collectors.toList());
-        Map<String, Object> aconf = PipelineUtils.getMap(data, EvolveConstants.DEFAULT);
+        Map<String, Object> aconf = PipelineUtils.getListMapAsMap(data, EvolveConstants.DEFAULT);
         //System.out.println("aconf" + aconf);
         String title = PipelineUtils.getString(data, EvolveConstants.TITLETEXT);
         //System.out.println(title);
