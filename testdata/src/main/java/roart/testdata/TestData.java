@@ -33,6 +33,8 @@ import roart.etl.db.Extract;
 public class TestData {
     private IclijConfig conf;
 
+    String[] periods;
+    
     public TestData() {
         super();
     }
@@ -183,20 +185,21 @@ public class TestData {
     }
 
     public StockData getStockdata(IclijConfig conf, Date startDate, Date endDate, String marketName, int size, int column, boolean ohlc) throws Exception {
-        List<StockItem> stocks = getStockItem(startDate, endDate, marketName, size, true, column, ohlc);
+        List<StockItem> stocks = getStockItem(startDate, endDate, marketName, size, true, column, ohlc, new String[0]);
         MetaItem meta = new MetaItem(marketName, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
         String[] periodText = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
         return new Extract((DbDao)null).getStockData(conf, marketName, stocks, meta, periodText);
     }
     
     public StockData getStockdata(IclijConfig conf, Date startDate, Date endDate, String market, int size, boolean weekdays, int period, boolean ohlc) throws Exception {
-        List<StockItem> stocks = getStockItem(startDate, endDate, market, size, weekdays, period, ohlc);
+        List<StockItem> stocks = getStockItem(startDate, endDate, market, size, weekdays, period, ohlc, new String[0]);
         MetaItem meta = new MetaItem(TestConstants.MARKET, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
         String[] periodText = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
         return new Extract((DbDao)null).getStockData(conf, market, stocks, meta, periodText);
     }
     
-    public List<StockItem> getStockItem(Date startDate, Date endDate, String market, int size, boolean weekdays, int period, boolean ohlc) throws Exception {
+    public List<StockItem> getStockItem(Date startDate, Date endDate, String market, int size, boolean weekdays, int period, boolean ohlc, String[] periods) throws Exception {
+        this.periods = periods;
         Random random = new Random();
         List<StockItem> list = new ArrayList<>();
         LocalDate startdate = TimeUtil.convertDate(startDate);
@@ -227,6 +230,9 @@ public class TestData {
                 boolean missing = random.nextInt(100) < 2;
                 // TODO for all
                 if (!missing) {
+                    for (int j = 0; j < periods.length; j++) {
+                        stock.setPeriod(j, datum + j);                        
+                    }
                     switch (period) {
                     case Constants.INDEXVALUECOLUMN:
                         stock.setIndexvalue(datum);
@@ -272,4 +278,14 @@ public class TestData {
         MetaItem meta = new MetaItem(TestConstants.MARKET, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
         return List.of(meta);
     }
+
+    public List<MetaItem> getMetas(String marketName, String[] periods) {
+        String[] p = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
+        for (int i = 0; i < periods.length; i++) {
+            p[i] = periods[i];
+        }
+        MetaItem meta = new MetaItem(marketName, p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], null, null, null);
+        return List.of(meta);
+    }
+    
 }
