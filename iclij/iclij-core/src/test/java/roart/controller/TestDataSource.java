@@ -39,7 +39,7 @@ public class TestDataSource extends MyDataSource {
     private List<StockItem> stocks;
     
     public TestDataSource(IclijConfig conf, Date startDate, Date endDate, String marketName, int size, boolean weekdays, int column,
-            boolean ohlc) {
+            boolean ohlc, String[] periods) {
         super();
         this.conf = conf;
         this.startDate = startDate;
@@ -52,9 +52,9 @@ public class TestDataSource extends MyDataSource {
         
         this.testData = new TestData(conf);
         
-        metas = testData.getMetas(marketName);
+        metas = testData.getMetas(marketName, periods);
         try {
-            stocks = testData.getStockItem(startDate, endDate, marketName, size, weekdays, column, ohlc);
+            stocks = testData.getStockItem(startDate, endDate, marketName, size, weekdays, column, ohlc, periods );
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

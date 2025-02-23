@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+import org.apache.curator.framework.CuratorFramework;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import roart.common.model.ActionComponentItem;
 import roart.common.model.TimingBLItem;
 import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.bean.ConfigI;
 import roart.iclij.model.Parameters;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,13 +27,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import roart.controller.ConfigDb;
 import roart.controller.IclijController;
 import roart.model.io.IO;
 
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-@SpringBootTest(classes = IclijController.class)
+@SpringBootTest(classes = { IclijConfig.class, ConfigI.class, IclijDbDao.class, ConfigDb.class })
 public class ActionThreadTest {
 
     @Autowired
@@ -78,6 +81,9 @@ public class ActionThreadTest {
     @Test
     public void test2() {
         IO io = mock(IO.class);
+        CuratorFramework curatorClient = mock(CuratorFramework.class);
+        doReturn(curatorClient).when(io).getCuratorClient();
+
         System.out.println("Run");
         Parameters parameters = new Parameters();
         parameters.setThreshold(1.0);
