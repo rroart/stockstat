@@ -82,6 +82,14 @@ public class ControlService {
         this.objectMapper = jsonObjectMapper();
     }
 
+    public IclijConfig getIclijConfig() {
+        return iclijConfig;
+    }
+
+    public void setIclijConfig(IclijConfig iclijConfig) {
+        this.iclijConfig = iclijConfig;
+    }
+
     public List<String> getTasks() {
         try {
             return sendAMe(List.class, null, EurekaConstants.GETTASKS, null);
@@ -253,13 +261,14 @@ public class ControlService {
         if (list != null) {
             return list;
         }
-                
+             
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig);
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(coremlconf.getConfigData());
         param.setWantMaps(true);
         param.setMarket(market);
         IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETDATES);
-        list = PipelineUtils.getDatelist(PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.DATELIST));      
+        list = PipelineUtils.getDatelist(PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.DATELIST, inmemory));      
         MyCache.getInstance().put(key, list);
         return list;
     }
@@ -285,6 +294,19 @@ public class ControlService {
             return list;
         }
         IclijServiceParam param = new IclijServiceParam();
+        log.info("Wants {}", iclijConfig.wantsInmemoryPipeline());
+        if (iclijConfig.wantsInmemoryPipeline()) {
+            log.info("InmemoryPipeline");
+            param.setId(UUID.randomUUID().toString());
+            String path = "/" + Constants.STOCKSTAT + "/" + "pipeline" + "/" + "live";
+            try {
+                io.getCuratorClient().setData().forPath(path + "/" + param.getId(), new byte[0]);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            String path2 = "/" + Constants.STOCKSTAT + "/" + "pipeline";
+            //QueueThread.queue.add(param.getId());
+        }
         param.setConfigData(coremlconf.getConfigData());
         param.setWantMaps(true);
         param.setConfList(disableList);
@@ -405,14 +427,14 @@ public class ControlService {
         getAndSetCoreConfig();
     }
 
-    public List<ResultItem> getEvolveRecommender(boolean doSet, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, PipelineData resultMap) {
+    public List<ResultItem> getEvolveRecommender(boolean doSet, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, PipelineData resultMap, Inmemory inmemory) {
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(coremlconf.getConfigData());
         param.setConfList(disableList);
         IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVERECOMMENDER);
         if (doSet) {
             //conf = new MyMyConfig(result.getConfig());
-            PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE);  
+            PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE, inmemory);  
             updateMap.putAll(datum.getMap(PipelineConstants.UPDATE));
             scoreMap.putAll(datum.getMap(PipelineConstants.SCORE));
             // rec with own result
@@ -439,7 +461,8 @@ public class ControlService {
         // TODO retry or queue
         IclijServiceResult result = io.getWebFluxUtil().sendMMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVENN);
         if (doSet) {
-            PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE);  
+            Inmemory inmemory = io.getInmemoryFactory().get(conf);
+            PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE, inmemory);  
             updateMap.putAll(datum.getMap(PipelineConstants.UPDATE));
             scoreMap.putAll(datum.getMap(PipelineConstants.SCORE));
             // TODO?

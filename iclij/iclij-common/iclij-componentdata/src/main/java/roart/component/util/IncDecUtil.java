@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.IncDecItem;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.util.PipelineUtils;
@@ -16,7 +17,7 @@ import roart.service.model.ProfitData;
 public class IncDecUtil {
 
     public void filterIncDecs(ComponentData param, Market market, ProfitData profitdata,
-            PipelineData[] maps, boolean inc, List<String> mydates) {
+            PipelineData[] maps, boolean inc, List<String> mydates, Inmemory inmemory) {
         List<String> dates;
         if (mydates == null) {
             dates = param.getService().getDates(param.getService().coremlconf.getConfigData().getMarket());        
@@ -30,7 +31,7 @@ public class IncDecUtil {
             category = market.getFilter().getDeccategory();
         }
         if (category != null) {
-            PipelineData categoryMap = PipelineUtils.getPipeline(maps, category);
+            PipelineData categoryMap = PipelineUtils.getPipeline(maps, category, inmemory);
             if (categoryMap != null) {
                 Integer offsetDays = null;
                 Integer days;
@@ -64,7 +65,7 @@ public class IncDecUtil {
                 } else {
                     threshold = market.getFilter().getDecthreshold();
                 }
-                Map<String, List<List<Double>>> listMap3 = new MarketUtil().getCategoryList(maps, category);
+                Map<String, List<List<Double>>> listMap3 = new MarketUtil().getCategoryList(maps, category, param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig()));
                 Map<String, IncDecItem> buysFilter = new MarketUtil().incdecFilterOnIncreaseValue(market, inc ? profitdata.getBuys() : profitdata.getSells(), maps, threshold, categoryMap,
                         listMap3, offsetDays, inc);
                 if (inc) {

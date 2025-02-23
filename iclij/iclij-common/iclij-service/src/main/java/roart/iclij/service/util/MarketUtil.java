@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.IncDecItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
@@ -144,7 +145,7 @@ public class MarketUtil {
         return incdecsFilter;
     }
 
-    public Map<String, List<List<Double>>> getCategoryList(PipelineData[] maps, String category) {
+    public Map<String, List<List<Double>>> getCategoryList(PipelineData[] maps, String category, Inmemory inmemory) {
         String newCategory = null;
         if (Constants.PRICE.equals(category)) {
             newCategory = "" + Constants.PRICECOLUMN;
@@ -153,12 +154,13 @@ public class MarketUtil {
             newCategory = "" + Constants.INDEXVALUECOLUMN;
         }
         if (newCategory != null) {
-            PipelineData map = PipelineUtils.getPipeline(maps, newCategory);
+            PipelineData map = PipelineUtils.getPipeline(maps, newCategory, inmemory);
             return MapUtil.convertA2L(PipelineUtils.sconvertMapDD(map.get(PipelineConstants.LIST)));
         }
         Map<String, List<List<Double>>> listMap3 = null;
-        for (Entry<String, PipelineData> entry : PipelineUtils.getPipelineMap(maps).entrySet()) {
-            PipelineData map = entry.getValue();
+        for (String entry : PipelineUtils.getPipelineMapKeys(maps)) {
+            log.info("TODO Getting all with {}", entry);
+            PipelineData map = PipelineUtils.getPipeline(maps, entry, inmemory);
             if (category.equals(PipelineUtils.getCatTitle(map))) {
                 listMap3 = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(map.get(PipelineConstants.LIST)));
             }

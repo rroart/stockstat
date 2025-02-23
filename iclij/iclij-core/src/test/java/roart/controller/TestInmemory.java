@@ -3,11 +3,17 @@ package roart.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.util.JsonUtil;
 
 public class TestInmemory extends Inmemory {
+    private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+
     private static Map<String, Object> map = new HashMap<>();
     
     public TestInmemory(String server) {
@@ -16,7 +22,7 @@ public class TestInmemory extends Inmemory {
 
     @Override
     public InmemoryMessage send(String id, Object data, String md5) {
-        map.put(id, JsonUtil.convert(data));
+        map.put(id, JsonUtil.convert(data, mapper));
         return new InmemoryMessage(getServer(), id, 0, md5);
     }
     

@@ -188,7 +188,7 @@ public class TestWebFluxUtil extends WebFluxUtil {
                 disableList = new ArrayList<>();
             }
             //getContentC( new IclijConfig(param.getConfigData()), disableList, result);
-            new CoreControlService(io).getContent( new IclijConfig(param.getConfigData()), disableList, result);
+            new CoreControlService(io).getContent( new IclijConfig(param.getConfigData()), disableList, result, param);
     
             long[] mem1 = MemUtil.mem();
             long[] memdiff = MemUtil.diff(mem1, mem0);
@@ -209,7 +209,7 @@ public class TestWebFluxUtil extends WebFluxUtil {
         IclijServiceResult result = new IclijServiceResult();
         try {
             System.out.println("Conf use " + param.getConfigData());
-            new CoreControlService(io).getDates( new IclijConfig(param.getConfigData()), result);
+            new CoreControlService(io).getDates( new IclijConfig(param.getConfigData()), result, param);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -247,7 +247,7 @@ public class TestWebFluxUtil extends WebFluxUtil {
             if (disableList == null) {
                 disableList = new ArrayList<>();
             }
-            result = new CoreEvolutionService(io).getEvolveRecommender( aConfig, disableList);
+            result = new CoreEvolutionService(io).getEvolveRecommender( aConfig, disableList, param);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());

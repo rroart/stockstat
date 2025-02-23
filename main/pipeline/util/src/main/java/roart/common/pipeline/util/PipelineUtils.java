@@ -1,7 +1,10 @@
 package roart.common.pipeline.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -9,6 +12,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.curator.framework.CuratorFramework;
 
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
@@ -18,7 +22,9 @@ import roart.common.pipeline.data.OneDimD;
 import roart.common.pipeline.data.OneDimd;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialInteger;
+import roart.common.pipeline.data.SerialKeyValue;
 import roart.common.pipeline.data.SerialList;
+import roart.common.pipeline.data.SerialListMap;
 import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialMapD;
@@ -28,6 +34,7 @@ import roart.common.pipeline.data.SerialMapTA;
 import roart.common.pipeline.data.SerialMapVolume;
 import roart.common.pipeline.data.SerialMapdd;
 import roart.common.pipeline.data.SerialMeta;
+import roart.common.pipeline.data.SerialObject;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.pipeline.data.SerialDouble;
 import roart.common.pipeline.data.SerialString;
@@ -37,6 +44,8 @@ import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.data.TwoDimd;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
+import roart.common.inmemory.model.Inmemory;
+import roart.common.inmemory.model.InmemoryMessage;
 
 public class PipelineUtils {
     private static Logger log = LoggerFactory.getLogger(PipelineUtils.class);
@@ -49,6 +58,15 @@ public class PipelineUtils {
         return pipelineMap;
     }
 
+    public static Set<String> getPipelineMapKeys(PipelineData[] datareaders) {
+        Set<String> pipelineKeys = new HashSet<>();
+        for (PipelineData datareader : datareaders) {
+            pipelineKeys.add(datareader.getName());
+        }
+        return pipelineKeys;
+    }
+
+    @Deprecated
     public static Map<String, PipelineData> getPipelineMapStartsWith(PipelineData[] datareaders, String startsWith) {
         Map<String, PipelineData> pipelineMap = new HashMap<>();
         for (PipelineData datareader : datareaders) {
@@ -66,6 +84,29 @@ public class PipelineUtils {
             }
             if (name.equals(datareader.getName())) {
                 return datareader;
+            }
+        }
+        return null;
+    }
+
+    public static PipelineData getPipeline(PipelineData[] datareaders, String name, Inmemory inmemory) {
+        if (name == null) {
+            int jj = 0;
+        }
+        for (int i = 0; i < datareaders.length; i++) {
+            PipelineData datareader = datareaders[i];
+            if (name.equals(datareader.getName())) {
+                if (datareader.isLoaded()) {
+                    return datareader;
+                } else {
+                    InmemoryMessage msg = JsonUtil.convertnostrip(datareader.getMessage(), InmemoryMessage.class);                    
+                    String str = inmemory.read(msg);
+                    log.info("TODO"+str);
+                    datareaders[i] = JsonUtil.convertnostrip(str, PipelineData.class);
+                    datareaders[i].setLoaded(true);
+                    log.info("Pipeline write {} {}", datareaders[i].getId(), datareaders[i].getName());
+                    return datareaders[i];
+                }
             }
         }
         return null;
@@ -571,6 +612,31 @@ public class PipelineUtils {
         return list.getMap();
     }
 
+    public static List<SerialKeyValue> getListMap(PipelineData data, String key) {
+        SerialListMap list = (SerialListMap) data.get(key);
+        return list.getMap();
+    }
+
+    public static Map<String, Object> getListMapAsMap(PipelineData data, String key) {
+        Map<String, Object> map = new HashMap<>();
+        SerialListMap list = (SerialListMap) data.get(key);
+        for (SerialKeyValue entry : list.getMap()) {
+            SerialObject value = entry.getValue();
+            Object avalue = value;
+            if (value instanceof SerialString s) {
+                avalue = s.getString();
+            }
+            if (value instanceof SerialDouble d) {
+                avalue = d.getAdouble();
+            }
+            if (value instanceof SerialInteger i) {
+                avalue = i.getInteger();
+            }
+            map.put(entry.getKey(), avalue);
+        }
+        return map;
+    }
+
     public static Map getMapPlain(PipelineData data, String key) {
         SerialMapPlain list = (SerialMapPlain) data.get(key);
         return list.getMap();
@@ -582,4 +648,39 @@ public class PipelineUtils {
         }
     }
 
+    public static void setPipelineMap(PipelineData[] datareaders, boolean old) {
+        for (PipelineData datareader : datareaders) {
+            datareader.setOld(old);
+        }
+    }
+
+    public static PipelineData[] setPipelineMap(PipelineData[] pipelineData, Inmemory inmemory, CuratorFramework curatorClient) {
+        PipelineData[] newPipelineData = new PipelineData[pipelineData.length];
+        int i = 0;
+        for (PipelineData data : pipelineData) {
+            if (!data.isOld()) {
+                InmemoryMessage msg = null;
+                try {
+                    String s = JsonUtil.convert(data);
+                    String md5 = null;
+                    msg = inmemory.send(Constants.STOCKSTAT + "-" + data.getId() + "-" + data.getName(), s, md5);
+                    //result.message = msg;
+                    curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.DATA + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+                PipelineData newDatum = new PipelineData();
+                newDatum.setId(data.getId());
+                newDatum.setName(data.getName());
+                newDatum.setOld(false);
+                newDatum.setLoaded(false);
+                newDatum.setMessage(JsonUtil.convert(msg));
+                newPipelineData[i++] = newDatum;
+                log.info("Pipeline write {} {}", newDatum.getId(), newDatum.getName());
+            } else {
+                newPipelineData[i++] = data;
+            }
+        }
+        return newPipelineData;
+    }
 }

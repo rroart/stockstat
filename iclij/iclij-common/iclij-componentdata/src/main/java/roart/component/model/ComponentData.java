@@ -385,7 +385,8 @@ public class ComponentData {
         try {
             // TODO null name, fix later
             // TODO needed where, reread?
-            List<String> stockdates = PipelineUtils.getDatelist(PipelineUtils.getPipeline(result, this.getCategoryTitle()));
+            Inmemory inmemory = getService().getIo().getInmemoryFactory().get(config);
+            List<String> stockdates = PipelineUtils.getDatelist(PipelineUtils.getPipeline(result, this.getCategoryTitle(), inmemory));
             this.setStockDates(stockdates);
             Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, this.getCategoryTitle()).get(PipelineConstants.LIST)));
             this.setCategoryValueMap(aCategoryValueMap);
@@ -430,7 +431,8 @@ public class ComponentData {
             // NOT yet Inmemory inmemory = InmemoryFactory.get(conf .getInmemoryServer(), conf.getInmemoryHazelcast(), conf.getInmemoryRedis());
             //log.info("" + result.keySet());
             //log.info("" + result.get(PipelineConstants.META).keySet());
-            String cat = PipelineUtils.getMetaCat(PipelineUtils.getPipeline(result, PipelineConstants.META));
+            Inmemory inmemory = getService().getIo().getInmemoryFactory().get(config);
+            String cat = PipelineUtils.getMetaCat(PipelineUtils.getPipeline(result, PipelineConstants.META, inmemory));
             List<String> stockdates = PipelineUtils.getDatelist(PipelineUtils.getPipeline(result, cat));
             this.setStockDates(stockdates);
             Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, cat).get(PipelineConstants.LIST)));
@@ -461,7 +463,8 @@ public class ComponentData {
         //System.out.println(maps.keySet());
         PipelineData aMap = null;
         if (mapName != null) {
-            aMap = PipelineUtils.getPipeline(maps, mapName);
+            Inmemory inmemory = getService().getIo().getInmemoryFactory().get(config);
+            aMap = PipelineUtils.getPipeline(maps, mapName, inmemory);
         }
         this.resultMap = aMap;
         return aMap;  

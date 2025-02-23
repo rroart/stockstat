@@ -114,6 +114,7 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
                 continue;
             }
             SimulateInvestData param = new SimulateInvestData(componentparam);
+            // TODO
             param.setAllIncDecs(getAllIncDecs(market, null, null));
             param.setAllMetas(((ImproveAutoSimulateInvestComponent)component).getAllMetas(componentparam));
             ((ImproveAutoSimulateInvestComponent)component).getResultMaps(param, market);
@@ -124,7 +125,7 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
             String evolutionConfigString = param.getConfig().getImproveAutoSimulateInvestEvolutionConfig();
             EvolutionConfig evolutionConfig = JsonUtil.convert(evolutionConfigString, EvolutionConfig.class);
             Map<String, Object> confMap = new HashMap<>();
-            ComponentData e = evolve.evolve(action.getActionData(), param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap , evolutionConfig, component.getPipeline(), component, confList, null);
+            ComponentData e = evolve.evolve(action.getActionData(), param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap , evolutionConfig, component.getPipeline(), component, confList);
             PipelineData results = e.getResultMap();
             Object filters = param.getConfigValueMap().remove(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
             // filters is already a serialized string

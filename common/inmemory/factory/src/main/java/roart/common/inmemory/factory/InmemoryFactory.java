@@ -4,6 +4,7 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.constants.Constants;
 import roart.common.inmemory.hazelcast.InmemoryHazelcast;
 import roart.common.inmemory.redis.InmemoryJedis;
+import roart.iclij.config.IclijConfig;
 
 public class InmemoryFactory {
 
@@ -16,6 +17,9 @@ public class InmemoryFactory {
         default:
             return null;    
         }
-        
+    }
+
+    public Inmemory get(IclijConfig config) {
+        return get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
     }
 }

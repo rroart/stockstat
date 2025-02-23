@@ -103,7 +103,8 @@ public class ActionThread extends Thread {
         }
         List<TimingBLItem> blacklist = null;
         try {
-            blacklist = io.getIdbDao().getAllTimingBLItem();
+            // TODO temp blacklist = io.getIdbDao().getAllTimingBLItem();
+            blacklist = new ArrayList<>();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

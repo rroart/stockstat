@@ -11,4 +11,5 @@ module common.inmemory.factory {
     requires common.inmemory.model;
     requires common.inmemory.redis;
     requires common.constants;
+    requires iclij.common.config;
 }

@@ -14,6 +14,8 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import roart.common.constants.Constants;
+import roart.common.inmemory.factory.InmemoryFactory;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
 import roart.common.config.ConfigConstants;
@@ -48,6 +50,7 @@ public abstract class IndicatorAdviser extends Adviser {
     
     public IndicatorAdviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param, SimulateInvestConfig simulateConfig) {
         super(market, investStart, investEnd, param, simulateConfig);
+        Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
         SimulateInvestData simulateParam;
         if (param instanceof SimulateInvestData) {
             simulateParam = (SimulateInvestData) param;
@@ -79,9 +82,9 @@ public abstract class IndicatorAdviser extends Adviser {
             if (resultMaps == null || resultMaps.length == 0) {
                 int  jj = 0;
             }
-            Integer cat = PipelineUtils.getWantedcat(PipelineUtils.getPipeline(resultMaps, PipelineConstants.META));
+            Integer cat = PipelineUtils.getWantedcat(PipelineUtils.getPipeline(resultMaps, PipelineConstants.META, inmemory));
             String catName = new MetaUtil().getCategory(meta, cat);
-            PipelineData objectMaps = PipelineUtils.getPipeline(resultMaps, getPipeline());
+            PipelineData objectMaps = PipelineUtils.getPipeline(resultMaps, getPipeline(), inmemory);
             if (objectMaps != null) {
                 Map<String, Object> indicatorMaps = (Map<String, Object>) objectMaps.get(getPipeline());
                 //System.out.println("macd"+ macdMaps.keySet());
@@ -126,9 +129,9 @@ public abstract class IndicatorAdviser extends Adviser {
             System.out.println("keys " + entry.getValue().keySet());
         }
         */
-        Integer cat = PipelineUtils.getWantedcat(PipelineUtils.getPipeline(maps, PipelineConstants.META));
+        Integer cat = PipelineUtils.getWantedcat(PipelineUtils.getPipeline(maps, PipelineConstants.META, inmemory));
         String catName = new MetaUtil().getCategory(meta, cat);
-        PipelineData resultMaps = PipelineUtils.getPipeline(maps, getPipeline());
+        PipelineData resultMaps = PipelineUtils.getPipeline(maps, getPipeline(), inmemory);
         if (resultMaps != null) {
             //Map<String, Object> indicatorMaps = (Map<String, Object>) resultMaps.get(getPipeline());
             //System.out.println("macd"+ macdMaps.keySet());

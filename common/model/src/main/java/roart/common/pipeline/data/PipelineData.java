@@ -21,6 +21,8 @@ public class PipelineData extends SerialObject {
     
     private boolean old;
     
+    private String message;
+    
     private Map<String, Object> map = new HashMap<>();
 
     private SerialMap smap = new SerialMap();
@@ -29,6 +31,8 @@ public class PipelineData extends SerialObject {
     
     public PipelineData() {
         super();
+        this.loaded = true;
+        this.old = false;
     }
 
     public String getId() {
@@ -123,6 +127,14 @@ public class PipelineData extends SerialObject {
 
     public void setOld(boolean old) {
         this.old = old;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     @Deprecated

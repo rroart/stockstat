@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.ActionComponentItem;
 import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
@@ -37,6 +38,7 @@ import roart.common.model.MetaItem;
 import roart.common.model.TimingItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -572,7 +574,13 @@ public abstract class MarketAction extends Action {
 
         setValMap(param);
         PipelineData[] maps = param.getResultMaps();
-        Map<String, String> nameMap = getNameMap(maps);
+        // TODO bad
+        Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config);
+        PipelineData metadata = PipelineUtils.getPipeline(maps, PipelineConstants.META, inmemory);
+        PipelineData pipeline = PipelineUtils.getPipeline(maps, PipelineUtils.getMetaCat(metadata), inmemory);
+        String catName = PipelineUtils.getMetaCat(metadata);
+        Map<String, String> nameMap = PipelineUtils.getNamemap(PipelineUtils.getPipeline(maps, catName, inmemory));
+        log.info("TODO names {}", nameMap.size());
         inputdata.setNameMap(nameMap);
 
         param.setTimings(new ArrayList<>());
@@ -605,8 +613,8 @@ public abstract class MarketAction extends Action {
         }
         
         if (!getActionData().isDataset()) {
-        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, null);
-        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, null);
+        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, null, inmemory);
+        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, null, inmemory);
         }
         //filterDecs(param, market, profitdata, maps);
         //buys = buys.values().stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());        

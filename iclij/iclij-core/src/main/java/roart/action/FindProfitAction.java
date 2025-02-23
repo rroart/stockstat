@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.ActionComponentItem;
 import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
@@ -273,9 +274,10 @@ public class FindProfitAction extends MarketAction {
         new MarketUtil().fillProfitdata(profitdata, incdecitems);
         
         setValMap(param);
+        Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
         PipelineData[] maps = param.getResultMaps();
-        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, null);
-        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, null);
+        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, null, inmemory);
+        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, null, inmemory);
         myData.getIncs().addAll(profitdata.getBuys().values());
         myData.getDecs().addAll(profitdata.getSells().values());
         return myData;

@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import roart.common.config.ConfigConstants;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.ConfigItem;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.util.JsonUtil;
@@ -45,7 +46,8 @@ public abstract class ComponentNoML extends Component {
             Map<String, Object> aScoreMap = new HashMap<>();
             PipelineData resultMap = new PipelineData();
             resultMap.setName(getPipeline());
-            List<ResultItem> retlist = param.getService().getEvolveRecommender(true, param.getDisableList(), anUpdateMap, scoreMap, resultMap);
+            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
+            List<ResultItem> retlist = param.getService().getEvolveRecommender(true, param.getDisableList(), anUpdateMap, scoreMap, resultMap, inmemory);
             nomlSaves(action, param, anUpdateMap);
             if (param.getUpdateMap() != null) {
                 param.getUpdateMap().putAll(anUpdateMap); 

@@ -33,7 +33,6 @@ module iclij.common.service {
     requires common.filesystem.client;
     requires curator.client;
     requires curator.framework;
-    requires pipeline.model;
     requires model;
     requires spring.beans;
     requires spring.context;

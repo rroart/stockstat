@@ -45,4 +45,6 @@ module iclij.common.component {
     requires dbdao;
     requires stockstat.shadow.zookeeper;
     requires pipeline.util;
+    requires common.inmemory.model;
+    requires common.inmemory.factory;
 }

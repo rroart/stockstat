@@ -17,6 +17,7 @@ import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.IncDecItem;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
@@ -66,7 +67,8 @@ public class PeriodAdviser extends Adviser {
                 int jj = 0;
             }
             //List<MetaItem> metas = param.getService().getMetas();
-            PipelineData metaData = PipelineUtils.getPipeline(resultMaps, PipelineConstants.META);
+            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
+            PipelineData metaData = PipelineUtils.getPipeline(resultMaps, PipelineConstants.META, inmemory);
             SerialMeta meta = PipelineUtils.getMeta(metaData);
             if (cat >= Constants.PERIODS) {
                 // from old stored data
@@ -80,7 +82,7 @@ public class PeriodAdviser extends Adviser {
                 return;
             }
 
-            PipelineData datareader = PipelineUtils.getPipeline(resultMaps, catName);
+            PipelineData datareader = PipelineUtils.getPipeline(resultMaps, catName, inmemory);
             if (datareader == null) {
                 // TODO not needed, done above?
                 log.info("Not used?");

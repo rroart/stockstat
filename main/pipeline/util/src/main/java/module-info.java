@@ -13,6 +13,8 @@ module pipeline.util {
     requires common.constants;
     requires common.model;
     requires common.util;
+    requires common.inmemory.model;
+    requires curator.framework;
     requires commons.math3;
     requires model;
     requires org.slf4j;
