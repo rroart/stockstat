@@ -37,6 +37,7 @@ import roart.db.dao.DbDao;
 import roart.executor.MyExecutors;
 import roart.indicator.util.IndicatorUtils;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.ml.dao.MLClassifyDao;
 import roart.ml.dao.MLClassifyLearnTestPredictCallable;
 import roart.ml.model.LearnTestClassifyResult;
@@ -62,8 +63,8 @@ public class MLMACD extends IndicatorAggregator {
     }
 
     public MLMACD(IclijConfig conf, String string, String title, int category, 
-            Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates) throws Exception {
-        super(conf, string, category, title, idNameMap, datareaders, neuralnetcommand, stockDates);
+            Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates, Inmemory inmemory) throws Exception {
+        super(conf, string, category, title, idNameMap, datareaders, neuralnetcommand, stockDates, inmemory);
     }
 
     private abstract class MacdSubType extends MergeSubType {
@@ -170,7 +171,7 @@ public class MLMACD extends IndicatorAggregator {
     @Override
     protected List<SubType> getWantedSubTypes(AfterBeforeLimit afterbefore) {
         List<SubType> wantedSubTypesList = new ArrayList<>();
-        PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORMACD);
+        PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORMACD, inmemory);
         Object list = null;
         SerialMapTA taObject = PipelineUtils.getMapTA(pipelineData);
         SerialMapD resultObject = PipelineUtils.getResultMap(pipelineData);

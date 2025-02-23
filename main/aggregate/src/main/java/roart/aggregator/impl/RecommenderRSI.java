@@ -15,6 +15,7 @@ import roart.etl.DatelistToMapETL;
 import roart.indicator.util.IndicatorUtils;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockItem;
 import roart.result.model.ResultItemTableRow;
 import roart.model.data.MarketData;
@@ -30,8 +31,8 @@ public class RecommenderRSI extends Aggregator {
     Map<String, Double[][]> listMap;
     Map<String, double[][]> truncListMap;
 
-    public RecommenderRSI(IclijConfig conf, String index, Map<String, MarketData> marketdatamap, AbstractCategory[] categories) throws Exception {
-        super(conf, index, 0);
+    public RecommenderRSI(IclijConfig conf, String index, Map<String, MarketData> marketdatamap, AbstractCategory[] categories, Inmemory inmemory) throws Exception {
+        super(conf, index, 0, inmemory);
         if (!isEnabled()) {
             return;
         }

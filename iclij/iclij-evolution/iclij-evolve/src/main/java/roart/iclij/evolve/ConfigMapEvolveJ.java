@@ -24,7 +24,6 @@ import roart.component.model.ComponentData;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.marketfilter.jenetics.gene.impl.ConfigMapChromosome;
 import roart.evolution.marketfilter.jenetics.gene.impl.ConfigMapGene;
-import roart.filesystem.FileSystemDao;
 import roart.iclij.component.Component;
 import roart.iclij.config.Market;
 import roart.iclij.evolution.fitness.impl.FitnessAboveBelow2;
@@ -39,7 +38,7 @@ public class ConfigMapEvolveJ extends EvolveJ {
     @Override
     public ComponentData evolve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata, Boolean buy,
             String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, Map<String, Object> confMap,
-            EvolutionConfig evolutionConfig, String pipeline, Component component, List<String> confList, FileSystemDao fileSystemDao) {
+            EvolutionConfig evolutionConfig, String pipeline, Component component, List<String> confList) {
         double score = -1;
         FitnessConfigMap2 fit = new FitnessConfigMap2(); //action, new ArrayList<>(), param, profitdata, market, null, pipeline, buy, subcomponent, parameters, mlTests, null);
         int size = 7;

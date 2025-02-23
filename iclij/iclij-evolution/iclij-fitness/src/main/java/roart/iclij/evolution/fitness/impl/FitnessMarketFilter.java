@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import roart.iclij.model.action.MarketActionData;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
@@ -172,9 +173,10 @@ public class FitnessMarketFilter extends Fitness {
             log.error(Constants.EXCEPTION, e3);
         }
         incProp = incProp1;
+        Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
         PipelineData[] maps = param.getResultMaps();
-        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, null);
-        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, null);
+        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, null, inmemory);
+        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, null, inmemory);
 
         double memoryFitness = 0.0;
         double incdecFitness = 0.0;

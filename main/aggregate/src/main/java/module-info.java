@@ -35,4 +35,5 @@ open module aggregate {
     requires stocketl;
     requires ml.pytorch;
     requires pipeline.util;
+    requires common.inmemory.model;
 }

@@ -23,4 +23,5 @@ module pipeline.common {
     requires talib;
     requires pipeline.indicator;
     requires common.model;
+    requires common.inmemory.model;
 }

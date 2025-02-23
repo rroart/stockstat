@@ -5,6 +5,7 @@ import java.util.Map;
 
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
@@ -32,12 +33,11 @@ import roart.stockutil.StockUtil;
 
 public class CategoryPeriod extends Category {
 
-    public CategoryPeriod(IclijConfig conf, int i, String periodText, List<StockItem> stocks,PipelineData[] datareaders) throws Exception {
-        super(conf, periodText, stocks, datareaders);
+    public CategoryPeriod(IclijConfig conf, int i, String periodText, List<StockItem> stocks,PipelineData[] datareaders, Inmemory inmemory) throws Exception {
+        super(conf, periodText, stocks, datareaders, inmemory);
         period = i;
         createResultMap(conf, stocks);
-        Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-        PipelineData datareader = pipelineMap.get(periodText);
+        PipelineData datareader = PipelineUtils.getPipeline(datareaders, periodText, inmemory);
         if (datareader == null) {
             log.info("empty {}", i);
             createIndicatorMap(periodText);
@@ -48,15 +48,15 @@ public class CategoryPeriod extends Category {
         //MarketData marketData = marketdatamap.get(market);
         //List<StockItem>[] datedstocklists = marketData.datedstocklists;
         //indicators.add(new IndicatorMove(conf, "Δ" + getTitle(), datedstocklists, period));
-        PipelineData metadata = pipelineMap.get(PipelineConstants.META);
+        PipelineData metadata = PipelineUtils.getPipeline(datareaders, PipelineConstants.META, inmemory);
         SerialMeta meta = PipelineUtils.getMeta(metadata);
         if (MetaUtil.currentYear(meta, periodText)) {
-            indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", getTitle(), i, datareaders, false));
-            indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", getTitle(), i, datareaders, false));
-            indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", getTitle(), i, datareaders, false));
-            indicators.add(new IndicatorSTOCH(conf, getTitle() + " STOCH", getTitle(), i, datareaders, false));
-            indicators.add(new IndicatorATR(conf, getTitle() + " ATR", getTitle(), i, datareaders, false));
-            indicators.add(new IndicatorCCI(conf, getTitle() + " CCI", getTitle(), i, datareaders, false));
+            indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", getTitle(), i, datareaders, false, inmemory));
+            indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", getTitle(), i, datareaders, false, inmemory));
+            indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", getTitle(), i, datareaders, false, inmemory));
+            indicators.add(new IndicatorSTOCH(conf, getTitle() + " STOCH", getTitle(), i, datareaders, false, inmemory));
+            indicators.add(new IndicatorATR(conf, getTitle() + " ATR", getTitle(), i, datareaders, false, inmemory));
+            indicators.add(new IndicatorCCI(conf, getTitle() + " CCI", getTitle(), i, datareaders, false, inmemory));
             for (AbstractIndicator indicator : indicators) {
                 ((Indicator) indicator).calculate();
             }

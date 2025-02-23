@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
@@ -36,8 +37,8 @@ public class MLRSI extends IndicatorAggregator {
     }
 
     public MLRSI(IclijConfig conf, String string, String title, int category, 
-            Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates) throws Exception {
-        super(conf, string, category, title, idNameMap, datareaders, neuralnetcommand, stockDates);
+            Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates, Inmemory inmemory) throws Exception {
+        super(conf, string, category, title, idNameMap, datareaders, neuralnetcommand, stockDates, inmemory);
     }
 
     private abstract class RsiSubType extends MergeSubType {
@@ -132,14 +133,14 @@ public class MLRSI extends IndicatorAggregator {
         List<SubType> wantedSubTypesList = new ArrayList<>();
         if (conf.wantMLRSI()) {
             if (conf.isRSIEnabled()) {
-                PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORRSI);
+                PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORRSI, inmemory);
                 Object list = null;
                 SerialMapTA taObject = PipelineUtils.getMapTA(pipelineData);
                 SerialMapD resultObject = PipelineUtils.getResultMap(pipelineData);
                 wantedSubTypesList.add(new SubTypeRSI(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf));
             }
             if (conf.isSTOCHRSIEnabled()) {
-                PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCHRSI);
+                PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCHRSI, inmemory);
                 Object list = null;
                 SerialMapTA taObject = PipelineUtils.getMapTA(pipelineData);
                 SerialMapD resultObject = PipelineUtils.getResultMap(pipelineData);

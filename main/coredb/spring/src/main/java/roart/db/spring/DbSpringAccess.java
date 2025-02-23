@@ -26,11 +26,9 @@ import roart.common.model.SimDataItem;
 import roart.common.model.StockItem;
 import roart.common.model.TimingBLItem;
 import roart.common.model.TimingItem;
-import roart.common.pipeline.data.SerialTA;
 import roart.common.springdata.repository.SpringStockRepository;
 import roart.common.springdata.repository.StockRepository;
 import roart.db.common.DbAccess;
-import roart.pipeline.common.Calculatable;
 
 @Component
 public class DbSpringAccess extends DbAccess {
@@ -49,12 +47,6 @@ public class DbSpringAccess extends DbAccess {
 	public MetaItem getMetaByMarket(String market) throws Exception {
 		return service.getMetaByMarket(market);
 	}
-
-    @Override
-    public Map<String, SerialTA> doCalculationsArr(IclijConfig conf, Map<String, double[][]> listMap, String key,
-            Calculatable indicator, boolean wantPercentizedPriceIndex) {
-        return null; // DbHibernate.doCalculationsArrNonNull(conf, listMap, key, indicator, wantPercentizedPriceIndex);
-    }
 
     @Override
     public List<String> getMarkets() {

@@ -20,6 +20,7 @@
     <module>indicator</module>
     <module>model</module>
     <module>predictor</module>
+    <module>util</module>
   </modules>
 </project>
 

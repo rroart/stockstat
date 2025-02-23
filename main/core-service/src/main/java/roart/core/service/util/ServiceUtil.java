@@ -87,46 +87,4 @@ public class ServiceUtil {
         tableMap.put(Constants.EVENT, eventTable);
         return eventTable;
     }
-
-    // TODO deprecated
-    public AbstractPredictor[] getPredictors(IclijConfig conf, Map<String, MarketData> marketdatamap,
-            PipelineData[] datareaders,
-            AbstractCategory[] categories,
-            NeuralNetCommand neuralnetcommand) throws Exception {
-        AbstractPredictor[] predictors = new AbstractPredictor[Constants.ALLPERIODS];
-        //predictors[0] = new PredictorLSTM(conf, Constants.INDEX, stocks, marketdatamap, periodDataMap, datareaders, categories);
-        //predictors[1] = new PredictorLSTM(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, datareaders, categories);
-        MarketData marketdata = marketdatamap.get(conf.getConfigData().getMarket());
-        for (int i = 0; i < Constants.ALLPERIODS; i++) {
-            //AbstractPredictor predictor = new PredictorGRU(conf, categories[i].getTitle() + " LSTM", marketdatamap, periodDataMap, categories[i].getTitle(), categories[i].getPeriod(), categories, datareaders);
-            List<AbstractPredictor> allpredictors = new ArrayList<>();
-            allpredictors.add(new PredictorTensorflowLIR(conf, categories[i].getTitle() + " LIR", categories[i].getTitle(), categories[i].getPeriod(), datareaders, neuralnetcommand));
-            allpredictors.add(new PredictorTensorflowMLP(conf, categories[i].getTitle() + " MLP", categories[i].getTitle(), categories[i].getPeriod(), datareaders, neuralnetcommand));
-            allpredictors.add(new PredictorTensorflowRNN(conf, categories[i].getTitle() + " RNN", categories[i].getTitle(), categories[i].getPeriod(), datareaders, neuralnetcommand));
-            allpredictors.add(new PredictorTensorflowLSTM(conf, categories[i].getTitle() + " LSTM", categories[i].getTitle(), categories[i].getPeriod(), datareaders, neuralnetcommand));
-            allpredictors.add(new PredictorTensorflowGRU(conf, categories[i].getTitle() + " GRU", categories[i].getTitle(), categories[i].getPeriod(), datareaders, neuralnetcommand));
-            allpredictors.add(new PredictorPytorchMLP(conf, categories[i].getTitle() + " MLP", categories[i].getTitle(), categories[i].getPeriod(), datareaders, neuralnetcommand));
-            allpredictors.add(new PredictorPytorchRNN(conf, categories[i].getTitle() + " RNN", categories[i].getTitle(), categories[i].getPeriod(), datareaders, neuralnetcommand));
-            allpredictors.add(new PredictorPytorchLSTM(conf, categories[i].getTitle() + " LSTM", categories[i].getTitle(), categories[i].getPeriod(), datareaders, neuralnetcommand));
-            allpredictors.add(new PredictorPytorchGRU(conf, categories[i].getTitle() + " GRU", categories[i].getTitle(), categories[i].getPeriod(), datareaders, neuralnetcommand));
-            for (AbstractPredictor predictor : allpredictors) {
-                if (predictor.isEnabled()) {
-                    if (MetaUtil.normalPeriod(marketdata, categories[i].getPeriod(), categories[i].getTitle())) {
-                        if (predictor.hasValue()) {
-                            predictors[i] = predictor;
-                        }
-                    }
-                }
-            }
-        }
-        return predictors;
-    }
-
-    public void calculatePredictors(AbstractPredictor[] predictors) throws Exception {
-        for (AbstractPredictor predictor : predictors) {
-            if (predictor != null) {
-                predictor.calculate();
-            }
-        }
-    }
 }

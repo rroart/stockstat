@@ -44,6 +44,11 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
+      <artifactId>stockstat-common-inmemory-model</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
       <artifactId>stockstat-iclij-common-config</artifactId>
       <version>${stockstat.version}</version>
     </dependency>

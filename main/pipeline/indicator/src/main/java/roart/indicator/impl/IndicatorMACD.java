@@ -8,6 +8,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialTA;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.ml.common.MLClassifyModel;
 import roart.pipeline.Pipeline;
 import roart.talib.Ta;
@@ -18,8 +19,8 @@ public class IndicatorMACD extends Indicator {
 
     Map<MLClassifyModel, Long> mapTime = new HashMap<>();
     
-    public IndicatorMACD(IclijConfig conf, String string, String title, int category, PipelineData[] datareaders, boolean onlyExtra) {
-        super(conf, string, category, datareaders, onlyExtra);
+    public IndicatorMACD(IclijConfig conf, String string, String title, int category, PipelineData[] datareaders, boolean onlyExtra, Inmemory inmemory) {
+        super(conf, string, category, datareaders, onlyExtra, inmemory);
         this.key = title;
     }
 

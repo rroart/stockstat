@@ -8,6 +8,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialTA;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.pipeline.Pipeline;
 import roart.talib.Ta;
 import roart.talib.impl.Ta4jSTOCHRSI;
@@ -16,8 +17,8 @@ import roart.talib.util.TaUtil;
 
 public class IndicatorSTOCHRSI extends Indicator {
 
-    public IndicatorSTOCHRSI(IclijConfig conf, String string, String title, int category, PipelineData[] datareaders, boolean onlyExtra) {
-        super(conf, string, category, datareaders, onlyExtra);
+    public IndicatorSTOCHRSI(IclijConfig conf, String string, String title, int category, PipelineData[] datareaders, boolean onlyExtra, Inmemory inmemory) {
+        super(conf, string, category, datareaders, onlyExtra, inmemory);
         this.key = title;
     }
 

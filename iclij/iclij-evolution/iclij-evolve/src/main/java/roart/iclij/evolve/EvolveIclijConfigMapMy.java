@@ -10,7 +10,6 @@ import roart.iclij.evolution.chromosome.winner.IclijConfigMapChromosomeWinner;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapChromosome;
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapGene;
-import roart.filesystem.FileSystemDao;
 import roart.iclij.component.Component;
 import roart.iclij.config.Market;
 import roart.iclij.evolution.fitness.impl.FitnessIclijConfigMap;
@@ -23,7 +22,7 @@ public class EvolveIclijConfigMapMy extends EvolveMy {
     @Override
     public ComponentData evolve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata, Boolean buy,
             String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, Map<String, Object> confMap,
-            EvolutionConfig evolutionConfig, String pipeline, Component component, List<String> confList, FileSystemDao fileSystemDao) {
+            EvolutionConfig evolutionConfig, String pipeline, Component component, List<String> confList) {
         SimulateInvestData param2 = (SimulateInvestData) param;
         List<String> stockDates = param2.getStockDates();
         IclijConfigMapGene gene = new IclijConfigMapGene(confList, param.getConfig());

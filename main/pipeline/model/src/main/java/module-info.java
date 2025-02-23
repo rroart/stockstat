@@ -25,4 +25,5 @@ module pipeline.model {
     requires scala.library;
     requires org.slf4j;
     requires org.apache.commons.lang3;
+    requires common.inmemory.model;
 }

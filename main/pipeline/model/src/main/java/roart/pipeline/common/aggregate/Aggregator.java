@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.iclij.config.IclijConfig;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
@@ -42,10 +43,13 @@ public abstract class Aggregator extends PipelineResultData {
     //protected List<Object[]> resultMetaArray;
     private SerialList resultMetas = new SerialList();
 
-    public Aggregator(IclijConfig conf, String string, int category) {
+    protected Inmemory inmemory;
+
+    public Aggregator(IclijConfig conf, String string, int category, Inmemory inmemory) {
         this.title = string;
         this.conf = conf;
         this.category = category;
+        this.inmemory = inmemory;
     }
 
     public SerialList getResultMetas() {

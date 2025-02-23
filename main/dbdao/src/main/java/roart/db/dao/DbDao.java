@@ -27,8 +27,6 @@ import roart.db.common.DbAccess;
 import roart.db.dao.util.StockETL;
 import roart.db.hibernate.DbHibernateAccess;
 import roart.db.spring.DbSpringAccess;
-//import roart.db.spark.DbSpark;
-//import roart.db.spark.DbSparkAccess;
 import roart.iclij.config.IclijConfig;
 
 @Component
@@ -61,16 +59,6 @@ public class DbDao {
         log.info("StockItem getall {}", (System.currentTimeMillis() - time0) / 1000);
         return list;
     }
-
-    /*
-    @Deprecated
-    public Map<String, Object[]> doCalculationsArr(IclijConfig conf, Map<String, double[][]> listMap, String key, AbstractIndicator indicator, boolean wantPercentizedPriceIndex) {
-        if (access == null) {
-            return null;
-        }
-        return access.doCalculationsArr(conf, listMap, key, indicator, wantPercentizedPriceIndex);
-    }
-    */
 
     public List<StockItem> getAll(String market, IclijConfig conf) throws Exception {
         String key = CacheConstants.STOCKS + market + conf.getConfigData().getDate();

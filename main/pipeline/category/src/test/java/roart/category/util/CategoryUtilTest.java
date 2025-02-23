@@ -17,6 +17,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 import roart.category.AbstractCategory;
 import roart.common.config.ConfigConstants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
@@ -42,6 +43,7 @@ public class CategoryUtilTest {
 
     @Test
     public void test() throws Exception {
+        Inmemory inmemory = null;
         System.out.println("" + conf.getConfigData().getConfigValueMap().get(ConfigConstants.MISCFILTERDATE));
         System.out.println("" + conf.getConfigData().getConfigMaps().deflt.get(ConfigConstants.MISCFILTERDATE));
         System.out.println("" + conf.getConfigData().getConfigMaps().text.get(ConfigConstants.MISCFILTERDATE));
@@ -71,14 +73,15 @@ public class CategoryUtilTest {
           List<StockItem> dayStocks = iu.getDayStocks(conf, stockData);
           
           List<AbstractCategory> categories = Arrays.asList(new CategoryUtil().getCategories(conf, dayStocks,
-                  stockData.periodText, pipelinedata));
+                  stockData.periodText, pipelinedata, inmemory));
           
           // add all indicators for the category
 
           pipelinedata = iu.createPipelineDataCategories(pipelinedata, categories, stockData);
           
-          int arraySize = IndicatorUtils.getCommonArraySizeAndObjectMap(conf, indicators, objectMapsList, listList, pipelinedata);
+          int arraySize = IndicatorUtils.getCommonArraySizeAndObjectMap(conf, indicators, objectMapsList, listList, pipelinedata, inmemory);
           System.out.println("arraysize" + arraySize);
+          assertEquals(10, arraySize);
         } catch (Exception e) {
             e.printStackTrace();
         }

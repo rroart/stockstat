@@ -34,6 +34,7 @@ import roart.common.config.MLConstants;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.ResultMetaConstants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
@@ -128,8 +129,8 @@ public abstract class IndicatorAggregator extends Aggregator {
     
     protected SerialList sincdecs = new SerialList();
 
-    public IndicatorAggregator(IclijConfig conf, String string, int category, String title, Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates) throws Exception {
-        super(conf, string, category);
+    public IndicatorAggregator(IclijConfig conf, String string, int category, String title, Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates, Inmemory inmemory) throws Exception {
+        super(conf, string, category, inmemory);
         this.key = title;
         this.idNameMap = idNameMap;
         this.datareaders = datareaders;
@@ -173,8 +174,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     private void calculateMe(IclijConfig conf,
             PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         log.info("checkthis {}", key.equals(title));
-        Map<String, PipelineData> pipelineMap = PipelineUtils.getPipelineMap(datareaders);
-        PipelineData datareader = pipelineMap.get(key);
+        PipelineData datareader  = PipelineUtils.getPipeline(datareaders, key, inmemory);
         if (datareader == null) {
             log.info("empty {}", category);
             return;
@@ -819,6 +819,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                                     int jj = 0;
                                 }
                                 String type = null;
+                                // TODO remove
                                 if (aType != null && stockDates != null) {
                                     /*
                                     ComponentInput input = new ComponentInput(myConfig.getConfigData(), null, item.getMarket(), null, null, true, false, new ArrayList<>(), new HashMap<>());

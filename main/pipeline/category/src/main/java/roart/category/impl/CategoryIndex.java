@@ -6,6 +6,7 @@ import java.util.List;
 import roart.category.AbstractCategory;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockItem;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.util.MathUtil;
@@ -27,16 +28,16 @@ import roart.stockutil.StockUtil;
 public class CategoryIndex extends Category {
 
     public CategoryIndex(IclijConfig conf, String string, List<StockItem> stocks,
-            PipelineData[] datareaders) throws Exception {
-        super(conf, string, stocks, datareaders);
+            PipelineData[] datareaders, Inmemory inmemory) throws Exception {
+        super(conf, string, stocks, datareaders, inmemory);
         period = Constants.INDEXVALUECOLUMN;
         createResultMap(conf, stocks);
-        indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false));
-        indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false));
-        indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false));
-        indicators.add(new IndicatorSTOCH(conf, getTitle() + " STOCH", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false));
-        indicators.add(new IndicatorATR(conf, getTitle() + " ATR", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false));
-        indicators.add(new IndicatorCCI(conf, getTitle() + " CCI", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false));
+        indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false, inmemory));
+        indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false, inmemory));
+        indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false, inmemory));
+        indicators.add(new IndicatorSTOCH(conf, getTitle() + " STOCH", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false, inmemory));
+        indicators.add(new IndicatorATR(conf, getTitle() + " ATR", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false, inmemory));
+        indicators.add(new IndicatorCCI(conf, getTitle() + " CCI", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false, inmemory));
         for (AbstractIndicator indicator : indicators) {
             ((Indicator) indicator).calculate();
         }
@@ -68,6 +69,7 @@ public class CategoryIndex extends Category {
     public void addResultItem(ResultItemTableRow r, StockItem stock) {
         try {
             if (StockUtil.hasSpecial(stocks, Constants.INDEXVALUECOLUMN)) {
+                //System.out.println("rsultx" + resultMap.keySet() + " "+ stock.getId());
                 Object[] array = resultMap.get(stock.getId());
                 r.addarr(Arrays.copyOfRange(array, 0, dataArraySize));
                 for (AbstractIndicator indicator : indicators) {

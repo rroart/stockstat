@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.iclij.model.action.MarketActionData;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.IncDecItem;
 import roart.common.pipeline.data.PipelineData;
 import roart.component.model.ComponentData;
@@ -201,9 +202,10 @@ public class FitnessAboveBelowCommon {
         } catch (Exception e3) {
             log.error(Constants.EXCEPTION, e3);
         }
+        Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
         PipelineData[] maps = param.getResultMaps();
-        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, stockDates);
-        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, stockDates);
+        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, stockDates, inmemory);
+        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, stockDates, inmemory);
 
         double incdecFitness = 0.0;
         try {

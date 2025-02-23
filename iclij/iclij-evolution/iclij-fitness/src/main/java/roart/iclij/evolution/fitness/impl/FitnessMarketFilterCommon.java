@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 
 import roart.iclij.model.action.MarketActionData;
 import roart.common.constants.Constants;
+import roart.common.inmemory.factory.InmemoryFactory;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.IncDecItem;
 import roart.common.pipeline.data.PipelineData;
 import roart.component.model.ComponentData;
@@ -27,6 +29,7 @@ import roart.iclij.model.WebData;
 import roart.iclij.service.util.MarketUtil;
 import roart.iclij.service.util.MiscUtil;
 import roart.iclij.verifyprofit.VerifyProfitUtil;
+import roart.model.io.IO;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 import roart.iclij.model.Parameters;
@@ -43,12 +46,12 @@ public class FitnessMarketFilterCommon {
         myData.setMemoryItems(new ArrayList<>());
         myData.setUpdateMap2(new HashMap<>());
         myData.setTimingMap(new HashMap<>());
-        
+        Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
         List<IncDecItem> myincdecs = new ArrayList<>(incdecs);
         PipelineData[] maps = param.getResultMaps();
         new MarketUtil().fillProfitdata(profitdata, myincdecs);
-        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, stockDates);
-        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, stockDates);
+        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, stockDates, inmemory);
+        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, stockDates, inmemory);
         Set<IncDecItem> myincs = new HashSet<>(profitdata.getBuys().values());
         Set<IncDecItem> mydecs = new HashSet<>(profitdata.getSells().values());
         myincs = new MiscUtil().mergeList(myincs, true);

@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
@@ -88,6 +89,7 @@ public class MachineLearningEvolutionService {
         Map<String, Object> scoreMap = new HashMap<>();
         Map<String, Object> resultMap = new HashMap<>();
         IclijConfig conf = new IclijConfig(origparam.getConfigData());
+        Inmemory inmemory = io.getInmemoryFactory().get(conf);
         NeuralNetCommand neuralnetcommand = origparam.getNeuralnetcommand();
         log.info("mydate {}", conf.getConfigData().getDate());
         log.info("mydate {}", conf.getDays());
@@ -109,7 +111,7 @@ public class MachineLearningEvolutionService {
         
             IclijServiceResult result = new IclijServiceResult();
             try {
-                findMLSettings(conf, evolutionConfig, table, updateMap, ml, neuralnetcommand, scoreMap, resultMap);
+                findMLSettings(conf, evolutionConfig, table, updateMap, ml, neuralnetcommand, scoreMap, resultMap, inmemory);
         
                 List<ResultItem> retlist = new ArrayList<>();
                 retlist.add(table);
@@ -143,19 +145,23 @@ public class MachineLearningEvolutionService {
 
             PipelineData[] datareaders = pipelineData;
     
-            StockData stockData = getStockData(pipelineData);
+            StockData stockData = getStockData(pipelineData, inmemory);
             
             AbstractPredictor[] predictors = new PredictorUtils().getPredictors(conf, datareaders,
-                    stockData.catName, stockData.cat, neuralnetcommand);
+                    stockData.catName, stockData.cat, neuralnetcommand, inmemory);
             //new ServiceUtil().createPredictors(categories);
             new PredictorUtils().calculatePredictors(predictors);
 
-            findMLSettings(conf, evolutionConfig, disableList, table, updateMap, ml, datareaders, stockData.catName, stockData.cat, neuralnetcommand, scoreMap, resultMap);
+            findMLSettings(conf, evolutionConfig, disableList, table, updateMap, ml, datareaders, stockData.catName, stockData.cat, neuralnetcommand, scoreMap, resultMap, inmemory);
     
             retlist.add(table);
             result.setList(retlist);
             PipelineData datum = getEvolveData(updateMap, scoreMap, resultMap);
             pipelineData = ArrayUtils.add(pipelineData, datum);
+            if (origparam.getId() != null) {
+                PipelineUtils.setPipelineMap(pipelineData, origparam.getId());
+                pipelineData = PipelineUtils.setPipelineMap(pipelineData, inmemory, io.getCuratorClient());
+            }
             result.setPipelineData(pipelineData);
             result.setConfigData(conf.getConfigData());
             PipelineUtils.printkeys(pipelineData);
@@ -177,7 +183,7 @@ public class MachineLearningEvolutionService {
     }
 
     private void findMLSettings(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
-            Map<String, Object> updateMap, String ml, PipelineData[] dataReaders, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws Exception {
+            Map<String, Object> updateMap, String ml, PipelineData[] dataReaders, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap, Inmemory inmemory) throws Exception {
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
         NeuralNetConfigs nnConfigs = null;
         String nnconfigString = null;
@@ -199,7 +205,7 @@ public class MachineLearningEvolutionService {
                 //chromosome.setAscending(false);
             }
 
-            FitnessNeuralNet fitness = new FitnessNeuralNet(conf, ml, dataReaders, key, catName, cat, neuralnetcommand);
+            FitnessNeuralNet fitness = new FitnessNeuralNet(conf, ml, dataReaders, key, catName, cat, neuralnetcommand, inmemory);
     
             OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
             evolution.setParallel(false);
@@ -270,7 +276,7 @@ public class MachineLearningEvolutionService {
     }
 
     private void findMLSettings(IclijConfig conf, EvolutionConfig evolutionConfig, ResultItemTable table, Map<String, Object> updateMap,
-            String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws Exception {
+            String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap, Inmemory inmemory) throws Exception {
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
         NeuralNetConfigs nnConfigs = null;
         String nnconfigString = null;
@@ -289,7 +295,7 @@ public class MachineLearningEvolutionService {
                 chromosome.setAscending(false);
             }
     
-            FitnessNeuralNet fitness = new FitnessNeuralNet(conf, ml, null, key, null, 0, neuralnetcommand);
+            FitnessNeuralNet fitness = new FitnessNeuralNet(conf, ml, null, key, null, 0, neuralnetcommand, inmemory);
 
             OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
             evolution.setParallel(false);
@@ -393,9 +399,9 @@ public class MachineLearningEvolutionService {
         return keys;
     }
 
-    public StockData getStockData(PipelineData[] pipelineData) {
+    public StockData getStockData(PipelineData[] pipelineData, Inmemory inmemory) {
         StockData stockData = new StockData();
-        PipelineData pipelineDatum = PipelineUtils.getPipeline(pipelineData, PipelineConstants.META);
+        PipelineData pipelineDatum = PipelineUtils.getPipeline(pipelineData, PipelineConstants.META, inmemory);
         stockData.cat = PipelineUtils.getWantedcat(pipelineDatum);
         stockData.catName = PipelineUtils.getMetaCat(pipelineDatum);
         return stockData;

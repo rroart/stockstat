@@ -31,6 +31,7 @@ import roart.gene.impl.CalcDoubleGene;
 import roart.gene.impl.CalcGeneUtils;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockItem;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
@@ -50,8 +51,8 @@ public class AggregatorRecommenderIndicator extends Aggregator {
     public List<String> disableList;
  
     public AggregatorRecommenderIndicator(IclijConfig conf, String index, Map<String, MarketData> marketdatamap, AbstractCategory[] categories,
-            PipelineData[] datareaders, List<String> disableList) throws Exception {
-        super(conf, index, 0);
+            PipelineData[] datareaders, List<String> disableList, Inmemory inmemory) throws Exception {
+        super(conf, index, 0, inmemory);
         this.disableList = disableList;
         if (!isEnabled()) {
             return;
@@ -60,8 +61,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         if (cat == null) {
             return;
         }
-        Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-        PipelineData datareader = pipelineMap.get("" + cat.getPeriod());
+        PipelineData datareader = PipelineUtils.getPipeline(datareaders, "" + cat.getPeriod(), inmemory);
         Map<String, AbstractIndicator> usedIndicatorMap = cat.getIndicatorMap();
         Map<String, PipelineData> localResultMap = cat.putData();
         Map<String, Double[][]> list0 = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
@@ -80,7 +80,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
             for (Recommend recommend : list) {
                 String indicator = recommend.indicator();
                 if (indicator != null) {
-                    AbstractIndicator newIndicator = recommend.getIndicator(category, newIndicatorMap, usedIndicatorMap, datareaders, cat.getTitle());
+                    AbstractIndicator newIndicator = recommend.getIndicator(category, newIndicatorMap, usedIndicatorMap, datareaders, cat.getTitle(), inmemory);
                     if (newIndicator != null) {
                         indicatorMap.put(indicator, newIndicator);
                     }
@@ -103,7 +103,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
             List<String>[] buysell = recommendKeyMap.get(recommender);
             List<AbstractIndicator> indicators = Recommend.getIndicators(recommender, usedRecommenders, indicatorMap);
             // We just want the config, any in the list will do
-            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, indicators.stream().map(AbstractIndicator::indicatorName).toList(), 0 /*recommend.getFutureDays()*/, 1 /*conf.getTableDays()*/, 1 /*recommend.getIntervalDays()*/, null, datareaders);
+            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, indicators.stream().map(AbstractIndicator::indicatorName).toList(), 0 /*recommend.getFutureDays()*/, 1 /*conf.getTableDays()*/, 1 /*recommend.getIntervalDays()*/, null, datareaders, inmemory);
             Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
             result = dayIndicatorMap.get(0);
             List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];

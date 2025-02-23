@@ -15,7 +15,6 @@ import roart.common.model.SimDataItem;
 import roart.common.model.StockItem;
 import roart.common.model.TimingBLItem;
 import roart.common.model.TimingItem;
-import roart.common.pipeline.data.SerialTA;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -58,7 +57,6 @@ import roart.common.springdata.repository.SpringTimingBLRepository;
 import roart.common.springdata.repository.SpringStockRepository;
 import roart.common.springdata.repository.SimDataRepository;
 import roart.common.springdata.repository.StockRepository;
-import roart.pipeline.common.Calculatable;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -589,63 +587,6 @@ public class DbSpring {
             return null;
         }
         return map(metas.get());
-    }
-
-    @Deprecated
-    public static Map<String, Object[]> doCalculationsArr(IclijConfig conf, Map<String, Double[]> listMap, String key, Calculatable indicator, boolean wantPercentizedPriceIndex) {
-        Map<String, Object[]> objectMap = new HashMap<>();
-        for (String id : listMap.keySet()) {
-            //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
-            Double [] list = listMap.get(id);
-            if (wantPercentizedPriceIndex) {
-                list = ArraysUtil.getPercentizedPriceIndex(list);
-            }
-            log.debug("beg end " + id + " "+ key);
-            //System.out.println("beg end " + begOfArray.value + " " + endOfArray.value);
-            log.debug("list " + list.length + " " + Arrays.asList(list));
-            //double momentum = tu.getMom(list, conf.getDays());
-            //Object[] objs = (Object[]) indicator.calculate(ArraysUtil.getNonNull(list));
-            //objectMap.put(id, objs);
-        }
-        return objectMap;
-    }
-    public static Map<String, SerialTA> doCalculationsArrNonNull(IclijConfig conf, Map<String, double[][]> listMap, String key, Calculatable indicator, boolean wantPercentizedPriceIndex) {
-        Map<String, SerialTA> objectMap = new HashMap<>();
-        for (String id : listMap.keySet()) {
-            //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
-            double [][] list = listMap.get(id);
-            if ("F00000HGSN".equals(id)) {              
-                log.debug("braz " + Arrays.toString(list));                
-            }
-            /*
-           if (wantPercentizedPriceIndex && list.length > 0 && list[0].length > 0) {
-               double first = list[0][0];
-               for(int i = 0; i < list.length; i ++)
-                list[i] = ArraysUtil.getPercentizedPriceIndex(list[i], key, indicator.getCategory(), first);
-            }
-             */
-            if ("2647727".equals(id)) {              
-                log.debug("braz " + Arrays.toString(list));                
-            }
-            log.debug("beg end " + id + " "+ key);
-            //System.out.println("beg end " + begOfArray.value + " " + endOfArray.value);
-            log.debug("list " + list.length + " " + Arrays.asList(list));
-            //double momentum = tu.getMom(list, conf.getDays());
-            if (list.length == 180) {
-                log.debug("180");
-            } else {
-                log.debug("not");
-            }
-            if (list[0].length == 0) {
-                //continue;
-            }
-            SerialTA objs = indicator.calculate(list);
-            if ("F00000HGSN".equals(id)) {
-                log.debug("braz " + Arrays.asList(list));
-            }
-            objectMap.put(id, objs);
-        }
-        return objectMap;
     }
 
     public List<MetaItem> getMetas() {

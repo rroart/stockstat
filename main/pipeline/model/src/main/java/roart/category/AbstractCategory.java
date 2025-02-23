@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.iclij.config.IclijConfig;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
@@ -30,12 +31,15 @@ public abstract class AbstractCategory {
     protected int period;
     protected Map<String, Object[]> resultMap;
     protected int dataArraySize;
+
+    protected Inmemory inmemory;
    
-    public AbstractCategory(IclijConfig conf, String periodText, List<StockItem> stocks, PipelineData[] datareaders) {
+    public AbstractCategory(IclijConfig conf, String periodText, List<StockItem> stocks, PipelineData[] datareaders, Inmemory inmemory) {
         this.conf = conf;
         setTitle(periodText);
         this.stocks = stocks;
         this.datareaders = datareaders;
+        this.inmemory = inmemory;
     }
 
     public int getPeriod() {

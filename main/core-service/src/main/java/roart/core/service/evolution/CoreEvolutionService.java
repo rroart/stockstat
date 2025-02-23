@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import roart.aggregatorindicator.impl.Recommend;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
@@ -40,6 +41,7 @@ import roart.evolution.fitness.impl.ProportionScore;
 import roart.evolution.species.Individual;
 import roart.filesystem.FileSystemDao;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.impl.Indicator;
@@ -63,11 +65,12 @@ public class CoreEvolutionService {
 
     private IO io;
     
-   public CoreEvolutionService(IO io) {
+    public CoreEvolutionService(IO io) {
         this.io = io;
     }
 
-    public IclijServiceResult getEvolveRecommender(IclijConfig conf, List<String> disableList) throws JsonParseException, JsonMappingException, IOException {
+    public IclijServiceResult getEvolveRecommender(IclijConfig conf, List<String> disableList, IclijServiceParam origparam) throws JsonParseException, JsonMappingException, IOException {
+        Inmemory inmemory = io.getInmemoryFactory().get(conf);
         IclijServiceResult result = new IclijServiceResult();
         Map<String, Object> updateMap = new HashMap<>();
         Map<String, Object> scoreMap = new HashMap<>();
@@ -121,7 +124,7 @@ public class CoreEvolutionService {
             int category = stockData.cat;
             Map<String, AbstractIndicator> newIndicatorMap = new HashMap<>();
             createRecommendIndicatorMap(stockData.marketdatamap, pipelineData, usedRecommenders, indicatorMap, category,
-                    newIndicatorMap, stockData.catName);
+                    newIndicatorMap, stockData.catName, inmemory);
             for (AbstractIndicator indicator : indicatorMap.values()) {
                 ((Indicator) indicator).calculate();
                 PipelineData datum = ((Indicator) indicator).putData();
@@ -129,13 +132,17 @@ public class CoreEvolutionService {
             }
             Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders, indicatorMap, conf);
             
-            findRecommendSettings(conf, evolutionConfig, disableList, table, usedRecommenders, recommendKeyMap, indicatorMap, updateMap, stockData.days, pipelineData, scoreMap, resultMap);
+            findRecommendSettings(conf, evolutionConfig, disableList, table, usedRecommenders, recommendKeyMap, indicatorMap, updateMap, stockData.days, pipelineData, scoreMap, resultMap, inmemory);
             List<ResultItem> retlist = new ArrayList<>();
             retlist.add(table);
 
             result.setList(retlist);
             PipelineData datum = getEvolveData(updateMap, scoreMap, resultMap);
             pipelineData = ArrayUtils.add(pipelineData, datum);
+            if (origparam.getId() != null) {
+                PipelineUtils.setPipelineMap(pipelineData, origparam.getId());
+                pipelineData = PipelineUtils.setPipelineMap(pipelineData, inmemory, io.getCuratorClient());
+            }
             result.setPipelineData(pipelineData);
             result.setConfigData(conf.getConfigData());
 
@@ -172,7 +179,7 @@ public class CoreEvolutionService {
 
     private void findRecommendSettings(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
             Map<String, List<Recommend>> usedRecommenders, Map<String, List<String>[]> recommendKeyMap,
-            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, int days, PipelineData[] datareaders, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws Exception {
+            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, int days, PipelineData[] datareaders, Map<String, Object> scoreMap, Map<String, Object> resultMap, Inmemory inmemory) throws Exception {
         String thresholdString = conf.getTestIndicatorRecommenderComplexThreshold();
         Double[] thresholds = getThresholds(conf, thresholdString);
         double threshold = thresholds[0];
@@ -180,7 +187,7 @@ public class CoreEvolutionService {
             List<AbstractIndicator> indicators = Recommend.getIndicators(entry.getKey(), usedRecommenders, indicatorMap);
             List<String>[] recommendList = recommendKeyMap.get(entry.getKey());
             Recommend recommend = entry.getValue().get(0);
-            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, indicators.stream().map(AbstractIndicator::indicatorName).toList(), 0, conf.getTableDays(), 1, null, datareaders);
+            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, indicators.stream().map(AbstractIndicator::indicatorName).toList(), 0, conf.getTableDays(), 1, null, datareaders, inmemory);
             List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
             if (macdrsiMinMax == null || macdrsiMinMax.length == 1) {
                 int jj = 0;
@@ -238,12 +245,12 @@ public class CoreEvolutionService {
 
     private void createRecommendIndicatorMap(Map<String, MarketData> marketdatamap, PipelineData[] datareaders,
             Map<String, List<Recommend>> usedRecommenders, Map<String, AbstractIndicator> indicatorMap, int category,
-            Map<String, AbstractIndicator> newIndicatorMap, String catName) throws Exception {
+            Map<String, AbstractIndicator> newIndicatorMap, String catName, Inmemory inmemory) throws Exception {
         for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {
             List<Recommend> list = entry.getValue();
             for (Recommend recommend : list) {
                 String indicator = recommend.indicator();
-                indicatorMap.put(indicator, recommend.getIndicator(category, newIndicatorMap, null, datareaders, catName));
+                indicatorMap.put(indicator, recommend.getIndicator(category, newIndicatorMap, null, datareaders, catName, inmemory));
             }
         }
     }

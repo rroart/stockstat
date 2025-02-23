@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
@@ -40,8 +41,10 @@ public class FitnessNeuralNet extends Fitness {
     private NeuralNetCommand neuralnetcommand;
     
     protected String titletext;
+
+    private Inmemory inmemory;
     
-    public FitnessNeuralNet(IclijConfig conf, String ml, PipelineData[] dataReaders, String key, String catName, Integer cat, NeuralNetCommand neuralnetcommand) {
+    public FitnessNeuralNet(IclijConfig conf, String ml, PipelineData[] dataReaders, String key, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Inmemory inmemory) {
         this.conf = conf.copy();
         this.ml = ml;
         this.dataReaders = dataReaders;
@@ -49,6 +52,7 @@ public class FitnessNeuralNet extends Fitness {
         this.catName = catName;
         this.cat = cat;
         this.neuralnetcommand = neuralnetcommand;
+        this.inmemory = inmemory;
     }
 
     @Override
@@ -60,7 +64,7 @@ public class FitnessNeuralNet extends Fitness {
         aggregate = future.get();
         */
         try {
-        pipelineData = new PipelineFactory().myfactory(conf, ml, dataReaders, catName, cat, neuralnetcommand, ((NeuralNetChromosome) chromosome), key);
+        pipelineData = new PipelineFactory().myfactory(conf, ml, dataReaders, catName, cat, neuralnetcommand, ((NeuralNetChromosome) chromosome), key, inmemory);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             // TODO null MyMyConfig.getAggregatorsIndicatorIntervaldays
@@ -109,7 +113,8 @@ public class FitnessNeuralNet extends Fitness {
 
         @Override
         public PipelineResultData call() throws Exception {
-            return new PipelineFactory().myfactory(conf, ml, dataReaders, catName, cat, neuralnetcommand, chromosome, key);
+            Inmemory inmemory = null;
+            return new PipelineFactory().myfactory(conf, ml, dataReaders, catName, cat, neuralnetcommand, chromosome, key, inmemory);
         }
     }
 

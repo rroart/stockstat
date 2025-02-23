@@ -6,6 +6,7 @@ import java.util.Map;
 
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
@@ -28,9 +29,9 @@ public class MACDBase extends Aggregator {
 
     private Map<String, Double[]> resultObject;
 
-    public MACDBase(IclijConfig conf, String catName, String catName2, Integer cat, PipelineData[] datareaders, List<String> stockDates) {
-        super(conf, "macdb", cat);
-        PipelineData macdmap = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORMACD);
+    public MACDBase(IclijConfig conf, String catName, String catName2, Integer cat, PipelineData[] datareaders, List<String> stockDates, Inmemory inmemory) {
+        super(conf, "macdb", cat, inmemory);
+        PipelineData macdmap = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORMACD, inmemory);
         if (macdmap == null) {
             return;
         }
@@ -38,8 +39,7 @@ public class MACDBase extends Aggregator {
 
         this.resultObject = resultObject2.getMap();
         
-        Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-        PipelineData datareader = pipelineMap.get(catName);
+        PipelineData datareader = PipelineUtils.getPipeline(datareaders, catName, inmemory);
         if (datareader == null) {
             log.info("empty {}", category);
             return;

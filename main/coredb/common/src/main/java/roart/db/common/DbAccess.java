@@ -3,12 +3,10 @@ package roart.db.common;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.iclij.config.IclijConfig;
 import roart.common.model.AboveBelowItem;
 import roart.common.model.ActionComponentItem;
 import roart.common.model.ConfigItem;
@@ -22,8 +20,6 @@ import roart.common.model.SimDataItem;
 import roart.common.model.StockItem;
 import roart.common.model.TimingBLItem;
 import roart.common.model.TimingItem;
-import roart.common.pipeline.data.SerialTA;
-import roart.pipeline.common.Calculatable;
 
 public abstract class DbAccess {
 
@@ -88,9 +84,6 @@ public abstract class DbAccess {
     public abstract List<String> getMarkets();
 
     public abstract List<Date> getDates(String market);
-
-    public abstract Map<String, SerialTA> doCalculationsArr(IclijConfig conf, Map<String, double[][]> listMap, String key,
-            Calculatable indicator, boolean wantPercentizedPriceIndex);
 
 }
 

@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
@@ -71,10 +72,13 @@ public abstract class AbstractIndicator extends Calculatable {
 
     protected SerialMap resultSMap = new SerialMap();
 
-    public AbstractIndicator(IclijConfig conf, String string, int category) {
+    protected Inmemory inmemory;
+
+    public AbstractIndicator(IclijConfig conf, String string, int category, Inmemory inmemory) {
         this.title = string;
         this.conf = conf;
         this.category = category;
+        this.inmemory = inmemory;
     }
 
     public abstract boolean isEnabled();
@@ -276,6 +280,7 @@ public abstract class AbstractIndicator extends Calculatable {
         return result;
     }
 
+    // TODO?
     protected Map<String, Double[][]> getListMap() {
         return PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
     }

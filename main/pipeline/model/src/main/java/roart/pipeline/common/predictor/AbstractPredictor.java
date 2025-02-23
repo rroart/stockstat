@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.iclij.config.IclijConfig;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
@@ -37,12 +38,15 @@ public abstract class AbstractPredictor extends PipelineResultData {
     private SerialList resultMetas = new SerialList();
 
     protected NeuralNetCommand neuralnetcommand;
+
+    protected Inmemory inmemory;
    
-    public AbstractPredictor(IclijConfig conf, String string, int category, NeuralNetCommand neuralnetcommand) {
+    public AbstractPredictor(IclijConfig conf, String string, int category, NeuralNetCommand neuralnetcommand, Inmemory inmemory) {
         this.title = string;
         this.conf = conf;
         this.category = category;
         this.neuralnetcommand = neuralnetcommand;
+        this.inmemory = inmemory;
     }
 
     public abstract boolean isEnabled();

@@ -22,11 +22,9 @@ import roart.common.model.SimDataItem;
 import roart.common.model.StockItem;
 import roart.common.model.TimingBLItem;
 import roart.common.model.TimingItem;
-import roart.common.pipeline.data.SerialTA;
 import roart.db.common.DbAccess;
 import roart.db.model.MLMetrics;
 import roart.db.model.Stock;
-import roart.pipeline.common.Calculatable;
 
 public class DbHibernateAccess extends DbAccess {
 
@@ -43,12 +41,6 @@ public class DbHibernateAccess extends DbAccess {
 	public MetaItem getMetaByMarket(String market) throws Exception {
 		return DbHibernate.getMarket(market);
 	}
-
-    @Override
-    public Map<String, SerialTA> doCalculationsArr(IclijConfig conf, Map<String, double[][]> listMap, String key,
-            Calculatable indicator, boolean wantPercentizedPriceIndex) {
-        return DbHibernate.doCalculationsArrNonNull(conf, listMap, key, indicator, wantPercentizedPriceIndex);
-    }
 
     public static DbAccess instance() {
         if (instance == null) {

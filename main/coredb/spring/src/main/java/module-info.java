@@ -12,8 +12,6 @@ open module coredb.spring {
     requires common.config;
     requires common.model;
     requires common.util;
-    requires pipeline.model;
-    requires model;
     requires coredb;
     requires org.slf4j;
     requires springdata;

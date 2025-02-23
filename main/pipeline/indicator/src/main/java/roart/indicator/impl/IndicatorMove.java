@@ -7,6 +7,7 @@ import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.SerialTA;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockItem;
 import roart.stockutil.StockUtil;
 
@@ -17,8 +18,8 @@ public class IndicatorMove extends Indicator {
     // fix category/period
     int period;
 
-    public IndicatorMove(IclijConfig conf, String string, List<StockItem>[] datedstocklists, int period) throws Exception {
-        super(conf, string, period, null, false);
+    public IndicatorMove(IclijConfig conf, String string, List<StockItem>[] datedstocklists, int period, Inmemory inmemory) throws Exception {
+        super(conf, string, period, null, false, inmemory);
         List<StockItem>[] stocklistPeriod = StockUtil.getListSorted(datedstocklists, 2, period);
         Map<String, Integer>[] periodmapArray = StockUtil.getListMove(2, stocklistPeriod, period);
 

@@ -14,8 +14,6 @@ module coredb.spark {
     requires common.model;
     requires common.util;
     requires coredb;
-    requires model;
-    requires pipeline.model;
     requires scala.library;
     requires org.slf4j;
     requires stockstat.shadow.spark;

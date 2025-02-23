@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import roart.common.config.ConfigMaps;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
@@ -58,9 +59,10 @@ public class PredictorIT {
             System.out.println("mark" + conf.getConfigData().getMarket());
             datareaders[0] = new DataReader(conf, stockdata.marketdatamap, Constants.INDEXVALUECOLUMN, TestConstants.MARKET).putData();
 
+            Inmemory inmemory = null;
             List<Predictor> predictors = List.of( 
-                    new PredictorTensorflowMLP(conf, Constants.INDEX + " MLP", Constants.INDEX, Constants.INDEXVALUECOLUMN, datareaders, neuralnetcommand),
-                    new PredictorTensorflowRNN(conf, Constants.INDEX + " RNN", Constants.INDEX, Constants.INDEXVALUECOLUMN, datareaders, neuralnetcommand)
+                    new PredictorTensorflowMLP(conf, Constants.INDEX + " MLP", Constants.INDEX, Constants.INDEXVALUECOLUMN, datareaders, neuralnetcommand, inmemory),
+                    new PredictorTensorflowRNN(conf, Constants.INDEX + " RNN", Constants.INDEX, Constants.INDEXVALUECOLUMN, datareaders, neuralnetcommand, inmemory)
                     );
             for (Predictor predictor : predictors) {
             int days = predictor.getDays(aListMap, aTruncListMap);

@@ -51,6 +51,7 @@ import roart.common.communication.factory.CommunicationFactory;
 import roart.common.communication.model.Communication;
 import roart.common.config.ConfigConstants;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 import roart.indicator.util.IndicatorUtils;
 import roart.common.constants.CategoryConstants;
@@ -157,13 +158,15 @@ public class CoreControlService {
 
     /**
      * Create result lists
-     * @param dbio.getDataSource() 
+     * @param origparam TODO
      * @param maps 
      * @param pipelinedata TODO
+     * @param dbio.getDataSource() 
      * @return the tabular result lists
      */
 
-    public List<ResultItem> getContent(IclijConfig conf, List<String> disableList, IclijServiceResult result) {
+    public List<ResultItem> getContent(IclijConfig conf, List<String> disableList, IclijServiceResult result, IclijServiceParam origparam) {
+        Inmemory inmemory = io.getInmemoryFactory().get(conf);
         log.info("mydate {}", conf.getConfigData().getDate());
         log.info("mydate {}", conf.getDays());
         //createOtherTables();
@@ -202,7 +205,7 @@ public class CoreControlService {
             List<StockItem> dayStocks = iu.getDayStocks(conf, stockData);
             
             categories = Arrays.asList(new CategoryUtil().getCategories(conf, dayStocks,
-                    stockData.periodText, pipelinedata));
+                    stockData.periodText, pipelinedata, inmemory));
             
             // add all indicators for the category
 
@@ -211,7 +214,7 @@ public class CoreControlService {
             // for aggregates and adding to the pipeline
 
             aggregates = Arrays.asList(getAggregates(conf, stockData.periodText,
-                    stockData.marketdatamap, categories.toArray(new AbstractCategory[0]), pipelinedata , disableList, stockData.catName, stockData.cat, stockData.stockdates));
+                    stockData.marketdatamap, categories.toArray(new AbstractCategory[0]), pipelinedata , disableList, stockData.catName, stockData.cat, stockData.stockdates, inmemory));
 
             pipelinedata = iu.createPipelineAggregators(pipelinedata, aggregates);
             
@@ -236,10 +239,15 @@ public class CoreControlService {
         PipelineUtils.printmap(pipelinedata);
 
         result.setList(retlist);
+        if (origparam.getId() != null) {
+            //PipelineUtils.setPipelineMap(pipelinedata, false);
+            PipelineUtils.setPipelineMap(pipelinedata, origparam.getId());
+            pipelinedata = PipelineUtils.setPipelineMap(pipelinedata, inmemory, io.getCuratorClient());
+        }
         result.setPipelineData(pipelinedata);
-        Inmemory inmemory = io.getInmemoryFactory().get(conf.getInmemoryServer(), conf.getInmemoryHazelcast(), conf.getInmemoryRedis());
 
         if (true) return retlist;
+        // TODO refid
         for (PipelineData data : pipelinedata) {
             //data.
             try (InputStream is = new ByteArrayInputStream(JsonUtil.convert(data).getBytes())) {
@@ -430,11 +438,11 @@ public class CoreControlService {
     private Aggregator[] getAggregates(IclijConfig conf, String[] periodText,
             Map<String, MarketData> marketdatamap,
             AbstractCategory[] categories,
-            PipelineData[] datareaders, List<String> disableList, String catName, Integer cat, List<String> stockDates) throws Exception {
+            PipelineData[] datareaders, List<String> disableList, String catName, Integer cat, List<String> stockDates, Inmemory inmemory) throws Exception {
         Aggregator[] aggregates = new Aggregator[3];
-        aggregates[0] = new MACDBase(conf, catName, catName, cat, datareaders, stockDates);
-        aggregates[1] = new AggregatorRecommenderIndicator(conf, catName, marketdatamap, categories, datareaders, disableList);
-        aggregates[2] = new RecommenderRSI(conf, catName, marketdatamap, categories);
+        aggregates[0] = new MACDBase(conf, catName, catName, cat, datareaders, stockDates, inmemory);
+        aggregates[1] = new AggregatorRecommenderIndicator(conf, catName, marketdatamap, categories, datareaders, disableList, inmemory);
+        aggregates[2] = new RecommenderRSI(conf, catName, marketdatamap, categories, inmemory);
         /*
         aggregates[3] = new MLMACD(conf, catName, catName, cat, idNameMap, datareaders, neuralnetcommand);
         aggregates[4] = new MLRSI(conf, catName, catName, cat, idNameMap, datareaders, neuralnetcommand);
@@ -613,7 +621,7 @@ public class CoreControlService {
     }
 
     /// TODO too big
-    public void getDates(IclijConfig conf, IclijServiceResult result) {
+    public void getDates(IclijConfig conf, IclijServiceResult result, IclijServiceParam origparam) {
         PipelineData[] pipelineData = new PipelineData[0];
         Map<String, Object> aMap = new HashMap<>();
         /*
@@ -638,6 +646,7 @@ public class CoreControlService {
             map.setName(PipelineConstants.DATELIST);
             map.put(PipelineConstants.DATELIST, new SerialListPlain(stockData.stockdates));
             pipelineData = ArrayUtils.add(pipelineData, map);
+            PipelineUtils.setPipelineMap(pipelineData, origparam.getId());
             result.setPipelineData(pipelineData);
             return;
         }

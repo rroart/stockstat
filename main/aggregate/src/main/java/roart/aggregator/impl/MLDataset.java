@@ -14,6 +14,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import roart.common.config.MLConstants;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.model.StockItem;
@@ -79,8 +80,8 @@ public class MLDataset extends Aggregator {
     List<MLClassifyDao> mldaos = new ArrayList<>();
 
     public MLDataset(IclijConfig conf, String string, Map<String, PeriodData> periodDataMap, String title, 
-            int category, NeuralNetCommand neuralnetcommand) throws Exception {
-        super(conf, string, category);
+            int category, NeuralNetCommand neuralnetcommand, Inmemory inmemory) throws Exception {
+        super(conf, string, category, inmemory);
         this.periodDataMap = periodDataMap;
         this.key = title;
         makeMapTypes();

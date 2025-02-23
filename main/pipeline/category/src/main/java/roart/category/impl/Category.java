@@ -4,6 +4,7 @@ import java.util.List;
 
 import roart.category.AbstractCategory;
 import roart.iclij.config.IclijConfig;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockItem;
 import roart.common.pipeline.data.PipelineData;
 import roart.pipeline.Pipeline;
@@ -13,8 +14,8 @@ import roart.stockutil.StockUtil;
 
 public class Category extends AbstractCategory {
 
-    public Category(IclijConfig conf, String periodText, List<StockItem> stocks, PipelineData[] datareaders) {
-        super(conf, periodText, stocks, datareaders);
+    public Category(IclijConfig conf, String periodText, List<StockItem> stocks, PipelineData[] datareaders, Inmemory inmemory) {
+        super(conf, periodText, stocks, datareaders, inmemory);
     }
 
     @Override

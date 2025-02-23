@@ -3,6 +3,7 @@ package roart.predictor.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.data.PipelineData;
 import roart.iclij.config.IclijConfig;
@@ -21,21 +22,21 @@ public class PredictorUtils {
 
     public AbstractPredictor[] getPredictors(IclijConfig conf, PipelineData[] datareaders,
             String catName,
-            Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
+            Integer cat, NeuralNetCommand neuralnetcommand, Inmemory inmemory) throws Exception {
         AbstractPredictor[] predictors = new AbstractPredictor[9];
         //predictors[0] = new PredictorLSTM(conf, Constants.INDEX, stocks, marketdatamap, periodDataMap, datareaders, categories);
         //predictors[1] = new PredictorLSTM(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, datareaders, categories);
         //AbstractPredictor predictor = new PredictorGRU(conf, categories[i].getTitle() + " LSTM", marketdatamap, periodDataMap, categories[i].getTitle(), categories[i].getPeriod(), categories, datareaders);
         List<AbstractPredictor> allpredictors = new ArrayList<>();
-        allpredictors.add(new PredictorTensorflowLIR(conf, catName + " LIR", catName, cat, datareaders, neuralnetcommand));
-        allpredictors.add(new PredictorTensorflowMLP(conf, catName + " MLP", catName, cat, datareaders, neuralnetcommand));
-        allpredictors.add(new PredictorTensorflowRNN(conf, catName + " RNN", catName, cat, datareaders, neuralnetcommand));
-        allpredictors.add(new PredictorTensorflowLSTM(conf, catName + " LSTM", catName, cat, datareaders, neuralnetcommand));
-        allpredictors.add(new PredictorTensorflowGRU(conf, catName + " GRU", catName, cat, datareaders, neuralnetcommand));
-        allpredictors.add(new PredictorPytorchMLP(conf, catName + " MLP", catName, cat, datareaders, neuralnetcommand));
-        allpredictors.add(new PredictorPytorchRNN(conf, catName + " RNN", catName, cat, datareaders, neuralnetcommand));
-        allpredictors.add(new PredictorPytorchLSTM(conf, catName + " LSTM", catName, cat, datareaders, neuralnetcommand));
-        allpredictors.add(new PredictorPytorchGRU(conf, catName + " GRU", catName, cat, datareaders, neuralnetcommand));
+        allpredictors.add(new PredictorTensorflowLIR(conf, catName + " LIR", catName, cat, datareaders, neuralnetcommand, inmemory));
+        allpredictors.add(new PredictorTensorflowMLP(conf, catName + " MLP", catName, cat, datareaders, neuralnetcommand, inmemory));
+        allpredictors.add(new PredictorTensorflowRNN(conf, catName + " RNN", catName, cat, datareaders, neuralnetcommand, inmemory));
+        allpredictors.add(new PredictorTensorflowLSTM(conf, catName + " LSTM", catName, cat, datareaders, neuralnetcommand, inmemory));
+        allpredictors.add(new PredictorTensorflowGRU(conf, catName + " GRU", catName, cat, datareaders, neuralnetcommand, inmemory));
+        allpredictors.add(new PredictorPytorchMLP(conf, catName + " MLP", catName, cat, datareaders, neuralnetcommand, inmemory));
+        allpredictors.add(new PredictorPytorchRNN(conf, catName + " RNN", catName, cat, datareaders, neuralnetcommand, inmemory));
+        allpredictors.add(new PredictorPytorchLSTM(conf, catName + " LSTM", catName, cat, datareaders, neuralnetcommand, inmemory));
+        allpredictors.add(new PredictorPytorchGRU(conf, catName + " GRU", catName, cat, datareaders, neuralnetcommand, inmemory));
         int i = 0;
         for (AbstractPredictor predictor : allpredictors) {
             if (predictor.isEnabled()) {

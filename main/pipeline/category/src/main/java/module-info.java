@@ -21,4 +21,5 @@ open module pipeline.category {
     requires common.config;
     requires common.util;
     requires pipeline.util;
+    requires common.inmemory.model;
 }

@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import roart.category.AbstractCategory;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
@@ -1264,9 +1265,9 @@ public class StockUtil {
         return stockdatemap;
     }
     
-    public StockData getStockData(IclijConfig conf, PipelineData[] pipelineData) {
+    public StockData getStockData(IclijConfig conf, PipelineData[] pipelineData, Inmemory inmemory) {
         StockData stockData = new StockData();
-        PipelineData pipelineDatum = PipelineUtils.getPipeline(pipelineData, PipelineConstants.META);
+        PipelineData pipelineDatum = PipelineUtils.getPipeline(pipelineData, PipelineConstants.META, inmemory);
         stockData.cat = PipelineUtils.getWantedcat(pipelineDatum);
         stockData.catName = PipelineUtils.getMetaCat(pipelineDatum);
         stockData.idNameMap = PipelineUtils.getNamemap(pipelineDatum);

@@ -26,6 +26,7 @@ import roart.common.config.MLConstants;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.ResultMetaConstants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.NeuralNetTensorflowConfig;
@@ -53,8 +54,8 @@ import roart.common.pipeline.util.PipelineUtils;
 
 public abstract class Predictor extends AbstractPredictor {
 
-    public Predictor(IclijConfig conf, String string, String title, int category, NeuralNetCommand neuralnetcommand, PipelineData[] datareaders) {
-        super(conf, string, category, neuralnetcommand);
+    public Predictor(IclijConfig conf, String string, String title, int category, NeuralNetCommand neuralnetcommand, PipelineData[] datareaders, Inmemory inmemory) {
+        super(conf, string, category, neuralnetcommand, inmemory);
         if (!isEnabled()) {
             return;
         }
@@ -153,8 +154,7 @@ public abstract class Predictor extends AbstractPredictor {
         }
 
         log.info("checkthis {}", key.equals(title));
-        Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-        PipelineData datareader = pipelineMap.get(key);
+        PipelineData datareader = PipelineUtils.getPipeline(datareaders, key, inmemory);
         if (datareader == null) {
             log.info("empty {}", category);
             return;
@@ -182,7 +182,7 @@ public abstract class Predictor extends AbstractPredictor {
         accuracyMap = new HashMap<>();
         lossMap = new HashMap<>();
 
-        List<String> dateList = PipelineUtils.getDatelist(pipelineMap.get(key));
+        List<String> dateList = PipelineUtils.getDatelist(PipelineUtils.getPipeline(datareaders, key, inmemory));
         Integer days = conf.getDays();
         if (days == 0) {
             days = dateList.size();
@@ -553,8 +553,7 @@ public abstract class Predictor extends AbstractPredictor {
 
     @Override
     public boolean hasValue() {
-        Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-        PipelineData datareader = pipelineMap.get(key);
+        PipelineData datareader = PipelineUtils.getPipeline(datareaders, key, inmemory);
         return anythingHereA(PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST)));
     }
     

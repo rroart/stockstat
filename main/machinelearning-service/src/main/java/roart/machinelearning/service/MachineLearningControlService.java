@@ -99,6 +99,7 @@ public class MachineLearningControlService {
 
     public IclijServiceResult getContent(List<String> disableList, IclijServiceParam origparam) {
         IclijConfig conf = new IclijConfig(origparam.getConfigData());
+        Inmemory inmemory = io.getInmemoryFactory().get(conf);
         NeuralNetCommand neuralnetcommand = origparam.getNeuralnetcommand();
         log.info("mydate {}", conf.getConfigData().getDate());
         log.info("mydate {}", conf.getDays());
@@ -110,7 +111,7 @@ public class MachineLearningControlService {
         List<ResultItem> retlist = result.getList();
         PipelineData[] pipelineData = result.getPipelineData();
         
-        StockData stockData = new StockUtil().getStockData(conf, pipelineData);
+        StockData stockData = new StockUtil().getStockData(conf, pipelineData, inmemory);
 
         try {
             String mydate = TimeUtil.format(conf.getConfigData().getDate());
@@ -122,12 +123,12 @@ public class MachineLearningControlService {
             // TODO split
             
             AbstractPredictor[] predictors = new PredictorUtils().getPredictors(conf, pipelineData,
-                    stockData.catName, stockData.cat, neuralnetcommand);
+                    stockData.catName, stockData.cat, neuralnetcommand, inmemory);
             //new ServiceUtil().createPredictors(categories);
             new PredictorUtils().calculatePredictors(predictors);
             
             Aggregator[] aggregates = new AggregatorUtils().getAggregates(conf, pipelineData,
-                    disableList, stockData.idNameMap, stockData.catName, stockData.cat, neuralnetcommand, stockData.stockdates);
+                    disableList, stockData.idNameMap, stockData.catName, stockData.cat, neuralnetcommand, stockData.stockdates, inmemory);
 
             /*
             for (AbstractCategory category : categories) {
@@ -172,13 +173,15 @@ public class MachineLearningControlService {
         //new CleanETL().fixmap((Map) maps);
         //printmap(maps, 0);
         result.setList(retlist);
+        if (origparam.getId() != null) {
+            PipelineUtils.setPipelineMap(pipelineData, origparam.getId());
+            pipelineData = PipelineUtils.setPipelineMap(pipelineData, inmemory, io.getCuratorClient());
+        }
         result.setPipelineData(pipelineData);
         result.setConfigData(conf.getConfigData());
        
         PipelineUtils.printkeys(pipelineData);
     
-        Inmemory inmemory = io.getInmemoryFactory().get(conf.getInmemoryServer(), conf.getInmemoryHazelcast(), conf.getInmemoryRedis());
-
         if (true) return result;
         for (PipelineData data : pipelineData) {
             //data.
@@ -203,6 +206,7 @@ public class MachineLearningControlService {
         }
 
         IclijServiceParam param = new IclijServiceParam();
+        param.setId(origparam.getId());
         param.setConfigData(conf.getConfigData());
         param.setWantMaps(origparam.isWantMaps());
         param.setConfList(disableList);

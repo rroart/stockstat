@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import roart.iclij.config.IclijConfig;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.indicator.AbstractIndicator;
@@ -20,12 +21,12 @@ public abstract class RecommendSTOCH extends Recommend {
     }
 
     @Override
-    public AbstractIndicator getIndicator(int category, Map<String, AbstractIndicator> newIndicatorMap, Map<String, AbstractIndicator> usedIndicatorMap, PipelineData[] datareaders, String catName) throws Exception {
+    public AbstractIndicator getIndicator(int category, Map<String, AbstractIndicator> newIndicatorMap, Map<String, AbstractIndicator> usedIndicatorMap, PipelineData[] datareaders, String catName, Inmemory inmemory) throws Exception {
         if (usedIndicatorMap != null && usedIndicatorMap.containsKey(indicator())) {
             return usedIndicatorMap.get(indicator());
         }
 
-        AbstractIndicator indicator = new IndicatorSTOCH(conf, null, catName, category, datareaders, false);
+        AbstractIndicator indicator = new IndicatorSTOCH(conf, null, catName, category, datareaders, false, inmemory);
         
         if (newIndicatorMap != null) {
             newIndicatorMap.put(indicator(), indicator);

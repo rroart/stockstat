@@ -6,6 +6,7 @@ import java.util.List;
 import roart.category.AbstractCategory;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockItem;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.util.MathUtil;
@@ -26,16 +27,16 @@ import roart.stockutil.StockUtil;
 public class CategoryPrice extends Category {
 
     public CategoryPrice(IclijConfig conf, String string, List<StockItem> stocks,
-            PipelineData[] datareaders) throws Exception {
-        super(conf, string, stocks, datareaders);
+            PipelineData[] datareaders, Inmemory inmemory) throws Exception {
+        super(conf, string, stocks, datareaders, inmemory);
         period = Constants.PRICECOLUMN;
         createResultMap(conf, stocks);
-        indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", getTitle(), Constants.PRICECOLUMN, datareaders, false));
-        indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", getTitle(), Constants.PRICECOLUMN, datareaders, false));
-        indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", getTitle(), Constants.PRICECOLUMN, datareaders, false));
-        indicators.add(new IndicatorSTOCH(conf, getTitle() + " STOCH", getTitle(), Constants.PRICECOLUMN, datareaders, false));
-        indicators.add(new IndicatorATR(conf, getTitle() + " ATR", getTitle(), Constants.PRICECOLUMN, datareaders, false));
-        indicators.add(new IndicatorCCI(conf, getTitle() + " CCI", getTitle(), Constants.PRICECOLUMN, datareaders, false));
+        indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", getTitle(), Constants.PRICECOLUMN, datareaders, false, inmemory));
+        indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", getTitle(), Constants.PRICECOLUMN, datareaders, false, inmemory));
+        indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", getTitle(), Constants.PRICECOLUMN, datareaders, false, inmemory));
+        indicators.add(new IndicatorSTOCH(conf, getTitle() + " STOCH", getTitle(), Constants.PRICECOLUMN, datareaders, false, inmemory));
+        indicators.add(new IndicatorATR(conf, getTitle() + " ATR", getTitle(), Constants.PRICECOLUMN, datareaders, false, inmemory));
+        indicators.add(new IndicatorCCI(conf, getTitle() + " CCI", getTitle(), Constants.PRICECOLUMN, datareaders, false, inmemory));
         for (AbstractIndicator indicator : indicators) {
             ((Indicator) indicator).calculate();
         }

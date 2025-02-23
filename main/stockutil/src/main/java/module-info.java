@@ -21,4 +21,5 @@ module stockutil {
     requires pipeline.model;
     requires iclij.common.config;
     requires pipeline.util;
+    requires common.inmemory.model;
 }

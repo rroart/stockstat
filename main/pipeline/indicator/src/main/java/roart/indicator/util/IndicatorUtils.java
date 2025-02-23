@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.category.AbstractCategory;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.MetaItem;
 import roart.common.model.MyDataSource;
 import roart.common.model.StockItem;
@@ -210,7 +211,7 @@ public class IndicatorUtils {
             Map<String, Double[]> indicatorMap = new HashMap<>();
             for (String id : listList.get(0).keySet()) {
                 Double[] result = new Double[0];
-                result = getCommonResult(conf, indicators, objectMapsList, j, id, result, null);
+                result = getCommonResult(conf, indicators, objectMapsList, j, id, result, null, null);
                 if (result.length == arraySize) {
                     indicatorMap.put(id, result);
                     IndicatorUtils.addToLists(indicatorLists, result);
@@ -232,10 +233,10 @@ public class IndicatorUtils {
 
     // for MLI
     
-    public static Object[] getDayIndicatorMap(IclijConfig conf, List<String> indicators, int futureDays, int tableDays, int intervalDays, ExtraData extraData, PipelineData[] datareaders, List<String> dateList) throws Exception {
+    public static Object[] getDayIndicatorMap(IclijConfig conf, List<String> indicators, int futureDays, int tableDays, int intervalDays, ExtraData extraData, PipelineData[] datareaders, List<String> dateList, Inmemory inmemory) throws Exception {
         List<SerialMapTA> objectMapsList = new ArrayList<>();
         List<Map<String, Double[][]>> listList = new ArrayList<>();
-        int arraySize = getCommonArraySizeAndObjectMap(conf, indicators, objectMapsList, listList, datareaders);
+        int arraySize = getCommonArraySizeAndObjectMap(conf, indicators, objectMapsList, listList, datareaders, inmemory);
         Object[] retobj = new Object[3];
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = new HashMap<>();
         if (listList.isEmpty()) {
@@ -248,7 +249,7 @@ public class IndicatorUtils {
         List<AbstractIndicator> allIndicators = new ArrayList<>();
         // for extrareader data
         if (extraData != null) {
-            arraySize = getExtraDataSize2(conf, extraData, arraySize, allIndicators);
+            arraySize = getExtraDataSize2(conf, extraData, arraySize, allIndicators, inmemory);
         }
         List<Double>[] indicatorLists = new ArrayList[arraySize];
         List<Double>[] indicatorMinMax = new ArrayList[arraySize];
@@ -271,7 +272,7 @@ public class IndicatorUtils {
             for (String id : listList.get(0).keySet()) {
                 Double[] result = new Double[0];
                 int aJ = dateList.size() - 1 - dateList.indexOf(commonDate);
-                result = getCommonResult(conf, indicators, objectMapsList, aJ, id, result, commonDate, datareaders);
+                result = getCommonResult(conf, indicators, objectMapsList, aJ, id, result, commonDate, datareaders, inmemory);
                 if (extraData != null) {
                     // for extrareader data
                     result = ExtraReader.getExtraData(conf, extraData, j, id, result, commonDate);
@@ -309,10 +310,10 @@ public class IndicatorUtils {
 
     // for ARI
     
-    public static Object[] getDayIndicatorMap(IclijConfig conf, List<String> indicators, int futureDays, int tableDays, int intervalDays, ExtraData extraData, PipelineData[] datareaders) throws Exception {
+    public static Object[] getDayIndicatorMap(IclijConfig conf, List<String> indicators, int futureDays, int tableDays, int intervalDays, ExtraData extraData, PipelineData[] datareaders, Inmemory inmemory) throws Exception {
         List<SerialMapTA> objectMapsList = new ArrayList<>();
         List<Map<String, Double[][]>> listList = new ArrayList<>();
-        int arraySize = getCommonArraySizeAndObjectMap(conf, indicators, objectMapsList, listList, datareaders);
+        int arraySize = getCommonArraySizeAndObjectMap(conf, indicators, objectMapsList, listList, datareaders, inmemory);
         Object[] retobj = new Object[3];
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = new HashMap<>();
         if (listList.isEmpty()) {
@@ -325,7 +326,7 @@ public class IndicatorUtils {
         List<AbstractIndicator> allIndicators = new ArrayList<>();
         // for extrareader data
         if (extraData != null) {
-            arraySize = getExtraDataSize(conf, extraData, arraySize, allIndicators);
+            arraySize = getExtraDataSize(conf, extraData, arraySize, allIndicators, inmemory);
         }
         List<Double>[] indicatorLists = new ArrayList[arraySize];
         List<Double>[] indicatorMinMax = new ArrayList[arraySize];
@@ -344,13 +345,13 @@ public class IndicatorUtils {
             Map<String, Double[]> indicatorMap = new HashMap<>();
             for (String id : listList.get(0).keySet()) {
                 Double[] result = new Double[0];
-                result = getCommonResult(conf, indicators, objectMapsList, j, id, result, datareaders);
+                result = getCommonResult(conf, indicators, objectMapsList, j, id, result, datareaders, inmemory);
                 if (extraData != null) {
                     // for extrareader data
                     result = ExtraReader.getExtraData(conf, extraData, j, id, result);
                     // for extrareader data end
                     // for more extrareader data
-                    result = getExtraIndicatorsResult(conf, j, result, allIndicators, datareaders);
+                    result = getExtraIndicatorsResult(conf, j, result, allIndicators, datareaders, inmemory);
                     // for more extrareader data end
                 }
                 if (result.length == arraySize && Arrays.stream(result).allMatch(i -> !Double.isNaN(i))) {
@@ -400,7 +401,7 @@ public class IndicatorUtils {
     // for ARI
 
     private static Double[] getCommonResult(IclijConfig conf, List<String> indicators,
-            List<SerialMapTA> objectMapsList, int j, String id, Double[] result, PipelineData[] datareaders) {
+            List<SerialMapTA> objectMapsList, int j, String id, Double[] result, PipelineData[] datareaders, Inmemory inmemory) {
         int idx = 0;
         for (SerialMapTA objectMap : objectMapsList) {
             if (objectMap == null) {
@@ -408,7 +409,7 @@ public class IndicatorUtils {
             }
             String ind = indicators.get(idx++);
             SerialTA objsIndicator = objectMap.get(id);
-            PipelineData pipeline = PipelineUtils.getPipeline(datareaders, ind);
+            PipelineData pipeline = PipelineUtils.getPipeline(datareaders, ind, inmemory);
             result = appendDayResult(conf, j, result  , pipeline.getName(), objsIndicator);
         }
         return result;
@@ -417,16 +418,15 @@ public class IndicatorUtils {
     // for MLI
 
     private static Double[] getCommonResult(IclijConfig conf, List<String> indicators,
-            List<SerialMapTA> objectMapsList, int j, String id, Double[] result, String commonDate, PipelineData[] datareaders) {
+            List<SerialMapTA> objectMapsList, int j, String id, Double[] result, String commonDate, PipelineData[] datareaders, Inmemory inmemory) {
         int idx = 0;
         for (SerialMapTA objectMap : objectMapsList) {
             if (objectMap == null) {
                 continue;
             }
             String indicatorName = indicators.get(idx++);
-            Map<String, PipelineData> pipelineMap = getPipelineMap(datareaders);
-            PipelineData meta = pipelineMap.get(PipelineConstants.META);
-            PipelineData pipeline = pipelineMap.get(PipelineUtils.getMetaCat(meta));
+            PipelineData meta = PipelineUtils.getPipeline(datareaders, PipelineConstants.META, inmemory);
+            PipelineData pipeline = PipelineUtils.getPipeline(datareaders, PipelineUtils.getMetaCat(meta), inmemory);
             List<String> dateList2 = PipelineUtils.getDatelist(pipeline);
             j = dateList2.size() - 1 - dateList2.indexOf(commonDate);
             SerialTA objsIndicator = objectMap.get(id);
@@ -438,13 +438,12 @@ public class IndicatorUtils {
     // shared
     
     public static int getCommonArraySizeAndObjectMap(IclijConfig conf, List<String> indicators,
-            List<SerialMapTA> objectMapsList, List<Map<String, Double[][]>> listList, PipelineData[] datareaders) {
+            List<SerialMapTA> objectMapsList, List<Map<String, Double[][]>> listList, PipelineData[] datareaders, Inmemory inmemory) {
         int arraySize = 0;
-        Map<String, PipelineData> pipelineMap = PipelineUtils.getPipelineMap(datareaders);
         for (String indicatorName : indicators) {
-            PipelineData meta = pipelineMap.get(PipelineConstants.META);
-            PipelineData datareader = pipelineMap.get(PipelineUtils.getMetaCat(meta));
-            PipelineData resultMap = pipelineMap.get(indicatorName);
+            PipelineData meta = PipelineUtils.getPipeline(datareaders, PipelineConstants.META, inmemory);
+            PipelineData datareader = PipelineUtils.getPipeline(datareaders, PipelineUtils.getMetaCat(meta));
+            PipelineData resultMap = PipelineUtils.getPipeline(datareaders, indicatorName);
             SerialMapTA objMap = PipelineUtils.getMapTA(resultMap);
             if (objMap.getMap() != null && !objMap.getMap().isEmpty()) { 
                 objectMapsList.add(objMap);
@@ -463,7 +462,7 @@ public class IndicatorUtils {
     // for ARI
     
     private static int getExtraDataSize(IclijConfig conf, ExtraData extraData, int arraySize,
-            List<AbstractIndicator> allIndicators) throws Exception {
+            List<AbstractIndicator> allIndicators, Inmemory inmemory) throws Exception {
         if (extraData.dateList != null) {
             if (!extraData.dateList.isEmpty()) {
                 int jj = 0;
@@ -473,7 +472,7 @@ public class IndicatorUtils {
         }
         // for extrareader data end
         // for more extra
-        getAllIndicators(allIndicators, conf, PipelineUtils.getMarketstocks(extraData.extrareader), extraData.datareaders);
+        getAllIndicators(allIndicators, conf, PipelineUtils.getMarketstocks(extraData.extrareader), extraData.datareaders, inmemory);
         for (AbstractIndicator indicator : allIndicators) {
             int aSize = indicator.getResultSize();
             arraySize += PipelineUtils.getMarketstocks(extraData.extrareader).size() * aSize;
@@ -485,16 +484,18 @@ public class IndicatorUtils {
     // for MLI
     
     private static int getExtraDataSize2(IclijConfig conf, ExtraData extraData, int arraySize,
-            List<AbstractIndicator> allIndicators) throws Exception {
+            List<AbstractIndicator> allIndicators, Inmemory inmemory) throws Exception {
         if (extraData.dateList != null) {
             if (!extraData.dateList.isEmpty()) {
                 int jj = 0;
             }
+            // all from here is already read from eventual inmemory
             Map<String, SerialList<PipelineData>> dataReaderMap = PipelineUtils.getDatareader(extraData.extrareader);
             List<SerialMarketStock> marketStocks = PipelineUtils.getMarketstocks(extraData.extrareader);
             for (SerialMarketStock entry : marketStocks) {
                 String market = entry.getMarket();
                 SerialList datareaders = dataReaderMap.get(market);
+                // ok again
                 Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
                 String cat = entry.getCategory();
                 if (cat == null) {
@@ -525,7 +526,7 @@ public class IndicatorUtils {
         }
         // for extrareader data end
         // for more extra
-        getAllIndicators(allIndicators, conf, PipelineUtils.getMarketstocks(extraData.extrareader), extraData.datareaders);
+        getAllIndicators(allIndicators, conf, PipelineUtils.getMarketstocks(extraData.extrareader), extraData.datareaders, inmemory);
         int extraSize = getExtraIndicatorsSize(allIndicators, extraData);
         arraySize += extraSize;
         log.info("listsize {}", extraData.dateList.size());
@@ -548,10 +549,10 @@ public class IndicatorUtils {
     
     // for ARI
 
-    private static Double[] getExtraIndicatorsResult(IclijConfig conf, int j, Double[] result, List<AbstractIndicator> allIndicators, PipelineData[] datareaders) throws Exception {
+    private static Double[] getExtraIndicatorsResult(IclijConfig conf, int j, Double[] result, List<AbstractIndicator> allIndicators, PipelineData[] datareaders, Inmemory inmemory) throws Exception {
         for (AbstractIndicator indicator : allIndicators) {
             if (indicator.wantForExtras()) {
-                PipelineData localIndicatorResults =  PipelineUtils.getPipeline(datareaders, indicator.indicatorName());
+                PipelineData localIndicatorResults =  PipelineUtils.getPipeline(datareaders, indicator.indicatorName(), inmemory);
                 Map<String, SerialMap<String, SerialTA>> marketObjectMap = PipelineUtils.getMarketObjectMap(localIndicatorResults);
                 for (Entry<String, SerialMap<String, SerialTA>> marketEntry : marketObjectMap.entrySet()) {
                     SerialMap<String, SerialTA> objectMap = marketEntry.getValue();
@@ -576,7 +577,9 @@ public class IndicatorUtils {
         PipelineData localResults =  extraData.extrareader;
         for (AbstractIndicator indicator : allIndicators) {
             if (indicator.wantForExtras()) {
+                // this is ok, but rename datareaders
                 PipelineData localIndicatorResults =  PipelineUtils.getPipeline(datareaders, indicator.indicatorName());
+                // all from here is already read from eventual inmemory
                 Map<String, SerialList<PipelineData>> dataReaderMap = PipelineUtils.getDatareader(localResults);
                 log.debug("lockeys {}", localResults.keySet());
                 //Map<Pair<String, String>, List<StockItem>> pairMap = pairStockMap;
@@ -655,7 +658,7 @@ public class IndicatorUtils {
     // shared
     
     private static void getAllIndicators(List<AbstractIndicator> allIndicators, IclijConfig conf, List<SerialMarketStock> marketStocks,
-            PipelineData[] datareaders) throws Exception {
+            PipelineData[] datareaders, Inmemory inmemory) throws Exception {
         Set<String> indicatorSet = new HashSet<>();
         for (SerialMarketStock pairEntry : marketStocks) {
             String market = pairEntry.getMarket();
@@ -667,6 +670,7 @@ public class IndicatorUtils {
                 if (cat == null) {
                     int jj = 0;
                 }
+                // ok to use as long as only with keys and no values
                 Map<String, PipelineData> indicatorMap = PipelineUtils.getPipelineMapStartsWith(datareaders, PipelineConstants.INDICATOR);
                 for (Entry<String, PipelineData> entry : indicatorMap.entrySet()) {
 
@@ -680,43 +684,44 @@ public class IndicatorUtils {
         }
         // make indicator factory
         if (indicatorSet.add(PipelineConstants.INDICATORMACD) && conf.wantAggregatorsIndicatorExtrasMACD()) {
-            allIndicators.add(new IndicatorMACD(conf, null, null, Constants.NOCOLUMN, datareaders, true));       
+            allIndicators.add(new IndicatorMACD(conf, null, null, Constants.NOCOLUMN, datareaders, true, inmemory));       
         }
         if (indicatorSet.add(PipelineConstants.INDICATORRSI) && conf.wantAggregatorsIndicatorExtrasRSI()) {
-            allIndicators.add(new IndicatorRSI(conf, null, null, Constants.NOCOLUMN, datareaders, true));       
+            allIndicators.add(new IndicatorRSI(conf, null, null, Constants.NOCOLUMN, datareaders, true, inmemory));       
         }
         if (indicatorSet.add(PipelineConstants.INDICATORATR) && conf.wantAggregatorsIndicatorExtrasATR()) {
-            allIndicators.add(new IndicatorATR(conf, null, null, Constants.NOCOLUMN, datareaders, true));       
+            allIndicators.add(new IndicatorATR(conf, null, null, Constants.NOCOLUMN, datareaders, true, inmemory));       
         }
         if (indicatorSet.add(PipelineConstants.INDICATORCCI) && conf.wantAggregatorsIndicatorExtrasCCI()) {
-            allIndicators.add(new IndicatorCCI(conf, null, null, Constants.NOCOLUMN, datareaders, true));       
+            allIndicators.add(new IndicatorCCI(conf, null, null, Constants.NOCOLUMN, datareaders, true, inmemory));       
         }
         if (indicatorSet.add(PipelineConstants.INDICATORSTOCH) && conf.wantAggregatorsIndicatorExtrasSTOCH()) {
-            allIndicators.add(new IndicatorSTOCH(conf, null, null, Constants.NOCOLUMN, datareaders, true));       
+            allIndicators.add(new IndicatorSTOCH(conf, null, null, Constants.NOCOLUMN, datareaders, true, inmemory));       
         }
         if (indicatorSet.add(PipelineConstants.INDICATORSTOCHRSI) && conf.wantAggregatorsIndicatorExtrasSTOCHRSI()) {
-            allIndicators.add(new IndicatorSTOCHRSI(conf, null, null, Constants.NOCOLUMN, datareaders, true));       
+            allIndicators.add(new IndicatorSTOCHRSI(conf, null, null, Constants.NOCOLUMN, datareaders, true, inmemory));       
         }
     }
 
     public static AbstractIndicator dummyfactory(IclijConfig conf, String indicator) {
+        Inmemory inmemory = null;
         if (indicator.equals(PipelineConstants.INDICATORMACD)) {
-            return new IndicatorMACD(conf, null, null, Constants.NOCOLUMN, null, true);       
+            return new IndicatorMACD(conf, null, null, Constants.NOCOLUMN, null, true, inmemory);       
         }
         if (indicator.equals(PipelineConstants.INDICATORRSI)) {
-            return new IndicatorRSI(conf, null, null, Constants.NOCOLUMN, null, true);       
+            return new IndicatorRSI(conf, null, null, Constants.NOCOLUMN, null, true, inmemory);       
         }
         if (indicator.equals(PipelineConstants.INDICATORATR)) {
-            return new IndicatorATR(conf, null, null, Constants.NOCOLUMN, null, true);       
+            return new IndicatorATR(conf, null, null, Constants.NOCOLUMN, null, true, inmemory);       
         }
         if (indicator.equals(PipelineConstants.INDICATORCCI)) {
-            return new IndicatorCCI(conf, null, null, Constants.NOCOLUMN, null, true);       
+            return new IndicatorCCI(conf, null, null, Constants.NOCOLUMN, null, true, inmemory);       
         }
         if (indicator.equals(PipelineConstants.INDICATORSTOCH)) {
-            return new IndicatorSTOCH(conf, null, null, Constants.NOCOLUMN, null, true);       
+            return new IndicatorSTOCH(conf, null, null, Constants.NOCOLUMN, null, true, inmemory);       
         }
         if (indicator.equals(PipelineConstants.INDICATORSTOCHRSI)) {
-            return new IndicatorSTOCHRSI(conf, null, null, Constants.NOCOLUMN, null, true);       
+            return new IndicatorSTOCHRSI(conf, null, null, Constants.NOCOLUMN, null, true, inmemory);       
         }
         return null;
 
@@ -731,6 +736,7 @@ public class IndicatorUtils {
         }
     }
 
+    @Deprecated
     public static Map<String, PipelineData> getPipelineMap(PipelineData[] datareaders) {
         Map<String, PipelineData> pipelineMap = new HashMap<>();
         for (PipelineData datareader : datareaders) {

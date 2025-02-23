@@ -329,11 +329,13 @@ public class ExtraReader extends Pipeline {
         }
         String date = extraData.dateList.get(size - j);
         String prevDate = extraData.dateList.get(size - (j + (deltas - 1)));
+        // this has not been sent in inmemory, it is in same process
         Map<String, SerialList<PipelineData>> dataReaderMap = PipelineUtils.getDatareader(extraData.extrareader);
         List<SerialMarketStock> allMarketStocks = PipelineUtils.getMarketstocks(extraData.extrareader);
         for (SerialMarketStock entry : allMarketStocks) {
             String market = entry.getMarket();
             SerialList datareaders = dataReaderMap.get(market);
+            // this is ok
             Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
             String cat = entry.getCategory();
             if (cat == null) {
@@ -379,11 +381,13 @@ public class ExtraReader extends Pipeline {
         }
         String date = extraData.dateList.get(size - j);
         String prevDate = extraData.dateList.get(size - (j + (deltas - 1)));
+        // all from here is already read from eventual inmemory
         Map<String, SerialList<PipelineData>> dataReaderMap = PipelineUtils.getDatareader(extraData.extrareader);
         List<SerialMarketStock> allMarketStocks = PipelineUtils.getMarketstocks(extraData.extrareader);
         for (SerialMarketStock entry : allMarketStocks) {
             String market = entry.getMarket();
             SerialList datareaders = dataReaderMap.get(market);
+            // this is ok map
             Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
             String cat = entry.getCategory();
             if (cat == null) {

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
@@ -34,8 +35,8 @@ public class MLSTOCH extends IndicatorAggregator {
     }
 
     public MLSTOCH(IclijConfig conf, String string, String title, int category, 
-            Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates) throws Exception {
-        super(conf, string, category, title, idNameMap, datareaders, neuralnetcommand, stockDates);
+            Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates, Inmemory inmemory) throws Exception {
+        super(conf, string, category, title, idNameMap, datareaders, neuralnetcommand, stockDates, inmemory);
     }
 
     private abstract class STOCHSubType extends SubType {
@@ -80,7 +81,7 @@ public class MLSTOCH extends IndicatorAggregator {
     @Override
     protected List<SubType> getWantedSubTypes(AfterBeforeLimit afterbefore) {
         List<SubType> wantedSubTypesList = new ArrayList<>();
-        PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCH);
+        PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCH, inmemory);
         Object list = null;
         SerialMapTA taObject = PipelineUtils.getMapTA(pipelineData);
         SerialMapD resultObject = PipelineUtils.getResultMap(pipelineData);

@@ -34,7 +34,6 @@ import roart.db.model.Relation;
 import roart.db.model.SimData;
 import roart.db.model.TimingBL;
 import roart.db.thread.Queues;
-import roart.pipeline.common.Calculatable;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -124,66 +123,6 @@ public class DbHibernate {
         }
         Meta meta = metas.get(0);
         return new MetaItem(meta.getMarketid(), meta.getPeriod1(), meta.getPeriod2(), meta.getPeriod3(), meta.getPeriod4(), meta.getPeriod5(), meta.getPeriod6(), meta.getPeriod7(), meta.getPeriod8(), meta.getPeriod9(), meta.getPriority(), meta.getReset(), meta.isLhc());
-    }
-
-    @Deprecated
-    public static Map<String, Object[]> doCalculationsArr(IclijConfig conf, Map<String, Double[]> listMap, String key, Calculatable indicator, boolean wantPercentizedPriceIndex) {
-        Map<String, Object[]> objectMap = new HashMap<>();
-        for (String id : listMap.keySet()) {
-            //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
-            Double [] list = listMap.get(id);
-            if (wantPercentizedPriceIndex) {
-                list = ArraysUtil.getPercentizedPriceIndex(list);
-            }
-            log.debug("beg end " + id + " "+ key);
-            //System.out.println("beg end " + begOfArray.value + " " + endOfArray.value);
-            log.debug("list " + list.length + " " + Arrays.asList(list));
-            //double momentum = tu.getMom(list, conf.getDays());
-            //Object[] objs = (Object[]) indicator.calculate(ArraysUtil.getNonNull(list));
-            //objectMap.put(id, objs);
-        }
-        return objectMap;
-    }
-
-    // Moved
-    @Deprecated
-    public static Map<String, SerialTA> doCalculationsArrNonNull(IclijConfig conf, Map<String, double[][]> listMap, String key, Calculatable indicator, boolean wantPercentizedPriceIndex) {
-        Map<String, SerialTA> objectMap = new HashMap<>();
-        for (String id : listMap.keySet()) {
-            //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
-            double [][] list = listMap.get(id);
-            if ("F00000HGSN".equals(id)) {              
-                log.debug("braz " + Arrays.toString(list));                
-            }
-            /*
-           if (wantPercentizedPriceIndex && list.length > 0 && list[0].length > 0) {
-               double first = list[0][0];
-               for(int i = 0; i < list.length; i ++)
-                list[i] = ArraysUtil.getPercentizedPriceIndex(list[i], key, indicator.getCategory(), first);
-            }
-             */
-            if ("2647727".equals(id)) {              
-                log.debug("braz " + Arrays.toString(list));                
-            }
-            log.debug("beg end " + id + " "+ key);
-            //System.out.println("beg end " + begOfArray.value + " " + endOfArray.value);
-            log.debug("list " + list.length + " " + Arrays.asList(list));
-            //double momentum = tu.getMom(list, conf.getDays());
-            if (list.length == 180) {
-                log.debug("180");
-            } else {
-                log.debug("not");
-            }
-            if (list[0].length == 0) {
-                //continue;
-            }
-            SerialTA objs = indicator.calculate(list);
-            if ("F00000HGSN".equals(id)) {
-                log.debug("braz " + Arrays.asList(list));
-            }
-            objectMap.put(id, objs);
-        }
-        return objectMap;
     }
 
     private static AboveBelowItem map(AboveBelow data) {

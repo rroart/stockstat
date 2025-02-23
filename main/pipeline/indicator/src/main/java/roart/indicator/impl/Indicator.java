@@ -11,6 +11,7 @@ import java.util.Set;
 
 import roart.common.config.MarketStock;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialList;
@@ -32,8 +33,8 @@ public abstract class Indicator extends AbstractIndicator {
     private PipelineData[] datareaders;
     private boolean onlyExtra;
 
-    public Indicator(IclijConfig conf, String string, int category, PipelineData[] datareaders, boolean onlyExtra) {
-        super(conf, string, category);
+    public Indicator(IclijConfig conf, String string, int category, PipelineData[] datareaders, boolean onlyExtra, Inmemory inmemory) {
+        super(conf, string, category, inmemory);
         this.datareaders = datareaders;
         this.onlyExtra = onlyExtra;
     }
@@ -42,9 +43,7 @@ public abstract class Indicator extends AbstractIndicator {
         if (category != Constants.NOCOLUMN && fieldSize == 0) {
             return;
         }
-        Map<String, PipelineData> pipelineMap = PipelineUtils.getPipelineMap(datareaders);
-
-        PipelineData extrareader = pipelineMap.get(PipelineConstants.EXTRAREADER);
+        PipelineData extrareader = PipelineUtils.getPipeline(datareaders, PipelineConstants.EXTRAREADER, inmemory);
         if (extrareader == null) {
             return;
         }
@@ -86,6 +85,7 @@ public abstract class Indicator extends AbstractIndicator {
         */
         //Set<String> commonDates = (Set<String>) localResults.get(PipelineConstants.DATELIST);
         List<SerialMarketStock> marketStocks = PipelineUtils.getMarketstocks(localResults);
+        // all from here is already read from eventual inmemory
         Map<String, SerialList<PipelineData>> dataReaderMap = PipelineUtils.getDatareader(localResults);
         log.debug("lockeys {}", localResults.keySet());
         //Map<Pair<String, String>, List<StockItem>> pairMap = pairStockMap;
@@ -157,8 +157,7 @@ public abstract class Indicator extends AbstractIndicator {
     }
     
     protected void calculateAll(int category, PipelineData[] datareaders) throws Exception {
-        Map<String, PipelineData> pipelineMap = PipelineUtils.getPipelineMap(datareaders);
-        PipelineData datareader = pipelineMap.get(key);
+        PipelineData datareader = PipelineUtils.getPipeline(datareaders, key, inmemory);
         log.info("preempty {}", category);
         if (datareader == null) {
             log.info("empty {}", category);

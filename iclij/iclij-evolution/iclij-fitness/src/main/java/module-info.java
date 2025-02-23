@@ -30,4 +30,7 @@ module iclij.evolutionfitness {
 	requires iclij.evolutionchromosome;
     requires io.jenetics.base;
     requires common.model;
+    requires common.inmemory.model;
+    requires common.io;
+    requires common.inmemory.factory;
 }
