@@ -9,7 +9,6 @@ module iclij.common.util {
     exports roart.iclij.util;
     exports roart.iclij.factory.actioncomponentconfig;
     
-    requires common.model;
     requires common.util;
     requires common.cache;
     requires iclij.common.config;
@@ -21,6 +20,4 @@ module iclij.common.util {
     requires iclij.common.constants;
     requires spring.beans;
     requires spring.context;
-    requires dbdao;
-
 }

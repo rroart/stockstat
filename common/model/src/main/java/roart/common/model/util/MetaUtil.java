@@ -1,4 +1,4 @@
-package roart.iclij.util;
+package roart.common.model.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;

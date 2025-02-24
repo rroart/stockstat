@@ -32,6 +32,7 @@ import roart.common.model.MemoryItem;
 import roart.common.model.MetaItem;
 import roart.common.model.TimingBLItem;
 import roart.common.model.TimingItem;
+import roart.common.model.util.MetaUtil;
 import roart.common.util.JsonUtil;
 import roart.common.util.MemUtil;
 import roart.iclij.component.Component;
@@ -46,7 +47,6 @@ import roart.iclij.model.WebData;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.ControlService;
 import roart.iclij.service.util.MarketUtil;
-import roart.iclij.util.MetaUtil;
 import roart.populate.PopulateThread;
 import roart.constants.IclijConstants;
 import roart.controller.IclijController;
@@ -103,8 +103,7 @@ public class ActionThread extends Thread {
         }
         List<TimingBLItem> blacklist = null;
         try {
-            // TODO temp blacklist = io.getIdbDao().getAllTimingBLItem();
-            blacklist = new ArrayList<>();
+            blacklist = io.getIdbDao().getAllTimingBLItem();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

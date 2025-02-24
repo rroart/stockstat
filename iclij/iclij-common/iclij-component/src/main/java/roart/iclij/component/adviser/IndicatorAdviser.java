@@ -21,6 +21,7 @@ import roart.common.config.CacheConstants;
 import roart.common.config.ConfigConstants;
 import roart.common.model.IncDecItem;
 import roart.common.model.MetaItem;
+import roart.common.model.util.MetaUtil;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMapTA;
@@ -32,7 +33,6 @@ import roart.component.model.SimulateInvestData;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
 import roart.iclij.config.SimulateInvestConfig;
-import roart.iclij.util.MetaUtil;
 
 public abstract class IndicatorAdviser extends Adviser {
 

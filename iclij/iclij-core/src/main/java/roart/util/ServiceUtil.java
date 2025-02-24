@@ -25,6 +25,7 @@ import roart.common.constants.Constants;
 import roart.common.model.ActionComponentItem;
 import roart.common.model.MetaItem;
 import roart.common.model.TimingItem;
+import roart.common.model.util.MetaUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
@@ -36,7 +37,6 @@ import roart.iclij.model.WebDataJson;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.IclijServiceResult;
 import roart.iclij.service.util.MarketUtil;
-import roart.iclij.util.MetaUtil;
 import roart.model.io.IO;
 
 public class ServiceUtil {

@@ -7,9 +7,14 @@
  */
 module common.model {
     exports roart.common.model;
+    exports roart.common.model.util;
     exports roart.common.pipeline.model;
     exports roart.common.pipeline.data;
     exports roart.result.model;
+    exports roart.service.model;
+    exports roart.iclij.model;
+    exports roart.simulate.model;
+    
     requires common.constants;
     requires common.util;
     requires evolution.model;
@@ -18,4 +23,5 @@ module common.model {
     requires org.slf4j;
     requires common.config;
     requires iclij.common.config;
+    requires org.apache.commons.lang3;
 }

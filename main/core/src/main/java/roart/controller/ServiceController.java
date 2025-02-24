@@ -168,7 +168,7 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         try {
-            getInstance(param).getDates( new IclijConfig(param.getConfigData()), result);
+            getInstance(param).getDates( new IclijConfig(param.getConfigData()), result, param);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -206,7 +206,7 @@ public class ServiceController implements CommandLineRunner {
             if (disableList == null) {
                 disableList = new ArrayList<>();
             }
-            getInstance(param).getContent( new IclijConfig(param.getConfigData()), disableList, result);
+            getInstance(param).getContent( new IclijConfig(param.getConfigData()), disableList, result, param);
             long[] mem1 = MemUtil.mem();
             long[] memdiff = MemUtil.diff(mem1, mem0);
             log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
@@ -281,7 +281,7 @@ public class ServiceController implements CommandLineRunner {
             if (disableList == null) {
                 disableList = new ArrayList<>();
             }
-            result = new CoreEvolutionService(io).getEvolveRecommender( aConfig, disableList);
+            result = new CoreEvolutionService(io).getEvolveRecommender( aConfig, disableList, param);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());

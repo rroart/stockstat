@@ -20,6 +20,7 @@ import roart.common.constants.Constants;
 import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MetaItem;
+import roart.common.model.util.MetaUtil;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
@@ -35,7 +36,6 @@ import roart.iclij.config.MarketFilter;
 import roart.iclij.evolution.fitness.impl.FitnessMarketFilter2;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
-import roart.iclij.util.MetaUtil;
 import roart.iclij.service.util.MiscUtil;
 import roart.service.model.ProfitData;
 

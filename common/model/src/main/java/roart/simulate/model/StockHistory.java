@@ -2,8 +2,13 @@ package roart.simulate.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import roart.common.util.MathUtil;
 
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        property = "_class")
 public class StockHistory {
     private String date;
 
