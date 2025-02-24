@@ -13,6 +13,10 @@ import roart.gene.impl.ConfigMapGene;
 
 public class MLIndicatorChromosome extends ConfigMapChromosome2 {
 
+    public MLIndicatorChromosome() {
+        super();
+    }
+
     public MLIndicatorChromosome(ConfigMapGene gene) {
         super(gene);
     }

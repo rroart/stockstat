@@ -11,6 +11,10 @@ import roart.gene.impl.ConfigMapGene;
 
 public class PredictorChromosome extends ConfigMapChromosome2 {
 
+    public PredictorChromosome() {
+        super();
+    }
+
     public PredictorChromosome(ConfigMapGene gene) {
         super(gene);
     }

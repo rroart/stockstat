@@ -23,6 +23,10 @@ public class RecommenderChromosome2 extends ConfigMapChromosome2 {
     
     private int listIdx;
     
+    public RecommenderChromosome2() {
+        super();
+    }
+
     public RecommenderChromosome2(ConfigMapGene gene) {
         super(gene);
         this.gene = gene;
