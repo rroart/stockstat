@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.iclij.model.action.MarketActionData;
+import roart.common.pipeline.data.SerialListMap;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.fitness.Fitness;
@@ -73,7 +74,7 @@ public class FitnessIclijConfigMap extends Fitness {
         Map<String, Object> map = gene.getMap();
 
         List<String> titletexts = new ArrayList<>();
-        chromosome.setResultMap(new HashMap());
+        chromosome.setResultMap(new SerialListMap());
         Double fitness = new FitnessIclijConfigMapCommon().fitnessCommon(profitdata, map, action, market, param, componentName, subcomponent, parameters, titletexts, chromosome.getResultMap());
         if (!titletexts.isEmpty()) {
             titletext = titletexts.get(0);

@@ -61,7 +61,15 @@ import roart.db.dao.IclijDbDao;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.SimDataItem;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialDouble;
+import roart.common.pipeline.data.SerialKeyValue;
+import roart.common.pipeline.data.SerialListMap;
+import roart.common.pipeline.data.SerialListPlain;
+import roart.common.pipeline.data.SerialListSimulateStock;
+import roart.common.pipeline.data.SerialListStockHistory;
+import roart.common.pipeline.data.SerialObject;
 import roart.common.pipeline.data.SerialScoreChromosome;
+import roart.common.pipeline.data.SerialString;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.factory.InmemoryFactory;
@@ -93,7 +101,8 @@ public class Sim {
 
     public void method(String param, String string, boolean b) {
         //param = getParam(param);
-        PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class);
+        log.info("Content " + param);
+        PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class, mapper);
         // TODO
         if (data.getSmap().getMap().isEmpty()) {
             log.info("Empty map");
@@ -137,10 +146,14 @@ public class Sim {
             }
             {
                 SimulateFilter[] listoverrides = null;
-                Object o = data.get(SimConstants.FILTER);
+                SerialString o = (SerialString) data.get(SimConstants.FILTER);
                 // TODO if o null
-                System.out.println("ooo" + o.getClass().getCanonicalName());
-                SimulateFilter[] listoverrides2 = JsonUtil.convert((String)o, SimulateFilter[].class);
+                // TODO if o null
+                //System.out.println("ooo" + o.getClass().getCanonicalName());
+                SimulateFilter[] listoverrides2 = null;
+                if (o != null) {
+                    listoverrides2 = JsonUtil.convert(o.getString(), SimulateFilter[].class);
+                }
                 SimulateFilter[] listoverride = listoverrides2;
                 if (listoverride != null) {
                 for (int i = 0; i < listoverride.length; i++) {
@@ -183,7 +196,9 @@ public class Sim {
                 //output.add("Score " + score);
                 List<AbstractChromosome> chromosomes = entry.getValue();
                 IclijConfigMapChromosome chromosome = (IclijConfigMapChromosome) chromosomes.get(0);
-                Map<String, Object> resultMap = chromosome.getResultMap();
+                SerialListMap resultMap = chromosome.getResultMap();
+                //Map<String, SerialListMap> resultMap = (Map<String, SerialListMap>) resultMap0;
+                log.info("TODO" + score + " " +resultMap);
                 Double keyScore = score;
                 if (filter.isAllabove()) {
                     keyScore = getAllAbove(resultMap, output, summary);
@@ -473,16 +488,17 @@ public class Sim {
     }
 
     private String getSimtext(IclijConfigMapChromosome chromosome) {
-        Map<String, Object> resultMap = chromosome.getResultMap();
-        Map<String, Object> aMap = (Map<String, Object>) resultMap.get("0");
-        String simtext = (String) aMap.get(EvolveConstants.SIMTEXT);
+        SerialListMap resultMap = chromosome.getResultMap();
+        SerialListMap aMap = (SerialListMap) resultMap.get("0");
+        String simtext = ((SerialString) aMap.get(EvolveConstants.SIMTEXT)).getString();
         return simtext;
     }
 
-    private void getShortRun(Map<String, Object> resultMap, SimulateFilter filter, List<String> output, List<Summary> summary) {
+    private void getShortRun(SerialListMap resultMap, SimulateFilter filter, List<String> output, List<Summary> summary) {
         boolean notshort = true;
-        Map<String, Object> aMap = (Map<String, Object>) resultMap.get("0");
-        List<StockHistory> history = (List<StockHistory>) aMap.get(SimConstants.HISTORY);
+        SerialListMap aMap = (SerialListMap) resultMap.get("0");
+        log.info("mapkeys {}", resultMap.keySet());
+        SerialListStockHistory history = (SerialListStockHistory) aMap.get(SimConstants.HISTORY);
         if (history.size() < filter.getShortrun()) {
             notshort = false;
         }
@@ -490,11 +506,11 @@ public class Sim {
         summary.add(new Summary(notshort, "ShortRun"));
     }
 
-    private void getLucky(Map<String, Object> resultMap, SimulateFilter filter, List<String> output, List<Summary> summary) {
+    private void getLucky(SerialListMap resultMap, SimulateFilter filter, List<String> output, List<Summary> summary) {
         boolean notlucky = true;
-        for (Entry<String, Object> entry : resultMap.entrySet()) {
-            Map<String, Object> aMap = (Map<String, Object>) entry.getValue();
-            List<StockHistory> history = (List<StockHistory>) aMap.get(SimConstants.HISTORY);
+        for (Entry<String, SerialObject> entry : resultMap.entrySet()) {
+            SerialListMap aMap = (SerialListMap) entry.getValue();
+            SerialListStockHistory history = (SerialListStockHistory) aMap.get(SimConstants.HISTORY);
             if (history.isEmpty()) {
                 continue;
             }
@@ -503,7 +519,7 @@ public class Sim {
             if (total == 0.0) {
                 continue;
             }
-            List<SimulateStock> stockhistory = (List<SimulateStock>) aMap.get(SimConstants.STOCKHISTORY);
+            SerialListSimulateStock stockhistory = (SerialListSimulateStock) aMap.get(SimConstants.STOCKHISTORY);
             List<Pair<String, Double>> list = SimUtil.getTradeStocks(stockhistory);
             int cnt = 3;
             for (Pair<String, Double> anEntry : list) {
@@ -525,11 +541,11 @@ public class Sim {
         summary.add(new Summary(notlucky, "Lucky"));
     }
 
-    private void getStable(Map<String, Object> resultMap, SimulateFilter filter, List<String> output, List<Summary> summary) {
+    private void getStable(SerialListMap resultMap, SimulateFilter filter, List<String> output, List<Summary> summary) {
         boolean stable = true;
-        for (Entry<String, Object> entry : resultMap.entrySet()) {
-            Map<String, Object> aMap = (Map<String, Object>) entry.getValue();
-            List<StockHistory> history = (List<StockHistory>) aMap.get(SimConstants.HISTORY);
+        for (Entry<String, SerialObject> entry : resultMap.entrySet()) {
+            SerialListMap aMap = (SerialListMap) entry.getValue();
+            SerialListStockHistory history = (SerialListStockHistory) aMap.get(SimConstants.HISTORY);
             if (history.isEmpty()) {
                 continue;
             }
@@ -542,11 +558,12 @@ public class Sim {
         summary.add(new Summary(stable, "Stable"));
     }
 
-    private void getCorrelation(Map<String, Object> resultMap, SimulateFilter filter, List<String> output, List<Summary> summary) {
+    private void getCorrelation(SerialListMap resultMap, SimulateFilter filter, List<String> output, List<Summary> summary) {
         boolean correlation = true;
-        for (Entry<String, Object> entry : resultMap.entrySet()) {
-            Map<String, Object> aMap = (Map<String, Object>) entry.getValue();
-            List<Double> capitalList = (List<Double>) aMap.get(SimConstants.PLOTCAPITAL);
+        for (Entry<String, SerialObject> entry : resultMap.entrySet()) {
+            SerialListMap aMap = (SerialListMap) entry.getValue();
+            SerialListPlain capitalList0 = (SerialListPlain) aMap.get(SimConstants.PLOTCAPITAL);
+            List<Double> capitalList = (List<Double>) capitalList0.getList();
             if (capitalList.size() < 2) {
                 continue;
             }
@@ -564,12 +581,14 @@ public class Sim {
         summary.add(new Summary(correlation, "Correlation"));
     }
 
-    private Double getAllAbove(Map<String, Object> resultMap, List<String> output, List<Summary> summary) {
+    private Double getAllAbove(SerialListMap resultMap, List<String> output, List<Summary> summary) {
         boolean above = true;
         List<Double> scores = new ArrayList<>();
-        for (Entry<String, Object> entry : resultMap.entrySet()) {
-            Map<String, Object> aMap = (Map<String, Object>) entry.getValue();
-            double score = (double) aMap.get(SimConstants.SCORE);
+        for (Entry<String, SerialObject> entry : resultMap.entrySet()) {
+            SerialListMap aMap = (SerialListMap) entry.getValue();
+            log.info("TODO" + aMap.keySet());
+            log.info("TODO" + aMap.get(SimConstants.SCORE));
+            double score = ((SerialDouble) aMap.get(SimConstants.SCORE)).getAdouble();
             scores.add(score);
             if (score < 1) {
                 above = false;
@@ -642,7 +661,8 @@ public class Sim {
             output.add("");
             for (AbstractChromosome aChromosome : aList) {
                 IclijConfigMapChromosome anotherChromosome = (IclijConfigMapChromosome) aChromosome;
-                Map<String, Object> resultMap = anotherChromosome.getResultMap();
+                SerialListMap resultMap = anotherChromosome.getResultMap();
+                //Map<String, SerialListMap> resultMap = (Map<String, SerialListMap>) resultMap0;
                 Double keyScore = score;
                 if (isAllabove) {
                     keyScore = getAllAbove(resultMap, new ArrayList<String>(), new ArrayList<Summary>());
@@ -700,7 +720,7 @@ public class Sim {
                 myList.add(pair);
 
                 Map<String, Object> resultMap = new HashMap<>();
-                Map map2 = chromosome.getResultMap();
+                Map map2 = null; //chromosome.getResultMap();
                 Map<String, Map> map3 = map2;
                 for (Entry<String, Map> entry3 : map3.entrySet()) {
                     Map<String, Object> map4 = entry3.getValue();
@@ -727,7 +747,7 @@ public class Sim {
                     newMap.put(EvolveConstants.SIMTEXT, simtext);
                     resultMap.put(entry3.getKey(), newMap);
                 }
-                chromosome.setResultMap(resultMap);
+                //chromosome.setResultMap(resultMap);
             }
         }
         //list.size();

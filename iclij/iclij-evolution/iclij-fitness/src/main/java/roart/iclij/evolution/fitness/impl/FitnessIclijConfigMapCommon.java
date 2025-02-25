@@ -12,6 +12,7 @@ import roart.iclij.model.action.MarketActionData;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.model.MemoryItem;
+import roart.common.pipeline.data.SerialListMap;
 import roart.iclij.component.Component;
 import roart.iclij.component.factory.ComponentFactory;
 import roart.component.model.ComponentData;
@@ -28,7 +29,7 @@ public class FitnessIclijConfigMapCommon {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public Double fitnessCommon(ProfitData profitdata, Map<String, Object> map, MarketActionData action, Market market, ComponentData param, String componentName, String subcomponent, Parameters parameters, List<String> titletexts, Map<String, Object> resultMap) {
+    public Double fitnessCommon(ProfitData profitdata, Map<String, Object> map, MarketActionData action, Market market, ComponentData param, String componentName, String subcomponent, Parameters parameters, List<String> titletexts, SerialListMap resultMap) {
         List<MemoryItem> memoryItems = null;
         WebData myData = new WebData();
         myData.setUpdateMap(new HashMap<>());
@@ -66,8 +67,9 @@ public class FitnessIclijConfigMapCommon {
             Object[] result = component.calculateAccuracy(componentData2);
             score = (Double) result[0];
             if (resultMap != null) {
-                // TODO
+                // TODO TODOE
                 log.info("TODO" + componentData2.getResultMap().getSmap().getMap());
+                //resultMap.putAll(componentData2.getResultMap().getSmap().getMap());
                 resultMap.putAll(componentData2.getResultMap().getSmap().getMap());
             }
         } catch (Exception e) {

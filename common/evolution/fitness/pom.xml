@@ -25,7 +25,7 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-common-evolution-model</artifactId>
+      <artifactId>stockstat-common-model</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>

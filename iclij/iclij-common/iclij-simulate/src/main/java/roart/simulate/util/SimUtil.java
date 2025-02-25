@@ -14,6 +14,8 @@ import org.apache.commons.math3.stat.correlation.KendallsCorrelation;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
 
+import roart.common.pipeline.data.SerialListSimulateStock;
+import roart.common.pipeline.data.SerialListStockHistory;
 import roart.common.util.ArraysUtil;
 import roart.common.util.MathUtil;
 import roart.constants.SimConstants;
@@ -23,6 +25,10 @@ import roart.simulate.model.SimulateStock;
 import roart.simulate.model.StockHistory;
 
 public class SimUtil {
+    public static List<Pair<String, Double>> getTradeStocks(SerialListSimulateStock stockhistory) {
+        return getTradeStocks(stockhistory.getList());
+    }
+    
     public static List<Pair<String, Double>> getTradeStocks(List<SimulateStock> stockhistory) {
         List<Pair<String, Double>> list = new ArrayList<>();
         Map<String, List<SimulateStock>> stockMap = new HashMap<>();
@@ -73,6 +79,10 @@ public class SimUtil {
         return average > filter.getCorrelation();
     }
 
+    public static boolean isStable(SimulateFilter filter, SerialListStockHistory history, List<Double> list) {
+        return isStable(filter, history.getList(), list);
+    }
+    
     public static boolean isStable(SimulateFilter filter, List<StockHistory> history, List<Double> list) {
         StockHistory last = history.get(history.size() - 1);
         double lasttotal = last.getCapital().amount + last.getSum().amount;

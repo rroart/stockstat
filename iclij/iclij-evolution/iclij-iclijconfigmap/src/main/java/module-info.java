@@ -9,7 +9,7 @@ module iclij.evolutioniclijconfigmap {
     exports roart.evolution.iclijconfigmap.jenetics.gene.impl;
     requires iclij.common.config;
     requires evolution.gene;
-    requires evolution.model;
+    requires common.model;
     requires common.util;
     requires io.jenetics.base;
     requires com.fasterxml.jackson.core;

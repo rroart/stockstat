@@ -12,7 +12,7 @@ module iclij.evolutionchromosome {
     requires iclij.evolutionmarketfilter;
     requires iclij.evolutioniclijconfigmap;
     requires evolution.gene;
-    requires evolution.model;
+    requires common.model;
     requires common.util;
     requires io.jenetics.base;
     requires com.fasterxml.jackson.core;

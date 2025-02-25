@@ -6,17 +6,9 @@
  *
  */
 module evolution.model {
-    exports roart.evolution.fitness;
-    exports roart.evolution.chromosome;
-    exports roart.evolution.chromosome.impl;
-    exports roart.evolution.species;
-    exports roart.iclij.evolution.chromosome.impl;
-    exports roart.iclij.evolution.marketfilter.chromosome.impl;
-    exports roart.evolution.iclijconfigmap.genetics.gene.impl;
-    exports roart.evolution.iclijconfigmap.common.gene.impl;
-    
     requires common.config;
     requires common.util;
+    requires common.model;
     requires iclij.common.config;
     requires evolution.config;
     requires com.fasterxml.jackson.core;

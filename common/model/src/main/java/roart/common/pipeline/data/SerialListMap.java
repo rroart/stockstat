@@ -1,6 +1,7 @@
 package roart.common.pipeline.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,6 +27,12 @@ public class SerialListMap extends SerialObject {
             Object object = entry.getValue();
             if (object instanceof String serialobject) {
                 object = new SerialString(serialobject);
+            }
+            if (object instanceof Double serialobject) {
+                object = new SerialDouble(serialobject);
+            }
+            if (object instanceof Integer serialobject) {
+                object = new SerialInteger(serialobject);
             }
             map.add(new SerialKeyValue(entry.getKey(), (SerialObject) object));
         }
@@ -73,5 +80,19 @@ public class SerialListMap extends SerialObject {
                 .filter(streamIndex -> key.equals(map.get(streamIndex).getKey()))
                 .findFirst()
                 .orElse(-1);
+    }
+
+    public void putAll(Map<String, SerialObject> map) {
+        for (Entry<String, SerialObject> entry : map.entrySet()) {
+            this.map.add(new SerialKeyValue(entry.getKey(), entry.getValue()));
+        }
+    }
+
+    public Set<Entry<String, SerialObject>> entrySet() {
+        Map<String, SerialObject> map = new HashMap<>();
+        for (SerialKeyValue entry : this.map) {
+            map.put(entry.getKey(), entry.getValue());
+        }
+        return map.entrySet();
     }
 }

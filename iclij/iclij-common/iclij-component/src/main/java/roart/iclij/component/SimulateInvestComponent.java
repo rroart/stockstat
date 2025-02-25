@@ -40,6 +40,10 @@ import roart.common.model.MetaItem;
 import roart.common.model.SimDataItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialListMap;
+import roart.common.pipeline.data.SerialListPlain;
+import roart.common.pipeline.data.SerialListSimulateStock;
+import roart.common.pipeline.data.SerialListStockHistory;
 import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialVolume;
 import roart.common.util.ArraysUtil;
@@ -722,9 +726,9 @@ public class SimulateInvestComponent extends ComponentML {
                             }
                         }
                         Map<String, Object> map = new HashMap<>();
-                        map.put(SimConstants.HISTORY, aResult.history);
-                        map.put(SimConstants.STOCKHISTORY, aResult.stockhistory);
-                        map.put(SimConstants.PLOTCAPITAL, aResult.plotCapital);
+                        map.put(SimConstants.HISTORY, new SerialListStockHistory(aResult.history));
+                        map.put(SimConstants.STOCKHISTORY, new SerialListSimulateStock(aResult.stockhistory));
+                        map.put(SimConstants.PLOTCAPITAL, new SerialListPlain(aResult.plotCapital));
                         map.put(SimConstants.SCORE, score);
                         map.put(SimConstants.STARTDATE, TimeUtil.convertDate2(investStart));
                         map.put(SimConstants.ENDDATE, TimeUtil.convertDate2(investEnd));
@@ -736,7 +740,7 @@ public class SimulateInvestComponent extends ComponentML {
                         map.put(SimConstants.FILTER, JsonUtil.convert(filter));
                         //map.put("market", market.getConfig().getMarket());
                         // fix
-                        resultMap.put("" + offset, new SerialMapPlain(map));
+                        resultMap.put("" + offset, new SerialListMap(map));
                     }
                     scores.add(score);
                     if (aOneRun.lastbuysell != null) {
@@ -745,6 +749,7 @@ public class SimulateInvestComponent extends ComponentML {
                 }
             }
             if (evolving) {
+                // TODO
                 componentData.setResultMap(resultMap);
             }
             log.debug("time0 {}", System.currentTimeMillis() - time0);

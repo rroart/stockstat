@@ -19,5 +19,5 @@ module pipeline.util {
     requires model;
     requires org.slf4j;
     // for test
-    requires evolution.model;
+    //requires evolution.model;
 }

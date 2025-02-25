@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
+import roart.common.pipeline.data.SerialListMap;
 import roart.evolution.chromosome.impl.IndicatorChromosome;
 import roart.evolution.chromosome.impl.IndicatorChromosome3;
 import roart.evolution.chromosome.impl.NeuralNetChromosome;
@@ -40,13 +41,13 @@ public abstract class AbstractChromosome {
     
     protected Random random = new Random();
 
-    protected Map<String, Object> resultMap;
+    private SerialListMap resultMap;
     
-    public Map<String, Object> getResultMap() {
+    public SerialListMap getResultMap() {
         return resultMap;
     }
 
-    public void setResultMap(Map<String, Object> resultMap) {
+    public void setResultMap(SerialListMap resultMap) {
         this.resultMap = resultMap;
     }
 

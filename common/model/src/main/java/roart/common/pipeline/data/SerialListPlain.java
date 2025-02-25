@@ -3,31 +3,31 @@ package roart.common.pipeline.data;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SerialListPlain extends SerialObject {
-    private List list = new ArrayList<>();
+public class SerialListPlain<T> extends SerialObject {
+    private List<T> list = new ArrayList<>();
 
     public SerialListPlain() {
         super();
     }
 
-    public SerialListPlain(List list) {
+    public SerialListPlain(List<T> list) {
         super();
         this.list = list;
     }
 
-    public List getList() {
+    public List<T> getList() {
         return list;
     }
 
-    public void setList(List list) {
+    public void setList(List<T> list) {
         this.list = list;
     }
 
-    public void add(Object incdec) {
+    public void add(T incdec) {
         list.add(incdec);
     }
 
-    public Object get(int index) {
+    public T get(int index) {
         return list.get(index);
     }
 
