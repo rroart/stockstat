@@ -102,6 +102,7 @@ import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.config.AutoSimulateInvestConfig;
 import roart.util.ServiceUtil;
 import roart.common.inmemory.factory.InmemoryFactory;
+import roart.common.inmemory.model.Inmemory;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
@@ -138,6 +139,8 @@ public class AllTest {
     
     IO io;
 
+    Inmemory inmemory;
+    
     private InmemoryFactory inmemoryFactory = new TestInmemoryFactory();
 
     private CommunicationFactory communicationFactory = new TestCommunicationFactory();
@@ -185,7 +188,7 @@ public class AllTest {
           List<StockItem> dayStocks = iu.getDayStocks(conf, stockData);
           
           List<AbstractCategory> categories = Arrays.asList(new CategoryUtil().getCategories(conf, dayStocks,
-                  stockData.periodText, pipelinedata));
+                  stockData.periodText, pipelinedata, inmemory));
           
           // add all indicators for the category
 
@@ -223,7 +226,7 @@ public class AllTest {
         List<ResultItem> retlist = result.getList();
         PipelineData[] pipelineData = result.getPipelineData();
         
-        StockData stockData = new StockUtil().getStockData(conf, pipelineData);
+        StockData stockData = new StockUtil().getStockData(conf, pipelineData, inmemory);
 
         try {
             String mydate = TimeUtil.format(conf.getConfigData().getDate());
@@ -235,12 +238,12 @@ public class AllTest {
             // TODO split
             
             AbstractPredictor[] predictors = new PredictorUtils().getPredictors(conf, pipelineData,
-                    stockData.catName, stockData.cat, neuralnetcommand);
+                    stockData.catName, stockData.cat, neuralnetcommand, inmemory);
             //new ServiceUtil().createPredictors(categories);
             new PredictorUtils().calculatePredictors(predictors);
             
             Aggregator[] aggregates = new AggregatorUtils().getAggregates(conf, pipelineData,
-                    disableList, stockData.idNameMap, stockData.catName, stockData.cat, neuralnetcommand, stockData.stockdates);
+                    disableList, stockData.idNameMap, stockData.catName, stockData.cat, neuralnetcommand, stockData.stockdates, inmemory);
 
             /*
             for (AbstractCategory category : categories) {
@@ -297,7 +300,7 @@ public class AllTest {
         conf = new IclijConfig(configMaps, "config2", null);
         conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.TRUE);
         String market = TestConstants.MARKET;
-        dataSource = new TestDataSource(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), market, 26, false, Constants.INDEXVALUECOLUMN, false);
+        dataSource = new TestDataSource(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), market, 26, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" });
         webFluxUtil = new TestWebFluxUtil(conf, dataSource);
         parameters = new Parameters();
         parameters.setThreshold(1.0);
@@ -308,6 +311,8 @@ public class AllTest {
 
         CuratorFramework curatorClient = mock(CuratorFramework.class);
         
+        inmemory = inmemoryFactory.get(iconf);
+
         io = new IO(iclijDbDao, null, dataSource, webFluxUtil, fileSystemDao, inmemoryFactory, communicationFactory, curatorClient);
         ((TestWebFluxUtil)webFluxUtil).setIo(io);
         ((TestCommunicationFactory)communicationFactory).setIo(io);
@@ -323,6 +328,18 @@ public class AllTest {
     @Test
     public void test2() throws Exception {
         ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        //aci.setBuy(null);
+        //aci.setRecord(LocalDate.now());
+        try {
+            ac.runAction(iconf, aci, new ArrayList<>());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
+    @Test
+    public void testFindProfitPredictor() throws Exception {
+        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.PREDICTOR, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         //aci.setBuy(null);
         //aci.setRecord(LocalDate.now());
         try {

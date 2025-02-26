@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.OptionalDouble;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -74,8 +75,10 @@ import roart.service.model.ProfitInputData;
 import roart.iclij.service.util.MarketUtil;
 import roart.iclij.service.util.MiscUtil;
 import roart.iclij.verifyprofit.VerifyProfitUtil;
+import roart.util.PipelineThreadUtils;
 import roart.util.ServiceUtil;
 import roart.model.io.IO;
+import roart.queue.PipelineThread;
 
 public abstract class MarketAction extends Action {
 
@@ -544,10 +547,22 @@ public abstract class MarketAction extends Action {
     public void getPicksFilteredOuter(WebData myData, ComponentData param, IclijConfig config, ActionComponentItem marketTime, Boolean evolve, Boolean wantThree, String actionItem) {
         IclijController.taskList.add(actionItem);
         try {
+            if (config.wantsInmemoryPipeline()) {
+                String uuid = UUID.randomUUID().toString();
+                param.setId(uuid);
+            }
             getPicksFiltered(myData, param, config, marketTime, evolve, wantThree);                
         } catch (Exception e) {
             throw e;
         } finally {
+            if (config.wantsInmemoryPipeline()) {
+                String path3 = "/" + Constants.STOCKSTAT + "/" + "pipeline" + "/" + param.getService().id + "/" + param.getId();
+                try {
+                    new PipelineThreadUtils(param.getConfig(), param.getService()).deleteOld(param.getService().getIo().getCuratorClient(), path3, param.getId(), 2 * 60 * 1000, false, false);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
             IclijController.taskList.remove(actionItem);
         }
     }

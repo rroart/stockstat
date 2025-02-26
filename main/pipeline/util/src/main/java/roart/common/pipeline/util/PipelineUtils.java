@@ -12,6 +12,11 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import org.apache.curator.framework.CuratorFramework;
 
 import roart.common.constants.Constants;
@@ -50,6 +55,8 @@ import roart.common.inmemory.model.InmemoryMessage;
 public class PipelineUtils {
     private static Logger log = LoggerFactory.getLogger(PipelineUtils.class);
     
+    private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+
     public static Map<String, PipelineData> getPipelineMap(PipelineData[] datareaders) {
         Map<String, PipelineData> pipelineMap = new HashMap<>();
         for (PipelineData datareader : datareaders) {
@@ -102,7 +109,7 @@ public class PipelineUtils {
                     InmemoryMessage msg = JsonUtil.convertnostrip(datareader.getMessage(), InmemoryMessage.class);                    
                     String str = inmemory.read(msg);
                     log.info("TODO"+str);
-                    datareaders[i] = JsonUtil.convertnostrip(str, PipelineData.class);
+                    datareaders[i] = JsonUtil.convertnostrip(str, PipelineData.class, mapper);
                     datareaders[i].setLoaded(true);
                     log.info("Pipeline write {} {}", datareaders[i].getId(), datareaders[i].getName());
                     return datareaders[i];
@@ -661,11 +668,13 @@ public class PipelineUtils {
             if (!data.isOld()) {
                 InmemoryMessage msg = null;
                 try {
-                    String s = JsonUtil.convert(data);
+                    //PipelineData d = JsonUtil.convertAndBack(data, null);
+                    //String s = JsonUtil.convert(data);
                     String md5 = null;
-                    msg = inmemory.send(Constants.STOCKSTAT + "-" + data.getId() + "-" + data.getName(), s, md5);
+                    msg = inmemory.send(Constants.STOCKSTAT + "-" + data.getId() + "-" + data.getName(), data, md5);
+                    log.info("Sent size {} {}", msg.getCount(), JsonUtil.convert(data, mapper).length());
                     //result.message = msg;
-                    curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.DATA + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
+                    curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + "pipeline" + "/" + data.getId() + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }

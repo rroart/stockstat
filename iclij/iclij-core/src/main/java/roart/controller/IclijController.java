@@ -26,6 +26,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.service.ControlService;
 import roart.iclij.service.IclijServiceParam;
 import roart.populate.PopulateThread;
+import roart.queue.PipelineThread;
 import roart.queue.QueueThread;
 import roart.model.io.IO;
 
@@ -95,6 +96,7 @@ public class IclijController implements CommandLineRunner {
             
             getInstance();
             new QueueThread(iclijConfig, instanceC, io).start();
+            new PipelineThread(iclijConfig, instanceC, io).start();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

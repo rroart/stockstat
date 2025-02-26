@@ -18,6 +18,8 @@ module pipeline.util {
     requires commons.math3;
     requires model;
     requires org.slf4j;
+    requires com.fasterxml.jackson.databind;
+    requires com.fasterxml.jackson.datatype.jsr310;
     // for test
     //requires evolution.model;
 }

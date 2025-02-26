@@ -2,8 +2,12 @@ package roart.action;
 
 import java.util.concurrent.TimeUnit;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
+import roart.common.inmemory.model.InmemoryMessage;
+
 import java.util.Set;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import org.apache.zookeeper.data.Stat;
@@ -16,6 +20,7 @@ import roart.common.webflux.WebFluxUtil;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.ControlService;
 import roart.model.io.IO;
+import roart.util.PipelineThreadUtils;
 
 public class LeaderRunner implements Runnable {
     static Logger log = LoggerFactory.getLogger(LeaderRunner.class);
@@ -56,6 +61,17 @@ public class LeaderRunner implements Runnable {
                 Action action = new MainAction(iclijConfig, io);
                 while (true) {
                     try {
+                        // TODO pipeline
+                        String path2 = "/" + Constants.STOCKSTAT + "/" + "pipeline" + "/" + "live";
+                        List<String> elems = getOld(curatorClient, path2, 2 * 60 * 1000, false, false);
+                        for (String elem : elems) {
+                            String path3 = "/" + Constants.STOCKSTAT + "/" + "pipeline" + "/" + elem;
+                            new PipelineThreadUtils(iclijConfig, controlService).deleteOld(curatorClient, path3, elem, 2 * 60 * 1000, false, false);
+                            log.info("Deleting " + path2 + "/" + elem);
+                            curatorClient.delete().forPath(path2 + "/" + elem);
+                        }
+
+                        // TODO only old borrowed leftover
                         String path = "/" + Constants.STOCKSTAT + "/" + Constants.DB;
                         if (curatorClient.checkExists().forPath(path) != null) {
                             deleteOld(curatorClient, path, 15 * 60 * 1000, false, false);
@@ -66,6 +82,7 @@ public class LeaderRunner implements Runnable {
                     }
 
                     try {
+                        // TODO only old borrowed leftover
                         String path = "/" + Constants.STOCKSTAT + "/" + Constants.DATA;
                         if (curatorClient.checkExists().forPath(path) != null) {
                             deleteOld(curatorClient, path, 20 * 60 * 1000, true, true);
@@ -130,4 +147,27 @@ public class LeaderRunner implements Runnable {
             }
         }
     }
+    
+    private List<String> getOld(CuratorFramework curatorClient, String path, int deleteTime, boolean deleteQueue, boolean deleteInmemory) throws Exception {
+        List<String> list = new ArrayList<>();
+        Stat b = curatorClient.checkExists().forPath(path);
+        if (b == null) {
+            return List.of();
+        }
+        List<String> children = curatorClient.getChildren().forPath(path);
+        log.debug("Children {}", children.size());
+        log.info("Children" + children);
+        for (String child : children) {
+            Stat stat = curatorClient.checkExists().forPath(path + "/" + child);
+            log.debug("Time {} {}", System.currentTimeMillis(), stat.getMtime());;
+            long time = System.currentTimeMillis() - stat.getMtime();
+            log.info("Time {} {}", time, deleteTime);
+            if (time > deleteTime) {
+                list.add(child);
+                log.error("Service died " + child);
+            }
+        }
+        return list;
+    }
+
 }

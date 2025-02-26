@@ -63,6 +63,8 @@ import roart.model.io.IO;
 public class ControlService {
     private static Logger log = LoggerFactory.getLogger(ControlService.class);
 
+    public static String id = UUID.randomUUID().toString();
+    
     // Config for the core, not iclij
     public IclijConfig coremlconf;
 
@@ -274,16 +276,16 @@ public class ControlService {
     }
    /**
      * Create result lists
+ * @param uuid TODO
  * @param useMl TODO
-     * 
-     * @return the tabular result lists
+ * @return the tabular result lists
      */
 
-    public PipelineData[] getContent(boolean useMl) {
-        return getContent(useMl, new ArrayList<>());
+    public PipelineData[] getContent(String uuid, boolean useMl) {
+        return getContent(uuid, useMl, new ArrayList<>());
     }
     
-    public PipelineData[] getContent(boolean useMl, List<String> disableList) {
+    public PipelineData[] getContent(String uuid, boolean useMl, List<String> disableList) {
         
         long[] mem0 = MemUtil.mem();
         log.info("MEM {}", MemUtil.print(mem0));
@@ -297,10 +299,10 @@ public class ControlService {
         log.info("Wants {}", iclijConfig.wantsInmemoryPipeline());
         if (iclijConfig.wantsInmemoryPipeline()) {
             log.info("InmemoryPipeline");
-            param.setId(UUID.randomUUID().toString());
-            String path = "/" + Constants.STOCKSTAT + "/" + "pipeline" + "/" + "live";
+            param.setId(id + "/" + uuid);
+            String path = "/" + Constants.STOCKSTAT + "/" + "pipeline" + "/" + "live" + "/" + id;
             try {
-                io.getCuratorClient().setData().forPath(path + "/" + param.getId(), new byte[0]);
+                io.getCuratorClient().setData().forPath(path + "/" + uuid, new byte[0]);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
@@ -438,7 +440,7 @@ public class ControlService {
             updateMap.putAll(datum.getMap(PipelineConstants.UPDATE));
             scoreMap.putAll(datum.getMap(PipelineConstants.SCORE));
             // rec with own result
-            // TODO
+            // TODO cast seriallistmap
             resultMap.putAll(datum.getMap(PipelineConstants.RESULT));
         }
         return result.getList();

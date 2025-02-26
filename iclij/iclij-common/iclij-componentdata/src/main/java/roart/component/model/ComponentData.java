@@ -37,6 +37,8 @@ import roart.model.io.IO;
 public class ComponentData {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private String id;
+    
     private ComponentInput input;
     
     private IclijConfig config;
@@ -84,6 +86,7 @@ public class ComponentData {
     }
     
     public ComponentData(ComponentData componentparam) {
+        this.id = componentparam.id;
         this.config = componentparam.config;
         this.input = componentparam.input;
         this.input.setValuemap(new HashMap<>(componentparam.input.getValuemap()));
@@ -135,6 +138,14 @@ public class ComponentData {
         param.setOffset(days);
         param.setMarket(aMarket);
         return param;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public ComponentInput getInput() {
@@ -380,7 +391,7 @@ public class ComponentData {
 
         service.coremlconf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
         service.coremlconf.getConfigData().getConfigValueMap().putAll(setValueMap);
-        PipelineData[] result = getService().getContent(useMl);
+        PipelineData[] result = getService().getContent(id, useMl);
         this.resultMaps = result;
         try {
             // TODO null name, fix later
@@ -424,7 +435,7 @@ public class ComponentData {
 	
         service.coremlconf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
         service.coremlconf.getConfigData().getConfigValueMap().putAll(setValueMap);
-        PipelineData[] result = getService().getContent(useMl);
+        PipelineData[] result = getService().getContent(id, useMl);
         this.resultMaps = result;
         try {
             MyMyConfig conf = null;
@@ -458,7 +469,7 @@ public class ComponentData {
             service.coremlconf.getConfigData().getConfigValueMap().putAll(updateMap);
         }
         service.coremlconf.getConfigData().setDate(getBaseDate());
-        PipelineData[] maps = service.getContent(useMl, getDisableList());
+        PipelineData[] maps = service.getContent(id, useMl, getDisableList());
         this.resultMaps = maps;
         //System.out.println(maps.keySet());
         PipelineData aMap = null;
