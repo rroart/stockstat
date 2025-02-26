@@ -3,6 +3,8 @@ package roart.common.pipeline.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import roart.simulate.model.StockHistory;
 
 public class SerialListStockHistory extends SerialObject {
@@ -37,6 +39,7 @@ public class SerialListStockHistory extends SerialObject {
         return list.size();
     }
 
+    @JsonIgnore
     public boolean isEmpty() {
         return this.size() == 0;
     }
