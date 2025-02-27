@@ -178,7 +178,7 @@ public class ServiceUtil {
                 log.error(Constants.EXCEPTION, e);
                 return result;
             }
-            List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+            List<String> stockDates = param.getService().getDates(market.getConfig().getMarket(), param.getId());
             // the market may be incomplete, the exception and skip
             try {
                 LocalDate endDate = componentInput.getEnddate();
@@ -678,7 +678,7 @@ public class ServiceUtil {
      
         // offset is the time interval for which we are checking the two trend
         // verificationdays is the interval for above / below check
-        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket(), param.getId());
 
         Trend trend;
         Trend trend2;
@@ -836,7 +836,7 @@ public class ServiceUtil {
 
         short startoffset = new MarketUtil().getStartoffset(market);
         
-        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket(), param.getId());
         String baseDateStr = TimeUtil.convertDate2(param.getBaseDate());
         String futureDateStr = TimeUtil.convertDate2(param.getFutureDate());
         log.info("Base future date {} {}", baseDateStr, futureDateStr);

@@ -20,7 +20,7 @@ public class IncDecUtil {
             PipelineData[] maps, boolean inc, List<String> mydates, Inmemory inmemory) {
         List<String> dates;
         if (mydates == null) {
-            dates = param.getService().getDates(param.getService().coremlconf.getConfigData().getMarket());        
+            dates = param.getService().getDates(param.getService().coremlconf.getConfigData().getMarket(), param.getId());        
         } else {
             dates = mydates;
         }

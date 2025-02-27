@@ -60,7 +60,7 @@ public class TestCuratorFramework implements CuratorFramework {
 
     @Override
     public DeleteBuilder delete() {
-        return null;
+        return new TestDeleteBuilder();
     }
 
     @Override

@@ -189,10 +189,11 @@ public abstract class MarketAction extends Action {
             //srv.getConfig();
             param.setService(srv);
             srv.coremlconf.getConfigData().setMarket(market.getConfig().getMarket());
+
             boolean skipIsDataset = !timingsdone.isEmpty();
             List<String> stockDates = null;
             if (skipIsDataset || !isDataset()) {
-                stockDates = param.getService().getDates(marketName);
+                stockDates = param.getService().getDates(marketName, param.getId());
                 if (stockDates == null || stockDates.isEmpty()) {
                     continue;
                 }
@@ -587,6 +588,8 @@ public abstract class MarketAction extends Action {
         acomponent.setConfig(aconfig);
         componentMap.put(marketTime.getComponent(), acomponent);
 
+        // TODO why so early?
+        // uses getcontent
         setValMap(param);
         PipelineData[] maps = param.getResultMaps();
         // TODO bad

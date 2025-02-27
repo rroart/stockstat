@@ -44,7 +44,7 @@ public class IclijConfigMapEvolveJ extends EvolveJ {
             EvolutionConfig evolutionConfig, String pipeline, Component component, List<String> confList) {
         double score = -1;
         Map<String, Object> map = new HashMap<>();
-        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket(), param.getId());
         FitnessIclijConfigMap2 fit = new FitnessIclijConfigMap2(action, param, profitdata, market, null, pipeline, buy, subcomponent, parameters, null, stockDates);
         int size = 7;
         //final Codec<IclijConfigMapChromosome, IclijConfigMapGene> codec = Codec.of(Genotype.of(new BitChromosome(new Boolean(), size)),gt -> (BitChromosome) gt.chromosome());

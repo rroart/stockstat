@@ -351,7 +351,7 @@ public class ComponentData {
     }
 
     public int setDatesNot() throws ParseException {
-        List<String> stockdates = service.getDates(getMarket());
+        List<String> stockdates = service.getDates(getMarket(), null);
         String date = TimeUtil.convertDate2(this.getInput().getEnddate());
         List<String> list = new TimeUtil().setDates(date, stockdates, getComponentTime().getOffset(), input.getLoopoffset(), getComponentTime().getFuturedays());
         String baseDateStr = list.get(0);
@@ -366,7 +366,7 @@ public class ComponentData {
     }
     
     public int setDates(String aDate, List<String> stockdates, MarketActionData actionData, Market market) throws ParseException {
-        return getComponentTime().setDates(aDate, stockdates, actionData, market, getService(), getInput());
+        return getComponentTime().setDates(aDate, stockdates, actionData, market, getService(), getInput(), id);
     }
     
     public void setUsedsec(long time0) {
@@ -385,6 +385,10 @@ public class ComponentData {
         setValueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
         setValueMap.put(ConfigConstants.MISCTHRESHOLD, null);
 
+
+
+
+	
 	// common
         setValueMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
         setValueMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
@@ -426,7 +430,9 @@ public class ComponentData {
         setValueMap.put(ConfigConstants.MACHINELEARNINGPREDICTORS, Boolean.FALSE);
         setValueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
         setValueMap.put(ConfigConstants.MISCTHRESHOLD, null);
-        setValueMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
+
+	// different
+	setValueMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
         setValueMap.put(ConfigConstants.MISCMYDAYS, 0);
 
 	// common
@@ -438,8 +444,6 @@ public class ComponentData {
         PipelineData[] result = getService().getContent(id, useMl);
         this.resultMaps = result;
         try {
-            MyMyConfig conf = null;
-            // NOT yet Inmemory inmemory = InmemoryFactory.get(conf .getInmemoryServer(), conf.getInmemoryHazelcast(), conf.getInmemoryRedis());
             //log.info("" + result.keySet());
             //log.info("" + result.get(PipelineConstants.META).keySet());
             Inmemory inmemory = getService().getIo().getInmemoryFactory().get(config);
@@ -450,7 +454,7 @@ public class ComponentData {
             this.setCategoryValueMap(aCategoryValueMap);
             Map<String, List<List<Double>>> aFillCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, cat).get(PipelineConstants.FILLLIST)));
             this.setFillCategoryValueMap(aFillCategoryValueMap);
-            InmemoryMessage msg = null;
+
             Map<String, SerialVolume[]> aVolumeMap = PipelineUtils.getVolume(PipelineUtils.getPipeline(result, cat));
             this.setVolumeMap(aVolumeMap);
         } catch (Exception e) {

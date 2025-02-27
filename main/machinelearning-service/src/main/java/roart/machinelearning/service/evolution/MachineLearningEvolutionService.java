@@ -159,6 +159,7 @@ public class MachineLearningEvolutionService {
             PipelineData datum = getEvolveData(updateMap, scoreMap, resultMap);
             pipelineData = ArrayUtils.add(pipelineData, datum);
             if (origparam.getId() != null) {
+                log.info("Before setPipelineMap");
                 PipelineUtils.setPipelineMap(pipelineData, origparam.getId());
                 pipelineData = PipelineUtils.setPipelineMap(pipelineData, inmemory, io.getCuratorClient());
             }

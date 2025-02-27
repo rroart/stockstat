@@ -197,7 +197,7 @@ public class SimulateInvestComponent extends ComponentML {
         if (simulateParam.getStockDates() != null) {
             data.stockDates = simulateParam.getStockDates();
         } else {
-            data.stockDates = param.getService().getDates(market.getConfig().getMarket());           
+            data.stockDates = param.getService().getDates(market.getConfig().getMarket(), param.getId());           
         }
         if (!TimeUtil.rangeCheck(data.stockDates, TimeUtil.replace(simConfig.getStartdate()), TimeUtil.replace(simConfig.getEnddate()))) {
             Map<String, Object> map = new HashMap<>();

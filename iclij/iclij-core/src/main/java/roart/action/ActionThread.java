@@ -246,8 +246,10 @@ public class ActionThread extends Thread {
             log.error(Constants.EXCEPTION, e);
         }
         param.setAction(action.getName());
-        List<String> stockDates = param.getService().getDates(item.getMarket());
+        // TODO null param id_
+        List<String> stockDates = param.getService().getDates(item.getMarket(), param.getId());
         if (!IclijConfigConstants.DATASET.equals(action.getName())) {
+            // TODO null param id_
             action.getParamDates(market, param, stockDates);
         }
         List<MetaItem> metas = param.getService().getMetas();

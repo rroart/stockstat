@@ -56,10 +56,10 @@ public class ComponentTime {
         this.futuredays = futuredays;
     }
 
-    public int setDates(String aDate, List<String> stockdates, MarketActionData actionData, Market market, ControlService service, ComponentInput input) throws ParseException {
+    public int setDates(String aDate, List<String> stockdates, MarketActionData actionData, Market market, ControlService service, ComponentInput input, String id) throws ParseException {
         String date;
         if (stockdates == null) {
-            stockdates = service.getDates(market.getConfig().getMarket());
+            stockdates = service.getDates(market.getConfig().getMarket(), id);
         }
         int loopoffset = 0;
         Integer offsetMult = input.getLoopoffset();

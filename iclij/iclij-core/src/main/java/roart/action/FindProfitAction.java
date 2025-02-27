@@ -255,7 +255,7 @@ public class FindProfitAction extends MarketAction {
         int offset = new ComponentTimeUtil().getFindProfitOffset(market, param.getInput());
         short startoffset = new MarketUtil().getStartoffset(market);
         prevdate = prevdate.plusDays(offset);
-        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket(), param.getId());
         prevdate = TimeUtil.getBackEqualBefore2(prevdate, verificationdays + startoffset, stockDates);
         //prevdate = prevdate.minusDays(verificationdays + startoffset);
         LocalDate olddate = prevdate.minusDays(getActionData().getTime(market));

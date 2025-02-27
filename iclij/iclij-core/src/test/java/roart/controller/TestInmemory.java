@@ -3,6 +3,9 @@ package roart.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -12,6 +15,8 @@ import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.util.JsonUtil;
 
 public class TestInmemory extends Inmemory {
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
     private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
 
     private static Map<String, Object> map = new HashMap<>();
@@ -22,7 +27,10 @@ public class TestInmemory extends Inmemory {
 
     @Override
     public InmemoryMessage send(String id, Object data, String md5) {
-        map.put(id, JsonUtil.convert(data, mapper));
+        Object old = map.put(id, JsonUtil.convert(data, mapper));
+        if (old != null) {
+            log.error("TODO already sent {}", id);
+        }
         return new InmemoryMessage(getServer(), id, 0, md5);
     }
     

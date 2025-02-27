@@ -32,7 +32,7 @@ public class EvolveFilterMy extends EvolveMy {
             Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests,
             Map<String, Object> confMap, EvolutionConfig evolutionConfig, String pipeline, Component component,
             List<String> confList) {
-        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket(), param.getId());
         int verificationdays = param.getConfig().verificationDays();
 
         List<IncDecItem> allIncDecs = null;

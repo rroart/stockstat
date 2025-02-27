@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.action.ActionThread;
+import roart.action.LeaderRunner;
 import roart.common.communication.factory.CommunicationFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.config.ConfigMaps;
@@ -41,7 +42,9 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.bean.ConfigI;
 import roart.iclij.model.Parameters;
+import roart.iclij.service.ControlService;
 import roart.model.io.IO;
+import roart.queue.PipelineThread;
 import roart.testdata.TestConstants;
 
 @TestInstance(Lifecycle.PER_CLASS)
@@ -116,7 +119,7 @@ public class InmemoryPipelineTest {
 
     @Test
     public void test() throws Exception {
-        
+        //new LeaderRunner(iconf, null, io).run();
     }
     
     @Test

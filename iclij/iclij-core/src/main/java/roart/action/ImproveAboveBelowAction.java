@@ -133,7 +133,7 @@ public class ImproveAboveBelowAction extends MarketAction {
             // 0 ok?
             Map<String, Object> aMap = new HashMap<>();
 
-            List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+            List<String> stockDates = param.getService().getDates(market.getConfig().getMarket(), param.getId());
             int verificationdays = param.getConfig().verificationDays();
 
             //ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters, mlTests);
@@ -159,6 +159,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                 Parameters realParameters = JsonUtil.convert(aParameter, Parameters.class);
                 Double threshold = realParameters.getThreshold();
 
+                // uses getcontent
                 param.getAndSetCategoryValueMap(false);
 
                 //FitnessAboveBelow fit = new FitnessAboveBelow(action, new ArrayList<>(), param, profitdata, market, null, this.getPipeline(), null, subcomponent, realParameters, null, incdecsP, components, subcomponents, stockDates);
@@ -426,7 +427,7 @@ public class ImproveAboveBelowAction extends MarketAction {
         marketMemory.addAll(myData.getMemoryItems());
         */
         
-        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket(), param.getId());
         int verificationdays = param.getConfig().verificationDays();
         /*
         List<IncDecItem> allIncDecs = null;

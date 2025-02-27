@@ -108,7 +108,7 @@ public class PopulateThread extends Thread {
                 }
 
                 Short findTime = market.getConfig().getFindtime();
-                List<String> dates = param.getService().getDates(market.getConfig().getMarket());
+                List<String> dates = param.getService().getDates(market.getConfig().getMarket(), param.getId());
                 String date = dates.get(populate);
                 int index = populate;
                 while (index < dates.size() - findTime) {

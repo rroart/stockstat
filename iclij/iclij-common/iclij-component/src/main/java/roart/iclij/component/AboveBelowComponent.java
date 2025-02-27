@@ -40,7 +40,7 @@ public class AboveBelowComponent extends ComponentML {
         ComponentData componentData = new ComponentData(param);
         
         int verificationdays = param.getConfig().verificationDays();
-        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket(), param.getId());
         List<IncDecItem> allIncDecs = null;
         LocalDate date = param.getFutureDate();
         date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);

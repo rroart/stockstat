@@ -43,7 +43,7 @@ public class AboveBelowEvolveJ extends EvolveJ {
             String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, Map<String, Object> confMap,
             EvolutionConfig evolutionConfig, String pipeline, Component component, List<String> confList) {
         double score = -1;
-        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket(), param.getId());
         int verificationdays = param.getConfig().verificationDays();
         List<IncDecItem> allIncDecs = null;
         LocalDate date = param.getFutureDate();

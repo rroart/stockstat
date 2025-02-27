@@ -66,7 +66,7 @@ public class ImproveFilterAction extends MarketAction {
         if (param.getUpdateMap() == null) {
             param.setUpdateMap(new HashMap<>());
         }
-        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket(), param.getId());
         int verificationdays = param.getConfig().verificationDays();
         //param.getInput().setDoSave(false);
         try {

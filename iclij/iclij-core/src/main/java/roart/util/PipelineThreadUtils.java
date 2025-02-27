@@ -38,19 +38,25 @@ public class PipelineThreadUtils {
         log.debug("Children {}", children.size());
         log.info("Children {}", children);
         for (String child : children) {
-            Stat stat = curatorClient.checkExists().forPath(path + "/" + child);
-            log.debug("Time {} {}", System.currentTimeMillis(), stat.getMtime());;
-            long time = System.currentTimeMillis() - stat.getMtime();
-            log.debug("Time {}", time);
-            byte[] data = curatorClient.getData().forPath(path + "/" + child);
-            String str = new String(data);
-            log.info("Element deleted " + str);
-            Inmemory inmemory = controlService.getIo().getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
-            //InmemoryMessage m = new InmemoryMessage(iclijConfig.getInmemoryServer(), id + "-" + child, 0);
-            InmemoryMessage m = JsonUtil.convert(str, InmemoryMessage.class);
-            inmemory.delete(m);
+            List<String> children2 = curatorClient.getChildren().forPath(path + "/" + child);
+            log.info("Children2" + children2);
+            for (String child2 : children2) {
+                Stat stat = curatorClient.checkExists().forPath(path + "/" + child + "/" + child2);
+                log.debug("Time {} {}", System.currentTimeMillis(), stat.getMtime());;
+                long time = System.currentTimeMillis() - stat.getMtime();
+                log.debug("Time {}", time);
+                byte[] data = curatorClient.getData().forPath(path + "/" + child + "/" + child2);
+                String str = new String(data);
+                log.info("Element deleted " + str);
+                Inmemory inmemory = controlService.getIo().getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+                //InmemoryMessage m = new InmemoryMessage(iclijConfig.getInmemoryServer(), id + "-" + child, 0);
+                InmemoryMessage m = JsonUtil.convert(str, InmemoryMessage.class);
+                inmemory.delete(m);
+                curatorClient.delete().forPath(path + "/" + child + "/" + child2);
+            }
             curatorClient.delete().forPath(path + "/" + child);
         }
+        curatorClient.delete().forPath(path);
         return list;
     }
 

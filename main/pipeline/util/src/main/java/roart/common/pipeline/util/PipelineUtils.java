@@ -111,7 +111,7 @@ public class PipelineUtils {
                     log.info("TODO"+str);
                     datareaders[i] = JsonUtil.convertnostrip(str, PipelineData.class, mapper);
                     datareaders[i].setLoaded(true);
-                    log.info("Pipeline write {} {}", datareaders[i].getId(), datareaders[i].getName());
+                    log.info("Pipeline read {} {}", datareaders[i].getId(), datareaders[i].getName());
                     return datareaders[i];
                 }
             }
@@ -668,11 +668,12 @@ public class PipelineUtils {
             if (!data.isOld()) {
                 InmemoryMessage msg = null;
                 try {
+                    data.setOld(true);
                     //PipelineData d = JsonUtil.convertAndBack(data, null);
                     //String s = JsonUtil.convert(data);
                     String md5 = null;
-                    msg = inmemory.send(Constants.STOCKSTAT + "-" + data.getId() + "-" + data.getName(), data, md5);
-                    log.info("Sent size {} {}", msg.getCount(), JsonUtil.convert(data, mapper).length());
+                    msg = inmemory.send(data.getId() + "-" + data.getName(), data, md5);
+                    log.info("Sent size {} {} {}", msg.getId(), msg.getCount(), JsonUtil.convert(data, mapper).length());
                     //result.message = msg;
                     curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + "pipeline" + "/" + data.getId() + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
                 } catch (Exception e) {
@@ -681,7 +682,7 @@ public class PipelineUtils {
                 PipelineData newDatum = new PipelineData();
                 newDatum.setId(data.getId());
                 newDatum.setName(data.getName());
-                newDatum.setOld(false);
+                newDatum.setOld(true);
                 newDatum.setLoaded(false);
                 newDatum.setMessage(JsonUtil.convert(msg));
                 newPipelineData[i++] = newDatum;

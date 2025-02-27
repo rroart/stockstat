@@ -50,6 +50,7 @@ import roart.db.dao.IclijDbDao;
 import roart.db.spring.DbSpringAccess;
 import roart.filesystem.FileSystemDao;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.model.WebData;
 import roart.iclij.model.WebDataJson;
 import roart.iclij.model.component.ComponentInput;
@@ -124,7 +125,11 @@ public class ControlService {
         }
         ConfigTreeMap map2 = coremlconf.getConfigData().getConfigTreeMap();
         print(map2, 0);
-
+        if (iclijConfig.wantsInmemoryPipeline()) {
+            //log.info("Wants {}", coremlconf.wantsInmemoryPipeline());
+            coremlconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
+            log.info("Wants {}", coremlconf.wantsInmemoryPipeline());
+        }
     }
 
     public ConfigData getCoreConfig() {
@@ -257,7 +262,7 @@ public class ControlService {
         return result.getStocks();   	
     }
     
-    public List<String> getDates(String market) {
+    public List<String> getDates(String market, String uuid) {
         String key = CacheConstants.DATES + coremlconf.getConfigData().getMarket() + coremlconf.getConfigData().getDate();
         List<String> list =  (List<String>) MyCache.getInstance().get(key);
         if (list != null) {
@@ -269,6 +274,10 @@ public class ControlService {
         param.setConfigData(coremlconf.getConfigData());
         param.setWantMaps(true);
         param.setMarket(market);
+        if (iclijConfig.wantsInmemoryPipeline()) {
+            log.info("InmemoryPipeline");
+            param.setId(id + "/" + uuid);
+        }
         IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETDATES);
         list = PipelineUtils.getDatelist(PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.DATELIST, inmemory));      
         MyCache.getInstance().put(key, list);
@@ -291,6 +300,7 @@ public class ControlService {
         log.info("MEM {}", MemUtil.print(mem0));
 
         String key = CacheConstants.CONTENT + coremlconf.getConfigData().getMarket() + coremlconf.getConfigData().getMlmarket() + coremlconf.getConfigData().getDate() + coremlconf.getConfigData().getConfigValueMap();
+        log.info("Content key {} {}", key, key.hashCode());
         PipelineData[] list = (PipelineData[]) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
@@ -300,14 +310,6 @@ public class ControlService {
         if (iclijConfig.wantsInmemoryPipeline()) {
             log.info("InmemoryPipeline");
             param.setId(id + "/" + uuid);
-            String path = "/" + Constants.STOCKSTAT + "/" + "pipeline" + "/" + "live" + "/" + id;
-            try {
-                io.getCuratorClient().setData().forPath(path + "/" + uuid, new byte[0]);
-            } catch (Exception e) {
-                log.error(Constants.EXCEPTION, e);
-            }
-            String path2 = "/" + Constants.STOCKSTAT + "/" + "pipeline";
-            //QueueThread.queue.add(param.getId());
         }
         param.setConfigData(coremlconf.getConfigData());
         param.setWantMaps(true);

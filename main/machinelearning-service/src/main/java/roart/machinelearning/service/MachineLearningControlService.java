@@ -174,6 +174,7 @@ public class MachineLearningControlService {
         //printmap(maps, 0);
         result.setList(retlist);
         if (origparam.getId() != null) {
+            log.info("Before setPipelineMap");
             PipelineUtils.setPipelineMap(pipelineData, origparam.getId());
             pipelineData = PipelineUtils.setPipelineMap(pipelineData, inmemory, io.getCuratorClient());
         }
@@ -210,6 +211,10 @@ public class MachineLearningControlService {
         param.setConfigData(conf.getConfigData());
         param.setWantMaps(origparam.isWantMaps());
         param.setConfList(disableList);
+        if (conf.wantsInmemoryPipeline()) {
+            log.info("InmemoryPipeline");
+            param.setId(origparam.getId());
+        }
         // TODO retry or queue
         IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
 

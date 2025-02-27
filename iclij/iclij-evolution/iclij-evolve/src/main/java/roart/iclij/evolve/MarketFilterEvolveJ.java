@@ -50,7 +50,7 @@ public class MarketFilterEvolveJ extends EvolveJ {
         List<String> categories = new MetaUtil().getCategories(meta);
         double score = -1;
         
-        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket(), param.getId());
         int verificationdays = param.getConfig().verificationDays();
 
         List<IncDecItem> allIncDecs = null;

@@ -241,6 +241,7 @@ public class CoreControlService {
         result.setList(retlist);
         if (origparam.getId() != null) {
             //PipelineUtils.setPipelineMap(pipelinedata, false);
+            log.info("Before setPipelineMap");
             PipelineUtils.setPipelineMap(pipelinedata, origparam.getId());
             pipelinedata = PipelineUtils.setPipelineMap(pipelinedata, inmemory, io.getCuratorClient());
         }
@@ -622,6 +623,7 @@ public class CoreControlService {
 
     /// TODO too big
     public void getDates(IclijConfig conf, IclijServiceResult result, IclijServiceParam origparam) {
+        Inmemory inmemory = io.getInmemoryFactory().get(conf);
         PipelineData[] pipelineData = new PipelineData[0];
         Map<String, Object> aMap = new HashMap<>();
         /*
@@ -647,6 +649,11 @@ public class CoreControlService {
             map.put(PipelineConstants.DATELIST, new SerialListPlain(stockData.stockdates));
             pipelineData = ArrayUtils.add(pipelineData, map);
             PipelineUtils.setPipelineMap(pipelineData, origparam.getId());
+            if (origparam.getId() != null) {
+                log.info("Before setPipelineMap");
+                PipelineUtils.setPipelineMap(pipelineData, origparam.getId());
+                pipelineData = PipelineUtils.setPipelineMap(pipelineData, inmemory, io.getCuratorClient());
+            }
             result.setPipelineData(pipelineData);
             return;
         }
