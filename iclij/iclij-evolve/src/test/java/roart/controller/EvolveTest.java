@@ -1,10 +1,13 @@
 package roart.controller;
 
+import org.junit.jupiter.api.BeforeAll;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -29,7 +32,10 @@ import roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene;
 import roart.evolve.Evolve;
 import roart.filesystem.FileSystemDao;
 import roart.iclij.config.MarketFilter;
+import roart.common.webflux.WebFluxUtil;
+import org.apache.curator.framework.CuratorFramework;
 
+@TestInstance(Lifecycle.PER_CLASS)
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
 @SpringJUnitConfig
 @SpringBootTest(classes = { IclijConfig.class, Config.class } )
@@ -51,6 +57,19 @@ public class EvolveTest {
         InputStream is = getClass().getClassLoader().getResourceAsStream(file);
         return new String(is.readAllBytes());        
     }
+    
+    @BeforeAll
+    public void before() throws Exception {
+        WebFluxUtil webFluxUtil = mock(WebFluxUtil.class);
+
+        fileSystemDao = mock(FileSystemDao.class);
+        doReturn("dummy.txt").when(fileSystemDao).writeFile(any(), any(), any(), any());
+
+        CuratorFramework curatorClient = mock(CuratorFramework.class);
+        
+        io = new IO(dbDao, null, null, webFluxUtil, fileSystemDao, null, null, curatorClient);
+    }
+
     @Test
     public void test0() throws IOException {
         MarketFilterGene gene = new MarketFilterGene(new MarketFilter(List.of("Price")), List.of("Price"));
@@ -70,7 +89,7 @@ public class EvolveTest {
     @Test
     public void testEvolve() throws IOException {
         String evolve1 = string("evolve1.json");
-        PipelineData d1 = JsonUtil.convert(evolve1, PipelineData.class);
+        PipelineData d1 = JsonUtil.convertnostrip(evolve1, PipelineData.class);
         System.out.println("" + d1);
         Evolve evolve = spy(new Evolve(iclijConfig, io));
         doNothing().when(evolve).print(anyString());
@@ -83,8 +102,8 @@ public class EvolveTest {
     
     @Test
     public void testImproveProfit() throws IOException {
-        String evolve1 = string("improveprofit1.json");
-        PipelineData d1 = JsonUtil.convert(evolve1, PipelineData.class);
+        String evolve1 = string("improveprofit2.json");
+        PipelineData d1 = JsonUtil.convertnostrip(evolve1, PipelineData.class);
         System.out.println("" + d1);
         Evolve evolve = spy(new Evolve(iclijConfig, io));
         doNothing().when(evolve).print(anyString());
@@ -98,7 +117,7 @@ public class EvolveTest {
     @Test
     public void testFilter() throws IOException {
         String s2 = string("filter1.json");
-        PipelineData d2 = JsonUtil.convert(s2, PipelineData.class);
+        PipelineData d2 = JsonUtil.convertnostrip(s2, PipelineData.class);
         System.out.println("" + d2);
         Evolve evolve = spy(new Evolve(iclijConfig, io));
         doNothing().when(evolve).print(anyString());
@@ -112,7 +131,7 @@ public class EvolveTest {
     @Test
     public void testAboveBelow() throws IOException {
         String s1 = string("abovebelow1.json");
-        PipelineData d1 = JsonUtil.convert(s1, PipelineData.class);
+        PipelineData d1 = JsonUtil.convertnostrip(s1, PipelineData.class);
         System.out.println("" + d1);
         Evolve evolve = spy(new Evolve(iclijConfig, io));
         doNothing().when(evolve).print(anyString());

@@ -1,0 +1,2630 @@
+{
+  "_class": "PipelineData",
+  "id": null,
+  "name": "improveautosimulateinvest",
+  "loaded": true,
+  "old": false,
+  "message": null,
+  "map": {},
+  "smap": {
+    "_class": "SerialMap",
+    "map": {
+      "titletext": {
+        "_class": "SerialString",
+        "string": "improveautosimulateinvest mark1 improveautosimulateinvest 2024-11-01-2024-12-01 all"
+      },
+      "dummy.txt": {
+        "_class": "SerialList",
+        "list": [
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 1.0,
+            "chromosome": {
+              "_class": "IclijConfigMapChromosome",
+              "resultMap": {
+                "_class": "SerialListMap",
+                "map": [
+                  {
+                    "_class": "SerialKeyValue",
+                    "key": "0",
+                    "value": {
+                      "_class": "SerialListMap",
+                      "map": [
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "filter",
+                          "value": null
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "score",
+                          "value": {
+                            "_class": "SerialDouble",
+                            "adouble": 1.0
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "enddate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.28"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "stockhistory",
+                          "value": {
+                            "_class": "SerialListSimulateStock",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "titletext",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024-11-01-2024-12-01 all"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "history",
+                          "value": {
+                            "_class": "SerialListStockHistory",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "startdate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.01"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "plotcapital",
+                          "value": {
+                            "_class": "SerialListPlain",
+                            "list": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 2,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.81,
+                  "autosimulateinvest.keepadviser": false,
+                  "autosimulateinvest.lastcount": 29,
+                  "autosimulateinvest.autoscorelimit": -0.03,
+                  "autosimulateinvest.scorelimit": 2.8,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.49,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 15,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 2,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.81,
+                "autosimulateinvest.keepadviser": false,
+                "autosimulateinvest.lastcount": 29,
+                "autosimulateinvest.autoscorelimit": -0.03,
+                "autosimulateinvest.scorelimit": 2.8,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.49,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 15,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 1.0,
+            "chromosome": {
+              "_class": "IclijConfigMapChromosome",
+              "resultMap": {
+                "_class": "SerialListMap",
+                "map": [
+                  {
+                    "_class": "SerialKeyValue",
+                    "key": "0",
+                    "value": {
+                      "_class": "SerialListMap",
+                      "map": [
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "filter",
+                          "value": null
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "score",
+                          "value": {
+                            "_class": "SerialDouble",
+                            "adouble": 1.0
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "enddate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.28"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "stockhistory",
+                          "value": {
+                            "_class": "SerialListSimulateStock",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "titletext",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024-11-01-2024-12-01 all"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "history",
+                          "value": {
+                            "_class": "SerialListStockHistory",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "startdate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.01"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "plotcapital",
+                          "value": {
+                            "_class": "SerialListPlain",
+                            "list": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 2,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.98,
+                  "autosimulateinvest.keepadviser": true,
+                  "autosimulateinvest.lastcount": 28,
+                  "autosimulateinvest.autoscorelimit": -0.09,
+                  "autosimulateinvest.scorelimit": 1.9,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.56,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 20,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 2,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.98,
+                "autosimulateinvest.keepadviser": true,
+                "autosimulateinvest.lastcount": 28,
+                "autosimulateinvest.autoscorelimit": -0.09,
+                "autosimulateinvest.scorelimit": 1.9,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.56,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 20,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 1.0,
+            "chromosome": {
+              "_class": "IclijConfigMapChromosome",
+              "resultMap": {
+                "_class": "SerialListMap",
+                "map": [
+                  {
+                    "_class": "SerialKeyValue",
+                    "key": "0",
+                    "value": {
+                      "_class": "SerialListMap",
+                      "map": [
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "filter",
+                          "value": null
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "score",
+                          "value": {
+                            "_class": "SerialDouble",
+                            "adouble": 1.0
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "enddate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.28"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "stockhistory",
+                          "value": {
+                            "_class": "SerialListSimulateStock",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "titletext",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024-11-01-2024-12-01 all"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "history",
+                          "value": {
+                            "_class": "SerialListStockHistory",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "startdate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.01"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "plotcapital",
+                          "value": {
+                            "_class": "SerialListPlain",
+                            "list": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 2,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.29,
+                  "autosimulateinvest.keepadviser": false,
+                  "autosimulateinvest.lastcount": 5,
+                  "autosimulateinvest.autoscorelimit": -0.12,
+                  "autosimulateinvest.scorelimit": 1.6,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.46,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 7,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 2,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.29,
+                "autosimulateinvest.keepadviser": false,
+                "autosimulateinvest.lastcount": 5,
+                "autosimulateinvest.autoscorelimit": -0.12,
+                "autosimulateinvest.scorelimit": 1.6,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.46,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 7,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 1.0,
+            "chromosome": {
+              "_class": "IclijConfigMapChromosome",
+              "resultMap": {
+                "_class": "SerialListMap",
+                "map": [
+                  {
+                    "_class": "SerialKeyValue",
+                    "key": "0",
+                    "value": {
+                      "_class": "SerialListMap",
+                      "map": [
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "filter",
+                          "value": null
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "score",
+                          "value": {
+                            "_class": "SerialDouble",
+                            "adouble": 1.0
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "enddate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.28"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "stockhistory",
+                          "value": {
+                            "_class": "SerialListSimulateStock",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "titletext",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024-11-01-2024-12-01 all"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "history",
+                          "value": {
+                            "_class": "SerialListStockHistory",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "startdate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.01"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "plotcapital",
+                          "value": {
+                            "_class": "SerialListPlain",
+                            "list": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 1,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.64,
+                  "autosimulateinvest.keepadviser": false,
+                  "autosimulateinvest.lastcount": 24,
+                  "autosimulateinvest.autoscorelimit": -0.03,
+                  "autosimulateinvest.scorelimit": 4.91,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.65,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 9,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 1,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.64,
+                "autosimulateinvest.keepadviser": false,
+                "autosimulateinvest.lastcount": 24,
+                "autosimulateinvest.autoscorelimit": -0.03,
+                "autosimulateinvest.scorelimit": 4.91,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.65,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 9,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 1.0,
+            "chromosome": {
+              "_class": "IclijConfigMapChromosome",
+              "resultMap": {
+                "_class": "SerialListMap",
+                "map": [
+                  {
+                    "_class": "SerialKeyValue",
+                    "key": "0",
+                    "value": {
+                      "_class": "SerialListMap",
+                      "map": [
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "filter",
+                          "value": null
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "score",
+                          "value": {
+                            "_class": "SerialDouble",
+                            "adouble": 1.0
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "enddate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.28"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "stockhistory",
+                          "value": {
+                            "_class": "SerialListSimulateStock",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "titletext",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024-11-01-2024-12-01 all"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "history",
+                          "value": {
+                            "_class": "SerialListStockHistory",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "startdate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.01"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "plotcapital",
+                          "value": {
+                            "_class": "SerialListPlain",
+                            "list": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 1,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.21,
+                  "autosimulateinvest.keepadviser": true,
+                  "autosimulateinvest.lastcount": 2,
+                  "autosimulateinvest.autoscorelimit": -0.12,
+                  "autosimulateinvest.scorelimit": 2.15,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.64,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 5,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 1,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.21,
+                "autosimulateinvest.keepadviser": true,
+                "autosimulateinvest.lastcount": 2,
+                "autosimulateinvest.autoscorelimit": -0.12,
+                "autosimulateinvest.scorelimit": 2.15,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.64,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 5,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 1.0,
+            "chromosome": {
+              "_class": "IclijConfigMapChromosome",
+              "resultMap": {
+                "_class": "SerialListMap",
+                "map": [
+                  {
+                    "_class": "SerialKeyValue",
+                    "key": "0",
+                    "value": {
+                      "_class": "SerialListMap",
+                      "map": [
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "filter",
+                          "value": null
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "score",
+                          "value": {
+                            "_class": "SerialDouble",
+                            "adouble": 1.0
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "enddate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.28"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "stockhistory",
+                          "value": {
+                            "_class": "SerialListSimulateStock",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "titletext",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024-11-01-2024-12-01 all"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "history",
+                          "value": {
+                            "_class": "SerialListStockHistory",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "startdate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.01"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "plotcapital",
+                          "value": {
+                            "_class": "SerialListPlain",
+                            "list": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 2,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.25,
+                  "autosimulateinvest.keepadviser": true,
+                  "autosimulateinvest.lastcount": 17,
+                  "autosimulateinvest.autoscorelimit": -0.1,
+                  "autosimulateinvest.scorelimit": 1.49,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.43,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 8,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 2,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.25,
+                "autosimulateinvest.keepadviser": true,
+                "autosimulateinvest.lastcount": 17,
+                "autosimulateinvest.autoscorelimit": -0.1,
+                "autosimulateinvest.scorelimit": 1.49,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.43,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 8,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 1.0,
+            "chromosome": {
+              "_class": "IclijConfigMapChromosome",
+              "resultMap": {
+                "_class": "SerialListMap",
+                "map": [
+                  {
+                    "_class": "SerialKeyValue",
+                    "key": "0",
+                    "value": {
+                      "_class": "SerialListMap",
+                      "map": [
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "filter",
+                          "value": null
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "score",
+                          "value": {
+                            "_class": "SerialDouble",
+                            "adouble": 1.0
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "enddate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.28"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "stockhistory",
+                          "value": {
+                            "_class": "SerialListSimulateStock",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "titletext",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024-11-01-2024-12-01 all"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "history",
+                          "value": {
+                            "_class": "SerialListStockHistory",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "startdate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.01"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "plotcapital",
+                          "value": {
+                            "_class": "SerialListPlain",
+                            "list": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 0,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.85,
+                  "autosimulateinvest.keepadviser": true,
+                  "autosimulateinvest.lastcount": 21,
+                  "autosimulateinvest.autoscorelimit": -0.2,
+                  "autosimulateinvest.scorelimit": 3.32,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.78,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 20,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 0,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.85,
+                "autosimulateinvest.keepadviser": true,
+                "autosimulateinvest.lastcount": 21,
+                "autosimulateinvest.autoscorelimit": -0.2,
+                "autosimulateinvest.scorelimit": 3.32,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.78,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 20,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 1.0,
+            "chromosome": {
+              "_class": "IclijConfigMapChromosome",
+              "resultMap": {
+                "_class": "SerialListMap",
+                "map": [
+                  {
+                    "_class": "SerialKeyValue",
+                    "key": "0",
+                    "value": {
+                      "_class": "SerialListMap",
+                      "map": [
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "filter",
+                          "value": null
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "score",
+                          "value": {
+                            "_class": "SerialDouble",
+                            "adouble": 1.0
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "enddate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.28"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "stockhistory",
+                          "value": {
+                            "_class": "SerialListSimulateStock",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "titletext",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024-11-01-2024-12-01 all"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "history",
+                          "value": {
+                            "_class": "SerialListStockHistory",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "startdate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.01"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "plotcapital",
+                          "value": {
+                            "_class": "SerialListPlain",
+                            "list": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 1,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.27,
+                  "autosimulateinvest.keepadviser": false,
+                  "autosimulateinvest.lastcount": 23,
+                  "autosimulateinvest.autoscorelimit": -0.08,
+                  "autosimulateinvest.scorelimit": 3.9,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.8,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 19,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 1,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.27,
+                "autosimulateinvest.keepadviser": false,
+                "autosimulateinvest.lastcount": 23,
+                "autosimulateinvest.autoscorelimit": -0.08,
+                "autosimulateinvest.scorelimit": 3.9,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.8,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 19,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 1.0,
+            "chromosome": {
+              "_class": "IclijConfigMapChromosome",
+              "resultMap": {
+                "_class": "SerialListMap",
+                "map": [
+                  {
+                    "_class": "SerialKeyValue",
+                    "key": "0",
+                    "value": {
+                      "_class": "SerialListMap",
+                      "map": [
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "filter",
+                          "value": null
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "score",
+                          "value": {
+                            "_class": "SerialDouble",
+                            "adouble": 1.0
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "enddate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.28"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "stockhistory",
+                          "value": {
+                            "_class": "SerialListSimulateStock",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "titletext",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024-11-01-2024-12-01 all"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "history",
+                          "value": {
+                            "_class": "SerialListStockHistory",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "startdate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.01"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "plotcapital",
+                          "value": {
+                            "_class": "SerialListPlain",
+                            "list": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 0,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.18,
+                  "autosimulateinvest.keepadviser": true,
+                  "autosimulateinvest.lastcount": 23,
+                  "autosimulateinvest.autoscorelimit": -0.09,
+                  "autosimulateinvest.scorelimit": 4.33,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.15,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 6,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 0,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.18,
+                "autosimulateinvest.keepadviser": true,
+                "autosimulateinvest.lastcount": 23,
+                "autosimulateinvest.autoscorelimit": -0.09,
+                "autosimulateinvest.scorelimit": 4.33,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.15,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 6,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 1.0,
+            "chromosome": {
+              "_class": "IclijConfigMapChromosome",
+              "resultMap": {
+                "_class": "SerialListMap",
+                "map": [
+                  {
+                    "_class": "SerialKeyValue",
+                    "key": "0",
+                    "value": {
+                      "_class": "SerialListMap",
+                      "map": [
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "filter",
+                          "value": null
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "score",
+                          "value": {
+                            "_class": "SerialDouble",
+                            "adouble": 1.0
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "enddate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.28"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "stockhistory",
+                          "value": {
+                            "_class": "SerialListSimulateStock",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "titletext",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024-11-01-2024-12-01 all"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "history",
+                          "value": {
+                            "_class": "SerialListStockHistory",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "startdate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.01"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "plotcapital",
+                          "value": {
+                            "_class": "SerialListPlain",
+                            "list": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 0,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.57,
+                  "autosimulateinvest.keepadviser": true,
+                  "autosimulateinvest.lastcount": 35,
+                  "autosimulateinvest.autoscorelimit": -0.12,
+                  "autosimulateinvest.scorelimit": 5.0,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.69,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 12,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 0,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.57,
+                "autosimulateinvest.keepadviser": true,
+                "autosimulateinvest.lastcount": 35,
+                "autosimulateinvest.autoscorelimit": -0.12,
+                "autosimulateinvest.scorelimit": 5.0,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.69,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 12,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 1.0,
+            "chromosome": {
+              "_class": "IclijConfigMapChromosome",
+              "resultMap": {
+                "_class": "SerialListMap",
+                "map": [
+                  {
+                    "_class": "SerialKeyValue",
+                    "key": "0",
+                    "value": {
+                      "_class": "SerialListMap",
+                      "map": [
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "filter",
+                          "value": null
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "score",
+                          "value": {
+                            "_class": "SerialDouble",
+                            "adouble": 1.0
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "enddate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.28"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "stockhistory",
+                          "value": {
+                            "_class": "SerialListSimulateStock",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "titletext",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024-11-01-2024-12-01 all"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "history",
+                          "value": {
+                            "_class": "SerialListStockHistory",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "startdate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.01"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "plotcapital",
+                          "value": {
+                            "_class": "SerialListPlain",
+                            "list": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 1,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.43,
+                  "autosimulateinvest.keepadviser": true,
+                  "autosimulateinvest.lastcount": 22,
+                  "autosimulateinvest.autoscorelimit": -0.01,
+                  "autosimulateinvest.scorelimit": 3.18,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.69,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 16,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 1,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.43,
+                "autosimulateinvest.keepadviser": true,
+                "autosimulateinvest.lastcount": 22,
+                "autosimulateinvest.autoscorelimit": -0.01,
+                "autosimulateinvest.scorelimit": 3.18,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.69,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 16,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 1.0,
+            "chromosome": {
+              "_class": "IclijConfigMapChromosome",
+              "resultMap": {
+                "_class": "SerialListMap",
+                "map": [
+                  {
+                    "_class": "SerialKeyValue",
+                    "key": "0",
+                    "value": {
+                      "_class": "SerialListMap",
+                      "map": [
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "filter",
+                          "value": null
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "score",
+                          "value": {
+                            "_class": "SerialDouble",
+                            "adouble": 1.0
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "enddate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.28"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "stockhistory",
+                          "value": {
+                            "_class": "SerialListSimulateStock",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "titletext",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024-11-01-2024-12-01 all"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "history",
+                          "value": {
+                            "_class": "SerialListStockHistory",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "startdate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.01"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "plotcapital",
+                          "value": {
+                            "_class": "SerialListPlain",
+                            "list": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 1,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.24,
+                  "autosimulateinvest.keepadviser": false,
+                  "autosimulateinvest.lastcount": 22,
+                  "autosimulateinvest.autoscorelimit": -0.01,
+                  "autosimulateinvest.scorelimit": 1.53,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.1,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 19,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 1,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.24,
+                "autosimulateinvest.keepadviser": false,
+                "autosimulateinvest.lastcount": 22,
+                "autosimulateinvest.autoscorelimit": -0.01,
+                "autosimulateinvest.scorelimit": 1.53,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.1,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 19,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 1.0,
+            "chromosome": {
+              "_class": "IclijConfigMapChromosome",
+              "resultMap": {
+                "_class": "SerialListMap",
+                "map": [
+                  {
+                    "_class": "SerialKeyValue",
+                    "key": "0",
+                    "value": {
+                      "_class": "SerialListMap",
+                      "map": [
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "filter",
+                          "value": null
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "score",
+                          "value": {
+                            "_class": "SerialDouble",
+                            "adouble": 1.0
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "enddate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.28"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "stockhistory",
+                          "value": {
+                            "_class": "SerialListSimulateStock",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "titletext",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024-11-01-2024-12-01 all"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "history",
+                          "value": {
+                            "_class": "SerialListStockHistory",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "startdate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.01"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "plotcapital",
+                          "value": {
+                            "_class": "SerialListPlain",
+                            "list": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 1,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.99,
+                  "autosimulateinvest.keepadviser": true,
+                  "autosimulateinvest.lastcount": 11,
+                  "autosimulateinvest.autoscorelimit": -0.03,
+                  "autosimulateinvest.scorelimit": 1.34,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.74,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 12,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 1,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.99,
+                "autosimulateinvest.keepadviser": true,
+                "autosimulateinvest.lastcount": 11,
+                "autosimulateinvest.autoscorelimit": -0.03,
+                "autosimulateinvest.scorelimit": 1.34,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.74,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 12,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 1.0,
+            "chromosome": {
+              "_class": "IclijConfigMapChromosome",
+              "resultMap": {
+                "_class": "SerialListMap",
+                "map": [
+                  {
+                    "_class": "SerialKeyValue",
+                    "key": "0",
+                    "value": {
+                      "_class": "SerialListMap",
+                      "map": [
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "filter",
+                          "value": null
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "score",
+                          "value": {
+                            "_class": "SerialDouble",
+                            "adouble": 1.0
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "enddate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.28"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "stockhistory",
+                          "value": {
+                            "_class": "SerialListSimulateStock",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "titletext",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024-11-01-2024-12-01 all"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "history",
+                          "value": {
+                            "_class": "SerialListStockHistory",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "startdate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.01"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "plotcapital",
+                          "value": {
+                            "_class": "SerialListPlain",
+                            "list": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 0,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.79,
+                  "autosimulateinvest.keepadviser": false,
+                  "autosimulateinvest.lastcount": 37,
+                  "autosimulateinvest.autoscorelimit": -0.07,
+                  "autosimulateinvest.scorelimit": 1.02,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.13,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 1,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 0,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.79,
+                "autosimulateinvest.keepadviser": false,
+                "autosimulateinvest.lastcount": 37,
+                "autosimulateinvest.autoscorelimit": -0.07,
+                "autosimulateinvest.scorelimit": 1.02,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.13,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 1,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 1.0,
+            "chromosome": {
+              "_class": "IclijConfigMapChromosome",
+              "resultMap": {
+                "_class": "SerialListMap",
+                "map": [
+                  {
+                    "_class": "SerialKeyValue",
+                    "key": "0",
+                    "value": {
+                      "_class": "SerialListMap",
+                      "map": [
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "filter",
+                          "value": null
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "score",
+                          "value": {
+                            "_class": "SerialDouble",
+                            "adouble": 1.0
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "enddate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.28"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "stockhistory",
+                          "value": {
+                            "_class": "SerialListSimulateStock",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "titletext",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024-11-01-2024-12-01 all"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "history",
+                          "value": {
+                            "_class": "SerialListStockHistory",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "startdate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.01"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "plotcapital",
+                          "value": {
+                            "_class": "SerialListPlain",
+                            "list": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 0,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.0,
+                  "autosimulateinvest.keepadviser": false,
+                  "autosimulateinvest.lastcount": 10,
+                  "autosimulateinvest.autoscorelimit": -0.03,
+                  "autosimulateinvest.scorelimit": 4.08,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.37,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 18,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 0,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.0,
+                "autosimulateinvest.keepadviser": false,
+                "autosimulateinvest.lastcount": 10,
+                "autosimulateinvest.autoscorelimit": -0.03,
+                "autosimulateinvest.scorelimit": 4.08,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.37,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 18,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 1.0,
+            "chromosome": {
+              "_class": "IclijConfigMapChromosome",
+              "resultMap": {
+                "_class": "SerialListMap",
+                "map": [
+                  {
+                    "_class": "SerialKeyValue",
+                    "key": "0",
+                    "value": {
+                      "_class": "SerialListMap",
+                      "map": [
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "filter",
+                          "value": null
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "score",
+                          "value": {
+                            "_class": "SerialDouble",
+                            "adouble": 1.0
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "enddate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.28"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "stockhistory",
+                          "value": {
+                            "_class": "SerialListSimulateStock",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "titletext",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024-11-01-2024-12-01 all"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "history",
+                          "value": {
+                            "_class": "SerialListStockHistory",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "startdate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.01"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "plotcapital",
+                          "value": {
+                            "_class": "SerialListPlain",
+                            "list": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 1,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.63,
+                  "autosimulateinvest.keepadviser": false,
+                  "autosimulateinvest.lastcount": 10,
+                  "autosimulateinvest.autoscorelimit": -0.14,
+                  "autosimulateinvest.scorelimit": 1.35,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.39,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 5,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 1,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.63,
+                "autosimulateinvest.keepadviser": false,
+                "autosimulateinvest.lastcount": 10,
+                "autosimulateinvest.autoscorelimit": -0.14,
+                "autosimulateinvest.scorelimit": 1.35,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.39,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 5,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 1.0,
+            "chromosome": {
+              "_class": "IclijConfigMapChromosome",
+              "resultMap": {
+                "_class": "SerialListMap",
+                "map": [
+                  {
+                    "_class": "SerialKeyValue",
+                    "key": "0",
+                    "value": {
+                      "_class": "SerialListMap",
+                      "map": [
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "filter",
+                          "value": null
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "score",
+                          "value": {
+                            "_class": "SerialDouble",
+                            "adouble": 1.0
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "enddate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.28"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "stockhistory",
+                          "value": {
+                            "_class": "SerialListSimulateStock",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "titletext",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024-11-01-2024-12-01 all"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "history",
+                          "value": {
+                            "_class": "SerialListStockHistory",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "startdate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.01"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "plotcapital",
+                          "value": {
+                            "_class": "SerialListPlain",
+                            "list": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 0,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.79,
+                  "autosimulateinvest.keepadviser": true,
+                  "autosimulateinvest.lastcount": 37,
+                  "autosimulateinvest.autoscorelimit": -0.09,
+                  "autosimulateinvest.scorelimit": 1.9,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.13,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 18,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 0,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.79,
+                "autosimulateinvest.keepadviser": true,
+                "autosimulateinvest.lastcount": 37,
+                "autosimulateinvest.autoscorelimit": -0.09,
+                "autosimulateinvest.scorelimit": 1.9,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.13,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 18,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 1.0,
+            "chromosome": {
+              "_class": "IclijConfigMapChromosome",
+              "resultMap": {
+                "_class": "SerialListMap",
+                "map": [
+                  {
+                    "_class": "SerialKeyValue",
+                    "key": "0",
+                    "value": {
+                      "_class": "SerialListMap",
+                      "map": [
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "filter",
+                          "value": null
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "score",
+                          "value": {
+                            "_class": "SerialDouble",
+                            "adouble": 1.0
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "enddate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.28"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "stockhistory",
+                          "value": {
+                            "_class": "SerialListSimulateStock",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "titletext",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024-11-01-2024-12-01 all"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "history",
+                          "value": {
+                            "_class": "SerialListStockHistory",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "startdate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.01"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "plotcapital",
+                          "value": {
+                            "_class": "SerialListPlain",
+                            "list": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 1,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.21,
+                  "autosimulateinvest.keepadviser": false,
+                  "autosimulateinvest.lastcount": 2,
+                  "autosimulateinvest.autoscorelimit": -0.12,
+                  "autosimulateinvest.scorelimit": 2.15,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.64,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 9,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 1,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.21,
+                "autosimulateinvest.keepadviser": false,
+                "autosimulateinvest.lastcount": 2,
+                "autosimulateinvest.autoscorelimit": -0.12,
+                "autosimulateinvest.scorelimit": 2.15,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.64,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 9,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          },
+          {
+            "_class": "SerialScoreChromosome",
+            "score": 1.0,
+            "chromosome": {
+              "_class": "IclijConfigMapChromosome",
+              "resultMap": {
+                "_class": "SerialListMap",
+                "map": [
+                  {
+                    "_class": "SerialKeyValue",
+                    "key": "0",
+                    "value": {
+                      "_class": "SerialListMap",
+                      "map": [
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "filter",
+                          "value": null
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "score",
+                          "value": {
+                            "_class": "SerialDouble",
+                            "adouble": 1.0
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "enddate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.28"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "stockhistory",
+                          "value": {
+                            "_class": "SerialListSimulateStock",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "titletext",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024-11-01-2024-12-01 all"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "history",
+                          "value": {
+                            "_class": "SerialListStockHistory",
+                            "list": []
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "startdate",
+                          "value": {
+                            "_class": "SerialString",
+                            "string": "2024.11.01"
+                          }
+                        },
+                        {
+                          "_class": "SerialKeyValue",
+                          "key": "plotcapital",
+                          "value": {
+                            "_class": "SerialListPlain",
+                            "list": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "ascending": true,
+              "gene": {
+                "_class": "IclijConfigMapGene",
+                "className": null,
+                "map": {
+                  "autosimulateinvest.period": 1,
+                  "autosimulateinvest.futurecount": 0,
+                  "autosimulateinvest.futuretime": 0,
+                  "autosimulateinvest.keepadviserlimit": 0.51,
+                  "autosimulateinvest.keepadviser": true,
+                  "autosimulateinvest.lastcount": 5,
+                  "autosimulateinvest.autoscorelimit": -0.19,
+                  "autosimulateinvest.scorelimit": 4.78,
+                  "autosimulateinvest.improvefilters": false,
+                  "autosimulateinvest.dellimit": 0.19,
+                  "autosimulateinvest.vote": false,
+                  "autosimulateinvest.interval": 8,
+                  "autosimulateinvest.intervalwhole": false
+                },
+                "confList": [
+                  "autosimulateinvest.interval",
+                  "autosimulateinvest.period",
+                  "autosimulateinvest.lastcount",
+                  "autosimulateinvest.dellimit",
+                  "autosimulateinvest.scorelimit",
+                  "autosimulateinvest.autoscorelimit",
+                  "autosimulateinvest.keepadviser",
+                  "autosimulateinvest.keepadviserlimit"
+                ]
+              },
+              "map": {
+                "autosimulateinvest.period": 1,
+                "autosimulateinvest.futurecount": 0,
+                "autosimulateinvest.futuretime": 0,
+                "autosimulateinvest.keepadviserlimit": 0.51,
+                "autosimulateinvest.keepadviser": true,
+                "autosimulateinvest.lastcount": 5,
+                "autosimulateinvest.autoscorelimit": -0.19,
+                "autosimulateinvest.scorelimit": 4.78,
+                "autosimulateinvest.improvefilters": false,
+                "autosimulateinvest.dellimit": 0.19,
+                "autosimulateinvest.vote": false,
+                "autosimulateinvest.interval": 8,
+                "autosimulateinvest.intervalwhole": false
+              },
+              "confList": [
+                "autosimulateinvest.interval",
+                "autosimulateinvest.period",
+                "autosimulateinvest.lastcount",
+                "autosimulateinvest.dellimit",
+                "autosimulateinvest.scorelimit",
+                "autosimulateinvest.autoscorelimit",
+                "autosimulateinvest.keepadviser",
+                "autosimulateinvest.keepadviserlimit"
+              ]
+            }
+          }
+        ]
+      },
+      "id": {
+        "_class": "SerialString",
+        "string": "dummy.txt"
+      }
+    }
+  }
+}

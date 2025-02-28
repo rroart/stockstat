@@ -6,7 +6,11 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -27,6 +31,7 @@ import roart.simulate.model.SimulateStock;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 
+@TestInstance(Lifecycle.PER_CLASS)
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
 @SpringJUnitConfig
 @SpringBootTest(classes = { IclijConfig.class, Config.class } )
@@ -40,10 +45,17 @@ public class SimTest {
     //public IclijDbDao dbDao;
     IclijDbDao dbDao = mock(IclijDbDao.class);
 
-    FileSystemDao fileSystemDao = null;
+    FileSystemDao fileSystemDao;
 
-    IO io = null;
-
+    IO io;
+    
+    @BeforeAll
+    public void before() {
+        fileSystemDao = mock(FileSystemDao.class);
+        doReturn("dummy.txt").when(fileSystemDao).writeFile(any(), any(), any(), any());
+        io = new IO(null, null, null, null, fileSystemDao, null, null, null);
+    }
+ 
     public SimTest() {
     }
 
@@ -123,7 +135,7 @@ public class SimTest {
     @Test
     public void test() throws IOException {
         Sim sim = new Sim(iclijConfig, io);
-        for (int i = 1; i <= 3; i++) {
+        for (int i = 5; i <= 5; i++) {
             try {
                 String s = string("improve" + i + ".json");
                 sim.method(s, "sim", true);
@@ -135,7 +147,7 @@ public class SimTest {
     @Test
     public void testAuto() throws IOException {
         Sim sim = new Sim(iclijConfig, io);
-        for (int i = 1; i <= 2; i++) {
+        for (int i = 3; i <= 3; i++) {
             try {
                 String s = string("improveauto" + i + ".json");
                 sim.method(s, "simauto", true);
