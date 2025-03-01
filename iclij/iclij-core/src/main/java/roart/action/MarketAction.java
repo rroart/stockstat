@@ -591,6 +591,7 @@ public abstract class MarketAction extends Action {
         // TODO why so early? fir setting, ordinary
         // uses getcontent data.categorytitle is null
         // todo start
+        if (false) {
         setValMap(param);
         PipelineData[] maps = param.getResultMaps();
         // TODO bad
@@ -601,6 +602,7 @@ public abstract class MarketAction extends Action {
         Map<String, String> nameMap = PipelineUtils.getNamemap(PipelineUtils.getPipeline(maps, catName, inmemory));
         log.info("TODO names {}", nameMap.size());
         inputdata.setNameMap(nameMap);
+        }
         // todo end
 
         param.setTimings(new ArrayList<>());
@@ -626,16 +628,19 @@ public abstract class MarketAction extends Action {
         handleComponent(this, market, profitdata, param, listComponentMap, componentMap, dataMap, marketTime.getBuy(), marketTime.getSubcomponent(), myData, config, parameters2, wantThree, mlTests);
         //handleMLMeta(this, param, valueMap, component.getPipeline());
         //saveTiming(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, false);
-        PipelineUtils.printkeys(param.getResultMaps());
+        //PipelineUtils.printkeys(param.getResultMaps());
         //log.info("Printkeys {} {}", componentMap.keySet(), dataMap.keySet());
         for (Entry<String, ComponentData> entry : dataMap.entrySet() ) {
             ComponentData component = entry.getValue();
-            PipelineUtils.printkeys(component.getResultMaps());
+            //PipelineUtils.printkeys(component.getResultMaps());
         }
         
         if (!getActionData().isDataset()) {
-        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, null, inmemory);
-        new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, null, inmemory);
+            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config);
+            PipelineData[] maps = param.getResultMaps();
+            // TODO not yet?
+            //new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, null, inmemory);
+            //new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, null, inmemory);
         }
         //filterDecs(param, market, profitdata, maps);
         //buys = buys.values().stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());        

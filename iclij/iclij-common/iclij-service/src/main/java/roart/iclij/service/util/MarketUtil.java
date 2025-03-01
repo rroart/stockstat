@@ -98,17 +98,14 @@ public class MarketUtil {
     }
 
     public Map<String, IncDecItem> incdecFilterOnIncreaseValue(Market market, Map<String, IncDecItem> incdecs,
-            PipelineData[] maps, Double threshold, PipelineData categoryMap,
-            Map<String, List<List<Double>>> listMap3, Integer offsetDays, boolean inc) {
+            Double threshold, PipelineData categoryMap, Map<String, List<List<Double>>> listMap3,
+            Integer offsetDays, boolean inc) {
         Map<String, IncDecItem> incdecsFilter = new HashMap<>();
         for(IncDecItem item : incdecs.values()) {
             String key = item.getId();
             if (listMap3 == null) {
                 if (categoryMap != null) {
                     log.debug("" + categoryMap.keySet());
-                }
-                if (maps != null) {
-                    //System.out.println(maps.keySet());
                 }
                 log.debug("market null map {}", market.getConfig().getMarket());
                 continue;

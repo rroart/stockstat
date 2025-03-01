@@ -30,6 +30,9 @@ public class IncDecUtil {
         } else {
             category = market.getFilter().getDeccategory();
         }
+        System.out.println("lm3" + category);
+        Map<String, List<List<Double>>> listMap33 = new MarketUtil().getCategoryList(maps, "Index", param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig()));
+        System.out.println("lm3x3" + listMap33.keySet());
         if (category != null) {
             PipelineData categoryMap = PipelineUtils.getPipeline(maps, category, inmemory);
             if (categoryMap != null) {
@@ -66,8 +69,9 @@ public class IncDecUtil {
                     threshold = market.getFilter().getDecthreshold();
                 }
                 Map<String, List<List<Double>>> listMap3 = new MarketUtil().getCategoryList(maps, category, param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig()));
-                Map<String, IncDecItem> buysFilter = new MarketUtil().incdecFilterOnIncreaseValue(market, inc ? profitdata.getBuys() : profitdata.getSells(), maps, threshold, categoryMap,
-                        listMap3, offsetDays, inc);
+                System.out.println("lm3" + listMap3.keySet());
+                Map<String, IncDecItem> buysFilter = new MarketUtil().incdecFilterOnIncreaseValue(market, inc ? profitdata.getBuys() : profitdata.getSells(), threshold, categoryMap, listMap3,
+                        offsetDays, inc);
                 if (inc) {
                     profitdata.setBuys(buysFilter);
                 } else {

@@ -24,6 +24,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.action.ActionThread;
 import roart.action.LeaderRunner;
+import roart.common.cache.MyCache;
 import roart.common.communication.factory.CommunicationFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.config.ConfigMaps;
@@ -38,11 +39,14 @@ import roart.common.webflux.WebFluxUtil;
 import roart.constants.IclijConstants;
 import roart.db.dao.IclijDbDao;
 import roart.filesystem.FileSystemDao;
+import roart.iclij.config.AutoSimulateInvestConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
+import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.config.bean.ConfigI;
 import roart.iclij.model.Parameters;
 import roart.iclij.service.ControlService;
+import roart.iclij.service.IclijServiceResult;
 import roart.model.io.IO;
 import roart.queue.PipelineThread;
 import roart.testdata.TestConstants;
@@ -84,6 +88,8 @@ public class InmemoryPipelineTest {
     private InmemoryFactory inmemoryFactory = new TestInmemoryFactory();
 
     private CommunicationFactory communicationFactory = new TestCommunicationFactory();
+
+    private TestUtils testutils;
     
     @BeforeAll
     public void before() throws Exception {
@@ -112,8 +118,12 @@ public class InmemoryPipelineTest {
         
         ac = new ActionThread(iconf, io);
         
+        testutils = new TestUtils(iconf, io);
+        
         //String content = "";
         //new Sim(iconf, dbDao, fileSystemDao).method((String) content, "sim", true);
+        MyCache.setCache(iconf.wantCache());
+        MyCache.setCacheTTL(iconf.getCacheTTL());
 
     }
 
@@ -123,7 +133,19 @@ public class InmemoryPipelineTest {
     }
     
     @Test
-    public void test2() throws Exception {
+    public void testMachineLearning() throws Exception {
+        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.MACHINELEARNING, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        //aci.setBuy(null);
+        //aci.setRecord(LocalDate.now());
+        try {
+            ac.runAction(iconf, aci, new ArrayList<>());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
+    @Test
+    public void testFindProfit() throws Exception {
         ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         //aci.setBuy(null);
         //aci.setRecord(LocalDate.now());
@@ -132,6 +154,131 @@ public class InmemoryPipelineTest {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+    }
+
+    @Test
+    public void testEvolve() throws Exception {
+        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.EVOLVE, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        try {
+            ac.runAction(iconf, aci, new ArrayList<>());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
+    @Test
+    public void testEvolveARI() throws Exception {
+        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.EVOLVE, PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null, 0, JsonUtil.convert(parameters));
+        try {
+            ac.runAction(iconf, aci, new ArrayList<>());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
+    @Test
+    public void testImproveProfit() throws Exception {
+        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.IMPROVEPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        try {
+            ac.runAction(iconf, aci, new ArrayList<>());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
+    @Test
+    public void testCrosstest() throws Exception {
+        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.CROSSTEST, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        try {
+            ac.runAction(iconf, aci, new ArrayList<>());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
+    @Test
+    public void testFilter() throws Exception {
+        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.IMPROVEFILTER, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        try {
+            ac.runAction(iconf, aci, new ArrayList<>());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
+    @Test
+    public void testAboveBelow() throws Exception {
+        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.IMPROVEABOVEBELOW, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        try {
+            ac.runAction(iconf, aci, new ArrayList<>());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
+    @Test
+    public void testSim() throws Exception {
+        log.info("Wants it {}", iconf.wantsInmemoryPipeline());
+        SimulateInvestConfig simConfig = testutils.getSimConfigDefault();
+        String market = TestConstants.MARKET;
+        simConfig.setStartdate("2024-11-01");
+        simConfig.setEnddate("2024-12-01");
+        IclijServiceResult result = null;
+        try {
+            result = testutils.getSimulateInvestMarket(simConfig, market);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        System.out.println("map" + result.getWebdatajson().getUpdateMap());
+        System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+    }
+
+    @Test
+    public void testAutoSim() throws Exception {
+        AutoSimulateInvestConfig simConfig = testutils.getAutoSimConfigDefault();
+        String market = TestConstants.MARKET;
+        simConfig.setStartdate("2024-11-01");
+        simConfig.setEnddate("2024-12-01");
+        IclijServiceResult result = null;
+        try {
+            result = testutils.getAutoSimulateInvestMarket(market, simConfig);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        System.out.println("map" + result.getWebdatajson().getUpdateMap());
+        System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+    }
+
+    @Test
+    public void testImproveSim() throws Exception {
+        SimulateInvestConfig simConfig = testutils.getImproveSimConfigDefault();
+        String market = TestConstants.MARKET;
+        simConfig.setStartdate("2024-11-01");
+        simConfig.setEnddate("2024-12-01");
+        IclijServiceResult result = null;
+        try {
+            result = testutils.getImproveSimulateInvest(market, simConfig);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        //System.out.println("map" + result.getWebdatajson().getUpdateMap());
+        //System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+    }
+
+    @Test
+    public void testImproveAutoSim() throws Exception {
+        AutoSimulateInvestConfig simConfig = testutils.getImproveAutoSimConfigDefault();
+        String market = TestConstants.MARKET;
+        simConfig.setStartdate("2024-11-01");
+        simConfig.setEnddate("2024-12-01");
+        IclijServiceResult result = null;
+        try {
+            result = testutils.getImproveAutoSimulateInvest(market, simConfig);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        //System.out.println("map" + result.getWebdatajson().getUpdateMap());
+        //System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
     }
 
 }

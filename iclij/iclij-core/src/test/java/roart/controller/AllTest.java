@@ -39,6 +39,7 @@ import roart.action.ActionThread;
 import roart.action.FindProfitAction;
 import roart.category.AbstractCategory;
 import roart.category.util.CategoryUtil;
+import roart.common.cache.MyCache;
 import roart.common.communication.factory.CommunicationFactory;
 import roart.common.communication.model.Communication;
 import roart.common.config.ConfigConstants;
@@ -87,7 +88,6 @@ import roart.predictor.util.PredictorUtils;
 import roart.aggregator.util.AggregatorUtils;
 import static org.mockito.Mockito.*;
 import roart.iclij.model.Parameters;
-import roart.iclij.model.component.ComponentInput;
 
 import java.util.HashSet;
 import java.util.List;
@@ -144,6 +144,8 @@ public class AllTest {
     private InmemoryFactory inmemoryFactory = new TestInmemoryFactory();
 
     private CommunicationFactory communicationFactory = new TestCommunicationFactory();
+
+    private TestUtils testutils;
     
     @Test
     public void test() {
@@ -296,9 +298,11 @@ public class AllTest {
     
     @BeforeAll
     public void before() throws Exception {
+        iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.FALSE);
         ConfigMaps configMaps = IclijConfig.instanceC();
         conf = new IclijConfig(configMaps, "config2", null);
         conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.TRUE);
+        conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.FALSE);
         String market = TestConstants.MARKET;
         dataSource = new TestDataSource(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), market, 26, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" });
         webFluxUtil = new TestWebFluxUtil(conf, dataSource);
@@ -320,13 +324,28 @@ public class AllTest {
         
         ac = new ActionThread(iconf, io);
         
+        testutils = new TestUtils(iconf, io);
         //String content = "";
         //new Sim(iconf, dbDao, fileSystemDao).method((String) content, "sim", true);
+        MyCache.setCache(iconf.wantCache());
+        MyCache.setCacheTTL(iconf.getCacheTTL());
 
     }
 
     @Test
-    public void test2() throws Exception {
+    public void testMachineLearning() throws Exception {
+        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.MACHINELEARNING, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        //aci.setBuy(null);
+        //aci.setRecord(LocalDate.now());
+        try {
+            ac.runAction(iconf, aci, new ArrayList<>());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
+    @Test
+    public void testFindProfit() throws Exception {
         ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         //aci.setBuy(null);
         //aci.setRecord(LocalDate.now());
@@ -380,6 +399,16 @@ public class AllTest {
     }
 
     @Test
+    public void testCrosstest() throws Exception {
+        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.CROSSTEST, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        try {
+            ac.runAction(iconf, aci, new ArrayList<>());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
+    @Test
     public void testFilter() throws Exception {
         ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.IMPROVEFILTER, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
@@ -401,13 +430,13 @@ public class AllTest {
 
     @Test
     public void testSim() throws Exception {
-        SimulateInvestConfig simConfig = getSimConfigDefault();
+        SimulateInvestConfig simConfig = testutils.getSimConfigDefault();
         String market = TestConstants.MARKET;
         simConfig.setStartdate("2024-11-01");
         simConfig.setEnddate("2024-12-01");
         IclijServiceResult result = null;
         try {
-            result = getSimulateInvestMarket(simConfig, market);
+            result = testutils.getSimulateInvestMarket(simConfig, market);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -417,13 +446,13 @@ public class AllTest {
 
     @Test
     public void testAutoSim() throws Exception {
-        AutoSimulateInvestConfig simConfig = getAutoSimConfigDefault();
+        AutoSimulateInvestConfig simConfig = testutils.getAutoSimConfigDefault();
         String market = TestConstants.MARKET;
         simConfig.setStartdate("2024-11-01");
         simConfig.setEnddate("2024-12-01");
         IclijServiceResult result = null;
         try {
-            result = getAutoSimulateInvestMarket(market, simConfig);
+            result = testutils.getAutoSimulateInvestMarket(market, simConfig);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -433,13 +462,13 @@ public class AllTest {
 
     @Test
     public void testImproveSim() throws Exception {
-        SimulateInvestConfig simConfig = getImproveSimConfigDefault();
+        SimulateInvestConfig simConfig = testutils.getImproveSimConfigDefault();
         String market = TestConstants.MARKET;
         simConfig.setStartdate("2024-11-01");
         simConfig.setEnddate("2024-12-01");
         IclijServiceResult result = null;
         try {
-            result = getImproveSimulateInvest(market, simConfig);
+            result = testutils.getImproveSimulateInvest(market, simConfig);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -449,191 +478,18 @@ public class AllTest {
 
     @Test
     public void testImproveAutoSim() throws Exception {
-        AutoSimulateInvestConfig simConfig = getImproveAutoSimConfigDefault();
+        AutoSimulateInvestConfig simConfig = testutils.getImproveAutoSimConfigDefault();
         String market = TestConstants.MARKET;
         simConfig.setStartdate("2024-11-01");
         simConfig.setEnddate("2024-12-01");
         IclijServiceResult result = null;
         try {
-            result = getImproveAutoSimulateInvest(market, simConfig);
+            result = testutils.getImproveAutoSimulateInvest(market, simConfig);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
         //System.out.println("map" + result.getWebdatajson().getUpdateMap());
         //System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
-    }
-
-    private IclijServiceResult getSimulateInvestMarket(SimulateInvestConfig simConfig, String market) {
-        Map<String, Object> map = simConfig.asMap();
-        IclijConfig myConfig = iconf.copy();
-        myConfig.getConfigData().getConfigValueMap().putAll(map);
-        return ServiceUtil.getSimulateInvest(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), myConfig, io);
-    }
-
-    public IclijServiceResult getImproveSimulateInvest(String market, SimulateInvestConfig simConfig)
-            throws Exception {
-        //MainAction.goals.add(new ImproveProfitAction());
-        //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
-        if ("null".equals(market) || "None".equals(market)) {
-            market = null;
-        }
-        IclijConfig myConfig = iconf.copy();
-        Map<String, Object> map = simConfig.asValuedMap();
-        myConfig.getConfigData().getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTSTARTDATE, simConfig.getStartdate());
-        myConfig.getConfigData().getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTENDDATE, simConfig.getEnddate());
-        map.remove(IclijConfigConstants.SIMULATEINVESTSTARTDATE);
-        map.remove(IclijConfigConstants.SIMULATEINVESTENDDATE);
-        if (simConfig.getGa() != null) {
-            int ga = simConfig.getGa();
-            simConfig.setGa(null);
-            myConfig.getConfigData().getConfigValueMap().put(IclijConfigConstants.EVOLVEGA, ga);
-        }
-        /*
-        config.getConfigValueMap().putAll(map);
-        if (simConfig.getAdviser() != null) {
-            int adviser = simConfig.getAdviser();
-            simConfig.setAdviser(null);
-            config.getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTADVISER, adviser);
-        }
-        if (simConfig.getIndicatorPure() != null) {
-            boolean adviser = simConfig.getIndicatorPure();
-            simConfig.setIndicatorPure(null);
-            config.getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, adviser);
-        }
-         */
-        return ServiceUtil.getImproveSimulateInvest(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), map), myConfig, io);
-    }
-    
-     public IclijServiceResult getAutoSimulateInvestMarket(String market, AutoSimulateInvestConfig simConfig)
-            throws Exception {
-        //MainAction.goals.add(new ImproveProfitAction());
-        //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
-        Map<String, Object> map = simConfig.asMap();
-        IclijConfig myConfig = iconf.copy();
-        myConfig.getConfigData().getConfigValueMap().putAll(map);
-        return ServiceUtil.getAutoSimulateInvest(myConfig, new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), io);
-    }
-
-    public IclijServiceResult getImproveAutoSimulateInvest(String market, AutoSimulateInvestConfig simConfig)
-            throws Exception {
-        //MainAction.goals.add(new ImproveProfitAction());
-        //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
-        if ("null".equals(market) || "None".equals(market)) {
-            market = null;
-        }
-        IclijConfig myConfig = iconf.copy();
-        Map<String, Object> map = simConfig.asValuedMap();
-        //myConfig.getConfigData().unmute();
-        myConfig.getConfigData().getConfigValueMap().put(IclijConfigConstants.AUTOSIMULATEINVESTSTARTDATE, simConfig.getStartdate());
-        myConfig.getConfigData().getConfigValueMap().put(IclijConfigConstants.AUTOSIMULATEINVESTENDDATE, simConfig.getEnddate());
-        map.remove(IclijConfigConstants.AUTOSIMULATEINVESTSTARTDATE);
-        map.remove(IclijConfigConstants.AUTOSIMULATEINVESTENDDATE);
-        if (simConfig.getGa() != null) {
-            int ga = simConfig.getGa();
-            simConfig.setGa(null);
-            myConfig.getConfigData().getConfigValueMap().put(IclijConfigConstants.EVOLVEGA, ga);
-        }
-        //myConfig.getConfigData().mute();
-        /*
-        config.getConfigValueMap().putAll(map);
-        if (simConfig.getAdviser() != null) {
-            int adviser = simConfig.getAdviser();
-            simConfig.setAdviser(null);
-            config.getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTADVISER, adviser);
-        }
-        if (simConfig.getIndicatorPure() != null) {
-            boolean adviser = simConfig.getIndicatorPure();
-            simConfig.setIndicatorPure(null);
-            config.getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, adviser);
-        }
-         */
-        return ServiceUtil.getImproveAutoSimulateInvest(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), map), myConfig, io);
-    }
-
-   private SimulateInvestConfig getSimConfigDefault() {
-        SimulateInvestConfig simConfig = new SimulateInvestConfig();
-        simConfig.setConfidence(false);
-        simConfig.setConfidenceValue(0.7);
-        simConfig.setConfidenceFindTimes(4);
-        simConfig.setStoploss(true);
-        simConfig.setStoplossValue(0.9);
-        simConfig.setIndicatorPure(false);
-        simConfig.setIndicatorRebase(false);
-        simConfig.setIndicatorReverse(false);
-        simConfig.setMldate(false);
-        simConfig.setStocks(5);
-        simConfig.setBuyweight(false);
-        simConfig.setInterval(7);
-        simConfig.setAdviser(0);
-        simConfig.setPeriod(0);
-        simConfig.setInterpolate(false);
-        simConfig.setIntervalStoploss(true);
-        simConfig.setIntervalStoplossValue(0.9);
-        simConfig.setDay(1);
-        simConfig.setDelay(1);
-        simConfig.setIntervalwhole(false);
-        simConfig.setConfidenceholdincrease(false);
-        simConfig.setNoconfidenceholdincrease(true);
-        simConfig.setNoconfidencetrenddecrease(false);
-        simConfig.setNoconfidencetrenddecreaseTimes(1);
-        simConfig.setConfidencetrendincrease(false);
-        simConfig.setConfidencetrendincreaseTimes(1);
-        simConfig.setIndicatorDirection(false);
-        simConfig.setIndicatorDirectionUp(true);
-        simConfig.setVolumelimits(null);
-        simConfig.setAbovebelow(false);
-        return simConfig;
-    }
-
-    private SimulateInvestConfig getImproveSimConfigDefault() {
-        SimulateInvestConfig simConfig = new SimulateInvestConfig();
-        simConfig.setGa(0);
-        simConfig.setIndicatorPure(null);
-        simConfig.setIndicatorReverse(null);
-        simConfig.setStocks(null);
-        simConfig.setBuyweight(false);
-        simConfig.setInterval(null);
-        simConfig.setAdviser(null);
-        simConfig.setPeriod(0);
-        simConfig.setDelay(1);
-        simConfig.setIntervalwhole(true);
-        simConfig.setVolumelimits(null);
-        simConfig.setFuturecount(0);
-        simConfig.setFuturetime(0);
-        simConfig.setImproveFilters(false);
-        return simConfig;
-    }
-
-    private AutoSimulateInvestConfig getAutoSimConfigDefault() {
-        AutoSimulateInvestConfig simConfig = new AutoSimulateInvestConfig();
-        simConfig.setInterval(1);
-        simConfig.setPeriod(0);
-        simConfig.setLastcount(5);
-        simConfig.setDellimit(0.5);
-        simConfig.setScorelimit(1.0);
-        simConfig.setAutoscorelimit(0.0);
-        simConfig.setIntervalwhole(false);        
-        simConfig.setFilters(null);
-        simConfig.setVolumelimits(null);
-        simConfig.setVote(false);
-        simConfig.setKeepAdviser(false);
-        simConfig.setKeepAdviserLimit(0.0);
-        return simConfig;
-    }
-
-    private AutoSimulateInvestConfig getImproveAutoSimConfigDefault() {
-        AutoSimulateInvestConfig simConfig = new AutoSimulateInvestConfig();
-        // TODO simConfig.setStocks(5);
-        simConfig.setIntervalwhole(false);
-        
-        simConfig.setGa(0);
-        simConfig.setFuturecount(0);
-        simConfig.setFuturetime(0);
-        simConfig.setImproveFilters(false);
-        simConfig.setFilters(null);
-        simConfig.setVolumelimits(null);
-        simConfig.setVote(false);
-        return simConfig;
     }
 
     @Deprecated

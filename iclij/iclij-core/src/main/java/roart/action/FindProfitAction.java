@@ -25,6 +25,7 @@ import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
@@ -103,6 +104,12 @@ public class FindProfitAction extends MarketAction {
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
             
             ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters, getParent() != null);
+            
+            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config);
+            Map<String, String> nameMap = PipelineUtils.getNamemap(PipelineUtils.getPipeline(param.getResultMaps(), param.getCategoryTitle(), inmemory));
+            log.info("TODO names {}", nameMap.size());
+            profitdata.getInputdata().setNameMap(nameMap);
+            
             component.calculateIncDec(componentData, profitdata, positions, buy, mlTests, parameters);
             if (param.getInput().isDoSave()) {
                 IncDecItem myitem = null;

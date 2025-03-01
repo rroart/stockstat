@@ -442,8 +442,8 @@ public class IndicatorUtils {
         int arraySize = 0;
         for (String indicatorName : indicators) {
             PipelineData meta = PipelineUtils.getPipeline(datareaders, PipelineConstants.META, inmemory);
-            PipelineData datareader = PipelineUtils.getPipeline(datareaders, PipelineUtils.getMetaCat(meta));
-            PipelineData resultMap = PipelineUtils.getPipeline(datareaders, indicatorName);
+            PipelineData datareader = PipelineUtils.getPipeline(datareaders, PipelineUtils.getMetaCat(meta), inmemory);
+            PipelineData resultMap = PipelineUtils.getPipeline(datareaders, indicatorName, inmemory);
             SerialMapTA objMap = PipelineUtils.getMapTA(resultMap);
             if (objMap.getMap() != null && !objMap.getMap().isEmpty()) { 
                 objectMapsList.add(objMap);

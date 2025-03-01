@@ -177,6 +177,10 @@ public abstract class Component {
         valueMap.putAll(aMap);
         if (action.doHandleMLMeta()) {
         	fixJsonList(valueMap);
+                // uses getcontent
+        	// true for improveprofit impfilter findprofit crosstest machinelearn  siminv
+                // false fpt dataset evolve impabove impautosim impsim
+        	// TODO second getcontent call, special
         	handleMLMetaCommon(param, valueMap);
         }
         try {
@@ -643,9 +647,11 @@ public abstract class Component {
     }
 
     protected void handleMLMetaCommon(ComponentData param, Map<String, Object> valueMap) {
+        // TODO second getcontent call, special
         PipelineData resultMaps = param.getResultMap(getPipeline(), valueMap, true);
         param.setCategory(resultMaps);
-        param.getAndSetCategoryValueMap(true);
+        // TODO 3rd call, ordinary again
+        param.getAndSetCategoryValueMapAlt();
         PipelineData resultMaps2 = param.getResultMap();
         handleMLMeta(param, resultMaps2);        
     }
