@@ -48,6 +48,7 @@ import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.ControlService;
 import roart.iclij.service.util.MarketUtil;
 import roart.populate.PopulateThread;
+import roart.util.PipelineThreadUtils;
 import roart.constants.IclijConstants;
 import roart.controller.IclijController;
 import roart.model.io.IO;
@@ -264,6 +265,7 @@ public class ActionThread extends Thread {
                 long[] mem0 = MemUtil.mem();
                 log.info("Action item {} {}", item.toStringId(), MemUtil.print(mem0));
                 action.getPicksFilteredOuter(myData, param, myConfig, item, evolve, wantThree, actionItem);                
+                new PipelineThreadUtils(iclijConfig, param.getService()).cleanPipeline(param);
                 //IclijController.taskList.remove(actionItem);
                 long[] mem1 = MemUtil.mem();
                 long[] memdiff = MemUtil.diff(mem1, mem0);

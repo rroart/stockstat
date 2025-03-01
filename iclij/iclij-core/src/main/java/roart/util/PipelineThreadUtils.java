@@ -8,9 +8,11 @@ import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.util.JsonUtil;
+import roart.component.model.ComponentData;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.ControlService;
 
@@ -37,6 +39,14 @@ public class PipelineThreadUtils {
         List<String> children = curatorClient.getChildren().forPath(path);
         log.debug("Children {}", children.size());
         log.info("Children {}", children);
+        if (false && !children.isEmpty()) {
+            try {
+                String s = null;
+                s.length();
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
         for (String child : children) {
             List<String> children2 = curatorClient.getChildren().forPath(path + "/" + child);
             log.info("Children2" + children2);
@@ -58,6 +68,17 @@ public class PipelineThreadUtils {
         }
         curatorClient.delete().forPath(path);
         return list;
+    }
+
+    public void cleanPipeline(ComponentData param) {
+        if (iclijConfig.wantsInmemoryPipeline()) {
+            String path3 = "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + param.getService().id + "/" + param.getId();
+            try {
+                deleteOld(param.getService().getIo().getCuratorClient(), path3, param.getId(), 2 * 60 * 1000, false, false);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
     }
 
 }

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -122,6 +123,10 @@ public class ComponentData {
 
     public static ComponentData getParam(IclijConfig iclijConfig, ComponentInput input, int days, Market aMarket, IO io) throws Exception {
         ComponentData param = new ComponentData(input);
+        if (iclijConfig.wantsInmemoryPipeline()) {
+            String uuid = UUID.randomUUID().toString();
+            param.setId(uuid);
+        }
         //param.setAction(IclijConstants.FINDPROFIT);
         String market = input.getConfigData().getMarket();
         String mlmarket = input.getConfigData().getMlmarket();

@@ -135,7 +135,9 @@ public abstract class MarketAction extends Action {
         } else {
             markets = new MarketUtil().getMarkets(false, iclijConfig);
         }
-        return getMarkets(iclijConfig, parent, param, markets, new ArrayList<>(), evolve, priority, timingsdone, false);
+        WebData data = getMarkets(iclijConfig, parent, param, markets, new ArrayList<>(), evolve, priority, timingsdone, false);
+        new PipelineThreadUtils(iclijConfig, param.getService()).cleanPipeline(param);
+        return data;
     }        
     
     public WebData getMarkets(IclijConfig iclijConfig, Action parent, ComponentInput input, Boolean evolve, Integer priority, IO io) {
@@ -152,6 +154,7 @@ public abstract class MarketAction extends Action {
             log.error(Constants.EXCEPTION, e);
         }
         List<Market> markets = new MarketUtil().getMarkets(actionData.isDataset(), iclijConfig);
+        new PipelineThreadUtils(iclijConfig, param.getService()).cleanPipeline(param);
         return getMarkets(iclijConfig, parent, param, markets, timings, evolve, priority, new ArrayList<>(), true);
     }        
     
@@ -177,7 +180,12 @@ public abstract class MarketAction extends Action {
             String marketName = market.getConfig().getMarket();
             MetaItem meta = new MetaUtil().findMeta(metas, marketName);
             boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
-            ComponentInput input = new ComponentInput(config.getConfigData(), null, marketName, null, 0, paramTemplate.getInput().isDoSave(), false, new ArrayList<>(), paramTemplate.getInput().getValuemap());
+            LocalDate enddate = null;
+            boolean siminvestmod = false;
+            if (siminvestmod && "simulateinvest".equals(this.getName())) {
+                enddate = paramTemplate.getInput().getEnddate();
+            }
+            ComponentInput input = new ComponentInput(config.getConfigData(), null, marketName, enddate, 0, paramTemplate.getInput().isDoSave(), false, new ArrayList<>(), paramTemplate.getInput().getValuemap());
             ComponentData param = null;
             try {
                 param = ComponentData.getParam(iclijConfig, input, 0, market, paramTemplate.getService().getIo());
@@ -189,6 +197,10 @@ public abstract class MarketAction extends Action {
             //srv.getConfig();
             param.setService(srv);
             srv.coremlconf.getConfigData().setMarket(market.getConfig().getMarket());
+
+            if (siminvestmod && "simulateinvest".equals(this.getName())) {
+                srv.coremlconf.getConfigData().setDate(enddate);
+            }
 
             boolean skipIsDataset = !timingsdone.isEmpty();
             List<String> stockDates = null;
@@ -548,22 +560,10 @@ public abstract class MarketAction extends Action {
     public void getPicksFilteredOuter(WebData myData, ComponentData param, IclijConfig config, ActionComponentItem marketTime, Boolean evolve, Boolean wantThree, String actionItem) {
         IclijController.taskList.add(actionItem);
         try {
-            if (config.wantsInmemoryPipeline()) {
-                String uuid = UUID.randomUUID().toString();
-                param.setId(uuid);
-            }
             getPicksFiltered(myData, param, config, marketTime, evolve, wantThree);                
         } catch (Exception e) {
             throw e;
         } finally {
-            if (config.wantsInmemoryPipeline()) {
-                String path3 = "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + param.getService().id + "/" + param.getId();
-                try {
-                    new PipelineThreadUtils(param.getConfig(), param.getService()).deleteOld(param.getService().getIo().getCuratorClient(), path3, param.getId(), 2 * 60 * 1000, false, false);
-                } catch (Exception e) {
-                    log.error(Constants.EXCEPTION, e);
-                }
-            }
             IclijController.taskList.remove(actionItem);
         }
     }
