@@ -95,7 +95,7 @@ public class IclijController implements CommandLineRunner {
             startLeaderWorker();
             
             getInstance();
-            String path = "/" + Constants.STOCKSTAT + "/" + "pipeline" + "/" + "live" + "/" + instanceC.id;
+            String path = "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + Constants.LIVE + "/" + instanceC.id;
             try {
                 io.getCuratorClient().setData().forPath(path, new byte[0]);
             } catch (Exception e) {

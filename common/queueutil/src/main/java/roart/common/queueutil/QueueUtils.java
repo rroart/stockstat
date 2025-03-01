@@ -71,32 +71,32 @@ public class QueueUtils {
     
     public static String getLivePath() {
         String extra = getExtra();
-        String path = "/" + Constants.STOCKSTAT + "/" + "queue" + extra + "/" + "live";
+        String path = "/" + Constants.STOCKSTAT + "/" + Constants.QUEUE + extra + "/" + Constants.LIVE;
         return path;
     }
     
     public static String getQueuePath(String path) {
         String extra = getExtra();
-        return "/" + Constants.STOCKSTAT + "/" + "queue" + extra + "/" + "run" + "/" + path;
+        return "/" + Constants.STOCKSTAT + "/" + Constants.QUEUE + extra + "/" + "run" + "/" + path;
     }
     
     public static String getLivePath(String hostname, String name) {
         String extra = getExtra();
-        String path = "/" + Constants.STOCKSTAT + "/" + "queue" + extra + "/" + "live" + "/" + hostname + "/" + name;
+        String path = "/" + Constants.STOCKSTAT + "/" + Constants.QUEUE + extra + "/" + Constants.LIVE + "/" + hostname + "/" + name;
         return path;
     }
     
     @Deprecated
     public static String getPath2(String str, String hostname) {
         QueueElement element = get(str);
-        String path = "/" + Constants.STOCKSTAT + "/" + "queue" + "/" + hostname + "/" + element.getId();
+        String path = "/" + Constants.STOCKSTAT + "/" + Constants.QUEUE + "/" + hostname + "/" + element.getId();
         return path;
     }
 
     @Deprecated
     public static String getPath3(String id, String hostname) {
         //QueueElement element = get(str);
-        String path = "/" + Constants.STOCKSTAT + "/" + "queue" + "/" + hostname + "/" + id;
+        String path = "/" + Constants.STOCKSTAT + "/" + Constants.QUEUE + "/" + hostname + "/" + id;
         return path;
     }
     

@@ -78,6 +78,8 @@ public class Constants {
     public static final String HZ = "hz";
 
     public static final String STOCKSTAT = "stockstat";
+    public static final String PIPELINE = "pipeline";
+    public static final String LIVE = "live";
     public static final String FS = "fs";
     public static final String DATA = "data";
     

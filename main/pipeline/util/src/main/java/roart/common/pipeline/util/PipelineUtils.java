@@ -675,7 +675,7 @@ public class PipelineUtils {
                     msg = inmemory.send(data.getId() + "-" + data.getName(), data, md5);
                     log.info("Sent size {} {} {}", msg.getId(), msg.getCount(), JsonUtil.convert(data, mapper).length());
                     //result.message = msg;
-                    curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + "pipeline" + "/" + data.getId() + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
+                    curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + data.getId() + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }

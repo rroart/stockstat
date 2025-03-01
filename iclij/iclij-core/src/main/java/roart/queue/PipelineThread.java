@@ -51,7 +51,7 @@ public class PipelineThread extends Thread {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        String path = "/" + Constants.STOCKSTAT + "/" + "pipeline" + "/" + "live" + "/" + controlService.id;
+        String path = "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + Constants.LIVE + "/" + controlService.id;
         try {
             io.getCuratorClient().setData().forPath(path, new byte[0]);
         } catch (Exception e) {

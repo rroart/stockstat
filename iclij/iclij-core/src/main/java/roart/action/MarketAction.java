@@ -557,7 +557,7 @@ public abstract class MarketAction extends Action {
             throw e;
         } finally {
             if (config.wantsInmemoryPipeline()) {
-                String path3 = "/" + Constants.STOCKSTAT + "/" + "pipeline" + "/" + param.getService().id + "/" + param.getId();
+                String path3 = "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + param.getService().id + "/" + param.getId();
                 try {
                     new PipelineThreadUtils(param.getConfig(), param.getService()).deleteOld(param.getService().getIo().getCuratorClient(), path3, param.getId(), 2 * 60 * 1000, false, false);
                 } catch (Exception e) {
@@ -588,8 +588,9 @@ public abstract class MarketAction extends Action {
         acomponent.setConfig(aconfig);
         componentMap.put(marketTime.getComponent(), acomponent);
 
-        // TODO why so early?
-        // uses getcontent
+        // TODO why so early? fir setting, ordinary
+        // uses getcontent data.categorytitle is null
+        // todo start
         setValMap(param);
         PipelineData[] maps = param.getResultMaps();
         // TODO bad
@@ -600,6 +601,7 @@ public abstract class MarketAction extends Action {
         Map<String, String> nameMap = PipelineUtils.getNamemap(PipelineUtils.getPipeline(maps, catName, inmemory));
         log.info("TODO names {}", nameMap.size());
         inputdata.setNameMap(nameMap);
+        // todo end
 
         param.setTimings(new ArrayList<>());
         
@@ -620,6 +622,7 @@ public abstract class MarketAction extends Action {
         mlTests = getMLMetrics(timings, mltests, market.getFilter().getConfidence());
         }
         Parameters parameters2 = JsonUtil.convert(marketTime.getParameters(), Parameters.class);
+        // TODO 2nd 3rd getcontent
         handleComponent(this, market, profitdata, param, listComponentMap, componentMap, dataMap, marketTime.getBuy(), marketTime.getSubcomponent(), myData, config, parameters2, wantThree, mlTests);
         //handleMLMeta(this, param, valueMap, component.getPipeline());
         //saveTiming(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, false);

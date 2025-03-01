@@ -62,10 +62,10 @@ public class LeaderRunner implements Runnable {
                 while (true) {
                     try {
                         // TODO pipeline
-                        String path2 = "/" + Constants.STOCKSTAT + "/" + "pipeline" + "/" + "live";
+                        String path2 = "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + Constants.LIVE;
                         List<String> elems = getOld(curatorClient, path2, 2 * 60 * 1000, false, false);
                         for (String elem : elems) {
-                            String path3 = "/" + Constants.STOCKSTAT + "/" + "pipeline" + "/" + elem;
+                            String path3 = "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + elem;
                             new PipelineThreadUtils(iclijConfig, controlService).deleteOld(curatorClient, path3, elem, 2 * 60 * 1000, false, false);
                             log.info("Deleting " + path2 + "/" + elem);
                             curatorClient.delete().forPath(path2 + "/" + elem);
