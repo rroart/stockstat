@@ -41,6 +41,7 @@ import roart.common.model.util.MetaUtil;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMeta;
+import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -75,7 +76,6 @@ import roart.service.model.ProfitInputData;
 import roart.iclij.service.util.MarketUtil;
 import roart.iclij.service.util.MiscUtil;
 import roart.iclij.verifyprofit.VerifyProfitUtil;
-import roart.util.PipelineThreadUtils;
 import roart.util.ServiceUtil;
 import roart.model.io.IO;
 import roart.queue.PipelineThread;
@@ -136,7 +136,8 @@ public abstract class MarketAction extends Action {
             markets = new MarketUtil().getMarkets(false, iclijConfig);
         }
         WebData data = getMarkets(iclijConfig, parent, param, markets, new ArrayList<>(), evolve, priority, timingsdone, false);
-        new PipelineThreadUtils(iclijConfig, param.getService()).cleanPipeline(param);
+        Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        new PipelineThreadUtils(iclijConfig, inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
         return data;
     }        
     
@@ -154,7 +155,8 @@ public abstract class MarketAction extends Action {
             log.error(Constants.EXCEPTION, e);
         }
         List<Market> markets = new MarketUtil().getMarkets(actionData.isDataset(), iclijConfig);
-        new PipelineThreadUtils(iclijConfig, param.getService()).cleanPipeline(param);
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        new PipelineThreadUtils(iclijConfig, inmemory, io.getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
         return getMarkets(iclijConfig, parent, param, markets, timings, evolve, priority, new ArrayList<>(), true);
     }        
     

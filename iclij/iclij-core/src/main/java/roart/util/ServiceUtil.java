@@ -57,6 +57,7 @@ public class ServiceUtil {
         FindProfitAction findProfitAction = new FindProfitAction(iclijConfig);
         Market market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
         param.setMarket(market);
+        // TODO getcontent
         WebData webData = findProfitAction.getVerifyMarket(componentInput, param, market, false, iclijConfig.verificationDays());        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);

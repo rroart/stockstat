@@ -20,7 +20,7 @@ import roart.common.webflux.WebFluxUtil;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.ControlService;
 import roart.model.io.IO;
-import roart.util.PipelineThreadUtils;
+import roart.common.pipeline.util.PipelineThreadUtils;
 
 public class LeaderRunner implements Runnable {
     static Logger log = LoggerFactory.getLogger(LeaderRunner.class);
@@ -66,7 +66,8 @@ public class LeaderRunner implements Runnable {
                         List<String> elems = getOld(curatorClient, path2, 2 * 60 * 1000, false, false);
                         for (String elem : elems) {
                             String path3 = "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + elem;
-                            new PipelineThreadUtils(iclijConfig, controlService).deleteOld(curatorClient, path3, elem, 2 * 60 * 1000, false, false);
+                            Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+                            new PipelineThreadUtils(iclijConfig, inmemory, curatorClient).deleteOld(curatorClient, path3, elem, 2 * 60 * 1000, false, false);
                             log.info("Deleting " + path2 + "/" + elem);
                             curatorClient.delete().forPath(path2 + "/" + elem);
                         }

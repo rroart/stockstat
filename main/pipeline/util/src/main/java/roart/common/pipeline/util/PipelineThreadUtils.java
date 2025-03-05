@@ -1,4 +1,4 @@
-package roart.util;
+package roart.common.pipeline.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,21 +12,22 @@ import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.util.JsonUtil;
-import roart.component.model.ComponentData;
 import roart.iclij.config.IclijConfig;
-import roart.iclij.service.ControlService;
 
 public class PipelineThreadUtils {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private IclijConfig iclijConfig;
 
-    private ControlService controlService;
+    private Inmemory inmemory;
 
-    public PipelineThreadUtils(IclijConfig iclijConfig, ControlService controlService) {
+    private CuratorFramework curatorClient;
+
+    public PipelineThreadUtils(IclijConfig iclijConfig, Inmemory inmemory, CuratorFramework curatorClient) {
         super();
         this.iclijConfig = iclijConfig;
-        this.controlService = controlService;
+        this.inmemory = inmemory;
+        this.curatorClient = curatorClient;
     }
 
     public List<String> deleteOld(CuratorFramework curatorClient, String path, String id, int deleteTime, boolean deleteQueue, boolean deleteInmemory) throws Exception {
@@ -58,7 +59,6 @@ public class PipelineThreadUtils {
                 byte[] data = curatorClient.getData().forPath(path + "/" + child + "/" + child2);
                 String str = new String(data);
                 log.info("Element deleted " + str);
-                Inmemory inmemory = controlService.getIo().getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
                 //InmemoryMessage m = new InmemoryMessage(iclijConfig.getInmemoryServer(), id + "-" + child, 0);
                 InmemoryMessage m = JsonUtil.convert(str, InmemoryMessage.class);
                 inmemory.delete(m);
@@ -70,11 +70,11 @@ public class PipelineThreadUtils {
         return list;
     }
 
-    public void cleanPipeline(ComponentData param) {
+    public void cleanPipeline(String serviceId, String id) {
         if (iclijConfig.wantsInmemoryPipeline()) {
-            String path3 = "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + param.getService().id + "/" + param.getId();
+            String path3 = "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id;
             try {
-                deleteOld(param.getService().getIo().getCuratorClient(), path3, param.getId(), 2 * 60 * 1000, false, false);
+                deleteOld(curatorClient, path3, id, 2 * 60 * 1000, false, false);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }

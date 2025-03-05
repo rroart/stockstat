@@ -20,6 +20,7 @@ module pipeline.util {
     requires org.slf4j;
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.datatype.jsr310;
+    requires stockstat.shadow.zookeeper;
     // for test
     //requires evolution.model;
 }
