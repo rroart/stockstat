@@ -1,4 +1,4 @@
-package roart.util;
+package roart.webcore.util;
 
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -57,11 +57,11 @@ import roart.iclij.service.IclijServiceList;
 import roart.iclij.service.IclijServiceResult;
 import roart.iclij.service.util.MarketUtil;
 import roart.iclij.service.util.MiscUtil;
-import roart.util.RelationUtil;
 import roart.iclij.verifyprofit.TrendUtil;
 import roart.iclij.verifyprofit.VerifyProfitUtil;
 import roart.model.io.IO;
 import roart.service.model.ProfitData;
+import roart.webcore.util.RelationUtil;
 
 public class ServiceUtil {
     private static Logger log = LoggerFactory.getLogger(ServiceUtil.class);
@@ -185,6 +185,7 @@ public class ServiceUtil {
                 LocalDate prevDate = TimeUtil.getEqualBefore(stockDates, endDate);
                 short startoffset = new MarketUtil().getStartoffset(market);
                 prevDate = TimeUtil.getBackEqualBefore2(prevDate, startoffset, stockDates);
+                // TODO getcontent
                 Trend trend = new TrendUtil().getTrend(instance.verificationDays(), null /*TimeUtil.convertDate2(prevDate)*/, startoffset, stockDates, param, market);
                 trendMap.put(market.getConfig().getMarket(), trend);
             } catch (Exception e) {
@@ -619,7 +620,8 @@ public class ServiceUtil {
         //componentInput.setDoSave(false);
         int verificationdays = iclijConfig.verificationDays();
         boolean rerun = iclijConfig.verificationRerun();
-        IclijServiceResult result = getFindProfitVerify(iclijConfig, componentInput, type, verificationdays, rerun, io);
+        // TODO getcontent
+       IclijServiceResult result = getFindProfitVerify(iclijConfig, componentInput, type, verificationdays, rerun, io);
         new MiscUtil().print(result);
         return result;
     }
@@ -682,6 +684,7 @@ public class ServiceUtil {
 
         Trend trend;
         Trend trend2;
+        // TODO getcontent
         if (rerun) {
             trend = new TrendUtil().getTrend(iclijConfig.verificationDays(), null /*TimeUtil.convertDate2(olddate)*/, startoffset, stockDates, findTime, param, market);
             trend2 = new TrendUtil().getTrend(iclijConfig.verificationDays(), null /*TimeUtil.convertDate2(prevdate)*/, startoffset, stockDates, param, market);
@@ -744,6 +747,7 @@ public class ServiceUtil {
                 listInc = new HashSet<>();
             }
             if (verificationdays > 0) {
+                // TODO getcontent
                 if (rerun) {
                     new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, listInc, listDec, listIncDec, startoffset, iclijConfig.getFindProfitManualThreshold(), param, stockDates, market);
                 } else {
@@ -1041,6 +1045,7 @@ public class ServiceUtil {
         int days = 0;  // config.verificationDays();
         //componentInput.setDoSave(false);
         boolean rerun = iclijConfig.singlemarketRerun();
+        // TODO getcontent
         IclijServiceResult result = getFindProfitVerify(iclijConfig, componentInput, type, days, rerun, io);
         new MiscUtil().print(result);
         return result;

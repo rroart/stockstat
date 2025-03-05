@@ -25,7 +25,7 @@ import roart.iclij.service.ControlService;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 import roart.model.io.IO;
-import roart.util.ServiceUtil;
+import roart.webcore.util.ServiceUtil;
 
 @CrossOrigin
 @RestController

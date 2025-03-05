@@ -46,6 +46,7 @@ import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.config.bean.ConfigI;
 import roart.iclij.model.Parameters;
 import roart.iclij.service.ControlService;
+import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 import roart.model.io.IO;
 import roart.queue.PipelineThread;
@@ -90,6 +91,8 @@ public class InmemoryPipelineTest {
     private CommunicationFactory communicationFactory = new TestCommunicationFactory();
 
     private TestUtils testutils;
+
+    private TestUtils2 testutils2;
     
     @BeforeAll
     public void before() throws Exception {
@@ -119,6 +122,7 @@ public class InmemoryPipelineTest {
         ac = new ActionThread(iconf, io);
         
         testutils = new TestUtils(iconf, io);
+        testutils2 = new TestUtils2(iconf, io);
         
         //String content = "";
         //new Sim(iconf, dbDao, fileSystemDao).method((String) content, "sim", true);
@@ -280,5 +284,32 @@ public class InmemoryPipelineTest {
         //System.out.println("map" + result.getWebdatajson().getUpdateMap());
         //System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
     }
+    
+    @Test
+    public void getVerify() throws Exception {
+        IclijServiceParam param = new IclijServiceParam();
+        param.setConfigData(iconf.getConfigData());
+        testutils2.getVerify(param);
+    }
 
+    @Test
+    public void getFindProfitMarket() throws Exception {
+        IclijServiceParam param = new IclijServiceParam();
+        param.setConfigData(iconf.getConfigData());
+        testutils2.getFindProfitMarket(param);
+    }
+    
+    @Test
+    public void getImproveAboveBelowMarketTest() throws Exception {
+        IclijServiceParam param = new IclijServiceParam();
+        param.setConfigData(iconf.getConfigData());
+        testutils2.getImproveAboveBelowMarket(param);
+    }
+    
+    @Test
+    public void getImproveProfitMarket() throws Exception {
+        IclijServiceParam param = new IclijServiceParam();
+        param.setConfigData(iconf.getConfigData());
+        testutils2.getImproveProfitMarket(param);
+    }
 }

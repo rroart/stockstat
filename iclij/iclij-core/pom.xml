@@ -395,6 +395,12 @@
       <version>${stockstat.version}</version>
       <scope>test</scope>
     </dependency>
+    <!--dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-iclij-webcore</artifactId>
+      <version>${stockstat.version}</version>
+      <scope>test</scope>
+    </dependency-->
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-testdata</artifactId>

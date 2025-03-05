@@ -6,6 +6,8 @@
  *
  */
 open module iclij.webcore {
+    exports roart.webcore.util;
+    
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
