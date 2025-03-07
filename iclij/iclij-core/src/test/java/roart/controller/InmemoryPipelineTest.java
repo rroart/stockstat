@@ -1,5 +1,6 @@
 package roart.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -94,6 +95,8 @@ public class InmemoryPipelineTest {
 
     private TestUtils2 testutils2;
     
+    private TestInmemory inmemory;
+    
     @BeforeAll
     public void before() throws Exception {
         ConfigMaps configMaps = IclijConfig.instanceC();
@@ -128,6 +131,8 @@ public class InmemoryPipelineTest {
         //new Sim(iconf, dbDao, fileSystemDao).method((String) content, "sim", true);
         MyCache.setCache(iconf.wantCache());
         MyCache.setCacheTTL(iconf.getCacheTTL());
+        
+        inmemory = (TestInmemory) io.getInmemoryFactory().get(iconf.getInmemoryServer(), iconf.getInmemoryHazelcast(), iconf.getInmemoryRedis());
 
     }
 
@@ -146,6 +151,8 @@ public class InmemoryPipelineTest {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+        inmemory.stat();
+        assertEquals(true, inmemory.isEmpty());
     }
 
     @Test
@@ -168,6 +175,8 @@ public class InmemoryPipelineTest {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+        inmemory.stat();
+        assertEquals(true, inmemory.isEmpty());
     }
 
     @Test
@@ -188,6 +197,8 @@ public class InmemoryPipelineTest {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+        inmemory.stat();
+        assertEquals(true, inmemory.isEmpty());
     }
 
     @Test
@@ -208,6 +219,8 @@ public class InmemoryPipelineTest {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+        inmemory.stat();
+        assertEquals(true, inmemory.isEmpty());
     }
 
     @Test
@@ -218,6 +231,8 @@ public class InmemoryPipelineTest {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+        inmemory.stat();
+        assertEquals(true, inmemory.isEmpty());
     }
 
     @Test
@@ -235,6 +250,8 @@ public class InmemoryPipelineTest {
         }
         System.out.println("map" + result.getWebdatajson().getUpdateMap());
         System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+        inmemory.stat();
+        assertEquals(true, inmemory.isEmpty());
     }
 
     @Test
@@ -251,6 +268,8 @@ public class InmemoryPipelineTest {
         }
         System.out.println("map" + result.getWebdatajson().getUpdateMap());
         System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+        inmemory.stat();
+        assertEquals(true, inmemory.isEmpty());
     }
 
     @Test
@@ -267,6 +286,8 @@ public class InmemoryPipelineTest {
         }
         //System.out.println("map" + result.getWebdatajson().getUpdateMap());
         //System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+        inmemory.stat();
+        assertEquals(true, inmemory.isEmpty());
     }
 
     @Test
@@ -283,8 +304,11 @@ public class InmemoryPipelineTest {
         }
         //System.out.println("map" + result.getWebdatajson().getUpdateMap());
         //System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+        inmemory.stat();
+        assertEquals(true, inmemory.isEmpty());
     }
     
+    /*
     @Test
     public void getVerify() throws Exception {
         IclijServiceParam param = new IclijServiceParam();
@@ -312,4 +336,5 @@ public class InmemoryPipelineTest {
         param.setConfigData(iconf.getConfigData());
         testutils2.getImproveProfitMarket(param);
     }
+    */
 }

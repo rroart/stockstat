@@ -38,6 +38,14 @@ public class TestInmemory extends Inmemory {
     public String read(InmemoryMessage m) {
         return (String) map.get(m.getId());
     }
+    
+    @Override
+    public void delete(InmemoryMessage m) {        
+        Object prev = map.remove(m.getId());
+        if (prev == null) {
+            log.error("Key did not exist {}", m.getId());
+        }
+    }
 
     @Override
     protected int getLimit() {
@@ -59,8 +67,26 @@ public class TestInmemory extends Inmemory {
     }
 
     @Override
-    protected void del(String key) {
-        map.remove(key);
+    protected void del(String key) {        
+        Object prev = map.remove(key);
+        if (prev == null) {
+            log.error("Key did not exist {}", key);
+        }
     }
 
+    public void stat() {
+        log.info("Stats {}", map.keySet());
+    }
+
+    public boolean isEmpty() {
+        return map.size() == 0;
+    }
+
+    public void clear() {
+        map.clear();
+    }
+    
+    public Map<String, Object> getMap() {
+        return map;
+    }
 }

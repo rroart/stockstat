@@ -13,6 +13,8 @@ public class CacheConstants {
 
     public static final String CONTENT = "content";
 
+    public static final String MLCONTENT = "mlcontent";
+
     public static final String CONFIG = "config";
 
     public static final String CORECONTENT = "corecontent";

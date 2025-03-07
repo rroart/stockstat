@@ -51,7 +51,10 @@ public class VerifyProfitUtil {
         }
         log.info("Verify compare date {} with {} threshold {}", componentData.getComponentTime().getFutureDate(), days, threshold);
         LocalDate mydate = componentData.getFutureDate();
-        componentData.getAndSetWantedCategoryValueMap(false);
+
+        //componentData.getAndSetWantedCategoryValueMap(false);
+        //new PipelineThreadUtils(componentData.getConfig(), componentData.getService()).cleanPipeline(componentData);
+
         Map<String, List<List<Double>>> categoryValueMap = componentData.getCategoryValueMap();
     
         VerifyProfit verify = new VerifyProfit();

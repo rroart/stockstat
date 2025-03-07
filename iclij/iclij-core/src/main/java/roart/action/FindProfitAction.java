@@ -25,6 +25,7 @@ import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -106,7 +107,7 @@ public class FindProfitAction extends MarketAction {
             ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters, getParent() != null);
             
             Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config);
-            Map<String, String> nameMap = PipelineUtils.getNamemap(PipelineUtils.getPipeline(param.getResultMaps(), param.getCategoryTitle(), inmemory));
+            Map<String, String> nameMap = PipelineUtils.getNamemap(PipelineUtils.getPipeline(componentData.getResultMaps(), componentData.getCategoryTitle(), inmemory));
             log.info("TODO names {}", nameMap.size());
             profitdata.getInputdata().setNameMap(nameMap);
             
@@ -280,11 +281,13 @@ public class FindProfitAction extends MarketAction {
         }
         new MarketUtil().fillProfitdata(profitdata, incdecitems);
         
+        // todo
         setValMap(param);
         Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
         PipelineData[] maps = param.getResultMaps();
         new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, null, inmemory);
         new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, null, inmemory);
+        new PipelineThreadUtils(param.getConfig(), inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
         myData.getIncs().addAll(profitdata.getBuys().values());
         myData.getDecs().addAll(profitdata.getSells().values());
         return myData;

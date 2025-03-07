@@ -55,6 +55,8 @@ open module iclij.webcore {
     requires common.filesystem.client;
     requires curator.client;
     requires curator.framework;
+    requires common.inmemory.model;
+    requires pipeline.util;
     //requires springfox.core;
     //requires springfox.spi;
     //requires springfox.spring.web;

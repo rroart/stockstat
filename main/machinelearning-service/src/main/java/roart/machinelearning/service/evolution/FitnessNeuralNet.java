@@ -70,6 +70,7 @@ public class FitnessNeuralNet extends Fitness {
             // TODO null MyMyConfig.getAggregatorsIndicatorIntervaldays
             return 0;
         }
+        // nothing is written to inmemory, so will not need to clean
         Map<String, Object> accuracyMap = PipelineUtils.getAccuracyMap(pipelineData.putData());
         if (accuracyMap == null) {
             return 0;

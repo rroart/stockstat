@@ -167,6 +167,7 @@ public abstract class Component {
         boolean interrupted = false;
         if (evolve) {   
             EvolutionConfig actionEvolveConfig = JsonUtil.convert(action.getEvolutionConfig(param.getConfig()), EvolutionConfig.class);
+            // calling ml
             evolveMap = handleEvolve(action, market, pipeline, evolve, param, subcomponent, scoreMap, null, parameters, actionEvolveConfig, action.getMLConfig(param.getConfig()));
             //if (IclijConstants.EVOLVE.equals(param.getAction())) {
             //    action.saveTimingCommon(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, evolve);
@@ -178,8 +179,8 @@ public abstract class Component {
         if (action.doHandleMLMeta()) {
         	fixJsonList(valueMap);
                 // uses getcontent
-        	// true for improveprofit impfilter findprofit crosstest machinelearn  siminv
-                // false fpt dataset evolve impabove impautosim impsim
+        	// true for improveprofit impfilter findprofit crosstest machinelearn
+                // false fpt dataset evolve impabove impautosim impsim siminv
         	// TODO second getcontent call, special
         	handleMLMetaCommon(param, valueMap);
         }
@@ -324,6 +325,8 @@ public abstract class Component {
         if (fitness != null) {
             evolution.fittest = fitness::fitness;
         }
+        
+        // todo calling evolve here soon
         
         Map<String, String> retMap = new HashMap<>();
         try {

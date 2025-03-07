@@ -25,6 +25,7 @@ import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
@@ -103,6 +104,7 @@ public class ImproveSimulateInvestAction extends MarketAction {
             Memories listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap,
             Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters,
             boolean wantThree, List<MLMetricsItem> mlTests) {
+        log.info("Param id {}", componentparam.getId());
         if (componentparam.getUpdateMap() == null) {
         	componentparam.setUpdateMap(new HashMap<>());
         }
@@ -126,8 +128,9 @@ public class ImproveSimulateInvestAction extends MarketAction {
             }
             
             SimulateInvestData param = new SimulateInvestData(componentparam);
-            param.setAllIncDecs(getAllIncDecs(market, null, null));
+            param.setAllIncDecs(getAllIncDecs(market, null, null, param));
             param.setAllMetas(((ImproveSimulateInvestComponent)component).getAllMetas(componentparam));
+            // TODO getcontent
             ((ImproveSimulateInvestComponent)component).getResultMaps(param, market);
             List<String> confList = component.getConflist();
 
@@ -155,15 +158,16 @@ public class ImproveSimulateInvestAction extends MarketAction {
                 param.getUpdateMap().putAll(updateMap);
             }
 
-        }
+            new PipelineThreadUtils(config, inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
+      }
 
     }
 
-    @Deprecated // ?
+    @Deprecated // TODO not deprecated?
     public List<IncDecItem> getAllIncDecs(Market market, LocalDate investStart,
-            LocalDate investEnd) {
+            LocalDate investEnd, ComponentData param) {
         try {
-            return null; //param.getService().getIo().getIdbDao().getAllIncDecs(market.getConfig().getMarket(), investStart, investEnd, null);
+            return param.getService().getIo().getIdbDao().getAllIncDecs(market.getConfig().getMarket(), investStart, investEnd, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

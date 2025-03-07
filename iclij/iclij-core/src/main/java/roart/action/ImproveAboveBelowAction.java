@@ -32,6 +32,7 @@ import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.queue.QueueElement;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -160,6 +161,8 @@ public class ImproveAboveBelowAction extends MarketAction {
                 Double threshold = realParameters.getThreshold();
 
                 // uses getcontent
+                // todo
+                // done clean
                 param.getAndSetCategoryValueMap(false);
 
                 //FitnessAboveBelow fit = new FitnessAboveBelow(action, new ArrayList<>(), param, profitdata, market, null, this.getPipeline(), null, subcomponent, realParameters, null, incdecsP, components, subcomponents, stockDates);
@@ -318,6 +321,9 @@ public class ImproveAboveBelowAction extends MarketAction {
             //System.out.println("Buys: " + market.getMarket() + buys);
             //System.out.println("Sells: " + market.getMarket() + sells);           
         }
+        // Done in runaction
+        //Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
+        //new PipelineThreadUtils(config, inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
 
     }
 

@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigData;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
@@ -28,6 +29,7 @@ import roart.common.model.MetaItem;
 import roart.common.model.TimingItem;
 import roart.common.model.util.MetaUtil;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.util.MathUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
@@ -186,8 +188,19 @@ public class ServiceUtil {
                 short startoffset = new MarketUtil().getStartoffset(market);
                 prevDate = TimeUtil.getBackEqualBefore2(prevDate, startoffset, stockDates);
                 // TODO getcontent
+                // add getcontent
+                try {
+                    param.setFuturedays(0);
+                    param.setOffset(0);
+                    param.setDates(null, stockDates, null, market);
+                } catch (ParseException e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+                param.getAndSetWantedCategoryValueMap(false);
                 Trend trend = new TrendUtil().getTrend(instance.verificationDays(), null /*TimeUtil.convertDate2(prevDate)*/, startoffset, stockDates, param, market);
                 trendMap.put(market.getConfig().getMarket(), trend);
+                Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getConfig().getInmemoryServer(), param.getConfig().getInmemoryHazelcast(), param.getConfig().getInmemoryRedis());
+                new PipelineThreadUtils(param.getConfig(), inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
             } catch (Exception e) {
                 log.error("Trend exception for market {}", market.getConfig().getMarket());
                 log.error(Constants.EXCEPTION, e);
@@ -682,14 +695,52 @@ public class ServiceUtil {
         // verificationdays is the interval for above / below check
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket(), param.getId());
 
+        Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getConfig().getInmemoryServer(), param.getConfig().getInmemoryHazelcast(), param.getConfig().getInmemoryRedis());
         Trend trend;
         Trend trend2;
         // TODO getcontent
+        // add getcontent
         if (rerun) {
+            try {
+                param.setFuturedays(0);
+                param.setOffset(-findTime);
+                param.setDates(null, stockDates, null, market);
+            } catch (ParseException e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            param.getAndSetWantedCategoryValueMap(false);
+            new PipelineThreadUtils(param.getConfig(), inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
             trend = new TrendUtil().getTrend(iclijConfig.verificationDays(), null /*TimeUtil.convertDate2(olddate)*/, startoffset, stockDates, findTime, param, market);
+            try {
+                param.setFuturedays(0);
+                param.setOffset(0);
+                param.setDates(null, stockDates, null, market);
+            } catch (ParseException e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            param.getAndSetWantedCategoryValueMap(false);
+            new PipelineThreadUtils(param.getConfig(), inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
             trend2 = new TrendUtil().getTrend(iclijConfig.verificationDays(), null /*TimeUtil.convertDate2(prevdate)*/, startoffset, stockDates, param, market);
         } else {
+            try {
+                param.setFuturedays(0);
+                param.setOffset(-findTime);
+                param.setDates(null, stockDates, null, market);
+            } catch (ParseException e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            param.getAndSetWantedCategoryValueMap(false);
+            new PipelineThreadUtils(param.getConfig(), inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
             trend = new TrendUtil().getTrend(iclijConfig.verificationDays(), null /*TimeUtil.convertDate2(olddate)*/, startoffset, stockDates, findTime, param, market);            
+            try {
+                param.setFuturedays(0);
+                param.setOffset(0);
+                param.setDates(null, stockDates, null, market);
+            } catch (ParseException e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            param.getAndSetWantedCategoryValueMap(false);
+            new PipelineThreadUtils(param.getConfig(), inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
             trend2 = new TrendUtil().getTrend(iclijConfig.verificationDays(), null /*TimeUtil.convertDate2(prevdate)*/, startoffset, stockDates, param, market);            
         }
         trendMap.put(market.getConfig().getMarket(), trend);
@@ -747,7 +798,7 @@ public class ServiceUtil {
                 listInc = new HashSet<>();
             }
             if (verificationdays > 0) {
-                // TODO getcontent
+                // TODO getcontent 2nd time
                 if (rerun) {
                     new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, listInc, listDec, listIncDec, startoffset, iclijConfig.getFindProfitManualThreshold(), param, stockDates, market);
                 } else {
@@ -875,12 +926,18 @@ public class ServiceUtil {
                 listInc = new HashSet<>();
             }
             if (verificationdays > 0) {
+                // todo calling getcontent
+                // todo call pipe here
+                param.getAndSetWantedCategoryValueMap(false);
+                // todo clean
                 if (rerun) {
                     new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, listInc, listDec, listIncDec, startoffset, iclijConfig.getFindProfitManualThreshold(), param, stockDates, market);
                 } else {
                     new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, listInc, listDec, listIncDec, startoffset, iclijConfig.getFindProfitManualThreshold(), param, stockDates, market);                
                 }
-            }
+                Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getConfig().getInmemoryServer(), param.getConfig().getInmemoryHazelcast(), param.getConfig().getInmemoryRedis());
+                new PipelineThreadUtils(param.getConfig(), inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
+        }
             addHeader(iclijConfig, componentInput, type, result, baseDateStr, futureDateStr, market);
 
             List<IclijServiceList> subLists = getServiceList(param.getService().coremlconf.getConfigData().getMarket(), key, listInc, listDec, listIncDec);

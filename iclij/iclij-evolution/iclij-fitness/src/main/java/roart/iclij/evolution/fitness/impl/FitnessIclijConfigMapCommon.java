@@ -59,6 +59,10 @@ public class FitnessIclijConfigMapCommon {
                 map.putAll(override);
             }
             
+            // TODO new param?
+            
+            // TODO disable caching
+            
             param.getInput().getConfigData().getConfigValueMap().putAll(map);
             
             ComponentData componentData2 = component.handle(action, market, param, profitdata, listMap, evolve, map, subcomponent, null, parameters, false);
@@ -68,7 +72,7 @@ public class FitnessIclijConfigMapCommon {
             score = (Double) result[0];
             if (resultMap != null) {
                 // TODO TODOE
-                log.info("TODO" + componentData2.getResultMap().getSmap().getMap());
+                //log.info("TODO" + componentData2.getResultMap().getSmap().getMap());
                 //resultMap.putAll(componentData2.getResultMap().getSmap().getMap());
                 resultMap.putAll(componentData2.getResultMap().getSmap().getMap());
             }

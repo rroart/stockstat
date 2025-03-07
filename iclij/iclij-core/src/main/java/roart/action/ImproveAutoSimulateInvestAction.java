@@ -22,6 +22,7 @@ import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.queue.QueueElement;
 import roart.common.util.JsonUtil;
 import roart.iclij.component.Component;
@@ -117,6 +118,7 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
             // TODO
             param.setAllIncDecs(getAllIncDecs(market, null, null));
             param.setAllMetas(((ImproveAutoSimulateInvestComponent)component).getAllMetas(componentparam));
+            // TODO getcontent
             ((ImproveAutoSimulateInvestComponent)component).getResultMaps(param, market);
             List<String> confList = component.getConflist();
 
@@ -140,6 +142,7 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
             }
+            new PipelineThreadUtils(config, inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
 
         }
 

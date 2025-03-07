@@ -40,6 +40,7 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.queue.QueueElement;
 import roart.common.util.ImmutabilityUtil;
@@ -255,6 +256,7 @@ public class ControlService {
     
     // (Un)used
     public Map<String, String> getStocks(String market) {
+        // TODO pipeline
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(coremlconf.getConfigData());
         param.setMarket(market);
@@ -275,11 +277,13 @@ public class ControlService {
         param.setWantMaps(true);
         param.setMarket(market);
         if (iclijConfig.wantsInmemoryPipeline()) {
-            log.info("InmemoryPipeline");
+            uuid = UUID.randomUUID().toString();
+            log.info("InmemoryPipeline {} {}", id, uuid);
             param.setId(id + "/" + uuid);
         }
         IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETDATES);
         list = PipelineUtils.getDatelist(PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.DATELIST, inmemory));      
+        new PipelineThreadUtils(getIclijConfig(), inmemory, getIo().getCuratorClient()).cleanPipeline(id, uuid);
         MyCache.getInstance().put(key, list);
         return list;
     }
@@ -287,20 +291,28 @@ public class ControlService {
      * Create result lists
  * @param uuid TODO
  * @param useMl TODO
+ * @param disableCache TODO
  * @return the tabular result lists
      */
 
-    public PipelineData[] getContent(String uuid, boolean useMl) {
-        return getContent(uuid, useMl, new ArrayList<>());
+    public PipelineData[] getContent(String uuid, boolean useMl, boolean disableCache) {
+        return getContent(uuid, useMl, new ArrayList<>(), disableCache);
     }
     
-    public PipelineData[] getContent(String uuid, boolean useMl, List<String> disableList) {
-        
+    public PipelineData[] getContent(String uuid, boolean useMl, List<String> disableList, boolean disableCache) {
+        if (true) {
+            try {
+                String s = null;
+                s.length();
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
         long[] mem0 = MemUtil.mem();
         log.info("MEM {}", MemUtil.print(mem0));
 
         String key = CacheConstants.CONTENT + coremlconf.getConfigData().getMarket() + coremlconf.getConfigData().getMlmarket() + coremlconf.getConfigData().getDate() + coremlconf.getConfigData().getConfigValueMap();
-        log.info("Content key {} {}", key, key.hashCode());
+        log.info("Content key {}", key.hashCode());
         PipelineData[] list = (PipelineData[]) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
@@ -308,7 +320,7 @@ public class ControlService {
         IclijServiceParam param = new IclijServiceParam();
         log.info("Wants {}", iclijConfig.wantsInmemoryPipeline());
         if (iclijConfig.wantsInmemoryPipeline()) {
-            log.info("InmemoryPipeline");
+            log.info("InmemoryPipeline {} {}", id, uuid);
             param.setId(id + "/" + uuid);
         }
         param.setConfigData(coremlconf.getConfigData());
@@ -335,8 +347,12 @@ public class ControlService {
         list = result.getPipelineData();
         PipelineData[] list2 = list;
         // TODO list = ImmutabilityUtil.immute(list2);
-        MyCache.getInstance().put(key, list);
-
+        if (!disableCache) {
+            MyCache.getInstance().put(key, list);
+        } else {
+            log.info("Cache disabled for {} {} {}", id, uuid, key.hashCode());
+        }
+        
         long[] mem1 = MemUtil.mem();
         long[] memdiff = MemUtil.diff(mem1, mem0);
         log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));

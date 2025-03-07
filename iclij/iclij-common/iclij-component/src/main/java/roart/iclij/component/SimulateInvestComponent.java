@@ -32,12 +32,15 @@ import com.google.common.collect.HashBiMap;
 
 import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
+import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.model.MetaItem;
 import roart.common.model.SimDataItem;
+import roart.common.model.util.MetaUtil;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialListMap;
@@ -45,7 +48,9 @@ import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialListSimulateStock;
 import roart.common.pipeline.data.SerialListStockHistory;
 import roart.common.pipeline.data.SerialMapPlain;
+import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.data.SerialVolume;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
 import roart.common.util.MapUtil;
@@ -98,6 +103,7 @@ public class SimulateInvestComponent extends ComponentML {
     public ComponentData handle(MarketActionData action, Market market, ComponentData param, ProfitData profitdata,
             Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket,
             Parameters parameters, boolean hasParent) {
+        log.info("Param id {}", param.getId());
         ComponentData componentData = new ComponentData(param);
         SimulateInvestData simulateParam;
         if (param instanceof SimulateInvestData) {
@@ -218,7 +224,7 @@ public class SimulateInvestComponent extends ComponentML {
             scoreMap.put(SimConstants.SCORE, score);
             componentData.setScoreMap(scoreMap);
 
-            handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent);
+            // TODO handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent);
             return componentData;
         }
         log.debug("stockdates {} {}", data.stockDates.size(), componentData.getStockDates().size());
@@ -785,7 +791,7 @@ public class SimulateInvestComponent extends ComponentML {
         componentData.setScoreMap(scoreMap);
         //componentData.setFuturedays(0);
 
-        handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent);
+        // TODO handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent);
         return componentData;
     }
 

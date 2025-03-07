@@ -11,12 +11,14 @@ import java.util.Map;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.ServiceConstants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
@@ -196,14 +198,31 @@ public class ImproveSimulateInvestComponent extends ComponentML {
         aMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
         aMap.put(ConfigConstants.MISCINTERPOLATIONLASTNULL, Boolean.TRUE);
         aMap.put(ConfigConstants.MISCMERGECY, false);
-        // different line
+        aMap.put(ConfigConstants.AGGREGATORS, false);
+        aMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, false);
+        aMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, false);
+        aMap.put(ConfigConstants.AGGREGATORS, false);
+    // different line
+        // todo
         param.getResultMap(null, aMap, false);
+        Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
+        //PipelineData metaData = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
+        //SerialMeta meta = PipelineUtils.getMeta(metaData);
+        //String catName = new MetaUtil().getCategory(meta,  cat);
+        PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
+        Integer cat = PipelineUtils.getWantedcat(pipelineDatum);
+        String catName = PipelineUtils.getMetaCat(pipelineDatum);
+        log.info("cats {} {}", cat, catName);
+        param.setCategory(cat);
+        param.setCategoryTitle(catName);
+        param.getAndSetCategoryValueMapAlt();
+
         PipelineData[] mapsRebase = param.getResultMaps();
         param.setResultRebaseMaps(mapsRebase);
 
         aMap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, false);
         // different line
-        param.getResultMap(null, aMap, false);
+        // todo param.getResultMap(null, aMap, false);
         //Map<String, Map<String, Object>> maps = param.getResultMaps();
         //param.getAndSetWantedCategoryValueMap();
         /*

@@ -200,7 +200,9 @@ public class MachineLearningControlService {
     }
 
     public IclijServiceResult getContent(IclijConfig conf, IclijServiceParam origparam, List<String> disableList) {
-        String key = CacheConstants.CONTENT + conf.getConfigData().getMarket() + conf.getConfigData().getMlmarket() + conf.getConfigData().getDate() + conf.getConfigData().getConfigValueMap();
+        String key = CacheConstants.MLCONTENT + conf.getConfigData().getMarket() + conf.getConfigData().getMlmarket() + conf.getConfigData().getDate() + conf.getConfigData().getConfigValueMap();
+        log.info("Content key {}", key.hashCode());
+        log.info("Content kez {}", key);
         IclijServiceResult list = (IclijServiceResult) MyCache.getInstance().get(key);
         if (list != null) {
             return list;

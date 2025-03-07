@@ -82,9 +82,19 @@ public class ComponentData {
     
     private Market market;
     
+    private boolean disableCache;
+    
     public ComponentData() {
         
     }
+
+    /*
+      Basically a copy
+      TODO input.valueMap setting is meaningless
+      TODO service.coremlconf.configdata.configvaluemap setting is meaningless
+      configValueMap is set from service.coremlconf.configdata.configvaluemap
+      updateMap is new Map
+     */
     
     public ComponentData(ComponentData componentparam) {
         this.id = componentparam.id;
@@ -100,6 +110,7 @@ public class ComponentData {
         this.setOffset(componentparam.getOffset());
         this.setFuturedays(componentparam.getFuturedays());
         this.resultMap = componentparam.resultMap;
+        this.resultMaps = componentparam.resultMaps;
         this.stockDates = componentparam.stockDates;
         this.categoryValueMap = componentparam.categoryValueMap;
         this.fillCategoryValueMap = componentparam.fillCategoryValueMap;
@@ -111,6 +122,7 @@ public class ComponentData {
         this.disableList = componentparam.disableList;
         this.timings = componentparam.timings;
         this.market = componentparam.market;
+        this.disableCache = componentparam.disableCache;
     }
 
     public ComponentData(ComponentInput input) {
@@ -355,6 +367,14 @@ public class ComponentData {
         this.market = market;
     }
 
+    public boolean isDisableCache() {
+        return disableCache;
+    }
+
+    public void setDisableCache(boolean disableCache) {
+        this.disableCache = disableCache;
+    }
+
     public int setDatesNot() throws ParseException {
         List<String> stockdates = service.getDates(getMarket(), null);
         String date = TimeUtil.convertDate2(this.getInput().getEnddate());
@@ -400,7 +420,7 @@ public class ComponentData {
 
         service.coremlconf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
         service.coremlconf.getConfigData().getConfigValueMap().putAll(setValueMap);
-        PipelineData[] result = getService().getContent(id, useMl);
+        PipelineData[] result = getService().getContent(id, useMl, disableCache);
         this.resultMaps = result;
         try {
             // TODO null name, fix later
@@ -431,6 +451,7 @@ public class ComponentData {
             // TODO needed where, reread?
             Inmemory inmemory = getService().getIo().getInmemoryFactory().get(config);
             List<String> stockdates = PipelineUtils.getDatelist(PipelineUtils.getPipeline(result, this.getCategoryTitle(), inmemory));
+            log.info("stockdates" + stockdates);
             this.setStockDates(stockdates);
             Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, this.getCategoryTitle(), inmemory).get(PipelineConstants.LIST)));
             this.setCategoryValueMap(aCategoryValueMap);
@@ -443,7 +464,7 @@ public class ComponentData {
             if (this.getCategoryTitle() != null) {
             log.error("Ex", e);
             } else {
-                log.error("Ex null cat title");
+                log.error("Ex null cat title", e);
             }
         }        
     }
@@ -470,7 +491,7 @@ public class ComponentData {
 	
         service.coremlconf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
         service.coremlconf.getConfigData().getConfigValueMap().putAll(setValueMap);
-        PipelineData[] result = getService().getContent(id, useMl);
+        PipelineData[] result = getService().getContent(id, useMl, disableCache);
         this.resultMaps = result;
         try {
             //log.info("" + result.keySet());
@@ -502,7 +523,7 @@ public class ComponentData {
             service.coremlconf.getConfigData().getConfigValueMap().putAll(updateMap);
         }
         service.coremlconf.getConfigData().setDate(getBaseDate());
-        PipelineData[] maps = service.getContent(id, useMl, getDisableList());
+        PipelineData[] maps = service.getContent(id, useMl, getDisableList(), disableCache);
         this.resultMaps = maps;
         //System.out.println(maps.keySet());
         PipelineData aMap = null;
@@ -510,6 +531,7 @@ public class ComponentData {
             Inmemory inmemory = getService().getIo().getInmemoryFactory().get(config);
             aMap = PipelineUtils.getPipeline(maps, mapName, inmemory);
         }
+        log.info("mapnamer" + mapName + " " + (aMap != null));
         this.resultMap = aMap;
         return aMap;  
     }

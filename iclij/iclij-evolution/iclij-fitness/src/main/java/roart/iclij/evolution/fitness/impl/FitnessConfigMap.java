@@ -10,7 +10,9 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.MemoryItem;
+import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.fitness.Fitness;
@@ -114,10 +116,13 @@ public class FitnessConfigMap extends Fitness {
             profitdata.setInputdata(inputdata);
             inputdata.setNameMap(new HashMap<>());
 
+            param.setDisableCache(true); // for improveprofit
             ComponentData componentData2 = component.handle(action, market, param, profitdata, listMap, evolve, gene.getMap(), subcomponent, null, parameters, false);
             Object[] result = component.calculateAccuracy(componentData2);
             score = (Double) result[0];
             titletext = (String) componentData2.getUpdateMap().get(EvolveConstants.TITLETEXT);
+            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getConfig().getInmemoryServer(), param.getConfig().getInmemoryHazelcast(), param.getConfig().getInmemoryRedis());
+            new PipelineThreadUtils(param.getConfig(), inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

@@ -30,9 +30,6 @@ public class IncDecUtil {
         } else {
             category = market.getFilter().getDeccategory();
         }
-        System.out.println("lm3" + category);
-        Map<String, List<List<Double>>> listMap33 = new MarketUtil().getCategoryList(maps, "Index", param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig()));
-        System.out.println("lm3x3" + listMap33.keySet());
         if (category != null) {
             PipelineData categoryMap = PipelineUtils.getPipeline(maps, category, inmemory);
             if (categoryMap != null) {

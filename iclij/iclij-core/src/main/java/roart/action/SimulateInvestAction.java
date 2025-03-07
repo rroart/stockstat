@@ -17,11 +17,15 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.ActionComponentItem;
 import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.util.PipelineThreadUtils;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
@@ -89,6 +93,7 @@ public class SimulateInvestAction extends MarketAction {
             Memories listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap,
             Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters,
             boolean wantThree, List<MLMetricsItem> mlTests) {
+        log.info("Param id {}", param.getId());
         if (param.getUpdateMap() == null) {
             param.setUpdateMap(new HashMap<>());
         }
@@ -120,6 +125,26 @@ public class SimulateInvestAction extends MarketAction {
             Map<String, Object> aMap = new HashMap<>();
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
+             //valueMap.put(ConfigConstants.MACHINELEARNING, false);
+            aMap.put(ConfigConstants.AGGREGATORS, false);
+            aMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, false);
+            aMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, false);
+            aMap.put(ConfigConstants.AGGREGATORS, false);
+            // TODO
+            // TODO getName() gives null
+            param.getResultMap(getName(), aMap, false);
+            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
+            //PipelineData metaData = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
+            //SerialMeta meta = PipelineUtils.getMeta(metaData);
+            //String catName = new MetaUtil().getCategory(meta,  cat);
+            PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
+            Integer cat = PipelineUtils.getWantedcat(pipelineDatum);
+            String catName = PipelineUtils.getMetaCat(pipelineDatum);
+            log.info("cats {} {}", cat, catName);
+            param.setCategory(cat);
+            param.setCategoryTitle(catName);
+            param.getAndSetCategoryValueMapAlt();
+
             
             ComponentData componentData = component.handle(getActionData(), market, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null, getParent() != null);
             
@@ -128,6 +153,7 @@ public class SimulateInvestAction extends MarketAction {
                 param.getUpdateMap().putAll(updateMap);
             }
             
+            new PipelineThreadUtils(config, inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
              //component.calculateIncDec(componentData, profitdata, positions);
             //System.out.println("Buys: " + market.getMarket() + buys);
             //System.out.println("Sells: " + market.getMarket() + sells);           

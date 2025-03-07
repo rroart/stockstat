@@ -33,4 +33,5 @@ module iclij.evolutionfitness {
     requires common.inmemory.model;
     requires common.io;
     requires common.inmemory.factory;
+    requires pipeline.util;
 }

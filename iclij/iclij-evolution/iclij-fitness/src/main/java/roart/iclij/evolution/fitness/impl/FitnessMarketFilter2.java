@@ -26,6 +26,7 @@ import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.iclij.component.Component;
 import roart.iclij.component.factory.ComponentFactory;
 import roart.component.model.ComponentData;
@@ -109,6 +110,7 @@ public class FitnessMarketFilter2 {
         Set<IncDecItem> listDec = new HashSet<>(profitdata.getSells().values());
         Set<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec);
         Trend incProp = null;
+        // TODO getcontent
         incProp = extracted(chromosome, myData, listInc, listDec, mlTests);
         Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
         PipelineData[] maps = param.getResultMaps();
@@ -257,7 +259,9 @@ public class FitnessMarketFilter2 {
 
             short startoffset = new MarketUtil().getStartoffset(market);
             //action.setValMap(param);
+            // todo two getcontent
             param.getAndSetWantedCategoryValueMap(false);
+            // todo clean
             VerifyProfit verify = new VerifyProfit();
             incProp = verify.getTrend(verificationdays, param.getCategoryValueMap(), startoffset, null);
             //Trend incProp = new FindProfitAction().getTrend(verificationdays, param.getFutureDate(), param.getService());
@@ -271,8 +275,11 @@ public class FitnessMarketFilter2 {
                 } catch (ParseException e) {
                     log.error(Constants.EXCEPTION, e);
                 }            
+                // TODO fixed getcontent number two
                 new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, listInc, listDec, new ArrayList<>(), startoffset, parameters.getThreshold(), param, null, market);
             }
+            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getConfig().getInmemoryServer(), param.getConfig().getInmemoryHazelcast(), param.getConfig().getInmemoryRedis());
+            new PipelineThreadUtils(param.getConfig(), inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

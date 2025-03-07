@@ -26,6 +26,7 @@ import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.iclij.component.Component;
 import roart.iclij.component.factory.ComponentFactory;
 import roart.component.model.ComponentData;
@@ -153,7 +154,9 @@ public class FitnessMarketFilter extends Fitness {
         
             short startoffset = new MarketUtil().getStartoffset(market);
             //action.setValMap(param);
+            // TODO getcontent 2 here
             param.getAndSetWantedCategoryValueMap(false);
+            // todo clean
             VerifyProfit verify = new VerifyProfit();
             incProp1 = verify.getTrend(verificationdays, param.getCategoryValueMap(), startoffset, null);
             //Trend incProp = new FindProfitAction().getTrend(verificationdays, param.getFutureDate(), param.getService());
@@ -167,8 +170,11 @@ public class FitnessMarketFilter extends Fitness {
                 } catch (ParseException e1) {
                     log.error(Constants.EXCEPTION, e1);
                 }            
+                // TODO fixed getcontent 2 here
                 new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, listInc, listDec, new ArrayList<>(), startoffset, parameters.getThreshold(), param, null, market);
             }
+            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getConfig().getInmemoryServer(), param.getConfig().getInmemoryHazelcast(), param.getConfig().getInmemoryRedis());
+            new PipelineThreadUtils(param.getConfig(), inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
         } catch (Exception e3) {
             log.error(Constants.EXCEPTION, e3);
         }
