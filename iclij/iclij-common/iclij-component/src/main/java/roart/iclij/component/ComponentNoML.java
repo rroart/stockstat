@@ -47,7 +47,7 @@ public abstract class ComponentNoML extends Component {
             PipelineData resultMap = new PipelineData();
             resultMap.setName(getPipeline());
             Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
-            List<ResultItem> retlist = param.getService().getEvolveRecommender(true, param.getDisableList(), anUpdateMap, scoreMap, resultMap, inmemory);
+            List<ResultItem> retlist = param.getService().getEvolveRecommender(param.getId(), true, param.getDisableList(), anUpdateMap, scoreMap, resultMap, inmemory);
             nomlSaves(action, param, anUpdateMap);
             if (param.getUpdateMap() != null) {
                 param.getUpdateMap().putAll(anUpdateMap); 

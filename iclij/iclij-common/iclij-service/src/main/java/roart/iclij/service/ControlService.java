@@ -300,7 +300,7 @@ public class ControlService {
     }
     
     public PipelineData[] getContent(String uuid, boolean useMl, List<String> disableList, boolean disableCache) {
-        if (true) {
+        if (false) {
             try {
                 String s = null;
                 s.length();
@@ -447,10 +447,16 @@ public class ControlService {
         getAndSetCoreConfig();
     }
 
-    public List<ResultItem> getEvolveRecommender(boolean doSet, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, PipelineData resultMap, Inmemory inmemory) {
+    public List<ResultItem> getEvolveRecommender(String uuid, boolean doSet, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, PipelineData resultMap, Inmemory inmemory) {
         IclijServiceParam param = new IclijServiceParam();
+        log.info("Wants {}", iclijConfig.wantsInmemoryPipeline());
+        if (iclijConfig.wantsInmemoryPipeline()) {
+            log.info("InmemoryPipeline {} {}", id, uuid);
+            param.setId(id + "/" + uuid);
+        }
         param.setConfigData(coremlconf.getConfigData());
         param.setConfList(disableList);
+        
         IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVERECOMMENDER);
         if (doSet) {
             //conf = new MyMyConfig(result.getConfig());
@@ -465,8 +471,13 @@ public class ControlService {
         //return result.getMaps().get("update");
     }
 
-    public List<ResultItem> getEvolveML(boolean doSet, List<String> disableList, String ml,  IclijConfig conf, Map<String, Object> updateMap, Map<String, Object> scoreMap, PipelineData resultMap) {
+    public List<ResultItem> getEvolveML(String uuid, boolean doSet, List<String> disableList,  String ml, IclijConfig conf, Map<String, Object> updateMap, Map<String, Object> scoreMap, PipelineData resultMap) {
         IclijServiceParam param = new IclijServiceParam();
+        log.info("Wants {}", iclijConfig.wantsInmemoryPipeline());
+        if (iclijConfig.wantsInmemoryPipeline()) {
+            log.info("InmemoryPipeline {} {}", id, uuid);
+            param.setId(id + "/" + uuid);
+        }
         param.setConfigData(conf.getConfigData());
         Set<String> ids = new HashSet<>();
         ids.add(ml);
@@ -480,6 +491,7 @@ public class ControlService {
         param.setNeuralnetcommand(neuralnetcommand);
         // TODO retry or queue
         IclijServiceResult result = io.getWebFluxUtil().sendMMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVENN);
+        
         if (doSet) {
             Inmemory inmemory = io.getInmemoryFactory().get(conf);
             PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE, inmemory);  

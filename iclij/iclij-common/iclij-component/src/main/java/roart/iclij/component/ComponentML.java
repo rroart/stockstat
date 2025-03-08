@@ -65,7 +65,7 @@ public abstract class ComponentML extends Component {
             resultMap.setName(getPipeline());
             param.getService().coremlconf.getConfigData().setDate(param.getFutureDate());
             // TODO calling ml
-            List<ResultItem> retlist = param.getService().getEvolveML(true, param.getDisableList(), pipeline, param.getService().coremlconf, anUpdateMap, aScoreMap, resultMap);
+            List<ResultItem> retlist = param.getService().getEvolveML(param.getId(), true, param.getDisableList(), pipeline, param.getService().coremlconf, anUpdateMap, aScoreMap, resultMap);
             mlSaves(action, mlConfigMap, param, anUpdateMap, subcomponent, parameters);
             if (param.getUpdateMap() != null) {
                 param.getUpdateMap().putAll(anUpdateMap); 

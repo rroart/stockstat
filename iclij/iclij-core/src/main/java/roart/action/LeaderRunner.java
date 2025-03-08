@@ -157,15 +157,14 @@ public class LeaderRunner implements Runnable {
         }
         List<String> children = curatorClient.getChildren().forPath(path);
         log.debug("Children {}", children.size());
-        log.info("Children" + children);
         for (String child : children) {
             Stat stat = curatorClient.checkExists().forPath(path + "/" + child);
             log.debug("Time {} {}", System.currentTimeMillis(), stat.getMtime());;
             long time = System.currentTimeMillis() - stat.getMtime();
-            log.info("Time {} {}", time, deleteTime);
+            log.debug("Time {} {}", time, deleteTime);
             if (time > deleteTime) {
                 list.add(child);
-                log.error("Service died " + child);
+                log.error("Service died {}", child);
             }
         }
         return list;

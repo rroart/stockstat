@@ -202,7 +202,7 @@ public class MachineLearningControlService {
     public IclijServiceResult getContent(IclijConfig conf, IclijServiceParam origparam, List<String> disableList) {
         String key = CacheConstants.MLCONTENT + conf.getConfigData().getMarket() + conf.getConfigData().getMlmarket() + conf.getConfigData().getDate() + conf.getConfigData().getConfigValueMap();
         log.info("Content key {}", key.hashCode());
-        log.info("Content kez {}", key);
+        log.debug("Content kez {}", key);
         IclijServiceResult list = (IclijServiceResult) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
@@ -214,8 +214,7 @@ public class MachineLearningControlService {
         param.setWantMaps(origparam.isWantMaps());
         param.setConfList(disableList);
         if (conf.wantsInmemoryPipeline()) {
-            log.info("InmemoryPipeline");
-            param.setId(origparam.getId());
+            log.info("InmemoryPipeline {}", origparam.getId());
         }
         // TODO retry or queue
         IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
