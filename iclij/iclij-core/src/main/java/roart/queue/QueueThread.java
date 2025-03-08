@@ -69,7 +69,7 @@ public class QueueThread extends Thread {
                             String path3 = QueueUtils.getQueuePath(elem);
                             requeueOld(curatorClient, path3, 2 * 60 * 1000, false, false);
                             String path2 = QueueUtils.getLivePath();
-                            log.info("Deleting " + path2 + "/" + elem);
+                            log.info("Deleting {}", path2 + "/" + elem);
                             curatorClient.delete().forPath(path2 + "/" + elem);
                         }
                     }
@@ -99,18 +99,17 @@ public class QueueThread extends Thread {
         }
         List<String> children = curatorClient.getChildren().forPath(path);
         log.debug("Children {}", children.size());
-        log.info("Children" + children);
         for (String child : children) {
             List<String> children2 = curatorClient.getChildren().forPath(path + "/" + child);
-            log.info("Children2" + children2);
+            log.debug("Children2 {}", children2);
             for (String child2 : children2) {
                 Stat stat = curatorClient.checkExists().forPath(path + "/" + child + "/" + child2);
                 log.debug("Time {} {}", System.currentTimeMillis(), stat.getMtime());;
                 long time = System.currentTimeMillis() - stat.getMtime();
-                log.info("Time {} {}", time, deleteTime);
+                log.debug("Time {} {}", time, deleteTime);
                 if (time > deleteTime) {
                     list.add(child + "/" + child2);
-                    log.error("Service died " + child + "/" + child2);
+                    log.error("Service died {}", child + "/" + child2);
                 }
             }
         }
