@@ -108,7 +108,7 @@ public class PipelineUtils {
                 } else {
                     InmemoryMessage msg = JsonUtil.convertnostrip(datareader.getMessage(), InmemoryMessage.class);                    
                     String str = inmemory.read(msg);
-                    log.info("TODO"+str);
+                    log.info("Pipeline reading {}", str.length());
                     datareaders[i] = JsonUtil.convertnostrip(str, PipelineData.class, mapper);
                     datareaders[i].setLoaded(true);
                     log.info("Pipeline read {} {}", datareaders[i].getId(), datareaders[i].getName());
