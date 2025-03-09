@@ -30,7 +30,7 @@ public class AggregatorUtils {
             Map<String, String> idNameMap,
             String catName, Integer cat, NeuralNetCommand neuralnetcommand, List<String> stockDates, Inmemory inmemory) throws Exception {
         Aggregator[] aggregates = new Aggregator[10];
-        aggregates[0] = new MACDBase(conf, catName, catName, cat, pipelineData, stockDates, inmemory);
+        //aggregates[0] = new MACDBase(conf, catName, catName, cat, pipelineData, stockDates, inmemory);
         //aggregates[1] = new AggregatorRecommenderIndicator(conf, catName, marketdatamap, categories, pipelineData, disableList);
         //aggregates[2] = new RecommenderRSI(conf, catName, marketdatamap, categories);
         aggregates[3] = new MLMACD(conf, catName, catName, cat, idNameMap, pipelineData, neuralnetcommand, stockDates, inmemory);
