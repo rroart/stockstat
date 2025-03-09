@@ -142,7 +142,11 @@ public class PopulateThread extends Thread {
                         continue;
                     }
                     ComponentInput componentInput = new ComponentInput(config.getConfigData(), null, null, lastStockdate, null, true, false, new ArrayList<>(), new HashMap<>());
-                    ServiceUtil.getFindProfit(componentInput, timingitems, iclijConfig, io);
+                    try {
+                        ServiceUtil.getFindProfit(componentInput, timingitems, iclijConfig, io);
+                    } catch (Exception e) {
+                        log.error(Constants.EXCEPTION, e);
+                    }
                     if (config.getFindProfitMemoryFilter()) {
                         try {
                             timingitems = io.getIdbDao().getAllTiming(market.getConfig().getMarket(), IclijConstants.IMPROVEABOVEBELOW, oldDate, currentDate);
