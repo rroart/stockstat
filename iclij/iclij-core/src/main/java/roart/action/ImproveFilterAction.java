@@ -23,7 +23,9 @@ import roart.common.model.IncDecItem;
 import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.model.TimingItem;
+import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.common.queue.QueueElement;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -104,6 +106,18 @@ public class ImproveFilterAction extends MarketAction {
             param.getConfigValueMap().put(ConfigConstants.MISCMYTABLEDAYS, 0);
             param.getConfigValueMap().put(ConfigConstants.MISCMYDAYS, 0);
             param.getConfigValueMap().put(IclijConfigConstants.FINDPROFITMLDYNAMIC, Boolean.TRUE);
+
+            // todo
+            // done clean
+            param.getAndSetCategoryValueMap(false);
+            PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
+            Integer cat = PipelineUtils.getWantedcat(pipelineDatum);
+            String catName = PipelineUtils.getMetaCat(pipelineDatum);
+            log.info("cats {} {}", cat, catName);
+            param.setCategory(cat);
+            param.setCategoryTitle(catName);
+            param.getAndSetCategoryValueMapAlt();
+
             Map<String, Object> aMap = new HashMap<>();
             aMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
             aMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
