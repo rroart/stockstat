@@ -51,6 +51,7 @@ public class PipelineThread extends Thread {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+        // duplicated in iclijcontroller
         String path = "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + Constants.LIVE + "/" + controlService.id;
         try {
             io.getCuratorClient().create().creatingParentsIfNeeded().forPath(path, new byte[0]);

@@ -156,7 +156,6 @@ public class MarketUtil {
         }
         Map<String, List<List<Double>>> listMap3 = null;
         for (String entry : PipelineUtils.getPipelineMapKeys(maps)) {
-            log.info("TODO Getting all with {}", entry);
             PipelineData map = PipelineUtils.getPipeline(maps, entry, inmemory);
             if (category.equals(PipelineUtils.getCatTitle(map))) {
                 listMap3 = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(map.get(PipelineConstants.LIST)));

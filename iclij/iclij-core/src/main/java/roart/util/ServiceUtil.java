@@ -22,6 +22,7 @@ import roart.action.ImproveSimulateInvestAction;
 import roart.action.MarketAction;
 import roart.action.SimulateInvestAction;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.ActionComponentItem;
 import roart.common.model.MetaItem;
 import roart.common.model.TimingItem;
@@ -38,6 +39,7 @@ import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.IclijServiceResult;
 import roart.iclij.service.util.MarketUtil;
 import roart.model.io.IO;
+import roart.common.pipeline.util.PipelineThreadUtils;
 
 public class ServiceUtil {
     private static Logger log = LoggerFactory.getLogger(ServiceUtil.class);
@@ -89,6 +91,8 @@ public class ServiceUtil {
         Market market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
         param.setMarket(market);
         WebData webData = findProfitAction.getMarket(iclijConfig, null, param, market, null, null, timingList);        
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        new PipelineThreadUtils(iclijConfig, inmemory, io.getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
@@ -109,6 +113,8 @@ public class ServiceUtil {
         Market market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
         param.setMarket(market);
         WebData webData = improveAboveBelowAction.getMarket(iclijConfig, null, param, market, null, null, new ArrayList<>());        
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        new PipelineThreadUtils(iclijConfig, inmemory, io.getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
@@ -129,6 +135,8 @@ public class ServiceUtil {
         Market market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
         param.setMarket(market);
         WebData webData = improveFilterAction.getMarket(iclijConfig, null, param, market, null, null, new ArrayList<>());        
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        new PipelineThreadUtils(iclijConfig, inmemory, io.getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
@@ -149,6 +157,8 @@ public class ServiceUtil {
         Market market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
         param.setMarket(market);
         WebData webData = improveProfitAction.getMarket(iclijConfig, null, param, market, null, null, new ArrayList<>());        
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        new PipelineThreadUtils(iclijConfig, inmemory, io.getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
@@ -180,6 +190,8 @@ public class ServiceUtil {
         //param.getService().conf.setdate(date);
         param.getInput().setEnddate(date);
         WebData webData = simulateInvestAction.getMarket(iclijConfig, null, param, market, null, null, new ArrayList<>());        
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        new PipelineThreadUtils(iclijConfig, inmemory, io.getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
@@ -200,6 +212,8 @@ public class ServiceUtil {
         Market market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
         param.setMarket(market);
         WebData webData = simulateInvestAction.getMarket(iclijConfig, null, param, market, null, null, new ArrayList<>());        
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        new PipelineThreadUtils(iclijConfig, inmemory, io.getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
@@ -223,6 +237,8 @@ public class ServiceUtil {
         }
         param.setMarket(market);
         WebData webData = simulateInvestAction.getMarket(iclijConfig, null, param, market, null, null, new ArrayList<>());        
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        new PipelineThreadUtils(iclijConfig, inmemory, io.getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
@@ -246,6 +262,8 @@ public class ServiceUtil {
         }
         param.setMarket(market);
         WebData webData = simulateInvestAction.getMarket(iclijConfig, null, param, market, null, null, new ArrayList<>());        
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        new PipelineThreadUtils(iclijConfig, inmemory, io.getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
