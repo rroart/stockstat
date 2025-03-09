@@ -464,8 +464,8 @@ public class ControlService {
             updateMap.putAll(datum.getMap(PipelineConstants.UPDATE));
             scoreMap.putAll(datum.getMap(PipelineConstants.SCORE));
             // rec with own result
-            // TODO cast seriallistmap
-            resultMap.putAll(datum.getMap(PipelineConstants.RESULT));
+            // TODO  cast seriallistmap
+            resultMap.putAll(datum.getListMap(PipelineConstants.RESULT));
         }
         return result.getList();
         //return result.getMaps().get("update");
