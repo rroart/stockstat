@@ -15,7 +15,9 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 
 import roart.iclij.config.IclijConfig;
+import roart.common.config.MLConstants;
 import roart.common.constants.Constants;
+import roart.common.model.IncDecItem;
 import roart.common.model.MetaItem;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
@@ -286,6 +288,24 @@ public class TestData {
         }
         MetaItem meta = new MetaItem(marketName, p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], null, null, null);
         return List.of(meta);
+    }
+
+    public List<IncDecItem> incdec(List<StockItem> all) {
+        List<IncDecItem> list = new ArrayList<>();
+        StockItem stock = all.get(0);
+        IncDecItem item = new IncDecItem();
+        item.setDate(LocalDate.now());
+        item.setMarket(stock.getMarketid());
+        item.setIncrease(true);
+        item.setId(stock.getId());
+        item.setName(stock.getName());
+        item.setScore(0.5);
+        item.setParameters( "[ 1.0 ]");
+        item.setComponent(PipelineConstants.MLRSI);
+        item.setSubcomponent(MLConstants.TENSORFLOW + " " + MLConstants.GRU);
+        // no localcomponent
+        list.add(item);
+        return list;
     }
     
 }
