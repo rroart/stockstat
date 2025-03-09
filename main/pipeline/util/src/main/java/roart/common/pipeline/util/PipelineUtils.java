@@ -672,11 +672,15 @@ public class PipelineUtils {
                     //PipelineData d = JsonUtil.convertAndBack(data, null);
                     //String s = JsonUtil.convert(data);
                     String md5 = null;
-                    msg = inmemory.send(data.getId() + "-" + data.getName(), data, md5);
+                    String serviceIdUuid = data.getId();
+                    String[] split = serviceIdUuid.split("/");
+                    String serviceId = split[0];
+                    String id = split[1];
+                    msg = inmemory.send(id + "-" + data.getName(), data, md5);
                     log.info("Sent size {} {} {}", msg.getId(), msg.getCount(), JsonUtil.convert(data, mapper).length());
                     //result.message = msg;
-                    curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
-                    log.info("Path write {}", "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + msg.getId());
+                    curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
+                    log.info("Path write {}", "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id + "/" + msg.getId());
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }

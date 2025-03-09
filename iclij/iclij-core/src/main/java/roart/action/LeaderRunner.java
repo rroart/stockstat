@@ -67,7 +67,7 @@ public class LeaderRunner implements Runnable {
                         for (String elem : elems) {
                             String path3 = "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + elem;
                             Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
-                            new PipelineThreadUtils(iclijConfig, inmemory, curatorClient).deleteOld(curatorClient, path3, elem, 2 * 60 * 1000, false, false);
+                            new PipelineThreadUtils(iclijConfig, inmemory, curatorClient).deleteOldService(curatorClient, path3, elem, 2 * 60 * 1000, false, false);
                             log.info("Deleting " + path2 + "/" + elem);
                             curatorClient.delete().forPath(path2 + "/" + elem);
                         }
