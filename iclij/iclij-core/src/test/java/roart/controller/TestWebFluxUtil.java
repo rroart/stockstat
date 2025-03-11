@@ -16,6 +16,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
+import roart.common.model.MyDataSource;
 import roart.common.util.JsonUtil;
 import roart.common.util.MemUtil;
 import roart.common.webflux.WebFluxUtil;
@@ -38,11 +39,11 @@ public class TestWebFluxUtil extends WebFluxUtil {
 
     private IclijConfig conf = null;
     
-    private TestDataSource dataSource;
+    private MyDataSource dataSource;
     
     private IO io;
     
-    public TestWebFluxUtil(IclijConfig conf, TestDataSource dataSource) {
+    public TestWebFluxUtil(IclijConfig conf, MyDataSource dataSource) {
         super();
         this.conf = conf;
         this.dataSource = dataSource;

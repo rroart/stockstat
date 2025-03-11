@@ -187,20 +187,20 @@ public class TestData {
     }
 
     public StockData getStockdata(IclijConfig conf, Date startDate, Date endDate, String marketName, int size, int column, boolean ohlc) throws Exception {
-        List<StockItem> stocks = getStockItem(startDate, endDate, marketName, size, true, column, ohlc, new String[0]);
+        List<StockItem> stocks = getStockItem(startDate, endDate, marketName, size, true, column, ohlc, new String[0], null);
         MetaItem meta = new MetaItem(marketName, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
         String[] periodText = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
         return new Extract((DbDao)null).getStockData(conf, marketName, stocks, meta, periodText);
     }
     
     public StockData getStockdata(IclijConfig conf, Date startDate, Date endDate, String market, int size, boolean weekdays, int period, boolean ohlc) throws Exception {
-        List<StockItem> stocks = getStockItem(startDate, endDate, market, size, weekdays, period, ohlc, new String[0]);
+        List<StockItem> stocks = getStockItem(startDate, endDate, market, size, weekdays, period, ohlc, new String[0], null);
         MetaItem meta = new MetaItem(TestConstants.MARKET, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
         String[] periodText = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
         return new Extract((DbDao)null).getStockData(conf, market, stocks, meta, periodText);
     }
     
-    public List<StockItem> getStockItem(Date startDate, Date endDate, String market, int size, boolean weekdays, int period, boolean ohlc, String[] periods) throws Exception {
+    public List<StockItem> getStockItem(Date startDate, Date endDate, String market, int size, boolean weekdays, int period, boolean ohlc, String[] periods, String idTemplate) throws Exception {
         this.periods = periods;
         Random random = new Random();
         List<StockItem> list = new ArrayList<>();
@@ -208,7 +208,12 @@ public class TestData {
         LocalDate enddate = TimeUtil.convertDate(endDate);
         long days = Duration.between(startdate.atStartOfDay(), enddate.atStartOfDay()).toDaysPart();
         for (int i = 0; i < size; i++) {
-            String id = UUID.randomUUID().toString();
+            String id;
+            if (idTemplate == null) {
+                id = UUID.randomUUID().toString();
+            } else {
+                id = idTemplate + i;
+            }
             double split = random.nextDouble();
             int startsplit = (int) (days * split);
             int endsplit = (int) (days - startsplit);

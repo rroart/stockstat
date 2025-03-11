@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
+import java.util.List;
 import java.util.ArrayList;
 
 import org.apache.curator.framework.CuratorFramework;
@@ -52,6 +53,8 @@ import roart.iclij.service.IclijServiceResult;
 import roart.model.io.IO;
 import roart.queue.PipelineThread;
 import roart.testdata.TestConstants;
+import roart.common.model.IncDecItem;
+import roart.testdata.TestData;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
@@ -71,7 +74,7 @@ public class InmemoryPipelineTest {
     // no autowiring
     IclijConfig conf = null;
    
-    TestDataSource dataSource;
+    TestDataSources dataSource;
     
     private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
 
@@ -106,7 +109,9 @@ public class InmemoryPipelineTest {
         iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
         log.info("Wants {}", iconf.wantsInmemoryPipeline());
         String market = TestConstants.MARKET;
-        dataSource = new TestDataSource(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), market, 26, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" });
+        TestDataSource dataSource1 = new TestDataSource(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), market, 26, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null);
+        TestDataSource dataSource2 = new TestDataSource(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), TestConstants.MARKET2, 20, false, Constants.PRICECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, "impid");
+        dataSource = new TestDataSources(List.of(dataSource1, dataSource2));
         webFluxUtil = new TestWebFluxUtil(conf, dataSource);
         parameters = new Parameters();
         parameters.setThreshold(1.0);
@@ -115,6 +120,9 @@ public class InmemoryPipelineTest {
         fileSystemDao = mock(FileSystemDao.class);
         doReturn("dummy.txt").when(fileSystemDao).writeFile(any(), any(), any(), any());
 
+        List<IncDecItem> incdecs = new TestData(iconf).incdec(dataSource.getAll(market, iconf));
+        doReturn(incdecs).when(iclijDbDao).getAllIncDecs(any(), any(), any(), any());
+        
         CuratorFramework curatorClient = new TestCuratorFramework();
         
         io = new IO(iclijDbDao, null, dataSource, webFluxUtil, fileSystemDao, inmemoryFactory, communicationFactory, curatorClient);
@@ -192,6 +200,18 @@ public class InmemoryPipelineTest {
     @Test
     public void testImproveProfit() throws Exception {
         ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.IMPROVEPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        try {
+            ac.runAction(iconf, aci, new ArrayList<>());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        inmemory.stat();
+        assertEquals(true, inmemory.isEmpty());
+    }
+
+    @Test
+    public void testImproveProfitMLI() throws Exception {
+        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.IMPROVEPROFIT, PipelineConstants.MLINDICATOR, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {

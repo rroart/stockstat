@@ -28,7 +28,7 @@ public class TestDataSource extends MyDataSource {
     private IclijConfig conf;
     private Date startDate;
     private Date endDate;
-    private  String marketName;
+    String marketName;
     private int size;
     boolean weekdays;
     private int column;
@@ -37,9 +37,10 @@ public class TestDataSource extends MyDataSource {
     private TestData testData;
     private List<MetaItem> metas;
     private List<StockItem> stocks;
+    private String isTemplate;
     
     public TestDataSource(IclijConfig conf, Date startDate, Date endDate, String marketName, int size, boolean weekdays, int column,
-            boolean ohlc, String[] periods) {
+            boolean ohlc, String[] periods, String idTemplate) {
         super();
         this.conf = conf;
         this.startDate = startDate;
@@ -49,12 +50,13 @@ public class TestDataSource extends MyDataSource {
         this.weekdays = weekdays;
         this.column = column;
         this.ohlc = ohlc;
+        this.isTemplate = idTemplate;
         
         this.testData = new TestData(conf);
         
         metas = testData.getMetas(marketName, periods);
         try {
-            stocks = testData.getStockItem(startDate, endDate, marketName, size, weekdays, column, ohlc, periods );
+            stocks = testData.getStockItem(startDate, endDate, marketName, size, weekdays, column, ohlc, periods, idTemplate );
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
