@@ -140,6 +140,9 @@ public class ComponentMLIndicator extends ComponentML {
             }
 
             Map<String, Double[]> classifyMap = (Map<String, Double[]>) meta.getClassifyMap(); 
+            if (classifyMap == null) {
+                continue;
+            }
             Map<Double, String> labelMap = createLabelMapShort();
 
             MLMetricsItem mltest = search(mlTests, meta);

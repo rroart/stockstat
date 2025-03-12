@@ -136,6 +136,9 @@ public abstract class ComponentMLAggregator extends ComponentML {
                 int jj = 0;
             }
             Map<String, Double[]> classifyMap = (Map<String, Double[]>) meta.getClassifyMap(); 
+            if (classifyMap == null) {
+                continue;
+            }
             Map<String, double[]> offsetMap = (Map<String, double[]>) meta.getOffsetMap();
 
             MLMetricsItem mltest = search(mlTests, meta);

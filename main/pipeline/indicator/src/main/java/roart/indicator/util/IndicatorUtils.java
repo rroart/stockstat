@@ -244,7 +244,10 @@ public class IndicatorUtils {
         }
         // copy the retain from aggregator?
         Set<String> ids = new HashSet<>();
+        // TODO get0 may be null
+        if (listList != null && listList.get(0) != null) {
         ids.addAll(listList.get(0).keySet());
+        }
 
         List<AbstractIndicator> allIndicators = new ArrayList<>();
         // for extrareader data
@@ -269,6 +272,7 @@ public class IndicatorUtils {
         for (int j = futureDays; j < tableDays - deltas; j += intervalDays) {
             String commonDate = commonDates.get(commonDates.size() - 1 - j);
             Map<String, Double[]> indicatorMap = new HashMap<>();
+            if (listList != null && listList.get(0) != null) {
             for (String id : listList.get(0).keySet()) {
                 Double[] result = new Double[0];
                 int aJ = dateList.size() - 1 - dateList.indexOf(commonDate);
@@ -292,6 +296,7 @@ public class IndicatorUtils {
                     int jj = 0;
                     continue;
                 }
+            }
             }
             dayIndicatorMap.put(j, indicatorMap);
         }
@@ -321,7 +326,10 @@ public class IndicatorUtils {
         }
         // copy the retain from aggregator?
         Set<String> ids = new HashSet<>();
+        // TODO get0 may be null
+        if (listList != null && listList.get(0) != null) {
         ids.addAll(listList.get(0).keySet());
+        }
 
         List<AbstractIndicator> allIndicators = new ArrayList<>();
         // for extrareader data
@@ -343,6 +351,7 @@ public class IndicatorUtils {
         }
         for (int j = futureDays; j < tableDays - deltas; j += intervalDays) {
             Map<String, Double[]> indicatorMap = new HashMap<>();
+            if (listList != null && listList.get(0) != null) {
             for (String id : listList.get(0).keySet()) {
                 Double[] result = new Double[0];
                 result = getCommonResult(conf, indicators, objectMapsList, j, id, result, datareaders, inmemory);
@@ -365,6 +374,7 @@ public class IndicatorUtils {
                     int jj = 0;
                     continue;
                 }
+            }
             }
             dayIndicatorMap.put(j, indicatorMap);
         }
@@ -453,6 +463,8 @@ public class IndicatorUtils {
                 arraySize += indicator.getResultSize();
                 log.info("sizes {}", listList.get(listList.size() - 1).size());
             } else {
+                // TODO why? generate exception?
+                log.error("Null or empty");
                 listList.add(null);
             }
         }
