@@ -135,10 +135,7 @@ public abstract class MarketAction extends Action {
         } else {
             markets = new MarketUtil().getMarkets(false, iclijConfig);
         }
-        WebData data = getMarkets(iclijConfig, parent, param, markets, new ArrayList<>(), evolve, priority, timingsdone, false);
-        Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
-        new PipelineThreadUtils(iclijConfig, inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
-        return data;
+        return getMarkets(iclijConfig, parent, param, markets, new ArrayList<>(), evolve, priority, timingsdone, false);
     }        
     
     public WebData getMarkets(IclijConfig iclijConfig, Action parent, ComponentInput input, Boolean evolve, Integer priority, IO io) {
@@ -155,8 +152,6 @@ public abstract class MarketAction extends Action {
             log.error(Constants.EXCEPTION, e);
         }
         List<Market> markets = new MarketUtil().getMarkets(actionData.isDataset(), iclijConfig);
-        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
-        new PipelineThreadUtils(iclijConfig, inmemory, io.getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
         return getMarkets(iclijConfig, parent, param, markets, timings, evolve, priority, new ArrayList<>(), true);
     }        
     
@@ -567,6 +562,8 @@ public abstract class MarketAction extends Action {
             throw e;
         } finally {
             IclijController.taskList.remove(actionItem);
+            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
+            new PipelineThreadUtils(config, inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
         }
     }
 

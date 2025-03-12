@@ -266,8 +266,6 @@ public class ActionThread extends Thread {
                 long[] mem0 = MemUtil.mem();
                 log.info("Action item {} {}", item.toStringId(), MemUtil.print(mem0));
                 action.getPicksFilteredOuter(myData, param, myConfig, item, evolve, wantThree, actionItem);                
-                Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
-                new PipelineThreadUtils(iclijConfig, inmemory, io.getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
                 //IclijController.taskList.remove(actionItem);
                 long[] mem1 = MemUtil.mem();
                 long[] memdiff = MemUtil.diff(mem1, mem0);

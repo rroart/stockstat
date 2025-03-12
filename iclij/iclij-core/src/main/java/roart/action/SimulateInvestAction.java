@@ -153,7 +153,6 @@ public class SimulateInvestAction extends MarketAction {
                 param.getUpdateMap().putAll(updateMap);
             }
             
-            new PipelineThreadUtils(config, inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
              //component.calculateIncDec(componentData, profitdata, positions);
             //System.out.println("Buys: " + market.getMarket() + buys);
             //System.out.println("Sells: " + market.getMarket() + sells);           
