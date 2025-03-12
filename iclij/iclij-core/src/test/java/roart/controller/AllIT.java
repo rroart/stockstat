@@ -53,11 +53,16 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialMapTA;
+import roart.common.springdata.repository.AboveBelowRepository;
+import roart.common.springdata.repository.SpringAboveBelowRepository;
 import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
 import roart.common.util.TimeUtil;
 import roart.db.common.DbAccess;
+import roart.db.dao.DbDao;
 import roart.db.dao.IclijDbDao;
+import roart.db.spring.DbSpring;
+import roart.db.spring.DbSpringAccess;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
@@ -110,11 +115,13 @@ import roart.common.inmemory.model.Inmemory;
 //@TestPropertySource("file:${user.dir}/../../../../config/test/application.properties") 
 //@ComponentScan(basePackages = "roart.testdata")
 //@SpringBootTest(classes = TestConfiguration.class)
-@SpringBootTest(classes = { IclijConfig.class, IclijDbDao.class, ConfigI.class, ConfigDb.class } )
-public class AllTest {
+@SpringBootTest(classes = { IclijConfig.class, DbSpring.class, DbSpringAccess.class, DbDao.class, ConfigI.class, ConfigDb.class, SpringAboveBelowRepository.class, AboveBelowRepository.class } )
+public class AllIT {
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
-
+    private Logger log = LoggerFactory.getLogger(this.getClass());    
+    
+    //, SpringAboveBelowRepository.class
+    
     @Autowired
     IclijConfig iconf = null;
     
@@ -127,7 +134,8 @@ public class AllTest {
     
     private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
 
-    IclijDbDao dbDao = mock(IclijDbDao.class);
+    @Autowired
+    DbDao dbDao;
 
     WebFluxUtil webFluxUtil;
     
@@ -304,7 +312,7 @@ public class AllTest {
         conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.TRUE);
         conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.FALSE);
         String market = TestConstants.MARKET;
-        dataSource = new TestDataSource(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), market, 26, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" });
+        dataSource = new TestDataSource(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), market, 26, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null);
         webFluxUtil = new TestWebFluxUtil(conf, dataSource);
         parameters = new Parameters();
         parameters.setThreshold(1.0);
