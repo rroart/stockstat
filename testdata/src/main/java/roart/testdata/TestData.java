@@ -15,6 +15,7 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 
 import roart.iclij.config.IclijConfig;
+import roart.iclij.model.Parameters;
 import roart.common.config.MLConstants;
 import roart.common.constants.Constants;
 import roart.common.model.IncDecItem;
@@ -26,6 +27,7 @@ import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.data.SerialVolume;
+import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.db.dao.DbDao;
 import roart.db.dao.util.StockETL;
@@ -296,6 +298,10 @@ public class TestData {
     }
 
     public List<IncDecItem> incdec(List<StockItem> all) {
+        Parameters parameters = new Parameters();
+        parameters.setThreshold(1.0);
+        parameters.setFuturedays(10);
+        
         List<IncDecItem> list = new ArrayList<>();
         StockItem stock = all.get(0);
         IncDecItem item = new IncDecItem();
@@ -305,7 +311,7 @@ public class TestData {
         item.setId(stock.getId());
         item.setName(stock.getName());
         item.setScore(0.5);
-        item.setParameters( "[ 1.0 ]");
+        item.setParameters(JsonUtil.convert(parameters));
         item.setComponent(PipelineConstants.MLRSI);
         item.setSubcomponent(MLConstants.TENSORFLOW + " " + MLConstants.GRU);
         // no localcomponent
