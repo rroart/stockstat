@@ -54,7 +54,7 @@ public class TestDataSource extends MyDataSource {
         
         this.testData = new TestData(conf);
         
-        metas = testData.getMetas(marketName, periods);
+        metas = testData.getMetas(marketName, periods, ohlc);
         try {
             stocks = testData.getStockItem(startDate, endDate, marketName, size, weekdays, column, ohlc, periods, idTemplate );
         } catch (Exception e) {

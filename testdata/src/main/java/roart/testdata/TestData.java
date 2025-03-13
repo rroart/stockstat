@@ -288,12 +288,12 @@ public class TestData {
         return List.of(meta);
     }
 
-    public List<MetaItem> getMetas(String marketName, String[] periods) {
+    public List<MetaItem> getMetas(String marketName, String[] periods, boolean ohlc) {
         String[] p = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
         for (int i = 0; i < periods.length; i++) {
             p[i] = periods[i];
         }
-        MetaItem meta = new MetaItem(marketName, p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], null, null, null);
+        MetaItem meta = new MetaItem(marketName, p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], null, null, ohlc);
         return List.of(meta);
     }
 
