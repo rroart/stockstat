@@ -84,6 +84,7 @@ public abstract class AbstractIndicator extends Calculatable {
     public abstract boolean isEnabled();
     protected abstract Double[] getCalculated(Map<String, SerialTA> objectMap, String id);
     protected abstract void getFieldResult(Double[] momentum, Object[] fields);
+    public abstract int getInputArrays();
 
     public abstract String getName();
 

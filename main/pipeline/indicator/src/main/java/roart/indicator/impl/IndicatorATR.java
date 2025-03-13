@@ -54,6 +54,11 @@ public class IndicatorATR extends Indicator {
     }
 
     @Override
+    public int getInputArrays() {
+        return new TalibATR().getInputArrays();
+    }
+    
+    @Override
     protected void getFieldResult(Double[] result, Object[] fields) {
         TaUtil tu = new TaUtil();
         tu.getWithOneAndDelta(conf.isATRDeltaEnabled(),  result, fields);

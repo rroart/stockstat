@@ -53,6 +53,11 @@ public class IndicatorSTOCH extends Indicator {
     }
 
     @Override
+    public int getInputArrays() {
+        return new TalibSTOCH().getInputArrays();
+    }
+    
+    @Override
     protected Double[] getCalculated(Map<String, SerialTA> objectMap, String id) {
         SerialTA objs = objectMap.get(id);
         TaUtil tu = new TaUtil();

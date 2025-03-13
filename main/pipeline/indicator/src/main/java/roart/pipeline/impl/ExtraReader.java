@@ -98,6 +98,7 @@ public class ExtraReader extends Pipeline {
         MarketData marketdata = marketdatamap.get(conf.getConfigData().getMarket());
         extra = JsonUtil.convert(str, Extra.class);
         if (extras.length > 0) {
+            // TODO empty check
             extra.getSimple().clear();
             extra.getComplex().clear();
             for (int i = 0; i < extras.length; i++) {

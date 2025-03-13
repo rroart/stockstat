@@ -74,5 +74,11 @@ public class IndicatorMove extends Indicator {
     public String getName() {
         return Constants.MOVE;
     }
+    
+    @Override
+    public int getInputArrays() {
+        return 1;
+    }
+    
 }
 

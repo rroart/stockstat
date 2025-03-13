@@ -11,6 +11,8 @@ import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.pipeline.Pipeline;
 import roart.talib.Ta;
+import roart.talib.impl.TalibATR;
+import roart.talib.impl.TalibMACD;
 import roart.talib.impl.TalibRSI;
 import roart.talib.util.TaUtil;
 
@@ -52,6 +54,11 @@ public class IndicatorRSI extends Indicator {
         return tu.calculate(array);
     }
 
+    @Override
+    public int getInputArrays() {
+        return new TalibRSI().getInputArrays();
+    }
+    
     @Override
     protected Double[] getCalculated(Map<String, SerialTA> objectMap, String id) {
         SerialTA objs = objectMap.get(id);

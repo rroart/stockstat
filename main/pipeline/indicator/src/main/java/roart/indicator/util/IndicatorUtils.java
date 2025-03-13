@@ -455,6 +455,8 @@ public class IndicatorUtils {
             PipelineData datareader = PipelineUtils.getPipeline(datareaders, PipelineUtils.getMetaCat(meta), inmemory);
             PipelineData resultMap = PipelineUtils.getPipeline(datareaders, indicatorName, inmemory);
             SerialMapTA objMap = PipelineUtils.getMapTA(resultMap);
+            // TODO meta ohlc and indicator.getInputArrays
+            // ohlc is false and getinputarrays is 3
             if (objMap.getMap() != null && !objMap.getMap().isEmpty()) { 
                 objectMapsList.add(objMap);
                 Map<String, Double[][]> list0 = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
@@ -464,7 +466,7 @@ public class IndicatorUtils {
                 log.info("sizes {}", listList.get(listList.size() - 1).size());
             } else {
                 // TODO why? generate exception?
-                log.error("Null or empty");
+                log.error("Null or empty {}", indicatorName);
                 listList.add(null);
             }
         }

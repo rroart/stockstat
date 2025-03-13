@@ -63,6 +63,11 @@ public class IndicatorMACD extends Indicator {
     }
 
     @Override
+    public int getInputArrays() {
+        return new TalibMACD().getInputArrays();
+    }
+    
+    @Override
     protected Double[] getCalculated(Map<String, SerialTA> objectMap, String id) {
         SerialTA objs = objectMap.get(id);
         TaUtil tu = new TaUtil();

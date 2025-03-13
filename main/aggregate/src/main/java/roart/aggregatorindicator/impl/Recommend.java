@@ -51,7 +51,7 @@ public abstract class Recommend extends AggregatorIndicator {
         return result;
     }
     
-    public static Map<String, List<String>[]> getRecommenderKeyMap(Map<String, List<Recommend>> usedRecommenders, Map<String, AbstractIndicator> usedIndicatorMap, IclijConfig conf) {
+    public static Map<String, List<String>[]> getRecommenderKeyMap(Map<String, List<Recommend>> usedRecommenders, Map<String, AbstractIndicator> usedIndicatorMap, IclijConfig conf, boolean ohlc) {
         Map<String, List<String>[]> result = new HashMap<>();
         for (String complexity : usedRecommenders.keySet()) {
             List<String>[] recommenders = new ArrayList[2];
@@ -68,6 +68,9 @@ public abstract class Recommend extends AggregatorIndicator {
                 PipelineData resultMap = indicator.putData();
                 Map<String, SerialTA> objMap = PipelineUtils.getObjectMap(resultMap);
                 if (objMap != null) { 
+                    if (ohlc == false && indicator.getInputArrays() == 3) {
+                        continue;
+                    }
                     List<Pair<String, String>> aBuyList = recommend.getBuyList();
                     for (Pair<String, String> pair : aBuyList) {
                         String key = pair.getLeft();

@@ -53,6 +53,11 @@ public class IndicatorSTOCHRSI extends Indicator {
         return tu.calculate(array);
     }
 
+    @Override
+    public int getInputArrays() {
+        return new Ta4jSTOCHRSI().getInputArrays();
+    }
+    
    @Override
     protected Double[] getCalculated(Map<String, SerialTA> objectMap, String id) {
         SerialTA objs = objectMap.get(id);

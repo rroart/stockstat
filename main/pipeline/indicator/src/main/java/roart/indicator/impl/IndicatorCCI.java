@@ -53,6 +53,11 @@ public class IndicatorCCI extends Indicator {
     }
 
     @Override
+    public int getInputArrays() {
+        return new TalibCCI().getInputArrays();
+    }
+    
+    @Override
     protected Double[] getCalculated(Map<String, SerialTA> objectMap, String id) {
         SerialTA objs = objectMap.get(id);
         TaUtil tu = new TaUtil();

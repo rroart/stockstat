@@ -130,7 +130,7 @@ public class CoreEvolutionService {
                 PipelineData datum = ((Indicator) indicator).putData();
                 pipelineData = ArrayUtils.add(pipelineData, datum);
             }
-            Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders, indicatorMap, conf);
+            Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders, indicatorMap, conf, meta.isLhc());
             
             findRecommendSettings(conf, evolutionConfig, disableList, table, usedRecommenders, recommendKeyMap, indicatorMap, updateMap, stockData.days, pipelineData, scoreMap, resultMap, inmemory);
             List<ResultItem> retlist = new ArrayList<>();
