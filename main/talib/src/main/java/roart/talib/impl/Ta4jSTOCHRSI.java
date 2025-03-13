@@ -57,7 +57,7 @@ public class Ta4jSTOCHRSI extends Ta4j {
     }
 
     @Override
-    protected int getInputArrays() {
+    public int getInputArrays() {
 	return 1;
     }
 }

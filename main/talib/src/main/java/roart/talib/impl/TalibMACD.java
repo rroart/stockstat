@@ -71,7 +71,7 @@ public class TalibMACD extends Talib {
     }
 
     @Override
-    protected int getInputArrays() {
+    public int getInputArrays() {
 	return 1;
     }
 }

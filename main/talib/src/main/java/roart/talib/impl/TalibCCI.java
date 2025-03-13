@@ -49,7 +49,7 @@ public class TalibCCI extends Talib {
     }
 
     @Override
-    protected int getInputArrays() {
+    public int getInputArrays() {
 	return 3;
     }
 }
