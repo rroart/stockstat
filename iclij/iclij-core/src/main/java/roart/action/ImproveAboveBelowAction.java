@@ -33,6 +33,7 @@ import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.util.PipelineThreadUtils;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.common.queue.QueueElement;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -134,6 +135,7 @@ public class ImproveAboveBelowAction extends MarketAction {
             // 0 ok?
             Map<String, Object> aMap = new HashMap<>();
 
+            // TODO param.stockdates?
             List<String> stockDates = param.getService().getDates(market.getConfig().getMarket(), param.getId());
             int verificationdays = param.getConfig().verificationDays();
 
@@ -163,7 +165,16 @@ public class ImproveAboveBelowAction extends MarketAction {
                 // uses getcontent
                 // todo
                 // done clean
+                // todo ok?
                 param.getAndSetCategoryValueMap(false);
+                Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
+                PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
+                Integer cat = PipelineUtils.getWantedcat(pipelineDatum);
+                String catName = PipelineUtils.getMetaCat(pipelineDatum);
+                log.info("cats {} {}", cat, catName);
+                param.setCategory(cat);
+                param.setCategoryTitle(catName);
+                param.getAndSetCategoryValueMapAlt();
 
                 //FitnessAboveBelow fit = new FitnessAboveBelow(action, new ArrayList<>(), param, profitdata, market, null, this.getPipeline(), null, subcomponent, realParameters, null, incdecsP, components, subcomponents, stockDates);
                 FitnessAboveBelowCommon fitCommon = new FitnessAboveBelowCommon();
