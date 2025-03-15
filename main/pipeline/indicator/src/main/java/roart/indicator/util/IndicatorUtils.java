@@ -523,7 +523,10 @@ public class IndicatorUtils {
                 Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.FILLLIST));
                 if (fillListMap == null) {
                     int jj = 0;
+                    log.error("Temp log, fillListMap null {} {}", entry.getMarket(), entry.getCategory());
+                    // just let if fail for now; // continue;
                 }
+                // TODO
                 Double[][] fillList = fillListMap.get(entry.getId());
                 // null
                 if (fillList == null || fillList[0] == null) {
