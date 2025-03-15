@@ -232,10 +232,12 @@ public abstract class Predictor extends AbstractPredictor {
 
     private void doPredictions(IclijConfig conf, Map<MLClassifyModel, Map<String, Double[]>> mapResult, Map<String, Double[][]> aListMap, Map<String, double[][]> aTruncListMap, NeuralNetConfigs nnConfigs, int days, Double threshold) {
         try {
+            log.info("MMM" + mldaos);
             for (MLClassifyDao mldao : mldaos) {
                 if (mldao.getModels().size() != 1) {
                     log.error("Models size is {}", mldao.getModels().size());
                 }
+                log.info("MMM" + predictorName() + " " + mldao.getModels(predictorName()));
                 for (MLClassifyModel model : mldao.getModels(predictorName())) {
                     // days find max
                     days = getDays(aListMap, aTruncListMap);
@@ -273,6 +275,8 @@ public abstract class Predictor extends AbstractPredictor {
                     accuracy = calculateAccuracy(aListMap, threshold, classifyResult, classifyResultNew);
                     accuracyMap.put(mldao.getName() + model.getName(), accuracy);
                     resultMeta.setTestAccuracy(accuracy);
+                    // resultMeta.setClassifyMap(classifyResult);
+                    resultMeta.setClassifyMap(classifyResultNew);
                 }
             }
         } catch (Exception e) {
@@ -308,7 +312,8 @@ public abstract class Predictor extends AbstractPredictor {
             log.info("if" + list.length + " " + conf.getPredictorsDays());
             if (list != null && list.length >= conf.getPredictorsDays()) {
                 log.info("list {}", list.length);
-                Object list3 = ArrayUtils.toObject(Arrays.copyOfRange(list, list.length - conf.getPredictorsDays(), list.length));
+                Object list3 = /*ArrayUtils.toObject*/(Arrays.copyOfRange(list, list.length - conf.getPredictorsDays(), list.length));
+                log.info("list {}", list3.getClass().getName());
                 log.info("iii"+Arrays.asList((double[])Arrays.copyOfRange(list, list.length - conf.getPredictorsDays(), list.length)));
                 classifylist.add(new LearnClassify(id, list3, (Double) null));
             }
@@ -326,7 +331,8 @@ public abstract class Predictor extends AbstractPredictor {
             // check reverse. move up before if?
             if (list != null && list.length == days) {
                 log.info("list {}", list.length);
-                Object list3 = ArrayUtils.toObject(list);
+                Object list3 = /*ArrayUtils.toObject*/(list);
+                log.info("list {}", list3.getClass().getName());
                 map.add(new LearnClassify(id, list3, (Double) null));
             }
         }
@@ -336,14 +342,17 @@ public abstract class Predictor extends AbstractPredictor {
     private double calculateAccuracy(Map<String, Double[][]> aListMap, Double threshold,
             Map<String, Double[]> classifyResult, Map<String, Double[]> classifyResultNew) {
         double accuracy = 0;
+        log.info("MMM" + classifyResult);
         if (classifyResult != null) {
             int count = 0;
             int total = 0;
             for (Entry<String, Double[]> entry : classifyResult.entrySet()) {
+                log.info("MMM" + key);
                 String key = entry.getKey();
                 Double[][] v = aListMap.get(key);
                 Double[] list = v[0];
                 Double val = list[list.length - 1];
+                log.info("MMM" + val + " " + list.length);
                 Double[] list2 = entry.getValue();
                 Double val2 = list2[list2.length - 1];
                 if (val != null && val2 != null) {

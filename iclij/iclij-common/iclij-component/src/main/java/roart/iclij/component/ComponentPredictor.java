@@ -198,12 +198,17 @@ public class ComponentPredictor extends ComponentML {
         }
         PipelineData resultMap = param.getResultMap();
         // mix text num
-        MapOneDim aResultMap = PipelineUtils.getMapOneDim(resultMap.get(PipelineConstants.RESULT));
+        // java.lang.ClassCastException: class roart.common.pipeline.data.SerialMapPlain ca
+        // nnot be cast to class java.util.Map (roart.common.pipeline.data.SerialMapPlain i
+        // s in unnamed module of loader org.springframework.boot.loader.LaunchedURLClassLo
+
+        //Map aResultMap = PipelineUtils.getMapPlain(resultMap, PipelineConstants.RESULT);
         int resultIndex = 0;
         int count = 0;
         if (param.getResultMeta() == null) {
             int jj = 0;
         }
+        
         for (SerialResultMeta meta : param.getResultMeta()) {
             int returnSize = (int) meta.getReturnSize();
 
@@ -218,21 +223,33 @@ public class ComponentPredictor extends ComponentML {
                 int jj = 0;
             }
             
+            Map<String, Double[]> classifyMap = (Map<String, Double[]>) meta.getClassifyMap(); 
+            if (classifyMap == null) {
+                //continue;
+            }
+            Map<Double, String> labelMap = createLabelMapShort();
+
             MLMetricsItem mltest = search(mlTests, meta);
-            if (mlTests == null || mltest != null) {
+            if (true || mlTests == null || mltest != null) {
                 //&& (positions == null || !positions.containsBelow(getPipeline(), paircount, above, mltest, param.getInput().getConfig().getFindProfitMemoryFilter()))) {
                 Double score = mltest.getTestAccuracy();
-                for (String key : param.getCategoryValueMap().keySet()) {
+                for (Entry<String, Double[]> entry : classifyMap.entrySet()) {
+                //for (String key : param.getCategoryValueMap().keySet()) {
+                    String key = entry.getKey();
+                    Double[] classification = entry.getValue();
                     List<List<Double>> resultList = param.getCategoryValueMap().get(key);
                     List<Double> mainList = resultList.get(0);
                     if (mainList == null) {
                         continue;
                     }
-                    OneDim list = aResultMap.get(key);
+                    /*
+                    List list = (List) aResultMap.get(key);
                     if (list == null) {
                         continue;
                     }
-                    String tfpn = (String) list.get(resultIndex);
+                    */
+                    String tfpn = labelMap.get(classification[0]);
+                    //String tfpn = (String) list.get(resultIndex);
                     if (tfpn == null) {
                         continue;
                     }
@@ -488,6 +505,13 @@ public class ComponentPredictor extends ComponentML {
     @Override
     public String getFuturedays() {
         return ConfigConstants.MACHINELEARNINGPREDICTORSFUTUREDAYS;
+    }
+    
+    public static Map<Double, String> createLabelMapShort() {
+        Map<Double, String> labelMap1 = new HashMap<>();
+        labelMap1.put(1.0, Constants.ABOVE);
+        labelMap1.put(2.0, Constants.BELOW);
+        return labelMap1;
     }
 }
 

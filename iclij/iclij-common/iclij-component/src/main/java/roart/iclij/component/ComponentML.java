@@ -422,7 +422,7 @@ public abstract class ComponentML extends Component {
 
     protected MLMetricsItem search(List<MLMetricsItem> mlTests, SerialResultMeta meta) {
         Pair<String, String> pair = new MiscUtil().getComponentPair(meta);
-        if (mlTests == null) {
+        if (mlTests == null || mlTests.isEmpty()) {
             MLMetricsItem test = new MLMetricsItem();
             test.setComponent(getPipeline());
             test.setSubcomponent(pair.getLeft());

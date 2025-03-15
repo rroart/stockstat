@@ -51,6 +51,11 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
     }
 
     @Override
+    public List<MLClassifyModel> getModels(String model) {
+        return models;
+    }
+    
+    @Override
     public Double eval(int modelInt) {
         return random.nextDouble();
     }
@@ -73,20 +78,39 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
         return new HashMap<>();
     }
 
-    private Map<String, Double[]> getCatMap(List<String> retList, List<LearnClassify> classifyMap, Object[] list) {
+    private Map<String, Double[]> getCatMap(List<String> retList, List<LearnClassify> classifyMap, Object[] list, int outcomes, boolean classify) {
         Map<String, Double[]> retMap = new HashMap<>();
+        // TODO list emply
+        if (list != null) {
+        log.info("list empty {} {}", retList.size(), list.length);
+        }
         for (int j = 0; j < retList.size(); j ++) {
+            String id = retList.get(j);
+            if (classify) {
             Double acat = (Double) list[random.nextInt(list.length)];
             Double aprob = random.nextDouble();
-            String id = retList.get(j);
             retMap.put(id, new Double[]{ acat, aprob });
+            } else {
+                LearnClassify triple = classifyMap.get(j);
+                double[] l = (double[]) triple.getArray();
+                Double last = l[l.length - 1];
+                List<Double> cat = new ArrayList<>();
+                for (int i = 0; i < outcomes; i++) {
+                    last = last * (0.99 + 0.02 * random.nextDouble());
+                    cat.add(last);
+                }
+                ArrayList list2 = (ArrayList) cat;
+                retMap.put(id, Arrays.copyOf((list2).toArray(), list2.size(), Double[].class));
+            }
             LearnClassify triple = classifyMap.get(j);
             if (triple.getClassification() != null) {
                 int jj = 0;
             }
-            LearnClassify mutableList = new LearnClassify(triple.getId(), triple.getArray(), acat);
+            if (classify) {
+            LearnClassify mutableList = new LearnClassify(triple.getId(), triple.getArray(), retMap.get(id)[0]);
             //triple.setRight(acat);
             classifyMap.set(j, mutableList);
+            }
         }
         return retMap;
     }
@@ -94,6 +118,7 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
     private void getClassifyArray(List<LearnClassify> list, List<String> retList, Object[][] objobj) {
         int i = 0;
         for (LearnClassify entry : list) {
+            log.info("MMM" + entry.getArray().getClass().getName());
             double[] value = (double[]) entry.getArray();
             Object[] obj = new Object[value.length/* + 1*/];
             for (int j = 0; j < value.length; j ++) {
@@ -125,17 +150,19 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
         }
         Object[] list = null;
         Map<Object, Long> countMap = null;
-        if (learnMap != null) {
+        if (classify && learnMap != null) {
             //IndicatorUtils.filterNonExistingClassifications2(labelMapShort, learnMap);
             countMap = learnMap.stream().collect(Collectors.groupingBy(e -> e.getClassification(), Collectors.counting()));                            
             list = countMap.keySet().toArray();
         }
         List<String> retList = new ArrayList<>();
+        if (true || classify) {
         Object[][] classifyArray = new Object[classifyMap.size()][];
         getClassifyArray(classifyMap, retList, classifyArray);
+        }
         result.setAccuracy(random.nextDouble());
         result.setTrainaccuracy(random.nextDouble());
-        Map<String, Double[]> retMap = getCatMap(retList, classifyMap, list);
+        Map<String, Double[]> retMap = getCatMap(retList, classifyMap, list, outcomes, classify);
         result.setCatMap(retMap);
         return result;
     }
