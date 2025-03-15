@@ -4,8 +4,9 @@ mplfinance
 numpy
 pandas
 pandas_datareader
+psycopg2
 Requests
 scipy
 SQLAlchemy
-TA_Lib
+TA_Lib==0.6.1
 cyclonedx-bom
