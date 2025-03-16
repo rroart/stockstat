@@ -204,6 +204,7 @@ public class RecommenderChromosome2 extends ConfigMapChromosome2 {
         return listPerm;
     }
 
+    @JsonIgnore
     public boolean getBuy() {
         return true;
     }
