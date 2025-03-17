@@ -222,7 +222,7 @@ public abstract class Component {
 			} else {
 				String val = (String) loadValues.get(IclijConstants.ALL);
 				log.info("val {} {}", loadValues.get(IclijConstants.ALL).getClass(), val);	
-				Map<String, Object> map = JsonUtil.convert(val, Map.class);
+				Map<String, Object> map = JsonUtil.convertnostrip(val, Map.class);
 				if (map != null) {
 					valueMap.putAll(map);
 				}
