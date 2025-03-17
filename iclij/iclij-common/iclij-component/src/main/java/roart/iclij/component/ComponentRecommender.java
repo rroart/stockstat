@@ -26,6 +26,8 @@ import roart.common.model.MLMetricsItem;
 import roart.common.model.MemoryItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMapD;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
@@ -122,7 +124,7 @@ public class ComponentRecommender extends ComponentNoML {
         PipelineData resultMap = param.getResultMap();
         if (resultMap != null) {
             // rec with own result
-        Map<String, Object> resultMap2 = (Map<String, Object>) resultMap.get(PipelineConstants.RESULT);
+        Map<String, Object> resultMap2 = PipelineUtils.getMapPlain(resultMap, PipelineConstants.RESULT);
         Map<String, List<Double>> recommendBuySell = (Map<String, List<Double>>) resultMap2.get(RecommendConstants.COMPLEX);
         param.setRecommendBuySell(recommendBuySell);
         }
@@ -150,9 +152,10 @@ public class ComponentRecommender extends ComponentNoML {
         Double confidenceFactor = 1.0; // reimplement? profitdata.getInputdata().getConfMap().get(keyPair);
         //System.out.println(okConfMap.keySet());
         //System.out.println(okListMap.keySet());
-        Map maps = (Map) resultMaps; //.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+        log.info("mapname" + resultMaps.getName() + " " + resultMaps.getAllKeys());
+        //Map maps = (Map) resultMaps; //.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
         // rec with own result
-        Map<String, Map> resultMap0 = (Map<String, Map>) maps.get(PipelineConstants.RESULT);
+        Map<String, Map> resultMap0 = PipelineUtils.getMapPlain(resultMaps, PipelineConstants.RESULT);
         Map<String, List<Double>> resultMap = (Map<String, List<Double>>) resultMap0.get(RecommendConstants.COMPLEX);
         if (resultMap == null) {
             return;

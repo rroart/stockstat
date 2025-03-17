@@ -9,6 +9,7 @@ import roart.category.AbstractCategory;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.SerialMapD;
 import roart.common.util.ArraysUtil;
 import roart.common.util.TimeUtil;
 import roart.etl.DatelistToMapETL;
@@ -25,7 +26,7 @@ import roart.pipeline.common.aggregate.Aggregator;
 
 public class RecommenderRSI extends Aggregator {
 
-    Map<String, Object[]> rsiMap;
+    SerialMapD rsiMap;
     Map<String, Double> buyMap;
     Map<String, Double> sellMap;
     Map<String, Double[][]> listMap;
@@ -51,7 +52,8 @@ public class RecommenderRSI extends Aggregator {
         if (rsi == null) {
             return;
         }
-        rsiMap = (Map<String, Object[]>) rsi;
+        // TODO SerialMapD
+        rsiMap = (SerialMapD) rsi;
         List<String> buyList = null;///new RSIRecommend().getBuyList();
         List<String> sellList = null;//new RSIRecommend().getSellList();
         for (String id : listMap.keySet()) {
@@ -94,7 +96,7 @@ public class RecommenderRSI extends Aggregator {
         Object[] obj = new Object[2];
         obj = round(obj, 3);
         if (rsiMap != null) {
-            obj = rsiMap.get(stock.getId());
+            obj = (Object[]) rsiMap.get(stock.getId());
         }
         if (obj == null) {
             obj = new Object[2];

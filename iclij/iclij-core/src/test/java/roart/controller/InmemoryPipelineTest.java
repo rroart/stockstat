@@ -176,6 +176,18 @@ public class InmemoryPipelineTest {
     }
 
     @Test
+    public void testFindProfitARI() throws Exception {
+        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null, 0, JsonUtil.convert(parameters));
+        //aci.setBuy(null);
+        //aci.setRecord(LocalDate.now());
+        try {
+            ac.runAction(iconf, aci, new ArrayList<>());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
+    @Test
     public void testFindProfitPredictor() throws Exception {
         ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.PREDICTOR, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         //aci.setBuy(null);

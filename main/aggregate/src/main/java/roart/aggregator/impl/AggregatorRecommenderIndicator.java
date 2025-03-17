@@ -22,6 +22,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.util.PipelineUtils;
@@ -61,9 +62,12 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         if (cat == null) {
             return;
         }
-        PipelineData datareader = PipelineUtils.getPipeline(datareaders, "" + cat.getPeriod(), inmemory);
+        log.info("CCC" + cat.getPeriod() + " " + cat.getTitle());
+        PipelineData datareader = PipelineUtils.getPipeline(datareaders, "" + cat.getTitle(), inmemory);
+        //PipelineData datareader = PipelineUtils.getPipeline(datareaders, "" + cat.getPeriod(), inmemory);
         Map<String, AbstractIndicator> usedIndicatorMap = cat.getIndicatorMap();
         Map<String, PipelineData> localResultMap = cat.putData();
+        // TODO datareader null
         Map<String, Double[][]> list0 = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
  
         usedRecommenders = Recommend.getUsedRecommenders(conf);
@@ -88,8 +92,15 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                 // fix
                 PipelineData indicatorResultMap = cat.putData().get(indicator);
                 if (indicatorResultMap != null) {
-                    Map<String, Object[]> aResult = (Map<String, Object[]>) indicatorResultMap.get(PipelineConstants.LIST);
+                    log.info("III" + indicator + " " + indicatorResultMap.getAllKeys());
+                    //Map<String, Object[]> aResult = (Map<String, Object[]>) indicatorResultMap.get(PipelineConstants.LIST);
+                    SerialMapD aResult = PipelineUtils.getResultMap(indicatorResultMap);
+                    if (aResult != null && aResult.getMap() != null && aResult.keySet() != null) {
+                        log.info("AAA"+ids + " " + aResult.keySet());
                     ids.retainAll(aResult.keySet());
+                    } else {
+                        log.info("AAAnull"+indicator);
+                    }
                 } else {
                     int jj = 0;
                 }
