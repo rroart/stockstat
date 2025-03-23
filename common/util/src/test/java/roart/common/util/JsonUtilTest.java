@@ -54,6 +54,14 @@ public class JsonUtilTest {
         System.out.println("ser" + ser);
         
     }
+
+    @Test
+    public void test1() {
+	String s0 = "{\"aggregators.indicator.extrasmacd\":true,\"aggregators.indicator.extrasdeltas\":3,\"aggregators.indicator.rsi\":true,\"aggregators.indicator.threshold\":\"[1.0]\",\"aggregators.indicator.macd\":false,\"aggregators.indicator.extrasrsi\":true,\"aggregators.indicator.intervaldays\":20,\"misc.threshold\":null,\"aggregators.indicator.extrasbits\":\"100\",\"aggregators.indicator.extraslist\":\"[{\"complex\":[{\"items\":[{\"market\":\"tradcomm\",\"id\":\"XAUUSD:CUR\",\"category\":\"Price\"},{\"market\":\"tradcomm\",\"id\":\"HG1:COM\",\"category\":\"Price\"}],\"expression\":\"1 2 /\"}],\"simple\":null},{\"complex\":null,\"simple\":[{\"market\":\"tradcomm\",\"id\":\"XAUUSD:CUR\",\"category\":\"Price\"}]},{\"complex\":null,\"simple\":[{\"market\":\"tradcomm\",\"id\":\"CL1:COM\",\"category\":\"Price\"}]}]\",\"aggregators.indicator.futuredays\":7}";
+        String s1 = "{\"aggregators.indicator.extraslist\":\"[{\"complex\":[{\"items\":[{\"market\":\"tradcomm\",\"id\":\"XAUUSD:CUR\",\"category\":\"Price\"},{\"market\":\"tradcomm\",\"id\":\"HG1:COM\",\"category\":\"Price\"}],\"expression\":\"1 2 /\"}],\"simple\":null},{\"complex\":null,\"simple\":[{\"market\":\"tradcomm\",\"id\":\"XAUUSD:CUR\",\"category\":\"Price\"}]},{\"complex\":null,\"simple\":[{\"market\":\"tradcomm\",\"id\":\"CL1:COM\",\"category\":\"Price\"}]}]\"}";
+        String s = "{\"aggregators.indicator.extraslist\":[{\"complex\":[{\"items\":[{\"market\":\"tradcomm\",\"id\":\"XAUUSD:CUR\",\"category\":\"Price\"},{\"market\":\"tradcomm\",\"id\":\"HG1:COM\",\"category\":\"Price\"}],\"expression\":\"1 2 /\"}],\"simple\":null},{\"complex\":null,\"simple\":[{\"market\":\"tradcomm\",\"id\":\"XAUUSD:CUR\",\"category\":\"Price\"}]},{\"complex\":null,\"simple\":[{\"market\":\"tradcomm\",\"id\":\"CL1:COM\",\"category\":\"Price\"}]}]}";
+        Map m = JsonUtil.convertnostrip(s, Map.class);
+    }
     
     /*
     @Test
@@ -68,3 +76,4 @@ public class JsonUtilTest {
     }
     */
 }
+

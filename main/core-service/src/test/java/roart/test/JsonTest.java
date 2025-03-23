@@ -15,12 +15,23 @@ import roart.ml.model.LearnTestClassifyAccess;
 import roart.common.util.JsonUtil;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
+import roart.common.config.Extra;
 
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
 
 public class JsonTest {
 
+    @Test
+    public void test1() {
+        String s0 = "{\"aggregators.indicator.extrasmacd\":true,\"aggregators.indicator.extrasdeltas\":3,\"aggregators.indicator.rsi\":true,\"aggregators.indicator.threshold\":\"[1.0]\",\"aggregators.indicator.macd\":false,\"aggregators.indicator.extrasrsi\":true,\"aggregators.indicator.intervaldays\":20,\"misc.threshold\":null,\"aggregators.indicator.extrasbits\":\"100\",\"aggregators.indicator.extraslist\":\"[{\"complex\":[{\"items\":[{\"market\":\"tradcomm\",\"id\":\"XAUUSD:CUR\",\"category\":\"Price\"},{\"market\":\"tradcomm\",\"id\":\"HG1:COM\",\"category\":\"Price\"}],\"expression\":\"1 2 /\"}],\"simple\":null},{\"complex\":null,\"simple\":[{\"market\":\"tradcomm\",\"id\":\"XAUUSD:CUR\",\"category\":\"Price\"}]},{\"complex\":null,\"simple\":[{\"market\":\"tradcomm\",\"id\":\"CL1:COM\",\"category\":\"Price\"}]}]\",\"aggregators.indicator.futuredays\":7}";
+        String s1 = "{\"aggregators.indicator.extraslist\":\"[{\"complex\":[{\"items\":[{\"market\":\"tradcomm\",\"id\":\"XAUUSD:CUR\",\"category\":\"Price\"},{\"market\":\"tradcomm\",\"id\":\"HG1:COM\",\"category\":\"Price\"}],\"expression\":\"1 2 /\"}],\"simple\":null},{\"complex\":null,\"simple\":[{\"market\":\"tradcomm\",\"id\":\"XAUUSD:CUR\",\"category\":\"Price\"}]},{\"complex\":null,\"simple\":[{\"market\":\"tradcomm\",\"id\":\"CL1:COM\",\"category\":\"Price\"}]}]\"}";
+        String s = "{\"aggregators.indicator.extraslist\":[{\"complex\":[{\"items\":[{\"market\":\"tradcomm\",\"id\":\"XAUUSD:CUR\",\"category\":\"Price\"},{\"market\":\"tradcomm\",\"id\":\"HG1:COM\",\"category\":\"Price\"}],\"expression\":\"1 2 /\"}],\"simple\":null},{\"complex\":null,\"simple\":[{\"market\":\"tradcomm\",\"id\":\"XAUUSD:CUR\",\"category\":\"Price\"}]},{\"complex\":null,\"simple\":[{\"market\":\"tradcomm\",\"id\":\"CL1:COM\",\"category\":\"Price\"}]}]}";
+        Map m = JsonUtil.convertnostrip(s, Map.class);
+        Extra[] extras = new Extra[1];
+    }
+    
     @Test
     public void test() {
         //MLClassifySparkAccess m = new MLClassifySparkAccess(null);

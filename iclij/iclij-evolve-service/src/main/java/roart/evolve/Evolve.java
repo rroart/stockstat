@@ -365,6 +365,11 @@ public class Evolve {
         if (better) {
             ConfigMapChromosome2 c = (ConfigMapChromosome2) myList0.get(0).getRight();
             ConfigMapGene conf2 = c.getGene();
+            Map<String, Object> map2 = conf2.getMap();
+            if (map2.containsKey(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST)) {
+                    Extra[] extras = JsonUtil.convert((String)map2.get(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST), Extra[].class);
+                    map2.put(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST, extras);               
+            }
             saveBetter(market, component, subComponent, IclijConfigConstants.FINDPROFIT, myList.get(0).getLeft(), IclijConstants.ALL, conf2.getMap(), true, IclijConfigConstants.MACHINELEARNING);
             /*
             try {
