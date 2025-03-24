@@ -47,26 +47,12 @@ public class PeriodAdviser extends Adviser {
                 int jj = 0;
             }
             int period = simulateConfig.getPeriod();
-            //List<MetaItem> metas = param.getService().getMetas();
-            //MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
-            //List<String> categories = new MetaUtil().getCategories(meta);
-            // TODO remove
-            Map<String, Object> aMap = new HashMap<>();
-            aMap.put(ConfigConstants.MACHINELEARNING, false);
-            aMap.put(ConfigConstants.AGGREGATORS, false);
-            aMap.put(ConfigConstants.INDICATORS, false);
-            aMap.put(ConfigConstants.INDICATORSMACD, true);
-            aMap.put(ConfigConstants.MISCTHRESHOLD, null);        
-            aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
-            aMap.put(ConfigConstants.MISCMYDAYS, 0);
-            aMap.put(ConfigConstants.MISCMERGECY, false);
-            Integer cat = period; //new MetaUtil().getCategory(meta, period);
-            //Map<String, Object> resultMaps = param.getResultMap(""+ cat, aMap);
+            Integer cat = period;
+
             PipelineData[] resultMaps = param.getResultMaps();
             if (resultMaps == null) {
                 int jj = 0;
             }
-            //List<MetaItem> metas = param.getService().getMetas();
             Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
             PipelineData metaData = PipelineUtils.getPipeline(resultMaps, PipelineConstants.META, inmemory);
             SerialMeta meta = PipelineUtils.getMeta(metaData);

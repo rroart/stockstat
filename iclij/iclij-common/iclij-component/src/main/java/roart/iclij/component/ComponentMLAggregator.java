@@ -73,59 +73,8 @@ public abstract class ComponentMLAggregator extends ComponentML {
         log.info("Keys {}", resultMap.keySet());
         log.info("Keys {}", param.getCategoryValueMap().keySet());
         List<String> stockDates = param.getService().getDates(param.getInput().getMarket(), param.getId());
-        if (true) {
-            //SerialMap smap = (SerialMap) resultMap.smap().get(PipelineConstants.RESULT);
-            Map<String, IncDecItem> getsells = new HashMap<>();
-            Map<String, IncDecItem> getbuys = new HashMap<>();
-            SerialList<SerialIncDec> list = (SerialList) resultMap.get(PipelineConstants.INCDEC);
-            for (SerialIncDec sincdec : list.getList()) {
-                String key = sincdec.getId();
-                
-                MLMetricsItem mltest = search(mlTests, sincdec);
-                if (!(mlTests == null || mltest != null)) {
-                    continue;
-                }
-                Double score = mltest.getTestAccuracy();
 
-                String tfpn = sincdec.getType();
-                if (tfpn == null) {
-                    log.error("tfpn null");
-                    continue;
-                }
-                LocalDate date = sincdec.getDate();
-                
-                boolean increase = false;
-                //System.out.println(okConfMap.keySet());
-                //Set<Pair<String, Integer>> keyset = profitdata.getInputdata().getConfMap().keySet();
-                //keyPair = getRealKeys(keyPair, keyset);
-                //System.out.println(okListMap.keySet());
-                if (above == null || above == true) {
-                    if (tfpn.equals(Constants.TP) || tfpn.equals(Constants.FN)) {
-                        increase = true;
-                        //IncDecItem incdec = mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
-                        IncDecItem incdec = mapAdder2(/*profitdata.getBuys()*/ getbuys, key, score, profitdata.getInputdata().getNameMap(), date, mltest.getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
-                        incdec.setIncrease(increase);
-                    } else {
-                        int jj = 0;
-                    }
-                }
-                if (above == null || above == false) {
-                    if (tfpn.equals(Constants.TN) || tfpn.equals(Constants.FP)) {
-                        increase = false;
-                        //IncDecItem incdec = mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
-                        IncDecItem incdec = mapAdder2(/*profitdata.getSells()*/ getsells, key, score, profitdata.getInputdata().getNameMap(), date, mltest.getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
-                        incdec.setIncrease(increase);
-                    } else {
-                        int jj = 0;
-                    }
-                }
-            }
-            log.info("sels " + getsells.size() + " " + getsells);
-            log.info("buys " + getbuys.size() + " " + getbuys);
-        }
         Map<Double, String> labelMap = createLabelMapShort();
-        Map<String, IncDecItem> getsells = new HashMap<>();
-        Map<String, IncDecItem> getbuys = new HashMap<>();
         for (SerialResultMeta meta : param.getResultMeta()) {
             boolean emptyMeta = meta.getMlName() == null;
             
@@ -176,10 +125,6 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     LocalDate date = TimeUtil.getBackEqualBefore2(confdate, offsetZero, stockDates);
                     
                     boolean increase = false;
-                    //System.out.println(okConfMap.keySet());
-                    //Set<Pair<String, Integer>> keyset = profitdata.getInputdata().getConfMap().keySet();
-                    //keyPair = getRealKeys(keyPair, keyset);
-                    //System.out.println(okListMap.keySet());
                     if (above == null || above == true) {
                         if (tfpn.equals(Constants.TP) || tfpn.equals(Constants.FN)) {
                             increase = true;
@@ -199,10 +144,6 @@ public abstract class ComponentMLAggregator extends ComponentML {
                 }                        
             }
         }
-        log.info("sels " + getsells.size() + " " + getsells);
-        log.info("buys " + getbuys.size() + " " + getbuys);
-        log.info("sels " + profitdata.getSells().size() + " " + profitdata.getSells());
-        log.info("buys " + profitdata.getBuys().size() + " " + profitdata.getBuys());
     }
 
     @Override

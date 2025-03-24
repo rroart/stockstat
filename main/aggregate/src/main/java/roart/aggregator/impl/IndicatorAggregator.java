@@ -127,8 +127,6 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     protected List<String> stockDates;
     
-    protected SerialList sincdecs = new SerialList();
-
     public IndicatorAggregator(IclijConfig conf, String string, int category, String title, Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates, Inmemory inmemory) throws Exception {
         super(conf, string, category, inmemory);
         this.key = title;
@@ -819,40 +817,6 @@ public abstract class IndicatorAggregator extends Aggregator {
                                     int jj = 0;
                                 }
                                 String type = null;
-                                // TODO remove
-                                if (aType != null && stockDates != null) {
-                                    /*
-                                    ComponentInput input = new ComponentInput(myConfig.getConfigData(), null, item.getMarket(), null, null, true, false, new ArrayList<>(), new HashMap<>());
-                                    ComponentData param = null;
-                                    try {
-                                        param = ComponentData.getParam(myConfig, input, 0, market);
-                                    } catch (Exception e) {
-                                        log.error(Constants.EXCEPTION, e);
-                                    }
-                                     */
-                                    
-                                    type = labelMapShort2.get(aType[0]);
-                                    Double prob = aType[1];
-                                    
-                                    String subComponent = MiscUtil.getSubComponent(mldao.getName(), model.getName());
-                                    String localComponent = MiscUtil.getLocalComponent(subType.getType() + mergeTxt(subType), mapType);
-                                    
-                                    Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap2 = mapMap.get(subType).get("offset");
-                                    Map<String, double[]> offsetMap = transformOffsetMap(offsetMap2);
-                                    double[] off = offsetMap.get(id);
-                                    if (off == null) {
-                                        log.error("The offset should not be null for {}", id);
-                                        continue;
-                                    }
-                                    int offsetZero = (int) Math.round(off[0]);
-                                    LocalDate confdate = conf.getConfigData().getDate();
-                                    LocalDate date = TimeUtil.getBackEqualBefore2(confdate, offsetZero, stockDates);
-            
-                                    //int obj = offsetMap.get(id);
-                                    
-                                    SerialIncDec incdec = new SerialIncDec(id, type, prob, subComponent, localComponent, date);
-                                    sincdecs.add(incdec);
-                                }
                                 fields[retindex++] = aType != null ? labelMapShort2.get(aType[0]) : null;
                                 if (model.getReturnSize() > 1) {
                                     fields[retindex++] = aType != null ? aType[1] : null;
@@ -2056,9 +2020,4 @@ public abstract class IndicatorAggregator extends Aggregator {
         return market + "_" + getName() + "_" + dao.getName() + "_" + model.getName() + "_" + getFilenamePart() + threshold + "_" + subType + "_" + mapType + "_" + mlmeta.dimString() + in + "_" + out;
     }
     
-    public PipelineData putData() {
-        PipelineData data = super.putData();
-        data.put(PipelineConstants.INCDEC, sincdecs);
-        return data;
-    }
 }

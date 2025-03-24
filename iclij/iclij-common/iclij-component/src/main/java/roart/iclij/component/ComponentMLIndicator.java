@@ -117,8 +117,6 @@ public class ComponentMLIndicator extends ComponentML {
         if (resultMap == null) {
             return;
         }
-        Map<String, IncDecItem> getsells = new HashMap<>();
-        Map<String, IncDecItem> getbuys = new HashMap<>();
         for (SerialResultMeta meta : param.getResultMeta()) {
             boolean emptyMeta = meta.getMlName() == null;
 
@@ -153,10 +151,6 @@ public class ComponentMLIndicator extends ComponentML {
                         continue;
                     }
                     boolean increase = false;
-                    //System.out.println(okConfMap.keySet());
-                    //Set<Pair<String, Integer>> keyset = profitdata.getInputdata().getConfMap().keySet();
-                    //keyPair = ComponentMLAggregator.getRealKeys(keyPair, keyset);
-                    //System.out.println(okListMap.keySet());
                     if (above == null || above == true) {
                         if (tfpn.equals(Constants.ABOVE)) {
                             increase = true;
@@ -176,10 +170,6 @@ public class ComponentMLIndicator extends ComponentML {
                 }                        
             }
         }
-        log.info("sels " + getsells.size() + " " + getsells);
-        log.info("buys " + getbuys.size() + " " + getbuys);
-        log.info("sels " + profitdata.getSells().size() + " " + profitdata.getSells());
-        log.info("buys " + profitdata.getBuys().size() + " " + profitdata.getBuys());
     }
 
     @Deprecated
