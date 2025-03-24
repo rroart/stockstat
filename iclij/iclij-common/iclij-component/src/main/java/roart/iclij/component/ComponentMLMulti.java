@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
+import roart.iclij.config.ConfigUtils;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.MLMetricsItem;
@@ -34,12 +35,7 @@ public class ComponentMLMulti extends ComponentMLAggregator {
         valueMap.put(ConfigConstants.AGGREGATORSMLMULTI, Boolean.TRUE);        
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);        
         valueMap.put(ConfigConstants.INDICATORS, Boolean.TRUE);                
-        valueMap.put(ConfigConstants.INDICATORSATR, Boolean.TRUE);                
-        valueMap.put(ConfigConstants.INDICATORSCCI, Boolean.TRUE);                
-        valueMap.put(ConfigConstants.INDICATORSMACD, Boolean.TRUE);                
-        valueMap.put(ConfigConstants.INDICATORSRSI, Boolean.TRUE);                
-        valueMap.put(ConfigConstants.INDICATORSSTOCH, Boolean.TRUE);                
-        valueMap.put(ConfigConstants.INDICATORSSTOCHRSI, Boolean.TRUE);                
+        valueMap.putAll(new ConfigUtils().getIndicators(Boolean.TRUE));                
     }
 
     @Override
@@ -47,12 +43,7 @@ public class ComponentMLMulti extends ComponentMLAggregator {
         valueMap.put(ConfigConstants.AGGREGATORSMLMULTI, Boolean.FALSE);        
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);        
         valueMap.put(ConfigConstants.INDICATORS, Boolean.FALSE);                
-        valueMap.put(ConfigConstants.INDICATORSATR, Boolean.FALSE);                
-        valueMap.put(ConfigConstants.INDICATORSCCI, Boolean.FALSE);                
-        valueMap.put(ConfigConstants.INDICATORSMACD, Boolean.FALSE);                
-        valueMap.put(ConfigConstants.INDICATORSRSI, Boolean.FALSE);                
-        valueMap.put(ConfigConstants.INDICATORSSTOCH, Boolean.FALSE);                
-        valueMap.put(ConfigConstants.INDICATORSSTOCHRSI, Boolean.FALSE);                
+        valueMap.putAll(new ConfigUtils().getIndicators(Boolean.FALSE));                
     }
 
     @Override
