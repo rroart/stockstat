@@ -227,21 +227,25 @@ export class IclijMarketbarComponent implements OnInit, OnDestroy {
     this.store.dispatch(new ActionGetImproveAboveBelow(this.main.config2));
   }
 
+  // @deprecated
   getVerify($event) {
     console.log($event);
     this.store.dispatch(new ActionGetVerify(this.main.config2));
   }
 
+  // @deprecated
   getVerifyLoop($event) {
     console.log($event);
     this.store.dispatch(new ActionGetVerifyLoop(this.main.config2));
   }
 
+  // @deprecated
   getSingleMarket($event) {
     console.log($event);
     this.store.dispatch(new ActionGetSingleMarket(this.main.config2));
   }
 
+  // @deprecated
   getSingleMarketLoop($event) {
     console.log($event);
     this.store.dispatch(new ActionGetSingleMarketLoop(this.main.config2));

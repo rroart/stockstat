@@ -126,10 +126,12 @@ function IclijMarketBar( { props, callbackNewTab } ) {
     setParam(param);
   }
 
+  // @deprecated
   function   getSingleMarket(event, props) {
     props.getsinglemarket(props.main.iconfig, props.main.imarket, props, false);
   }
 
+  // @deprecated
   function   getSingleMarketLoop(event, props) {
     props.getsinglemarket(props.main.iconfig, props.main.imarket, props, true);
   }
@@ -144,11 +146,13 @@ function IclijMarketBar( { props, callbackNewTab } ) {
     setParam(param);
   }
 
+  // @deprecated
   function  getVerify(event, props) {
     props.getverify(props.main.iconfig, props.main.imarket, props, false);
   }
 
-  function  getVerifyLoop(event, props) {
+  // @deprecated
+    function  getVerifyLoop(event, props) {
     props.getverify(props.main.iconfig, props.main.imarket, props, true);
   }
 
