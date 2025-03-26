@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import roart.common.cache.MyCache;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.leader.MyLeader;
@@ -270,6 +271,7 @@ public class ActionThread extends Thread {
                 long[] mem1 = MemUtil.mem();
                 long[] memdiff = MemUtil.diff(mem1, mem0);
                 log.info("Action mem {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
+                log.info("Cache {}", MyCache.getInstance().toString());
                 finished = true;
                 if (item.getDbid() != null) {
                     // flow

@@ -229,6 +229,7 @@ public class MachineLearningControlService {
         {
         long[] mem0 = MemUtil.mem();
         log.info("MEM {}", MemUtil.print(mem0));
+        log.info("Cache {}", MyCache.getInstance().toString());
         }
         
         return result;

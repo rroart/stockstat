@@ -137,6 +137,7 @@ public class ServiceController implements CommandLineRunner {
             long[] mem1 = MemUtil.mem();
             long[] memdiff = MemUtil.diff(mem1, mem0);
             log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
+            log.info("Cache {}", MyCache.getInstance().toString());
             if (maps != null) {
                 //log.info("Length {}", JsonUtil.convert(maps).length());
             }

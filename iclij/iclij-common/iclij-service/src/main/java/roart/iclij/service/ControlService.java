@@ -265,6 +265,14 @@ public class ControlService {
     }
     
     public List<String> getDates(String market, String uuid) {
+        if (false) {
+            try {
+                String s = null;
+                s.length();
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
         String key = CacheConstants.DATES + coremlconf.getConfigData().getMarket() + coremlconf.getConfigData().getDate();
         List<String> list =  (List<String>) MyCache.getInstance().get(key);
         if (list != null) {
@@ -356,6 +364,7 @@ public class ControlService {
         long[] mem1 = MemUtil.mem();
         long[] memdiff = MemUtil.diff(mem1, mem0);
         log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
+        log.info("Cache {}", MyCache.getInstance().toString());
         PipelineUtils.fixPipeline(result.getPipelineData(), MarketStock.class, StockData.class);
         return list;
         //return result.getMaps();
@@ -559,6 +568,7 @@ public class ControlService {
         return r;
     }
 
+    @Deprecated
     public WebData getVerify(String findprofit, ComponentInput componentInput) {
         // TODO Auto-generated method stub
         IclijServiceParam param = new IclijServiceParam();
