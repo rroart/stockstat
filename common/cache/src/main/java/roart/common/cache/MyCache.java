@@ -105,6 +105,6 @@ public class MyCache {
     public String toString() {
         Set keySet = new HashSet(cache.asMap().keySet());
         List<String> keys = ((Set<String>) keySet).stream().map(s -> s.substring(0, Math.min(s.length(), 20))).toList();
-        return "" + cache.size() + " " + keys + " " + cache.stats().toString();
+        return "" + cache.size() + " " + keys;
     }
 }
