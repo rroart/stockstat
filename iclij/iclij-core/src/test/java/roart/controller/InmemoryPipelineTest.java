@@ -54,6 +54,7 @@ import roart.model.io.IO;
 import roart.queue.PipelineThread;
 import roart.testdata.TestConstants;
 import roart.common.model.IncDecItem;
+import roart.common.model.SimDataItem;
 import roart.testdata.TestData;
 
 @TestInstance(Lifecycle.PER_CLASS)
@@ -109,8 +110,10 @@ public class InmemoryPipelineTest {
         iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
         log.info("Wants {}", iconf.wantsInmemoryPipeline());
         String market = TestConstants.MARKET;
-        TestDataSource dataSource1 = new TestDataSource(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), market, 26, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null);
-        TestDataSource dataSource2 = new TestDataSource(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), TestConstants.MARKET2, 20, false, Constants.PRICECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, "impid");
+        String start = "2024.01.01";
+        String end = "2025.01.01";
+        TestDataSource dataSource1 = new TestDataSource(conf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), market, 26, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null);
+        TestDataSource dataSource2 = new TestDataSource(conf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), TestConstants.MARKET2, 20, false, Constants.PRICECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, "impid");
         dataSource = new TestDataSources(List.of(dataSource1, dataSource2));
         webFluxUtil = new TestWebFluxUtil(conf, dataSource);
         parameters = new Parameters();
@@ -122,6 +125,9 @@ public class InmemoryPipelineTest {
 
         List<IncDecItem> incdecs = new TestData(iconf).incdec(dataSource.getAll(market, iconf));
         doReturn(incdecs).when(iclijDbDao).getAllIncDecs(any(), any(), any(), any());
+        
+        List<SimDataItem> sims = new TestData(iconf).getSimData(market, TimeUtil.convertDate2(start), TimeUtil.convertDate2(end), iconf, 100);
+        doReturn(sims).when(iclijDbDao).getAllSimData(any(), any(), any());
         
         CuratorFramework curatorClient = new TestCuratorFramework();
         
@@ -299,6 +305,25 @@ public class InmemoryPipelineTest {
     }
 
     @Test
+    public void testSim2() throws Exception {
+        log.info("Wants it {}", iconf.wantsInmemoryPipeline());
+        SimulateInvestConfig simConfig = testutils.getSimConfigDefault();
+        String market = TestConstants.MARKET;
+        simConfig.setStartdate("2024-11-01");
+        simConfig.setEnddate("2024-12-01");
+        IclijServiceResult result = null;
+        try {
+            result = testutils.getSimulateInvest2Market(simConfig, market);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        System.out.println("map" + result.getWebdatajson().getUpdateMap());
+        System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+        inmemory.stat();
+        assertEquals(true, inmemory.isEmpty());
+    }
+
+    @Test
     public void testAutoSim() throws Exception {
         AutoSimulateInvestConfig simConfig = testutils.getAutoSimConfigDefault();
         String market = TestConstants.MARKET;
@@ -338,7 +363,7 @@ public class InmemoryPipelineTest {
     public void testImproveAutoSim() throws Exception {
         AutoSimulateInvestConfig simConfig = testutils.getImproveAutoSimConfigDefault();
         String market = TestConstants.MARKET;
-        simConfig.setStartdate("2024-11-01");
+        simConfig.setStartdate("2024-07-01");
         simConfig.setEnddate("2024-12-01");
         IclijServiceResult result = null;
         try {

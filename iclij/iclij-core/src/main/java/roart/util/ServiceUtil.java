@@ -18,6 +18,7 @@ import roart.action.ImproveFilterAction;
 import roart.action.ImproveProfitAction;
 import roart.action.ImproveSimulateInvestAction;
 import roart.action.MarketAction;
+import roart.action.SimulateInvest2Action;
 import roart.action.SimulateInvestAction;
 import roart.common.constants.Constants;
 import roart.common.model.ActionComponentItem;
@@ -38,6 +39,7 @@ import roart.model.io.IO;
 public class ServiceUtil {
     private static Logger log = LoggerFactory.getLogger(ServiceUtil.class);
 
+    @Deprecated
     public static IclijServiceResult getVerify(ComponentInput componentInput, IclijConfig iclijConfig, IO io) {
         actionThreadReady();
         IclijServiceResult result = new IclijServiceResult();
@@ -162,6 +164,37 @@ public class ServiceUtil {
         }
 
         MarketAction simulateInvestAction = new SimulateInvestAction(iclijConfig);
+        Market market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
+        param.setMarket(market);
+        LocalDate date = null;
+        try {
+            if (param.getConfig().getSimulateInvestEnddate() != null) {
+                date = TimeUtil.convertDate(TimeUtil.replace(param.getConfig().getSimulateInvestEnddate()));
+            }
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            
+        }
+        //param.getService().conf.setdate(date);
+        param.getInput().setEnddate(date);
+        WebData webData = simulateInvestAction.getMarket(iclijConfig, null, param, market, null, null, new ArrayList<>());        
+        WebDataJson webDataJson = convert(webData);
+        result.setWebdatajson(webDataJson);
+        return result;
+    }
+
+    public static IclijServiceResult getSimulateInvest2(ComponentInput componentInput, IclijConfig iclijConfig, IO io) {
+        actionThreadReady();
+        IclijServiceResult result = new IclijServiceResult();
+        ComponentData param = null;
+        try {
+            param = ComponentData.getParam(iclijConfig, componentInput, 0, io);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return result;
+        }
+
+        MarketAction simulateInvestAction = new SimulateInvest2Action(iclijConfig);
         Market market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
         param.setMarket(market);
         LocalDate date = null;

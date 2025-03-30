@@ -2,6 +2,7 @@ package roart.testdata;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,12 +15,17 @@ import java.util.UUID;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 
+import roart.iclij.config.ComponentConstants;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.SimulateFilter;
+import roart.iclij.config.SimulateInvestConfig;
+import roart.iclij.config.SimulateInvestUtils;
 import roart.iclij.model.Parameters;
 import roart.common.config.MLConstants;
 import roart.common.constants.Constants;
 import roart.common.model.IncDecItem;
 import roart.common.model.MetaItem;
+import roart.common.model.SimDataItem;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
@@ -33,6 +39,7 @@ import roart.db.dao.DbDao;
 import roart.db.dao.util.StockETL;
 import roart.model.data.StockData;
 import roart.etl.db.Extract;
+import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapGene;
 
 public class TestData {
     private IclijConfig conf;
@@ -319,4 +326,45 @@ public class TestData {
         return list;
     }
     
+    public List<SimulateInvestConfig> getSim(String market, Date startDate, Date endDate, IclijConfig config, int num) {
+        List<SimulateInvestConfig> list = new ArrayList<>();
+        List<String> confList = ComponentConstants.getSimulateInvestConfig();
+        IclijConfigMapGene gene = new IclijConfigMapGene(confList , config);
+        for (int i = 0; i < num; i++) {
+            gene.randomize();
+            IclijConfig aConf = config.copy();
+            aConf.getConfigData().getConfigValueMap().putAll(gene.getMap());
+            SimulateInvestConfig sim = SimulateInvestUtils.getSimConfig(aConf);
+            list.add(sim);
+        }
+        return list;
+    }
+    
+    public List<SimDataItem> getSimData(String market, Date startDate, Date endDate, IclijConfig config, int num) {
+        List<SimDataItem> list = new ArrayList<>();
+        Random random = new Random();
+        LocalDate aStartDate = TimeUtil.convertDate(startDate);
+        LocalDate anEndDate = TimeUtil.convertDate(endDate);
+        Period period = Period.between(aStartDate, anEndDate);
+        int months = period.getMonths() + period.getYears() * 12;
+        LocalDate anotherStartDate = aStartDate.plusMonths(random.nextLong(months - 3));
+        LocalDate anotherEndDate = anotherStartDate.plusMonths(1);
+        SimulateFilter filter = new SimulateFilter(6, 0.9, 0.0, 0.0, false, 20, false, null);
+        //filter.setCorrelation(0.9);
+
+        List<SimulateInvestConfig> sims = getSim(market, startDate, endDate, config, num);
+        
+        for (SimulateInvestConfig sim : sims) {
+            SimDataItem simdata = new SimDataItem();
+            simdata.setRecord(LocalDate.now());
+            simdata.setStartdate(anotherStartDate);
+            simdata.setEnddate(anotherEndDate);
+            simdata.setMarket(market);
+            simdata.setConfig(JsonUtil.convert(sim));
+            simdata.setScore(random.nextDouble(5));
+            simdata.setFilter(JsonUtil.convert(filter));
+            list.add(simdata);
+        }
+        return list;
+    }
 }
