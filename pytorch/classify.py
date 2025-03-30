@@ -16,6 +16,7 @@ import shutil
 import importlib
 
 import mydatasets
+# NONO from datasetcli import dataset
 
 global dicteval
 dicteval = {}
@@ -509,6 +510,12 @@ class Classify:
         if myobj.modelInt == 8:
             modelname = 'gptmidirpr'
             config = myobj.pytorchGPTMIDIRPRConfig
+        if myobj.modelInt == 9:
+            modelname = 'gptmidifigaro'
+            config = myobj.pytorchGPTMIDIFigaroConfig
+        if myobj.modelInt == 10:
+            modelname = 'gptmidimmt'
+            config = myobj.pytorchGPTMIDIMMTConfig
         return config, modelname
       if hasattr(myobj, 'modelName'):
         if myobj.modelName == 'mlp':
@@ -783,7 +790,12 @@ class Classify:
             model = cachedata
             model.myobj = myobj
         else:
-            datasets = mydatasets.getdatasetmidi(myobj, config, self)
+            if not hasattr(myobj, 'flavour'):
+                datasets = mydatasets.getdatasetmidi(myobj, config, self)
+            else:
+                import mydatasetsl
+                datamodule = mydatasetsl.getdatasetmidi(myobj, config, self)
+                datasets = datamodule
             model = Model.Model(myobj, config, datasets)
         exists = self.exists(myobj)
         print("exist", exists)
@@ -799,7 +811,10 @@ class Classify:
                     dev = self.getdev()
                     #checkpoint = torch.load(self.getfullpath(myobj), map_location=dev)
                     #model = checkpoint['model']
-                    model.model.load_state_dict(torch.load(self.getfullpath(myobj)))
+                    if not hasattr(myobj, 'flavour'):
+                        model.model.load_state_dict(torch.load(self.getfullpath(myobj)))
+                    else:
+                        model = model_class.load_from_checkpoint(checkpoint_path=CHECKPOINT)
                     print("Restoring done")
                     print("training", model.model.training)
                     if hasattr(model.model, 'test'):
@@ -829,7 +844,10 @@ class Classify:
             if model.localsave():
                 print("Saving")
                 #torch.save({'model': model }, self.getfullpath(myobj))
-                torch.save(model.model.state_dict(), self.getfullpath(myobj))
+                if not hasattr(myobj, 'flavour'):
+                    torch.save(model.model.state_dict(), self.getfullpath(myobj))
+                else:
+                    model.save()
 
         #classifier.tidy()
         del classifier

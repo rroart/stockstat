@@ -122,6 +122,8 @@ def _merge_note(snote_sequence):
                 result = pretty_midi.Note(on.velocity, snote.value, on.time, off.time)
                 result_array.append(result)
             except:
+                #import sys,traceback
+                #print(traceback.format_exc())
                 print('info removed pitch: {}'.format(snote.value))
     return result_array
 
@@ -129,6 +131,8 @@ def _merge_note(snote_sequence):
 def _snote2events(snote: SplitNote, prev_vel: int):
     result = []
     if snote.velocity is not None:
+        if snote.velocity == 128:
+            print("Velos 128")
         modified_velocity = snote.velocity // 4
         if prev_vel != modified_velocity:
             result.append(Event(event_type='velocity', value=modified_velocity))
@@ -238,29 +242,30 @@ def decode_midi(idx_array, file_path=None):
     event_sequence = [Event.from_int(idx) for idx in idx_array]
     # print(event_sequence)
     snote_seq = _event_seq2snote_seq(event_sequence)
+    i = 0
+    for n in snote_seq:
+        if (n.velocity > 127):
+            print("SNote", i, n, idx_array[i])
+        if (n.velocity > 127):
+            n.velocity = 127
+        i = i + 1
     note_seq = _merge_note(snote_seq)
+    #print("srq", note_seq)
+    i = 0
+    for n in note_seq:
+        if (n.pitch > 127 or n.velocity > 127):
+            print("Note", i, n)
+        if (n.velocity > 127):
+            n.velocity = 127
+        i = i + 1
     note_seq.sort(key=lambda x:x.start)
 
     mid = pretty_midi.PrettyMIDI()
-    # if want to change instument, see https://www.midi.org/specifications/item/gm-level-1-sound-set
-    instument = pretty_midi.Instrument(1, False, "Developed By Yang-Kichang")
-    instument.notes = note_seq
+    # if want to change instrument, see https://www.midi.org/specifications/item/gm-level-1-sound-set
+    instrument = pretty_midi.Instrument(1, False, "Developed By Yang-Kichang")
+    instrument.notes = note_seq
 
-    mid.instruments.append(instument)
+    mid.instruments.append(instrument)
     if file_path is not None:
         mid.write(file_path)
     return mid
-
-
-if __name__ == '__main__':
-    encoded = encode_midi('bin/ADIG04.mid')
-    print(encoded)
-    decided = decode_midi(encoded,file_path='bin/test.mid')
-
-    ins = pretty_midi.PrettyMIDI('bin/ADIG04.mid')
-    print(ins)
-    print(ins.instruments[0])
-    for i in ins.instruments:
-        print(i.control_changes)
-        print(i.notes)
-

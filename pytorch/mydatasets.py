@@ -6,11 +6,20 @@ import numpy as np
 
 from util.midi import process_midi, TORCH_LABEL_TYPE, cpu_device
 
+
 def getdatasetmidi(myobj, config, classifier):
     if myobj.dataset == 'maestro':
         return getmaestro(myobj, config)
     if myobj.dataset == 'lmd_full':
         return getlmdfull(myobj, config)
+    if myobj.dataset == 'lmd':
+        return getlmd(myobj, config)
+    if myobj.dataset == 'sod':
+        return getsod(myobj, config)
+    if myobj.dataset == 'snd':
+        return getsnd(myobj, config)
+    if myobj.dataset == 'lmd_full2':
+        return getlmdfull2(myobj, config)
     return do_dir(myobj, config)
 
 def getdataset(myobj, config, classifier):
@@ -263,6 +272,32 @@ def getlmdfull(myobj, config):
         torchvision.datasets.utils.extract_archive(dir + "lmd_full.tar.gz", dir + "lmd_full")
 
 
+def getsod(myobj, config):
+    import pathlib
+    import glob
+    import os
+    import mmt.convert_sod
+    import mmt.extract
+    import mmt.split
+    dir = getpath(myobj)
+    if not pathlib.Path(dir + "sod").exists():
+        url = 'https://qsdfo.github.io/LOP/database/SOD.zip'
+        torchvision.datasets.utils.download_url(url, dir)
+        torchvision.datasets.utils.extract_archive(dir + "SOD.zip", dir + "sod")
+    midi_files = glob.glob(os.path.join(dir, '**/*.mid'), recursive=True)
+    xml_files = glob.glob(os.path.join(dir, '**/*.xml'), recursive=True)
+    midi_files.append(xml_files)
+    for i in range(len(midi_files)):
+        midi_files[i] = midi_files[i][14:]
+    with open('data/sod/original-names.txt', 'w') as f:
+        for line in midi_files:
+                f.write(f"{line}\n")
+    mmt.convert_sod.main(None)
+    mmt.extract.main(["-d", "sod"])
+    mmt.split.main(["-d", "sod"])
+    pass
+
+
 def getmaestro(myobj, config):
     import pathlib
     import os
@@ -283,6 +318,7 @@ def getmaestro(myobj, config):
     maestro_json = json.load(open(maestro_json_file, "r"))
     print("Found", len(maestro_json), "pieces")
     print("Preprocessing...")
+    # todo
 
     train_count = 0
     val_count   = 0
