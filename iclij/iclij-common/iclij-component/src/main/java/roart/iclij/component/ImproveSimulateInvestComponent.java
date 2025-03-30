@@ -29,6 +29,7 @@ import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.Fitness;
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapChromosome;
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapGene;
+import roart.iclij.config.ComponentConstants;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.MLConfigs;
@@ -130,35 +131,7 @@ public class ImproveSimulateInvestComponent extends ComponentML {
 
     @Override
     protected List<String> getConfList() {
-        List<String> confList = new ArrayList<>();
-        confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCEVALUE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES);
-        confList.add(IclijConfigConstants.SIMULATEINVESTABOVEBELOW);
-        confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCEHOLDINCREASE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCEHOLDINCREASE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASETIMES);
-        confList.add(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASETIMES);
-        confList.add(IclijConfigConstants.SIMULATEINVESTSTOPLOSS);
-        confList.add(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSS);
-        confList.add(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSSVALUE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORPURE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTION);
-        confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTIONUP);
-        confList.add(IclijConfigConstants.SIMULATEINVESTMLDATE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTSTOCKS);
-        confList.add(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT);
-        confList.add(IclijConfigConstants.SIMULATEINVESTINTERVAL);
-        confList.add(IclijConfigConstants.SIMULATEINVESTINTERPOLATE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTADVISER);
-        confList.add(IclijConfigConstants.SIMULATEINVESTPERIOD);
-        confList.add(IclijConfigConstants.SIMULATEINVESTDAY);
-        return confList;
+        return ComponentConstants.getSimulateInvestConfig();
     }
 
     @Override
@@ -176,7 +149,6 @@ public class ImproveSimulateInvestComponent extends ComponentML {
         return new Object[] { componentparam.getScoreMap().get(SimConstants.SCORE) };
     }
 
-    // duplicated
     public void getResultMaps(SimulateInvestData param, Market market) {
         //Map<String, List<Object>> objectMap = new HashMap<>();
         IclijConfig config = param.getConfig();

@@ -29,6 +29,7 @@ import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.Fitness;
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapChromosome;
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapGene;
+import roart.iclij.config.ComponentConstants;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.MLConfigs;
@@ -129,16 +130,7 @@ public class ImproveAutoSimulateInvestComponent extends ComponentML {
 
     @Override
     protected List<String> getConfList() {
-        List<String> confList = new ArrayList<>();
-        confList.add(IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL);
-        confList.add(IclijConfigConstants.AUTOSIMULATEINVESTPERIOD);
-        confList.add(IclijConfigConstants.AUTOSIMULATEINVESTLASTCOUNT);
-        confList.add(IclijConfigConstants.AUTOSIMULATEINVESTDELLIMIT);
-        confList.add(IclijConfigConstants.AUTOSIMULATEINVESTSCORELIMIT);
-        confList.add(IclijConfigConstants.AUTOSIMULATEINVESTAUTOSCORELIMIT);
-        confList.add(IclijConfigConstants.AUTOSIMULATEINVESTKEEPADVISER);
-        confList.add(IclijConfigConstants.AUTOSIMULATEINVESTKEEPADVISERLIMIT);
-        return confList;
+        return ComponentConstants.getAutoSimulateInvestConfig();
     }
 
     @Override
@@ -156,7 +148,6 @@ public class ImproveAutoSimulateInvestComponent extends ComponentML {
         return new Object[] { componentparam.getScoreMap().get(SimConstants.SCORE) };
     }
 
-    // duplicated
     public void getResultMaps(SimulateInvestData param, Market market) {
         //Map<String, List<Object>> objectMap = new HashMap<>();
         IclijConfig config = param.getConfig();
