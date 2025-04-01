@@ -2,7 +2,7 @@ import pretty_midi
 from collections import Counter
 from torch import Tensor
 
-from constants import (
+from figaro.constants import (
   DEFAULT_VELOCITY_BINS,
   DEFAULT_DURATION_BINS,
   DEFAULT_TEMPO_BINS,
@@ -14,7 +14,7 @@ from constants import (
 )
 
 
-from constants import (
+from figaro.constants import (
   MAX_BAR_LENGTH,
   MAX_N_BARS,
 

@@ -9,13 +9,15 @@ import tqdm
 import numpy as np
 import shutil
 import matplotlib.pyplot as plt
+import mmt.args
 
 class Model:
     def __init__(self, myobj, config, dataset):
         self.myobj = myobj
         self.config = config
         self.dataset = dataset
-        self.args = Args()
+        dir = getpath(myobj)
+        self.args = mmt.args.Args(myobj.dataset, dir)
 
         # Get the specified device
         device = torch.device(
@@ -26,39 +28,6 @@ class Model:
 
         # Load the encoding
         encoding = mmt.representation.load_encoding(self.args.in_dir / "encoding.json")
-
-        # Create the dataset and data loader
-        logging.info(f"Creating the data loader...")
-        train_dataset = dataset.MusicDataset(
-            self.args.train_names,
-            self.args.in_dir,
-            encoding,
-            max_seq_len=self.args.max_seq_len,
-            max_beat=self.args.max_beat,
-            use_augmentation=self.args.aug,
-            use_csv=self.args.use_csv,
-        )
-        self.train_loader = torch.utils.data.DataLoader(
-            train_dataset,
-            self.args.batch_size,
-            shuffle=True,
-            num_workers=self.args.jobs,
-            collate_fn=dataset.MusicDataset.collate,
-        )
-        self.valid_dataset = dataset.MusicDataset(
-            self.args.valid_names,
-            self.args.in_dir,
-            encoding,
-            max_seq_len=self.args.max_seq_len,
-            max_beat=self.args.max_beat,
-            use_csv=self.args.use_csv,
-        )
-        self.valid_loader = torch.utils.data.DataLoader(
-            self.valid_dataset,
-            self.args.batch_size,
-            num_workers=self.args.jobs,
-            collate_fn=dataset.MusicDataset.collate,
-        )
 
         # Create the model
         logging.info(f"Creating model...")
@@ -86,9 +55,9 @@ class Model:
 
         # Create the optimizer
         self.optimizer = torch.optim.Adam(self.model.parameters(), self.args.learning_rate)
-        scheduler = torch.optim.lr_scheduler.LambdaLR(
+        self.scheduler = torch.optim.lr_scheduler.LambdaLR(
             self.optimizer,
-            lr_lambda=lambda step: self.get_lr_multiplier(
+            lr_lambda=lambda step: get_lr_multiplier(
                 step,
                 self.args.lr_warmup_steps,
                 self.args.lr_decay_steps,
@@ -97,6 +66,7 @@ class Model:
         )
 
         # Create a file to record losses
+        self.args.out_dir.mkdir(exist_ok=True, parents=True)
         self.loss_csv = open(self.args.out_dir / "loss.csv", "w")
         self.loss_csv.write(
             "step,train_loss,valid_loss,type_loss,beat_loss,position_loss,"
@@ -112,7 +82,7 @@ class Model:
         #self.trainer.fit(self.model, self.datamodule)
         # Get the specified device
         device = torch.device(
-            f"cuda:{self.args.gpu}" if self.gpu is not None else "cpu"
+            f"cuda:{self.args.gpu}" if self.args.gpu is not None else "cpu"
         )
         # Initialize variables
         step = 0
@@ -120,7 +90,7 @@ class Model:
         if self.args.early_stopping:
             count_early_stopping = 0
         # Iterate for the specified number of steps
-        train_iterator = iter(self.train_loader)
+        train_iterator = iter(self.dataset.train_loader)
         while step < self.args.steps:
 
             # Training
@@ -134,7 +104,7 @@ class Model:
                     batch = next(train_iterator)
                 except StopIteration:
                     # Reinitialize dataset iterator
-                    train_iterator = iter(self.train_loader)
+                    train_iterator = iter(self.dataset.train_loader)
                     batch = next(train_iterator)
 
                 # Get input and output pair
@@ -143,10 +113,10 @@ class Model:
 
                 # Update the model parameters
                 self.optimizer.zero_grad()
-                loss = model(seq, mask=mask)
+                loss = self.model(seq, mask=mask)
                 loss.backward()
                 torch.nn.utils.clip_grad_norm_(
-                    model.parameters(), self.args.grad_norm_clip
+                    self.model.parameters(), self.args.grad_norm_clip
                 )
                 self.optimizer.step()
                 self.scheduler.step()
@@ -165,18 +135,18 @@ class Model:
 
             # Validation
             logging.info(f"Validating...")
-            model.eval()
+            self.model.eval()
             with torch.no_grad():
                 total_loss = 0
                 total_losses = [0] * 6
                 count = 0
-                for batch in self.valid_loader:
+                for batch in self.dataset.val_loader:
                     # Get input and output pair
                     seq = batch["seq"].to(device)
                     mask = batch["mask"].to(device)
 
                     # Pass through the model
-                    loss, losses = model(seq, return_list=True, mask=mask)
+                    loss, losses = self.model(seq, return_list=True, mask=mask)
 
                     # Accumulate validation loss
                     count += len(batch)
@@ -207,8 +177,10 @@ class Model:
             )
 
             # Save the model
+            import pathlib
+            pathlib.Path(self.args.out_dir / "checkpoints").mkdir(exist_ok=True, parents=True)
             checkpoint_filename = self.args.out_dir / "checkpoints" / f"model_{step}.pt"
-            torch.save(model.state_dict(), checkpoint_filename)
+            torch.save(self.model.state_dict(), checkpoint_filename)
             logging.info(f"Saved the model to: {checkpoint_filename}")
 
             # Copy the model if it is the best model so far
@@ -260,7 +232,7 @@ class Model:
 
     def generate(self, filename):
         device = torch.device(
-            f"cuda:{self.args.gpu}" if self.gpu is not None else "cpu"
+            f"cuda:{self.args.gpu}" if self.args.gpu is not None else "cpu"
         )
         sample_dir = self.args.out_dir / "samples"
         sample_dir.mkdir(exist_ok=True)
@@ -278,38 +250,23 @@ class Model:
         # Load the encoding
         encoding = mmt.representation.load_encoding(self.args.in_dir / "encoding.json")
 
+        #TODO move
         # Create the dataset and data loader
         logging.info(f"Creating the data loader...")
-        test_dataset = self.dataset.MusicDataset(
-            self.args.names,
+        test_dataset = mmt.dataset.MusicDataset(
+            self.args.train_names,
             self.args.in_dir,
             encoding,
-            max_seq_len=self.train_args["max_seq_len"],
-            max_beat=self.train_args["max_beat"],
+            max_seq_len=self.args.max_seq_len,
+            max_beat=self.args.max_beat,
             use_csv=self.args.use_csv,
         )
         test_loader = torch.utils.data.DataLoader(
             test_dataset,
             shuffle=self.args.shuffle,
             num_workers=self.args.jobs,
-            collate_fn=self.dataset.MusicDataset.collate,
+            collate_fn=mmt.dataset.MusicDataset.collate,
         )
-
-        # Create the model
-        logging.info(f"Creating the model...")
-        model = self.model.mmt.music_x_transformers.MusicXTransformer(
-            dim=self.train_args["dim"],
-            encoding=encoding,
-            depth=self.train_args["layers"],
-            heads=self.train_args["heads"],
-            max_seq_len=self.train_args["max_seq_len"],
-            max_beat=self.train_args["max_beat"],
-            rotary_pos_emb=self.train_args["rel_pos_emb"],
-            use_abs_pos_emb=self.train_args["abs_pos_emb"],
-            emb_dropout=self.train_args["dropout"],
-            attn_dropout=self.train_args["dropout"],
-            ff_dropout=self.train_args["dropout"],
-        ).to(device)
 
         # Load the checkpoint
         checkpoint_dir = self.args.out_dir / "checkpoints"
@@ -318,9 +275,9 @@ class Model:
         else:
             checkpoint_filename = checkpoint_dir / f"model_{self.args.model_steps}.pt"
         print("filename", checkpoint_filename)
-        model.load_state_dict(torch.load(checkpoint_filename, map_location=device))
+        self.model.load_state_dict(torch.load(checkpoint_filename, map_location=device))
         logging.info(f"Loaded the model weights from: {checkpoint_filename}")
-        model.eval()
+        self.model.eval()
 
         # Get special tokens
         sos = encoding["type_code_map"]["start-of-song"]
@@ -349,7 +306,7 @@ class Model:
                 tgt_start[:, 0, 0] = sos
 
                 # Generate new samples
-                generated = model.generate(
+                generated = self.model.generate(
                     tgt_start,
                     self.args.seq_len,
                     eos_token=eos,
@@ -374,7 +331,7 @@ class Model:
                 tgt_start = batch["seq"][:1, :prefix_len].to(device)
 
                 # Generate new samples
-                generated = model.generate(
+                generated = self.model.generate(
                     tgt_start,
                     self.args.seq_len,
                     eos_token=eos,
@@ -401,7 +358,7 @@ class Model:
                 cond_len = int(np.argmax(batch["seq"][0, :, 1] >= beat_4))
                 tgt_start = batch["seq"][:1, :cond_len].to(device)
                 # Generate new samples
-                generated = model.generate(
+                generated = self.model.generate(
                     tgt_start,
                     self.args.seq_len,
                     eos_token=eos,
@@ -429,7 +386,7 @@ class Model:
                 tgt_start = batch["seq"][:1, :cond_len].to(device)
 
                 # Generate new samples
-                generated = model.generate(
+                generated = self.model.generate(
                     tgt_start,
                     self.args.seq_len,
                     eos_token=eos,
@@ -465,7 +422,7 @@ class Model:
         position = (step - warmup_steps) / (decay_end_steps - warmup_steps)
         return 1 - (1 - decay_end_multiplier) * position
 
-    def save_pianoroll(filename, music, size=None, **kwargs):
+    def save_pianoroll(self, filename, music, size=None, **kwargs):
         """Save the piano roll to file."""
         music.show_pianoroll(track_label="program", **kwargs)
         if size is not None:
@@ -538,27 +495,27 @@ class Model:
         )
 
 
-class Args:
-    def __init__(self):
-        self.batch_size = 8
-        self.use_cvs = True
-        self.aug = True
-        self.max_seq_len = 1024
-        self.max_beat = 256
-        self.dim = 512
-        self.layers = 6
-        self.heads = 8
-        self.dropout = 0.2
-        self.abs_pos_emb = True
-        self.rel_pos_emb = False
-        self.steps = 1
-        self.valid_steps = 1
-        self.early_stopping = True
-        self.early_stopping_tolerance = 20
-        self.learning_rate = 0.0005
-        self.lr_warmup_steps = 5000
-        self.lr_decay_steps = 100000
-        self.lf_deacy_multiplier = 0.1
-        self.grad_norm_clip = 1.0
-        self.jobs = 4
-        self.gpu = None
+def get_lr_multiplier(
+    step, warmup_steps, decay_end_steps, decay_end_multiplier
+):
+    """Return the learning rate multiplier with a warmup and decay schedule.
+
+    The learning rate multiplier starts from 0 and linearly increases to 1
+    after `warmup_steps`. After that, it linearly decreases to
+    `decay_end_multiplier` until `decay_end_steps` is reached.
+
+    """
+    if step < warmup_steps:
+        return (step + 1) / warmup_steps
+    if step > decay_end_steps:
+        return decay_end_multiplier
+    position = (step - warmup_steps) / (decay_end_steps - warmup_steps)
+    return 1 - (1 - decay_end_multiplier) * position
+
+
+def getpath(myobj):
+    if hasattr(myobj, 'path') and not myobj.path is None:
+        return myobj.path + '/data/'
+    return '/tmp/data/'
+
+

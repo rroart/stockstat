@@ -45,7 +45,7 @@ def parse_args(args=None, namespace=None):
     return parser.parse_args(args=args, namespace=namespace)
 
 
-def main(args):
+def main(dir, args):
     """Main function."""
     # Parse the command-line arguments
     args = parse_args(args)
@@ -54,10 +54,10 @@ def main(args):
     if args.dataset is not None:
         if args.names is None:
             args.names = pathlib.Path(
-                f"data/{args.dataset}/processed/names.txt"
+                f"{dir}{args.dataset}/processed/names.txt"
             )
         if args.out_dir is None:
-            args.out_dir = pathlib.Path(f"data/{args.dataset}/processed/")
+            args.out_dir = pathlib.Path(f"{dir}{args.dataset}/processed/")
 
     # Set up the logger
     logging.basicConfig(

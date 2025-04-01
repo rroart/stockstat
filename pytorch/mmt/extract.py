@@ -94,7 +94,7 @@ def process(name, in_dir, out_dir, resolution, ignore_exceptions=True):
     return extract(name, in_dir, out_dir, resolution)
 
 
-def main(args):
+def main(dir, args):
     """Main function."""
     # Parse the command-line arguments
     args = parse_args(args)
@@ -103,13 +103,13 @@ def main(args):
     if args.dataset is not None:
         if args.names is None:
             args.names = args.names or pathlib.Path(
-                f"data/{args.dataset}/processed/json-names.txt"
+                f"{dir}{args.dataset}/processed/json-names.txt"
             )
         if args.in_dir is None:
-            args.in_dir = pathlib.Path(f"data/{args.dataset}/processed/json/")
+            args.in_dir = pathlib.Path(f"{dir}{args.dataset}/processed/json/")
         if args.out_dir is None:
             args.out_dir = pathlib.Path(
-                f"data/{args.dataset}/processed/notes/"
+                f"{dir}{args.dataset}/processed/notes/"
             )
 
     # Make sure output directory exists

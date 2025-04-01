@@ -13,7 +13,7 @@ import mmt.utils
 
 
 @mmt.utils.resolve_paths
-def parse_args(args=None, namespace=None):
+def parse_args(dir, args=None, namespace=None):
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         description="Convert MIDI and MusicXML files into music JSON files."
@@ -21,21 +21,21 @@ def parse_args(args=None, namespace=None):
     parser.add_argument(
         "-n",
         "--names",
-        default="data/sod/original-names.txt",
+        default=dir + "sod/original-names.txt",
         type=pathlib.Path,
         help="input names",
     )
     parser.add_argument(
         "-i",
         "--in_dir",
-        default="data/sod/SOD/",
+        default=dir + "sod/SOD/",
         type=pathlib.Path,
         help="input data directory",
     )
     parser.add_argument(
         "-o",
         "--out_dir",
-        default="data/sod/processed/json/",
+        default=dir + "sod/processed/json/",
         type=pathlib.Path,
         help="output directory",
     )
@@ -125,13 +125,13 @@ def process(
     return convert(name, in_dir, out_dir, resolution, skip_existing)
 
 
-def main(args):
+def main(dir, args):
     """Main function."""
     # Parse the command-line arguments
-    args = parse_args(args)
+    args = parse_args(dir, args)
 
     # Make sure output directory exists
-    args.out_dir.mkdir(exist_ok=True)
+    args.out_dir.mkdir(exist_ok=True, parents=True) # todo parents?
 
     # Set up the logger
     logging.basicConfig(

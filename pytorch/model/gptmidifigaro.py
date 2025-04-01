@@ -42,11 +42,11 @@ class Model:
         self.config = config
         self.dataset = dataset
 
-        MODEL = config.model
+        MODEL = 'figaro-expert' #config.model
 
         VAE_CHECKPOINT = None
 
-        OUTPUT_DIR = myobj.path + '/' + MODEL;
+        OUTPUT_DIR = "/tmp/data/figaro" + '/' + MODEL # myobj.path
 
         if MODEL in ['figaro-learned', 'figaro'] and VAE_CHECKPOINT:
             vae_module = VqVaeModule.load_from_checkpoint(checkpoint_path=VAE_CHECKPOINT)
@@ -129,7 +129,7 @@ class Model:
             }[MODEL]()
 
         self.datamodule = self.model.get_datamodule(
-                    self.files, #midi_files,
+                    self.dataset.files, #midi_files,
                     vae_module=vae_module,
                     batch_size=BATCH_SIZE,
                     num_workers=N_WORKERS,

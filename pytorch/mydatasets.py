@@ -270,6 +270,13 @@ def getlmdfull(myobj, config):
         url = 'http://hog.ee.columbia.edu/craffel/lmd/lmd_full.tar.gz'
         torchvision.datasets.utils.download_url(url, dir)
         torchvision.datasets.utils.extract_archive(dir + "lmd_full.tar.gz", dir + "lmd_full")
+    import glob
+    midi_files = glob.glob(os.path.join(dir + "lmd_full", '**/*.mid'), recursive=True)
+    if hasattr(config, 'take'):
+        midi_files = midi_files[:config.take]
+    dsdict = { "files" : midi_files }
+    ds = DictToObject(dsdict)
+    return ds
 
 
 def getsod(myobj, config):
@@ -279,24 +286,66 @@ def getsod(myobj, config):
     import mmt.convert_sod
     import mmt.extract
     import mmt.split
+    import logging
+    import mmt.dataset
     dir = getpath(myobj)
     if not pathlib.Path(dir + "sod").exists():
         url = 'https://qsdfo.github.io/LOP/database/SOD.zip'
         torchvision.datasets.utils.download_url(url, dir)
         torchvision.datasets.utils.extract_archive(dir + "SOD.zip", dir + "sod")
-    midi_files = glob.glob(os.path.join(dir, '**/*.mid'), recursive=True)
-    xml_files = glob.glob(os.path.join(dir, '**/*.xml'), recursive=True)
-    midi_files.append(xml_files)
-    for i in range(len(midi_files)):
-        midi_files[i] = midi_files[i][14:]
-    with open('data/sod/original-names.txt', 'w') as f:
-        for line in midi_files:
-                f.write(f"{line}\n")
-    mmt.convert_sod.main(None)
-    mmt.extract.main(["-d", "sod"])
-    mmt.split.main(["-d", "sod"])
-    pass
+        midi_files = glob.glob(os.path.join(dir, '**/*.mid'), recursive=True)
+        xml_files = glob.glob(os.path.join(dir, '**/*.xml'), recursive=True)
+        midi_files.append(xml_files)
+        for i in range(len(midi_files)):
+            midi_files[i] = midi_files[i][18:] #TODO 14
+        if hasattr(config, 'take'):
+            midi_files = midi_files[:config.take]
+        pathlib.Path(dir + "sod").mkdir(exist_ok = True)
+        with open(dir + 'sod/original-names.txt', 'w') as f:
+            for line in midi_files:
+                    f.write(f"{line}\n")
+        mmt.convert_sod.main(dir, None)
+        mmt.extract.main(dir, ["-d", "sod"])
+        mmt.split.main(dir, ["-d", "sod"])
+    # Create the dataset and data loader
+    logging.info(f"Creating the data loader...")
+    args = mmt.args.Args(myobj.dataset, dir)
+    # Load the encoding
+    encoding = mmt.representation.load_encoding(args.in_dir / "encoding.json")
 
+    train_dataset = mmt.dataset.MusicDataset(
+        args.train_names,
+        args.in_dir,
+        encoding,
+        max_seq_len=args.max_seq_len,
+        max_beat=args.max_beat,
+        use_augmentation=args.aug,
+        use_csv=args.use_csv,
+    )
+    train_loader = torch.utils.data.DataLoader(
+        train_dataset,
+        args.batch_size,
+        shuffle=True,
+        num_workers=args.jobs,
+        collate_fn=mmt.dataset.MusicDataset.collate,
+    )
+    valid_dataset = mmt.dataset.MusicDataset(
+        args.valid_names,
+        args.in_dir,
+        encoding,
+        max_seq_len=args.max_seq_len,
+        max_beat=args.max_beat,
+        use_csv=args.use_csv,
+    )
+    valid_loader = torch.utils.data.DataLoader(
+        valid_dataset,
+        args.batch_size,
+        num_workers=args.jobs,
+        collate_fn=mmt.dataset.MusicDataset.collate,
+    )
+    dsdict = { "train_loader" : train_loader, "val_loader" : valid_loader, "test_loader" :None }
+    ds = DictToObject(dsdict)
+    return ds
 
 def getmaestro(myobj, config):
     import pathlib

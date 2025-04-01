@@ -839,7 +839,9 @@ class Classify:
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
             #print(model.model.summary())
             print(model.dataset)
-            if model.dataset.train_loader is not None:
+            if hasattr(model.dataset, "train_loader") and model.dataset.train_loader is not None:
+                model.fit()
+            if hasattr(model.dataset, "files") and model.dataset.files is not None:
                 model.fit()
             if model.localsave():
                 print("Saving")

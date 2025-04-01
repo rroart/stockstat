@@ -4,7 +4,7 @@ import pretty_midi
 
 from util.vocab import RemiVocab
 
-from constants import (
+from figaro.constants import (
   EOS_TOKEN,
   # vocab keys
   TIME_SIGNATURE_KEY,
