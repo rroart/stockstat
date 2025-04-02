@@ -2,9 +2,12 @@ import torch
 import os
 import glob
 import pytorch_lightning as pl
+from torch.utils.data import DataLoader
 
+from datasetsl import MidiDataset, SeqCollator
 from model.seq2seq import Seq2SeqModule
 from model.vae import VqVaeModule
+from figaro.input_representation import remi2midi
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -128,13 +131,13 @@ class Model:
               ),
             }[MODEL]()
 
-        self.datamodule = self.model.get_datamodule(
-                    self.dataset.files, #midi_files,
-                    vae_module=vae_module,
-                    batch_size=BATCH_SIZE,
-                    num_workers=N_WORKERS,
-                    pin_memory=True
-                  )
+        #self.datamodule = self.model.get_datamodule(
+        #            self.dataset.files, #midi_files,
+        #            vae_module=vae_module,
+        #            batch_size=BATCH_SIZE,
+        #            num_workers=N_WORKERS,
+        #            pin_memory=True
+        #          )
 
         checkpoint_callback = pl.callbacks.model_checkpoint.ModelCheckpoint(
             monitor='valid_loss',
@@ -169,7 +172,7 @@ class Model:
 
     def fit(self):
         import os
-        self.trainer.fit(self.model, self.datamodule)
+        self.trainer.fit(self.model, self.dataset.datamodule)
 
     def save(self):
         #torch.save( { 'model' : trainer }, "/tmp/e.ckpt")
@@ -179,3 +182,103 @@ class Model:
 
     def generate(self, filename):
         num_prime = 256
+        batch_size=BATCH_SIZE
+        verbose=True
+        max_iter=16000
+        max_bars=32
+        vae_module=None
+        datamodule = self.dataset.datamodule
+        datamodule.setup("test")
+        midi_files = datamodule.test_ds.files
+        import random
+        random.shuffle(midi_files)
+        if hasattr(self.config, 'take'):
+            midi_files = midi_files[:self.config.take]
+        print("files", len(midi_files))
+
+        description_options = None # todo
+        dataset = MidiDataset(
+            midi_files,
+            max_len=-1,
+            description_flavor=self.model.description_flavor,
+            description_options=description_options,
+            max_bars=self.model.context_size,
+            vae_module=vae_module
+        )
+
+        coll = SeqCollator(context_size=-1)
+        dl = DataLoader(dataset, batch_size=batch_size, collate_fn=coll)
+
+        make_medleys = False
+        if make_medleys:
+            dl = medley_iterator(dl,
+              n_pieces=args.n_medley_pieces,
+              n_bars=args.n_medley_bars,
+              description_flavor=model.description_flavor
+            )
+
+        with torch.no_grad():
+            for batch in dl:
+              reconstruct_sample(self.model, batch,
+                output_dir="/tmp",
+                max_iter=max_iter,
+                max_bars=max_bars,
+                verbose=verbose,
+              )
+
+
+@torch.no_grad()
+def reconstruct_sample(model, batch,
+  initial_context=1,
+  output_dir=None,
+  max_iter=-1,
+  max_bars=-1,
+  verbose=0,
+):
+  batch_size, seq_len = batch['input_ids'].shape[:2]
+
+  batch_ = { key: batch[key][:, :initial_context] for key in ['input_ids', 'bar_ids', 'position_ids'] }
+  if model.description_flavor in ['description', 'both']:
+    batch_['description'] = batch['description']
+    batch_['desc_bar_ids'] = batch['desc_bar_ids']
+  if model.description_flavor in ['latent', 'both']:
+    batch_['latents'] = batch['latents']
+
+  max_len = seq_len + 1024
+  if max_iter > 0:
+    max_len = min(max_len, initial_context + max_iter)
+  if verbose:
+    print(f"Generating sequence ({initial_context} initial / {max_len} max length / {max_bars} max bars / {batch_size} batch size)")
+  sample = model.sample(batch_, max_length=max_len, max_bars=max_bars, verbose=verbose//2)
+
+  xs = batch['input_ids'].detach().cpu()
+  xs_hat = sample['sequences'].detach().cpu()
+  events = [model.vocab.decode(x) for x in xs]
+  events_hat = [model.vocab.decode(x) for x in xs_hat]
+
+  pms, pms_hat = [], []
+  n_fatal = 0
+  for rec, rec_hat in zip(events, events_hat):
+    try:
+      pm = remi2midi(rec)
+      pms.append(pm)
+    except Exception as err:
+      print("ERROR: Could not convert events to midi:", err)
+    try:
+      pm_hat = remi2midi(rec_hat)
+      pms_hat.append(pm_hat)
+    except Exception as err:
+      print("ERROR: Could not convert events to midi:", err)
+      n_fatal += 1
+
+  if output_dir:
+    os.makedirs(os.path.join(output_dir, 'ground_truth'), exist_ok=True)
+    for pm, pm_hat, file in zip(pms, pms_hat, batch['files']):
+      if verbose:
+        print(f"Saving to {output_dir}/{file}")
+      pm.write(os.path.join(output_dir, 'ground_truth', file))
+      pm_hat.write(os.path.join(output_dir, file))
+
+  return events
+
+

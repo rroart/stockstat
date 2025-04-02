@@ -783,6 +783,7 @@ class Classify:
         timestamp = dt.timestamp()
         filename = filenames[0]
         myobj = json.loads(myjson, object_hook=lt.LearnTest)
+        print("flavour", hasattr(myobj, 'flavour'))
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
         if cachedata is not None:
@@ -811,10 +812,19 @@ class Classify:
                     dev = self.getdev()
                     #checkpoint = torch.load(self.getfullpath(myobj), map_location=dev)
                     #model = checkpoint['model']
+                    print("flavour", hasattr(myobj, 'flavour'))
                     if not hasattr(myobj, 'flavour'):
+                        # not figaro
                         model.model.load_state_dict(torch.load(self.getfullpath(myobj)))
                     else:
-                        model = model_class.load_from_checkpoint(checkpoint_path=CHECKPOINT)
+                        # figaro
+                        pl_ckpt = torch.load(self.getfullpath(myobj), map_location="cpu")
+                        state_dict = pl_ckpt['state_dict']
+                        state_dict = {k: v for k, v in state_dict.items() if not k.endswith('embeddings.position_ids')}
+                        print("state_dict", state_dict.keys())
+                        model.model.load_state_dict(state_dict, strict=False)
+                        model.model.freeze()
+                        model.model.eval()
                     print("Restoring done")
                     print("training", model.model.training)
                     if hasattr(model.model, 'test'):
@@ -849,7 +859,8 @@ class Classify:
                 if not hasattr(myobj, 'flavour'):
                     torch.save(model.model.state_dict(), self.getfullpath(myobj))
                 else:
-                    model.save()
+                    torch.save({'state_dict': model.model.state_dict()}, self.getfullpath(myobj))
+                    #model.save()
 
         #classifier.tidy()
         del classifier

@@ -24,6 +24,8 @@ def learn(ds = None, path = None, cf = config.PYTORCHGPTMIDIRPRCONFIG, steps = N
     myds = getdsname(ds)
     filename = getfilename(thecf, myds)
     data = { 'modelInt' : modelInt, 'dataset' : ds, 'path' : path, 'filename' : filename, 'classifyarray' : None, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
+    if ds == 'figaro':
+        data['flavour'] = None
     cachedata = cache.get(cf+myds)
     cachedata = None
     myjson = json.dumps(data)
@@ -33,7 +35,7 @@ def learn(ds = None, path = None, cf = config.PYTORCHGPTMIDIRPRCONFIG, steps = N
     print (result)
     return result
 
-def chat(text, ds = None, path = None, cf = config.PYTORCHGPTMIDIRPRCONFIG, take = None, size = 40):
+def generate(text, ds = None, path = None, cf = config.PYTORCHGPTMIDIRPRCONFIG, take = None, size = 40):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : True, 'mllearn' : False }
     cfname, modelInt, thecf = config.get(cf)
     if take is not None:
@@ -41,9 +43,12 @@ def chat(text, ds = None, path = None, cf = config.PYTORCHGPTMIDIRPRCONFIG, take
     myds = getdsname(ds)
     filename = getfilename(thecf, myds)
     data = { 'modelInt' : modelInt, 'dataset' : ds, 'path' : path, 'filename' : filename, 'classifyarray' : [ text ], 'classes' : size, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
+    if ds == 'figaro':
+        data['flavour'] = None
     cachedata = cache.get(cf+myds)
+    cachedata = None
     myjson = json.dumps(data)
-    response = gpt.do_gpt(queue, myjson, cachedata)
+    response = gpt.do_gptmidi(queue, myjson, [ None ], cachedata)
     cache[cf+myds] = response
     result = queue.get()
     print (result)
@@ -66,6 +71,6 @@ def chatloop(ds = None, path = None, cf = 'tensorflowMiniatureGPTConfig', take =
         do_rd = rd != ''
         if do_rd:
             rdall = rdall + " " + rd
-            chat(rdall, ds, path, cf, take, size)
+            generate(rdall, ds, path, cf, take, size)
         else:
             break

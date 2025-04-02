@@ -260,6 +260,7 @@ class Dummy:
     def __init__(self, v):
         vars(self).update(v)
 
+
 def getlmdfull(myobj, config):
     import pathlib
     import os
