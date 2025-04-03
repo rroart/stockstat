@@ -24,7 +24,7 @@ def learn(ds = None, path = None, cf = config.PYTORCHGPTMIDIRPRCONFIG, steps = N
     myds = getdsname(ds)
     filename = getfilename(thecf, myds)
     data = { 'modelInt' : modelInt, 'dataset' : ds, 'path' : path, 'filename' : filename, 'classifyarray' : None, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
-    if ds == 'figaro':
+    if cf == config.PYTORCHGPTMIDIFIGARO:
         data['flavour'] = None
     cachedata = cache.get(cf+myds)
     cachedata = None
@@ -43,7 +43,7 @@ def generate(text, ds = None, path = None, cf = config.PYTORCHGPTMIDIRPRCONFIG, 
     myds = getdsname(ds)
     filename = getfilename(thecf, myds)
     data = { 'modelInt' : modelInt, 'dataset' : ds, 'path' : path, 'filename' : filename, 'classifyarray' : [ text ], 'classes' : size, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
-    if ds == 'figaro':
+    if cf == config.PYTORCHGPTMIDIFIGARO:
         data['flavour'] = None
     cachedata = cache.get(cf+myds)
     cachedata = None

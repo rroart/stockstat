@@ -13,13 +13,11 @@ CONTEXT_SIZE = int(os.getenv('CONTEXT_SIZE', 256))
 MAX_CONTEXT = min(1024, CONTEXT_SIZE)
 
 def getdatasetmidi(myobj, config, classifier):
-    if myobj.dataset == 'figaro':
-        return getfigaro(myobj, config)
+    if myobj.dataset == 'lmd_full':
         return getlmdfull(myobj, config)
-#    if myobj.dataset == 'lmd_full':
 
 
-def getlmdfull(myobj, config):
+def getlmdfullNOT(myobj, config):
     import pathlib
     import os
     import json
@@ -39,7 +37,7 @@ def getlmdfull(myobj, config):
     return ds
 
 
-def getfigaro(myobj, config):
+def getlmdfull(myobj, config):
     import pathlib
     dir = getpath(myobj)
     if not pathlib.Path(dir + "lmd_full").exists():

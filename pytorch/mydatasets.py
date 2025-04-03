@@ -261,7 +261,7 @@ class Dummy:
         vars(self).update(v)
 
 
-def getlmdfull(myobj, config):
+def getlmdfull2(myobj, config):
     import pathlib
     import os
     import json
@@ -294,11 +294,12 @@ def getsod(myobj, config):
         url = 'https://qsdfo.github.io/LOP/database/SOD.zip'
         torchvision.datasets.utils.download_url(url, dir)
         torchvision.datasets.utils.extract_archive(dir + "SOD.zip", dir + "sod")
-        midi_files = glob.glob(os.path.join(dir, '**/*.mid'), recursive=True)
-        xml_files = glob.glob(os.path.join(dir, '**/*.xml'), recursive=True)
+        midi_files = glob.glob(os.path.join(dir + "sod", '**/*.mid'), recursive=True)
+        xml_files = glob.glob(os.path.join(dir + "sod", '**/*.xml'), recursive=True)
         midi_files.append(xml_files)
+        offset = 1 + len(dir) + len("sod/SOD")
         for i in range(len(midi_files)):
-            midi_files[i] = midi_files[i][18:] #TODO 14
+            midi_files[i] = midi_files[i][offset:]
         if hasattr(config, 'take'):
             midi_files = midi_files[:config.take]
         pathlib.Path(dir + "sod").mkdir(exist_ok = True)
@@ -308,8 +309,88 @@ def getsod(myobj, config):
         mmt.convert_sod.main(dir, None)
         mmt.extract.main(dir, ["-d", "sod"])
         mmt.split.main(dir, ["-d", "sod"])
+    return getmmtcommon(myobj, config)
+
+
+def getlmdfull(myobj, config):
+    import pathlib
+    import glob
+    import os
+    import mmt.convert_sod
+    import mmt.extract
+    import mmt.split
+    import logging
+    import mmt.dataset
+    import mmt.convert_lmd_full
+    dir = getpath(myobj)
+    if not pathlib.Path(dir + "lmd_full").exists():
+        url = 'http://hog.ee.columbia.edu/craffel/lmd/lmd_full.tar.gz'
+        torchvision.datasets.utils.download_url(url, dir)
+        torchvision.datasets.utils.extract_archive(dir + "lmd_full.tar.gz", dir + "lmd_full")
+        midi_files = glob.glob(os.path.join(dir + "lmd_full", '**/*.mid'), recursive=True)
+        xml_files = glob.glob(os.path.join(dir + "lmd_full", '**/*.xml'), recursive=True)
+        midi_files.append(xml_files)
+        print("mi", midi_files[0])
+        offset = 1 + len(dir) + len("lmd_full/lmd_full") + 2
+        for i in range(len(midi_files)):
+            midi_files[i] = midi_files[i][offset:]
+        if hasattr(config, 'take'):
+            midi_files = midi_files[:config.take]
+        pathlib.Path(dir + "lmd_full").mkdir(exist_ok = True)
+        with open(dir + 'lmd_full/original-names.txt', 'w') as f:
+            for line in midi_files:
+                    f.write(f"{line}\n")
+        print("dir", dir)
+        mmt.convert_lmd_full.main(dir, [ "-e"])
+        mmt.extract.main(dir, ["-d", "lmd_full"])
+        mmt.split.main(dir, ["-d", "lmd_full"])
+    return getmmtcommon(myobj, config)
+
+
+def getsnd(myobj, config):
+    import pathlib
+    import glob
+    import os
+    import mmt.convert_sod
+    import mmt.extract
+    import mmt.split
+    import logging
+    import mmt.dataset
+    import gdown
+    import mmt.convert_snd
+    from zipfile import ZipFile
+    dir = getpath(myobj)
+    if not pathlib.Path(dir + "snd").exists():
+        url = "https://drive.google.com/u/0/uc?id=1j9Pvtzaq8k_QIPs8e2ikvCR-BusPluTb"
+        output = dir + "snd.tar"
+        gdown.download(url, output, quiet=True)
+        torchvision.datasets.utils.extract_archive(dir + "snd.tar", dir + "snd")
+        midi_files = glob.glob(os.path.join(dir + "snd", '**/*.mid'), recursive=True)
+        xml_files = glob.glob(os.path.join(dir + "snd", '**/*.xml'), recursive=True)
+        midi_files.append(xml_files)
+        offset = 1 + len(dir) + len("snd/SymphonyNet_Dataset")
+        for i in range(len(midi_files)):
+            midi_files[i] = midi_files[i][offset:]
+        if hasattr(config, 'take'):
+            midi_files = midi_files[:config.take]
+        pathlib.Path(dir + "snd").mkdir(exist_ok = True)
+        with open(dir + 'snd/original-names.txt', 'w') as f:
+            for line in midi_files:
+                    f.write(f"{line}\n")
+        mmt.convert_snd.main(dir, None)
+        mmt.extract.main(dir, ["-d", "snd"])
+        mmt.split.main(dir, ["-d", "snd"])
+    return getmmtcommon(myobj, config)
+
+
+def getmmtcommon(myobj, config):
+    import logging
+    import mmt.args
+    import mmt.dataset
+    import mmt.representation
     # Create the dataset and data loader
     logging.info(f"Creating the data loader...")
+    dir = getpath(myobj)
     args = mmt.args.Args(myobj.dataset, dir)
     # Load the encoding
     encoding = mmt.representation.load_encoding(args.in_dir / "encoding.json")
