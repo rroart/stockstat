@@ -16,6 +16,7 @@ TENSORFLOWMINIATUREGPT = 'tensorflowMiniatureGPTConfig'
 TENSORFLOWGPT = 'tensorflowGPTConfig'
 TENSORFLOWGPT2 = 'tensorflowGPT2Config'
 TENSORFLOWPQK = 'tensorflowPQKConfig'
+TENSORFLOWVAE = 'tensorflowVAEConfig'
 
 TENSORFLOWDNNCONFIG = { 'name' : 'dnn', 'steps' : 1000, 'hidden' : 100, 'layers': 2, 'lr' : 0.01 }
 TENSORFLOWLICCONFIG = { 'name' : 'lic', 'steps' : 1000, 'lr' : 0.01 }
@@ -35,6 +36,7 @@ TENSORFLOWMINIATUREGPTCONFIG = { 'name' : 'miniature_gpt', 'steps' : 25 }
 TENSORFLOWGPTCONFIG = { 'name' : 'gpt', 'steps' : 5 }
 TENSORFLOWGPT2CONFIG = { 'name' : 'gpt2', 'steps' : 1 }
 TENSORFLOWPQKCONFIG = { 'name' : 'pqk', 'steps' : 3 }
+TENSORFLOWVAECONFIG = { 'name' : 'vae', 'steps' : 30 }
 
 def get(cf):
     if cf == TENSORFLOWDNN:
@@ -73,4 +75,6 @@ def get(cf):
         return cf, 17, TENSORFLOWGPT2CONFIG
     elif cf == TENSORFLOWPQK:
         return cf, 18, TENSORFLOWPQKCONFIG
+    elif cf == TENSORFLOWVAE:
+        return cf, 19, TENSORFLOWVAECONFIG
     return None

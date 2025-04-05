@@ -58,6 +58,16 @@ def neural_style_transfer(path, path2, ds = 'vgg19', cf = config.TENSORFLOWNEURA
     data = { 'modelInt' : modelInt, 'dataset' : 'dcgan', 'generate' : True, 'files' : 2, 'filename' : filename, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
     return image(path, path2, data, cf)
     
+def vae(ds = 'mnist', cf = config.TENSORFLOWVAE, take = None):
+    neuralnetcommand = { 'mldynamic' : None, 'mlclassify' : None, 'mllearn' : None }
+    cfname, modelInt, thecf = config.get(cf)
+    thecf['steps'] = 1
+    if take is not None:
+        thecf['take'] = take
+    filename = getfilename(thecf, ds)
+    data = { 'modelInt' : modelInt, 'dataset' : ds, 'generate' : True, 'files' : 2, 'filename' : filename, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
+    return image(None, None, data, cf)
+
 def dataset(ds = 'mnist', cf = config.TENSORFLOWMLP):
     neuralnetcommand = { 'mldynamic' : None, 'mlclassify' : None, 'mllearn' : None }
     cfname, modelInt, thecf = config.get(cf)

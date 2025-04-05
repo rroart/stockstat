@@ -1,3 +1,5 @@
+TENSORFLOWVAE = 'tensorflowVAEConfig'
+
 PYTORCHMLPCONFIG = { 'name' : 'mlp', 'steps' : 1000, 'hidden' : 100, 'layers': 2, 'lr' : 0.01 }
 PYTORCHRNNCONFIG = { 'name' : 'rnn', 'steps' : 1000, 'hidden' : 100, 'layers' : 2, 'lr' : 0.01 }
 PYTORCHLSTMCONFIG = { 'name' : 'lstm', 'steps' : 1000, 'hidden' : 100, 'layers' : 2, 'lr' : 0.01 }
@@ -24,6 +26,7 @@ TENSORFLOWNEURALSTYLETRANSFERCONFIG = { 'name' : 'neural_style_transfer', 'steps
 TENSORFLOWMINIATUREGPTCONFIG = { 'name' : 'miniature_gpt', 'steps' : 25 }
 TENSORFLOWGPTCONFIG = { 'name' : 'gpt', 'steps' : 5 }
 TENSORFLOWGPT2CONFIG = { 'name' : 'gpt2', 'steps' : 1 }
+TENSORFLOWVAECONFIG = { 'name' : 'vae', 'steps' : 30 }
 
 def get(cf):
     if cf == 'tensorflowDNNConfig':
@@ -60,6 +63,8 @@ def get(cf):
         return cf, 16, TENSORFLOWGPTCONFIG
     elif cf == 'tensorflowGPT2Config':
         return cf, 17, TENSORFLOWGPT2CONFIG
+    elif cf == TENSORFLOWVAE:
+        return cf, 19, TENSORFLOWVAECONFIG
     elif cf == 'pytorchMLPConfig':
         return cf, 1, PYTORCHMLPCONFIG
     elif cf == 'pytorchRNNConfig':

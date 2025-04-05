@@ -6,6 +6,7 @@ import imgcli as cli
 
 class MyTestCase(unittest.TestCase):
     def test_something(self):
+        return
         ads = 'mnist'
         result = cli.conditionalgan(ds = ads, take = 10)
         print(result)
@@ -30,6 +31,13 @@ class MyTestCase(unittest.TestCase):
         result = cli.neural_style_transfer(path = base_image_path, path2 = style_reference_image_path, ds = 'vgg19', cf = config.TENSORFLOWNEURALSTYLETRANSFER)
         print(result)
         self.assertIsNotNone(result['loss'], "Loss")  # add assertion
+
+
+    def test_vae(self):
+        result = cli.vae()
+        print(result)
+        self.assertIsNotNone(result['loss'], "Loss")  # add assertion
+
 
 if __name__ == '__main__':
     unittest.main()

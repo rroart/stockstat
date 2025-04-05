@@ -446,6 +446,9 @@ class Classify:
         if myobj.modelInt == 18:
             modelname = 'pqk'
             config = myobj.tensorflowPQKConfig
+        if myobj.modelInt == 19:
+            modelname = 'vae'
+            config = myobj.tensorflowVAEConfig
         return config, modelname
       if hasattr(myobj, 'modelName'):
         if myobj.modelName == 'dnn':
@@ -696,7 +699,10 @@ class Classify:
         myobj = json.loads(myjson, object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
-        if not modelname == 'neural_style_transfer':
+        if modelname == 'vae':
+            (dataset, size, classes, classify, from_logits, encoder, decoder) = mydatasets.getdatasetgen(myobj, config, self)
+            model = Model.Model(myobj, config, classify, encoder, decoder)
+        if modelname == 'conditionalgan' or modelname == 'dcgan':
             (dataset, size, classes, classify, from_logits) = mydatasets.getdatasetgen(myobj, config, self)
             if hasattr(config, 'take'):
                 dataset = dataset.take(config.take)
@@ -705,7 +711,7 @@ class Classify:
             myobj.classes = classes
 
             model = Model.Model(myobj, config)
-        else:
+        if modelname == 'neural_style_transfer':
             model = Model.Model(myobj, config, filename, filename2)
 
         exists = self.exists(myobj)
@@ -735,7 +741,11 @@ class Classify:
         #cond_gan = ConditionalGAN(
         #    discriminator=discriminator, generator=generator, latent_dim=latent_dim
         #)
-        if not modelname == 'neural_style_transfer':
+        if modelname == 'vae':
+            model.compile(optimizer=keras.optimizers.Adam())
+            model.fit(dataset, epochs=config.steps, batch_size=128)
+            gan = model
+        if modelname == 'conditionalgan' or modelname == 'dcgan':
             gan = model
             gan.compile(
                 d_optimizer=tf.keras.optimizers.Adam(learning_rate=config.lr),
@@ -744,7 +754,7 @@ class Classify:
             )
 
             gan.fit(dataset, epochs=config.steps, callbacks = [ gan.getcallback() ])
-        else:
+        if modelname == 'neural_style_transfer':
             gan = model
 
         #if not self.wantDynamic(myobj) and self.wantLearn(myobj):
