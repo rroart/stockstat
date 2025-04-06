@@ -57,6 +57,7 @@ import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
 import roart.aggregator.util.AggregatorUtils;
 import roart.etl.CleanETL;
+import roart.iclij.config.ConfigUtils;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
@@ -200,7 +201,10 @@ public class MachineLearningControlService {
     }
 
     public IclijServiceResult getContent(IclijConfig conf, IclijServiceParam origparam, List<String> disableList) {
-        String key = CacheConstants.MLCONTENT + conf.getConfigData().getMarket() + conf.getConfigData().getMlmarket() + conf.getConfigData().getDate() + conf.getConfigData().getConfigValueMap();
+        // TODO core config
+        Map<String, Object> valueMap = new HashMap<>(conf.getConfigData().getConfigValueMap());
+        valueMap.keySet().removeAll(new ConfigUtils().getMLComponentConfigList());
+        String key = CacheConstants.MLCONTENT + conf.getConfigData().getMarket() + conf.getConfigData().getMlmarket() + conf.getConfigData().getDate() + valueMap;
         log.info("Content key {}", key.hashCode());
         log.debug("Content kez {}", key);
         IclijServiceResult list = (IclijServiceResult) MyCache.getInstance().get(key);
