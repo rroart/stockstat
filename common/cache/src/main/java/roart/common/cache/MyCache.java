@@ -74,6 +74,7 @@ public class MyCache {
             return;
         }
         cache.put(key, object);
+        log.info("Cache put {} {}", key.hashCode(), key.substring(0, Math.min(key.length(), 20)));
     }
     
     public Object get(String key) {
@@ -92,6 +93,9 @@ public class MyCache {
         log.debug("CacheStats {}", cache.stats());
         String keyHead = key.substring(0, Math.min(80, key.length()));
         log.debug("Cache key {} {}", keyHead, object != null);
+        if (object != null) {
+            log.info("Cache get {} {}", key.hashCode(), key.substring(0, Math.min(key.length(), 20)));
+        }
         return object;
     }
     
