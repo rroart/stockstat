@@ -354,8 +354,10 @@ public class TestData {
 
         List<SimulateInvestConfig> sims = getSim(market, startDate, endDate, config, num);
         
+        long l = 0;
         for (SimulateInvestConfig sim : sims) {
             SimDataItem simdata = new SimDataItem();
+            simdata.setDbid(l++);
             simdata.setRecord(LocalDate.now());
             simdata.setStartdate(anotherStartDate);
             simdata.setEnddate(anotherEndDate);
