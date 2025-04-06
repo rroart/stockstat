@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
+import roart.iclij.config.ConfigUtils;
 import roart.iclij.config.IclijConfig;
 import roart.common.model.MLMetricsItem;
 import roart.common.pipeline.PipelineConstants;
@@ -81,14 +82,7 @@ public class ComponentMLMACD extends ComponentMLAggregator {
 
     @Override
     protected List<String> getConfList() {
-        List<String> confList = new ArrayList<>();
-        confList.add(ConfigConstants.AGGREGATORSMLMACDDAYSAFTERZERO);
-        confList.add(ConfigConstants.AGGREGATORSMLMACDDAYSBEFOREZERO);
-        confList.add(ConfigConstants.AGGREGATORSMLMACDHISTOGRAMML);
-        confList.add(ConfigConstants.AGGREGATORSMLMACDMACDML);
-        confList.add(ConfigConstants.AGGREGATORSMLMACDSIGNALML);
-        //confList.add(ConfigConstants.AGGREGATORSMLMACDTHRESHOLD);
-        return confList;
+        return new ConfigUtils().getComponentMLMACDConfigList();
     }
 
     @Override

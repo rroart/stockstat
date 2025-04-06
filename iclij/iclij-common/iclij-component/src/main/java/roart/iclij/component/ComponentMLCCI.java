@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
+import roart.iclij.config.ConfigUtils;
 import roart.iclij.config.IclijConfig;
 import roart.common.model.MLMetricsItem;
 import roart.common.pipeline.PipelineConstants;
@@ -81,13 +82,7 @@ public class ComponentMLCCI extends ComponentMLAggregator {
 
     @Override
     protected List<String> getConfList() {
-        List<String> confList = new ArrayList<>();
-        confList.add(ConfigConstants.AGGREGATORSMLCCIDAYSAFTERLIMIT);
-        confList.add(ConfigConstants.AGGREGATORSMLCCIDAYSBEFORELIMIT);
-        confList.add(ConfigConstants.AGGREGATORSMLCCIBUYLIMIT);
-        confList.add(ConfigConstants.AGGREGATORSMLCCISELLLIMIT);
-        //confList.add(ConfigConstants.AGGREGATORSMLCCITHRESHOLD);
-        return confList;
+        return new ConfigUtils().getComponentMLCCIConfigList();
     }
 
     @Override

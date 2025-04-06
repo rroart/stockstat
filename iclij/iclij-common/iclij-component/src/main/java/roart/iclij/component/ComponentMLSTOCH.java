@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
+import roart.iclij.config.ConfigUtils;
 import roart.iclij.config.IclijConfig;
 import roart.common.model.MLMetricsItem;
 import roart.common.pipeline.PipelineConstants;
@@ -81,13 +82,7 @@ public class ComponentMLSTOCH extends ComponentMLAggregator {
 
     @Override
     protected List<String> getConfList() {
-        List<String> confList = new ArrayList<>();
-        confList.add(ConfigConstants.AGGREGATORSMLSTOCHDAYSAFTERLIMIT);
-        confList.add(ConfigConstants.AGGREGATORSMLSTOCHDAYSBEFORELIMIT);
-        confList.add(ConfigConstants.AGGREGATORSMLSTOCHBUYLIMIT);
-        confList.add(ConfigConstants.AGGREGATORSMLSTOCHSELLLIMIT);
-        //confList.add(ConfigConstants.AGGREGATORSMLSTOCHTHRESHOLD);
-        return confList;
+        return new ConfigUtils().getComponentMLStochConfigList();
     }
 
     @Override

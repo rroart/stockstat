@@ -1,5 +1,6 @@
 package roart.iclij.config;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,6 +23,99 @@ public class ConfigUtils {
                 .stream()
                 .collect(Collectors.toMap( 
                         value -> value, value -> bool));
+    }
+
+    public List<String> getMLComponentConfigList() {
+        List<String> list = new ArrayList<>();
+        list.addAll(getComponentMLATRConfigList());
+        list.addAll(getComponentMLCCIConfigList());
+        list.addAll(getComponentMLMACDConfigList());
+        list.addAll(getComponentMLRSIConfigList());
+        list.addAll(getComponentMLStochConfigList());
+        list.addAll(getComponentMLMultiConfigList());
+        list.addAll(getComponentMLMultiOHLCConfigList());
+        return list;
+    }
+    
+    public List<String> getComponentMLATRConfigList() {
+        List<String> confList = new ArrayList<>();
+        confList.add(ConfigConstants.AGGREGATORSMLATRDAYSAFTERLIMIT);
+        confList.add(ConfigConstants.AGGREGATORSMLATRDAYSBEFORELIMIT);
+        confList.add(ConfigConstants.AGGREGATORSMLATRBUYLIMIT);
+        confList.add(ConfigConstants.AGGREGATORSMLATRSELLLIMIT);
+        //confList.add(ConfigConstants.AGGREGATORSMLATRTHRESHOLD);
+        return confList;
+    }
+
+    public List<String> getComponentMLCCIConfigList() {
+        List<String> confList = new ArrayList<>();
+        confList.add(ConfigConstants.AGGREGATORSMLCCIDAYSAFTERLIMIT);
+        confList.add(ConfigConstants.AGGREGATORSMLCCIDAYSBEFORELIMIT);
+        confList.add(ConfigConstants.AGGREGATORSMLCCIBUYLIMIT);
+        confList.add(ConfigConstants.AGGREGATORSMLCCISELLLIMIT);
+        //confList.add(ConfigConstants.AGGREGATORSMLCCITHRESHOLD);
+        return confList;
+    }
+
+    public List<String> getComponentMLMACDConfigList() {
+        List<String> confList = new ArrayList<>();
+        confList.add(ConfigConstants.AGGREGATORSMLMACDDAYSAFTERZERO);
+        confList.add(ConfigConstants.AGGREGATORSMLMACDDAYSBEFOREZERO);
+        confList.add(ConfigConstants.AGGREGATORSMLMACDHISTOGRAMML);
+        confList.add(ConfigConstants.AGGREGATORSMLMACDMACDML);
+        confList.add(ConfigConstants.AGGREGATORSMLMACDSIGNALML);
+        //confList.add(ConfigConstants.AGGREGATORSMLMACDTHRESHOLD);
+        return confList;
+    }
+
+    public List<String> getComponentMLRSIConfigList() {
+        List<String> confList = new ArrayList<>();
+        confList.add(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT);
+        confList.add(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT);
+        confList.add(ConfigConstants.AGGREGATORSMLRSIBUYRSILIMIT);
+        confList.add(ConfigConstants.AGGREGATORSMLRSIBUYSRSILIMIT);
+        confList.add(ConfigConstants.AGGREGATORSMLRSISELLRSILIMIT);
+        confList.add(ConfigConstants.AGGREGATORSMLRSISELLSRSILIMIT);
+        return confList;
+    }
+
+    public List<String> getComponentMLStochConfigList() {
+        List<String> confList = new ArrayList<>();
+        confList.add(ConfigConstants.AGGREGATORSMLSTOCHDAYSAFTERLIMIT);
+        confList.add(ConfigConstants.AGGREGATORSMLSTOCHDAYSBEFORELIMIT);
+        confList.add(ConfigConstants.AGGREGATORSMLSTOCHBUYLIMIT);
+        confList.add(ConfigConstants.AGGREGATORSMLSTOCHSELLLIMIT);
+        //confList.add(ConfigConstants.AGGREGATORSMLSTOCHTHRESHOLD);
+        return confList;
+    }
+
+    public List<String> getComponentMLMultiConfigList() {
+        List<String> list = new ArrayList<>();
+        list.add(ConfigConstants.AGGREGATORSMLMULTIMACD);
+        list.add(ConfigConstants.AGGREGATORSMLMULTIRSI);
+        list.add(ConfigConstants.AGGREGATORSMLMULTISTOCHRSI);
+        //list.add(ConfigConstants.AGGREGATORSMLMACDDAYSBEFOREZERO);
+        //list.add(ConfigConstants.AGGREGATORSMLMACDDAYSAFTERZERO);
+        //list.add(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT);
+        list.add(ConfigConstants.AGGREGATORSMLMULTIDAYSBEFORELIMIT);
+        list.add(ConfigConstants.AGGREGATORSMLMULTIDAYSAFTERLIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLMULTITHRESHOLD);
+        return list;
+    }
+
+    public List<String> getComponentMLMultiOHLCConfigList() {
+        List<String> list = new ArrayList<>();
+        list.add(ConfigConstants.AGGREGATORSMLMULTIATR);
+        list.add(ConfigConstants.AGGREGATORSMLMULTICCI);
+        list.add(ConfigConstants.AGGREGATORSMLMULTISTOCH);
+        //list.add(ConfigConstants.AGGREGATORSMLATRDAYSBEFORELIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLATRDAYSAFTERLIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLCCIDAYSBEFORELIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLCCIDAYSAFTERLIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLSTOCHDAYSBEFORELIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLSTOCHDAYSAFTERLIMIT);
+        return list;
     }
 
 }

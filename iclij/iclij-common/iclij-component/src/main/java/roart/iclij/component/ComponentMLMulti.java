@@ -117,32 +117,11 @@ public class ComponentMLMulti extends ComponentMLAggregator {
 
     @Override
     protected List<String> getConfList() {
-        List<String> list = new ArrayList<>();
-        list.add(ConfigConstants.AGGREGATORSMLMULTIMACD);
-        list.add(ConfigConstants.AGGREGATORSMLMULTIRSI);
-        list.add(ConfigConstants.AGGREGATORSMLMULTISTOCHRSI);
-        //list.add(ConfigConstants.AGGREGATORSMLMACDDAYSBEFOREZERO);
-        //list.add(ConfigConstants.AGGREGATORSMLMACDDAYSAFTERZERO);
-        //list.add(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT);
-        //list.add(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT);
-        list.add(ConfigConstants.AGGREGATORSMLMULTIDAYSBEFORELIMIT);
-        list.add(ConfigConstants.AGGREGATORSMLMULTIDAYSAFTERLIMIT);
-        //list.add(ConfigConstants.AGGREGATORSMLMULTITHRESHOLD);
-        return list;
+        return new ConfigUtils().getComponentMLMultiConfigList();
     }
 
     protected List<String> getThreeConfList() {
-        List<String> list = new ArrayList<>();
-        list.add(ConfigConstants.AGGREGATORSMLMULTIATR);
-        list.add(ConfigConstants.AGGREGATORSMLMULTICCI);
-        list.add(ConfigConstants.AGGREGATORSMLMULTISTOCH);
-        //list.add(ConfigConstants.AGGREGATORSMLATRDAYSBEFORELIMIT);
-        //list.add(ConfigConstants.AGGREGATORSMLATRDAYSAFTERLIMIT);
-        //list.add(ConfigConstants.AGGREGATORSMLCCIDAYSBEFORELIMIT);
-        //list.add(ConfigConstants.AGGREGATORSMLCCIDAYSAFTERLIMIT);
-        //list.add(ConfigConstants.AGGREGATORSMLSTOCHDAYSBEFORELIMIT);
-        //list.add(ConfigConstants.AGGREGATORSMLSTOCHDAYSAFTERLIMIT);
-        return list;
+        return new ConfigUtils().getComponentMLMultiOHLCConfigList();
     }
 
     @Override
