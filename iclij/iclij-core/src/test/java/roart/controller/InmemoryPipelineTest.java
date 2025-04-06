@@ -313,7 +313,7 @@ public class InmemoryPipelineTest {
         simConfig.setEnddate("2024-12-01");
         IclijServiceResult result = null;
         try {
-            result = testutils.getSimulateInvest2Market(simConfig, market);
+            result = testutils.getSimulateInvestMarket2(simConfig, market);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
