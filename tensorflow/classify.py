@@ -702,7 +702,7 @@ class Classify:
         if modelname == 'vae':
             (dataset, size, classes, classify, from_logits, encoder, decoder) = mydatasets.getdatasetgen(myobj, config, self)
             model = Model.Model(myobj, config, classify, encoder, decoder)
-        if modelname == 'conditionalgan' or modelname == 'dcgan':
+        if modelname == 'conditional_gan' or modelname == 'dcgan':
             (dataset, size, classes, classify, from_logits) = mydatasets.getdatasetgen(myobj, config, self)
             if hasattr(config, 'take'):
                 dataset = dataset.take(config.take)
@@ -745,7 +745,7 @@ class Classify:
             model.compile(optimizer=keras.optimizers.Adam())
             model.fit(dataset, epochs=config.steps, batch_size=128)
             gan = model
-        if modelname == 'conditionalgan' or modelname == 'dcgan':
+        if modelname == 'conditional_gan' or modelname == 'dcgan':
             gan = model
             gan.compile(
                 d_optimizer=tf.keras.optimizers.Adam(learning_rate=config.lr),
