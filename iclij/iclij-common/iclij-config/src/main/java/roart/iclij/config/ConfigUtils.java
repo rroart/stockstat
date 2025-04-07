@@ -34,6 +34,8 @@ public class ConfigUtils {
         list.addAll(getComponentMLStochConfigList());
         list.addAll(getComponentMLMultiConfigList());
         list.addAll(getComponentMLMultiOHLCConfigList());
+        list.addAll(getComponentMLIndicatorConfigList());
+        list.addAll(getComponentMLIndicatorOHLCConfigList());
         return list;
     }
     
@@ -118,4 +120,32 @@ public class ConfigUtils {
         return list;
     }
 
+    public List<String> getComponentMLIndicatorConfigList() {
+        List<String> list = new ArrayList<>();
+        list.add(ConfigConstants.AGGREGATORSINDICATORMACD);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRSI);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI);
+        list.add(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS);
+        list.add(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS);
+        list.add(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASBITS);
+        return list;
+    }
+    
+    public List<String> getComponentMLIndicatorOHLCConfigList() {
+        List<String> list = new ArrayList<>();
+        list.add(ConfigConstants.AGGREGATORSINDICATORATR);
+        list.add(ConfigConstants.AGGREGATORSINDICATORCCI);
+        list.add(ConfigConstants.AGGREGATORSINDICATORSTOCH);
+        list.add(ConfigConstants.AGGREGATORSINDICATORSTOCHRSI);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASATR);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASCCI);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCH);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCHRSI);
+        return list;
+    }
+    
 }
