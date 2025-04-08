@@ -23,7 +23,7 @@ public abstract class MyDataSource {
     
     public abstract List<MetaItem> getMetas();
 
-    public abstract List<StockItem> getAll(String market, IclijConfig conf);
+    public abstract List<StockItem> getAll(String market, IclijConfig conf, boolean disableCache);
 
     public MetaItem getById(String market, IclijConfig conf) {
         List<MetaItem> metas = getMetas();

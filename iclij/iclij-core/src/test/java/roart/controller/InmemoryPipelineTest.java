@@ -109,6 +109,10 @@ public class InmemoryPipelineTest {
         log.info("Wants {}", iconf.wantsInmemoryPipeline());
         iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
         log.info("Wants {}", iconf.wantsInmemoryPipeline());
+
+        MyCache.setCache(iconf.wantCache());
+        MyCache.setCacheTTL(iconf.getCacheTTL());
+
         String market = TestConstants.MARKET;
         String start = "2024.01.01";
         String end = "2025.01.01";
@@ -123,7 +127,7 @@ public class InmemoryPipelineTest {
         fileSystemDao = mock(FileSystemDao.class);
         doReturn("dummy.txt").when(fileSystemDao).writeFile(any(), any(), any(), any());
 
-        List<IncDecItem> incdecs = new TestData(iconf).incdec(dataSource.getAll(market, iconf));
+        List<IncDecItem> incdecs = new TestData(iconf).incdec(dataSource.getAll(market, iconf, true));
         doReturn(incdecs).when(iclijDbDao).getAllIncDecs(any(), any(), any(), any());
         
         List<SimDataItem> sims = new TestData(iconf).getSimData(market, TimeUtil.convertDate2(start), TimeUtil.convertDate2(end), iconf, 100);
@@ -143,8 +147,6 @@ public class InmemoryPipelineTest {
         
         //String content = "";
         //new Sim(iconf, dbDao, fileSystemDao).method((String) content, "sim", true);
-        MyCache.setCache(iconf.wantCache());
-        MyCache.setCacheTTL(iconf.getCacheTTL());
         
         inmemory = (TestInmemory) io.getInmemoryFactory().get(iconf.getInmemoryServer(), iconf.getInmemoryHazelcast(), iconf.getInmemoryRedis());
 

@@ -32,9 +32,9 @@ public class Extract {
 
     private static Logger log = LoggerFactory.getLogger(Extract.class);
 
-    public StockData getStockData(IclijConfig conf) {
+    public StockData getStockData(IclijConfig conf, boolean disableCache) {
         String market = conf.getConfigData().getMarket();
-        return getStockData(conf, market);
+        return getStockData(conf, market, disableCache);
     }
 
     private DbDao dbDao;
@@ -51,13 +51,13 @@ public class Extract {
         this.dataSource = dataSource;
     }
     
-    public StockData getStockData(IclijConfig conf, String market) {
+    public StockData getStockData(IclijConfig conf, String market, boolean disableCache) {
         List<StockItem> stocks = null;
         try {
             if (dbDao != null) {
-                stocks = dbDao.getAll(market, conf);
+                stocks = dbDao.getAll(market, conf, disableCache);
             } else {
-                stocks = dataSource.getAll(market, conf);
+                stocks = dataSource.getAll(market, conf, disableCache);
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

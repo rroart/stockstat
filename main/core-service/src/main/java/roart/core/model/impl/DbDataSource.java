@@ -54,9 +54,9 @@ public class DbDataSource extends MyDataSource {
     }
 
     @Override
-    public List<StockItem> getAll(String market, IclijConfig conf) {
+    public List<StockItem> getAll(String market, IclijConfig conf, boolean disableCache) {
         try {
-            return dbDao.getAll(market, conf);
+            return dbDao.getAll(market, conf, disableCache);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return new ArrayList<>();

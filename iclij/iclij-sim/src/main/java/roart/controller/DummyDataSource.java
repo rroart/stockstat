@@ -15,7 +15,7 @@ public class DummyDataSource extends MyDataSource {
     }
 
     @Override
-    public List<StockItem> getAll(String market, IclijConfig conf) {
+    public List<StockItem> getAll(String market, IclijConfig conf, boolean disableCache) {
         return List.of();
     }
 

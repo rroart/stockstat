@@ -905,21 +905,21 @@ public class IndicatorUtils {
         extraReader.readData(conf, marketdatamap, 0, stockData, stockDataMap, dataReaderMap);
     }
 
-    public Map<String, StockData> getExtraStockDataMap(IclijConfig conf, DbDao dbDao,ExtraReader extraReader) {
+    public Map<String, StockData> getExtraStockDataMap(IclijConfig conf, DbDao dbDao,ExtraReader extraReader, boolean disableCache) {
         Map<String, StockData> stockDataMap;
         stockDataMap = new HashMap<>();
         for (String market : extraReader.getMarkets()) {
-            StockData stockData2 = new Extract(dbDao).getStockData(conf, market);
+            StockData stockData2 = new Extract(dbDao).getStockData(conf, market, disableCache);
             stockDataMap.put(market, stockData2);
         }
         return stockDataMap;
     }
     
-    public Map<String, StockData> getExtraStockDataMap(IclijConfig conf, MyDataSource dbDao,ExtraReader extraReader) {
+    public Map<String, StockData> getExtraStockDataMap(IclijConfig conf, MyDataSource dbDao,ExtraReader extraReader, boolean disableCache) {
         Map<String, StockData> stockDataMap;
         stockDataMap = new HashMap<>();
         for (String market : extraReader.getMarkets()) {
-            StockData stockData2 = new Extract(dbDao).getStockData(conf, market);
+            StockData stockData2 = new Extract(dbDao).getStockData(conf, market, disableCache);
             stockDataMap.put(market, stockData2);
         }
         return stockDataMap;

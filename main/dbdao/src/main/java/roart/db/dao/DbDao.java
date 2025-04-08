@@ -60,7 +60,7 @@ public class DbDao {
         return list;
     }
 
-    public List<StockItem> getAll(String market, IclijConfig conf) throws Exception {
+    public List<StockItem> getAll(String market, IclijConfig conf, boolean disableCache) throws Exception {
         String key = CacheConstants.STOCKS + market + conf.getConfigData().getDate();
         log.info("StockItem getall {}", key);
         List<StockItem> list = (List<StockItem>) MyCache.getInstance().get(key);
@@ -72,7 +72,11 @@ public class DbDao {
         list = access.getStocksByMarket(market);
         list = StockETL.filterWeekend(conf, list);
         log.info("StockItem getall {} {}", market, (System.currentTimeMillis() - time0) / 1000);
-        MyCache.getInstance().put(key, list);
+        if (!disableCache) {
+            MyCache.getInstance().put(key, list);
+        } else {
+            log.info("Cache disabled for {}", key.hashCode());
+        }
         return list;
     }
 
