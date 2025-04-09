@@ -36,6 +36,7 @@ public class ConfigUtils {
         list.addAll(getComponentMLMultiOHLCConfigList());
         list.addAll(getComponentMLIndicatorConfigList());
         list.addAll(getComponentMLIndicatorOHLCConfigList());
+        list.addAll(getComponentPredictorConfigList());
         return list;
     }
     
@@ -148,4 +149,11 @@ public class ConfigUtils {
         return list;
     }
     
+    public List<String> getComponentPredictorConfigList() {
+        List<String> list = new ArrayList<>();
+        list.add(ConfigConstants.MACHINELEARNINGPREDICTORSDAYS);
+        list.add(ConfigConstants.MACHINELEARNINGPREDICTORSFUTUREDAYS);
+        //list.add(ConfigConstants.MACHINELEARNINGPREDICTORSTHRESHOLD);
+        return list;
+    }
 }

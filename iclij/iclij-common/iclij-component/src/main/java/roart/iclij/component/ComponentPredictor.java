@@ -38,6 +38,7 @@ import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.iclij.evolution.chromosome.impl.PredictorChromosome;
 import roart.iclij.evolution.chromosome.winner.ConfigMapChromosomeWinner;
 import roart.gene.impl.ConfigMapGene;
+import roart.iclij.config.ConfigUtils;
 import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
@@ -443,11 +444,7 @@ public class ComponentPredictor extends ComponentML {
     
     @Override
     public List<String> getConfList() {
-        List<String> list = new ArrayList<>();
-        list.add(ConfigConstants.MACHINELEARNINGPREDICTORSDAYS);
-        list.add(ConfigConstants.MACHINELEARNINGPREDICTORSFUTUREDAYS);
-        //list.add(ConfigConstants.MACHINELEARNINGPREDICTORSTHRESHOLD);
-        return list;
+        return new ConfigUtils().getComponentPredictorConfigList();
     }
 
     @Override
