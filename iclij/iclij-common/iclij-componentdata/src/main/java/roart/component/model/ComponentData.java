@@ -398,6 +398,7 @@ public class ComponentData {
         this.usedsec = (int) ((System.currentTimeMillis() - time0) / 1000);
     }
     
+    // blae
     public void getAndSetCategoryValueMap(boolean useMl) {
         getService().coremlconf.getConfigData().setDate(getFutureDate());
         Map<String, Object> setValueMap = new HashMap<>();
@@ -427,6 +428,7 @@ public class ComponentData {
             // TODO needed where, reread?
             Inmemory inmemory = getService().getIo().getInmemoryFactory().get(config);
             List<String> stockdates = PipelineUtils.getDatelist(PipelineUtils.getPipeline(result, this.getCategoryTitle(), inmemory));
+            log.info("Category title {}", this.getCategoryTitle());
             this.setStockDates(stockdates);
             Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, this.getCategoryTitle(), inmemory).get(PipelineConstants.LIST)));
             this.setCategoryValueMap(aCategoryValueMap);
@@ -451,7 +453,8 @@ public class ComponentData {
             // TODO needed where, reread?
             Inmemory inmemory = getService().getIo().getInmemoryFactory().get(config);
             List<String> stockdates = PipelineUtils.getDatelist(PipelineUtils.getPipeline(result, this.getCategoryTitle(), inmemory));
-            log.info("stockdates" + stockdates);
+            log.info("Category title {}", this.getCategoryTitle());
+            log.info("stockdates {}", stockdates);
             this.setStockDates(stockdates);
             Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, this.getCategoryTitle(), inmemory).get(PipelineConstants.LIST)));
             this.setCategoryValueMap(aCategoryValueMap);
@@ -469,6 +472,7 @@ public class ComponentData {
         }        
     }
 
+    // blae
     public void getAndSetWantedCategoryValueMap(boolean useMl) {
         getService().coremlconf.getConfigData().setDate(getFutureDate());
         Map<String, Object> setValueMap = new HashMap<>();
@@ -498,6 +502,7 @@ public class ComponentData {
             //log.info("" + result.get(PipelineConstants.META).keySet());
             Inmemory inmemory = getService().getIo().getInmemoryFactory().get(config);
             String cat = PipelineUtils.getMetaCat(PipelineUtils.getPipeline(result, PipelineConstants.META, inmemory));
+            log.info("Category title {} {}", this.getCategoryTitle(), cat);
             List<String> stockdates = PipelineUtils.getDatelist(PipelineUtils.getPipeline(result, cat, inmemory));
             this.setStockDates(stockdates);
             Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, cat, inmemory).get(PipelineConstants.LIST)));
@@ -538,6 +543,7 @@ public class ComponentData {
 
     public void setCategory(PipelineData aMap) {
         if (aMap == null) {
+            log.error("Map null");
             int jj = 0;
             return;
         }
@@ -545,7 +551,8 @@ public class ComponentData {
         this.setCategory(aCategory);
         String aCategoryTitle = PipelineUtils.getCatTitle(aMap);
         this.setCategoryTitle(aCategoryTitle);        
-    }
+        log.info("Category title {}", this.getCategoryTitle());
+}
     
     public void zerokey(Map map) {
         Set keys = map.keySet();

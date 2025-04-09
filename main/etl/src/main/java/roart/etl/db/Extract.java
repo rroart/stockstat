@@ -124,6 +124,7 @@ public class Extract {
         }
         
         String catName = StockUtil.getCatName(cat, periodText);
+        log.info("Category title {}", catName);
     
         ValidateUtil.validateSizes(stocks, marketdatamap.get(market).stocks);
         if (stocks.size() != marketdatamap.get(market).stocks.size()) {
