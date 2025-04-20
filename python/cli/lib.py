@@ -174,7 +174,8 @@ class MyDates:
         return MyDates(start, end, startdateindex, enddateindex)
 
 class StockData:
-    def __init__(self, source, market, ids, periods, allstocks, allmetas, start, end, numberdays = None, tableintervaldays = 1, tablemoveintervaldays = 1, reverse = False):
+    def __init__(self, source, market, ids, periods, allstocks, allmetas, mystart, start, end, numberdays=None,
+                 tableintervaldays=1, tablemoveintervaldays=1, reverse=False):
         # other sources...
         if source == 'db':
             self.stocks = getstockmarket(allstocks, market)
@@ -182,7 +183,25 @@ class StockData:
         elif source == 'pd':
             print("iii", ids, periods, start, end)
             import pandas_datareader.data as web
+            import pandas_datareader.data as data
+            import pandas_datareader.wb as wb
+            import pandas_datareader.fred as fred
+            from datetime import datetime
+            print("startend", start, end)
+            s1 = start.split('-')
+            e1 = end.split('-')
+            start1 = datetime.strptime(start, '%Y-%m-%d')
+            end1 = datetime.strptime(end, '%Y-%m-%d')
+            print(end1)
+            #fred.
+            print("ids", ids[0], market)
             df = web.DataReader(ids[0], market, start, end)
+            print("cols", df.columns)
+            print(df)
+            print(df.GDP)
+            #df = df.rename(columns={"GDP" , "indexvalue"}) 
+            #aaa = df['Close']
+            #series = aaa.values
             #print(df)
             #key = 'GDP'
             #print(df.GDP)
@@ -192,13 +211,20 @@ class StockData:
             df = df.reset_index()
             df['id'] = ids[0]
             periodtexts = [ "period1", "period2", "period3", "period4", "period5", "period6", "period7", "period8", "period9", "price", "indexvalue", "pricelow", "pricehigh", "priceopen", "indexvaluelow", "indexvaluehigh", "indexvalueopen", "volume", "name" ]
-            periodtexts.remove(periods[0])
+            print("pppp",periods[0])
+            #if periods[0] in periodtexts:
+            #    periodtexts.remove(periods[0])
             for periodtext in periodtexts:
                 df[periodtext] = None
-            df = df.rename(columns={'DATE' : 'date', ids[0] : periods[0]})
+            #print("rename", ids[0], periods[0])
+            #df = df.rename(columns={'DATE' : 'date', ids[0] : periods[0]})
+            #print("col2s", df.columns)
+            #df = df.rename(columns={'DATE' : 'date', ids[0] : "Indexvalue"})
             #print("df0",df)
             self.stocks = df
             self.meta = None
+        elif source == 'file':
+            pass
         self.listdate = split(self.stocks, self.stocks.date)
         #print("ttt", type(self.listdate), type(self.listdate[0]), self.listdate[0])
         mysum = 0
@@ -215,7 +241,8 @@ class StockData:
         self.listdates.sort()
         self.listid = split(self.stocks, self.stocks.id)
         self.periodtexts = getperiodtexts(market)
-        self.dates = MyDates.getdates(self.listdates, start, end)
+        print("hihi", mystart, end, self.listdates)
+        self.dates = MyDates.getdates(self.listdates, mystart, end)
         print("d", self.dates)
         self.datedstocklists = getdatedstocklists(self.listdate, self.listdates, self.dates, numberdays, tableintervaldays)
         self.days = self.dates.endindex - self.dates.startindex + 1
@@ -226,6 +253,7 @@ class StockData:
         self.marketdatamap[market] = [ self.stocks, self.periodtexts, self.datedstocklists, self.listdates, self.meta ]
         self.tablemoveintervaldays = tablemoveintervaldays
         self.cat = getwantedcategory(self.stocks, self.marketdatamap[market][4])
+        print("cat", self.cat)
 
 class DataReader:
     def __init__(self, cat):
@@ -304,7 +332,7 @@ class DataReader:
 
 def adls(start, end, market, period):
     start0 = time.time()
-    stockdata = StockData('db', market, None, None, allstocks, allmetas, start, end)
+    stockdata = StockData('db', market, None, None, allstocks, allmetas, start, start, end)
     #if days == 0:
     #    days = stockdata.dates.endindex - stockdata.dates.startindex + 1
     #print("days", days)
@@ -370,6 +398,8 @@ def getlistsorted(datedstocklists, listid, listdate, count, tableintervaldays, w
     for j in range(count):
         for i in range(periods):
             df = datedstocklists[j] # dataframe make?
+            if not i in df:
+                continue
             hasperiod = False
             #is.infinit
             #print(type(df))
@@ -505,7 +535,7 @@ def getvalues(myid, start, end):
     market = myid[0]
     anid = myid[1]
     periodtext = myid[2]
-    stockdata = StockData('db', market, None, None, allstocks, allmetas, start, end)
+    stockdata = StockData('db', market, None, None, allstocks, allmetas, start, start, end)
     #stocks = stockdata.stocks
     #stocks = stocks.loc[(stocks.id == anid)]
     myperiodtexts = myperiodtextslist( [ periodtext ], stockdata.periodtexts)
@@ -620,7 +650,9 @@ def getbottomgraph(market, start, end, numberdays, tablemoveintervaldays, topbot
 def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, sort=const.VALUE, macddays=180, reverse=False, wantrise=False, wantmacd=False, wantrsi=False, deltadays=3, rebase=False, wantchart=True, interpolate=True, wantdays=False, days=1, wantgrid=False, interpolation = 'linear'):
     print("0", market)
     print(wantmacd, wantrsi, wantdays, rebase, interpolate)
-    stockdata = StockData('db', market, None, None, allstocks, allmetas, start, end, tableintervaldays = tablemoveintervaldays, tablemoveintervaldays = tablemoveintervaldays, reverse = reverse, numberdays = numberdays)
+    stockdata = StockData('db', market, None, None, allstocks, allmetas, start, start, end, numberdays=numberdays,
+                          tableintervaldays=tablemoveintervaldays, tablemoveintervaldays=tablemoveintervaldays,
+                          reverse=reverse)
     periodtexts = stockdata.periodtexts
     myperiodtexts = myperiodtextslist(myperiodtexts, periodtexts)
     print ("00 " , len(myperiodtexts))
@@ -768,7 +800,8 @@ def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=
         markets.add(id[0])
     stockdatamap = {}
     for market in markets:
-        stockdatamap[market] = StockData('db', market, None, None, allstocks, allmetas, start, end, tableintervaldays = tableintervaldays)
+        stockdatamap[market] = StockData('db', market, None, None, allstocks, allmetas, start, start, end,
+                                         tableintervaldays=tableintervaldays)
     perioddatamap = {}
     for market in markets:
         stockdata = stockdatamap[market]
@@ -992,7 +1025,8 @@ def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True, inte
     marketdatamap = {}
     stockdatamap = {}
     for market in markets:
-        stockdatamap[market] = StockData('db', market, None, None, allstocks, allmetas, start, end, tableintervaldays = tableintervaldays)
+        stockdatamap[market] = StockData('db', market, None, None, allstocks, allmetas, start, start, end,
+                                         tableintervaldays=tableintervaldays)
     perioddatamap = {}
     for market in markets:
         stockdata = stockdatamap[market]
@@ -1205,7 +1239,7 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
             periodids[sourcemarket] = [ marketstock[3] ]
         else:
             l = marketids[sourcemarket].append(anid)
-    datareadermap = getDatareaderMap(end, interpolate, interpolation, marketids, periodids, markets, scalebeginning100, mystart,
+    datareadermap = getDatareaderMap(start, end, interpolate, interpolation, marketids, periodids, markets, scalebeginning100, mystart,
                                      stockdatamap, tableintervaldays)
 
     for alist in ids:
@@ -1710,14 +1744,16 @@ def addDatareaderComplex(allmarketstocks, commondates, datareadermap, interpolat
         allmarketstocks[(anid, anid, anid, None)] = None
 
 
-def getDatareaderMap(end, interpolate, interpolation, marketids, periodids, markets, scalebeginning100, start, stockdatamap,
+def getDatareaderMap(start, end, interpolate, interpolation, marketids, periodids, markets, scalebeginning100, mystart, stockdatamap,
                      tableintervaldays):
     datareadermap = {}
     for sourcemarket in markets:
         source = sourcemarket[0]
         market = sourcemarket[1]
         # market[0], market[1] is source, market
-        stockdatamap[sourcemarket] = StockData(source, market, marketids[sourcemarket], periodids[sourcemarket], allstocks, allmetas, start, end, tableintervaldays=tableintervaldays)
+        stockdatamap[sourcemarket] = StockData(source, market, marketids[sourcemarket], periodids[sourcemarket],
+                                               allstocks, allmetas, mystart, start, end,
+                                               tableintervaldays=tableintervaldays)
         marketdatamap = stockdatamap[sourcemarket].marketdatamap
         datareader = DataReader(stockdatamap[sourcemarket].cat)
         periodint = stockdatamap[sourcemarket].cat
@@ -1731,7 +1767,7 @@ def getDatareaderMap(end, interpolate, interpolation, marketids, periodids, mark
         datareader.volumelistmap = getseries(getvolumes(market, periodint, count, mytableintervaldays, marketdatamap, currentyear, marketids[sourcemarket]))
         if "ADL" in marketids[sourcemarket]:
             jj = 1
-            datareader.listmap = adls(start, end, market, periodint)
+            datareader.listmap = adls(mystart, end, market, periodint)
             datareader.calculateotherlistmaps(interpolate, interpolation, scalebeginning100)
         datareadermap[sourcemarket] = [datareader]
             
@@ -1989,7 +2025,9 @@ def getwantedcategory(stocks: list, meta):
         for i in range(len(defaultpriorities)):
             print("a", apriority, defaultpriorities[i])
             if defaultpriorities[i] == apriority:
+                #if defaultpris[i] in stocks and hasstockvalue(stocks, defaultpris[i]):
                 if hasstockvalue(stocks, defaultpris[i]):
+                    print("i",i,defaultpris[i])
                     return defaultpris[i]
         periods = []
         if meta is not None:
@@ -2008,6 +2046,9 @@ def hasstockvalue(stocks, pri):
     print("ttt", type(stocks), pri)
     periodtext = [ "period1", "period2", "period3", "period4", "period5", "period6", "period7", "period8", "period9", "price", "indexvalue" ]
     x = stocks[periodtext[pri]]
+    #print("yyy", stocks)
+    #print("xxx", stocks.columns)
+    #print("xxx", x)
     return not np.isnan(x.max())
 
 def displaychart(ls, mynames, topbottom, periodtext, maindate, olddate, days):
