@@ -5,9 +5,9 @@ def getonedfvalue(df, atype):
         return(getonedfspecial(df, atype))
     print("should not be here")
 
-def getonedfvaluearr(df, atype):
+def getonedfvaluearr(df, atype, meta):
     if atype >= 0:
-        return(getonedfperiodarr(df, atype))
+        return(getonedfperiodarr(df, atype, meta))
     if atype < 0:
         return(getonedfspecialarr(df, atype))
     print("should not be here")
@@ -92,7 +92,7 @@ def getonedfperiod(df, period):
     #print("should not be here")
     return None
 
-def getonedfperiodarr(df, period):
+def getonedfperiodarr(df, period, meta):
     if period == 0:
         return [ df.period1 ]
     if period == 1:
@@ -112,8 +112,14 @@ def getonedfperiodarr(df, period):
     if period == 8:
         return [ df.period9 ]
     if period == 9:
+        text = meta.pricename.values[0]
+        if not text == 'price':
+            return [ df[text] ]
         return [ df.price, df.pricelow, df.pricehigh, df.priceopen ]
     if period == 10:
+        text = meta.indexvaluename.values[0]
+        if not text == 'indexvalue':
+            return [ df[text] ]
         return [ df.indexvalue, df.indexvaluelow, df.indexvaluehigh, df.indexvalueopen ]
     #print("should not be here")
     return None

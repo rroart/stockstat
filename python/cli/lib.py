@@ -180,12 +180,32 @@ class StockData:
         if source == 'db':
             self.stocks = getstockmarket(allstocks, market)
             self.meta = getmarketmeta(allmetas, market)
+            self.meta['datename'] = ['date']
+            self.meta['indexname'] = ['indexvalue']
+            self.meta['pricename'] = ['price']
         elif source == 'pd':
             print("iii", ids, periods, start, end)
             import pandas_datareader.data as web
             import pandas_datareader.data as data
             import pandas_datareader.wb as wb
             import pandas_datareader.fred as fred
+            print("ids0", ids[0])
+            if ids[0] == 'GDP':
+                data = {'datename' : ['DATE'],
+                        'pricename': ['GDP'],
+                        'period1': None,
+                        'period2': None,
+                        'period3': None,
+                        'period4': None,
+                        'period5': None,
+                        'period6': None,
+                        'period7': None,
+                        'period8': None,
+                        'period9': None,
+                        'priority': None}
+                df = pd.DataFrame(data)
+                self.meta = df
+                print("mygdp")
             from datetime import datetime
             print("startend", start, end)
             s1 = start.split('-')
@@ -222,10 +242,13 @@ class StockData:
             #df = df.rename(columns={'DATE' : 'date', ids[0] : "Indexvalue"})
             #print("df0",df)
             self.stocks = df
-            self.meta = None
+            #self.meta = None
         elif source == 'file':
             pass
-        self.listdate = split(self.stocks, self.stocks.date)
+        print("meta", self.meta.datename)
+        print("metatype", type(self.meta.datename))
+        print("meta", self.meta.datename.values[0])
+        self.listdate = split(self.stocks, getstocksdate(self.meta, self.stocks))
         #print("ttt", type(self.listdate), type(self.listdate[0]), self.listdate[0])
         mysum = 0
         for frame in self.listdate:
@@ -236,7 +259,7 @@ class StockData:
         removedsizes = [len(frame) for frame in self.listdate if len(frame) < limit]
         print("removed " + str(len(removed)) + " " + str(avg) + " " + str(limit) + " " + str(removedsizes))
         self.listdate = [frame for frame in self.listdate if len(frame) >= limit];
-        self.listdates = self.stocks.date.unique()
+        self.listdates = getstocksdate(self.meta, self.stocks).unique()
         self.listdates = [date for date in self.listdates if date not in removed]
         self.listdates.sort()
         self.listid = split(self.stocks, self.stocks.id)
@@ -254,6 +277,13 @@ class StockData:
         self.tablemoveintervaldays = tablemoveintervaldays
         self.cat = getwantedcategory(self.stocks, self.marketdatamap[market][4])
         print("cat", self.cat)
+
+
+def getstocksdate(meta, stocks):
+    return stocks[meta.datename.values[0]]
+
+def getstockdate(meta, stock):
+    return stock[meta.datename.values[0]]
 
 class DataReader:
     def __init__(self, cat):
@@ -329,6 +359,7 @@ class DataReader:
             self.filllistmap = l
             self.listmap100 = m
             self.filllistmap100 = n
+
 
 def adls(start, end, market, period):
     start0 = time.time()
@@ -1792,6 +1823,7 @@ def getarrsparse(market, periodint, count, mytableintervaldays, marketdatamap, c
     retmap = {}
     print("mkeys", marketdatamap.keys(), ids)
     datedstocklists = marketdatamap[market][2]
+    meta = marketdatamap[market][4]
     index = 0
     #print("ids", ids, len(datedstocklists), currentyear)
     if not currentyear:
@@ -1810,12 +1842,13 @@ def getarrsparse(market, periodint, count, mytableintervaldays, marketdatamap, c
                         if not len(el) == 1:
                             continue
                         #print("da", el.date)
-                        dfarr = pdu.getonedfvaluearr(el, periodint)
+                        dfarr = pdu.getonedfvaluearr(el, periodint, meta)
                         #print("dfarr",type(dfarr), len(dfarr), dfarr)
                         #value = dfarr[2].values
                         #print(type(value))
                         #print("el", el, len(el))
                         #print(dfarr, el.date)
+                        #print(dfarr)
                         #print(len(dfarr))
                         #print(len(dfarr[0]))
                         #print(len(dfarr[0].values), len(dfarr[1].values), len(dfarr[2].values))
@@ -1861,7 +1894,7 @@ def getarrsparse(market, periodint, count, mytableintervaldays, marketdatamap, c
                     df = stock
                     el = df.loc[(df.id == anid)]
                     #print("da", el.date, el.price, i)
-                    dfarr = pdu.getonedfvaluearr(el, periodint)
+                    dfarr = pdu.getonedfvaluearr(el, periodint, meta)
                     value = dfarr[0].values
                     #print(value, type(value))
                     for ii in range(len(value)):
@@ -1936,12 +1969,13 @@ def getdatelist(market, marketdatamap):
     retlist = []
     print(marketdatamap.keys())
     datedstocklists = marketdatamap[market][2]
+    meta = marketdatamap[market][4]
     for i in range(len(datedstocklists)):
         alist = datedstocklists[i]
         #print(type(alist), len(alist))
         if (len(alist) > 0):
             #print(type(list.iloc[0]))
-            retlist.append(alist.iloc[0].date)
+            retlist.append(getstocksdate(meta, alist.iloc[0]))
     #print("retl", retlist)
     return retlist
 
@@ -2026,7 +2060,8 @@ def getwantedcategory(stocks: list, meta):
             print("a", apriority, defaultpriorities[i])
             if defaultpriorities[i] == apriority:
                 #if defaultpris[i] in stocks and hasstockvalue(stocks, defaultpris[i]):
-                if hasstockvalue(stocks, defaultpris[i]):
+                print("c", defaultpris[i])
+                if hasstockvalue(meta, stocks, defaultpris[i]):
                     print("i",i,defaultpris[i])
                     return defaultpris[i]
         periods = []
@@ -2038,14 +2073,22 @@ def getwantedcategory(stocks: list, meta):
             print("b", apriority, i, len(periods[i]), periods[i])
             print("b", apriority, periods[i].iloc[0])
             if apriority == periods[i].iloc[0]:
-                if hasstockvalue(stocks, i):
+                print("cc3")
+                if hasstockvalue(meta, stocks, i):
                     return i
     return None
 
-def hasstockvalue(stocks, pri):
+def hasstockvalue(meta, stocks, pri):
     print("ttt", type(stocks), pri)
     periodtext = [ "period1", "period2", "period3", "period4", "period5", "period6", "period7", "period8", "period9", "price", "indexvalue" ]
-    x = stocks[periodtext[pri]]
+    text = periodtext[pri]
+    if pri == 9:
+        text = meta.pricename.values[0]
+    if pri == 10:
+        text = meta.indexvaluename.values[0]
+    print("text", text)
+    x = stocks[text]
+    #x = stocks["GDP"]
     #print("yyy", stocks)
     #print("xxx", stocks.columns)
     #print("xxx", x)
@@ -2161,6 +2204,8 @@ def intersection(a, b):
     return list(set(a) & set(b))
     
 def getelem3(anid, days, datedstocklist, period, size, handlecy):
+    print("Is this unused?")
+    meta = None
     dayset = []
     dayset2 = []
     retl1 = [ None for x in range(days) ]
@@ -2188,7 +2233,7 @@ def getelem3(anid, days, datedstocklist, period, size, handlecy):
         df = l
         el = df.loc[(df.id == anid)]
         if len(el) == 1:
-            dfarr = pdu.getonedfvaluearr(el, period)
+            dfarr = pdu.getonedfvaluearr(el, period, meta)
             if len(dfarr) == 1:
                 retl1[c] = dfarr[0].values[0]
                 #dfarr[0].values[0] = dfarr[0].values[0] * 0.01 + 1
