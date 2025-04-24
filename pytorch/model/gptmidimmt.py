@@ -11,13 +11,15 @@ import shutil
 import matplotlib.pyplot as plt
 import mmt.args
 
+# must be citing Hao-Wen Dong, Ke Chen, Shlomo Dubnov, Julian McAuley, and Taylor Berg-Kirkpatrick, "Multitrack Music Transformer," _IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)_, 2023.
+
 class Model:
     def __init__(self, myobj, config, dataset):
         self.myobj = myobj
         self.config = config
         self.dataset = dataset
         dir = getpath(myobj)
-        self.args = mmt.args.Args(myobj.dataset, dir)
+        self.args = mmt.args.Args(myobj.dataset, dir, config)
 
         # Get the specified device
         device = torch.device(
@@ -289,6 +291,7 @@ class Model:
         with torch.no_grad():
             data_iter = iter(test_loader)
             for i in tqdm.tqdm(range(self.args.n_samples), ncols=80):
+                print("Iter", i)
                 batch = next(data_iter)
 
                 # ------------
@@ -424,7 +427,11 @@ class Model:
 
     def save_pianoroll(self, filename, music, size=None, **kwargs):
         """Save the piano roll to file."""
-        music.show_pianoroll(track_label="program", **kwargs)
+        # todo temp workaround
+        try:
+            music.show_pianoroll(track_label="program", **kwargs)
+        except:
+            print("pianoroll crash")
         if size is not None:
             plt.gcf().set_size_inches(size)
         plt.savefig(filename)
@@ -457,12 +464,15 @@ class Model:
 
         # Save as a MIDI file
         music.write(sample_dir / "mid" / f"{filename}.mid")
-
         # Save as a WAV file
-        music.write(
+        # todo temp workaround
+        try:
+          music.write(
             sample_dir / "wav" / f"{filename}.wav",
-            options="-o synth.polyphony=4096",
-        )
+            # TODO options="-o synth.polyphony=4096",
+          )
+        except:
+            print("music write crash")
 
         # Save also as a MP3 file
         subprocess.check_output(
@@ -481,10 +491,14 @@ class Model:
         )
 
         # Save as a WAV file
-        music.write(
+        # todo temp workaround
+        try:
+          music.write(
             sample_dir / "wav-trimmed" / f"{filename}.wav",
-            options="-o synth.polyphony=4096",
-        )
+            # TODO options="-o synth.polyphony=4096",
+          )
+        except:
+            print("music write crash")
 
         # Save also as a MP3 file
         subprocess.check_output(

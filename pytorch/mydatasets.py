@@ -361,6 +361,7 @@ def getsnd(myobj, config):
     from zipfile import ZipFile
     dir = getpath(myobj)
     if not pathlib.Path(dir + "snd").exists():
+        pathlib.Path(dir + "snd").mkdir(exist_ok = True, parents = True)
         url = "https://drive.google.com/u/0/uc?id=1j9Pvtzaq8k_QIPs8e2ikvCR-BusPluTb"
         output = dir + "snd.tar"
         gdown.download(url, output, quiet=True)
@@ -373,7 +374,6 @@ def getsnd(myobj, config):
             midi_files[i] = midi_files[i][offset:]
         if hasattr(config, 'take'):
             midi_files = midi_files[:config.take]
-        pathlib.Path(dir + "snd").mkdir(exist_ok = True)
         with open(dir + 'snd/original-names.txt', 'w') as f:
             for line in midi_files:
                     f.write(f"{line}\n")
@@ -391,7 +391,7 @@ def getmmtcommon(myobj, config):
     # Create the dataset and data loader
     logging.info(f"Creating the data loader...")
     dir = getpath(myobj)
-    args = mmt.args.Args(myobj.dataset, dir)
+    args = mmt.args.Args(myobj.dataset, dir, config)
     # Load the encoding
     encoding = mmt.representation.load_encoding(args.in_dir / "encoding.json")
 

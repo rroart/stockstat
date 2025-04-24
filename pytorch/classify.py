@@ -815,6 +815,8 @@ class Classify:
                     print("flavour", hasattr(myobj, 'flavour'))
                     if not hasattr(myobj, 'flavour'):
                         # not figaro
+                        print("not figaro")
+                        #model.model.load_state_dict(torch.load("/tmp/data/exp/test_sod/checkpoints/best_model.pt"))
                         model.model.load_state_dict(torch.load(self.getfullpath(myobj)))
                     else:
                         # figaro
@@ -851,16 +853,20 @@ class Classify:
             print(model.dataset)
             if hasattr(model.dataset, "train_loader") and model.dataset.train_loader is not None:
                 model.fit()
+            # not used
             if hasattr(model.dataset, "files") and model.dataset.files is not None:
                 model.fit()
             if model.localsave():
                 print("Saving")
                 #torch.save({'model': model }, self.getfullpath(myobj))
                 if not hasattr(myobj, 'flavour'):
+                    # not figaro
                     torch.save(model.model.state_dict(), self.getfullpath(myobj))
                 else:
+                    # figaro
                     torch.save({'state_dict': model.model.state_dict()}, self.getfullpath(myobj))
-                    #model.save()
+                    if modelname == 'gptmidimmt':
+                        model.save()
 
         #classifier.tidy()
         del classifier

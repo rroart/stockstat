@@ -9,7 +9,7 @@ PYTORCHCNN2CONFIG = { 'name' : 'cnn2', 'steps' : 1000, 'stride' : 1, 'kernelsize
 PYTORCHGPTMIDICONFIG = { 'name' : 'gptmidi', 'steps' : 1 }
 PYTORCHGPTMIDIRPRCONFIG = { 'name' : 'gptmidirpr', 'rpr' : True, 'steps' : 1 }
 PYTORCHGPTMIDIFIGAROCONFIG = { 'name' : 'gptmidifigaro', 'steps' : 1 }
-PYTORCHGPTMIDIMMTCONFIG = { 'name' : 'gptmidimmt', 'steps' : 1 }
+PYTORCHGPTMIDIMMTCONFIG = { 'name' : 'gptmidimmt', 'steps' : 50, 'valid_steps' : 10 }
 
 TENSORFLOWDNNCONFIG = { 'name' : 'dnn', 'steps' : 1000, 'hidden' : 100, 'layers': 2, 'lr' : 0.01 }
 TENSORFLOWLICCONFIG = { 'name' : 'lic', 'steps' : 1000, 'lr' : 0.01 }
