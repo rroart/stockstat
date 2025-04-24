@@ -17,14 +17,38 @@ def getdataset(myobj, config, classifier):
         return getmnist(myobj, config)
     if myobj.dataset == 'fashion_mnist':
         return getfashionmnist(myobj, config)
+    if myobj.dataset == 'pqk_mnist':
+        return getpqkmnist(myobj, config)
+    if myobj.dataset == 'pqk_fashion_mnist':
+        return getpqkfashionmnist(myobj, config)
     if myobj.dataset == 'iris':
         return getiris(myobj, config)
     if myobj.dataset == 'iris2':
         return getiris2(myobj, config)
 
+def getfashionmnist(myobj, config):
+    (x_train, y_train), (x_test, y_test) = tf.keras.datasets.fashion_mnist.load_data()
+    print("sh", x_train.shape, y_train.shape)
+
+    # Rescale the images from [0,255] to the [0.0,1.0] range.
+    x_train, x_test = x_train/255.0, x_test/255.0
+
+    print("Number of original training examples:", len(x_train))
+    print("Number of original test examples:", len(x_test))
+
+    x_train, y_train = filter_03(x_train, y_train)
+    x_test, y_test = filter_03(x_test, y_test)
+
+    print("Number of filtered training examples:", len(x_train))
+    print("Number of filtered test examples:", len(x_test))
+
+    return getmnistcommon(myobj, config, x_train, y_train, x_test, y_test)
+
+
 def getmnist(myobj, config):
         #load mnist data
         (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+        print("sh", x_train.shape)
 
         #print(type(y_train))
         #exit
@@ -33,6 +57,10 @@ def getmnist(myobj, config):
         print("shape",x_train.shape, y_train.shape)
         x_train, y_train = filter_36(x_train, y_train)
         x_test, y_test = filter_36(x_test, y_test)
+        return getmnistcommon(myobj, config, x_train, y_train, x_test, y_test)
+
+
+def getmnistcommon(myobj, config, x_train, y_train, x_test, y_test):
         x_train_small = tf.image.resize(x_train, (4,4)).numpy()
         x_test_small = tf.image.resize(x_test, (4,4)).numpy()
         x_train_nocon, y_train_nocon = remove_contradicting(x_train_small, y_train)
@@ -54,6 +82,16 @@ def getmnist(myobj, config):
 
         x_train_tfcirc = tfq.convert_to_tensor(x_train_circ)
         x_test_tfcirc = tfq.convert_to_tensor(x_test_circ)
+
+        if myobj.modelInt == 188:
+            print("sh", x_train_tfcirc.shape, y_train_nocon.shape)
+            print("sh", x_test_tfcirc.shape, y_test.shape)
+            N_TRAIN = 1000
+            N_TEST = 200
+            x_train_tfcirc, x_test_tfcirc = x_train_tfcirc[:N_TRAIN], x_test_tfcirc[:N_TEST]
+            y_train_nocon, y_test = y_train_nocon[:N_TRAIN], y_test[:N_TEST]
+            print("sh", x_train_tfcirc.shape, y_train_nocon.shape)
+            print("sh", x_test_tfcirc.shape, y_test.shape)
 
         dsdict = { 'x_train' : x_train_tfcirc, 'x_test' : x_test_tfcirc, 'y_train' : y_train_nocon, 'y_test' : y_test }
         ds = DictToObject(dsdict)
@@ -110,8 +148,24 @@ def convert_to_circuit(image):
             circuit.append(cirq.X(qubits[i]))
     return circuit
 
-def getfashionmnist(myobj, config):
+def getpqkmnist(myobj, config):
+        #load mnist data
+        (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+        print("sh", x_train.shape)
+
+        #print(type(y_train))
+        #exit
+        normalizevalue = 255.0
+        x_train, x_test = x_train[..., np.newaxis]/normalizevalue, x_test[..., np.newaxis]/normalizevalue
+        print("shape",x_train.shape, y_train.shape)
+        x_train, y_train = filter_36(x_train, y_train)
+        x_test, y_test = filter_36(x_test, y_test)
+        return getpqkmnistcommon(myobj, config, x_train, y_train, x_test, y_test)
+
+    
+def getpqkfashionmnist(myobj, config):
     (x_train, y_train), (x_test, y_test) = tf.keras.datasets.fashion_mnist.load_data()
+    print("sh", x_train.shape, y_train.shape)
 
     # Rescale the images from [0,255] to the [0.0,1.0] range.
     x_train, x_test = x_train/255.0, x_test/255.0
@@ -121,7 +175,10 @@ def getfashionmnist(myobj, config):
 
     x_train, y_train = filter_03(x_train, y_train)
     x_test, y_test = filter_03(x_test, y_test)
+    return getpqkmnistcommon(myobj, config, x_train, y_train, x_test, y_test)
 
+
+def getpqkmnistcommon(myobj, config, x_train, y_train, x_test, y_test):
     print("Number of filtered training examples:", len(x_train))
     print("Number of filtered test examples:", len(x_test))
 
@@ -138,6 +195,7 @@ def getfashionmnist(myobj, config):
     N_TEST = 200
     x_train, x_test = x_train[:N_TRAIN], x_test[:N_TEST]
     y_train, y_test = y_train[:N_TRAIN], y_test[:N_TEST]
+    print("sh", x_train.shape, y_train.shape)
 
     print("New number of training examples:", len(x_train))
     print("New number of test examples:", len(x_test))
@@ -170,6 +228,7 @@ def getfashionmnist(myobj, config):
     y_relabel = get_stilted_dataset(S_pqk, V_pqk, S_original, V_original)
     y_train_new, y_test_new = y_relabel[:N_TRAIN], y_relabel[N_TRAIN:]
 
+    print("sh", x_train_pqk.shape, y_train_new.shape)
     dsdict = {'x_train': x_train_pqk, 'x_test': x_test_pqk, 'y_train': y_train_new,
               'y_test': y_test_new }
     ds = DictToObject(dsdict)
@@ -382,12 +441,12 @@ def getiris2(myobj, config):
     plt.imshow(x_train[0, :, :])
     plt.colorbar()
 
-    DATASET_DIM = 10
+    DATASET_DIM = 3
     x_train, x_test = truncate_x(x_train, x_test, n_components=DATASET_DIM)
     print(f'New datapoint dimension:', len(x_train[0]))
 
-    N_TRAIN = 1000
-    N_TEST = 200
+    N_TRAIN = 936 # 1000
+    N_TEST = 100 # 200
     x_train, x_test = x_train[:N_TRAIN], x_test[:N_TEST]
     y_train, y_test = y_train[:N_TRAIN], y_test[:N_TEST]
 

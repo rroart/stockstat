@@ -36,7 +36,7 @@ class Model(MyModel):
               optimizer=tf.keras.optimizers.Adam(),
               metrics=[hinge_accuracy])
       else:
-          self.pqk_model.compile(loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
+          self.model.compile(loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
               optimizer=tf.keras.optimizers.Adam(learning_rate=0.003),
               metrics=['accuracy'])
       print(self.model.summary())

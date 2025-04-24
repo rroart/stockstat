@@ -22,12 +22,18 @@ class Model(MyModel):
 
   def train(self, dataset):
       # docs_infra: no_execute
+      print("sh", dataset.x_train.shape, dataset.y_train.shape)
+      print("sh", dataset.x_test.shape, dataset.y_test.shape)
       pqk_history = self.pqk_model.fit(tf.reshape(dataset.x_train, [N_TRAIN, -1]),
                                   dataset.y_train,
                                   batch_size=32,
                                   epochs=10,
                                   verbose=0,
                                   validation_data=(tf.reshape(dataset.x_test, [N_TEST, -1]), dataset.y_test))
+      # this for iris
+      #pqk_history = self.pqk_model.fit(tf.reshape(dataset.x_train[:N_TRAIN], [N_TRAIN, -1]),
+      #                            dataset.y_train[:N_TRAIN],
+      #                            validation_data=(tf.reshape(dataset.x_test[:N_TEST], [N_TEST, -1]), dataset.y_test[:N_TEST]))
 
       print("History", pqk_history)
       #pqk_results = self.pqk_model.evaluate(dataset.x_test, dataset.y_test)
@@ -46,6 +52,10 @@ def create_pqk_model(qubits):
     return model
 
 
+# these 3 for iris
+DATASET_DIM = 3
+N_TRAIN = 936
+N_TEST = 4
 DATASET_DIM = 10
 N_TRAIN = 1000
 N_TEST = 200
