@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+
+import org.jfree.util.Log;
+
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 
@@ -337,6 +340,7 @@ public class TestData {
             SimulateInvestConfig sim = SimulateInvestUtils.getSimConfig(aConf);
             list.add(sim);
         }
+        System.out.println("Sim sample " + list.get(0).asValuedMap());
         return list;
     }
     
@@ -347,8 +351,6 @@ public class TestData {
         LocalDate anEndDate = TimeUtil.convertDate(endDate);
         Period period = Period.between(aStartDate, anEndDate);
         int months = period.getMonths() + period.getYears() * 12;
-        LocalDate anotherStartDate = aStartDate.plusMonths(random.nextLong(months - 3));
-        LocalDate anotherEndDate = anotherStartDate.plusMonths(1);
         SimulateFilter filter = new SimulateFilter(6, 0.9, 0.0, 0.0, false, 20, false, null);
         //filter.setCorrelation(0.9);
 
@@ -356,13 +358,17 @@ public class TestData {
         
         long l = 0;
         for (SimulateInvestConfig sim : sims) {
+            LocalDate anotherStartDate = aStartDate.plusMonths(random.nextLong(months - 3));
+            LocalDate anotherEndDate = anotherStartDate.plusMonths(1);
+            sim.setStartdate(TimeUtil.convertDate2(anotherStartDate));
+            sim.setEnddate(TimeUtil.convertDate2(anotherEndDate));
             SimDataItem simdata = new SimDataItem();
             simdata.setDbid(l++);
             simdata.setRecord(LocalDate.now());
             simdata.setStartdate(anotherStartDate);
             simdata.setEnddate(anotherEndDate);
             simdata.setMarket(market);
-            simdata.setConfig(JsonUtil.convert(sim));
+            simdata.setConfig(JsonUtil.convert(sim.asValuedMap()));
             simdata.setScore(random.nextDouble(5));
             simdata.setFilter(JsonUtil.convert(filter));
             list.add(simdata);

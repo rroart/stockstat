@@ -17,4 +17,12 @@ module iclij.common.simulate {
     requires iclij.common.config;
     requires iclij.common.service;
     requires com.fasterxml.jackson.annotation;
+    requires org.slf4j;
+    requires common.cache;
+    requires common.config;
+    requires common.constants;
+    requires iclij.common.model;
+    requires iclij.common.componentdata;
+    requires common.io;
+    requires dbdao;
 }

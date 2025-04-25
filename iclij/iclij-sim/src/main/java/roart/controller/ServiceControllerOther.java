@@ -60,6 +60,9 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
         if (serviceMatch(ServiceConstants.SIMAUTO, c)) {
             new Sim(iclijConfig, io).method((String) content, "simauto", false);
         }
+        if (serviceMatch(ServiceConstants.SIMTEST, c)) {
+            new Sim(iclijConfig, io).method3((String) content, "simtest", false);
+        }
         new QueueUtils(io.getCuratorClient()).zkUnregister((String) param);
         if (param instanceof IclijServiceParam) {
             sendReply(((IclijServiceParam) param).getWebpath(), c, r);

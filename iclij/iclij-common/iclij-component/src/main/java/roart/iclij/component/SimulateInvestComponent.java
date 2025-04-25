@@ -292,6 +292,7 @@ public class SimulateInvestComponent extends ComponentML {
         //LocalDate date = TimeUtil.getEqualBefore(data.stockDates, investStart);
         //int indexOffset = data.stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(data.stockDates, datestring2);
         // TODO investend and other reset of more params
+        log.info("My sim {}", simConfig.asValuedMap());
         Parameters realParameters = parameters;
         if (realParameters == null || realParameters.getThreshold() == 1.0) {
             String aParameter = JsonUtil.convert(realParameters);
@@ -322,17 +323,17 @@ public class SimulateInvestComponent extends ComponentML {
                 if (autoSimConfig == null) {
                     simConfigs = new HashMap<>();
                     List<SimulateFilter> listoverride = filter; //simConfig.getFilters();
-                    List<SimulateFilter[]> list = getDefaultList(action);
+                    List<SimulateFilter[]> list = new SimUtil().getDefaultList(action);
                     if (list != null) {
                         filters.addAll(list);
                     }
                     if (listoverride != null) {
-                        mergeFilterList(list, listoverride);
+                        new SimUtil().mergeFilterList(list, listoverride);
                     }
                     //simConfigs = new ArrayList<>();
                     //simConfigs.add(getSimConfig(config));
                 } else {
-                    simConfigs = getSimConfigs(market.getConfig().getMarket(), autoSimConfig, autofilter, filters, config, action, param);
+                    simConfigs = new SimUtil().getSimConfigs(market.getConfig().getMarket(), autoSimConfig, autofilter, filters, config, action, param);
                     simConfigs = new HashMap<>(simConfigs);
                 }
                 List<Pair<Long, SimulateInvestConfig>> simsConfigs = new ArrayList<>();
@@ -402,6 +403,7 @@ public class SimulateInvestComponent extends ComponentML {
                     }
                     */
                     if (autoSimConfig != null) {
+                        log.debug("simtriplets" + simTriplets.size());
                         if (MAXARR > 0 && !simTriplets.isEmpty() && simTriplets.get(0).getMiddle().autoscore != null && simTriplets.get(0).getMiddle().autoscore != 0) {
                             Collections.shuffle(simTriplets);
                         }
@@ -994,161 +996,6 @@ public class SimulateInvestComponent extends ComponentML {
         MyCache.getInstance().put(key, abnormExcludes);
 
         return abnormExcludes;
-    }
-
-    private Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> getSimConfigs(String market, AutoSimulateInvestConfig autoSimConf, List<SimulateFilter> filter, List<SimulateFilter[]> filters, IclijConfig config, MarketActionData actionData, ComponentData param) {
-        List<SimDataItem> all = new ArrayList<>();
-        try {
-            String simkey = CacheConstants.SIMDATA + market + autoSimConf.getStartdate() + autoSimConf.getEnddate();
-            all =  (List<SimDataItem>) MyCache.getInstance().get(simkey);
-            if (all == null) {
-                LocalDate startDate = TimeUtil.convertDate(TimeUtil.replace(autoSimConf.getStartdate()));
-                LocalDate endDate = null;
-                if (autoSimConf.getEnddate() != null) {
-                    endDate = TimeUtil.convertDate(TimeUtil.replace(autoSimConf.getEnddate()));
-                }
-                all = param.getService().getIo().getIdbDao().getAllSimData(market, null, null); // fix later: , startDate, endDate);
-                MyCache.getInstance().put(simkey, all);
-            }
-            /*
-            if (VERIFYCACHE && trendMap != null) {
-                for (Entry<Integer, Trend> entry : newTrendMap.entrySet()) {
-                    int key2 = entry.getKey();
-                    Trend v2 = entry.getValue();
-                    Trend v = trendMap.get(key2);
-                    if (v2 != null && !v2.toString().equals(v.toString())) {
-                        log.error("Difference with cache");
-                    }
-                }
-            }
-             */
-        } catch (Exception e) {
-            log.error(Constants.ERROR, e);
-        }
-        List<SimulateFilter[]> list = null;
-        if (autoSimConf != null) {
-            List<SimulateFilter> listoverride = filter; //autoSimConf.getFilters();
-            list = getDefaultList(actionData);
-            if (list != null) {
-                filters.addAll(list);
-            }
-            if (listoverride != null) {
-                mergeFilterList(list, listoverride);
-            }
-        }
-        String listString = JsonUtil.convert(list);
-        String key = CacheConstants.AUTOSIMCONFIG + market + autoSimConf.getStartdate() + autoSimConf.getEnddate() + "_" + autoSimConf.getInterval() + "_" + autoSimConf.getPeriod() + "_" + autoSimConf.getScorelimit().doubleValue() + " " + listString;
-        Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> retMap = (Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>>) MyCache.getInstance().get(key);
-        Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> newRetMap = new HashMap<>();
-        if (retMap == null || VERIFYCACHE) {
-            for (SimDataItem data : all) {
-                if (autoSimConf.getScorelimit().doubleValue() > data.getScore().doubleValue()) {
-                    continue;
-                }
-                Integer period = null;
-                int months = Period.between(data.getStartdate(), data.getEnddate()).getMonths();
-                switch (months) {
-                case 1:
-                    period = 0;
-                    break;
-                case 3:
-                    period = 1;
-                    break;
-                case 12:
-                    period = 2;
-                    break;
-                }
-                if (period == null) {
-                    continue;
-                }
-                if (period.intValue() == autoSimConf.getPeriod().intValue()) {
-                    String amarket = data.getMarket();
-                    if (market.equals(amarket)) {
-                        Long dbid = data.getDbid();
-                        String configStr = data.getConfig();
-                        //SimulateInvestConfig s = JsonUtil.convert(configStr, SimulateInvestConfig.class);
-                        Map defaultMap = config.getConfigData().getConfigMaps().deflt;
-                        Map map = JsonUtil.convert(configStr, Map.class);
-                        Map newMap = new HashMap<>();
-                        newMap.putAll(defaultMap);
-                        newMap.putAll(map);
-                        IclijConfig dummy = new IclijConfig(config);
-                        dummy.getConfigData().setConfigValueMap(newMap);
-                        SimulateInvestConfig simConf = SimulateInvestUtils.getSimConfig(dummy);
-                        if (simConf.getInterval().intValue() != autoSimConf.getInterval().intValue()) {
-                            continue;
-                        }
-                        simConf.setVolumelimits(autoSimConf.getVolumelimits());
-                        int adviser = simConf.getAdviser();
-                        String filterStr = data.getFilter();
-                        SimulateFilter myFilter = JsonUtil.convert((String)filterStr, SimulateFilter.class);
-                        SimulateFilter[] autoSimConfFilters = list.get(0);
-                        if (autoSimConfFilters != null) {
-                            SimulateFilter autoSimConfFilter = autoSimConfFilters[adviser];
-                            if (myFilter != null && autoSimConfFilter != null) {
-                                if (myFilter.getCorrelation() != null && autoSimConfFilter.getCorrelation() > 0 && autoSimConfFilter.getCorrelation() > myFilter.getCorrelation()) {
-                                    continue;
-                                }
-                                if (autoSimConfFilter.getLucky() > 0 && autoSimConfFilter.getLucky() < myFilter.getLucky()) {
-                                    continue;
-                                }
-                                if (autoSimConfFilter.getStable() > 0 && autoSimConfFilter.getStable() < myFilter.getStable()) {
-                                    continue;
-                                }
-                                if (autoSimConfFilter.getShortrun() > 0 && autoSimConfFilter.getShortrun() > myFilter.getShortrun()) {
-                                    continue;
-                                }
-                                if (autoSimConfFilter.getPopulationabove() > myFilter.getPopulationabove()) {
-                                    continue;
-                                }
-                            }
-                        }
-                        Pair<LocalDate, LocalDate> aKey = new ImmutablePair(data.getStartdate(), data.getEnddate());
-                        MapUtil.mapAddMe(newRetMap, aKey, new ImmutablePair(dbid, simConf));
-                    }
-                }
-            }
-        }
-        if (VERIFYCACHE && retMap != null) {
-            for (Entry<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> entry : newRetMap.entrySet()) {
-                Pair<LocalDate, LocalDate> key2 = entry.getKey();
-                List<Pair<Long, SimulateInvestConfig>> v2 = entry.getValue();
-                List<Pair<Long, SimulateInvestConfig>> v = retMap.get(key2);
-                if (v == null || v2 == null || v.size() != v2.size()) {
-                    log.error("Difference with cache");
-                    continue;
-                }
-                for (int i = 0; i < v.size(); i++) {
-                    if (!v.get(i).equals(v2.get(i))) {
-                        log.error("Difference with cache");
-                    }
-                }
-            }
-        }
-        if (retMap != null) {
-            return retMap;
-        }
-        retMap = newRetMap;
-        MyCache.getInstance().put(key, retMap);
-        return retMap;
-    }
-
-    private void mergeFilterList(List<SimulateFilter[]> list, List<SimulateFilter> listoverride) {
-        for (int i = 0; i < listoverride.size(); i++) {
-            SimulateFilter afilter = list.get(0)[i];
-            SimulateFilter otherfilter = listoverride.get(i);
-            afilter.merge(otherfilter);
-        }
-    }
-
-    private List<SimulateFilter[]> getDefaultList(MarketActionData action) {
-        List<SimulateFilter[]> list = null;
-        try {
-            list = IclijXMLConfig.getSimulate(action.getIclijConfig());
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        return list;
     }
 
     private void getAdjustedDate(Data data, LocalDate investStart, int offset, Mydate mydate) {
@@ -2083,7 +1930,7 @@ public class SimulateInvestComponent extends ComponentML {
         return mystocks;
     }
 
-    private List<SimulateFilter> get(String json) {
+   private List<SimulateFilter> get(String json) {
         SimulateFilter[] array = JsonUtil.convert(json, SimulateFilter[].class);
         List<SimulateFilter> list = null;
         if (array != null) {
@@ -2091,7 +1938,7 @@ public class SimulateInvestComponent extends ComponentML {
         }
         return list;
     }
-
+    
     private AutoSimulateInvestConfig getAutoSimConfig(IclijConfig config) {
         if (config.getConfigData().getConfigValueMap().get(IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL) == null || (int) config.getConfigData().getConfigValueMap().get(IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL) == 0) {
             return null;

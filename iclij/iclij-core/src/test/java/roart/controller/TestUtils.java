@@ -132,7 +132,7 @@ public class TestUtils {
         simConfig.setStocks(5);
         simConfig.setBuyweight(false);
         simConfig.setInterval(7);
-        simConfig.setAdviser(0);
+        simConfig.setAdviser(1);
         simConfig.setPeriod(0);
         simConfig.setInterpolate(false);
         simConfig.setIntervalStoploss(true);

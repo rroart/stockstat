@@ -311,8 +311,8 @@ public class InmemoryPipelineTest {
         log.info("Wants it {}", iconf.wantsInmemoryPipeline());
         SimulateInvestConfig simConfig = testutils.getSimConfigDefault();
         String market = TestConstants.MARKET;
-        simConfig.setStartdate("2024-11-01");
-        simConfig.setEnddate("2024-12-01");
+        simConfig.setStartdate("2024-01-01");
+        simConfig.setEnddate("2025-01-01");
         IclijServiceResult result = null;
         try {
             result = testutils.getSimulateInvestMarket2(simConfig, market);
