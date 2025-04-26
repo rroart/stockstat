@@ -18,11 +18,11 @@ import roart.common.constants.ServiceConstants;
 import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
-import roart.common.model.ActionComponentItem;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
-import roart.common.model.TimingItem;
+import roart.common.model.ActionComponentDTO;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
+import roart.common.model.TimingDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.util.PipelineUtils;
@@ -64,7 +64,7 @@ public class ImproveFilterAction extends MarketAction {
     }
 
     @Override
-    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Memories listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
+    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Memories listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree, List<MLMetricsDTO> mlTests) {
         if (param.getUpdateMap() == null) {
             param.setUpdateMap(new HashMap<>());
         }
@@ -85,7 +85,7 @@ public class ImproveFilterAction extends MarketAction {
                 continue;
             }
 
-            List<IncDecItem> allIncDecs = null;
+            List<IncDecDTO> allIncDecs = null;
             LocalDate date = param.getFutureDate();
             date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
             LocalDate prevDate = date.minusDays(market.getConfig().getFindtime());
@@ -94,10 +94,10 @@ public class ImproveFilterAction extends MarketAction {
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
-            List<IncDecItem> incdecs = allIncDecs; // new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
+            List<IncDecDTO> incdecs = allIncDecs; // new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
             List<String> parametersList = new MiscUtil().getParameters(incdecs);
             for (String aParameter : parametersList) {
-                List<IncDecItem> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              
+                List<IncDecDTO> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              
 
             
             //component.set(market, param, profitdata, positions, evolve);
@@ -109,6 +109,7 @@ public class ImproveFilterAction extends MarketAction {
 
             // todo
             // done clean
+            // todo ok?
             param.getAndSetCategoryValueMap(false);
             PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
             Integer cat = PipelineUtils.getWantedcat(pipelineDatum);
@@ -154,7 +155,7 @@ public class ImproveFilterAction extends MarketAction {
     }
 
     @Override
-    protected List<IncDecItem> getIncDecItems() {
+    protected List<IncDecDTO> getIncDecDTOs() {
         return null;
     }
     
@@ -174,7 +175,7 @@ public class ImproveFilterAction extends MarketAction {
     }
     
     @Override
-    protected List<MemoryItem> getMemItems(ActionComponentItem marketTime, WebData myData, ComponentData param, IclijConfig config, Boolean evolve, Map<String, ComponentData> dataMap) {
+    protected List<MemoryDTO> getMemDTOs(ActionComponentDTO marketTime, WebData myData, ComponentData param, IclijConfig config, Boolean evolve, Map<String, ComponentData> dataMap) {
         return new ArrayList<>();
     }
 
@@ -190,7 +191,7 @@ public class ImproveFilterAction extends MarketAction {
     }
     
     @Override
-    protected List<TimingItem> getCurrentTimings(LocalDate olddate, List<TimingItem> timings, Market market, String name,
+    protected List<TimingDTO> getCurrentTimings(LocalDate olddate, List<TimingDTO> timings, Market market, String name,
             Short time, boolean b, List<String> stockDates) {
         String mldate = ((ImproveFilterActionData) getActionData()).getMlDate(market, stockDates);
         String mldaysdate = ((ImproveFilterActionData) getActionData()).getMlDays(market, stockDates);

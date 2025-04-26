@@ -4,20 +4,16 @@ import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import java.util.Date;
-
 import org.springframework.jdbc.core.RowMapper;
 
-import roart.common.model.SimDataItem;
+import roart.common.model.SimDataDTO;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 
-import org.springframework.jdbc.core.RowMapper;
-
-public class SimDataRowMapper implements RowMapper<SimDataItem>{
+public class SimDataRowMapper implements RowMapper<SimDataDTO>{
     @Override
-    public SimDataItem mapRow(ResultSet rs, int rowNum) throws SQLException {
-        SimDataItem item = new SimDataItem();
+    public SimDataDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+        SimDataDTO item = new SimDataDTO();
         item.setDbid((Long) rs.getObject("dbid"));
         item.setRecord(TimeUtil.convertDate(rs.getDate("record")));
         item.setMarket(rs.getString("market"));

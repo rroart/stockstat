@@ -13,19 +13,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
-import roart.common.model.AboveBelowItem;
-import roart.common.model.ActionComponentItem;
-import roart.common.model.ConfigItem;
-import roart.common.model.ContItem;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
-import roart.common.model.MetaItem;
-import roart.common.model.RelationItem;
-import roart.common.model.SimDataItem;
-import roart.common.model.StockItem;
-import roart.common.model.TimingBLItem;
-import roart.common.model.TimingItem;
+import roart.common.model.AboveBelowDTO;
+import roart.common.model.ActionComponentDTO;
+import roart.common.model.ConfigDTO;
+import roart.common.model.ContDTO;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
+import roart.common.model.MetaDTO;
+import roart.common.model.RelationDTO;
+import roart.common.model.SimDataDTO;
+import roart.common.model.StockDTO;
+import roart.common.model.TimingBLDTO;
+import roart.common.model.TimingDTO;
 import roart.common.springdata.repository.SpringStockRepository;
 import roart.common.springdata.repository.StockRepository;
 import roart.db.common.DbDS;
@@ -39,12 +39,12 @@ public class DbSpringDS extends DbDS {
     DbSpring service;
     
     @Override
-    public List<StockItem> getStocksByMarket(String market) throws Exception {
+    public List<StockDTO> getStocksByMarket(String market) throws Exception {
     	return service.getStocksByMarket(market);
     }
 
 	@Override
-	public MetaItem getMetaByMarket(String market) throws Exception {
+	public MetaDTO getMetaByMarket(String market) throws Exception {
 		return service.getMetaByMarket(market);
 	}
 
@@ -54,7 +54,7 @@ public class DbSpringDS extends DbDS {
     }
 
     @Override
-    public List<MetaItem> getAllMetas() {
+    public List<MetaDTO> getAllMetas() {
         return service.getMetas();
     }
 
@@ -71,69 +71,69 @@ public class DbSpringDS extends DbDS {
     }
 
     @Override
-    public List<MemoryItem> getAllMemories() {
+    public List<MemoryDTO> getAllMemories() {
         return service.getMemories();
     }
 
     @Override
-    public List<MemoryItem> getMemoriesByMarket(String market) {
+    public List<MemoryDTO> getMemoriesByMarket(String market) {
         return service.getMemoriesByMarket(market);
     }
 
     @Override
-    public List<MemoryItem> getMemories(String market, String action, String component, String subcomponent,
+    public List<MemoryDTO> getMemories(String market, String action, String component, String subcomponent,
             String parameters, Date startDate, Date endDate) {
         return service.getMemories(market, action, component, subcomponent, parameters, startDate, endDate);
     }
 
     @Override
-    public List<TimingItem> getAllTimings() {
+    public List<TimingDTO> getAllTimings() {
         return service.getTimings();
     }
 
     @Override
-    public List<TimingItem> getTimings(String market, String action, Date startDate, Date endDate) {
+    public List<TimingDTO> getTimings(String market, String action, Date startDate, Date endDate) {
         return service.getTimings(market, action, startDate, endDate);
     }
 
     @Override
-    public List<RelationItem> getAllRelations() {
+    public List<RelationDTO> getAllRelations() {
         return service.getRelations();
     }
 
     @Override
-    public List<IncDecItem> getAllIncDecs() {
+    public List<IncDecDTO> getAllIncDecs() {
         return service.getIncDecs();
     }
 
     @Override
-    public List<IncDecItem> getIncDecs(String market, Date startDate, Date endDate, String parameters) {
+    public List<IncDecDTO> getIncDecs(String market, Date startDate, Date endDate, String parameters) {
         return service.getIncDecs(market, startDate, endDate, parameters);
     }
 
     @Override
-    public List<ConfigItem> getConfigs(String market, String action, String component, String subcomponent,
+    public List<ConfigDTO> getConfigs(String market, String action, String component, String subcomponent,
             String parameters, Date startDate, Date endDate) {
         return service.getConfigs(market, action, component, subcomponent, parameters, startDate, endDate);
     }
 
     @Override
-    public List<ConfigItem> getConfigsByMarket(String market) {
+    public List<ConfigDTO> getConfigsByMarket(String market) {
         return service.getConfigsByMarket(market);
     }
 
     @Override
-    public List<MLMetricsItem> getAllMLMetrics() {
+    public List<MLMetricsDTO> getAllMLMetrics() {
         return service.getMLMetrics();
     }
 
     @Override
-    public List<MLMetricsItem> getMLMetrics(String market, Date startDate, Date endDate) {
+    public List<MLMetricsDTO> getMLMetrics(String market, Date startDate, Date endDate) {
         return service.getMLMetrics(market, startDate, endDate);
     }
 
     @Override
-    public List<SimDataItem> getAllSimData(String market, LocalDate startDate, LocalDate endDate) {
+    public List<SimDataDTO> getAllSimData(String market, LocalDate startDate, LocalDate endDate) {
         try {
             return service.getSimData(market, startDate, endDate);
         } catch (Exception e) {
@@ -143,7 +143,7 @@ public class DbSpringDS extends DbDS {
     }
 
     @Override
-    public List<AboveBelowItem> getAllAboveBelow(String market, Date startDate, Date endDate) {
+    public List<AboveBelowDTO> getAllAboveBelow(String market, Date startDate, Date endDate) {
        try {
         return service.getAboveBelow(market, startDate, endDate);
     } catch (Exception e) {
@@ -153,12 +153,12 @@ public class DbSpringDS extends DbDS {
     }
 
     @Override
-    public List<ActionComponentItem> getAllActionComponent() {
+    public List<ActionComponentDTO> getAllActionComponent() {
         return service.getActionComponent();
     }
 
     @Override
-    public List<TimingBLItem> getAllTimingBL() {
+    public List<TimingBLDTO> getAllTimingBL() {
         return service.getTimingBL();
     }
 
@@ -168,32 +168,32 @@ public class DbSpringDS extends DbDS {
     }
 
     @Override
-    public List<ContItem> getAllConts() {
+    public List<ContDTO> getAllConts() {
         return service.getCont();
     }
 
     @Override
-    public List<StockItem> getAllStocks() throws Exception {
+    public List<StockDTO> getAllStocks() throws Exception {
         return service.getAllStocks();
     }
 
     @Override
-    public List<ConfigItem> getAllConfigs() {
+    public List<ConfigDTO> getAllConfigs() {
         return service.getAllConfigs();
     }
 
     @Override
-    public List<SimDataItem> getAllSimData(String market) {
+    public List<SimDataDTO> getAllSimData(String market) {
         return service.getAllSimData();
     }
 
     @Override
-    public List<AboveBelowItem> getAllAboveBelow() {
+    public List<AboveBelowDTO> getAllAboveBelow() {
         return service.getAllAboveBelow();
     }
 
     @Override
-    public List<SimDataItem> getAllSimData() {
+    public List<SimDataDTO> getAllSimData() {
         return service.getAllSimData();
     }
 

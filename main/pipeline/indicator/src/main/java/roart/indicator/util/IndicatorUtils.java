@@ -20,9 +20,9 @@ import org.slf4j.LoggerFactory;
 import roart.category.AbstractCategory;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.MetaItem;
+import roart.common.model.MetaDTO;
 import roart.common.model.MyDataSource;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialList;
@@ -599,7 +599,7 @@ public class IndicatorUtils {
                 // all from here is already read from eventual inmemory
                 Map<String, SerialList<PipelineData>> dataReaderMap = PipelineUtils.getDatareader(localResults);
                 log.debug("lockeys {}", localResults.keySet());
-                //Map<Pair<String, String>, List<StockItem>> pairMap = pairStockMap;
+                //Map<Pair<String, String>, List<StockDTO>> pairMap = pairStockMap;
                 Map<String, SerialMap<String, SerialTA>> marketObjectMap = PipelineUtils.getMarketObjectMap(localIndicatorResults);
                 if (marketObjectMap == null) {
                     continue;
@@ -930,7 +930,7 @@ public class IndicatorUtils {
     public PipelineData getMetadata(IclijConfig conf, StockData stockData) {
         PipelineData singlePipelineData = new PipelineData();
         singlePipelineData.setName(PipelineConstants.META);
-        MetaItem meta = stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta;
+        MetaDTO meta = stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta;
         singlePipelineData.put(PipelineConstants.META, new SerialMeta(meta.getMarketid(), meta.getPeriod(), meta.getPriority(), meta.getReset(), meta.isLhc()));
         singlePipelineData.put(PipelineConstants.CATEGORY, stockData.catName);
         singlePipelineData.put(PipelineConstants.WANTEDCAT, stockData.cat);
@@ -952,7 +952,7 @@ public class IndicatorUtils {
         return pipelinedata;
     }
 
-    public List<StockItem> getDayStocks(IclijConfig conf, StockData stockData) {
+    public List<StockDTO> getDayStocks(IclijConfig conf, StockData stockData) {
         String mydate = TimeUtil.format(conf.getConfigData().getDate());
         int dateIndex = TimeUtil.getIndexEqualBefore(stockData.stockdates, mydate);
         if (dateIndex >= 0) {

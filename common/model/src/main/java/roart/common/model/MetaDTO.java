@@ -1,7 +1,5 @@
 package roart.common.model;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 import roart.common.constants.Constants;
 
 /*
@@ -10,7 +8,7 @@ import roart.common.constants.Constants;
         include = JsonTypeInfo.As.PROPERTY,  
         property = "_class")  
         */
-public class MetaItem {
+public class MetaDTO {
 
     private String marketid;
     private String[] period = new String[Constants.PERIODS];
@@ -18,11 +16,11 @@ public class MetaItem {
     private String reset;
     private Boolean lhc;
 
-    public MetaItem() {
+    public MetaDTO() {
         super();
     }
     
-    public MetaItem(String marketid, String period1, String period2, String period3, String period4, String period5, String period6, String period7, String period8, String period9, String priority, String reset, Boolean lhc) {
+    public MetaDTO(String marketid, String period1, String period2, String period3, String period4, String period5, String period6, String period7, String period8, String period9, String priority, String reset, Boolean lhc) {
         this.marketid = marketid;
         this.period[0] = period1;
         this.period[1] = period2;

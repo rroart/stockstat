@@ -16,20 +16,13 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.common.constants.Constants;
-import roart.common.constants.ResultMetaConstants;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.MapOneDim;
-import roart.common.pipeline.data.OneDim;
 import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialMapD;
-import roart.common.pipeline.data.SerialObject;
 import roart.common.pipeline.data.SerialResultMeta;
-import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
-import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
 import roart.component.model.PredictorData;
@@ -47,7 +40,6 @@ import roart.iclij.filter.Memories;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.service.ControlService;
-import roart.result.model.ResultMeta;
 import roart.service.model.ProfitData;
 
 public class ComponentPredictor extends ComponentML {
@@ -140,7 +132,7 @@ public class ComponentPredictor extends ComponentML {
     }
     
     //@Override
-    public void calculateIncDecNot(ComponentData componentparam, ProfitData profitdata, Memories position, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
+    public void calculateIncDecNot(ComponentData componentparam, ProfitData profitdata, Memories position, Boolean above, List<MLMetricsDTO> mlTests, Parameters parameters) {
         PredictorData param = (PredictorData) componentparam;
         Pair<String, Integer> keyPair = new ImmutablePair(PipelineConstants.PREDICTOR, null);
         //keyPair = ComponentMLAggregator.getRealKeys(keyPair, profitdata.getInputdata().getConfMap().keySet());
@@ -182,7 +174,7 @@ public class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
+    public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsDTO> mlTests, Fitness fitness, boolean save) {
 	ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().coremlconf);
@@ -192,7 +184,7 @@ public class ComponentPredictor extends ComponentML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories positions, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories positions, Boolean above, List<MLMetricsDTO> mlTests, Parameters parameters) {
         PredictorData param = (PredictorData) componentparam;
         if (positions == null) {
             //return;
@@ -230,7 +222,7 @@ public class ComponentPredictor extends ComponentML {
             }
             Map<Double, String> labelMap = createLabelMapShort();
 
-            MLMetricsItem mltest = search(mlTests, meta);
+            MLMetricsDTO mltest = search(mlTests, meta);
             if (true || mlTests == null || mltest != null) {
                 //&& (positions == null || !positions.containsBelow(getPipeline(), paircount, above, mltest, param.getInput().getConfig().getFindProfitMemoryFilter()))) {
                 Double score = mltest.getTestAccuracy();
@@ -262,16 +254,16 @@ public class ComponentPredictor extends ComponentML {
                     if (above == null || above == true) {
                     if (tfpn.equals(Constants.ABOVE)) {
                         increase = true;
-                        //IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
-                        IncDecItem incdec = mapAdder(profitdata.getBuys(), key, score, profitdata.getInputdata().getNameMap(), param.getBaseDate(), param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
+                        //IncDecDTO incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                        IncDecDTO incdec = mapAdder(profitdata.getBuys(), key, score, profitdata.getInputdata().getNameMap(), param.getBaseDate(), param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
                         incdec.setIncrease(increase);
                     }
                     }
                     if (above == null || above == false) {
                     if (tfpn.equals(Constants.BELOW)) {
                         increase = false;
-                        //IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
-                        IncDecItem incdec = mapAdder(profitdata.getSells(), key, score, profitdata.getInputdata().getNameMap(), param.getBaseDate(), param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
+                        //IncDecDTO incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                        IncDecDTO incdec = mapAdder(profitdata.getSells(), key, score, profitdata.getInputdata().getNameMap(), param.getBaseDate(), param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
                         incdec.setIncrease(increase);
                     }
                     }
@@ -283,10 +275,10 @@ public class ComponentPredictor extends ComponentML {
         }
     }
 
-    public List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters) throws Exception {
+    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters) throws Exception {
         PredictorData param = (PredictorData) componentparam;
         Map<String, List<Double>> resultMap = (Map<String, List<Double>>) param.getResultMap().get("result");
-        List<MemoryItem> memoryList = new ArrayList<>();
+        List<MemoryDTO> memoryList = new ArrayList<>();
         long total = 0;
         long goodInc = 0;
         long goodDec = 0;
@@ -325,7 +317,7 @@ public class ComponentPredictor extends ComponentML {
                 }
             }
             //System.out.println("tot " + total + " " + goodInc + " " + goodDec);
-            MemoryItem incMemory = new MemoryItem();
+            MemoryDTO incMemory = new MemoryDTO();
             incMemory.setAction(param.getAction());
             incMemory.setMarket(param.getMarket());
             incMemory.setRecord(LocalDate.now());
@@ -345,7 +337,7 @@ public class ComponentPredictor extends ComponentML {
             if (param.isDoSave()) {
                 param.getService().getIo().getIdbDao().save(incMemory);
             }
-            MemoryItem decMemory = new MemoryItem();
+            MemoryDTO decMemory = new MemoryDTO();
             decMemory.setAction(param.getAction());
             decMemory.setMarket(param.getMarket());
             decMemory.setRecord(LocalDate.now());
@@ -394,10 +386,10 @@ public class ComponentPredictor extends ComponentML {
             }
             double confidence = confidenceFactor * (element.getValue() - min) / diff;
             String recommendation = "recommend buy";
-            //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
+            //IncDecDTO incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(true);
             //buys.put(element.getKey(), incdec);
-            IncDecItem incdec = mapAdder(profitdata.getBuys(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), srv.coremlconf.getConfigData().getDate(), srv.coremlconf.getConfigData().getMarket(), subcomponent, null, JsonUtil.convert(parameters));
+            IncDecDTO incdec = mapAdder(profitdata.getBuys(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), srv.coremlconf.getConfigData().getDate(), srv.coremlconf.getConfigData().getMarket(), subcomponent, null, JsonUtil.convert(parameters));
             incdec.setIncrease(true);
         }
         for (MyElement element : bottomList) {
@@ -407,9 +399,9 @@ public class ComponentPredictor extends ComponentML {
             }
             double confidence = confidenceFactor * (element.getValue() - min) / diff;
             String recommendation = "recommend sell";
-            //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
+            //IncDecDTO incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(false);
-            IncDecItem incdec = mapAdder(profitdata.getSells(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), srv.coremlconf.getConfigData().getDate(), srv.coremlconf.getConfigData().getMarket(), subcomponent, null, JsonUtil.convert(parameters));
+            IncDecDTO incdec = mapAdder(profitdata.getSells(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), srv.coremlconf.getConfigData().getDate(), srv.coremlconf.getConfigData().getMarket(), subcomponent, null, JsonUtil.convert(parameters));
             incdec.setIncrease(false);
         }
     }

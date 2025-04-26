@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import roart.db.hibernate.DbHibernate;
 import roart.db.hibernate.DbHibernateDS;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.springdata.model.Stock;
 import roart.common.springdata.repository.SpringStockRepository;
 import roart.common.springdata.repository.StockRepository;
@@ -33,8 +33,8 @@ public class DbDaoUtil {
         return repo2.getMarkets();
     }
     
-    public List<StockItem> getAll(String market, int type) throws Exception {
-        List<StockItem> list = new ArrayList<>();
+    public List<StockDTO> getAll(String market, int type) throws Exception {
+        List<StockDTO> list = new ArrayList<>();
         long time0 = System.currentTimeMillis();
         if (type == 0) {
             return DbHibernateDS.instance().getStocksByMarket(market);
@@ -44,7 +44,7 @@ public class DbDaoUtil {
         }
         List<Stock> list2 = repo.findByMarketid(market);
         for (Stock stock : list2) {
-            list.add(new StockItem(stock.getDbid(), stock.getMarketid(), stock.getId(), stock.getIsin(), stock.getName(), stock.getDate(), stock.getIndexvalue(), stock.getIndexvaluelow(), stock.getIndexvaluehigh(), stock.getIndexvalueopen(), stock.getPrice(), stock.getPricelow(), stock.getPricehigh(), stock.getPriceopen(), stock.getVolume(), stock.getCurrency(), stock.getPeriod1(), stock.getPeriod2(), stock.getPeriod3(), stock.getPeriod4(), stock.getPeriod5(), stock.getPeriod6(), stock.getPeriod7(), stock.getPeriod8(), stock.getPeriod9()));
+            list.add(new StockDTO(stock.getDbid(), stock.getMarketid(), stock.getId(), stock.getIsin(), stock.getName(), stock.getDate(), stock.getIndexvalue(), stock.getIndexvaluelow(), stock.getIndexvaluehigh(), stock.getIndexvalueopen(), stock.getPrice(), stock.getPricelow(), stock.getPricehigh(), stock.getPriceopen(), stock.getVolume(), stock.getCurrency(), stock.getPeriod1(), stock.getPeriod2(), stock.getPeriod3(), stock.getPeriod4(), stock.getPeriod5(), stock.getPeriod6(), stock.getPeriod7(), stock.getPeriod8(), stock.getPeriod9()));
 
         }
         System.out.println("" + (System.currentTimeMillis() - time0) / 1000);

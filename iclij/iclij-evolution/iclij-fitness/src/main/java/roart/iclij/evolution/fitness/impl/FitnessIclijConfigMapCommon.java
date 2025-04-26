@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import roart.iclij.model.action.MarketActionData;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
-import roart.common.model.MemoryItem;
+import roart.common.model.MemoryDTO;
 import roart.common.pipeline.data.SerialListMap;
 import roart.iclij.component.Component;
 import roart.iclij.component.factory.ComponentFactory;
@@ -30,10 +30,10 @@ public class FitnessIclijConfigMapCommon {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     public Double fitnessCommon(ProfitData profitdata, Map<String, Object> map, MarketActionData action, Market market, ComponentData param, String componentName, String subcomponent, Parameters parameters, List<String> titletexts, SerialListMap resultMap) {
-        List<MemoryItem> memoryItems = null;
+        List<MemoryDTO> memoryItems = null;
         WebData myData = new WebData();
         myData.setUpdateMap(new HashMap<>());
-        myData.setMemoryItems(new ArrayList<>());
+        myData.setMemoryDTOs(new ArrayList<>());
         //myData.profitData = new ProfitData();
         myData.setTimingMap(new HashMap<>());
 

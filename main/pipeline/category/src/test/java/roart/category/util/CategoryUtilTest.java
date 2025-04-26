@@ -18,7 +18,7 @@ import org.springframework.context.annotation.ComponentScan;
 import roart.category.AbstractCategory;
 import roart.common.config.ConfigConstants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMapTA;
@@ -70,7 +70,7 @@ public class CategoryUtilTest {
 
           // for categories and adding to pipelinedata
 
-          List<StockItem> dayStocks = iu.getDayStocks(conf, stockData);
+          List<StockDTO> dayStocks = iu.getDayStocks(conf, stockData);
           
           List<AbstractCategory> categories = Arrays.asList(new CategoryUtil().getCategories(conf, dayStocks,
                   stockData.periodText, pipelinedata, inmemory));

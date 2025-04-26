@@ -9,19 +9,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import roart.iclij.config.IclijConfig;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.util.TimeUtil;
 
 // Impurity, should be in ETL, only temporarily here.
 
 public class StockETL {
-    public static List<StockItem> filterWeekend(IclijConfig conf, List<StockItem> stocks) {
+    public static List<StockDTO> filterWeekend(IclijConfig conf, List<StockDTO> stocks) {
         if (!conf.wantFilterWeekend()) {
             return stocks;
         }
         Calendar calendar = Calendar.getInstance();
-        List<StockItem> retList = new ArrayList<>();
-        for (StockItem stock : stocks) {
+        List<StockDTO> retList = new ArrayList<>();
+        for (StockDTO stock : stocks) {
             Date date = stock.getDate();
             if (date == null || stock.getDate() == null) {
                 int jj = 0;
@@ -52,14 +52,14 @@ public class StockETL {
         return retList;
     }
     
-    public static Map<String, List<StockItem>> filterWeekend(IclijConfig conf, Map<String, List<StockItem>> stockMap) {
+    public static Map<String, List<StockDTO>> filterWeekend(IclijConfig conf, Map<String, List<StockDTO>> stockMap) {
         if (!conf.wantFilterWeekend()) {
             return stockMap;
         }
-        Map<String, List<StockItem>> retMap = new HashMap<>();
+        Map<String, List<StockDTO>> retMap = new HashMap<>();
         Calendar calendar = Calendar.getInstance();
-        for (Entry<String, List<StockItem>> entry : stockMap.entrySet()) {
-            List<StockItem> stocks = entry.getValue();
+        for (Entry<String, List<StockDTO>> entry : stockMap.entrySet()) {
+            List<StockDTO> stocks = entry.getValue();
             Date date = stocks.get(0).getDate();
             calendar.setTime(date);
             if (!(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ||

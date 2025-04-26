@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
 import roart.common.constants.Constants;
-import roart.common.model.SimDataItem;
+import roart.common.model.SimDataDTO;
 import roart.common.pipeline.data.SerialListSimulateStock;
 import roart.common.pipeline.data.SerialListStockHistory;
 import roart.common.util.ArraysUtil;
@@ -132,10 +132,10 @@ public class SimUtil {
 
 
     public Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> getSimConfigs(String market, AutoSimulateInvestConfig autoSimConf, List<SimulateFilter> filter, List<SimulateFilter[]> filters, IclijConfig config, MarketActionData actionData, ComponentData param) {
-        List<SimDataItem> all = new ArrayList<>();
+        List<SimDataDTO> all = new ArrayList<>();
         try {
             String simkey = CacheConstants.SIMDATA + market + autoSimConf.getStartdate() + autoSimConf.getEnddate();
-            all =  (List<SimDataItem>) MyCache.getInstance().get(simkey);
+            all =  (List<SimDataDTO>) MyCache.getInstance().get(simkey);
             if (all == null) {
                 LocalDate startDate = TimeUtil.convertDate(TimeUtil.replace(autoSimConf.getStartdate()));
                 LocalDate endDate = null;
@@ -176,7 +176,7 @@ public class SimUtil {
         Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> retMap = (Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>>) MyCache.getInstance().get(key);
         Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> newRetMap = new HashMap<>();
         if (retMap == null || VERIFYCACHE) {
-            for (SimDataItem data : all) {
+            for (SimDataDTO data : all) {
                 if (autoSimConf.getScorelimit().doubleValue() > data.getScore().doubleValue()) {
                     continue;
                 }

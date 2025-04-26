@@ -15,7 +15,7 @@ import roart.common.config.ConfigConstants;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.RecommendConstants;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.stockutil.StockDao;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.ImmutablePair;

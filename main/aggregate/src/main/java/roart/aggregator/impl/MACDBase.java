@@ -7,7 +7,7 @@ import java.util.Map;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMapD;
@@ -56,7 +56,7 @@ public class MACDBase extends Aggregator {
     }
 
     @Override
-    public Object[] getResultItem(StockItem stock) {
+    public Object[] getResultItem(StockDTO stock) {
         Object[] ret = new Object[3];
         if (resultObject != null) {
         String id = stock.getId();
@@ -85,7 +85,7 @@ public class MACDBase extends Aggregator {
     }
 
     @Override
-    public void addResultItem(ResultItemTableRow row, StockItem stock) {
+    public void addResultItem(ResultItemTableRow row, StockDTO stock) {
         Object[] arrayResult = getResultItem(stock);
         arrayResult = round(arrayResult, 3);
         row.addarr(arrayResult);

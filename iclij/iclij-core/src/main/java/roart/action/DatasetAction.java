@@ -19,10 +19,10 @@ import roart.common.constants.ServiceConstants;
 import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
-import roart.common.model.ActionComponentItem;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
+import roart.common.model.ActionComponentDTO;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.queue.QueueElement;
 import roart.iclij.component.Component;
@@ -46,7 +46,7 @@ public class DatasetAction extends MarketAction {
     @Override
     protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param,
             Memories listComponent, Map<String, Component> componentMap,
-            Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
+            Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree, List<MLMetricsDTO> mlTests) {
         if (param.getUpdateMap() == null) {
             param.setUpdateMap(new HashMap<>());
         }
@@ -93,7 +93,7 @@ public class DatasetAction extends MarketAction {
     }
 
     @Override
-    protected List<IncDecItem> getIncDecItems() {
+    protected List<IncDecDTO> getIncDecDTOs() {
         return null;
     }
 
@@ -113,7 +113,7 @@ public class DatasetAction extends MarketAction {
     }
 
     @Override
-    protected List<MemoryItem> getMemItems(ActionComponentItem marketTime, WebData myData, ComponentData param,
+    protected List<MemoryDTO> getMemDTOs(ActionComponentDTO marketTime, WebData myData, ComponentData param,
             IclijConfig config, Boolean evolve, Map<String, ComponentData> dataMap) {
         return new ArrayList<>();
     }

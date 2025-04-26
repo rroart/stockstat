@@ -1,13 +1,13 @@
 package roart.stockutil;
 
 import roart.common.constants.CategoryConstants;
-import roart.common.model.MetaItem;
+import roart.common.model.MetaDTO;
 import roart.common.pipeline.data.SerialMeta;
 import roart.model.data.MarketData;
 
 public class MetaUtil {
 
-    public static boolean currentYear(MetaItem meta, String categoryTitle) {
+    public static boolean currentYear(MetaDTO meta, String categoryTitle) {
         if (meta == null) {
             return false;
         }

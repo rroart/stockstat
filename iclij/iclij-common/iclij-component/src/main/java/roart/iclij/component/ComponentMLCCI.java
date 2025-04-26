@@ -9,8 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.iclij.config.ConfigUtils;
-import roart.iclij.config.IclijConfig;
-import roart.common.model.MLMetricsItem;
+import roart.common.model.MLMetricsDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.component.model.ComponentData;
 import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
@@ -76,7 +75,7 @@ public class ComponentMLCCI extends ComponentMLAggregator {
 
     @Override
     protected ConfigMapChromosome2 getNewChromosome(MarketActionData action, Market market, ProfitData profitdata,
-            Memories positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
+            Memories positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsDTO> mlTests) {
         return new MLCCIChromosome(gene);
     }
 

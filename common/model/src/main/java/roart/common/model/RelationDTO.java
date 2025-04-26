@@ -1,10 +1,8 @@
 package roart.common.model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
-public class RelationItem {
+public class RelationDTO {
 
     private LocalDate record;
 

@@ -33,7 +33,7 @@ public class IoBean {
 
     @Bean
     public MyDataSource getDataSource(DbDao dbDao, IclijConfig conf) {
-        return new DbDataSource(dbDao, conf);
+        return  new DbDataSource(dbDao, conf);
     }
     
     @Bean

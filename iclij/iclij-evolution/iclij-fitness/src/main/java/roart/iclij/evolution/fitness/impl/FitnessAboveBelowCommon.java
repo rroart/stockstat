@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import roart.iclij.model.action.MarketActionData;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.IncDecItem;
+import roart.common.model.IncDecDTO;
 import roart.common.pipeline.data.PipelineData;
 import roart.component.model.ComponentData;
 import roart.component.util.IncDecUtil;
@@ -36,7 +36,7 @@ public class FitnessAboveBelowCommon {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public double fitness(Collection<IncDecItem> myincs, Collection<IncDecItem> mydecs, Collection<IncDecItem> myincdec, int minimum, Boolean buy) {
+    public double fitness(Collection<IncDecDTO> myincs, Collection<IncDecDTO> mydecs, Collection<IncDecDTO> myincdec, int minimum, Boolean buy) {
         double incdecFitness;
         int fitnesses = 0;
         double decfitness = 0;
@@ -88,7 +88,7 @@ public class FitnessAboveBelowCommon {
         return incdecFitness;
     }
     
-    public Pair<Long, Integer>[] fitness2(Collection<IncDecItem> myincs, Collection<IncDecItem> mydecs, Collection<IncDecItem> myincdec, int minimum, Boolean buy) {
+    public Pair<Long, Integer>[] fitness2(Collection<IncDecDTO> myincs, Collection<IncDecDTO> mydecs, Collection<IncDecDTO> myincdec, int minimum, Boolean buy) {
         double incdecFitness;
         int fitnesses = 0;
         double decfitness = 0;
@@ -145,21 +145,21 @@ public class FitnessAboveBelowCommon {
         return pairs;
     }
     
-    public double fitnessCommon(List<Boolean> genes, MarketActionData action, ComponentData param, ProfitData profitdata, List<String> components, List<String> subcomponents, List<IncDecItem> incdecs, Market market, List<String> stockDates, Parameters parameters, Boolean buy, String componentName, Map<String, Object> map) {
+    public double fitnessCommon(List<Boolean> genes, MarketActionData action, ComponentData param, ProfitData profitdata, List<String> components, List<String> subcomponents, List<IncDecDTO> incdecs, Market market, List<String> stockDates, Parameters parameters, Boolean buy, String componentName, Map<String, Object> map) {
         WebData myData = new WebData();
         myData.setIncs(new ArrayList<>());
         myData.setDecs(new ArrayList<>());
         myData.setUpdateMap(new HashMap<>());
-        myData.setMemoryItems(new ArrayList<>());
+        myData.setMemoryDTOs(new ArrayList<>());
         myData.setUpdateMap2(new HashMap<>());
         //myData.profitData = new ProfitData();
         myData.setTimingMap(new HashMap<>());
 
-        //List<IncDecItem> listInc = incdecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toList());
-        //List<IncDecItem> listDec = incdecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
+        //List<IncDecDTO> listInc = incdecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toList());
+        //List<IncDecDTO> listDec = incdecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
         //listInc = new MiscUtil().mergeList(listInc, false);
         //listDec = new MiscUtil().mergeList(listDec, false);
-        //List<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec, true);
+        //List<IncDecDTO> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec, true);
         
         List<String> mycomponents = new ArrayList<>();
         List<String> mysubcomponents = new ArrayList<>();
@@ -180,19 +180,19 @@ public class FitnessAboveBelowCommon {
             }
         }
         
-        Set<IncDecItem> myincdecs = new HashSet<>(new MiscUtil().getIncDecsWithComponent(incdecs, mycomponents));
+        Set<IncDecDTO> myincdecs = new HashSet<>(new MiscUtil().getIncDecsWithComponent(incdecs, mycomponents));
         myincdecs.addAll(new MiscUtil().getIncDecsWithSubcomponent(incdecs, mysubcomponents));
-        Set<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toSet());
-        Set<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toSet());
+        Set<IncDecDTO> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toSet());
+        Set<IncDecDTO> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toSet());
         myincs = new MiscUtil().mergeList(myincs, true);
         mydecs = new MiscUtil().mergeList(mydecs, true);
-        Set<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
+        Set<IncDecDTO> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
         try {
             int verificationdays = param.getConfig().verificationDays();
             myData.setProfitData(profitdata);
             Memories listMap = new Memories(market);
             ProfitInputData inputdata = new ProfitInputData();
-            listMap.method(myData.getMemoryItems(), param.getConfig());        
+            listMap.method(myData.getMemoryDTOs(), param.getConfig());        
             profitdata.setInputdata(inputdata);
         
             short startoffset = new MarketUtil().getStartoffset(market);
@@ -221,17 +221,17 @@ public class FitnessAboveBelowCommon {
         return incdecFitness;
     }
 
-    public static Pair<Long, Integer> countsize(Collection<IncDecItem> list) {
-        List<Boolean> listBoolean = list.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
+    public static Pair<Long, Integer> countsize(Collection<IncDecDTO> list) {
+        List<Boolean> listBoolean = list.stream().map(IncDecDTO::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
         long count = listBoolean.stream().filter(i -> i).count();                            
         int size = listBoolean.size();
         return new ImmutablePair(count, size);
 
     }
     
-    public static Pair<Long, Integer> countsize(Collection<IncDecItem> list, boolean above) {
+    public static Pair<Long, Integer> countsize(Collection<IncDecDTO> list, boolean above) {
         list = list.stream().filter(e -> e.isIncrease() == above).collect(Collectors.toList());
-        List<Boolean> listBoolean = list.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
+        List<Boolean> listBoolean = list.stream().map(IncDecDTO::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
         long count = listBoolean.stream().filter(i -> i).count();                            
         int size = listBoolean.size();
         return new ImmutablePair(count, size);

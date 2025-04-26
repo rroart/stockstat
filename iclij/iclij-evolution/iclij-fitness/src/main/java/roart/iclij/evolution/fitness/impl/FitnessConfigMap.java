@@ -3,6 +3,7 @@ package roart.iclij.evolution.fitness.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,7 @@ import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.MemoryItem;
+import roart.common.model.MemoryDTO;
 import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
@@ -71,10 +72,10 @@ public class FitnessConfigMap extends Fitness {
 
     @Override
     public double fitness(AbstractChromosome chromosome) {
-        List<MemoryItem> memoryItems = null;
+        List<MemoryDTO> memoryItems = null;
         WebData myData = new WebData();
         myData.setUpdateMap(new HashMap<>());
-        myData.setMemoryItems(new ArrayList<>());
+        myData.setMemoryDTOs(new ArrayList<>());
         //myData.profitData = new ProfitData();
         myData.setTimingMap(new HashMap<>());
 
@@ -116,7 +117,10 @@ public class FitnessConfigMap extends Fitness {
             profitdata.setInputdata(inputdata);
             inputdata.setNameMap(new HashMap<>());
 
+            // TODO put higher up, maybe in action?
             param.setDisableCache(true); // for improveprofit
+            // NOT param.setId(UUID.randomUUID().toString());
+            
             ComponentData componentData2 = component.handle(action, market, param, profitdata, listMap, evolve, gene.getMap(), subcomponent, null, parameters, false);
             Object[] result = component.calculateAccuracy(componentData2);
             score = (Double) result[0];

@@ -59,8 +59,8 @@ import roart.common.constants.Constants;
 import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
-import roart.common.model.MetaItem;
-import roart.common.model.StockItem;
+import roart.common.model.MetaDTO;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialInteger;
@@ -113,7 +113,7 @@ public class CoreControlService {
         return new ArrayList<>();
     }
 
-    public List<MetaItem> getMetas() {
+    public List<MetaDTO> getMetas() {
         try {
             return io.getDbDao().getMetas();
         } catch (Exception e) {
@@ -133,9 +133,9 @@ public class CoreControlService {
         // TODO pipeline
         try {
             Map<String, String> stockMap = new HashMap<>();
-            List<StockItem> stocks = io.getDbDao().getAll(market, conf, true);
+            List<StockDTO> stocks = io.getDbDao().getAll(market, conf, true);
             stocks.remove(null);
-            for (StockItem stock : stocks) {
+            for (StockDTO stock : stocks) {
                 String name = stock.getName();
                 if (name != null && !name.isEmpty() && !name.isBlank()) {
                     stockMap.put(stock.getId(), stock.getName());
@@ -203,7 +203,7 @@ public class CoreControlService {
 
             // for categories and adding to pipelinedata
 
-            List<StockItem> dayStocks = iu.getDayStocks(conf, stockData);
+            List<StockDTO> dayStocks = iu.getDayStocks(conf, stockData);
             
             categories = Arrays.asList(new CategoryUtil().getCategories(conf, dayStocks,
                     stockData.periodText, pipelinedata, inmemory));
@@ -329,7 +329,7 @@ public class CoreControlService {
         }
     }
 
-    private void createRows(IclijConfig conf, ResultItemTable table, List<StockItem> datedstocks, AbstractCategory[] categories,
+    private void createRows(IclijConfig conf, ResultItemTable table, List<StockDTO> datedstocks, AbstractCategory[] categories,
             AbstractPredictor[] predictors, Aggregator[] aggregates) {
         if (conf.getConfigData().getMarket() == null) {
             return;
@@ -348,7 +348,7 @@ public class CoreControlService {
             }
         }
         */
-        for (StockItem stock : datedstocks) {
+        for (StockDTO stock : datedstocks) {
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(stock.getId());
             row.add(stock.getIsin());
@@ -495,14 +495,14 @@ public class CoreControlService {
                 return new ArrayList<>();
             }
             // sort based on date
-            for (Entry<String, List<StockItem>> entry : stockData.stockidmap.entrySet()) {
-                List<StockItem> stocklist = entry.getValue();
+            for (Entry<String, List<StockDTO>> entry : stockData.stockidmap.entrySet()) {
+                List<StockDTO> stocklist = entry.getValue();
                 stocklist.sort(StockUtil.StockDateComparator);
             }
 
-            List<StockItem>[] datedstocklistsmove = StockUtil.getDatedstocklists(stockData.stockdatemap, conf.getConfigData().getDate(), stockData.days, conf.getTableMoveIntervalDays());
+            List<StockDTO>[] datedstocklistsmove = StockUtil.getDatedstocklists(stockData.stockdatemap, conf.getConfigData().getDate(), stockData.days, conf.getTableMoveIntervalDays());
 
-            List<StockItem>[][] stocklistPeriod = StockUtil.getListSorted(datedstocklistsmove, stockData.days);
+            List<StockDTO>[][] stocklistPeriod = StockUtil.getListSorted(datedstocklistsmove, stockData.days);
             
             GraphCategoryPeriodTopBottom[] categories = new GraphCategoryPeriodTopBottom[Constants.PERIODS];
             for (int i = 0; i < Constants.PERIODS; i++) {
@@ -585,15 +585,15 @@ public class CoreControlService {
         row.add("Pearson (e)");
         table.add(row);
         try {
-            List<StockItem> stocks = io.getDbDao().getAll(conf.getConfigData().getMarket(), conf, true);
+            List<StockDTO> stocks = io.getDbDao().getAll(conf.getConfigData().getMarket(), conf, true);
             log.info("stocks {}", stocks.size());
-            Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
-            Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
+            Map<String, List<StockDTO>> stockidmap = StockUtil.splitId(stocks);
+            Map<String, List<StockDTO>> stockdatemap = StockUtil.splitDate(stocks);
             stockdatemap = StockUtil.filterFew(stockdatemap, conf.getFilterDate());
 
             // sort based on date
-            for (Entry<String, List<StockItem>> entry : stockidmap.entrySet()) {
-                List<StockItem> stocklist = entry.getValue();
+            for (Entry<String, List<StockDTO>> entry : stockidmap.entrySet()) {
+                List<StockDTO> stocklist = entry.getValue();
                 stocklist.sort(StockUtil.StockDateComparator);
             }
 
@@ -606,9 +606,9 @@ public class CoreControlService {
              * Make stock lists based on the intervals
              */
 
-            List<StockItem> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, conf.getConfigData().getDate(), days, conf.getTableIntervalDays());
+            List<StockDTO> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, conf.getConfigData().getDate(), days, conf.getTableIntervalDays());
 
-            List<StockItem> datedstocks = datedstocklists[0];
+            List<StockDTO> datedstocks = datedstocklists[0];
             if (datedstocks == null) {
                 return new ArrayList<>();
             }

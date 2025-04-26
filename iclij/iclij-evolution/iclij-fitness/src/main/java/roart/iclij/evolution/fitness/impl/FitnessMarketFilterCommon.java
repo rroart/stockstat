@@ -19,7 +19,7 @@ import roart.iclij.model.action.MarketActionData;
 import roart.common.constants.Constants;
 import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.IncDecItem;
+import roart.common.model.IncDecDTO;
 import roart.common.pipeline.data.PipelineData;
 import roart.component.model.ComponentData;
 import roart.component.util.IncDecUtil;
@@ -38,32 +38,32 @@ public class FitnessMarketFilterCommon {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public double fitnessCommon(MarketActionData action, ComponentData param, Market market, ProfitData profitdata, Boolean buy, List<String> stockDates, List<IncDecItem> incdecs, Parameters parameters, String componentName, Map<String, Object> map) {
+    public double fitnessCommon(MarketActionData action, ComponentData param, Market market, ProfitData profitdata, Boolean buy, List<String> stockDates, List<IncDecDTO> incdecs, Parameters parameters, String componentName, Map<String, Object> map) {
         WebData myData = new WebData();
         myData.setIncs(new ArrayList<>());
         myData.setDecs(new ArrayList<>());
         myData.setUpdateMap(new HashMap<>());
-        myData.setMemoryItems(new ArrayList<>());
+        myData.setMemoryDTOs(new ArrayList<>());
         myData.setUpdateMap2(new HashMap<>());
         myData.setTimingMap(new HashMap<>());
         Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
-        List<IncDecItem> myincdecs = new ArrayList<>(incdecs);
+        List<IncDecDTO> myincdecs = new ArrayList<>(incdecs);
         PipelineData[] maps = param.getResultMaps();
         new MarketUtil().fillProfitdata(profitdata, myincdecs);
         new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, stockDates, inmemory);
         new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, stockDates, inmemory);
-        Set<IncDecItem> myincs = new HashSet<>(profitdata.getBuys().values());
-        Set<IncDecItem> mydecs = new HashSet<>(profitdata.getSells().values());
+        Set<IncDecDTO> myincs = new HashSet<>(profitdata.getBuys().values());
+        Set<IncDecDTO> mydecs = new HashSet<>(profitdata.getSells().values());
         myincs = new MiscUtil().mergeList(myincs, true);
         mydecs = new MiscUtil().mergeList(mydecs, true);
-        Set<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
+        Set<IncDecDTO> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
         try {
             int verificationdays = param.getConfig().verificationDays();
             myData.setProfitData(profitdata);
         
             Memories listMap = new Memories(market);
             ProfitInputData inputdata = new ProfitInputData();
-            listMap.method(myData.getMemoryItems(), param.getConfig());        
+            listMap.method(myData.getMemoryDTOs(), param.getConfig());        
             profitdata.setInputdata(inputdata);
         
             short startoffset = new MarketUtil().getStartoffset(market);
@@ -91,7 +91,7 @@ public class FitnessMarketFilterCommon {
         return incdecFitness;
     }
     
-    public double fitness(Collection<IncDecItem> myincs, Collection<IncDecItem> mydecs, Collection<IncDecItem> myincdec, int minimum, Boolean buy) {
+    public double fitness(Collection<IncDecDTO> myincs, Collection<IncDecDTO> mydecs, Collection<IncDecDTO> myincdec, int minimum, Boolean buy) {
         double incdecFitness;
         int fitnesses = 0;
         double decfitness = 0;
@@ -143,8 +143,8 @@ public class FitnessMarketFilterCommon {
         return incdecFitness;
     }
     
-    public static Pair<Long, Integer> countsize(Collection<IncDecItem> list) {
-        List<Boolean> listBoolean = list.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
+    public static Pair<Long, Integer> countsize(Collection<IncDecDTO> list) {
+        List<Boolean> listBoolean = list.stream().map(IncDecDTO::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
         long count = listBoolean.stream().filter(i -> i).count();                            
         int size = listBoolean.size();
         return new ImmutablePair(count, size);

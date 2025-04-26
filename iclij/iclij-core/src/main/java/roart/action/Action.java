@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import roart.common.model.MemoryItem;
+import roart.common.model.MemoryDTO;
 import roart.component.model.ComponentData;
 import roart.constants.IclijPipelineConstants;
 import roart.db.dao.IclijDbDao;
@@ -25,13 +25,13 @@ public abstract class Action {
         this.goals = goals;
     }
 
-    private List<MemoryItem> memory;
+    private List<MemoryDTO> memory;
 
-    public List<MemoryItem> getMemory() {
+    public List<MemoryDTO> getMemory() {
         return memory;
     }
 
-    public void setMemory(List<MemoryItem> memory) {
+    public void setMemory(List<MemoryDTO> memory) {
         this.memory = memory;
     }
 

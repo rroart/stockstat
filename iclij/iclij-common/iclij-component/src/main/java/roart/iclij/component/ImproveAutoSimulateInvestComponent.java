@@ -10,25 +10,19 @@ import java.util.Map;
 
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
-import roart.common.constants.ServiceConstants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
-import roart.common.model.MetaItem;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
+import roart.common.model.MetaDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.util.PipelineUtils;
-import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.constants.SimConstants;
-import roart.iclij.evolution.chromosome.winner.IclijConfigMapChromosomeWinner;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.Fitness;
-import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapChromosome;
-import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapGene;
 import roart.iclij.config.ComponentConstants;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
@@ -103,8 +97,8 @@ public class ImproveAutoSimulateInvestComponent extends ComponentML {
 
     @Override
     public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata,
-            Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree,
-            List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
+                                 Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree,
+                                 List<MLMetricsDTO> mlTests, Fitness fitness, boolean save) {
         return null;
     }
 
@@ -115,11 +109,11 @@ public class ImproveAutoSimulateInvestComponent extends ComponentML {
 
     @Override
     public void calculateIncDec(ComponentData param, ProfitData profitdata, Memories positions, Boolean above,
-            List<MLMetricsItem> mlTests, Parameters parameters) {
+                                List<MLMetricsDTO> mlTests, Parameters parameters) {
     }
 
     @Override
-    public List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception {
+    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception {
         return null;
     }
 
@@ -148,14 +142,15 @@ public class ImproveAutoSimulateInvestComponent extends ComponentML {
         return new Object[] { componentparam.getScoreMap().get(SimConstants.SCORE) };
     }
 
+    // duplicated
     public void getResultMaps(SimulateInvestData param, Market market) {
         //Map<String, List<Object>> objectMap = new HashMap<>();
         IclijConfig config = param.getConfig();
 
         Map<String, Object> aMap = new HashMap<>();
         // for improve evolver
-        //List<MetaItem> metas = param.getService().getMetas();
-        //MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
+        //List<MetaDTO> metas = param.getService().getMetas();
+        //MetaDTO meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
         //ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters, mlTests);
         // don't need these both here and in getevolveml?
         // TODO indicators not all
@@ -218,7 +213,7 @@ public class ImproveAutoSimulateInvestComponent extends ComponentML {
         //return resultMaps;
     }
 
-    public List<MetaItem> getAllMetas(ComponentData param) {
+    public List<MetaDTO> getAllMetas(ComponentData param) {
         return param.getService().getMetas();
     }
 

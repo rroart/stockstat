@@ -3,19 +3,15 @@ package roart.common.springdata.rowmapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import java.util.Date;
-
 import org.springframework.jdbc.core.RowMapper;
 
-import roart.common.model.MemoryItem;
+import roart.common.model.MemoryDTO;
 import roart.common.util.TimeUtil;
 
-import org.springframework.jdbc.core.RowMapper;
-
-public class MemoryRowMapper implements RowMapper<MemoryItem>{
+public class MemoryRowMapper implements RowMapper<MemoryDTO>{
     @Override
-    public MemoryItem mapRow(ResultSet rs, int rowNum) throws SQLException {
-        MemoryItem item = new MemoryItem();
+    public MemoryDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+        MemoryDTO item = new MemoryDTO();
         // \([A-Za-z]+\) \([A-Za-z]+\) item.set\2(rs.get\1("\,(downcase \2)")
         // item.set\([a-z]\) → item.set\,(upcase \1))
         item.setAction(rs.getString("action"));

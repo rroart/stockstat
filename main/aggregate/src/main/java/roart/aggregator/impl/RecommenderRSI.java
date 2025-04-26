@@ -17,7 +17,7 @@ import roart.indicator.util.IndicatorUtils;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.result.model.ResultItemTableRow;
 import roart.model.data.MarketData;
 import roart.stockutil.StockDao;
@@ -74,7 +74,7 @@ public class RecommenderRSI extends Aggregator {
     }
 
     @Override
-    public Object[] getResultItem(StockItem stock) {
+    public Object[] getResultItem(StockDTO stock) {
         Object[] fields = new Object[2];
         int retindex = 0;
         String id = stock.getId();
@@ -92,7 +92,7 @@ public class RecommenderRSI extends Aggregator {
     }
 
     @Override
-    public void addResultItem(ResultItemTableRow row, StockItem stock) {
+    public void addResultItem(ResultItemTableRow row, StockDTO stock) {
         Object[] obj = new Object[2];
         obj = round(obj, 3);
         if (rsiMap != null) {

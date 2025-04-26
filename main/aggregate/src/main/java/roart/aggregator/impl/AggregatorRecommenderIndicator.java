@@ -33,7 +33,7 @@ import roart.gene.impl.CalcGeneUtils;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
 import roart.pipeline.Pipeline;
@@ -200,7 +200,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
     }
 
     @Override
-    public Object[] getResultItem(StockItem stock) {
+    public Object[] getResultItem(StockDTO stock) {
         Double[] arrayResult = new Double[0];
         if (usedRecommenders == null) {
             return arrayResult;
@@ -229,7 +229,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
     }
 
     @Override
-    public void addResultItem(ResultItemTableRow row, StockItem stock) {
+    public void addResultItem(ResultItemTableRow row, StockDTO stock) {
         Object[] arrayResult = getResultItem(stock);
         arrayResult = round(arrayResult, 3);
         row.addarr(arrayResult);

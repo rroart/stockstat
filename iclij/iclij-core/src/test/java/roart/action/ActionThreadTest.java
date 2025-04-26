@@ -14,8 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 
 import roart.common.util.JsonUtil;
-import roart.common.model.ActionComponentItem;
-import roart.common.model.TimingBLItem;
+import roart.common.model.ActionComponentDTO;
+import roart.common.model.TimingBLDTO;
 import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.bean.ConfigI;
@@ -49,26 +49,26 @@ public class ActionThreadTest {
         IO io = null;
         ActionThread t = new ActionThread(iclijConfig, io);
 
-        ActionComponentItem item1 = new ActionComponentItem();
+        ActionComponentDTO item1 = new ActionComponentDTO();
         item1.setPriority(-20);
         item1.setHaverun(false);
-        ActionComponentItem item2 = new ActionComponentItem();
+        ActionComponentDTO item2 = new ActionComponentDTO();
         item2.setPriority(50);
         item2.setTime(98);
         item2.setHaverun(true);   	
-        ActionComponentItem item3 = new ActionComponentItem();
+        ActionComponentDTO item3 = new ActionComponentDTO();
         item3.setPriority(50);
         item3.setTime(100.5);
         item3.setHaverun(true);   	
-        ActionComponentItem item4 = new ActionComponentItem();
+        ActionComponentDTO item4 = new ActionComponentDTO();
         item4.setPriority(50);
         item4.setTime(100.6);
         item4.setHaverun(true);   	
-        ActionComponentItem item5 = new ActionComponentItem();
+        ActionComponentDTO item5 = new ActionComponentDTO();
         item5.setPriority(50);
         item5.setTime(102);
         item5.setHaverun(true);   	
-        ActionComponentItem item6 = new ActionComponentItem();
+        ActionComponentDTO item6 = new ActionComponentDTO();
         item6.setPriority(50);
 
         assertTrue(t.getScore(item1) < t.getScore(item6));
@@ -94,8 +94,8 @@ public class ActionThreadTest {
         System.out.println("" + JsonUtil.convert(parameters));
         //if (true) return;
         
-        //TimingBLItem item = new TimingBLItem();
-        ActionComponentItem item = new ActionComponentItem();
+        //TimingBLDTO item = new TimingBLDTO();
+        ActionComponentDTO item = new ActionComponentDTO();
         item.setMarket("omxs");
         item.setAction("crosstest");
         item.setComponent("mlatr");
@@ -111,14 +111,14 @@ public class ActionThreadTest {
         //ActionFactory actionFactory = mock(ActionFactory.class);
         //MarketAction action = mock(MarketAction.class);
         
-        //List<ActionComponentItem> spyList = spy(new ArrayList<>());        
+        //List<ActionComponentDTO> spyList = spy(new ArrayList<>());        
         //spyList.add(item);
-        List<ActionComponentItem> list = new ArrayList<>();        
+        List<ActionComponentDTO> list = new ArrayList<>();        
         list.add(item);
-        List<TimingBLItem> list2 = new ArrayList<>();        
+        List<TimingBLDTO> list2 = new ArrayList<>();        
        
         //when(dbDao.getAllActionComponent()).thenReturn(list);
-        //when(dbDao.getAllTimingBLItem()).thenReturn(list2);
+        //when(dbDao.getAllTimingBLDTO()).thenReturn(list2);
         //when(actionFactory.get(any(), any())).thenReturn(action);
         //when(action.getName()).thenReturn("");
         //doThrow(IllegalArgumentException.class)

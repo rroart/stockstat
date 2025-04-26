@@ -1,11 +1,8 @@
 package roart.common.model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
-public class IncDecItem {
+public class IncDecDTO {
     private LocalDate record;
     
     private LocalDate date;
@@ -36,7 +33,7 @@ public class IncDecItem {
     // not saved
     private String verificationComment;
     
-    public IncDecItem() {
+    public IncDecDTO() {
         super();
     }
     

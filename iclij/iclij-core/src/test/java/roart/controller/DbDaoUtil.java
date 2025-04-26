@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 
 import roart.db.hibernate.DbHibernate;
 import roart.db.hibernate.DbHibernateDS;
-import roart.common.model.ConfigItem;
-import roart.common.model.StockItem;
+import roart.common.model.ConfigDTO;
+import roart.common.model.StockDTO;
 import roart.common.springdata.model.Config;
 import roart.common.springdata.model.Stock;
 import roart.common.springdata.repository.SpringConfigRepository;
@@ -37,8 +37,8 @@ public class DbDaoUtil {
     @Autowired
     SpringConfigRepository repo3;
 
-    public List<ConfigItem> getAll(String market, int type) throws Exception {
-        List<StockItem> list = new ArrayList<>();
+    public List<ConfigDTO> getAll(String market, int type) throws Exception {
+        List<StockDTO> list = new ArrayList<>();
         long time0 = System.currentTimeMillis();
         if (type == 0) {
             return DbHibernateDS.instance().getConfigsByMarket(market);
@@ -52,8 +52,8 @@ public class DbDaoUtil {
         return null;
     }
 
-    private ConfigItem map(Config config) {
-        ConfigItem configItem = new ConfigItem();
+    private ConfigDTO map(Config config) {
+        ConfigDTO configItem = new ConfigDTO();
         configItem.setAction(config.getAction());
         configItem.setBuy(config.getBuy());
         configItem.setDate(TimeUtil.convertDate(config.getDate()));

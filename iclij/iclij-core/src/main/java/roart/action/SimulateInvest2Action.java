@@ -25,11 +25,11 @@ import roart.common.constants.EvolveConstants;
 import roart.common.constants.ServiceConstants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
-import roart.common.model.ActionComponentItem;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
-import roart.common.model.SimDataItem;
+import roart.common.model.ActionComponentDTO;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
+import roart.common.model.SimDataDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialList;
@@ -65,7 +65,7 @@ public class SimulateInvest2Action extends MarketAction {
     }
     
     @Override
-    protected List<IncDecItem> getIncDecItems() {
+    protected List<IncDecDTO> getIncDecDTOs() {
         return null;
     }
 
@@ -85,7 +85,7 @@ public class SimulateInvest2Action extends MarketAction {
     }
 
     @Override
-    protected List<MemoryItem> getMemItems(ActionComponentItem marketTime, WebData myData, ComponentData param,
+    protected List<MemoryDTO> getMemDTOs(ActionComponentDTO marketTime, WebData myData, ComponentData param,
             IclijConfig config, Boolean evolve, Map<String, ComponentData> dataMap) {
         return new ArrayList<>();
     }
@@ -104,7 +104,7 @@ public class SimulateInvest2Action extends MarketAction {
     protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param,
             Memories listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap,
             Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters,
-            boolean wantThree, List<MLMetricsItem> mlTests) {
+            boolean wantThree, List<MLMetricsDTO> mlTests) {
         String startDate = config.getSimulateInvestStartdate();
         String endDate = config.getSimulateInvestEnddate();
         AutoSimulateInvestConfig autoSimConfig = new AutoSimulateInvestConfig();
@@ -163,7 +163,7 @@ public class SimulateInvest2Action extends MarketAction {
         } catch (ParseException e) {
             log.error(Constants.EXCEPTION, e);
         }
-        //List<MemoryItem> memories = findAllMarketComponentsToCheckNew(myData, param, 0, config, false, dataMap, componentMap, subcomponent, parameters, market);
+        //List<MemoryDTO> memories = findAllMarketComponentsToCheckNew(myData, param, 0, config, false, dataMap, componentMap, subcomponent, parameters, market);
         
         for (Entry<String, Component> entry : componentMap.entrySet()) {
             Component component = entry.getValue();
@@ -288,10 +288,10 @@ public class SimulateInvest2Action extends MarketAction {
     }
 
     private Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> getSimConfigs(String market, AutoSimulateInvestConfig autoSimConf, List<SimulateFilter> filter, List<SimulateFilter[]> filters, IclijConfig config, MarketActionData actionData, ComponentData param) {
-        List<SimDataItem> all = new ArrayList<>();
+        List<SimDataDTO> all = new ArrayList<>();
         try {
             String simkey = CacheConstants.SIMDATA + market + autoSimConf.getStartdate() + autoSimConf.getEnddate();
-            all =  (List<SimDataItem>) MyCache.getInstance().get(simkey);
+            all =  (List<SimDataDTO>) MyCache.getInstance().get(simkey);
             if (all == null) {
                 LocalDate startDate = TimeUtil.convertDate(TimeUtil.replace(autoSimConf.getStartdate()));
                 LocalDate endDate = null;
@@ -332,7 +332,7 @@ public class SimulateInvest2Action extends MarketAction {
         Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> retMap = (Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>>) MyCache.getInstance().get(key);
         Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> newRetMap = new HashMap<>();
         if (retMap == null || VERIFYCACHE) {
-            for (SimDataItem data : all) {
+            for (SimDataDTO data : all) {
                 if (autoSimConf.getScorelimit().doubleValue() > data.getScore().doubleValue()) {
                     continue;
                 }
@@ -530,10 +530,10 @@ public class SimulateInvest2Action extends MarketAction {
     }
 
     private Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> getSimConfigs2(String market, AutoSimulateInvestConfig autoSimConf, List<SimulateFilter> filter, List<SimulateFilter[]> filters, IclijConfig config, MarketActionData actionData, ComponentData param) {
-        List<SimDataItem> all = new ArrayList<>();
+        List<SimDataDTO> all = new ArrayList<>();
         try {
             String simkey = CacheConstants.SIMDATA + market + autoSimConf.getStartdate() + autoSimConf.getEnddate();
-            all =  (List<SimDataItem>) MyCache.getInstance().get(simkey);
+            all =  (List<SimDataDTO>) MyCache.getInstance().get(simkey);
             if (all == null) {
                 LocalDate startDate = TimeUtil.convertDate(TimeUtil.replace(autoSimConf.getStartdate()));
                 LocalDate endDate = null;
@@ -561,7 +561,7 @@ public class SimulateInvest2Action extends MarketAction {
         Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> retMap = null;
         Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> newRetMap = new HashMap<>();
         if (retMap == null || VERIFYCACHE) {
-            for (SimDataItem data : all) {
+            for (SimDataDTO data : all) {
                 if (autoSimConf.getScorelimit().doubleValue() > data.getScore().doubleValue()) {
                     continue;
                 }

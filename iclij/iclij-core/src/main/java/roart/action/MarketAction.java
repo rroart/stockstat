@@ -31,12 +31,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.ActionComponentItem;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
-import roart.common.model.MetaItem;
-import roart.common.model.TimingItem;
+import roart.common.model.ActionComponentDTO;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
+import roart.common.model.MetaDTO;
+import roart.common.model.TimingDTO;
 import roart.common.model.util.MetaUtil;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
@@ -86,7 +86,7 @@ public abstract class MarketAction extends Action {
     
     private MarketActionData actionData;
     
-    protected abstract List<IncDecItem> getIncDecItems();
+    protected abstract List<IncDecDTO> getIncDecDTOs();
 
     protected abstract List getAnArray();
 
@@ -112,7 +112,7 @@ public abstract class MarketAction extends Action {
 
     protected abstract boolean getEvolve(Component component, ComponentData param);
 
-    protected abstract List<MemoryItem> getMemItems(ActionComponentItem marketTime, WebData myData, ComponentData param, IclijConfig config, Boolean evolve, Map<String, ComponentData> dataMap);
+    protected abstract List<MemoryDTO> getMemDTOs(ActionComponentDTO marketTime, WebData myData, ComponentData param, IclijConfig config, Boolean evolve, Map<String, ComponentData> dataMap);
 
     protected abstract LocalDate getPrevDate(ComponentData param, Market market);
 
@@ -128,7 +128,7 @@ public abstract class MarketAction extends Action {
         getMarkets(iclijConfig, parent, new ComponentInput(iclijConfig.getConfigData(), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), null, priority, io);
     }
 
-    public WebData getMarket(IclijConfig iclijConfig, Action parent, ComponentData param, Market market, Boolean evolve, Integer priority, List<TimingItem> timingsdone) {
+    public WebData getMarket(IclijConfig iclijConfig, Action parent, ComponentData param, Market market, Boolean evolve, Integer priority, List<TimingDTO> timingsdone) {
         List<Market> markets = new ArrayList<>();
         if (market != null) {
             markets.add(market);
@@ -145,7 +145,7 @@ public abstract class MarketAction extends Action {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        List<TimingItem> timings = null;
+        List<TimingDTO> timings = null;
         try {
             timings = param.getService().getIo().getIdbDao().getAllTiming();
         } catch (Exception e) {
@@ -155,7 +155,7 @@ public abstract class MarketAction extends Action {
         return getMarkets(iclijConfig, parent, param, markets, timings, evolve, priority, new ArrayList<>(), true);
     }        
     
-    private WebData getMarkets(IclijConfig iclijConfig, Action parent, ComponentData paramTemplate, List<Market> markets, List<TimingItem> timings, Boolean evolve, Integer priority, List<TimingItem> timingsdone, boolean auto) {
+    private WebData getMarkets(IclijConfig iclijConfig, Action parent, ComponentData paramTemplate, List<Market> markets, List<TimingDTO> timings, Boolean evolve, Integer priority, List<TimingDTO> timingsdone, boolean auto) {
 	// test picks for aggreg recommend, predict etc
         // remember and make confidence
         // memory is with date, confidence %, inc/dec, semantic item
@@ -165,17 +165,17 @@ public abstract class MarketAction extends Action {
 
         markets = new MarketUtil().filterMarkets(markets, getActionData().isDataset());
         
-        List<MetaItem> metas = paramTemplate.getService().getMetas();
+        List<MetaDTO> metas = paramTemplate.getService().getMetas();
             
         IclijConfig config = iclijConfig; //paramTemplate.getInput().getConfigData();
-        List<ActionComponentItem> marketTimes = new ArrayList<>();
+        List<ActionComponentDTO> marketTimes = new ArrayList<>();
         Map<String, ComponentData> componentDataMap = new HashMap<>();
         for (Market market : markets) {
             if (market.getConfig().getEnable() != null && !market.getConfig().getEnable()) {
                 continue;
             }
             String marketName = market.getConfig().getMarket();
-            MetaItem meta = new MetaUtil().findMeta(metas, marketName);
+            MetaDTO meta = new MetaUtil().findMeta(metas, marketName);
             boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
             LocalDate enddate = null;
             boolean siminvestmod = false;
@@ -222,8 +222,8 @@ public abstract class MarketAction extends Action {
             if (getActionData().getTime(market) == null) {
                 continue;
             }
-            List<TimingItem> currentTimings = getCurrentTimings(olddate, timings, market, getName(), time, false, stockDates);
-            List<IncDecItem> currentIncDecs = null; // ServiceUtil.getCurrentIncDecs(olddate, incdecitems, market);
+            List<TimingDTO> currentTimings = getCurrentTimings(olddate, timings, market, getName(), time, false, stockDates);
+            List<IncDecDTO> currentIncDecs = null; // ServiceUtil.getCurrentIncDecs(olddate, incdecitems, market);
             if (true) {
                 List<String> componentList = getProfitComponents(config, wantThree);
                 Map<String, Component> componentMap = getComponentMap(componentList, market);
@@ -236,16 +236,16 @@ public abstract class MarketAction extends Action {
                         componentMapFiltered.put(entry.getKey(),  entry.getValue());
                     }
                 }
-                List<ActionComponentItem> marketTime = getList(getName(), componentMapFiltered, timings, market, param, currentTimings, timingsdone, iclijConfig);
+                List<ActionComponentDTO> marketTime = getList(getName(), componentMapFiltered, timings, market, param, currentTimings, timingsdone, iclijConfig);
                 marketTimes.addAll(marketTime);
             } else {
                 int jj = 0;
             }
         }
         if (auto) {
-            List<ActionComponentItem> marketTimesFiltered = new ArrayList<>();;
+            List<ActionComponentDTO> marketTimesFiltered = new ArrayList<>();;
             Set<String> marketTimesIds = new HashSet<>();
-            for (ActionComponentItem marketTime : marketTimes) {
+            for (ActionComponentDTO marketTime : marketTimes) {
                 String id = marketTime.toStringId();
                 if (!ActionThread.queued.contains(id)) {
                     marketTimesIds.add(id);
@@ -260,36 +260,36 @@ public abstract class MarketAction extends Action {
         }
         
         Collections.sort(marketTimes, (o1, o2) -> (Double.valueOf(o2.getTime()).compareTo(Double.valueOf(o1.getTime()))));
-        List<ActionComponentItem> run = marketTimes.stream().filter(m -> m.isHaverun()).collect(Collectors.toList());
-        List<ActionComponentItem> notrun = marketTimes.stream().filter(m -> !m.isHaverun()).collect(Collectors.toList());
+        List<ActionComponentDTO> run = marketTimes.stream().filter(m -> m.isHaverun()).collect(Collectors.toList());
+        List<ActionComponentDTO> notrun = marketTimes.stream().filter(m -> !m.isHaverun()).collect(Collectors.toList());
 
         // Event-ish
         
-        for (ActionComponentItem marketTime : marketTimes) {
+        for (ActionComponentDTO marketTime : marketTimes) {
             log.info("MarketTime {}", marketTime);
         }
-        for (ActionComponentItem marketTime : notrun) {
+        for (ActionComponentDTO marketTime : notrun) {
             if (marketTime.getTime() == 0.0) {
                 ComponentData param = componentDataMap.get(marketTime.getMarket());
-                MetaItem meta = new MetaUtil().findMeta(metas, marketTime.getMarket());
+                MetaDTO meta = new MetaUtil().findMeta(metas, marketTime.getMarket());
                 boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
-                String actionItem = LocalTime.now() + " " + Thread.currentThread().getId() + " " + marketTime.toStringId();
-                getPicksFilteredOuter(myData, param, config, marketTime, evolve, wantThree, actionItem);                
+                String actionDTO = LocalTime.now() + " " + Thread.currentThread().getId() + " " + marketTime.toStringId();
+                getPicksFilteredOuter(myData, param, config, marketTime, evolve, wantThree, actionDTO);                
             }
         }
-        for (ActionComponentItem marketTime : notrun) {
+        for (ActionComponentDTO marketTime : notrun) {
             if (marketTime.getTime() > 0.0) {
                 if (!enoughTime(config, marketTime)) {
                     continue;
                 }
                 ComponentData param = componentDataMap.get(marketTime.getMarket());
-                MetaItem meta = new MetaUtil().findMeta(metas, marketTime.getMarket());
+                MetaDTO meta = new MetaUtil().findMeta(metas, marketTime.getMarket());
                 boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
-                String actionItem = LocalTime.now() + " " + Thread.currentThread().getId() + " " + marketTime.toStringId();
-                getPicksFilteredOuter(myData, param, config, marketTime, evolve, wantThree, actionItem);                
+                String actionDTO = LocalTime.now() + " " + Thread.currentThread().getId() + " " + marketTime.toStringId();
+                getPicksFilteredOuter(myData, param, config, marketTime, evolve, wantThree, actionDTO);                
             }            
         }       
-        for (ActionComponentItem marketTime : run) {
+        for (ActionComponentDTO marketTime : run) {
             if (marketTime.getTime() == 0.0) {
                 log.error("should not be here");
             }
@@ -298,10 +298,10 @@ public abstract class MarketAction extends Action {
                     continue;
                 }
                 ComponentData param = componentDataMap.get(marketTime.getMarket());
-                MetaItem meta = new MetaUtil().findMeta(metas, marketTime.getMarket());
+                MetaDTO meta = new MetaUtil().findMeta(metas, marketTime.getMarket());
                 boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
-                String actionItem = LocalTime.now() + " " + Thread.currentThread().getId() + " " + marketTime.toStringId();
-                getPicksFilteredOuter(myData, param, config, marketTime, evolve, wantThree, actionItem);                
+                String actionDTO = LocalTime.now() + " " + Thread.currentThread().getId() + " " + marketTime.toStringId();
+                getPicksFilteredOuter(myData, param, config, marketTime, evolve, wantThree, actionDTO);                
             }            
         }       
         return myData;
@@ -318,7 +318,7 @@ public abstract class MarketAction extends Action {
         }
     }
 
-    public static boolean enoughTime(IclijConfig config, ActionComponentItem marketTime) {
+    public static boolean enoughTime(IclijConfig config, ActionComponentDTO marketTime) {
         if (marketTime.getTime() == 0) {
             return true;
         }
@@ -347,7 +347,7 @@ public abstract class MarketAction extends Action {
         return myData;
     }
     
-    protected List<TimingItem> getCurrentTimings(LocalDate olddate, List<TimingItem> timings, Market market, String name,
+    protected List<TimingDTO> getCurrentTimings(LocalDate olddate, List<TimingDTO> timings, Market market, String name,
             Short time, boolean b, List<String> stockDates) {
         return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
     }
@@ -358,14 +358,14 @@ public abstract class MarketAction extends Action {
 
     protected static final int AVERAGE_SIZE = 5;
 
-    private List<ActionComponentItem> getList(String action, Map<String, Component> componentMapFiltered, List<TimingItem> timings, Market market, ComponentData param, List<TimingItem> currentTimings, List<TimingItem> timingsdone, IclijConfig iclijConfig) {
-        List<MLMetricsItem> mltests = null;
+    private List<ActionComponentDTO> getList(String action, Map<String, Component> componentMapFiltered, List<TimingDTO> timings, Market market, ComponentData param, List<TimingDTO> currentTimings, List<TimingDTO> timingsdone, IclijConfig iclijConfig) {
+        List<MLMetricsDTO> mltests = null;
         try {
             mltests = param.getService().getIo().getIdbDao().getAllMLMetrics(market.getConfig().getMarket(), null, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        List<ActionComponentItem> marketTimes = new ArrayList<>();
+        List<ActionComponentDTO> marketTimes = new ArrayList<>();
         String marketName = market.getConfig().getMarket();
         Double confidence = null;
         if (!isDataset()) {
@@ -413,7 +413,7 @@ public abstract class MarketAction extends Action {
                         String parameterString = JsonUtil.convert(parameters);
                         Boolean[] booleans = getActionData().getBooleans();
                         for (Boolean buy : booleans) {
-                            List<TimingItem> currentTimingFiltered = currentTimings.stream().filter(m -> m != null 
+                            List<TimingDTO> currentTimingFiltered = currentTimings.stream().filter(m -> m != null 
                                     && componentName.equals(m.getComponent()) 
                                     && (subComponents == null || myequals(subComponent, m.getSubcomponent())) 
                                     && (m.getParameters() == null || parameterString.equals(m.getParameters())) 
@@ -421,8 +421,8 @@ public abstract class MarketAction extends Action {
                             if (!currentTimingFiltered.isEmpty()) {
                                 continue;
                             }
-                            //List<TimingItem> timingToDo = new ArrayList<>();
-                            ActionComponentItem marketTime = new ActionComponentItem();
+                            //List<TimingDTO> timingToDo = new ArrayList<>();
+                            ActionComponentDTO marketTime = new ActionComponentDTO();
                             // TODO
                             marketTime.setMarket(market.getConfig().getMarket());
                             //marketTime.componentName = componentName;
@@ -437,13 +437,13 @@ public abstract class MarketAction extends Action {
                             int aPriority = getPriority(config, mypriorityKey);
                             int mypriority = aPriority + entry.getValue().getConfig().getPriority(config);
                             marketTime.setPriority(mypriority);
-                            List<TimingItem> filterTimingsEvolution = getMyTimings(timings, marketName, action, componentName, true, buy, subComponent, parameters);
+                            List<TimingDTO> filterTimingsEvolution = getMyTimings(timings, marketName, action, componentName, true, buy, subComponent, parameters);
                             if (evolve) {
                                 handleFilterTimings(action, market, marketTime, componentName, filterTimingsEvolution, evolve, param.getInput().getEnddate(), buy, timings, subComponent, parameters);               
                             }
                             // evolve is not false
                             if (getName().equals(IclijConstants.FINDPROFIT)) {
-                                List<TimingItem> filterTimings = getMyTimings(timings, marketName, action, componentName, false, buy, subComponent, parameters);
+                                List<TimingDTO> filterTimings = getMyTimings(timings, marketName, action, componentName, false, buy, subComponent, parameters);
                                 handleFilterTimings(action, market, marketTime, componentName, filterTimings, evolve, param.getInput().getEnddate(), buy, timings, subComponent, parameters);
                             }
                             marketTimes.add(marketTime);
@@ -463,17 +463,17 @@ public abstract class MarketAction extends Action {
         }
     }
 
-    protected boolean getSkipComponent(List<MLMetricsItem> mltests, Double confidence, String componentName) {
+    protected boolean getSkipComponent(List<MLMetricsDTO> mltests, Double confidence, String componentName) {
         return false;
     }
     
-    protected boolean getSkipSubComponent(List<MLMetricsItem> mltests, Double confidence, String componentName,
+    protected boolean getSkipSubComponent(List<MLMetricsDTO> mltests, Double confidence, String componentName,
             String subComponent) {
         return false;
     }
     
-    private void handleFilterTimings(String action, Market market, ActionComponentItem marketTime,
-            String component, List<TimingItem> filterTimings, boolean evolve, LocalDate date, Boolean buy, List<TimingItem> timings, String subComponent, Parameters parameters) {
+    private void handleFilterTimings(String action, Market market, ActionComponentDTO marketTime,
+            String component, List<TimingDTO> filterTimings, boolean evolve, LocalDate date, Boolean buy, List<TimingDTO> timings, String subComponent, Parameters parameters) {
         if (!filterTimings.isEmpty()) {
             Collections.sort(filterTimings, (o1, o2) -> (o2.getDate().compareTo(o1.getDate())));
             LocalDate olddate = date.minusDays(((long) AVERAGE_SIZE) * getActionData().getTime(market));
@@ -492,7 +492,7 @@ public abstract class MarketAction extends Action {
                 log.error("should not be here");
             }
         } else {
-            List<TimingItem> filterTimingsEvolution = getMyTimings(timings, action, component, evolve, buy, subComponent, parameters);
+            List<TimingDTO> filterTimingsEvolution = getMyTimings(timings, action, component, evolve, buy, subComponent, parameters);
             OptionalDouble average = getAverage(filterTimingsEvolution);
             marketTime.setTime(marketTime.getTime() + average.orElse(0));
             if (!evolve) {
@@ -502,19 +502,19 @@ public abstract class MarketAction extends Action {
         }
     }
 
-    private OptionalDouble getAverage(List<TimingItem> timings) {
+    private OptionalDouble getAverage(List<TimingDTO> timings) {
         Collections.sort(timings, (o1, o2) -> (o2.getDate().compareTo(o1.getDate())));
         int size = Math.min(AVERAGE_SIZE, timings.size());
         return timings
                 .subList(0, size)
                 .stream()
-                .mapToDouble(TimingItem::getMytime)
+                .mapToDouble(TimingDTO::getMytime)
                 .average();
     }
     
     @Deprecated
-    public ActionComponentItem getActionComponent(String componentName, Component component, String subcomponent, Market market, double time, boolean haverun, Boolean buy, Parameters parameters) {
-        ActionComponentItem mct = new ActionComponentItem();
+    public ActionComponentDTO getActionComponent(String componentName, Component component, String subcomponent, Market market, double time, boolean haverun, Boolean buy, Parameters parameters) {
+        ActionComponentDTO mct = new ActionComponentDTO();
         //mct.componentName = componentName;
         mct.setComponent(componentName);
         mct.setSubcomponent(subcomponent);
@@ -526,10 +526,10 @@ public abstract class MarketAction extends Action {
         return mct;
     }
     
-    private List<TimingItem> getMyTimings(List<TimingItem> timings, String market, String action, String component, boolean evolve, Boolean buy, String subcomponent, Parameters parameters) {
-        List<TimingItem> filterTimings = new ArrayList<>();
+    private List<TimingDTO> getMyTimings(List<TimingDTO> timings, String market, String action, String component, boolean evolve, Boolean buy, String subcomponent, Parameters parameters) {
+        List<TimingDTO> filterTimings = new ArrayList<>();
         String paramString = JsonUtil.convert(parameters);
-        for (TimingItem timing : timings) {
+        for (TimingDTO timing : timings) {
             if (!Objects.equals(buy,timing.getBuy())) {
                 continue;
             }
@@ -540,10 +540,10 @@ public abstract class MarketAction extends Action {
         return filterTimings;
     }
 
-    private List<TimingItem> getMyTimings(List<TimingItem> timings, String action, String component, boolean evolve, Boolean buy, String subcomponent, Parameters parameters) {
-        List<TimingItem> filterTimings = new ArrayList<>();
+    private List<TimingDTO> getMyTimings(List<TimingDTO> timings, String action, String component, boolean evolve, Boolean buy, String subcomponent, Parameters parameters) {
+        List<TimingDTO> filterTimings = new ArrayList<>();
         String paramString = JsonUtil.convert(parameters);
-        for (TimingItem timing : timings) {
+        for (TimingDTO timing : timings) {
             if (!Objects.equals(buy, timing.getBuy())) {
                 continue;
             }
@@ -554,26 +554,26 @@ public abstract class MarketAction extends Action {
         return filterTimings;
     }
     
-    public void getPicksFilteredOuter(WebData myData, ComponentData param, IclijConfig config, ActionComponentItem marketTime, Boolean evolve, Boolean wantThree, String actionItem) {
-        IclijController.taskList.add(actionItem);
+    public void getPicksFilteredOuter(WebData myData, ComponentData param, IclijConfig config, ActionComponentDTO marketTime, Boolean evolve, Boolean wantThree, String actionDTO) {
+        IclijController.taskList.add(actionDTO);
         try {
             getPicksFiltered(myData, param, config, marketTime, evolve, wantThree);                
         } catch (Exception e) {
             throw e;
         } finally {
-            IclijController.taskList.remove(actionItem);
+            IclijController.taskList.remove(actionDTO);
             Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
             new PipelineThreadUtils(config, inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
         }
     }
 
-    public void getPicksFiltered(WebData myData, ComponentData param, IclijConfig config, ActionComponentItem marketTime, Boolean evolve, boolean wantThree) {
+    public void getPicksFiltered(WebData myData, ComponentData param, IclijConfig config, ActionComponentDTO marketTime, Boolean evolve, boolean wantThree) {
         log.info("Getting picks for date {}", param.getInput().getEnddate());
         Market market = new MarketUtil().findMarket(marketTime.getMarket(), config);
         Map<String, ComponentData> dataMap = new HashMap<>();
         ProfitData profitdata = new ProfitData();
         Memories listComponentMap = new Memories(market);
-        myData.setMemoryItems(getMemItems(marketTime, myData, param, config, evolve, dataMap));
+        myData.setMemoryDTOs(getMemDTOs(marketTime, myData, param, config, evolve, dataMap));
         LocalDate prevdate = getPrevDate(param, market);
         LocalDate olddate = prevdate.minusDays(((int) AVERAGE_SIZE) * getActionData().getTime(market));
         ProfitInputData inputdata = new ProfitInputData();
@@ -606,19 +606,19 @@ public abstract class MarketAction extends Action {
 
         param.setTimings(new ArrayList<>());
         
-        List<TimingItem> timings = null;
+        List<TimingDTO> timings = null;
         try {
             timings = param.getService().getIo().getIdbDao().getAllTiming(market.getConfig().getMarket(), IclijConstants.MACHINELEARNING, olddate, prevdate);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        List<MLMetricsItem> mltests = null;
+        List<MLMetricsDTO> mltests = null;
         try {
             mltests = param.getService().getIo().getIdbDao().getAllMLMetrics(market.getConfig().getMarket(), null, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        List<MLMetricsItem> mlTests = null;
+        List<MLMetricsDTO> mlTests = null;
         if (true || config.getFindProfitMemoryFilter()) {
         mlTests = getMLMetrics(timings, mltests, market.getFilter().getConfidence());
         }
@@ -645,7 +645,7 @@ public abstract class MarketAction extends Action {
         //buys = buys.values().stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());        
         myData.setProfitData(profitdata);
 
-        Map<String, List<TimingItem>> timingMap = new HashMap<>();
+        Map<String, List<TimingDTO>> timingMap = new HashMap<>();
         timingMap.put(market.getConfig().getMarket(), param.getTimings());
         if (marketTime.getBuy() == null || marketTime.getBuy()) {
             myData.setTimingMap(timingMap);
@@ -660,21 +660,21 @@ public abstract class MarketAction extends Action {
         }
     }
 
-    private List<MLMetricsItem> getMLMetrics(List<TimingItem> timings, List<MLMetricsItem> mltests, Double confidence) {
+    private List<MLMetricsDTO> getMLMetrics(List<TimingDTO> timings, List<MLMetricsDTO> mltests, Double confidence) {
         mltests = filterMetrics(mltests, confidence);
         if (true) {
-            List<MLMetricsItem> list = new ArrayList<>();
-            Map<Pair<String, String>, List<MLMetricsItem>> map = getMLMetricsNew(mltests, confidence, false);
-            for (Entry<Pair<String, String>, List<MLMetricsItem>> entry : map.entrySet()) {
+            List<MLMetricsDTO> list = new ArrayList<>();
+            Map<Pair<String, String>, List<MLMetricsDTO>> map = getMLMetricsNew(mltests, confidence, false);
+            for (Entry<Pair<String, String>, List<MLMetricsDTO>> entry : map.entrySet()) {
                 list.add(entry.getValue().get(0));
             }
             return list;
         }
-        List<MLMetricsItem> returnedMLMetrics = new ArrayList<>();
+        List<MLMetricsDTO> returnedMLMetrics = new ArrayList<>();
         // don't need timings anymore
         timings = new ArrayList<>();
-        for (TimingItem item : timings) {
-            MLMetricsItem test = new MLMetricsItem();
+        for (TimingDTO item : timings) {
+            MLMetricsDTO test = new MLMetricsDTO();
             test.setRecord(item.getRecord());
             test.setDate(item.getDate());
             test.setMarket(item.getMarket());
@@ -686,20 +686,20 @@ public abstract class MarketAction extends Action {
             test.setTestAccuracy(item.getScore());
             addNewest(returnedMLMetrics, test, confidence);
         }
-        for (MLMetricsItem test : mltests) {
+        for (MLMetricsDTO test : mltests) {
             addNewest(returnedMLMetrics, test, confidence);
         }
         return returnedMLMetrics;
     }
 
-    protected Map<Pair<String, String>, List<MLMetricsItem>> getMLMetricsNew(List<MLMetricsItem> mltests, Double confidence, boolean component) {
+    protected Map<Pair<String, String>, List<MLMetricsDTO>> getMLMetricsNew(List<MLMetricsDTO> mltests, Double confidence, boolean component) {
         if (confidence != null) {
             mltests = filterMetrics(mltests, confidence);
         } else {
             confidence = 0.0;
         }
-        Map<Triple<String, String, String>, List<MLMetricsItem>> moreReturnedMLMetrics = new HashMap<>();
-        for (MLMetricsItem metric : mltests) {
+        Map<Triple<String, String, String>, List<MLMetricsDTO>> moreReturnedMLMetrics = new HashMap<>();
+        for (MLMetricsDTO metric : mltests) {
             if (metric.getTestAccuracy() == null || metric.getTestAccuracy() < confidence) {
                 continue;
             }
@@ -709,26 +709,26 @@ public abstract class MarketAction extends Action {
             Triple key = new ImmutableTriple(metric.getComponent(), metric.getSubcomponent(), metric.getLocalcomponent());
             new MiscUtil().listGetterAdder(moreReturnedMLMetrics, key, metric);  
         }
-        Comparator<MLMetricsItem> compareById = new Comparator<>() {
+        Comparator<MLMetricsDTO> compareById = new Comparator<>() {
             @Override
-            public int compare(MLMetricsItem o1, MLMetricsItem o2) {
+            public int compare(MLMetricsDTO o1, MLMetricsDTO o2) {
                 return o1.getRecord().compareTo(o2.getRecord());
             }
         };
-        Map<Pair<String, String>, List<MLMetricsItem>> moreReturnedMLMetrics2 = new HashMap<>();
-        for (Entry<Triple<String, String, String>, List<MLMetricsItem>> entry : moreReturnedMLMetrics.entrySet()) {
+        Map<Pair<String, String>, List<MLMetricsDTO>> moreReturnedMLMetrics2 = new HashMap<>();
+        for (Entry<Triple<String, String, String>, List<MLMetricsDTO>> entry : moreReturnedMLMetrics.entrySet()) {
             Triple<String, String, String> key = entry.getKey();
-            List<MLMetricsItem> value = entry.getValue();
+            List<MLMetricsDTO> value = entry.getValue();
             Collections.sort(value, compareById);
             Collections.reverse(value);
             Pair<String, String> newkey = new ImmutablePair(key.getLeft(), key.getMiddle());
             new MiscUtil().listGetterAdder(moreReturnedMLMetrics2, newkey, value.get(0));              
         }
         if (component) {
-            Map<Pair<String, String>, List<MLMetricsItem>> moreReturnedMLMetrics3 = new HashMap<>();
-            for (Entry<Pair<String, String>, List<MLMetricsItem>> entry : moreReturnedMLMetrics2.entrySet()) {
+            Map<Pair<String, String>, List<MLMetricsDTO>> moreReturnedMLMetrics3 = new HashMap<>();
+            for (Entry<Pair<String, String>, List<MLMetricsDTO>> entry : moreReturnedMLMetrics2.entrySet()) {
                 Pair<String, String> key = entry.getKey();
-                List<MLMetricsItem> value = entry.getValue();
+                List<MLMetricsDTO> value = entry.getValue();
                 Pair<String, String> newkey = new ImmutablePair(key.getLeft(), null);
                 new MiscUtil().listGetterAdder(moreReturnedMLMetrics3, newkey, value.get(0));              
             }
@@ -738,47 +738,47 @@ public abstract class MarketAction extends Action {
         return moreReturnedMLMetrics2;
     }
 
-    protected Map<Pair<String, String>, List<MLMetricsItem>> getMLMetrics(List<MLMetricsItem> mltests, Double confidence) {
+    protected Map<Pair<String, String>, List<MLMetricsDTO>> getMLMetrics(List<MLMetricsDTO> mltests, Double confidence) {
         if (true) {
             return getMLMetricsNew(mltests, confidence, false);
         }
-        List<MLMetricsItem> returnedMLMetrics = new ArrayList<>();
-        for (MLMetricsItem test : mltests) {
+        List<MLMetricsDTO> returnedMLMetrics = new ArrayList<>();
+        for (MLMetricsDTO test : mltests) {
             addNewest(returnedMLMetrics, test, 0.0);
         }
-        Map<Pair<String, String>, List<MLMetricsItem>> moreReturnedMLMetrics = new HashMap<>();
-        for (MLMetricsItem metric : returnedMLMetrics) {
+        Map<Pair<String, String>, List<MLMetricsDTO>> moreReturnedMLMetrics = new HashMap<>();
+        for (MLMetricsDTO metric : returnedMLMetrics) {
             Pair key = new ImmutablePair(metric.getComponent(), metric.getSubcomponent());
             new MiscUtil().listGetterAdder(moreReturnedMLMetrics, key, metric);  
         }
         return moreReturnedMLMetrics;
     }
 
-    protected Map<Pair<String, String>, List<MLMetricsItem>> getMLMetrics2(List<MLMetricsItem> mltests, Double confidence) {
+    protected Map<Pair<String, String>, List<MLMetricsDTO>> getMLMetrics2(List<MLMetricsDTO> mltests, Double confidence) {
         if (true) {
             return getMLMetricsNew(mltests, confidence, true);
         }
-        List<MLMetricsItem> returnedMLMetrics = new ArrayList<>();
-        for (MLMetricsItem test : mltests) {
+        List<MLMetricsDTO> returnedMLMetrics = new ArrayList<>();
+        for (MLMetricsDTO test : mltests) {
             addNewest(returnedMLMetrics, test, 0.0);
         }
-        Map<Pair<String, String>, List<MLMetricsItem>> moreReturnedMLMetrics = new HashMap<>();
-        for (MLMetricsItem metric : returnedMLMetrics) {
+        Map<Pair<String, String>, List<MLMetricsDTO>> moreReturnedMLMetrics = new HashMap<>();
+        for (MLMetricsDTO metric : returnedMLMetrics) {
             Pair<String, String> key = new ImmutablePair(metric.getComponent(), null);
             new MiscUtil().listGetterAdder(moreReturnedMLMetrics, key, metric);  
         }
         return moreReturnedMLMetrics;
     }
 
-    private void addNewest(List<MLMetricsItem> mlTests, MLMetricsItem test, Double confidence) {
+    private void addNewest(List<MLMetricsDTO> mlTests, MLMetricsDTO test, Double confidence) {
         if (test.getTestAccuracy() == null || test.getTestAccuracy() < confidence) {
             return;
         }
         if (test.getThreshold() == null || test.getThreshold() != 1.0) {
             return;
         }
-        MLMetricsItem replace = null;
-        for (MLMetricsItem aTest : mlTests) {
+        MLMetricsDTO replace = null;
+        for (MLMetricsDTO aTest : mlTests) {
             Boolean moregeneralthan = aTest.moreGeneralThan(test);
             // we don't need this anymore
             if (false && moregeneralthan != null && moregeneralthan) {
@@ -799,8 +799,8 @@ public abstract class MarketAction extends Action {
         mlTests.add(test);
     }
 
-    private List<MLMetricsItem> filterMetrics(List<MLMetricsItem> items, double confidence) {
-        List<MLMetricsItem> retList = new ArrayList<>();
+    private List<MLMetricsDTO> filterMetrics(List<MLMetricsDTO> items, double confidence) {
+        List<MLMetricsDTO> retList = new ArrayList<>();
         return items.stream()
                 .filter(e -> (e.getTestAccuracy() != null && e.getTestAccuracy() >= confidence))
                 .collect(Collectors.toList());
@@ -809,7 +809,7 @@ public abstract class MarketAction extends Action {
     public void getListComponents(WebData myData, ComponentData param, IclijConfig config,
             Parameters parameters, Boolean evolve, Market market, Map<String, ComponentData> dataMap,
             Memories memories, LocalDate olddate, LocalDate prevdate) {
-        List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market, IclijConstants.IMPROVEABOVEBELOW, null, null, JsonUtil.convert(parameters), olddate, prevdate, param.getService().getIo().getIdbDao());
+        List<MemoryDTO> marketMemory = new MarketUtil().getMarketMemory(market, IclijConstants.IMPROVEABOVEBELOW, null, null, JsonUtil.convert(parameters), olddate, prevdate, param.getService().getIo().getIdbDao());
         marketMemory = marketMemory.stream().filter(e -> "Confidence".equals(e.getType())).collect(Collectors.toList());
         if (!marketMemory.isEmpty()) {
             int jj = 0;
@@ -817,8 +817,8 @@ public abstract class MarketAction extends Action {
         if (marketMemory == null) {
             myData.setProfitData(new ProfitData());
         }
-        //marketMemory.addAll(myData.getMemoryItems());
-        List<MemoryItem> currentList = new MiscUtil().filterKeepRecent3(marketMemory, prevdate, ((int) AVERAGE_SIZE) * getActionData().getTime(market), false);
+        //marketMemory.addAll(myData.getMemoryDTOs());
+        List<MemoryDTO> currentList = new MiscUtil().filterKeepRecent3(marketMemory, prevdate, ((int) AVERAGE_SIZE) * getActionData().getTime(market), false);
         // map subcat + posit -> list
         currentList = currentList.stream().filter(e -> !e.getComponent().equals(PipelineConstants.ABOVEBELOW)).collect(Collectors.toList());
         memories.method(currentList, config);
@@ -840,7 +840,7 @@ public abstract class MarketAction extends Action {
         return nameMap;
     }
     
-    protected abstract void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Memories listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests);
+    protected abstract void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Memories listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree, List<MLMetricsDTO> mlTests);
  
     public Map<String, Component> getComponentMap(Collection<String> listComponent, Market market) {
         Map<String, Component> componentMap = new HashMap<>();
@@ -883,29 +883,29 @@ public abstract class MarketAction extends Action {
         this.actionData = actionData;
     }
 
-    protected boolean getSkipComponent(List<TimingItem> mltests, String componentName) {
-        Map<String, List<TimingItem>> metricsMap = getTiming2(mltests);
+    protected boolean getSkipComponent(List<TimingDTO> mltests, String componentName) {
+        Map<String, List<TimingDTO>> metricsMap = getTiming2(mltests);
         return metricsMap.containsKey(componentName);
     }
 
-    protected boolean getSkipSubComponent(List<TimingItem> mltests, String componentName,
+    protected boolean getSkipSubComponent(List<TimingDTO> mltests, String componentName,
             String subComponent) {
-        Map<Pair<String, String>, List<TimingItem>> metricsMap2 = getTiming(mltests);
+        Map<Pair<String, String>, List<TimingDTO>> metricsMap2 = getTiming(mltests);
         return metricsMap2.containsKey(new ImmutablePair(componentName, subComponent));
     }
 
-    protected Map<Pair<String, String>, List<TimingItem>> getTiming(List<TimingItem> mltests) {
-        Map<Pair<String, String>, List<TimingItem>> moreReturnedTiming = new HashMap<>();
-        for (TimingItem metric : mltests) {
+    protected Map<Pair<String, String>, List<TimingDTO>> getTiming(List<TimingDTO> mltests) {
+        Map<Pair<String, String>, List<TimingDTO>> moreReturnedTiming = new HashMap<>();
+        for (TimingDTO metric : mltests) {
             Pair key = new ImmutablePair(metric.getComponent(), metric.getSubcomponent());
             new MiscUtil().listGetterAdder(moreReturnedTiming, key, metric);  
         }
         return moreReturnedTiming;
     }
 
-    protected Map<String, List<TimingItem>> getTiming2(List<TimingItem> mltests) {
-        Map<String, List<TimingItem>> moreReturnedTiming = new HashMap<>();
-        for (TimingItem metric : mltests) {
+    protected Map<String, List<TimingDTO>> getTiming2(List<TimingDTO> mltests) {
+        Map<String, List<TimingDTO>> moreReturnedTiming = new HashMap<>();
+        for (TimingDTO metric : mltests) {
             String key = metric.getComponent();
             new MiscUtil().listGetterAdder(moreReturnedTiming, key, metric);  
         }

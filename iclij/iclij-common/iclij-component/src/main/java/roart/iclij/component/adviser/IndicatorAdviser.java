@@ -13,21 +13,17 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import roart.common.constants.Constants;
-import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
 import roart.common.config.ConfigConstants;
-import roart.common.model.IncDecItem;
-import roart.common.model.MetaItem;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MetaDTO;
 import roart.common.model.util.MetaUtil;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialMapTA;
 import roart.common.pipeline.data.SerialTA;
 import roart.common.pipeline.util.PipelineUtils;
-import roart.common.util.ValidateUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.iclij.config.IclijConfig;
@@ -42,7 +38,7 @@ public abstract class IndicatorAdviser extends Adviser {
     
     protected boolean interpolate;
     
-    protected List<MetaItem> allMetas;
+    protected List<MetaDTO> allMetas;
     
     private boolean indicatordirection;
     
@@ -72,7 +68,7 @@ public abstract class IndicatorAdviser extends Adviser {
         indicatordirectionup = simulateConfig.getIndicatorDirectionUp();
         
         if (param instanceof SimulateInvestData) {            
-            MetaItem meta = new MetaUtil().findMeta(allMetas, market.getConfig().getMarket());
+            MetaDTO meta = new MetaUtil().findMeta(allMetas, market.getConfig().getMarket());
             PipelineData[] resultMaps;
             if (simulateConfig.getIndicatorRebase()) {
                 resultMaps = simulateParam.getResultRebaseMaps();
@@ -95,14 +91,14 @@ public abstract class IndicatorAdviser extends Adviser {
         
         Map<String, Object> aMap = new HashMap<>();
         // for improve evolver
-        List<MetaItem> metas = allMetas; //param.getService().getMetas();
-        MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
+        List<MetaDTO> metas = allMetas; //param.getService().getMetas();
+        MetaDTO meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
         //List<String> categories = new MetaUtil().getCategories(meta);
         //ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters, mlTests);
         // don't need these both here and in getevolveml?
         aMap.put(ConfigConstants.MACHINELEARNING, false);
         aMap.put(ConfigConstants.AGGREGATORS, false);
-        // TODO move
+        // TODO  move
 	// TODO only two indicators used
         aMap.put(ConfigConstants.INDICATORS, true);
         aMap.put(ConfigConstants.INDICATORSMACD, true);
@@ -143,7 +139,7 @@ public abstract class IndicatorAdviser extends Adviser {
     }
 
     //@Override
-    public List<IncDecItem> getIncs2(String aParameter, int buytop, LocalDate date, int indexOffset, List<String> stockDates, List<String> excludes) {
+    public List<IncDecDTO> getIncs2(String aParameter, int buytop, LocalDate date, int indexOffset, List<String> stockDates, List<String> excludes) {
         Map<String, List<List<Double>>> categoryValueMap;
         if (interpolate) {
             categoryValueMap = param.getFillCategoryValueMap();
@@ -151,13 +147,13 @@ public abstract class IndicatorAdviser extends Adviser {
             categoryValueMap = param.getCategoryValueMap();
         }
         List<Pair<String, Double>> valueList = getValuePairs(categoryValueMap, indexOffset, stockDates, excludes);
-        List<IncDecItem> list = new ArrayList<>();
+        List<IncDecDTO> list = new ArrayList<>();
         for (Pair<String, Double> value : valueList) {
             Double myvalue = value.getValue();
             if (myvalue == null) {
                 continue;
             }
-            IncDecItem item = new IncDecItem();
+            IncDecDTO item = new IncDecDTO();
             item.setId(value.getKey());
             if (myvalue <= 0) {
                 myvalue = -myvalue;
@@ -328,7 +324,7 @@ public abstract class IndicatorAdviser extends Adviser {
     
     protected abstract String getPipeline();
 
-    private List<MetaItem> getAllMetas(ComponentData param) {
+    private List<MetaDTO> getAllMetas(ComponentData param) {
         return param.getService().getMetas();
     }
 

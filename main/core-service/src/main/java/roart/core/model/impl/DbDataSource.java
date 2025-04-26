@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import roart.common.constants.Constants;
-import roart.common.model.MetaItem;
+import roart.common.model.MetaDTO;
 import roart.common.model.MyDataSource;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.db.dao.DbDao;
 import roart.etl.db.Extract;
 import roart.iclij.config.IclijConfig;
@@ -44,7 +44,7 @@ public class DbDataSource extends MyDataSource {
     */
 
     @Override
-    public List<MetaItem> getMetas() {
+    public List<MetaDTO> getMetas() {
         try {
             return dbDao.getMetas();
         } catch (Exception e) {
@@ -54,7 +54,7 @@ public class DbDataSource extends MyDataSource {
     }
 
     @Override
-    public List<StockItem> getAll(String market, IclijConfig conf, boolean disableCache) {
+    public List<StockDTO> getAll(String market, IclijConfig conf, boolean disableCache) {
         try {
             return dbDao.getAll(market, conf, disableCache);
         } catch (Exception e) {

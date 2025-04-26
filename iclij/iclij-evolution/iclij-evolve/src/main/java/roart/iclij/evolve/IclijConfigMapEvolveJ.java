@@ -19,7 +19,7 @@ import io.jenetics.engine.Codec;
 import io.jenetics.engine.Engine;
 import io.jenetics.engine.EvolutionResult;
 import roart.common.constants.Constants;
-import roart.common.model.MLMetricsItem;
+import roart.common.model.MLMetricsDTO;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.evolution.config.EvolutionConfig;
@@ -40,7 +40,7 @@ public class IclijConfigMapEvolveJ extends EvolveJ {
 
     @Override
     public ComponentData evolve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata, Boolean buy,
-            String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, Map<String, Object> confMap,
+            String subcomponent, Parameters parameters, List<MLMetricsDTO> mlTests, Map<String, Object> confMap,
             EvolutionConfig evolutionConfig, String pipeline, Component component, List<String> confList) {
         double score = -1;
         Map<String, Object> map = new HashMap<>();

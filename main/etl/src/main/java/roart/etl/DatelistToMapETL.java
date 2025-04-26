@@ -8,7 +8,7 @@ import java.util.Map;
 import org.apache.commons.lang3.tuple.Pair;
 
 import roart.iclij.config.IclijConfig;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.data.SerialVolume;
 import roart.common.util.MapUtil;
 import roart.model.data.MarketData;
@@ -19,13 +19,13 @@ public class DatelistToMapETL {
     public static Map<String, Double[][]> getArrSparse(IclijConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
             Map<String, MarketData> marketdataMap, boolean currentyear) throws Exception {
         Map<String, Double[][]> retMap = new HashMap<>();
-        List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
+        List<StockDTO> datedstocklists[] = marketdataMap.get(market).datedstocklists;
         int index = 0;
         if (!currentyear || !conf.wantMergecy()) {
             if (index >= 0) {
                 for (int i = datedstocklists.length - 1; i >= 0; i--) {
-                    List<StockItem> stocklist = datedstocklists[i];
-                    for (StockItem stock : stocklist) {
+                    List<StockDTO> stocklist = datedstocklists[i];
+                    for (StockDTO stock : stocklist) {
                         String stockid = stock.getId();
                         Double[] value = StockDao.getValue(stock, periodInt);
                         MapUtil.mapAdd(retMap, stockid, datedstocklists.length - 1 - i, value, datedstocklists.length);
@@ -37,8 +37,8 @@ public class DatelistToMapETL {
             Map<String, Double> lastnumberMap = new HashMap<>();
             Map<String, Integer> yearMap = new HashMap<>();
             for (int i = datedstocklists.length - 1; i >= 0; i--) {
-                List<StockItem> stocklist = datedstocklists[i];
-                for (StockItem stock : stocklist) {
+                List<StockDTO> stocklist = datedstocklists[i];
+                for (StockDTO stock : stocklist) {
                     String stockid = stock.getId();
                     int curYear = stock.getDate().getYear();
                     Integer thisYear = yearMap.get(stockid);
@@ -89,10 +89,10 @@ public class DatelistToMapETL {
     public static Map<String, SerialVolume[]> getVolumes(IclijConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
             Map<String, MarketData> marketdataMap, boolean currentyear) throws Exception {
         Map<String, SerialVolume[]> retMap = new HashMap<>();
-        List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
+        List<StockDTO> datedstocklists[] = marketdataMap.get(market).datedstocklists;
         for (int i = datedstocklists.length - 1; i >= 0; i--) {
-            List<StockItem> stocklist = datedstocklists[i];
-            for (StockItem stock : stocklist) {
+            List<StockDTO> stocklist = datedstocklists[i];
+            for (StockDTO stock : stocklist) {
                 String stockid = stock.getId();
                 Pair<Long, String> value = StockDao.getVolume(stock);
                 SerialVolume value2 = new SerialVolume(value.getLeft(), value.getRight() );

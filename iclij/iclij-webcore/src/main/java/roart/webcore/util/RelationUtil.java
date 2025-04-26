@@ -2,7 +2,6 @@ package roart.webcore.util;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -12,9 +11,9 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import roart.common.model.IncDecItem;
-import roart.common.model.RelationItem;
-import roart.common.model.TimingItem;
+import roart.common.model.IncDecDTO;
+import roart.common.model.RelationDTO;
+import roart.common.model.TimingDTO;
 import roart.constants.RelationConstants;
 import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
@@ -25,7 +24,7 @@ import roart.iclij.service.IclijServiceList;
 import roart.iclij.service.util.MarketUtil;
 
 public class RelationUtil {
-    public Set[] method(ComponentInput componentInput, Set<IncDecItem> listIncDecs, IclijDbDao dbDao, IclijConfig iclijConfig) throws Exception {
+    public Set[] method(ComponentInput componentInput, Set<IncDecDTO> listIncDecs, IclijDbDao dbDao, IclijConfig iclijConfig) throws Exception {
         /*
 
     rel: market, id/null
@@ -39,43 +38,43 @@ public class RelationUtil {
 
          */
 
-        Set<RelationItem> relations = new HashSet<>(dbDao.getAllRelations());
+        Set<RelationDTO> relations = new HashSet<>(dbDao.getAllRelations());
         
-        //List<RelationItem> foundRelations = search(listAll, relations);
+        //List<RelationDTO> foundRelations = search(listAll, relations);
         
-        //List<TimingItem> listAllTimings = TimingItem.getAll();
-        //List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, IclijConstants.IMPROVEPROFIT);
-        //List<IncDecItem> listAll = IncDecItem.getAll();
-        Set<IncDecItem> currentIncDecs = new HashSet<>(listIncDecs);
+        //List<TimingDTO> listAllTimings = TimingItem.getAll();
+        //List<TimingDTO> currentTimings = getCurrentTimings(date, listAllTimings, IclijConstants.IMPROVEPROFIT);
+        //List<IncDecDTO> listAll = IncDecItem.getAll();
+        Set<IncDecDTO> currentIncDecs = new HashSet<>(listIncDecs);
         //currentIncDecs.addAll(listIncDecs);
         List<Market> markets = IclijXMLConfig.getMarkets(iclijConfig);
         markets = new MarketUtil().filterMarkets(markets, false);
         
         Set<Pair<String, String>> alreadyDone = new HashSet<>();
-        Set<RelationItem> alreadyFound = new HashSet<>();
+        Set<RelationDTO> alreadyFound = new HashSet<>();
         
-        for (IncDecItem incdec : currentIncDecs) {
+        for (IncDecDTO incdec : currentIncDecs) {
             Pair<String, String> pair = new ImmutablePair(incdec.getMarket(), incdec.getId());
             if (alreadyDone.contains(pair)) {
                 continue;
             }
             alreadyDone.add(pair);
-            RelationItem relation = new RelationItem();
+            RelationDTO relation = new RelationDTO();
             relation.setMarket(incdec.getMarket());
             relation.setId(incdec.getId());
             //relation.setOtherMarket(incdec.getMarket());
             //relation.setOtherId(incdec.getId());
             boolean done = false;
             while (!done) {
-                Set<RelationItem> foundRelations2 = searchPartof(relation, relations);
+                Set<RelationDTO> foundRelations2 = searchPartof(relation, relations);
                 foundRelations2.removeAll(alreadyFound);
                 if (!foundRelations2.isEmpty()) {
                     int jj = 0;
                 }
                 alreadyFound.addAll(foundRelations2);
-                Set<RelationItem> foundRelations4 = new HashSet<>();
-                for (RelationItem aRelation : foundRelations2) {
-                    Set<RelationItem> foundRelations3 = searchEquivalent(aRelation, relations);
+                Set<RelationDTO> foundRelations4 = new HashSet<>();
+                for (RelationDTO aRelation : foundRelations2) {
+                    Set<RelationDTO> foundRelations3 = searchEquivalent(aRelation, relations);
                     foundRelations3.removeAll(alreadyFound);
                     if (!foundRelations3.isEmpty()) {
                         int jj = 0;
@@ -97,15 +96,15 @@ public class RelationUtil {
         return retObjects;
     }
 
-    private List<IncDecItem> filter2(List<RelationItem> relations, List<IncDecItem> currentIncDecs) {
-        List<IncDecItem> retain = new ArrayList<>();
+    private List<IncDecDTO> filter2(List<RelationDTO> relations, List<IncDecDTO> currentIncDecs) {
+        List<IncDecDTO> retain = new ArrayList<>();
         // partof
-        for (RelationItem aRelation : relations) {
+        for (RelationDTO aRelation : relations) {
             String market = aRelation.getMarket();
             String id = aRelation.getId();
             String othermarket = aRelation.getOtherMarket();
             String otherid = aRelation.getOtherId();
-            for (IncDecItem item : currentIncDecs) {
+            for (IncDecDTO item : currentIncDecs) {
                 if (market.equals(item.getMarket())) {
                     if (item.getId() != null && item.getId().equals(id)) {
                         retain.add(item);
@@ -122,13 +121,13 @@ public class RelationUtil {
         return retain;
     }
 
-    private Set<IncDecItem> filter4(Set<RelationItem> relations, Set<IncDecItem> currentIncDecs) {
-        Set<IncDecItem> retain = new HashSet<>();
-        for (IncDecItem item : currentIncDecs) {
+    private Set<IncDecDTO> filter4(Set<RelationDTO> relations, Set<IncDecDTO> currentIncDecs) {
+        Set<IncDecDTO> retain = new HashSet<>();
+        for (IncDecDTO item : currentIncDecs) {
             // partof
             // and
             // equivalent
-            for (RelationItem aRelation : relations) {
+            for (RelationDTO aRelation : relations) {
                 String market = aRelation.getMarket();
                 String id = aRelation.getId();
                 String othermarket = aRelation.getOtherMarket();
@@ -153,13 +152,13 @@ public class RelationUtil {
         return retain;
     }
 
-    private List<RelationItem> filter3(Set<Pair<String, String>> done, List<RelationItem> found) {
-        List<RelationItem> retain = new ArrayList<>();
+    private List<RelationDTO> filter3(Set<Pair<String, String>> done, List<RelationDTO> found) {
+        List<RelationDTO> retain = new ArrayList<>();
         for (Pair<String, String> item : done) {
             String market = item.getLeft();
             String id = item.getRight();
             // partof
-            for (RelationItem aRelation : found) {
+            for (RelationDTO aRelation : found) {
                 if (!aRelation.getType().equals(RelationConstants.PARTOF)) {
                     continue;
                 }
@@ -174,7 +173,7 @@ public class RelationUtil {
                 }
             }
             // equivalent
-            for (RelationItem aRelation : found) {
+            for (RelationDTO aRelation : found) {
                 if (!aRelation.getType().equals(RelationConstants.EQUIVALENT)) {
                     continue;
                 }
@@ -211,9 +210,9 @@ public class RelationUtil {
         return false;
     }
     
-    private Set<RelationItem> filter5(Set<Pair<String, String>> done, Set<RelationItem> found) {
-        Set<RelationItem> retain = new HashSet<>();
-        for (RelationItem aRelation : found) {
+    private Set<RelationDTO> filter5(Set<Pair<String, String>> done, Set<RelationDTO> found) {
+        Set<RelationDTO> retain = new HashSet<>();
+        for (RelationDTO aRelation : found) {
             boolean foundLeft = false;
             boolean foundRight = false;
             // partof
@@ -236,13 +235,13 @@ public class RelationUtil {
         return retain;
     }
 
-    private List<RelationItem> filter(List<IncDecItem> currentIncDecs, List<RelationItem> relations) {
-        List<RelationItem> retain = new ArrayList<>();
-        for (IncDecItem item : currentIncDecs) {
+    private List<RelationDTO> filter(List<IncDecDTO> currentIncDecs, List<RelationDTO> relations) {
+        List<RelationDTO> retain = new ArrayList<>();
+        for (IncDecDTO item : currentIncDecs) {
             String market = item.getMarket();
             String id = item.getId();
             // partof
-            for (RelationItem aRelation : relations) {
+            for (RelationDTO aRelation : relations) {
                 if (!market.equals(aRelation.getMarket())) {
                     continue;
                 }
@@ -265,8 +264,8 @@ public class RelationUtil {
      * @return
      */
     
-    private Set<RelationItem> searchEquivalent(RelationItem relation, Set<RelationItem> relations) {
-        Set<RelationItem> retList = new HashSet<>();
+    private Set<RelationDTO> searchEquivalent(RelationDTO relation, Set<RelationDTO> relations) {
+        Set<RelationDTO> retList = new HashSet<>();
 
         String market = relation.getMarket();
         String id = relation.getId();
@@ -279,9 +278,9 @@ public class RelationUtil {
         return retList;
     }
 
-    private void searchEquivalentInner(Set<RelationItem> relations, Set<RelationItem> retList, String market,
-            String id) {
-        for (RelationItem aRelation : relations) {
+    private void searchEquivalentInner(Set<RelationDTO> relations, Set<RelationDTO> retList, String market,
+                                       String id) {
+        for (RelationDTO aRelation : relations) {
             if (aRelation.getType().equals(RelationConstants.EQUIVALENT)) {
                 if (market.equals(aRelation.getMarket())) {
                     if (aRelation.getId() == null || aRelation.getId().equals(id)) {
@@ -297,12 +296,12 @@ public class RelationUtil {
         }
     }
 
-    private List<RelationItem> search(IncDecItem incdec, List<RelationItem> relations) {
-        List<RelationItem> retList = new ArrayList<>();
+    private List<RelationDTO> search(IncDecDTO incdec, List<RelationDTO> relations) {
+        List<RelationDTO> retList = new ArrayList<>();
         String market = incdec.getMarket();
         String id = incdec.getId();
         
-        for (RelationItem relation : relations) {
+        for (RelationDTO relation : relations) {
             if (relation.getType().equals(RelationConstants.PARTOF)) {
                 if (!market.equals(relation.getMarket())) {
                     continue;
@@ -323,12 +322,12 @@ public class RelationUtil {
      * @return found relations
      */
     
-    private Set<RelationItem> searchPartof(RelationItem relation, Set<RelationItem> relations) {
-        Set<RelationItem> retList = new HashSet<>();
+    private Set<RelationDTO> searchPartof(RelationDTO relation, Set<RelationDTO> relations) {
+        Set<RelationDTO> retList = new HashSet<>();
         String market = relation.getMarket();
         String id = relation.getId();
         
-        for (RelationItem aRelation : relations) {
+        for (RelationDTO aRelation : relations) {
             if (aRelation.getType().equals(RelationConstants.PARTOF)) {
                 if (!market.equals(aRelation.getMarket())) {
                     continue;
@@ -342,49 +341,49 @@ public class RelationUtil {
         return retList;
     }
 
-    private List<RelationItem> search(List<IncDecItem> listAll, List<RelationItem> relations) {
+    private List<RelationDTO> search(List<IncDecDTO> listAll, List<RelationDTO> relations) {
         
-        for (RelationItem i : relations) {
+        for (RelationDTO i : relations) {
             
         }
-        List<RelationItem> retList = new ArrayList<>();
-        for (IncDecItem i : listAll) {
+        List<RelationDTO> retList = new ArrayList<>();
+        for (IncDecDTO i : listAll) {
             
         }
         return null;
     }
 
-    private void mapPutter(List<IncDecItem> list, Map<Pair<String, String>, IncDecItem> map) {
-        for (IncDecItem item : list) {
+    private void mapPutter(List<IncDecDTO> list, Map<Pair<String, String>, IncDecDTO> map) {
+        for (IncDecDTO item : list) {
             Pair<String, String> pair = new ImmutablePair(item.getMarket(), item.getId());
             map.put(pair, item);
         }
     }
     
     @Deprecated
-    public static List<IncDecItem> getCurrentIncDecs(LocalDate date, List<IncDecItem> listAll, Market market2) {
+    public static List<IncDecDTO> getCurrentIncDecs(LocalDate date, List<IncDecDTO> listAll, Market market2) {
         if (date == null) {
             date = LocalDate.now();
         }
         LocalDate newdate = date;
         LocalDate olddate = date.minusDays(10);
-        List<IncDecItem> filterListAll = listAll.stream().filter(m -> m.getRecord() != null).collect(Collectors.toList());
-        List<IncDecItem> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());
+        List<IncDecDTO> filterListAll = listAll.stream().filter(m -> m.getRecord() != null).collect(Collectors.toList());
+        List<IncDecDTO> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());
         currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getRecord()) >= 0).collect(Collectors.toList());
         //currentIncDecs = currentIncDecs.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
         return currentIncDecs;
     }
 
     @Deprecated
-    public static List<TimingItem> getCurrentTimings(LocalDate date, List<TimingItem> listAll, String action) {
+    public static List<TimingDTO> getCurrentTimings(LocalDate date, List<TimingDTO> listAll, String action) {
         if (date == null) {
             date = LocalDate.now();
         }
         LocalDate newdate = date;
         LocalDate olddate = date.minusDays(10);
-        List<TimingItem> filterListAll = listAll.stream().filter(m -> m.getRecord() != null).collect(Collectors.toList());
+        List<TimingDTO> filterListAll = listAll.stream().filter(m -> m.getRecord() != null).collect(Collectors.toList());
         filterListAll = filterListAll.stream().filter(m -> action.equals(m.getAction())).collect(Collectors.toList());
-        List<TimingItem> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());
+        List<TimingDTO> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());
         currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getRecord()) >= 0).collect(Collectors.toList());
         //currentIncDecs = currentIncDecs.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
         return currentIncDecs;

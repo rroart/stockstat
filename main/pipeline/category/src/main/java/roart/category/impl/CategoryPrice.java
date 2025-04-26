@@ -7,7 +7,7 @@ import roart.category.AbstractCategory;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.util.MathUtil;
 import roart.indicator.AbstractIndicator;
@@ -26,7 +26,7 @@ import roart.stockutil.StockUtil;
 
 public class CategoryPrice extends Category {
 
-    public CategoryPrice(IclijConfig conf, String string, List<StockItem> stocks,
+    public CategoryPrice(IclijConfig conf, String string, List<StockDTO> stocks,
             PipelineData[] datareaders, Inmemory inmemory) throws Exception {
         super(conf, string, stocks, datareaders, inmemory);
         period = Constants.PRICECOLUMN;
@@ -66,7 +66,7 @@ public class CategoryPrice extends Category {
     }
 
     @Override
-    public void addResultItem(ResultItemTableRow r, StockItem stock) {
+    public void addResultItem(ResultItemTableRow r, StockDTO stock) {
         try {
             if (StockUtil.hasSpecial(stocks, Constants.PRICECOLUMN)) {
                 Object[] array = resultMap.get(stock.getId());

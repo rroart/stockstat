@@ -1,10 +1,8 @@
 package roart.common.model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
-public class ContItem {
+public class ContDTO {
     private String md5;
     
     private String filename;

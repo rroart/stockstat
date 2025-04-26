@@ -16,8 +16,8 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
 import roart.iclij.service.util.MiscUtil;
@@ -35,35 +35,35 @@ public class Memories {
 
     // or make a new object instead of the object array. use this as a pair
     //System.out.println(currentList.get(0).getRecord());
-    Map<Triple<String, String, String>, List<MemoryItem>> listMap = new HashMap<>();
+    Map<Triple<String, String, String>, List<MemoryDTO>> listMap = new HashMap<>();
 
     public Memories(Market market) {
         this.market = market;
     }
 
-    public void method(List<MemoryItem> currentList, IclijConfig config) {
+    public void method(List<MemoryDTO> currentList, IclijConfig config) {
         currentList.forEach(m -> new MiscUtil().listGetterAdder(listMap, new ImmutableTriple<String, String, String>(m.getComponent(), m.getSubcomponent(), m.getLocalcomponent()), m));
-        Map<Triple<String, String, String>, List<MemoryItem>> okListMap = new HashMap<>();
+        Map<Triple<String, String, String>, List<MemoryDTO>> okListMap = new HashMap<>();
         Map<Triple<String, String, String>, Double> aboveThresholdMap = new HashMap<>();
-        Map<Triple<String, String, String>, List<MemoryItem>> aboveOkListMap = new HashMap<>();
+        Map<Triple<String, String, String>, List<MemoryDTO>> aboveOkListMap = new HashMap<>();
         Map<Triple<String, String, String>, Double> aboveThresholdAboveMap = new HashMap<>();
-        Map<Triple<String, String, String>, List<MemoryItem>> belowOkListMap = new HashMap<>();
+        Map<Triple<String, String, String>, List<MemoryDTO>> belowOkListMap = new HashMap<>();
         Map<Triple<String, String, String>, Double> aboveThresholdBelowMap = new HashMap<>();
-        Map<Triple<String, String, String>, List<MemoryItem>> badListMap = new HashMap<>();
+        Map<Triple<String, String, String>, List<MemoryDTO>> badListMap = new HashMap<>();
         Map<Triple<String, String, String>, Double> belowThresholdMap = new HashMap<>();
-        Map<Triple<String, String, String>, List<MemoryItem>> aboveBadListMap = new HashMap<>();
+        Map<Triple<String, String, String>, List<MemoryDTO>> aboveBadListMap = new HashMap<>();
         Map<Triple<String, String, String>, Double> belowThresholdAboveMap = new HashMap<>();
-        Map<Triple<String, String, String>, List<MemoryItem>> belowBadListMap = new HashMap<>();
+        Map<Triple<String, String, String>, List<MemoryDTO>> belowBadListMap = new HashMap<>();
         Map<Triple<String, String, String>, Double> belowThresholdBelowMap = new HashMap<>();
-        for(Entry<Triple<String, String, String>, List<MemoryItem>> entry : listMap.entrySet()) {
+        for(Entry<Triple<String, String, String>, List<MemoryDTO>> entry : listMap.entrySet()) {
             Triple<String, String, String> keys = entry.getKey();
-            List<MemoryItem> memoryList = entry.getValue();
-            List<Double> confidences = memoryList.stream().map(MemoryItem::getConfidence).collect(Collectors.toList());
+            List<MemoryDTO> memoryList = entry.getValue();
+            List<Double> confidences = memoryList.stream().map(MemoryDTO::getConfidence).collect(Collectors.toList());
             confidences = confidences.stream().filter(m1 -> m1 != null && !m1.isNaN()).collect(Collectors.toList());
             List<Double> aboveConfidenceList = new ArrayList<>();
             List<Double> belowConfidenceList = new ArrayList<>();
             if (true) {
-            for (MemoryItem memory : memoryList) {
+            for (MemoryDTO memory : memoryList) {
                 // get count and sizes for rightly predicted above or below a threshold
                 // and add them to their respective lists
                 Long above = memory.getAbovepositives();
@@ -82,12 +82,12 @@ public class Memories {
             } else {
                 confidences = new ArrayList<>();
                 
-                Long positives = memoryList.stream().map(MemoryItem::getPositives).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
-                Long size = memoryList.stream().map(MemoryItem::getSize).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
-                Long above = memoryList.stream().map(MemoryItem::getAbovepositives).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
-                Long below = memoryList.stream().map(MemoryItem::getAbovesize).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
-                Long abovesize = memoryList.stream().map(MemoryItem::getBelowpositives).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
-                Long belowsize = memoryList.stream().map(MemoryItem::getBelowsize).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
+                Long positives = memoryList.stream().map(MemoryDTO::getPositives).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
+                Long size = memoryList.stream().map(MemoryDTO::getSize).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
+                Long above = memoryList.stream().map(MemoryDTO::getAbovepositives).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
+                Long below = memoryList.stream().map(MemoryDTO::getAbovesize).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
+                Long abovesize = memoryList.stream().map(MemoryDTO::getBelowpositives).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
+                Long belowsize = memoryList.stream().map(MemoryDTO::getBelowsize).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
                 if (size != null) {
                     Double confidence = ( (double ) positives) / size;
                     confidences.add(confidence);                    
@@ -130,7 +130,7 @@ public class Memories {
         return listComponent;
     }
 
-    public boolean containsBelow(String component, Pair<String, String> pair, Boolean above, MLMetricsItem mlmetrics, boolean useThreshold) {
+    public boolean containsBelow(String component, Pair<String, String> pair, Boolean above, MLMetricsDTO mlmetrics, boolean useThreshold) {
         if (!useThreshold) {
             return false;
         }

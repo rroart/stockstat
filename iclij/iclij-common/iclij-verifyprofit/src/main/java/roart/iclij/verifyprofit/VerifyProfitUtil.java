@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
-import roart.common.model.IncDecItem;
+import roart.common.model.IncDecDTO;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.iclij.config.Market;
@@ -21,7 +21,7 @@ public class VerifyProfitUtil {
 
     @Deprecated
     public void getVerifyProfit(int days, LocalDate date, LocalDate oldDate,
-            List<IncDecItem> listInc, List<IncDecItem> listDec, List<IncDecItem> listIncDec, int startoffset, Double threshold, List<String> stockDates, int loopoffset, ComponentData componentData, Market market) {
+                                List<IncDecDTO> listInc, List<IncDecDTO> listDec, List<IncDecDTO> listIncDec, int startoffset, Double threshold, List<String> stockDates, int loopoffset, ComponentData componentData, Market market) {
         log.info("Verify compare date {} with {}", oldDate, date);
         try {
             componentData.setFuturedays(0);
@@ -40,7 +40,7 @@ public class VerifyProfitUtil {
     }
 
     public void getVerifyProfit(int days, LocalDate date, LocalDate oldDate,
-            Collection<IncDecItem> listInc, Collection<IncDecItem> listDec, Collection<IncDecItem> listIncDec, int startoffset, Double threshold, ComponentData componentData, List<String> stockDates, Market market) {
+                                Collection<IncDecDTO> listInc, Collection<IncDecDTO> listDec, Collection<IncDecDTO> listIncDec, int startoffset, Double threshold, ComponentData componentData, List<String> stockDates, Market market) {
         componentData = new ComponentData(componentData);
         try {
             componentData.setFuturedays(0);
@@ -64,7 +64,7 @@ public class VerifyProfitUtil {
     }
 
     public void getVerifyProfit(int days, LocalDate date,
-            Collection<IncDecItem> listInc, Collection<IncDecItem> listDec, Collection<IncDecItem> listIncDec, int startoffset, Double threshold, List<String> stockDates, Map<String, List<List<Double>>> categoryValueMap) {
+                                Collection<IncDecDTO> listInc, Collection<IncDecDTO> listDec, Collection<IncDecDTO> listIncDec, int startoffset, Double threshold, List<String> stockDates, Map<String, List<List<Double>>> categoryValueMap) {
         log.info("Verify compare date {} with {} threshold {}", date, days, threshold);
     
         VerifyProfit verify = new VerifyProfit();

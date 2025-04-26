@@ -28,7 +28,7 @@ import roart.action.ActionThread;
 import roart.common.cache.MyCache;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
-import roart.common.model.TimingItem;
+import roart.common.model.TimingDTO;
 import roart.common.webflux.WebFluxUtil;
 import roart.db.dao.DbDSFactory;
 import roart.db.dao.IclijDbDao;
@@ -121,7 +121,7 @@ public class ServiceController {
         //MainAction.goals.add(new FindProfitAction());
         IclijConfig myConfig = new IclijConfig(param.getConfigData());
         return ServiceUtil.getFindProfit(new ComponentInput(param.getConfigData(), null, null, null, param.getOffset(), true, false, new ArrayList<>(), new HashMap<>()), new ArrayList<>(), myConfig, io);
-        //Map<String, IncDecItem>[] result = new FindProfitAction().getPicks(param.getIclijConfig().getMarket(), false, param.getIclijConfig().getDate(), null, param .getIclijConfig());
+        //Map<String, IncDecDTO>[] result = new FindProfitAction().getPicks(param.getIclijConfig().getMarket(), false, param.getIclijConfig().getDate(), null, param .getIclijConfig());
         //IclijServiceResult ret = new IclijServiceResult();
         //ret.setError(error);
         //return ret;

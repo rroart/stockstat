@@ -2,7 +2,7 @@ package roart.common.model;
 
 import java.time.LocalDate;
 
-public class SimDataItem {
+public class SimDataDTO {
 
     private Long dbid;
     

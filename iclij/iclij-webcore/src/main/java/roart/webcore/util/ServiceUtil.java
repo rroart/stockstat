@@ -22,11 +22,8 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigData;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
-import roart.common.model.MetaItem;
-import roart.common.model.TimingItem;
+import roart.common.model.*;
+import roart.common.model.MemoryDTO;
 import roart.common.model.util.MetaUtil;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.util.PipelineThreadUtils;
@@ -63,7 +60,6 @@ import roart.iclij.verifyprofit.TrendUtil;
 import roart.iclij.verifyprofit.VerifyProfitUtil;
 import roart.model.io.IO;
 import roart.service.model.ProfitData;
-import roart.webcore.util.RelationUtil;
 
 public class ServiceUtil {
     private static Logger log = LoggerFactory.getLogger(ServiceUtil.class);
@@ -165,8 +161,8 @@ public class ServiceUtil {
         LocalDate date = componentInput.getEnddate();
         IclijConfig instance = iclijConfig;
 
-        List<IncDecItem> listAll = io.getIdbDao().getAllIncDecs();
-        Set<IncDecItem> listRel = new HashSet<>();
+        List<IncDecDTO> listAll = io.getIdbDao().getAllIncDecs();
+        Set<IncDecDTO> listRel = new HashSet<>();
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
         Map<String, Object> trendMap = new HashMap<>();
@@ -205,7 +201,7 @@ public class ServiceUtil {
                 log.error("Trend exception for market {}", market.getConfig().getMarket());
                 log.error(Constants.EXCEPTION, e);
             }
-            List<IncDecItem> allCurrentIncDecs = new MiscUtil().getCurrentIncDecs(date, listAll, market, market.getConfig().getFindtime(), true);
+            List<IncDecDTO> allCurrentIncDecs = new MiscUtil().getCurrentIncDecs(date, listAll, market, market.getConfig().getFindtime(), true);
             
             short startoffset = new MarketUtil().getStartoffset(market);
             int verificationdays = 0;
@@ -223,15 +219,15 @@ public class ServiceUtil {
                     .filter(e -> !memories.containsBelow(e.getComponent(), new ImmutablePair(e.getSubcomponent(), e.getLocalcomponent()), null, null, true))
                     .collect(Collectors.toList());
             
-            Map<String, Set<IncDecItem>> currentIncDecMap = splitParam(allCurrentIncDecs);
-            for (Entry<String, Set<IncDecItem>> entry : currentIncDecMap.entrySet()) {
+            Map<String, Set<IncDecDTO>> currentIncDecMap = splitParam(allCurrentIncDecs);
+            for (Entry<String, Set<IncDecDTO>> entry : currentIncDecMap.entrySet()) {
                 String key = entry.getKey();
-                Set<IncDecItem> currentIncDecs = entry.getValue();
-                Set<IncDecItem> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toSet());
-                Set<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toSet());
+                Set<IncDecDTO> currentIncDecs = entry.getValue();
+                Set<IncDecDTO> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toSet());
+                Set<IncDecDTO> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toSet());
                 listInc = new MiscUtil().mergeList(listInc, false);
                 listDec = new MiscUtil().mergeList(listDec, false);
-                Set<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec, true);
+                Set<IncDecDTO> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec, true);
                 List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), key, listInc, listDec, listIncDec);
                 lists.addAll(subLists);
                 listRel.addAll(listInc);
@@ -260,7 +256,7 @@ public class ServiceUtil {
     private static void getListComponents(WebData myData, ComponentData param, IclijConfig config,
             Market market,
             Memories memories, LocalDate prevdate, LocalDate olddate, MarketActionData actionData) {
-        List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market, IclijConstants.IMPROVEABOVEBELOW, null, null, null, olddate, prevdate, param.getService().getIo().getIdbDao());
+        List<MemoryDTO> marketMemory = new MarketUtil().getMarketMemory(market, IclijConstants.IMPROVEABOVEBELOW, null, null, null, olddate, prevdate, param.getService().getIo().getIdbDao());
         marketMemory = marketMemory.stream().filter(e -> "Confidence".equals(e.getType())).collect(Collectors.toList());
         if (!marketMemory.isEmpty()) {
             int jj = 0;
@@ -269,14 +265,14 @@ public class ServiceUtil {
             myData.setProfitData(new ProfitData());
         }
         int AVERAGE_SIZE = 5;
-        //marketMemory.addAll(myData.getMemoryItems());
-        List<MemoryItem> currentList = new MiscUtil().filterKeepRecent3(marketMemory, prevdate, ((int) AVERAGE_SIZE) * actionData.getTime(market), false);
+        //marketMemory.addAll(myData.getMemoryDTOs());
+        List<MemoryDTO> currentList = new MiscUtil().filterKeepRecent3(marketMemory, prevdate, ((int) AVERAGE_SIZE) * actionData.getTime(market), false);
         // map subcat + posit -> list
         currentList = currentList.stream().filter(e -> !e.getComponent().equals(PipelineConstants.ABOVEBELOW)).collect(Collectors.toList());
         memories.method(currentList, config);
      }
 
-    private static void addRelations(ComponentInput componentInput, List<IclijServiceList> lists, Set<IncDecItem> listIncDecs, IO io, IclijConfig iclijConfig) throws Exception {
+    private static void addRelations(ComponentInput componentInput, List<IclijServiceList> lists, Set<IncDecDTO> listIncDecs, IO io, IclijConfig iclijConfig) throws Exception {
         Set[] objects = new RelationUtil().method(componentInput, listIncDecs, io.getIdbDao(), iclijConfig);
 
         IclijServiceList incdecs = new IclijServiceList();
@@ -295,7 +291,7 @@ public class ServiceUtil {
         ImproveProfitActionData improveProfitActionData = new ImproveProfitActionData(iclijConfig);
         LocalDate date = componentInput.getEnddate();
 
-        List<IncDecItem> listAll = io.getIdbDao().getAllIncDecs();
+        List<IncDecDTO> listAll = io.getIdbDao().getAllIncDecs();
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
         List<Market> markets = IclijXMLConfig.getMarkets(iclijConfig);
@@ -324,7 +320,7 @@ public class ServiceUtil {
         ImproveFilterActionData improveFilterActionData = new ImproveFilterActionData(iclijConfig);
         LocalDate date = componentInput.getEnddate();
 
-        List<IncDecItem> listAll = io.getIdbDao().getAllIncDecs();
+        List<IncDecDTO> listAll = io.getIdbDao().getAllIncDecs();
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
         List<Market> markets = IclijXMLConfig.getMarkets(iclijConfig);
@@ -353,7 +349,7 @@ public class ServiceUtil {
         ImproveAboveBelowActionData improveAboveBelowActionData = new ImproveAboveBelowActionData(iclijConfig);
         LocalDate date = componentInput.getEnddate();
 
-        List<IncDecItem> listAll = io.getIdbDao().getAllIncDecs();
+        List<IncDecDTO> listAll = io.getIdbDao().getAllIncDecs();
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
         List<Market> markets = IclijXMLConfig.getMarkets(iclijConfig);
@@ -380,9 +376,9 @@ public class ServiceUtil {
 
     private static void getContentTimings(LocalDate date, List<IclijServiceList> lists, List<Market> markets, MarketActionData action, IO io)
             throws Exception {
-        List<TimingItem> listAllTimings = io.getIdbDao().getAllTiming();
+        List<TimingDTO> listAllTimings = io.getIdbDao().getAllTiming();
         for (Market market : markets) {
-            List<TimingItem> currentTimings = new MiscUtil().getCurrentTimingsRecord(date, listAllTimings, market, action.getName(), action.getTime(market), true);
+            List<TimingDTO> currentTimings = new MiscUtil().getCurrentTimingsRecord(date, listAllTimings, market, action.getName(), action.getTime(market), true);
             List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), currentTimings);
             lists.addAll(subLists);
         }
@@ -390,9 +386,9 @@ public class ServiceUtil {
 
     private static void getContentMLTest(LocalDate date, List<IclijServiceList> lists, List<Market> markets, MarketActionData action, IO io)
             throws Exception {
-        List<MLMetricsItem> listAllTimings = io.getIdbDao().getAllMLMetrics();
+        List<MLMetricsDTO> listAllTimings = io.getIdbDao().getAllMLMetrics();
         for (Market market : markets) {
-            List<MLMetricsItem> currentTimings = new MiscUtil().getCurrentMLMetrics(date, listAllTimings, market, action.getTime(market), true);
+            List<MLMetricsDTO> currentTimings = new MiscUtil().getCurrentMLMetrics(date, listAllTimings, market, action.getTime(market), true);
             List<IclijServiceList> subLists = getServiceList2(market.getConfig().getMarket(), currentTimings);
             lists.addAll(subLists);
         }
@@ -404,10 +400,10 @@ public class ServiceUtil {
         //Market market = findProfitActionData.findMarket(param);
         //String marketName = market.getConfig().getMarket();
         long time0 = System.currentTimeMillis();
-        List<MetaItem> metas = param.getService().getMetas();
+        List<MetaDTO> metas = param.getService().getMetas();
         for (Market market : new MarketUtil().getMarkets(actionData.isDataset(), actionData.getIclijConfig())) {
             String marketName = market.getConfig().getMarket();
-            MetaItem meta = new MetaUtil().findMeta(metas, marketName);
+            MetaDTO meta = new MetaUtil().findMeta(metas, marketName);
             boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
             List<String> componentList = actionData.getComponents(param.getConfig(), wantThree);
             Map<Boolean, String> booleanTexts = actionData.getBooleanTexts();
@@ -529,8 +525,8 @@ public class ServiceUtil {
             if (!useMemory) {
                 continue;
             }
-            List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market, io.getIdbDao());
-            List<MemoryItem> currentList = new MiscUtil().filterKeepRecent(marketMemory, componentInput.getEnddate(), actionData.getTime(market), true);
+            List<MemoryDTO> marketMemory = new MarketUtil().getMarketMemory(market, io.getIdbDao());
+            List<MemoryDTO> currentList = new MiscUtil().filterKeepRecent(marketMemory, componentInput.getEnddate(), actionData.getTime(market), true);
 
             IclijServiceList memories = new IclijServiceList();
             memories.setTitle("Memories " + marketName);
@@ -567,19 +563,19 @@ public class ServiceUtil {
         return header;
     }
 
-    private static List<IclijServiceList> getServiceList(String market, List<TimingItem> listIncDec) {
+    private static List<IclijServiceList> getServiceList(String market, List<TimingDTO> listIncDec) {
         List<IclijServiceList> subLists = new ArrayList<>();
         roundList2(listIncDec);
         if (!listIncDec.isEmpty()) {
             IclijServiceList incDec = new IclijServiceList();
-            incDec.setTitle(market + " " + "timing" + " " + listIncDec.stream().mapToDouble(TimingItem::getMytime).summaryStatistics());
+            incDec.setTitle(market + " " + "timing" + " " + listIncDec.stream().mapToDouble(TimingDTO::getMytime).summaryStatistics());
             incDec.setList(listIncDec);
             subLists.add(incDec);
         }
         return subLists;
     }
 
-    private static List<IclijServiceList> getServiceList2(String market, List<MLMetricsItem> listTest) {
+    private static List<IclijServiceList> getServiceList2(String market, List<MLMetricsDTO> listTest) {
         List<IclijServiceList> subLists = new ArrayList<>();
         roundList4(listTest);
         if (!listTest.isEmpty()) {
@@ -590,14 +586,14 @@ public class ServiceUtil {
         }
         return subLists;
     }
-    static List<IclijServiceList> getServiceList(String market, String text, Set<IncDecItem> listInc, Set<IncDecItem> listDec,
-            Set<IncDecItem> listIncDec) {
+    static List<IclijServiceList> getServiceList(String market, String text, Set<IncDecDTO> listInc, Set<IncDecDTO> listDec,
+                                                 Set<IncDecDTO> listIncDec) {
         List<IclijServiceList> subLists = new ArrayList<>();
         roundList(listInc);
         roundList(listDec);
         roundList(listIncDec);
         if (!listInc.isEmpty()) {
-            List<Boolean> listIncBoolean = listInc.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
+            List<Boolean> listIncBoolean = listInc.stream().map(IncDecDTO::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
             long count = listIncBoolean.stream().filter(i -> i).count();                            
             IclijServiceList inc = new IclijServiceList();
             String trendStr = "";
@@ -606,7 +602,7 @@ public class ServiceUtil {
             subLists.add(inc);
         }
         if (!listDec.isEmpty()) {
-            List<Boolean> listDecBoolean = listDec.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
+            List<Boolean> listDecBoolean = listDec.stream().map(IncDecDTO::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
             long count = listDecBoolean.stream().filter(i -> i).count();                            
             IclijServiceList dec = new IclijServiceList();
             dec.setTitle(market + " " + "Decrease " + text + " ( verified " + count + " / " + listDecBoolean.size() + " )");
@@ -614,7 +610,7 @@ public class ServiceUtil {
             subLists.add(dec);
         }
         if (!listIncDec.isEmpty()) {
-            List<Boolean> listIncDecBoolean = listIncDec.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
+            List<Boolean> listIncDecBoolean = listIncDec.stream().map(IncDecDTO::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
             long count = listIncDecBoolean.stream().filter(i -> i).count();                            
             IclijServiceList incDec = new IclijServiceList();
             incDec.setTitle(market + " " + "Increase and decrease " + text + "( verified " + count + " / " + listIncDecBoolean.size() + " )" );
@@ -661,13 +657,13 @@ public class ServiceUtil {
 
         FindProfitActionData findProfitActionData = new FindProfitActionData(iclijConfig);
         // this calculates, does not read from db
-        List<MemoryItem> allMemoryItems = new ArrayList<>();
-        //ProfitData picks = findProfitActionData.getPicks(param, allMemoryItems);
-        //getMemoryItems(componentInput.getConfig(), param, verificationdays, getFindProfitComponents(componentInput.getConfig()));
+        List<MemoryDTO> allMemoryDTOS = new ArrayList<>();
+        //ProfitData picks = findProfitActionData.getPicks(param, allMemoryDTOs);
+        //getMemoryDTOs(componentInput.getConfig(), param, verificationdays, getFindProfitComponents(componentInput.getConfig()));
         IclijServiceList memories = new IclijServiceList();
         memories.setTitle("Memories");
-        roundList3(allMemoryItems);
-        memories.setList(allMemoryItems);
+        roundList3(allMemoryDTOS);
+        memories.setList(allMemoryDTOS);
         Map<String, Object> updateMap = new HashMap<>();
         //param.setUpdateMap(updateMap);
         Market market = new MarketUtil().findMarket(param.getService().coremlconf.getConfigData().getMarket(), iclijConfig);
@@ -684,12 +680,12 @@ public class ServiceUtil {
             if (iclijConfig.getFindProfitMemoryFilter()) {
                 myData = param.getService().getRun(IclijConstants.IMPROVEFILTER, componentInput);
             }
-            //ProfitData buysells = myData.profitData; // findProfitActionData.getPicks(param, allMemoryItems);
+            //ProfitData buysells = myData.profitData; // findProfitActionData.getPicks(param, allMemoryDTOs);
         } else {
             myData = param.getService().getVerify(IclijConstants.FINDPROFIT, componentInput);            
         }
         updateMap = myData.getUpdateMap();
-        allMemoryItems.addAll(myData.getMemoryItems());
+        allMemoryDTOS.addAll(myData.getMemoryDTOs());
 
         Map<String, Object> trendMap = new HashMap<>();
         short startoffset = new MarketUtil().getStartoffset(market);
@@ -751,8 +747,8 @@ public class ServiceUtil {
         String baseDateStr = TimeUtil.convertDate2(param.getBaseDate());
         String futureDateStr = TimeUtil.convertDate2(param.getFutureDate());
         log.info("Base future date {} {}", baseDateStr, futureDateStr);
-        Set<IncDecItem> allListInc = new HashSet<>(myData.getIncs());
-        Set<IncDecItem> allListDec = new HashSet<>(myData.getDecs());
+        Set<IncDecDTO> allListInc = new HashSet<>(myData.getIncs());
+        Set<IncDecDTO> allListDec = new HashSet<>(myData.getDecs());
         allListInc = new MiscUtil().mergeList(allListInc, !rerun);
         allListDec = new MiscUtil().mergeList(allListDec, !rerun);
 
@@ -774,23 +770,23 @@ public class ServiceUtil {
                 .collect(Collectors.toSet());
 
         
-        Set<IncDecItem> allListIncDec;
+        Set<IncDecDTO> allListIncDec;
         if (rerun) {
             allListIncDec = new MiscUtil().moveAndGetCommon(allListInc, allListDec, verificationdays > 0);
         } else {
             allListIncDec = new MiscUtil().moveAndGetCommon2(allListInc, allListDec, verificationdays > 0);
         }
-        Map<String, Set<IncDecItem>> allListIncDecMap = splitParam(allListIncDec);
-        Map<String, Set<IncDecItem>> allListIncMap = splitParam(allListInc);
-        Map<String, Set<IncDecItem>> allListDecMap = splitParam(allListDec);
+        Map<String, Set<IncDecDTO>> allListIncDecMap = splitParam(allListIncDec);
+        Map<String, Set<IncDecDTO>> allListIncMap = splitParam(allListInc);
+        Map<String, Set<IncDecDTO>> allListDecMap = splitParam(allListDec);
         Set<String> allKeys = new HashSet<>();
         allKeys.addAll(allListIncDecMap.keySet());
         allKeys.addAll(allListDecMap.keySet());
         allKeys.addAll(allListIncMap.keySet());
         for (String key : allKeys) {
-            Set<IncDecItem> listIncDec = allListIncDecMap.get(key);
-            Set<IncDecItem> listInc = allListIncMap.get(key);
-            Set<IncDecItem> listDec = allListDecMap.get(key);
+            Set<IncDecDTO> listIncDec = allListIncDecMap.get(key);
+            Set<IncDecDTO> listInc = allListIncMap.get(key);
+            Set<IncDecDTO> listDec = allListDecMap.get(key);
             if (listIncDec == null) {
                 listIncDec = new HashSet<>();
             }
@@ -817,7 +813,7 @@ public class ServiceUtil {
         retLists.add(memories);
 
         {
-            List<TimingItem> currentTimings = (List<TimingItem>) myData.getTimingMap().get(market.getConfig().getMarket());
+            List<TimingDTO> currentTimings = (List<TimingDTO>) myData.getTimingMap().get(market.getConfig().getMarket());
             if (currentTimings != null) {
                 List<IclijServiceList> subLists2 = getServiceList(market.getConfig().getMarket(), currentTimings);
                 retLists.addAll(subLists2);
@@ -829,13 +825,13 @@ public class ServiceUtil {
         IclijServiceList trends = convert(trendMap);
         retLists.add(trends);
 
-        Set<IncDecItem> currentIncDecs = new HashSet<>();
-        List<IncDecItem> listAll = io.getIdbDao().getAllIncDecs();
+        Set<IncDecDTO> currentIncDecs = new HashSet<>();
+        List<IncDecDTO> listAll = io.getIdbDao().getAllIncDecs();
         List<Market> markets = IclijXMLConfig.getMarkets(iclijConfig);
         markets = new MarketUtil().filterMarkets(markets, false);
         for (Market aMarket : markets) {
             if (rerun && !iclijConfig.wantsFindProfitRerunSave() && market.getConfig().getMarket().equals(aMarket.getConfig().getMarket()) ) {
-                //List<IncDecItem> listIncDecs = new ArrayList<>();
+                //List<IncDecDTO> listIncDecs = new ArrayList<>();
                 //listIncDecs.addAll(myData.getIncs());
                 //listIncDecs.addAll(myData.getDecs());
                 //listIncDecs = mergeList(listIncDecs, !rerun);
@@ -844,7 +840,7 @@ public class ServiceUtil {
                 currentIncDecs.addAll(allListIncDec);
                 continue;
             }
-            List<IncDecItem> marketCurrentIncDecs = new MiscUtil().getCurrentIncDecs(param.getFutureDate(), listAll, aMarket, market.getConfig().getFindtime(), true);
+            List<IncDecDTO> marketCurrentIncDecs = new MiscUtil().getCurrentIncDecs(param.getFutureDate(), listAll, aMarket, market.getConfig().getFindtime(), true);
             currentIncDecs.addAll(marketCurrentIncDecs);
         }
         //roundList(currentIncDecs);
@@ -875,11 +871,11 @@ public class ServiceUtil {
         }
 
         // this calculates, does not read from db
-        List<MemoryItem> allMemoryItems = new ArrayList<>();
+        List<MemoryDTO> allMemoryDTOS = new ArrayList<>();
         IclijServiceList memories = new IclijServiceList();
         memories.setTitle("Memories");
-        roundList3(allMemoryItems);
-        memories.setList(allMemoryItems);
+        roundList3(allMemoryDTOS);
+        memories.setList(allMemoryDTOS);
         Map<String, Object> updateMap = new HashMap<>();
         //param.setUpdateMap(updateMap);
         Market market = new MarketUtil().findMarket(param.getService().coremlconf.getConfigData().getMarket(), iclijConfig);
@@ -887,7 +883,7 @@ public class ServiceUtil {
         if (rerun) {
             myData = param.getService().getRun(IclijConstants.IMPROVEABOVEBELOW, componentInput);
             updateMap = myData.getUpdateMap();
-            allMemoryItems.addAll(myData.getMemoryItems());
+            allMemoryDTOS.addAll(myData.getMemoryDTOs());
         } else {
             //myData = new WebData(); //param.getService().getVerify(IclijConstants.FINDPROFIT, componentInput);            
         }
@@ -898,27 +894,27 @@ public class ServiceUtil {
         String baseDateStr = TimeUtil.convertDate2(param.getBaseDate());
         String futureDateStr = TimeUtil.convertDate2(param.getFutureDate());
         log.info("Base future date {} {}", baseDateStr, futureDateStr);
-        Set<IncDecItem> allListInc = new HashSet<>(myData.getIncs());
-        Set<IncDecItem> allListDec = new HashSet<>(myData.getDecs());
+        Set<IncDecDTO> allListInc = new HashSet<>(myData.getIncs());
+        Set<IncDecDTO> allListDec = new HashSet<>(myData.getDecs());
         allListInc = new MiscUtil().mergeList(allListInc, !rerun);
         allListDec = new MiscUtil().mergeList(allListDec, !rerun);
-        Set<IncDecItem> allListIncDec;
+        Set<IncDecDTO> allListIncDec;
         if (rerun) {
             allListIncDec = new MiscUtil().moveAndGetCommon(allListInc, allListDec, verificationdays > 0);
         } else {
             allListIncDec = new MiscUtil().moveAndGetCommon2(allListInc, allListDec, verificationdays > 0);
         }
-        Map<String, Set<IncDecItem>> allListIncDecMap = splitParam(allListIncDec);
-        Map<String, Set<IncDecItem>> allListIncMap = splitParam(allListInc);
-        Map<String, Set<IncDecItem>> allListDecMap = splitParam(allListDec);
+        Map<String, Set<IncDecDTO>> allListIncDecMap = splitParam(allListIncDec);
+        Map<String, Set<IncDecDTO>> allListIncMap = splitParam(allListInc);
+        Map<String, Set<IncDecDTO>> allListDecMap = splitParam(allListDec);
         Set<String> allKeys = new HashSet<>();
         allKeys.addAll(allListIncDecMap.keySet());
         allKeys.addAll(allListDecMap.keySet());
         allKeys.addAll(allListIncMap.keySet());
         for (String key : allKeys) {
-            Set<IncDecItem> listIncDec = allListIncDecMap.get(key);
-            Set<IncDecItem> listInc = allListIncMap.get(key);
-            Set<IncDecItem> listDec = allListDecMap.get(key);
+            Set<IncDecDTO> listIncDec = allListIncDecMap.get(key);
+            Set<IncDecDTO> listInc = allListIncMap.get(key);
+            Set<IncDecDTO> listDec = allListDecMap.get(key);
             if (listIncDec == null) {
                 listIncDec = new HashSet<>();
             }
@@ -950,7 +946,7 @@ public class ServiceUtil {
         retLists.add(memories);
 
         {
-            List<TimingItem> currentTimings = (List<TimingItem>) myData.getTimingMap().get(market.getConfig().getMarket());
+            List<TimingDTO> currentTimings = (List<TimingDTO>) myData.getTimingMap().get(market.getConfig().getMarket());
             if (currentTimings != null) {
                 List<IclijServiceList> subLists2 = getServiceList(market.getConfig().getMarket(), currentTimings);
                 retLists.addAll(subLists2);
@@ -959,13 +955,13 @@ public class ServiceUtil {
         IclijServiceList updates = convert(market.getConfig().getMarket(), updateMap);
         retLists.add(updates);
 
-        Set<IncDecItem> currentIncDecs = new HashSet<>();
-        List<IncDecItem> listAll = io.getIdbDao().getAllIncDecs();
+        Set<IncDecDTO> currentIncDecs = new HashSet<>();
+        List<IncDecDTO> listAll = io.getIdbDao().getAllIncDecs();
         List<Market> markets = IclijXMLConfig.getMarkets(iclijConfig);
         markets = new MarketUtil().filterMarkets(markets, false);
         for (Market aMarket : markets) {
             if (rerun && !iclijConfig.wantsFindProfitRerunSave() && market.getConfig().getMarket().equals(aMarket.getConfig().getMarket()) ) {
-                //List<IncDecItem> listIncDecs = new ArrayList<>();
+                //List<IncDecDTO> listIncDecs = new ArrayList<>();
                 //listIncDecs.addAll(myData.getIncs());
                 //listIncDecs.addAll(myData.getDecs());
                 //listIncDecs = mergeList(listIncDecs, !rerun);
@@ -976,7 +972,7 @@ public class ServiceUtil {
             }
             LocalDate date = param.getFutureDate();
             date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
-            List<IncDecItem> marketCurrentIncDecs = new MiscUtil().getCurrentIncDecs(date, listAll, aMarket, market.getConfig().getFindtime(), true);
+            List<IncDecDTO> marketCurrentIncDecs = new MiscUtil().getCurrentIncDecs(date, listAll, aMarket, market.getConfig().getFindtime(), true);
             currentIncDecs.addAll(marketCurrentIncDecs);
         }
         //roundList(currentIncDecs);
@@ -1048,7 +1044,7 @@ public class ServiceUtil {
     /*
     if (config.wantsImproveProfit()) {
         ImproveProfitActionData improveProfitActionData = new ImproveProfitActionData();  
-        getImprovements(retLists, market, date, save, improveProfitActionData, allMemoryItems);
+        getImprovements(retLists, market, date, save, improveProfitActionData, allMemoryDTOs);
     }
      */
 
@@ -1090,8 +1086,8 @@ public class ServiceUtil {
     /*
     @Deprecated
     private static void getImprovements(List<IclijServiceList> retLists, ComponentData param,
-            ImproveProfitActionData improveProfitActionData, List<MemoryItem> allMemoryItems) throws Exception {
-        Map<String, String> map = improveProfitActionData.getMarket(param, allMemoryItems);        
+            ImproveProfitActionData improveProfitActionData, List<MemoryDTO> allMemoryItems) throws Exception {
+        Map<String, String> map = improveProfitActionData.getMarket(param, allMemoryDTOs);        
         List<MapList> mapList = improveProfitActionData.getList(map);
         IclijServiceList resultMap = new IclijServiceList();
         resultMap.setTitle("Improve Profit Info");
@@ -1131,10 +1127,10 @@ public class ServiceUtil {
             componentInput.setDoSave(false);
             //FindProfitActionData findProfitActionData = new FindProfitActionData();
             ImproveProfitActionData improveProfitActionData = new ImproveProfitActionData(iclijConfig);  
-            List<MemoryItem> allMemoryItems = new ArrayList<>(); // getMemoryItems(componentInput.getConfig(), param, days, getImproveProfitComponents(componentInput.getConfig()));
+            List<MemoryDTO> allMemoryDTOS = new ArrayList<>(); // getMemoryDTOs(componentInput.getConfig(), param, days, getImproveProfitComponents(componentInput.getConfig()));
             //IclijServiceList memories = new IclijServiceList();
             //memories.setTitle("Memories");
-            //memories.setList(allMemoryItems);
+            //memories.setList(allMemoryDTOs);
             Map<String, Object> updateMap = new HashMap<>();
             Market market = new MarketUtil().findMarket(param.getService().coremlconf.getConfigData().getMarket(), iclijConfig);
             WebData webData = param.getService().getRun(IclijConstants.IMPROVEPROFIT, componentInput);
@@ -1147,18 +1143,18 @@ public class ServiceUtil {
             //retLists.add(memories);
 
             List<IclijServiceList> lists = new ArrayList<>();
-            Map<String, List<TimingItem>> timingMap = webData.getTimingMap();
-            for (Entry<String, List<TimingItem>> entry : timingMap.entrySet()) {
+            Map<String, List<TimingDTO>> timingMap = webData.getTimingMap();
+            for (Entry<String, List<TimingDTO>> entry : timingMap.entrySet()) {
                 String marketName = entry.getKey();
-                List<TimingItem> list = (List<TimingItem>) entry.getValue();
+                List<TimingDTO> list = (List<TimingDTO>) entry.getValue();
                 List<IclijServiceList> subLists = getServiceList(marketName, list);
                 lists.addAll(subLists);
             }
 
-            Map<String, List<TimingItem>> timingMap2 = webData.getTimingMap2();
-            for (Entry<String, List<TimingItem>> entry : timingMap2.entrySet()) {
+            Map<String, List<TimingDTO>> timingMap2 = webData.getTimingMap2();
+            for (Entry<String, List<TimingDTO>> entry : timingMap2.entrySet()) {
                 String marketName = entry.getKey();
-                List<TimingItem> list = (List<TimingItem>) entry.getValue();
+                List<TimingDTO> list = (List<TimingDTO>) entry.getValue();
                 List<IclijServiceList> subLists = getServiceList(marketName + " sell", list);
                 lists.addAll(subLists);
             }
@@ -1209,34 +1205,34 @@ public class ServiceUtil {
     }
 
     /*
-    public static List<MemoryItem> getMemoryItemsNot(IclijConfig config, ComponentData param, int days, List<String> components) throws InterruptedException {
-        List<MemoryItem> allMemoryItems = new ArrayList<>();
+    public static List<MemoryDTO> getMemoryItemsNot(IclijConfig config, ComponentData param, int days, List<String> components) throws InterruptedException {
+        List<MemoryDTO> allMemoryItems = new ArrayList<>();
         UpdateDBActionData updateDbActionData = new UpdateDBActionData();
         Queue<ActionData> serviceActionDatas = updateDbActionData.findAllMarketComponentsToCheck(param, days, config, components);
         for (ActionData serviceActionData : serviceActionDatas) {
             serviceActionData.goal(null, param, null);
             Map<String, Object> resultMap = serviceActionData.getLocalResultMap();
-            List<MemoryItem> memoryItems = (List<MemoryItem>) resultMap.get(IclijPipelineConstants.MEMORY);
+            List<MemoryDTO> memoryItems = (List<MemoryItem>) resultMap.get(IclijPipelineConstants.MEMORY);
             if (memoryItems != null) {
-                allMemoryItems.addAll(memoryItems);
+                allMemoryDTOs.addAll(memoryItems);
             } else {
                 log.error("Memory null");
             }
         }
-        return allMemoryItems;
+        return allMemoryDTOs;
     }
      */
 
-    private static void wipeFields(Collection<IncDecItem> list) {
-        for (IncDecItem item : list) {
+    private static void wipeFields(Collection<IncDecDTO> list) {
+        for (IncDecDTO item : list) {
             item.setComponent(null);
             item.setLocalcomponent(null);
             item.setSubcomponent(null);
         }
     }
     
-    private static void roundList(Collection<IncDecItem> list) {
-        for (IncDecItem item : list) {
+    private static void roundList(Collection<IncDecDTO> list) {
+        for (IncDecDTO item : list) {
             Double score = item.getScore();
             if (score != null) {
                 item.setScore(MathUtil.round2(score, 3));
@@ -1244,8 +1240,8 @@ public class ServiceUtil {
         }        
     }
 
-    private static void roundList2(List<TimingItem> list) {
-        for (TimingItem item : list) {
+    private static void roundList2(List<TimingDTO> list) {
+        for (TimingDTO item : list) {
             Double score = item.getScore();
             if (score != null) {
                 item.setScore(MathUtil.round2(score, 3));
@@ -1253,8 +1249,8 @@ public class ServiceUtil {
         }        
     }
 
-    private static void roundList3(List<MemoryItem> list) {
-        for (MemoryItem item : list) {
+    private static void roundList3(List<MemoryDTO> list) {
+        for (MemoryDTO item : list) {
             Double testaccuracy = item.getTestaccuracy();
             if (testaccuracy != null) {
                 item.setTestaccuracy(MathUtil.round2(testaccuracy, 3));
@@ -1322,8 +1318,8 @@ public class ServiceUtil {
         }        
     }
 
-    private static void roundList4(List<MLMetricsItem> list) {
-        for (MLMetricsItem item : list) {
+    private static void roundList4(List<MLMetricsDTO> list) {
+        for (MLMetricsDTO item : list) {
             Double loss = item.getLoss();
             if (loss != null) {
                 item.setLoss(MathUtil.round2(loss, 3));
@@ -1339,11 +1335,11 @@ public class ServiceUtil {
         }        
     }
 
-    public static Map<String, Set<IncDecItem>> splitParam(Collection<IncDecItem> items) {
-        Map<String, Set<IncDecItem>> mymap = new HashMap<String, Set<IncDecItem>>();
-        for (IncDecItem item : items) {
+    public static Map<String, Set<IncDecDTO>> splitParam(Collection<IncDecDTO> items) {
+        Map<String, Set<IncDecDTO>> mymap = new HashMap<String, Set<IncDecDTO>>();
+        for (IncDecDTO item : items) {
             String key = item.getParameters();
-            Set<IncDecItem> itemlist = mymap.get(key);
+            Set<IncDecDTO> itemlist = mymap.get(key);
             if (itemlist == null) {
                 itemlist = new HashSet<>();
                 mymap.put(key, itemlist);

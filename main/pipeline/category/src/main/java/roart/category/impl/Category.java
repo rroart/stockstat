@@ -5,7 +5,7 @@ import java.util.List;
 import roart.category.AbstractCategory;
 import roart.iclij.config.IclijConfig;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.data.PipelineData;
 import roart.pipeline.Pipeline;
 import roart.result.model.ResultItemTableRow;
@@ -14,7 +14,7 @@ import roart.stockutil.StockUtil;
 
 public class Category extends AbstractCategory {
 
-    public Category(IclijConfig conf, String periodText, List<StockItem> stocks, PipelineData[] datareaders, Inmemory inmemory) {
+    public Category(IclijConfig conf, String periodText, List<StockDTO> stocks, PipelineData[] datareaders, Inmemory inmemory) {
         super(conf, periodText, stocks, datareaders, inmemory);
     }
 
@@ -24,7 +24,7 @@ public class Category extends AbstractCategory {
     }
     
     @Override
-    public Double[] getData(StockItem stock) throws Exception {
+    public Double[] getData(StockDTO stock) throws Exception {
         return StockDao.getValue(stock, period);
     }
 
@@ -33,7 +33,7 @@ public class Category extends AbstractCategory {
     }
 
     @Override
-    public void addResultItem(ResultItemTableRow r, StockItem stock) {
+    public void addResultItem(ResultItemTableRow r, StockDTO stock) {
     }
 
 }

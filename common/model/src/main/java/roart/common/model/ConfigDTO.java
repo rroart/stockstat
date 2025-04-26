@@ -1,11 +1,8 @@
 package roart.common.model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
-public class ConfigItem {
+public class ConfigDTO {
     private LocalDate record;
     
     private LocalDate date;

@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.iclij.config.IclijConfig;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.indicator.AbstractIndicator;
@@ -24,7 +24,7 @@ public abstract class AbstractCategory {
 
     private String title;
     protected IclijConfig conf;
-    protected List<StockItem> stocks;
+    protected List<StockDTO> stocks;
     protected List<AbstractIndicator> indicators = new ArrayList<>();
     private Map<String, AbstractIndicator> indicatorMap = new HashMap<>();
     protected PipelineData[] datareaders;
@@ -34,7 +34,7 @@ public abstract class AbstractCategory {
 
     protected Inmemory inmemory;
    
-    public AbstractCategory(IclijConfig conf, String periodText, List<StockItem> stocks, PipelineData[] datareaders, Inmemory inmemory) {
+    public AbstractCategory(IclijConfig conf, String periodText, List<StockDTO> stocks, PipelineData[] datareaders, Inmemory inmemory) {
         this.conf = conf;
         setTitle(periodText);
         this.stocks = stocks;
@@ -48,7 +48,7 @@ public abstract class AbstractCategory {
     
     public abstract void addResultItemTitle(ResultItemTableRow r);
 
-    public abstract void addResultItem(ResultItemTableRow r, StockItem stock);
+    public abstract void addResultItem(ResultItemTableRow r, StockDTO stock);
 
     public static void mapAdder(Map<Integer, List<ResultItemTableRow>> map, Integer key, List<ResultItemTableRow> add) {
         List<ResultItemTableRow> val = map.computeIfAbsent(key, k -> new ArrayList<>());
@@ -134,16 +134,16 @@ public abstract class AbstractCategory {
         return map;
     }
     
-    public abstract Double[] getData(StockItem stock) throws Exception;
+    public abstract Double[] getData(StockDTO stock) throws Exception;
     
-    public void createResultMap(IclijConfig conf, List<StockItem> stocks) throws Exception {
+    public void createResultMap(IclijConfig conf, List<StockDTO> stocks) throws Exception {
         resultMap = new HashMap<>();
         dataArraySize = 0;
         if (stocks == null) {
             int jj = 0;
             return;
         }
-        for (StockItem stock : stocks) {
+        for (StockDTO stock : stocks) {
             Double[] value = getData(stock);
             resultMap.put(stock.getId(), value);
             for (int i = dataArraySize; i < value.length; i++) {

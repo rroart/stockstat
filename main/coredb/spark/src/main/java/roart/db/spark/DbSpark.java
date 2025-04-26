@@ -2,8 +2,8 @@ package roart.db.spark;
 
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
-import roart.common.model.MetaItem;
-import roart.common.model.StockItem;
+import roart.common.model.MetaDTO;
+import roart.common.model.StockDTO;
 import roart.common.util.ArraysUtil;
 import roart.db.spark.util.SparkSessionUtil;
 import scala.collection.mutable.ArraySeq;
@@ -69,9 +69,9 @@ public class DbSpark {
 
     }
 
-    public static List<StockItem> getAll(String market) throws Exception {
+    public static List<StockDTO> getAll(String market) throws Exception {
         long time0 = System.currentTimeMillis();
-        List<StockItem> retList = new ArrayList<>();
+        List<StockDTO> retList = new ArrayList<>();
         Dataset<Row> allstocks = spark.read().jdbc("jdbc:postgresql://localhost:5432/stockstat?user=stockstat&password=password", "stock", prop);
         log.info("spark size {}", allstocks.count());
         Dataset<Row> allstocksMarket = allstocks.filter(allstocks.col("marketid").equalTo(market));
@@ -102,7 +102,7 @@ public class DbSpark {
             Double period7 = row.getAs("period7");
             Double period8 = row.getAs("period8");
             Double period9 = row.getAs("period9");
-            retList.add(new StockItem(dbid, marketid, id, isin, name, date, indexvalue, indexvaluelow, indexvaluehigh, indexvalueopen, price, pricelow, pricehigh, priceopen, volume, currency, period1, period2, period3, period4, period5, period6, period7, period8, period9));			
+            retList.add(new StockDTO(dbid, marketid, id, isin, name, date, indexvalue, indexvaluelow, indexvaluehigh, indexvalueopen, price, pricelow, pricehigh, priceopen, volume, currency, period1, period2, period3, period4, period5, period6, period7, period8, period9));			
         }
         log.info("spark size {}", retList.size());
         log.info("time0 " + (System.currentTimeMillis() - time0));
@@ -118,7 +118,7 @@ public class DbSpark {
         return retList;
     }
 
-    public static MetaItem getMarket(String market) {
+    public static MetaDTO getMarket(String market) {
         Dataset<Row> allmetas = spark.read().jdbc("jdbc:postgresql://localhost:5432/stockstat?user=stockstat&password=password", "meta", prop);
         //allmetas.show();
         for (Row row : allmetas.collectAsList()) {
@@ -136,7 +136,7 @@ public class DbSpark {
                 String priority = row.getAs("priority");
                 String reset = row.getAs("reset");
                 boolean lhc = row.getAs("lhc");
-                return new MetaItem(marketid, period1, period2, period3, period4, period5, period6, period7, period8, period9, priority, reset, lhc);
+                return new MetaDTO(marketid, period1, period2, period3, period4, period5, period6, period7, period8, period9, priority, reset, lhc);
             }
         }
         return null;

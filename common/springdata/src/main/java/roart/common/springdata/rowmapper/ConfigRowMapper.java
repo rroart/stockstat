@@ -6,14 +6,14 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import roart.common.model.ConfigItem;
+import roart.common.model.ConfigDTO;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 
-public class ConfigRowMapper implements RowMapper<ConfigItem>{
+public class ConfigRowMapper implements RowMapper<ConfigDTO>{
     @Override
-    public ConfigItem mapRow(ResultSet rs, int rowNum) throws SQLException {
-        ConfigItem item = new ConfigItem();
+    public ConfigDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+        ConfigDTO item = new ConfigDTO();
         item.setRecord(TimeUtil.convertDate(rs.getDate("record")));
         item.setDate(TimeUtil.convertDate(rs.getDate("date")));
         item.setMarket(rs.getString("market"));

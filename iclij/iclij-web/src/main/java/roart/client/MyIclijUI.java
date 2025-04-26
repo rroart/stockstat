@@ -47,12 +47,12 @@ import com.vaadin.ui.VerticalLayout;
 
 import roart.common.config.ConfigTreeMap;
 import roart.common.constants.Constants;
-import roart.common.model.ConfigItem;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
-import roart.common.model.RelationItem;
-import roart.common.model.TimingItem;
+import roart.common.model.ConfigDTO;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
+import roart.common.model.RelationDTO;
+import roart.common.model.TimingDTO;
 import roart.eureka.util.EurekaUtil;
 import roart.iclij.model.MapList;
 import roart.iclij.service.IclijServiceList;
@@ -660,13 +660,13 @@ public class MyIclijUI extends UI implements ViewDisplay {
         HorizontalLayout horDb = new HorizontalLayout();
         horDb.setHeight("20%");
         horDb.setWidth("60%");
-        //horDb.addComponent(getDbItem());
+        //horDb.addComponent(getDbDTO());
         //horDb.addComponent(getMarkets());
 
         HorizontalLayout horDb2 = new HorizontalLayout();
         horDb2.setHeight("20%");
         horDb2.setWidth("60%");
-        //horDb.addComponent(getDbItem());
+        //horDb.addComponent(getDbDTO());
         /*
         horDb2.addComponent(getDays());
         horDb2.addComponent(getTableDays());
@@ -713,13 +713,13 @@ public class MyIclijUI extends UI implements ViewDisplay {
         HorizontalLayout horManual = new HorizontalLayout();
         horManual.setHeight("20%");
         horManual.setWidth("60%");
-        //horDb.addComponent(getDbItem());
+        //horDb.addComponent(getDbDTO());
         //horManual.addComponent(getMarkets2(horManual, verManualList));
 
         HorizontalLayout horChooseGraph = new HorizontalLayout();
         horChooseGraph.setHeight("20%");
         horChooseGraph.setWidth("60%");
-        //horDb.addComponent(getDbItem());
+        //horDb.addComponent(getDbDTO());
         //horChooseGraph.addComponent(getEqualizeGraph());
         //horChooseGraph.addComponent(getEqualizeUnify());
         //horChooseGraph.addComponent(getChooseGraph(verManualList));
@@ -904,38 +904,38 @@ public class MyIclijUI extends UI implements ViewDisplay {
             return;
         }
         if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("category")) {
-            List<MemoryItem> mylist = objectMapper.convertValue(list, new TypeReference<List<MemoryItem>>() { });
-            Grid<MemoryItem> table = getGridFromList(item, mylist);
+            List<MemoryDTO> mylist = objectMapper.convertValue(list, new TypeReference<List<MemoryItem>>() { });
+            Grid<MemoryDTO> table = getGridFromList(item, mylist);
             ts.addComponent(table);
             return;
         }
         if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("increase")) {
-            List<IncDecItem> mylist = objectMapper.convertValue(list, new TypeReference<List<IncDecItem>>() { });
-            Grid<IncDecItem> table = getGridFromList2(item, mylist);
+            List<IncDecDTO> mylist = objectMapper.convertValue(list, new TypeReference<List<IncDecItem>>() { });
+            Grid<IncDecDTO> table = getGridFromList2(item, mylist);
             ts.addComponent(table);
             return;
         }
         if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("mytime")) {
-            List<TimingItem> mylist = objectMapper.convertValue(list, new TypeReference<List<TimingItem>>() { });
-            Grid<TimingItem> table = getGridFromList4(item, mylist);
+            List<TimingDTO> mylist = objectMapper.convertValue(list, new TypeReference<List<TimingItem>>() { });
+            Grid<TimingDTO> table = getGridFromList4(item, mylist);
             ts.addComponent(table);
             return;
         }
         if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("type")) {
-            List<RelationItem> mylist = objectMapper.convertValue(list, new TypeReference<List<RelationItem>>() { });
-            Grid<RelationItem> table = getGridFromList6(item, mylist);
+            List<RelationDTO> mylist = objectMapper.convertValue(list, new TypeReference<List<RelationItem>>() { });
+            Grid<RelationDTO> table = getGridFromList6(item, mylist);
             ts.addComponent(table);
             return;
         }
         if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("localcomponent")) {
-            List<MLMetricsItem> mylist = objectMapper.convertValue(list, new TypeReference<List<MLMetricsItem>>() { });
-            Grid<MLMetricsItem> table = getGridFromList7(item, mylist);
+            List<MLMetricsDTO> mylist = objectMapper.convertValue(list, new TypeReference<List<MLMetricsItem>>() { });
+            Grid<MLMetricsDTO> table = getGridFromList7(item, mylist);
             ts.addComponent(table);
             return;
         }
         if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("id")) {
-            List<ConfigItem> mylist = objectMapper.convertValue(list, new TypeReference<List<ConfigItem>>() { });
-            Grid<ConfigItem> table = getGridFromList5(item, mylist);
+            List<ConfigDTO> mylist = objectMapper.convertValue(list, new TypeReference<List<ConfigItem>>() { });
+            Grid<ConfigDTO> table = getGridFromList5(item, mylist);
             ts.addComponent(table);            
         } else {
             List<MapList> mylist = objectMapper.convertValue(list, new TypeReference<List<MapList>>() { });
@@ -944,77 +944,77 @@ public class MyIclijUI extends UI implements ViewDisplay {
         }
     }
 
-    private Grid<MLMetricsItem> getGridFromList7(IclijServiceList item, List<MLMetricsItem> mylist) {
-        Grid<MLMetricsItem> table = new Grid<>();
+    private Grid<MLMetricsDTO> getGridFromList7(IclijServiceList item, List<MLMetricsItem> mylist) {
+        Grid<MLMetricsDTO> table = new Grid<>();
         table.setCaption(item.getTitle());
-        table.addColumn(MLMetricsItem::getRecord).setCaption("Record");
-        table.addColumn(MLMetricsItem::getDate).setCaption("Date");
-        table.addColumn(MLMetricsItem::getMarket).setCaption("Market");
-        table.addColumn(MLMetricsItem::getComponent).setCaption("Component");
-        table.addColumn(MLMetricsItem::getSubcomponent).setCaption("Subcomponent");
-        table.addColumn(MLMetricsItem::getLocalcomponent).setCaption("Local component");
-        table.addColumn(MLMetricsItem::getTestAccuracy).setCaption("Test accuracy");
-        table.addColumn(MLMetricsItem::getLoss).setCaption("Loss");
-        table.addColumn(MLMetricsItem::getThreshold).setCaption("Threshold");
+        table.addColumn(MLMetricsDTO::getRecord).setCaption("Record");
+        table.addColumn(MLMetricsDTO::getDate).setCaption("Date");
+        table.addColumn(MLMetricsDTO::getMarket).setCaption("Market");
+        table.addColumn(MLMetricsDTO::getComponent).setCaption("Component");
+        table.addColumn(MLMetricsDTO::getSubcomponent).setCaption("Subcomponent");
+        table.addColumn(MLMetricsDTO::getLocalcomponent).setCaption("Local component");
+        table.addColumn(MLMetricsDTO::getTestAccuracy).setCaption("Test accuracy");
+        table.addColumn(MLMetricsDTO::getLoss).setCaption("Loss");
+        table.addColumn(MLMetricsDTO::getThreshold).setCaption("Threshold");
         table.setWidth("90%");
         table.setItems(mylist);
         System.out.println("added");
         return table;
     }
     
-    private Grid<RelationItem> getGridFromList6(IclijServiceList item, List<RelationItem> mylist) {
-        Grid<RelationItem> table = new Grid<>();
+    private Grid<RelationDTO> getGridFromList6(IclijServiceList item, List<RelationItem> mylist) {
+        Grid<RelationDTO> table = new Grid<>();
         table.setCaption(item.getTitle());
-        table.addColumn(RelationItem::getRecord).setCaption("Record");
-        table.addColumn(RelationItem::getMarket).setCaption("Market");
-        table.addColumn(RelationItem::getId).setCaption("Id");
-        table.addColumn(RelationItem::getAltId).setCaption("AltId");
-        table.addColumn(RelationItem::getType).setCaption("Type");
-        table.addColumn(RelationItem::getValue).setCaption("Value");
-        table.addColumn(RelationItem::getOtherMarket).setCaption("OtherMarket");
-        table.addColumn(RelationItem::getOtherId).setCaption("OtherId");
-        table.addColumn(RelationItem::getOtherAltId).setCaption("OtherAltId");
+        table.addColumn(RelationDTO::getRecord).setCaption("Record");
+        table.addColumn(RelationDTO::getMarket).setCaption("Market");
+        table.addColumn(RelationDTO::getId).setCaption("Id");
+        table.addColumn(RelationDTO::getAltId).setCaption("AltId");
+        table.addColumn(RelationDTO::getType).setCaption("Type");
+        table.addColumn(RelationDTO::getValue).setCaption("Value");
+        table.addColumn(RelationDTO::getOtherMarket).setCaption("OtherMarket");
+        table.addColumn(RelationDTO::getOtherId).setCaption("OtherId");
+        table.addColumn(RelationDTO::getOtherAltId).setCaption("OtherAltId");
         table.setWidth("90%");
         table.setItems(mylist);
         System.out.println("added");
         return table;
     }
 
-    private Grid<ConfigItem> getGridFromList5(IclijServiceList item, List<ConfigItem> mylist) {
-        Grid<ConfigItem> table = new Grid<>();
+    private Grid<ConfigDTO> getGridFromList5(IclijServiceList item, List<ConfigItem> mylist) {
+        Grid<ConfigDTO> table = new Grid<>();
         table.setCaption(item.getTitle());
-        table.addColumn(ConfigItem::getRecord).setCaption("Record");
-        table.addColumn(ConfigItem::getDate).setCaption("Date");
-        table.addColumn(ConfigItem::getMarket).setCaption("Market");
-        table.addColumn(ConfigItem::getAction).setCaption("Action");
-        table.addColumn(ConfigItem::getId).setCaption("Id");
-        table.addColumn(ConfigItem::getValue).setCaption("Value");
-        table.addColumn(ConfigItem::getComponent).setCaption("Component");
-        table.addColumn(ConfigItem::getSubcomponent).setCaption("Subcomponent");
-        table.addColumn(ConfigItem::getScore).setCaption("Score");
-        table.addColumn(ConfigItem::getBuy).setCaption("Buy");
+        table.addColumn(ConfigDTO::getRecord).setCaption("Record");
+        table.addColumn(ConfigDTO::getDate).setCaption("Date");
+        table.addColumn(ConfigDTO::getMarket).setCaption("Market");
+        table.addColumn(ConfigDTO::getAction).setCaption("Action");
+        table.addColumn(ConfigDTO::getId).setCaption("Id");
+        table.addColumn(ConfigDTO::getValue).setCaption("Value");
+        table.addColumn(ConfigDTO::getComponent).setCaption("Component");
+        table.addColumn(ConfigDTO::getSubcomponent).setCaption("Subcomponent");
+        table.addColumn(ConfigDTO::getScore).setCaption("Score");
+        table.addColumn(ConfigDTO::getBuy).setCaption("Buy");
         table.setWidth("90%");
         table.setItems(mylist);
         System.out.println("added");
         return table;
     }
 
-    private Grid<TimingItem> getGridFromList4(IclijServiceList item, List<TimingItem> mylist) {
-        Grid<TimingItem> table = new Grid<>();
+    private Grid<TimingDTO> getGridFromList4(IclijServiceList item, List<TimingItem> mylist) {
+        Grid<TimingDTO> table = new Grid<>();
         table.setCaption(item.getTitle());
-        table.addColumn(TimingItem::getRecord).setCaption("Record");
-        table.addColumn(TimingItem::getDate).setCaption("Date");
-        table.addColumn(TimingItem::getMarket).setCaption("Market");
-        table.addColumn(TimingItem::getMlmarket).setCaption("ML market");
-        table.addColumn(TimingItem::getAction).setCaption("Action");
-        table.addColumn(TimingItem::isEvolve).setCaption("Evolve");
-        table.addColumn(TimingItem::getComponent).setCaption("Component");
-        table.addColumn(TimingItem::getSubcomponent).setCaption("Subcomponent");
-        table.addColumn(TimingItem::getParameters).setCaption("Threshold");
-        table.addColumn(TimingItem::getMytime).setCaption("Time");
-        table.addColumn(TimingItem::getScore).setCaption("Score");
-        table.addColumn(TimingItem::getBuy).setCaption("Buy");
-        table.addColumn(TimingItem::getDescription).setCaption("Description");
+        table.addColumn(TimingDTO::getRecord).setCaption("Record");
+        table.addColumn(TimingDTO::getDate).setCaption("Date");
+        table.addColumn(TimingDTO::getMarket).setCaption("Market");
+        table.addColumn(TimingDTO::getMlmarket).setCaption("ML market");
+        table.addColumn(TimingDTO::getAction).setCaption("Action");
+        table.addColumn(TimingDTO::isEvolve).setCaption("Evolve");
+        table.addColumn(TimingDTO::getComponent).setCaption("Component");
+        table.addColumn(TimingDTO::getSubcomponent).setCaption("Subcomponent");
+        table.addColumn(TimingDTO::getParameters).setCaption("Threshold");
+        table.addColumn(TimingDTO::getMytime).setCaption("Time");
+        table.addColumn(TimingDTO::getScore).setCaption("Score");
+        table.addColumn(TimingDTO::getBuy).setCaption("Buy");
+        table.addColumn(TimingDTO::getDescription).setCaption("Description");
         table.setWidth("90%");
         table.setItems(mylist);
         System.out.println("added");
@@ -1032,67 +1032,67 @@ public class MyIclijUI extends UI implements ViewDisplay {
         return table;
     }
 
-    private Grid<IncDecItem> getGridFromList2(IclijServiceList item, List<IncDecItem> mylist) {
-        Grid<IncDecItem> table = new Grid<>();
+    private Grid<IncDecDTO> getGridFromList2(IclijServiceList item, List<IncDecItem> mylist) {
+        Grid<IncDecDTO> table = new Grid<>();
         table.setCaption(item.getTitle());
-        table.addColumn(IncDecItem::getRecord).setCaption("Record");
-        table.addColumn(IncDecItem::getDate).setCaption("Date");
-        table.addColumn(IncDecItem::getMarket).setCaption("Market");
-        table.addColumn(IncDecItem::isIncrease).setCaption("Inc");
-        table.addColumn(IncDecItem::getId).setCaption("Id");
-        table.addColumn(IncDecItem::getName).setCaption("Name");
-        table.addColumn(IncDecItem::getScore).setCaption("Score");
-        table.addColumn(IncDecItem::getDescription).setCaption("Description");
-        table.addColumn(IncDecItem::getVerified).setCaption("Verified");
-        table.addColumn(IncDecItem::getVerificationComment).setCaption("Comment");
+        table.addColumn(IncDecDTO::getRecord).setCaption("Record");
+        table.addColumn(IncDecDTO::getDate).setCaption("Date");
+        table.addColumn(IncDecDTO::getMarket).setCaption("Market");
+        table.addColumn(IncDecDTO::isIncrease).setCaption("Inc");
+        table.addColumn(IncDecDTO::getId).setCaption("Id");
+        table.addColumn(IncDecDTO::getName).setCaption("Name");
+        table.addColumn(IncDecDTO::getScore).setCaption("Score");
+        table.addColumn(IncDecDTO::getDescription).setCaption("Description");
+        table.addColumn(IncDecDTO::getVerified).setCaption("Verified");
+        table.addColumn(IncDecDTO::getVerificationComment).setCaption("Comment");
         table.setWidth("90%");
         table.setItems(mylist);
         System.out.println("added");
         return table;
     }
 
-    private Grid<MemoryItem> getGridFromList(IclijServiceList item, List<MemoryItem> mylist) {
-        Grid<MemoryItem> table = new Grid<>();
+    private Grid<MemoryDTO> getGridFromList(IclijServiceList item, List<MemoryItem> mylist) {
+        Grid<MemoryDTO> table = new Grid<>();
         table.setCaption(item.getTitle());
-        table.addColumn(MemoryItem::getRecord).setCaption("Record");
-        table.addColumn(MemoryItem::getDate).setCaption("Date");
-        table.addColumn(MemoryItem::getUsedsec).setCaption("Usedsec");
-        table.addColumn(MemoryItem::getMarket).setCaption("Market");
-        table.addColumn(MemoryItem::getTestaccuracy).setCaption("Testaccuracy");
-        table.addColumn(MemoryItem::getTestloss).setCaption("Testloss");
-        table.addColumn(MemoryItem::getConfidence).setCaption("Confidence");
-        table.addColumn(MemoryItem::getLearnConfidence).setCaption("LearnConfidence");
-        table.addColumn(MemoryItem::getCategory).setCaption("Category");
-        table.addColumn(MemoryItem::getComponent).setCaption("Component");
-        table.addColumn(MemoryItem::getSubcomponent).setCaption("Subcomponent");
-        table.addColumn(MemoryItem::getDescription).setCaption("Description");
-        table.addColumn(MemoryItem::getInfo).setCaption("Info");
-        table.addColumn(MemoryItem::getFuturedays).setCaption("Futuredays");
-        table.addColumn(MemoryItem::getFuturedate).setCaption("Futuredate");
-        table.addColumn(MemoryItem::getPositives).setCaption("Positives");
-        table.addColumn(MemoryItem::getSize).setCaption("Size");
-        table.addColumn(MemoryItem::getParameters).setCaption("Threshold");
-        table.addColumn(MemoryItem::getTp).setCaption("Tp");
-        table.addColumn(MemoryItem::getTpSize).setCaption("TpSize");
-        table.addColumn(MemoryItem::getTpConf).setCaption("TpConf");
-        table.addColumn(MemoryItem::getTpProb).setCaption("TpProb");
-        table.addColumn(MemoryItem::getTpProbConf).setCaption("TpProbConf");
-        table.addColumn(MemoryItem::getTn).setCaption("Tn");
-        table.addColumn(MemoryItem::getTnSize).setCaption("TnSize");
-        table.addColumn(MemoryItem::getTnConf).setCaption("TnConf");
-        table.addColumn(MemoryItem::getTnProb).setCaption("TnProb");
-        table.addColumn(MemoryItem::getTnProbConf).setCaption("TnProbConf");
-        table.addColumn(MemoryItem::getFp).setCaption("Fp");
-        table.addColumn(MemoryItem::getFpSize).setCaption("FpSize");
-        table.addColumn(MemoryItem::getFpConf).setCaption("FpConf");
-        table.addColumn(MemoryItem::getFpProb).setCaption("FpProb");
-        table.addColumn(MemoryItem::getFpProbConf).setCaption("FpProbConf");
-        table.addColumn(MemoryItem::getFn).setCaption("Fn");
-        table.addColumn(MemoryItem::getFnSize).setCaption("FnSize");
-        table.addColumn(MemoryItem::getFnConf).setCaption("FnConf");
-        table.addColumn(MemoryItem::getFnProb).setCaption("FnProb");
-        table.addColumn(MemoryItem::getFnProbConf).setCaption("FnProbConf");
-        table.addColumn(MemoryItem::getPosition).setCaption("Position");
+        table.addColumn(MemoryDTO::getRecord).setCaption("Record");
+        table.addColumn(MemoryDTO::getDate).setCaption("Date");
+        table.addColumn(MemoryDTO::getUsedsec).setCaption("Usedsec");
+        table.addColumn(MemoryDTO::getMarket).setCaption("Market");
+        table.addColumn(MemoryDTO::getTestaccuracy).setCaption("Testaccuracy");
+        table.addColumn(MemoryDTO::getTestloss).setCaption("Testloss");
+        table.addColumn(MemoryDTO::getConfidence).setCaption("Confidence");
+        table.addColumn(MemoryDTO::getLearnConfidence).setCaption("LearnConfidence");
+        table.addColumn(MemoryDTO::getCategory).setCaption("Category");
+        table.addColumn(MemoryDTO::getComponent).setCaption("Component");
+        table.addColumn(MemoryDTO::getSubcomponent).setCaption("Subcomponent");
+        table.addColumn(MemoryDTO::getDescription).setCaption("Description");
+        table.addColumn(MemoryDTO::getInfo).setCaption("Info");
+        table.addColumn(MemoryDTO::getFuturedays).setCaption("Futuredays");
+        table.addColumn(MemoryDTO::getFuturedate).setCaption("Futuredate");
+        table.addColumn(MemoryDTO::getPositives).setCaption("Positives");
+        table.addColumn(MemoryDTO::getSize).setCaption("Size");
+        table.addColumn(MemoryDTO::getParameters).setCaption("Threshold");
+        table.addColumn(MemoryDTO::getTp).setCaption("Tp");
+        table.addColumn(MemoryDTO::getTpSize).setCaption("TpSize");
+        table.addColumn(MemoryDTO::getTpConf).setCaption("TpConf");
+        table.addColumn(MemoryDTO::getTpProb).setCaption("TpProb");
+        table.addColumn(MemoryDTO::getTpProbConf).setCaption("TpProbConf");
+        table.addColumn(MemoryDTO::getTn).setCaption("Tn");
+        table.addColumn(MemoryDTO::getTnSize).setCaption("TnSize");
+        table.addColumn(MemoryDTO::getTnConf).setCaption("TnConf");
+        table.addColumn(MemoryDTO::getTnProb).setCaption("TnProb");
+        table.addColumn(MemoryDTO::getTnProbConf).setCaption("TnProbConf");
+        table.addColumn(MemoryDTO::getFp).setCaption("Fp");
+        table.addColumn(MemoryDTO::getFpSize).setCaption("FpSize");
+        table.addColumn(MemoryDTO::getFpConf).setCaption("FpConf");
+        table.addColumn(MemoryDTO::getFpProb).setCaption("FpProb");
+        table.addColumn(MemoryDTO::getFpProbConf).setCaption("FpProbConf");
+        table.addColumn(MemoryDTO::getFn).setCaption("Fn");
+        table.addColumn(MemoryDTO::getFnSize).setCaption("FnSize");
+        table.addColumn(MemoryDTO::getFnConf).setCaption("FnConf");
+        table.addColumn(MemoryDTO::getFnProb).setCaption("FnProb");
+        table.addColumn(MemoryDTO::getFnProbConf).setCaption("FnProbConf");
+        table.addColumn(MemoryDTO::getPosition).setCaption("Position");
         table.setWidth("90%");
         table.setItems(mylist);
         System.out.println("added");

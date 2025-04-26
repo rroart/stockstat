@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import roart.iclij.config.IclijConfig;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialInteger;
@@ -73,7 +73,7 @@ public abstract class AbstractPredictor extends PipelineResultData {
         return titleArray;
     }
 
-    public abstract Object[] getResultItem(StockItem stock);
+    public abstract Object[] getResultItem(StockDTO stock);
 
     public Object calculate(Double[] array) {
         return null;

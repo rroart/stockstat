@@ -20,10 +20,10 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.ActionComponentItem;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
+import roart.common.model.ActionComponentDTO;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.pipeline.util.PipelineUtils;
@@ -55,17 +55,17 @@ public class FindProfitAction extends MarketAction {
     }
     
     //@Override
-    public List<MemoryItem> getMarketMemory2(Market market) {
+    public List<MemoryDTO> getMarketMemory2(Market market) {
         return new ArrayList<>();
     }
 
     //@Override
-    public List<MemoryItem> filterKeepRecent2(List<MemoryItem> marketMemory, LocalDate date, int days) {
+    public List<MemoryDTO> filterKeepRecent2(List<MemoryDTO> marketMemory, LocalDate date, int days) {
         return marketMemory;
     }
 
     @Override
-    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Memories listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
+    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Memories listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree, List<MLMetricsDTO> mlTests) {
         if (param.getUpdateMap() == null) {
             param.setUpdateMap(new HashMap<>());
         }
@@ -113,14 +113,14 @@ public class FindProfitAction extends MarketAction {
             
             component.calculateIncDec(componentData, profitdata, positions, buy, mlTests, parameters);
             if (param.getInput().isDoSave()) {
-                IncDecItem myitem = null;
+                IncDecDTO myitem = null;
                 try {
-                    for (IncDecItem item : profitdata.getBuys().values()) {
+                    for (IncDecDTO item : profitdata.getBuys().values()) {
                         myitem = item;
                         param.getService().getIo().getIdbDao().save(item);
                         log.debug("" + item);
                     }
-                    for (IncDecItem item : profitdata.getSells().values()) {
+                    for (IncDecDTO item : profitdata.getSells().values()) {
                         myitem = item;
                         param.getService().getIo().getIdbDao().save(item);
                         log.debug("" + item);
@@ -137,8 +137,8 @@ public class FindProfitAction extends MarketAction {
         myData.getDecs().addAll(profitdata.getSells().values());
     }
 
-    public List<MemoryItem> findAllMarketComponentsToCheck(WebData myData, ComponentData param, int days, IclijConfig config, ActionComponentItem marketTime, boolean evolve, Map<String, ComponentData> dataMap, Map<String, Component> componentMap) {
-        List<MemoryItem> allMemories = new ArrayList<>();
+    public List<MemoryDTO> findAllMarketComponentsToCheck(WebData myData, ComponentData param, int days, IclijConfig config, ActionComponentDTO marketTime, boolean evolve, Map<String, ComponentData> dataMap, Map<String, Component> componentMap) {
+        List<MemoryDTO> allMemories = new ArrayList<>();
         Market market = new MarketUtil().findMarket(marketTime.getMarket(), getActionData().getIclijConfig());
         Short startOffset = market.getConfig().getStartoffset();
         if (startOffset != null) {
@@ -170,7 +170,7 @@ public class FindProfitAction extends MarketAction {
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
             myData.getUpdateMap().putAll(componentData.getUpdateMap());
-            List<MemoryItem> memories;
+            List<MemoryDTO> memories;
             try {
                 memories = component.calculateMemory(getActionData(), componentData, parameters);
                 allMemories.addAll(memories);
@@ -183,8 +183,8 @@ public class FindProfitAction extends MarketAction {
 
     @Deprecated // ?
     @Override
-    protected List<IncDecItem> getIncDecItems() {
-        List<IncDecItem> incdecitems = null;
+    protected List<IncDecDTO> getIncDecDTOs() {
+        List<IncDecDTO> incdecitems = null;
         try {
             incdecitems = null; //param.getService().getIo().getIdbDao().getAllIncDecs();
         } catch (Exception e) {
@@ -209,15 +209,15 @@ public class FindProfitAction extends MarketAction {
     }
     
     @Override
-    protected List<MemoryItem> getMemItems(ActionComponentItem marketTime, WebData myData, ComponentData param, IclijConfig config, Boolean evolve, Map<String, ComponentData> dataMap) {
+    protected List<MemoryDTO> getMemDTOs(ActionComponentDTO marketTime, WebData myData, ComponentData param, IclijConfig config, Boolean evolve, Map<String, ComponentData> dataMap) {
         Market market = new MarketUtil().findMarket(marketTime.getMarket(), getActionData().getIclijConfig());
         
         try {
             evolve = false;
-            //List<MemoryItem> newMemories = findAllMarketComponentsToCheck(myData, param, 0, config, marketTime, evolve, dataMap, componentMap);
+            //List<MemoryDTO> newMemories = findAllMarketComponentsToCheck(myData, param, 0, config, marketTime, evolve, dataMap, componentMap);
             LocalDate prevdate = getPrevDate(param, market);
             LocalDate olddate = prevdate.minusDays(((int) MarketAction.AVERAGE_SIZE) * getActionData().getTime(market));
-            List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market, getName(), marketTime.getComponent(), marketTime.getSubcomponent(), JsonUtil.convert(marketTime.getParameters()), olddate, prevdate, param.getService().getIo().getIdbDao());
+            List<MemoryDTO> marketMemory = new MarketUtil().getMarketMemory(market, getName(), marketTime.getComponent(), marketTime.getSubcomponent(), JsonUtil.convert(marketTime.getParameters()), olddate, prevdate, param.getService().getIo().getIdbDao());
             return marketMemory;
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -235,6 +235,7 @@ public class FindProfitAction extends MarketAction {
         param.getAndSetCategoryValueMap(false);
     }
 
+    @Deprecated
     public WebData getVerifyMarket(ComponentInput componentInput, ComponentData param,
             Market market, boolean evolve, int verificationdays) {
         WebData myData;
@@ -245,7 +246,7 @@ public class FindProfitAction extends MarketAction {
         myData.setTimingMap(new HashMap<>());
         myData.setUpdateMap2(new HashMap<>());
         myData.setTimingMap2(new HashMap<>());
-        myData.setMemoryItems(new ArrayList<>());
+        myData.setMemoryDTOs(new ArrayList<>());
         /*
         MarketComponentTime marketTime = new MarketComponentTime();
         marketTime.market = market;
@@ -258,7 +259,7 @@ public class FindProfitAction extends MarketAction {
         */
         Map<String, ComponentData> dataMap = new HashMap<>();
         Memories listComponentMap = new Memories(market);
-        myData.setMemoryItems(new ArrayList<>());
+        myData.setMemoryDTOs(new ArrayList<>());
         LocalDate prevdate = getPrevDate(param, market);
         int offset = new ComponentTimeUtil().getFindProfitOffset(market, param.getInput());
         short startoffset = new MarketUtil().getStartoffset(market);
@@ -273,7 +274,7 @@ public class FindProfitAction extends MarketAction {
         profitdata.setInputdata(inputdata);
         myData.setProfitData(profitdata);
 
-        List<IncDecItem> incdecitems = null;
+        List<IncDecDTO> incdecitems = null;
         try {
             incdecitems = param.getService().getIo().getIdbDao().getAllIncDecs(market.getConfig().getMarket(), olddate, prevdate, null);
         } catch (Exception e) {
@@ -294,10 +295,10 @@ public class FindProfitAction extends MarketAction {
     }
 
     @Override
-    protected boolean getSkipComponent(List<MLMetricsItem> mltests, Double confidence, String componentName) {
+    protected boolean getSkipComponent(List<MLMetricsDTO> mltests, Double confidence, String componentName) {
         mltests = filterMetrics(mltests, componentName, null);
-        Map<Pair<String, String>, List<MLMetricsItem>> metricsMap = getMLMetrics2(mltests, null);
-        List<MLMetricsItem> metricsList = metricsMap.get(new ImmutablePair(componentName, null));
+        Map<Pair<String, String>, List<MLMetricsDTO>> metricsMap = getMLMetrics2(mltests, null);
+        List<MLMetricsDTO> metricsList = metricsMap.get(new ImmutablePair(componentName, null));
         if (metricsList == null) {
             return true;
         }
@@ -306,11 +307,11 @@ public class FindProfitAction extends MarketAction {
     }
 
     @Override
-    protected boolean getSkipSubComponent(List<MLMetricsItem> mltests, Double confidence, String componentName,
+    protected boolean getSkipSubComponent(List<MLMetricsDTO> mltests, Double confidence, String componentName,
             String subComponent) {
         mltests = filterMetrics(mltests, componentName, subComponent);
-        Map<Pair<String, String>, List<MLMetricsItem>> metricsMap2 = getMLMetrics(mltests, null);
-        List<MLMetricsItem> metricsList2 = metricsMap2.get(new ImmutablePair(componentName, subComponent));
+        Map<Pair<String, String>, List<MLMetricsDTO>> metricsMap2 = getMLMetrics(mltests, null);
+        List<MLMetricsDTO> metricsList2 = metricsMap2.get(new ImmutablePair(componentName, subComponent));
         if (metricsList2 == null) {
             return true;
         }        
@@ -318,8 +319,8 @@ public class FindProfitAction extends MarketAction {
         return skipSubcomponent;
     }
 
-    private List<MLMetricsItem> filterMetrics(List<MLMetricsItem> items, String component, String subcomponent) {
-        List<MLMetricsItem> retList = new ArrayList<>();
+    private List<MLMetricsDTO> filterMetrics(List<MLMetricsDTO> items, String component, String subcomponent) {
+        List<MLMetricsDTO> retList = new ArrayList<>();
         return items.stream()
                 .filter(e -> (component.equals(e.getComponent()) && (subcomponent == null || subcomponent.equals(e.getSubcomponent()))))
                 .collect(Collectors.toList());

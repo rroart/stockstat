@@ -8,8 +8,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
@@ -43,9 +43,9 @@ public class FitnessAboveBelow extends Fitness {
     
     private Parameters parameters;
     
-    private List<MLMetricsItem> mlTests;
+    private List<MLMetricsDTO> mlTests;
 
-    private List<IncDecItem> incdecs;
+    private List<IncDecDTO> incdecs;
     
     private List<String> components = new ArrayList<>();
     
@@ -53,7 +53,7 @@ public class FitnessAboveBelow extends Fitness {
 
     private List<String> stockDates;
 
-    public FitnessAboveBelow(MarketActionData action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, Memories positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, List<IncDecItem> incdecs, List<String> components, List<String> subcomponents, List<String> stockDates) {
+    public FitnessAboveBelow(MarketActionData action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, Memories positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsDTO> mlTests, List<IncDecDTO> incdecs, List<String> components, List<String> subcomponents, List<String> stockDates) {
         this.action = action;
         this.param = param;
         this.profitdata = profitdata;

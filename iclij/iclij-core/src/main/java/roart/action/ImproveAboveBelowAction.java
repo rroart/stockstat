@@ -26,10 +26,10 @@ import roart.common.constants.ServiceConstants;
 import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
-import roart.common.model.ActionComponentItem;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
+import roart.common.model.ActionComponentDTO;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.util.PipelineThreadUtils;
@@ -68,7 +68,7 @@ public class ImproveAboveBelowAction extends MarketAction {
     }
     
     @Override
-    protected List<IncDecItem> getIncDecItems() {
+    protected List<IncDecDTO> getIncDecDTOs() {
         return null;
     }
 
@@ -88,7 +88,7 @@ public class ImproveAboveBelowAction extends MarketAction {
     }
 
     @Override
-    protected List<MemoryItem> getMemItems(ActionComponentItem marketTime, WebData myData, ComponentData param,
+    protected List<MemoryDTO> getMemDTOs(ActionComponentDTO marketTime, WebData myData, ComponentData param,
             IclijConfig config, Boolean evolve, Map<String, ComponentData> dataMap) {
         return new ArrayList<>();
     }
@@ -108,7 +108,7 @@ public class ImproveAboveBelowAction extends MarketAction {
     protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param,
             Memories listComponent, Map<String, Component> componentMap,
             Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config,
-            Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
+            Parameters parameters, boolean wantThree, List<MLMetricsDTO> mlTests) {
         if (param.getUpdateMap() == null) {
             param.setUpdateMap(new HashMap<>());
         }
@@ -121,7 +121,7 @@ public class ImproveAboveBelowAction extends MarketAction {
         } catch (ParseException e) {
             log.error(Constants.EXCEPTION, e);
         }
-        //List<MemoryItem> memories = findAllMarketComponentsToCheckNew(myData, param, 0, config, false, dataMap, componentMap, subcomponent, parameters, market);
+        //List<MemoryDTO> memories = findAllMarketComponentsToCheckNew(myData, param, 0, config, false, dataMap, componentMap, subcomponent, parameters, market);
 
         for (Entry<String, Component> entry : componentMap.entrySet()) {
             Component component = entry.getValue();
@@ -140,7 +140,7 @@ public class ImproveAboveBelowAction extends MarketAction {
             int verificationdays = param.getConfig().verificationDays();
 
             //ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters, mlTests);
-            List<IncDecItem> allIncDecs = null;
+            List<IncDecDTO> allIncDecs = null;
             LocalDate date = param.getFutureDate();
             date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
             LocalDate prevDate = date.minusDays(market.getConfig().getFindtime());
@@ -149,13 +149,13 @@ public class ImproveAboveBelowAction extends MarketAction {
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
-            List<IncDecItem> incdecs = allIncDecs; // new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
+            List<IncDecDTO> incdecs = allIncDecs; // new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
             List<String> parametersList = new MiscUtil().getParameters(incdecs);
             if (parametersList.isEmpty()) {
                 component.saveTiming(action.getActionData(), param, true, System.currentTimeMillis(), Double.valueOf(0.0), null, subcomponent, null, null, null, true);
             }
             for (String aParameter : parametersList) {
-                List<IncDecItem> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              
+                List<IncDecDTO> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              
                 List<String> components = new ArrayList<>();
                 List<String> subcomponents = new ArrayList<>();
                 getComponentLists(incdecsP, components, subcomponents);
@@ -186,24 +186,24 @@ public class ImproveAboveBelowAction extends MarketAction {
                     ProfitInputData inputdata = new ProfitInputData();
                     getListComponents(action.getActionData(), myData, param, null, realParameters, evolve, market, null, listComponent2, olddate, prevDate);
 
-                    List<IncDecItem> mylocals = new MiscUtil().getIncDecLocals(incdecsP);
-                    List<IncDecItem> allCurrentIncDecs = mylocals
+                    List<IncDecDTO> mylocals = new MiscUtil().getIncDecLocals(incdecsP);
+                    List<IncDecDTO> allCurrentIncDecs = mylocals
                             .stream()
                             .filter(e -> !listComponent2.containsBelow(e.getComponent(), new ImmutablePair(e.getSubcomponent(), e.getLocalcomponent()), null, null, true))
                             .collect(Collectors.toList());
-                    List<IncDecItem> myincdecs = allCurrentIncDecs;
+                    List<IncDecDTO> myincdecs = allCurrentIncDecs;
                     if (threshold != 1.0) {
                         myincdecs = myincdecs
                                 .stream()
                                 .filter(e -> e.isIncrease() == threshold > 1.0)
                                 .collect(Collectors.toList());
                     }
-                    Set<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toSet());
-                    Set<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toSet());
+                    Set<IncDecDTO> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toSet());
+                    Set<IncDecDTO> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toSet());
 
                     myincs = new MiscUtil().mergeList(myincs, true);
                     mydecs = new MiscUtil().mergeList(mydecs, true);
-                    Set<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
+                    Set<IncDecDTO> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
                     short startoffset = new MarketUtil().getStartoffset(market);
 
                     new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), param.getStockDates(), param.getCategoryValueMap());
@@ -217,20 +217,20 @@ public class ImproveAboveBelowAction extends MarketAction {
                 long scoreSize = 0;
                 Pair<Long, Integer>[] scores = null;
                 {
-                    List<IncDecItem> myincdecs = incdecsP;
+                    List<IncDecDTO> myincdecs = incdecsP;
                     if (threshold != 1.0) {
                         myincdecs = myincdecs
                                 .stream()
                                 .filter(e -> e.isIncrease() == threshold > 1.0)
                                 .collect(Collectors.toList());
                     }
-                    Set<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toSet());
-                    Set<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toSet());
-                    List<IncDecItem> mylocals = new MiscUtil().getIncDecLocals(myincdecs);
+                    Set<IncDecDTO> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toSet());
+                    Set<IncDecDTO> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toSet());
+                    List<IncDecDTO> mylocals = new MiscUtil().getIncDecLocals(myincdecs);
 
                     myincs = new MiscUtil().mergeList(myincs, true);
                     mydecs = new MiscUtil().mergeList(mydecs, true);
-                    Set<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
+                    Set<IncDecDTO> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
                     short startoffset = new MarketUtil().getStartoffset(market);
                     new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), param.getStockDates(), param.getCategoryValueMap());
                     score = fitCommon.fitness(myincs, mydecs, myincdec, 0, null);
@@ -260,7 +260,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                 Trend trend = new TrendUtil().getTrend(verificationdays, null , startoffset, param.getStockDates(), param, market, param.getCategoryValueMap());
                 log.info("Trend {}", trend);                
 
-                MemoryItem memory = new MemoryItem();
+                MemoryDTO memory = new MemoryDTO();
                 if (true) {
                     int ga = param.getConfig().getEvolveGA();
                     Evolve evolve2 = AboveBelowEvolveFactory.factory(ga);
@@ -270,7 +270,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                     Map<String, Object> confMap = new HashMap<>();
                     List<String> confList = new ArrayList<>();
                     //Boolean buy = null;
-                    //List<MLMetricsItem> mlTests = null;
+                    //List<MLMetricsDTO> mlTests = null;
                     ComponentData componentData = evolve2.evolve(action.getActionData(), param, market, profitdata, buy, subcomponent, parameters, mlTests , confMap , evolutionConfig, component.getPipeline(), component, confList );
 
                     //component.handle(this, market, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null);
@@ -338,8 +338,8 @@ public class ImproveAboveBelowAction extends MarketAction {
 
     }
 
-    public List<MemoryItem> findAllMarketComponentsToCheck(WebData myData, ComponentData param, int days, IclijConfig config, boolean evolve, Map<String, ComponentData> dataMap, Map<String, Component> componentMap, String subcomponent, Parameters parameters, Market market) {
-        List<MemoryItem> allMemories = new ArrayList<>();
+    public List<MemoryDTO> findAllMarketComponentsToCheck(WebData myData, ComponentData param, int days, IclijConfig config, boolean evolve, Map<String, ComponentData> dataMap, Map<String, Component> componentMap, String subcomponent, Parameters parameters, Market market) {
+        List<MemoryDTO> allMemories = new ArrayList<>();
         Short startOffset = market.getConfig().getStartoffset();
         if (startOffset != null) {
             log.info("Using offset {}", startOffset);
@@ -368,7 +368,7 @@ public class ImproveAboveBelowAction extends MarketAction {
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
             myData.getUpdateMap().putAll(componentData.getUpdateMap());
-            List<MemoryItem> memories;
+            List<MemoryDTO> memories;
             try {
                 memories = component.calculateMemory(getActionData(), componentData, parameters);
                 allMemories.addAll(memories);
@@ -379,8 +379,8 @@ public class ImproveAboveBelowAction extends MarketAction {
         return allMemories;
     }
 
-    public List<MemoryItem> findAllMarketComponentsToCheckNew(WebData myData, ComponentData param, int days, IclijConfig config, boolean evolve, Map<String, ComponentData> dataMap, Map<String, Component> componentMap, String subcomponent, Parameters parameters, Market market) {
-        List<MemoryItem> allMemories = new ArrayList<>();
+    public List<MemoryDTO> findAllMarketComponentsToCheckNew(WebData myData, ComponentData param, int days, IclijConfig config, boolean evolve, Map<String, ComponentData> dataMap, Map<String, Component> componentMap, String subcomponent, Parameters parameters, Market market) {
+        List<MemoryDTO> allMemories = new ArrayList<>();
         Short startOffset = market.getConfig().getStartoffset();
         if (startOffset != null) {
             log.info("Using offset {}", startOffset);
@@ -409,7 +409,7 @@ public class ImproveAboveBelowAction extends MarketAction {
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
             myData.getUpdateMap().putAll(componentData.getUpdateMap());
-            List<MemoryItem> memories;
+            List<MemoryDTO> memories;
             try {
                 memories = component.calculateMemory(getActionData(), componentData, parameters);
                 allMemories.addAll(memories);
@@ -420,11 +420,11 @@ public class ImproveAboveBelowAction extends MarketAction {
         return allMemories;
     }
 
-    private void getComponentLists(List<IncDecItem> incdecs, List<String> components, List<String> subcomponents) {
+    private void getComponentLists(List<IncDecDTO> incdecs, List<String> components, List<String> subcomponents) {
         Set<String> componentSet = new HashSet<>();
         Set<String> subcomponentSet = new HashSet<>();
 
-        for (IncDecItem item : incdecs) {
+        for (IncDecDTO item : incdecs) {
             componentSet.add(item.getComponent());
             subcomponentSet.add(item.getSubcomponent());
         }
@@ -434,20 +434,20 @@ public class ImproveAboveBelowAction extends MarketAction {
     
     private void getListComponentsNew(WebData myData, ComponentData param, Parameters parameters,
             Boolean evolve, Market market, Memories listComponentMap, LocalDate prevdate,
-            LocalDate olddate, List<IncDecItem> mylocals, MarketActionData action) {
+            LocalDate olddate, List<IncDecDTO> mylocals, MarketActionData action) {
         ProfitInputData inputdata = null;
         /*
-        List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(marketTime.market, getName(), marketTime.componentName, marketTime.subcomponent, JsonUtil.convert(marketTime.parameters), olddate, prevdate);
+        List<MemoryDTO> marketMemory = new MarketUtil().getMarketMemory(marketTime.market, getName(), marketTime.componentName, marketTime.subcomponent, JsonUtil.convert(marketTime.parameters), olddate, prevdate);
         if (marketMemory == null) {
             myData.setProfitData(new ProfitData());
         }
-        marketMemory.addAll(myData.getMemoryItems());
+        marketMemory.addAll(myData.getMemoryDTOs());
         */
         
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket(), param.getId());
         int verificationdays = param.getConfig().verificationDays();
         /*
-        List<IncDecItem> allIncDecs = null;
+        List<IncDecDTO> allIncDecs = null;
         try {
             allIncDecs = IclijDbDao.getAllIncDecs();
         } catch (Exception e) {
@@ -469,21 +469,21 @@ public class ImproveAboveBelowAction extends MarketAction {
             log.error(Constants.EXCEPTION, e);
         }
         /*
-        List<IncDecItem> incdecs = new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, AVERAGE_SIZE * market.getConfig().getFindtime());
-        List<IncDecItem> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, JsonUtil.convert(parameters));              
-        List<IncDecItem> incdecsL = new MiscUtil().getIncDecLocals(incdecsP);              
+        List<IncDecDTO> incdecs = new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, AVERAGE_SIZE * market.getConfig().getFindtime());
+        List<IncDecDTO> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, JsonUtil.convert(parameters));              
+        List<IncDecDTO> incdecsL = new MiscUtil().getIncDecLocals(incdecsP);              
         */
-        List<IncDecItem> incdecsL = mylocals;
-        List<IncDecItem> myincs = mylocals.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
-        List<IncDecItem> mydecs = mylocals.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toList());
+        List<IncDecDTO> incdecsL = mylocals;
+        List<IncDecDTO> myincs = mylocals.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
+        List<IncDecDTO> mydecs = mylocals.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toList());
         short startoffset = new MarketUtil().getStartoffset(market);
         new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, new ArrayList<>(), startoffset, parameters.getThreshold(), param.getStockDates(), param.getCategoryValueMap());
         
 
-        //List<MemoryItem> currentList = new MiscUtil().filterKeepRecent(marketMemory, prevdate, ((int) AVERAGE_SIZE) *.getTime(market));
+        //List<MemoryDTO> currentList = new MiscUtil().filterKeepRecent(marketMemory, prevdate, ((int) AVERAGE_SIZE) *.getTime(market));
         // or make a new object instead of the object array. use this as a pair
         //System.out.println(currentList.get(0).getRecord());
-        Map<Triple<String, String, String>, List<IncDecItem>> listMap = new HashMap<>();
+        Map<Triple<String, String, String>, List<IncDecDTO>> listMap = new HashMap<>();
         // map subcat + posit -> list
         incdecsL.forEach(m -> new MiscUtil().listGetterAdder(listMap, new ImmutableTriple<String, String, String>(m.getComponent(), m.getSubcomponent(), m.getLocalcomponent()), m));
         filterMemoryListMapsWithConfidenceNew(market, listMap, param, parameters, action);        
@@ -498,17 +498,17 @@ public class ImproveAboveBelowAction extends MarketAction {
         */
     }
 
-    private void filterMemoryListMapsWithConfidenceNew(Market market, Map<Triple<String, String, String>, List<IncDecItem>> listMap, ComponentData param, Parameters parameters, MarketActionData action) {
-        Map<Triple<String, String, String>, List<MemoryItem>> okListMap = new HashMap<>();
+    private void filterMemoryListMapsWithConfidenceNew(Market market, Map<Triple<String, String, String>, List<IncDecDTO>> listMap, ComponentData param, Parameters parameters, MarketActionData action) {
+        Map<Triple<String, String, String>, List<MemoryDTO>> okListMap = new HashMap<>();
         Map<Triple<String, String, String>, Double> okConfMap = new HashMap<>();
-        Map<Triple<String, String, String>, List<MemoryItem>> aboveOkListMap = new HashMap<>();
+        Map<Triple<String, String, String>, List<MemoryDTO>> aboveOkListMap = new HashMap<>();
         Map<Triple<String, String, String>, Double> aboveOkConfMap = new HashMap<>();
-        Map<Triple<String, String, String>, List<MemoryItem>> belowOkListMap = new HashMap<>();
+        Map<Triple<String, String, String>, List<MemoryDTO>> belowOkListMap = new HashMap<>();
         Map<Triple<String, String, String>, Double> belowOkConfMap = new HashMap<>();
-        for(Entry<Triple<String, String, String>, List<IncDecItem>> entry : listMap.entrySet()) {
+        for(Entry<Triple<String, String, String>, List<IncDecDTO>> entry : listMap.entrySet()) {
             Triple<String, String, String> keys = entry.getKey();
-            List<IncDecItem> incdecList = entry.getValue();
-            //List<Double> confidences = memoryList.stream().map(MemoryItem::getConfidence).collect(Collectors.toList());
+            List<IncDecDTO> incdecList = entry.getValue();
+            //List<Double> confidences = memoryList.stream().map(MemoryDTO::getConfidence).collect(Collectors.toList());
             //confidences = confidences.stream().filter(m -> m != null && !m.isNaN()).collect(Collectors.toList());
             //List<Double> aboveConfidenceList = new ArrayList<>();
             //List<Double> belowConfidenceList = new ArrayList<>();
@@ -518,7 +518,7 @@ public class ImproveAboveBelowAction extends MarketAction {
             Pair<Long, Integer> belowcnt = FitnessAboveBelowCommon.countsize(incdecList.stream().filter(e -> !e.isIncrease()).collect(Collectors.toList()));
             Pair<Long, Integer> cnt = FitnessAboveBelowCommon.countsize(incdecList);
             {
-                MemoryItem memory = new MemoryItem();
+                MemoryDTO memory = new MemoryDTO();
                 memory.setAction(action.getName());
                 memory.setMarket(market.getConfig().getMarket());
                 memory.setDate(incdecList.get(0).getDate());
@@ -531,7 +531,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                 memory.setLocalcomponent(keys.getRight());
                 memory.setCategory(param.getCategoryTitle());
                 /*
-                List<IncDecItem> metalist = memoryList
+                List<IncDecDTO> metalist = memoryList
                         .stream()
                         .filter(Objects::nonNull)
                         .filter(e -> e.getLocalcomponent() != null)
@@ -563,13 +563,13 @@ public class ImproveAboveBelowAction extends MarketAction {
                 }
 
             }
-            Set<String> incIds = incdecList.stream().filter(e -> e.isIncrease()).map(IncDecItem::getId).collect(Collectors.toSet());
-            Set<String> decIds = incdecList.stream().filter(e -> !e.isIncrease()).map(IncDecItem::getId).collect(Collectors.toSet());
+            Set<String> incIds = incdecList.stream().filter(e -> e.isIncrease()).map(IncDecDTO::getId).collect(Collectors.toSet());
+            Set<String> decIds = incdecList.stream().filter(e -> !e.isIncrease()).map(IncDecDTO::getId).collect(Collectors.toSet());
             incIds.retainAll(decIds);
             //long listBoolean = memoryList.stream().filter(e -> e.isIncrease()).count();
             //long listBoolean2 = memoryList.stream().filter(e -> !e.isIncrease()).count();
             if (!incIds.isEmpty()) {
-                MemoryItem memory = new MemoryItem();
+                MemoryDTO memory = new MemoryDTO();
                 memory.setAction(action.getName());
                 memory.setMarket(market.getConfig().getMarket());
                 memory.setDate(incdecList.get(0).getDate());
@@ -582,7 +582,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                 memory.setLocalcomponent(keys.getRight());
                 memory.setCategory(param.getCategoryTitle());
                 /*
-                List<IncDecItem> metalist = memoryList
+                List<IncDecDTO> metalist = memoryList
                         .stream()
                         .filter(Objects::nonNull)
                         .filter(e -> e.getLocalcomponent() != null)
@@ -623,7 +623,7 @@ public class ImproveAboveBelowAction extends MarketAction {
     public void getListComponents(MarketActionData action, WebData myData, ComponentData param, IclijConfig config,
             Parameters parameters, Boolean evolve, Market market, Map<String, ComponentData> dataMap,
             Memories memories, LocalDate olddate, LocalDate prevdate) {
-        List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market, IclijConstants.IMPROVEABOVEBELOW, null, null, JsonUtil.convert(parameters), olddate, prevdate, param.getService().getIo().getIdbDao());
+        List<MemoryDTO> marketMemory = new MarketUtil().getMarketMemory(market, IclijConstants.IMPROVEABOVEBELOW, null, null, JsonUtil.convert(parameters), olddate, prevdate, param.getService().getIo().getIdbDao());
         marketMemory = marketMemory.stream().filter(e -> "Confidence".equals(e.getType())).collect(Collectors.toList());
         if (!marketMemory.isEmpty()) {
             int jj = 0;
@@ -631,8 +631,8 @@ public class ImproveAboveBelowAction extends MarketAction {
         if (marketMemory == null) {
             myData.setProfitData(new ProfitData());
         }
-        //marketMemory.addAll(myData.getMemoryItems());
-        List<MemoryItem> currentList = new MiscUtil().filterKeepRecent3(marketMemory, prevdate, ((int) AVERAGE_SIZE) * action.getTime(market), false);
+        //marketMemory.addAll(myData.getMemoryDTOs());
+        List<MemoryDTO> currentList = new MiscUtil().filterKeepRecent3(marketMemory, prevdate, ((int) AVERAGE_SIZE) * action.getTime(market), false);
         // map subcat + posit -> list
         currentList = currentList.stream().filter(e -> !e.getComponent().equals(PipelineConstants.ABOVEBELOW)).collect(Collectors.toList());
         memories.method(currentList, config);

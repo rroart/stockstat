@@ -18,15 +18,12 @@ import roart.common.config.CacheConstants;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.IncDecItem;
-import roart.common.model.MetaItem;
+import roart.common.model.IncDecDTO;
 import roart.common.model.util.MetaUtil;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMeta;
-import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.util.PipelineUtils;
-import roart.common.util.JsonUtil;
 import roart.common.util.MapUtil;
 import roart.component.model.ComponentData;
 import roart.iclij.config.IclijConfig;
@@ -111,7 +108,7 @@ public class PeriodAdviser extends Adviser {
     }
 
     //@Override
-    public List<IncDecItem> getIncs2(String aParameter, int buytop, LocalDate date, int indexOffset, List<String> stockDates, List<String> excludes) {
+    public List<IncDecDTO> getIncs2(String aParameter, int buytop, LocalDate date, int indexOffset, List<String> stockDates, List<String> excludes) {
         int idx = stockDates.size() - 1 - indexOffset;
         if (idx < 0) {
             return new ArrayList<>();
@@ -120,7 +117,7 @@ public class PeriodAdviser extends Adviser {
         if (valueList == null) {
             return new ArrayList<>();
         }
-        List<IncDecItem> list = new ArrayList<>();
+        List<IncDecDTO> list = new ArrayList<>();
         for (Pair<String, Double> value : valueList) {
             if (excludes.contains(value.getKey())) {
                 continue;
@@ -129,7 +126,7 @@ public class PeriodAdviser extends Adviser {
             if (myvalue == null) {
                 continue;
             }
-            IncDecItem item = new IncDecItem();
+            IncDecDTO item = new IncDecDTO();
             item.setId(value.getKey());
             if (myvalue <= 0) {
                 myvalue = -myvalue;

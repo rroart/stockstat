@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMap;
@@ -264,7 +264,7 @@ public abstract class AbstractIndicator extends Calculatable {
         return result;
     }
 
-    public Object[] getResultItem(StockItem stock) {
+    public Object[] getResultItem(StockDTO stock) {
         String market = conf.getConfigData().getMarket();
         String id = stock.getId();
         Pair<String, String> pair = new ImmutablePair<>(market, id);

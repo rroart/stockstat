@@ -3,8 +3,8 @@ package roart.common.service;
 import java.util.List;
 import java.util.Map;
 
+import roart.common.model.MetaDTO;
 import roart.iclij.config.IclijConfig;
-import roart.common.model.MetaItem;
 import roart.result.model.ResultItem;
 
 public class ServiceResult {
@@ -12,7 +12,7 @@ public class ServiceResult {
     
     private List<String> markets;
     
-    private List<MetaItem> metas;
+    private List<MetaDTO> metas;
     
     private Map<String, String> stocks;
     
@@ -42,11 +42,11 @@ public class ServiceResult {
         this.markets = markets;
     }
 
-    public List<MetaItem> getMetas() {
+    public List<MetaDTO> getMetas() {
         return metas;
     }
 
-    public void setMetas(List<MetaItem> metas) {
+    public void setMetas(List<MetaDTO> metas) {
         this.metas = metas;
     }
 

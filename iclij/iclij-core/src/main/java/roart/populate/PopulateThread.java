@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import roart.common.constants.Constants;
 import roart.common.leader.MyLeader;
 import roart.common.leader.impl.MyLeaderFactory;
-import roart.common.model.TimingItem;
+import roart.common.model.TimingDTO;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.constants.IclijConstants;
@@ -119,7 +119,7 @@ public class PopulateThread extends Thread {
                         log.error(Constants.EXCEPTION, e);
                     }
                     LocalDate oldDate = currentDate.minusDays(findTime);
-                    List<TimingItem> timingitems = null;
+                    List<TimingDTO> timingitems = null;
                     try {
                         timingitems = io.getIdbDao().getAllTiming(market.getConfig().getMarket(), IclijConstants.FINDPROFIT, oldDate, currentDate);
                     } catch (Exception e) {

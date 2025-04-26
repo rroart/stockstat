@@ -9,9 +9,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.model.MetaItem;
+import roart.common.model.MetaDTO;
 import roart.common.model.MyDataSource;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.db.dao.DbDao;
 import roart.etl.db.Extract;
 import roart.iclij.config.IclijConfig;
@@ -36,8 +36,8 @@ public class TestDataSource extends MyDataSource {
     private boolean ohlc;
     
     private TestData testData;
-    private List<MetaItem> metas;
-    private List<StockItem> stocks;
+    private List<MetaDTO> metas;
+    private List<StockDTO> stocks;
     private String isTemplate;
     
     public TestDataSource(IclijConfig conf, Date startDate, Date endDate, String marketName, int size, boolean weekdays, int column,
@@ -57,7 +57,7 @@ public class TestDataSource extends MyDataSource {
         
         metas = testData.getMetas(marketName, periods, ohlc);
         try {
-            stocks = testData.getStockItem(startDate, endDate, marketName, size, weekdays, column, ohlc, periods, idTemplate );
+            stocks = testData.getStockDTO(startDate, endDate, marketName, size, weekdays, column, ohlc, periods, idTemplate );
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -96,17 +96,17 @@ public class TestDataSource extends MyDataSource {
     */
     
     @Override
-    public List<MetaItem> getMetas() {
+    public List<MetaDTO> getMetas() {
         return metas;
     }
     
     @Override
-    public List<StockItem> getAll(String market, IclijConfig conf, boolean disableCache) {
+    public List<StockDTO> getAll(String market, IclijConfig conf, boolean disableCache) {
         return stocks;
     }
 
     @Override
-    public List<StockItem> getAll(String type, String language) throws Exception {
+    public List<StockDTO> getAll(String type, String language) throws Exception {
         log.error("Should not be here");
         return null;
     }
@@ -124,7 +124,7 @@ public class TestDataSource extends MyDataSource {
     }
 
     @Override
-    public MetaItem getById(String market, IclijConfig conf) throws Exception {
+    public MetaDTO getById(String market, IclijConfig conf) throws Exception {
         log.error("Should not be here");
         return null;
     }

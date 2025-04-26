@@ -27,13 +27,13 @@ import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.leader.MyLeader;
 import roart.common.leader.impl.MyLeaderFactory;
-import roart.common.model.AboveBelowItem;
-import roart.common.model.ActionComponentItem;
-import roart.common.model.IncDecItem;
-import roart.common.model.MemoryItem;
-import roart.common.model.MetaItem;
-import roart.common.model.TimingBLItem;
-import roart.common.model.TimingItem;
+import roart.common.model.AboveBelowDTO;
+import roart.common.model.ActionComponentDTO;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MemoryDTO;
+import roart.common.model.MetaDTO;
+import roart.common.model.TimingBLDTO;
+import roart.common.model.TimingDTO;
 import roart.common.model.util.MetaUtil;
 import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.util.JsonUtil;
@@ -59,7 +59,7 @@ public class ActionThread extends Thread {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public static volatile List<ActionComponentItem> queue = Collections.synchronizedList(new ArrayList<>());
+    public static volatile List<ActionComponentDTO> queue = Collections.synchronizedList(new ArrayList<>());
 
     public static volatile Set<String> queued = Collections.synchronizedSet(new HashSet<>());
 
@@ -104,9 +104,9 @@ public class ActionThread extends Thread {
             log.error(Constants.EXCEPTION, e);
             Thread.currentThread().interrupt();
         }
-        List<TimingBLItem> blacklist = null;
+        List<TimingBLDTO> blacklist = null;
         try {
-            blacklist = io.getIdbDao().getAllTimingBLItem();
+            blacklist = io.getIdbDao().getAllTimingBLDTO();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -139,23 +139,23 @@ public class ActionThread extends Thread {
                 log.info("I am not action leader");
             } else {
             log.info("I am action leader");
-            ActionComponentItem ac = null;
-            List<ActionComponentItem> dblist = new ArrayList<>();
+            ActionComponentDTO ac = null;
+            List<ActionComponentDTO> dblist = new ArrayList<>();
             try {
                 dblist = io.getIdbDao().getAllActionComponent();
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
-            List<ActionComponentItem> list = new ArrayList<>();
+            List<ActionComponentDTO> list = new ArrayList<>();
             list.addAll(dblist);
-            List<ActionComponentItem> copy = new ArrayList<>(queue);
+            List<ActionComponentDTO> copy = new ArrayList<>(queue);
             queue.removeAll(copy);
             list.addAll(copy);
-            Comparator<ActionComponentItem> comparator = (ActionComponentItem i1, ActionComponentItem i2) -> getScore(i1) - getScore(i2);
+            Comparator<ActionComponentDTO> comparator = (ActionComponentDTO i1, ActionComponentDTO i2) -> getScore(i1) - getScore(i2);
             Collections.sort(list, comparator);
             Collections.sort(copy, comparator);
             if (!list.isEmpty()) {
-                ActionComponentItem item = list.get(0);
+                ActionComponentDTO item = list.get(0);
                 // ???
                 if (item.getDbid() == null) {
                     copy.remove(0);
@@ -169,28 +169,28 @@ public class ActionThread extends Thread {
                 }
                 String id = item.toStringId();
                 log.info("Working with id {}", id);
-                TimingBLItem blItem = blacklist.stream().filter(anitem -> id.equals(anitem.getId())).findAny().orElse(null);
-                List<TimingBLItem> checkList = blacklist.stream().filter(anitem -> id.equals(anitem.getId())).toList();
+                TimingBLDTO blDTO = blacklist.stream().filter(anitem -> id.equals(anitem.getId())).findAny().orElse(null);
+                List<TimingBLDTO> checkList = blacklist.stream().filter(anitem -> id.equals(anitem.getId())).toList();
                 if (checkList.size() > 1) {
                     log.error("List size {} for {}", checkList.size(), id);
                 }
-                if (blItem != null && blItem.getCount() >= 3) {
+                if (blDTO != null && blDTO.getCount() >= 3) {
                     continue;
                 } 
-                if (blItem == null) {
-                    blItem = new TimingBLItem();
-                    blItem.setId(id);
-                    blItem.setRecord(LocalDate.now());
+                if (blDTO == null) {
+                    blDTO = new TimingBLDTO();
+                    blDTO.setId(id);
+                    blDTO.setRecord(LocalDate.now());
                 } else {
                     try {
-                        io.getIdbDao().deleteById(blItem, id);
+                        io.getIdbDao().deleteById(blDTO, id);
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
                     }                	
                 }
-                blItem.setCount(1 + blItem.getCount());
+                blDTO.setCount(1 + blDTO.getCount());
                 try {
-                    io.getIdbDao().save(blItem);
+                    io.getIdbDao().save(blDTO);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -201,7 +201,7 @@ public class ActionThread extends Thread {
                     log.error(Constants.EXCEPTION, e);
                 }
                 try {
-                    io.getIdbDao().deleteById(blItem, id);
+                    io.getIdbDao().deleteById(blDTO, id);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -233,7 +233,7 @@ public class ActionThread extends Thread {
         }
     }
 
-    public boolean runAction(IclijConfig instance, ActionComponentItem item, List<ActionComponentItem> dblist) {
+    public boolean runAction(IclijConfig instance, ActionComponentDTO item, List<ActionComponentDTO> dblist) {
         boolean finished = false;
         IclijConfig myConfig = new IclijConfig(iclijConfig);
         myConfig.getConfigData().setMarket(item.getMarket());
@@ -255,19 +255,19 @@ public class ActionThread extends Thread {
             // TODO null param id_
             action.getParamDates(market, param, stockDates);
         }
-        List<MetaItem> metas = param.getService().getMetas();
-        MetaItem meta = new MetaUtil().findMeta(metas, item.getMarket());
+        List<MetaDTO> metas = param.getService().getMetas();
+        MetaDTO meta = new MetaUtil().findMeta(metas, item.getMarket());
         boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
         Component component = new ComponentFactory().factory(item.getComponent());
         boolean evolve = action.getEvolve(component, param);
         WebData myData = action.getWebData();
         if (item.getDbid() == null || action.getActionData().wantsUpdate(myConfig)) {
-            String actionItem = LocalTime.now() + " " + Thread.currentThread().getId() + " " + item.toStringId();
+            String actionDTO = LocalTime.now() + " " + Thread.currentThread().getId() + " " + item.toStringId();
             try {
                 long[] mem0 = MemUtil.mem();
                 log.info("Action item {} {}", item.toStringId(), MemUtil.print(mem0));
-                action.getPicksFilteredOuter(myData, param, myConfig, item, evolve, wantThree, actionItem);                
-                //IclijController.taskList.remove(actionItem);
+                action.getPicksFilteredOuter(myData, param, myConfig, item, evolve, wantThree, actionDTO);                
+                //IclijController.taskList.remove(actionDTO);
                 long[] mem1 = MemUtil.mem();
                 long[] memdiff = MemUtil.diff(mem1, mem0);
                 log.info("Action mem {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
@@ -289,7 +289,7 @@ public class ActionThread extends Thread {
                                 MarketAction anAction = ActionFactory.get(IclijConstants.IMPROVEPROFIT, io.getIdbDao(), myConfig);
                                 String mypriorityKey = anAction.getActionData().getPriority();
                                 int aPriority = action.getPriority(myConfig, mypriorityKey);
-                                ActionComponentItem it = dblist.stream().filter(dbitem -> (IclijConstants.IMPROVEPROFIT.equals(dbitem.getAction()) && item.getMarket().equals(dbitem.getMarket()) && item.getComponent().equals(dbitem.getComponent()) && item.getSubcomponent().equals(item.getSubcomponent()))).findAny().orElse(null); 
+                                ActionComponentDTO it = dblist.stream().filter(dbitem -> (IclijConstants.IMPROVEPROFIT.equals(dbitem.getAction()) && item.getMarket().equals(dbitem.getMarket()) && item.getComponent().equals(dbitem.getComponent()) && item.getSubcomponent().equals(item.getSubcomponent()))).findAny().orElse(null); 
                                 if (it == null && item.getPriority() == -10) {
                                     mct(IclijConstants.IMPROVEPROFIT, item.getMarket(), item.getComponent(), item.getSubcomponent(), aPriority);
                                 }
@@ -299,10 +299,10 @@ public class ActionThread extends Thread {
                             // only after improveprofit?
                             try {
                                 log.info("Deleting AboveBelow etc {} {} {}", item.getMarket(), item.getComponent(), item.getSubcomponent());
-                                io.getIdbDao().delete(new TimingItem(), item.getMarket(), IclijConstants.FINDPROFIT, item.getComponent(), item.getSubcomponent(), null, null);
-                                io.getIdbDao().delete(new IncDecItem(), item.getMarket(), null, item.getComponent(), item.getSubcomponent(), null, null);
-                                io.getIdbDao().delete(new MemoryItem(), item.getMarket(), null, item.getComponent(), item.getSubcomponent(), null, null);
-                                io.getIdbDao().delete(new AboveBelowItem(), item.getMarket(), null, null, null, null, null);
+                                io.getIdbDao().delete(new TimingDTO(), item.getMarket(), IclijConstants.FINDPROFIT, item.getComponent(), item.getSubcomponent(), null, null);
+                                io.getIdbDao().delete(new IncDecDTO(), item.getMarket(), null, item.getComponent(), item.getSubcomponent(), null, null);
+                                io.getIdbDao().delete(new MemoryDTO(), item.getMarket(), null, item.getComponent(), item.getSubcomponent(), null, null);
+                                io.getIdbDao().delete(new AboveBelowDTO(), item.getMarket(), null, null, null, null, null);
                             } catch (Exception e) {
                                 log.error(Constants.EXCEPTION, e);
                             }                        
@@ -320,7 +320,7 @@ public class ActionThread extends Thread {
         return finished;
     }
 
-    int getScore(ActionComponentItem i) {
+    int getScore(ActionComponentDTO i) {
         int run = i.isHaverun() ? 1 : 0;
         return (int) (100000 * (i.getPriority() + run) - i.getTime());
     }
@@ -329,7 +329,7 @@ public class ActionThread extends Thread {
         Parameters p = new Parameters();
         p.setFuturedays(10);
         p.setThreshold(1.0);
-        ActionComponentItem mct = new ActionComponentItem();
+        ActionComponentDTO mct = new ActionComponentDTO();
         mct.setAction(action);
         mct.setMarket(market);
         mct.setComponent(component);

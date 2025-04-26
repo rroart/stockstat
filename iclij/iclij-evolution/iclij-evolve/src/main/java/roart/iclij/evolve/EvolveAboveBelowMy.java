@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 import roart.common.constants.Constants;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
@@ -30,13 +30,13 @@ public class EvolveAboveBelowMy extends EvolveMy {
 
     @Override
     public ComponentData evolve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata,
-            Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests,
+            Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsDTO> mlTests,
             Map<String, Object> confMap, EvolutionConfig evolutionConfig, String pipeline, Component component,
             List<String> confList) {
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket(), param.getId());
         int verificationdays = param.getConfig().verificationDays();
 
-        List<IncDecItem> allIncDecs = null;
+        List<IncDecDTO> allIncDecs = null;
         LocalDate date = param.getFutureDate();
         date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
         LocalDate prevDate = date.minusDays(market.getConfig().getFindtime());
@@ -45,10 +45,10 @@ public class EvolveAboveBelowMy extends EvolveMy {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        List<IncDecItem> incdecs = allIncDecs; // new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
+        List<IncDecDTO> incdecs = allIncDecs; // new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
         List<String> parametersList = new MiscUtil().getParameters(incdecs);
         for (String aParameter : parametersList) {
-            List<IncDecItem> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              
+            List<IncDecDTO> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              
             List<String> components = new ArrayList<>();
             List<String> subcomponents = new ArrayList<>();
             getComponentLists(incdecsP, components, subcomponents);
@@ -76,11 +76,11 @@ public class EvolveAboveBelowMy extends EvolveMy {
     }
 
     // dup
-    private void getComponentLists(List<IncDecItem> incdecs, List<String> components, List<String> subcomponents) {
+    private void getComponentLists(List<IncDecDTO> incdecs, List<String> components, List<String> subcomponents) {
         Set<String> componentSet = new HashSet<>();
         Set<String> subcomponentSet = new HashSet<>();
 
-        for (IncDecItem item : incdecs) {
+        for (IncDecDTO item : incdecs) {
             componentSet.add(item.getComponent());
             subcomponentSet.add(item.getSubcomponent());
         }

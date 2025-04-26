@@ -19,7 +19,7 @@ import roart.common.config.Extra;
 import roart.common.config.MarketStock;
 import roart.common.config.MarketStockExpression;
 import roart.common.constants.Constants;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialList;
@@ -44,8 +44,8 @@ import roart.stockutil.StockDao;
 
 public class ExtraReader extends Pipeline {
 
-    //Map<MarketStock, List<StockItem>> pairStockMap;
-    //Map<MarketStock, Map<Date, StockItem>> pairDateMap;
+    //Map<MarketStock, List<StockDTO>> pairStockMap;
+    //Map<MarketStock, Map<Date, StockDTO>> pairDateMap;
     //Map<Pair<String, String>, String> pairCatMap;
     //Map<Pair<String, String>, Double[][]> pairListMap;
     //Map<Pair<String, String>, List<Date>> pairDateListMap;
@@ -161,14 +161,14 @@ public class ExtraReader extends Pipeline {
         commonDates = new HashSet<>(dateList);
         for (SerialMarketStock ms : marketStocks) {
             String market = ms.getMarket();
-            List<StockItem> stocksId = new ArrayList<>();
+            List<StockDTO> stocksId = new ArrayList<>();
             StockData stockData = stockDataMap.get(market);
             Set<String> aDateSet = new HashSet<>(StockDao.getDateList(market, stockData.marketdatamap));
             commonDates.retainAll(aDateSet);
             //Pipeline[] datareaders = dataReaderMap.get(market);
-            //List<StockItem> mystocks = new ArrayList<>();
-            Map<Date, StockItem> mymap = new HashMap<>();
-            for (StockItem stock : stocksId) {
+            //List<StockDTO> mystocks = new ArrayList<>();
+            Map<Date, StockDTO> mymap = new HashMap<>();
+            for (StockDTO stock : stocksId) {
                 //mystocks.add(stock);
                 //mymap.put(stock.getDate(), stock);
             }
@@ -254,7 +254,7 @@ public class ExtraReader extends Pipeline {
 
     /*
     private Map<String, MarketData> getMarketdatamap(int days,
-            String market, IclijConfig conf, List<StockItem> stocksId) throws Exception {
+            String market, IclijConfig conf, List<StockDTO> stocksId) throws Exception {
         Map<String, MarketData> marketdatamap = new HashMap();
         log.info("prestocks");
         log.info("stocks {}", stocksId.size());
@@ -263,14 +263,14 @@ public class ExtraReader extends Pipeline {
         String[] periodText = DbDaoUtil.getPeriodText(market, conf, dbDao);
         marketdata.periodtext = periodText;
         marketdata.meta = dbDao.getById(market, conf);
-        Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocksId);
+        Map<String, List<StockDTO>> stockdatemap = StockUtil.splitDate(stocksId);
         stockdatemap = StockUtil.filterFew(stockdatemap, conf.getFilterDate());
         if (days == 0) {
             days = stockdatemap.keySet().size();
         }
         // the main list, based on freshest or specific date.
 
-        List<StockItem> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, conf.getConfigData().getDate(), days, conf.getTableIntervalDays());
+        List<StockDTO> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, conf.getConfigData().getDate(), days, conf.getTableIntervalDays());
         marketdata.datedstocklists = datedstocklists;
 
         marketdatamap.put(market,  marketdata);
@@ -280,7 +280,7 @@ public class ExtraReader extends Pipeline {
     */
 
     public static Double[] getExtraData3(IclijConfig conf, List<Date> dateList,
-            Map<Pair<String, String>, Map<Date, StockItem>> pairDateMap, Map<Pair<String, String>, String> pairCatMap, int j, String id,
+            Map<Pair<String, String>, Map<Date, StockDTO>> pairDateMap, Map<Pair<String, String>, String> pairCatMap, int j, String id,
             Double[] result) throws Exception {
         int deltas = conf.getAggregatorsIndicatorExtrasDeltas();
         int size = dateList.size() - 1;
@@ -292,12 +292,12 @@ public class ExtraReader extends Pipeline {
         }
         Date date = dateList.get(size - j);
         Date prevDate = dateList.get(size - (j + (deltas - 1)));
-        for (Entry<Pair<String, String>, Map<Date, StockItem>> entry : pairDateMap.entrySet()) {
+        for (Entry<Pair<String, String>, Map<Date, StockDTO>> entry : pairDateMap.entrySet()) {
             Pair<String, String> pairKey = entry.getKey();
             Object[] arr = null;
-            Map<Date, StockItem> dateMap = entry.getValue(); 
-            StockItem stock = dateMap.get(date);
-            StockItem prevStock = dateMap.get(prevDate);
+            Map<Date, StockDTO> dateMap = entry.getValue(); 
+            StockDTO stock = dateMap.get(date);
+            StockDTO prevStock = dateMap.get(prevDate);
             if (stock != null && prevStock != null) {
                 int category = IndicatorUtils.getCategoryFromString(pairCatMap, pairKey);
                 Double value = StockDao.getMainValue(stock, category);
@@ -422,19 +422,19 @@ public class ExtraReader extends Pipeline {
 // ?
     @Deprecated
     public Map<Pair<String, String>, Double[][]> getExtraData2(IclijConfig conf, List<Date> dateList,
-            Map<Pair<String, String>, Map<Date, StockItem>> pairDateMap, Map<Pair<String, String>, String> pairCatMap, int j2, String id,
+            Map<Pair<String, String>, Map<Date, StockDTO>> pairDateMap, Map<Pair<String, String>, String> pairCatMap, int j2, String id,
             Double[] result) throws Exception {
         int deltas = conf.getAggregatorsIndicatorExtrasDeltas();
         int size = dateList.size() - 1;
         Map<Pair<String, String>, Double[][]> retMap = new HashMap<>();
-        for (Entry<Pair<String, String>, Map<Date, StockItem>> entry : pairDateMap.entrySet()) {
+        for (Entry<Pair<String, String>, Map<Date, StockDTO>> entry : pairDateMap.entrySet()) {
             Pair<String, String> pairKey = entry.getKey();
             int category = IndicatorUtils.getCategoryFromString(pairCatMap, pairKey);
 
-            Map<Date, StockItem> dateMap = entry.getValue();
+            Map<Date, StockDTO> dateMap = entry.getValue();
             for (int j = 0; j < size; j++) {
                 Date date = dateList.get(size - j);
-                StockItem stock = dateMap.get(date);
+                StockDTO stock = dateMap.get(date);
                 if (stock != null) {
                     Double[] value = StockDao.getValue(stock, category);
                     mapAdd(retMap, pairKey, size - 1 - j, value, size);

@@ -14,22 +14,19 @@ import java.util.Set;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.RecommendConstants;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
-import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.RecommenderData;
 import roart.iclij.evolution.chromosome.impl.RecommenderChromosome2;
@@ -132,7 +129,7 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories position, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories position, Boolean above, List<MLMetricsDTO> mlTests, Parameters parameters) {
         RecommenderData param = (RecommenderData) componentparam;
         //Map resultMaps = (Map) param.getResultMap(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, new HashMap<>());
         PipelineData resultMaps = param.getResultMap();
@@ -211,10 +208,10 @@ public class ComponentRecommender extends ComponentNoML {
             }
             double confidence = confidenceFactor * (element.getValue() - min) / diff;
             String recommendation = "recommend buy";
-            //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
+            //IncDecDTO incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(true);
             //buys.put(element.getKey(), incdec);
-            IncDecItem incdec = mapAdder(profitdata.getBuys(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), param.getService().coremlconf.getConfigData().getDate(), param.getService().coremlconf.getConfigData().getMarket(), null, "" + keys.getRight(), JsonUtil.convert(parameters));
+            IncDecDTO incdec = mapAdder(profitdata.getBuys(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), param.getService().coremlconf.getConfigData().getDate(), param.getService().coremlconf.getConfigData().getMarket(), null, "" + keys.getRight(), JsonUtil.convert(parameters));
             if (incdec != null) {
             incdec.setIncrease(true);
             }
@@ -226,17 +223,17 @@ public class ComponentRecommender extends ComponentNoML {
             }
             double confidence = confidenceFactor * (element.getValue() - min) / diff;
             String recommendation = "recommend sell";
-            //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
+            //IncDecDTO incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(false);
-            IncDecItem incdec = mapAdder(profitdata.getSells(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), param.getService().coremlconf.getConfigData().getDate(), param.getService().coremlconf.getConfigData().getMarket(), null, "" + keys.getRight(), JsonUtil.convert(parameters));
+            IncDecDTO incdec = mapAdder(profitdata.getSells(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), param.getService().coremlconf.getConfigData().getDate(), param.getService().coremlconf.getConfigData().getMarket(), null, "" + keys.getRight(), JsonUtil.convert(parameters));
             if (incdec != null) {
             incdec.setIncrease(false);
             }
         }
     }
 
-    private IncDecItem getIncDec(MyElement element, double confidence, String recommendation, Map<String, String> nameMap, String market) {
-        IncDecItem incdec = new IncDecItem();
+    private IncDecDTO getIncDec(MyElement element, double confidence, String recommendation, Map<String, String> nameMap, String market) {
+        IncDecDTO incdec = new IncDecDTO();
         incdec.setRecord(LocalDate.now());
         incdec.setId(element.getKey());
         incdec.setMarket(market);
@@ -323,7 +320,7 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
+    public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsDTO> mlTests, Fitness fitness, boolean save) {
 	ComponentData param = new ComponentData(componentparam);
         //Map<String, String> retMap = new HashMap<>();
         //List<String> list = getBuy();
@@ -402,9 +399,9 @@ public class ComponentRecommender extends ComponentNoML {
     }
     
     @Override
-    public List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters) throws Exception {
+    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters) throws Exception {
         RecommenderData param = (RecommenderData) componentparam;
-        List<MemoryItem> memoryList = new ArrayList<>();
+        List<MemoryDTO> memoryList = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
             AbstractScore eval = new ProportionScore(i == 0);
             getMemories(param, memoryList, eval, i, parameters, actionData);
@@ -434,7 +431,7 @@ public class ComponentRecommender extends ComponentNoML {
         return changeSet;
     }
 
-    public void getMemories(RecommenderData param, List<MemoryItem> memoryList, AbstractScore eval, int position, Parameters parameters, MarketActionData actionData) throws Exception {
+    public void getMemories(RecommenderData param, List<MemoryDTO> memoryList, AbstractScore eval, int position, Parameters parameters, MarketActionData actionData) throws Exception {
         Map<String, List<Double>> resultMap = new HashMap<>();
         for (String key : param.getCategoryValueMap().keySet()) {
             if (param.getRecommendBuySell() == null) {
@@ -477,7 +474,7 @@ public class ComponentRecommender extends ComponentNoML {
         double[] resultArray = eval.calculate(resultMap, parameters.getThreshold());
         double goodBuy = resultArray[0];
         long totalBuy = (long) resultArray[1];
-        MemoryItem memory = new MemoryItem();
+        MemoryDTO memory = new MemoryDTO();
         memory.setAction(param.getAction());
         memory.setMarket(param.getMarket());
         memory.setRecord(LocalDate.now());
@@ -505,9 +502,9 @@ public class ComponentRecommender extends ComponentNoML {
 
     @Deprecated
     public void getMemoriesPrev(String market, int futuredays, LocalDate baseDate, LocalDate futureDate,
-            String categoryTitle, Map<String, List<Double>> recommendBuySell, Map<String, List<List<Double>>> categoryValueMap, Integer usedsec,
-            boolean doSave, List<MemoryItem> memoryList, Set<Double> changeSet,
-            boolean doPrint) throws Exception {
+                                String categoryTitle, Map<String, List<Double>> recommendBuySell, Map<String, List<List<Double>>> categoryValueMap, Integer usedsec,
+                                boolean doSave, List<MemoryDTO> memoryList, Set<Double> changeSet,
+                                boolean doPrint) throws Exception {
         int div = 4;
         double goodBuy = 0;
         double goodSell = 0;
@@ -595,7 +592,7 @@ public class ComponentRecommender extends ComponentNoML {
         log.info("buyselltopbottom {} {} {} {} {} {}", buyTop, buyBottom, sellTop, sellBottom, myups, mydowns);
         totalBuy = myups + mydowns;
         totalSell = totalBuy;
-        MemoryItem buyMemory = new MemoryItem();
+        MemoryDTO buyMemory = new MemoryDTO();
         buyMemory.setMarket(market);
         buyMemory.setRecord(LocalDate.now());
         buyMemory.setDate(baseDate);
@@ -612,7 +609,7 @@ public class ComponentRecommender extends ComponentNoML {
         if (doSave) {
             //actionData.getDbDao().save(buyMemory);
         }
-        MemoryItem sellMemory = new MemoryItem();
+        MemoryDTO sellMemory = new MemoryDTO();
         sellMemory.setMarket(market);
         sellMemory.setRecord(LocalDate.now());
         sellMemory.setDate(baseDate);
@@ -642,9 +639,9 @@ public class ComponentRecommender extends ComponentNoML {
 
     @Deprecated
     public void getMemoriesOld(String market, int futuredays, LocalDate baseDate, LocalDate futureDate,
-            String categoryTitle, Map<String, List<Double>> recommendBuySell, Map<String, List<List<Double>>> categoryValueMap, Integer usedsec,
-            boolean doSave, List<MemoryItem> memoryList, Set<Double> changeSet,
-            boolean doPrint) throws Exception {
+                               String categoryTitle, Map<String, List<Double>> recommendBuySell, Map<String, List<List<Double>>> categoryValueMap, Integer usedsec,
+                               boolean doSave, List<MemoryDTO> memoryList, Set<Double> changeSet,
+                               boolean doPrint) throws Exception {
         double goodBuy = 0;
         double goodSell = 0;
         long totalBuy = 0;
@@ -741,7 +738,7 @@ public class ComponentRecommender extends ComponentNoML {
                 goodSell += confidence;
            }
         }      
-        MemoryItem buyMemory = new MemoryItem();
+        MemoryDTO buyMemory = new MemoryDTO();
         buyMemory.setMarket(market);
         buyMemory.setRecord(LocalDate.now());
         buyMemory.setDate(baseDate);
@@ -758,7 +755,7 @@ public class ComponentRecommender extends ComponentNoML {
         if (doSave) {
             //actionData.getDbDao().save(buyMemory);
         }
-        MemoryItem sellMemory = new MemoryItem();
+        MemoryDTO sellMemory = new MemoryDTO();
         sellMemory.setMarket(market);
         sellMemory.setRecord(LocalDate.now());
         sellMemory.setDate(baseDate);

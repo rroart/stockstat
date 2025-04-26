@@ -35,25 +35,18 @@ import roart.common.config.CacheConstants;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
-import roart.common.inmemory.model.Inmemory;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
-import roart.common.model.MetaItem;
-import roart.common.model.SimDataItem;
-import roart.common.model.util.MetaUtil;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
+import roart.common.model.MetaDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialListMap;
 import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialListSimulateStock;
 import roart.common.pipeline.data.SerialListStockHistory;
-import roart.common.pipeline.data.SerialMapPlain;
-import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.data.SerialVolume;
-import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
-import roart.common.util.MapUtil;
 import roart.common.util.MathUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
@@ -1887,7 +1880,7 @@ public class SimulateInvestComponent extends ComponentML {
         Set<String> myincs = new LinkedHashSet<>(myincl);
         //myincs = new ArrayList<>(myincs);
         myincs.removeAll(anExcludeSet);
-        //List<IncDecItem> myincs = ds.getIncs(valueList);
+        //List<IncDecDTO> myincs = ds.getIncs(valueList);
         //List<ValueList> valueList = ds.getValueList(categoryValueMap, indexOffset);
 
         // full list, except if null value
@@ -2019,8 +2012,8 @@ public class SimulateInvestComponent extends ComponentML {
 
     @Override
     public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata,
-            Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree,
-            List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
+                                 Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree,
+                                 List<MLMetricsDTO> mlTests, Fitness fitness, boolean save) {
         return null;
     }
 
@@ -2031,11 +2024,11 @@ public class SimulateInvestComponent extends ComponentML {
 
     @Override
     public void calculateIncDec(ComponentData param, ProfitData profitdata, Memories positions, Boolean above,
-            List<MLMetricsItem> mlTests, Parameters parameters) {
+                                List<MLMetricsDTO> mlTests, Parameters parameters) {
     }
 
     @Override
-    public List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception {
+    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception {
         return null;
     }
 
@@ -2314,7 +2307,7 @@ public class SimulateInvestComponent extends ComponentML {
         return newbuys;
     }
 
-    private List<MetaItem> getAllMetas(ComponentData param) {
+    private List<MetaDTO> getAllMetas(ComponentData param) {
         return param.getService().getMetas();
     }
 

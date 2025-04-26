@@ -3,10 +3,9 @@ package roart.iclij.component;
 import java.util.List;
 import java.util.Map;
 
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.Fitness;
@@ -46,8 +45,8 @@ public class FilterComponent extends ComponentML {
 
     @Override
     public ComponentData improve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata,
-            Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree,
-            List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
+                                 Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree,
+                                 List<MLMetricsDTO> mlTests, Fitness fitness, boolean save) {
         return null;
     }
 
@@ -58,11 +57,11 @@ public class FilterComponent extends ComponentML {
 
     @Override
     public void calculateIncDec(ComponentData param, ProfitData profitdata, Memories positions, Boolean above,
-            List<MLMetricsItem> mlTests, Parameters parameters) {
+                                List<MLMetricsDTO> mlTests, Parameters parameters) {
     }
 
     @Override
-    public List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception {
+    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception {
         return null;
     }
 

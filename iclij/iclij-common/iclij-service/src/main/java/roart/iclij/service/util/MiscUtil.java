@@ -33,11 +33,11 @@ import roart.iclij.service.IclijServiceList;
 import roart.iclij.service.IclijServiceResult;
 import roart.common.constants.Constants;
 import roart.common.constants.ResultMetaConstants;
-import roart.common.model.ConfigItem;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
-import roart.common.model.TimingItem;
+import roart.common.model.ConfigDTO;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
+import roart.common.model.TimingDTO;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -55,7 +55,7 @@ public class MiscUtil {
         return header;
     }
 
-    public List<TimingItem> getCurrentTimingsRecord(LocalDate date, List<TimingItem> listAll, Market market, String action, int days, boolean inclusiveStart) {
+    public List<TimingDTO> getCurrentTimingsRecord(LocalDate date, List<TimingDTO> listAll, Market market, String action, int days, boolean inclusiveStart) {
         if (date == null) {
             date = LocalDate.now();
         }
@@ -64,15 +64,15 @@ public class MiscUtil {
             days++;
         }
         LocalDate olddate = date.minusDays(days);
-        List<TimingItem> filterListAll = listAll.stream().filter(m -> m.getRecord() != null).collect(Collectors.toList());
+        List<TimingDTO> filterListAll = listAll.stream().filter(m -> m.getRecord() != null).collect(Collectors.toList());
         filterListAll = filterListAll.stream().filter(m -> action.equals(m.getAction())).collect(Collectors.toList());
-        List<TimingItem> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getRecord()) < 0).collect(Collectors.toList());
+        List<TimingDTO> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getRecord()) < 0).collect(Collectors.toList());
         currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getRecord()) >= 0).collect(Collectors.toList());
         currentIncDecs = currentIncDecs.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
         return currentIncDecs;
     }
 
-    public List<TimingItem> getCurrentTimings(LocalDate date, List<TimingItem> listAll, Market market, String action, int days, boolean inclusiveStart) {
+    public List<TimingDTO> getCurrentTimings(LocalDate date, List<TimingDTO> listAll, Market market, String action, int days, boolean inclusiveStart) {
         if (date == null) {
             date = LocalDate.now();
         }
@@ -81,27 +81,27 @@ public class MiscUtil {
             days++;
         }
         LocalDate olddate = date.minusDays(days);
-        List<TimingItem> filterListAll = listAll.stream().filter(m -> m.getDate() != null).collect(Collectors.toList());
+        List<TimingDTO> filterListAll = listAll.stream().filter(m -> m.getDate() != null).collect(Collectors.toList());
         filterListAll = filterListAll.stream().filter(m -> action.equals(m.getAction())).collect(Collectors.toList());
-        List<TimingItem> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getDate()) < 0).collect(Collectors.toList());
+        List<TimingDTO> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getDate()) < 0).collect(Collectors.toList());
         currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
         currentIncDecs = currentIncDecs.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
         return currentIncDecs;
     }
 
-    public List<TimingItem> getCurrentTimings(LocalDate date, List<TimingItem> listAll, Market market, String action) {
+    public List<TimingDTO> getCurrentTimings(LocalDate date, List<TimingDTO> listAll, Market market, String action) {
         if (date == null) {
             date = LocalDate.now();
         }
         LocalDate newdate = date;
-        List<TimingItem> filterListAll = listAll.stream().filter(m -> m.getDate() != null).collect(Collectors.toList());
+        List<TimingDTO> filterListAll = listAll.stream().filter(m -> m.getDate() != null).collect(Collectors.toList());
         filterListAll = filterListAll.stream().filter(m -> action.equals(m.getAction())).collect(Collectors.toList());
-        List<TimingItem> currentIncDecs = filterListAll.stream().filter(m -> newdate.compareTo(m.getDate()) == 0).collect(Collectors.toList());
+        List<TimingDTO> currentIncDecs = filterListAll.stream().filter(m -> newdate.compareTo(m.getDate()) == 0).collect(Collectors.toList());
         currentIncDecs = currentIncDecs.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
         return currentIncDecs;
     }
 
-    public List<MemoryItem> getCurrentMemories(LocalDate date, List<MemoryItem> listAll, Market market, int days, boolean inclusiveStart) {
+    public List<MemoryDTO> getCurrentMemories(LocalDate date, List<MemoryDTO> listAll, Market market, int days, boolean inclusiveStart) {
         //System.out.println(market.getConfig().getMarket());
         Map<String, Long> countMap;
         if (date == null) {
@@ -112,11 +112,11 @@ public class MiscUtil {
             days++;
         }
         LocalDate olddate = date.minusDays(days);
-        List<MemoryItem> filterListAll = listAll;
+        List<MemoryDTO> filterListAll = listAll;
         if (market != null) {
             filterListAll = filterListAll.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
         }
-        List<MemoryItem> currentIncDecs = filterListAll;
+        List<MemoryDTO> currentIncDecs = filterListAll;
         currentIncDecs = currentIncDecs.stream().filter(m -> m.getDate() != null).collect(Collectors.toList());
         countMap = currentIncDecs.stream().collect(Collectors.groupingBy(e -> e.getMarket(), Collectors.counting()));
         //System.out.println(countMap);
@@ -129,7 +129,7 @@ public class MiscUtil {
         return currentIncDecs;
     }
 
-    public List<MLMetricsItem> getCurrentMLMetrics(LocalDate date, List<MLMetricsItem> listAll, Market market, int days, boolean inclusiveStart) {
+    public List<MLMetricsDTO> getCurrentMLMetrics(LocalDate date, List<MLMetricsDTO> listAll, Market market, int days, boolean inclusiveStart) {
         if (date == null) {
             date = LocalDate.now();
         }
@@ -138,14 +138,14 @@ public class MiscUtil {
             days++;
         }
         LocalDate olddate = date.minusDays(days);
-        List<MLMetricsItem> filterListAll = listAll.stream().filter(m -> m.getDate() != null).collect(Collectors.toList());
-        List<MLMetricsItem> currentTests = filterListAll.stream().filter(m -> olddate.compareTo(m.getDate()) < 0).collect(Collectors.toList());
+        List<MLMetricsDTO> filterListAll = listAll.stream().filter(m -> m.getDate() != null).collect(Collectors.toList());
+        List<MLMetricsDTO> currentTests = filterListAll.stream().filter(m -> olddate.compareTo(m.getDate()) < 0).collect(Collectors.toList());
         currentTests = currentTests.stream().filter(m -> newdate.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
         currentTests = currentTests.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
         return currentTests;
     }
 
-    public List<IncDecItem> getCurrentIncDecs(LocalDate date, List<IncDecItem> listAll, Market market, int days, boolean inclusiveStart) {
+    public List<IncDecDTO> getCurrentIncDecs(LocalDate date, List<IncDecDTO> listAll, Market market, int days, boolean inclusiveStart) {
         //System.out.println(market.getConfig().getMarket());
         Map<String, Long> countMap;
         if (date == null) {
@@ -156,11 +156,11 @@ public class MiscUtil {
             days++;
         }
         LocalDate olddate = date.minusDays(days);
-        List<IncDecItem> filterListAll = listAll;
+        List<IncDecDTO> filterListAll = listAll;
         if (market != null) {
             filterListAll = filterListAll.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
         }
-        List<IncDecItem> currentIncDecs = filterListAll;
+        List<IncDecDTO> currentIncDecs = filterListAll;
         currentIncDecs = currentIncDecs.stream().filter(m -> m.getDate() != null).collect(Collectors.toList());
         countMap = currentIncDecs.stream().collect(Collectors.groupingBy(e -> e.getMarket(), Collectors.counting()));
         //System.out.println(countMap);
@@ -173,50 +173,50 @@ public class MiscUtil {
         return currentIncDecs;
     }
 
-    public List<IncDecItem> getCurrentIncDecs(List<IncDecItem> listAll, String parameters) {
+    public List<IncDecDTO> getCurrentIncDecs(List<IncDecDTO> listAll, String parameters) {
         if (parameters != null) {
             return listAll.stream().filter(m -> parameters.equals(m.getParameters())).collect(Collectors.toList());
         }
         return listAll;
     }
 
-    public List<IncDecItem> getIncDecsWithComponent(List<IncDecItem> listAll, List<String> components) {
+    public List<IncDecDTO> getIncDecsWithComponent(List<IncDecDTO> listAll, List<String> components) {
         return listAll.stream().filter(m -> components.contains(m.getComponent())).collect(Collectors.toList());
     }
 
-    public List<IncDecItem> getIncDecsWithSubcomponent(List<IncDecItem> listAll, List<String> subcomponents) {
+    public List<IncDecDTO> getIncDecsWithSubcomponent(List<IncDecDTO> listAll, List<String> subcomponents) {
         return listAll.stream().filter(m -> subcomponents.contains(m.getSubcomponent())).collect(Collectors.toList());
     }
 
-    public Set<IncDecItem> moveAndGetCommon(Set<IncDecItem> listInc, Set<IncDecItem> listDec) {
+    public Set<IncDecDTO> moveAndGetCommon(Set<IncDecDTO> listInc, Set<IncDecDTO> listDec) {
         // and a new list for common items
-        Set<String> incIds = listInc.stream().map(IncDecItem::getId).collect(Collectors.toSet());
-        Set<String> decIds = listDec.stream().map(IncDecItem::getId).collect(Collectors.toSet());
+        Set<String> incIds = listInc.stream().map(IncDecDTO::getId).collect(Collectors.toSet());
+        Set<String> decIds = listDec.stream().map(IncDecDTO::getId).collect(Collectors.toSet());
         Set<String> commonIds = new HashSet<>(incIds);
         commonIds.retainAll(decIds);
-        Set<IncDecItem> common = listInc.stream().filter(m -> commonIds.contains(m.getId())).collect(Collectors.toSet());
+        Set<IncDecDTO> common = listInc.stream().filter(m -> commonIds.contains(m.getId())).collect(Collectors.toSet());
         common.addAll(listDec.stream().filter(m -> commonIds.contains(m.getId())).collect(Collectors.toSet()));
         listInc.removeAll(common);
         listDec.removeAll(common);
         return common;
     }
 
-    public Set<IncDecItem> moveAndGetCommon(Set<IncDecItem> listInc, Set<IncDecItem> listDec, boolean verify) {
+    public Set<IncDecDTO> moveAndGetCommon(Set<IncDecDTO> listInc, Set<IncDecDTO> listDec, boolean verify) {
         // and a new list for common items
-        Set<String> incIds = listInc.stream().map(IncDecItem::getId).collect(Collectors.toSet());
-        Set<String> decIds = listDec.stream().map(IncDecItem::getId).collect(Collectors.toSet());
+        Set<String> incIds = listInc.stream().map(IncDecDTO::getId).collect(Collectors.toSet());
+        Set<String> decIds = listDec.stream().map(IncDecDTO::getId).collect(Collectors.toSet());
         Set<String> commonIds = new HashSet<>(incIds);
         commonIds.retainAll(decIds);
-        Set<IncDecItem> common = listInc.stream().filter(m -> commonIds.contains(m.getId())).collect(Collectors.toSet());
+        Set<IncDecDTO> common = listInc.stream().filter(m -> commonIds.contains(m.getId())).collect(Collectors.toSet());
         common.addAll(listDec.stream().filter(m -> commonIds.contains(m.getId())).collect(Collectors.toSet()));
         listInc.removeAll(common);
         listDec.removeAll(common);
         if (true) {
-            Set<IncDecItem> mergecommon = new HashSet<>();
+            Set<IncDecDTO> mergecommon = new HashSet<>();
             for (String id : commonIds) {
-                IncDecItem inc = common.stream().filter(item -> id.equals(item.getId()) && item.isIncrease()).findAny().orElse(null);
-                IncDecItem dec = common.stream().filter(item -> id.equals(item.getId()) && !item.isIncrease()).findAny().orElse(null);
-                IncDecItem mergeitem = new IncDecItem();
+                IncDecDTO inc = common.stream().filter(item -> id.equals(item.getId()) && item.isIncrease()).findAny().orElse(null);
+                IncDecDTO dec = common.stream().filter(item -> id.equals(item.getId()) && !item.isIncrease()).findAny().orElse(null);
+                IncDecDTO mergeitem = new IncDecDTO();
                 mergeitem.setComponent(inc.getComponent());
                 mergeitem.setDate(inc.getDate());
                 mergeitem.setDescription("Up: " + inc.getDescription() + " Down: " + dec.getDescription());
@@ -235,30 +235,30 @@ public class MiscUtil {
         return common;
     }
 
-    public Set<IncDecItem> moveAndGetCommon2(Set<IncDecItem> listInc, Set<IncDecItem> listDec, boolean verify) {
+    public Set<IncDecDTO> moveAndGetCommon2(Set<IncDecDTO> listInc, Set<IncDecDTO> listDec, boolean verify) {
         // and a new list for common items
         Set<String> incIds = new HashSet<>();
-        for (IncDecItem item : listInc) {
+        for (IncDecDTO item : listInc) {
             String id = item.getId() + item.getDate().toString();
             incIds.add(id);
         }
         Set<String> decIds = new HashSet<>();
-        for (IncDecItem item : listDec) {
+        for (IncDecDTO item : listDec) {
             String id = item.getId() + item.getDate().toString();
             decIds.add(id);
         }
         Set<String> commonIds = new HashSet<>(incIds);
         commonIds.retainAll(decIds);
-        Set<IncDecItem> common = listInc.stream().filter(m -> commonIds.contains(m.getId() + m.getDate().toString())).collect(Collectors.toSet());
+        Set<IncDecDTO> common = listInc.stream().filter(m -> commonIds.contains(m.getId() + m.getDate().toString())).collect(Collectors.toSet());
         common.addAll(listDec.stream().filter(m -> commonIds.contains(m.getId() + m.getDate().toString())).collect(Collectors.toSet()));
         listInc.removeAll(common);
         listDec.removeAll(common);
         if (true) {
-            Set<IncDecItem> mergecommon = new HashSet<>();
+            Set<IncDecDTO> mergecommon = new HashSet<>();
             for (String id : commonIds) {
-                IncDecItem inc = common.stream().filter(item -> id.equals(item.getId() + item.getDate().toString()) && item.isIncrease()).findAny().orElse(null);
-                IncDecItem dec = common.stream().filter(item -> id.equals(item.getId() + item.getDate().toString()) && !item.isIncrease()).findAny().orElse(null);
-                IncDecItem mergeitem = new IncDecItem();
+                IncDecDTO inc = common.stream().filter(item -> id.equals(item.getId() + item.getDate().toString()) && item.isIncrease()).findAny().orElse(null);
+                IncDecDTO dec = common.stream().filter(item -> id.equals(item.getId() + item.getDate().toString()) && !item.isIncrease()).findAny().orElse(null);
+                IncDecDTO mergeitem = new IncDecDTO();
                 mergeitem.setComponent(inc.getComponent());
                 mergeitem.setDate(inc.getDate());
                 mergeitem.setDescription("Up: " + inc.getDescription() + " Down: " + dec.getDescription());
@@ -280,9 +280,9 @@ public class MiscUtil {
     public Map<String, Object> loadConfig(ControlService srv, ComponentInput componentInput, Market market, String marketName, String action, String component, boolean evolve, Boolean buy, String subcomponent, MarketActionData marketaction, Parameters parameters) throws Exception {
         //LocalDate date = componentInput.getEnddate();
         //LocalDate olddate = date.minusDays(2 * marketaction.getTime(market));
-        List<ConfigItem> filterConfigs = new ArrayList<>();
-        List<ConfigItem> configs = srv.getIo().getIdbDao().getAllConfigs(market.getConfig().getMarket(), action, component, subcomponent, JsonUtil.convert(parameters), null, null);
-        for (ConfigItem config : configs) {
+        List<ConfigDTO> filterConfigs = new ArrayList<>();
+        List<ConfigDTO> configs = srv.getIo().getIdbDao().getAllConfigs(market.getConfig().getMarket(), action, component, subcomponent, JsonUtil.convert(parameters), null, null);
+        for (ConfigDTO config : configs) {
             if (buy != null && config.getBuy() != null && buy != config.getBuy()) {
                 continue;
             }
@@ -294,7 +294,7 @@ public class MiscUtil {
         if (filterConfigs.isEmpty()) {
         	return updateMap;
         }
-        ConfigItem config = filterConfigs.get(0);
+        ConfigDTO config = filterConfigs.get(0);
             Object value = config.getValue();
             String string = config.getValue();
             Class myclass = type.get(config.getId());
@@ -351,21 +351,21 @@ public class MiscUtil {
     }
 
     //@Override
-    public List<MemoryItem> getMarketMemory2(Market market) {
+    public List<MemoryDTO> getMarketMemory2(Market market) {
         return new ArrayList<>();
     }
 
     //@Override
-    public List<MemoryItem> filterKeepRecent2(List<MemoryItem> marketMemory, LocalDate date, int days) {
+    public List<MemoryDTO> filterKeepRecent2(List<MemoryDTO> marketMemory, LocalDate date, int days) {
         return marketMemory;
     }
 
-    public List<MemoryItem> filterKeepRecent(List<MemoryItem> marketMemory, LocalDate date, int days, boolean inclusiveStart) {
+    public List<MemoryDTO> filterKeepRecent(List<MemoryDTO> marketMemory, LocalDate date, int days, boolean inclusiveStart) {
         if (inclusiveStart) {
             days++;
         }
         LocalDate olddate = date.minusDays(days);
-        for (MemoryItem item : marketMemory) {
+        for (MemoryDTO item : marketMemory) {
             if (item.getRecord() == null) {
                 item.setRecord(LocalDate.now());
             }
@@ -374,17 +374,17 @@ public class MiscUtil {
         if (date == null) {
             return marketMemory;
         }
-        List<MemoryItem> currentList = marketMemory.stream().filter(m -> olddate.compareTo(m.getFuturedate()) < 0).collect(Collectors.toList());
+        List<MemoryDTO> currentList = marketMemory.stream().filter(m -> olddate.compareTo(m.getFuturedate()) < 0).collect(Collectors.toList());
         currentList = currentList.stream().filter(m -> date.compareTo(m.getFuturedate()) >= 0).collect(Collectors.toList());
         return currentList;
     }
 
-    public List<MemoryItem> filterKeepRecent3(List<MemoryItem> marketMemory, LocalDate date, int days, boolean inclusiveStart) {
+    public List<MemoryDTO> filterKeepRecent3(List<MemoryDTO> marketMemory, LocalDate date, int days, boolean inclusiveStart) {
         if (inclusiveStart) {
             days++;
         }
         LocalDate olddate = date.minusDays(days);
-        for (MemoryItem item : marketMemory) {
+        for (MemoryDTO item : marketMemory) {
             if (item.getRecord() == null) {
                 item.setRecord(LocalDate.now());
             }
@@ -393,7 +393,7 @@ public class MiscUtil {
         if (date == null) {
             return marketMemory;
         }
-        List<MemoryItem> currentList = marketMemory.stream().filter(m -> olddate.compareTo(m.getDate()) < 0).collect(Collectors.toList());
+        List<MemoryDTO> currentList = marketMemory.stream().filter(m -> olddate.compareTo(m.getDate()) < 0).collect(Collectors.toList());
         currentList = currentList.stream().filter(m -> date.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
         return currentList;
     }
@@ -409,18 +409,18 @@ public class MiscUtil {
         return retList;
     }
 
-    public Set<IncDecItem> mergeList(Collection<IncDecItem> itemList, boolean splitid) {
-        Map<String, IncDecItem> map = new HashMap<>();
-        for (IncDecItem item : itemList) {
+    public Set<IncDecDTO> mergeList(Collection<IncDecDTO> itemList, boolean splitid) {
+        Map<String, IncDecDTO> map = new HashMap<>();
+        for (IncDecDTO item : itemList) {
             String id;
             if (!splitid) {
                 id = item.getId();
             } else {
                 id = item.getId() + item.getDate().toString();
             }
-            IncDecItem getItem = map.get(id);
-            if (getItem == null) {
-                IncDecItem mergeitem = new IncDecItem();
+            IncDecDTO getDTO = map.get(id);
+            if (getDTO == null) {
+                IncDecDTO mergeitem = new IncDecDTO();
                 mergeitem.setComponent(item.getComponent());
                 mergeitem.setDate(item.getDate());
                 mergeitem.setDescription(item.getDescription());
@@ -434,24 +434,24 @@ public class MiscUtil {
                 mergeitem.setSubcomponent(item.getSubcomponent());
                 map.put(id, mergeitem);
             } else {
-                getItem.setScore(getItem.getScore() + item.getScore());
-                getItem.setDescription(getItem.getDescription() + ", " + item.getDescription());
+                getDTO.setScore(getDTO.getScore() + item.getScore());
+                getDTO.setDescription(getDTO.getDescription() + ", " + item.getDescription());
             }
         }
         return new HashSet<>(map.values());
     }
 
-    public List<String> getParameters(List<IncDecItem> incdecs) {
+    public List<String> getParameters(List<IncDecDTO> incdecs) {
         return incdecs
                 .stream()
-                .map(IncDecItem::getParameters)
+                .map(IncDecDTO::getParameters)
                 .distinct()
                 .collect(Collectors.toList());
      }
 
-    public List<IncDecItem> getIncDecLocals(List<IncDecItem> incdecs) {
-        List<IncDecItem> locals = new ArrayList<>();
-        for (IncDecItem item : incdecs) {
+    public List<IncDecDTO> getIncDecLocals(List<IncDecDTO> incdecs) {
+        List<IncDecDTO> locals = new ArrayList<>();
+        for (IncDecDTO item : incdecs) {
             String localcomponent = item.getLocalcomponent();
             String[] localcomponents = null;
             if (localcomponent != null) {
@@ -459,20 +459,20 @@ public class MiscUtil {
             }
             if (localcomponents != null && localcomponents.length > 1) {
                 for (String aLocalcomponent : localcomponents) {
-                    IncDecItem newItem = new IncDecItem();
-                    newItem.setComponent(item.getComponent());
-                    newItem.setDate(item.getDate());
-                    newItem.setDescription(item.getDescription());
-                    newItem.setId(item.getId());
-                    newItem.setIncrease(item.isIncrease());
-                    newItem.setLocalcomponent(aLocalcomponent);
-                    newItem.setMarket(item.getMarket());
-                    newItem.setName(item.getName());
-                    newItem.setParameters(item.getParameters());
-                    newItem.setRecord(item.getRecord());
-                    newItem.setScore(item.getScore());
-                    newItem.setSubcomponent(item.getSubcomponent());;
-                    locals.add(newItem);
+                    IncDecDTO newDTO = new IncDecDTO();
+                    newDTO.setComponent(item.getComponent());
+                    newDTO.setDate(item.getDate());
+                    newDTO.setDescription(item.getDescription());
+                    newDTO.setId(item.getId());
+                    newDTO.setIncrease(item.isIncrease());
+                    newDTO.setLocalcomponent(aLocalcomponent);
+                    newDTO.setMarket(item.getMarket());
+                    newDTO.setName(item.getName());
+                    newDTO.setParameters(item.getParameters());
+                    newDTO.setRecord(item.getRecord());
+                    newDTO.setScore(item.getScore());
+                    newDTO.setSubcomponent(item.getSubcomponent());;
+                    locals.add(newDTO);
                 }
             } else {
                 locals.add(item);

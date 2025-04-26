@@ -28,7 +28,7 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.webflux.WebFluxUtil;
-import roart.common.model.ContItem;
+import roart.common.model.ContDTO;
 import roart.ml.common.MLClassifyDS;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
@@ -263,7 +263,7 @@ public class MLClassifyGemDS extends MLClassifyDS {
         Object[][] trainingArray = new Object[learnMap.size()][];
         Object[] trainingCatArray = new Object[learnMap.size()];
         getTrainingSet(learnMap, trainingArray, trainingCatArray);
-        List<ContItem> newConts = new ArrayList<>();
+        List<ContDTO> newConts = new ArrayList<>();
         log.info("First training array size {}", trainingArray.length);
         if (neuralnetcommand.isMllearn()) {
             trainingArray = filter(trainingArray, filename, newConts);
@@ -349,9 +349,9 @@ public class MLClassifyGemDS extends MLClassifyDS {
         return result;
     }
 
-    private void saveme(List<ContItem> newConts) {
+    private void saveme(List<ContDTO> newConts) {
         long millis0 = System.currentTimeMillis();
-        for (ContItem cont : newConts) {
+        for (ContDTO cont : newConts) {
             try {
                 IclijDbDao.badDS.save(cont);
             } catch (Exception e) {
@@ -361,16 +361,16 @@ public class MLClassifyGemDS extends MLClassifyDS {
         log.info("Time spent {}", (System.currentTimeMillis() - millis0) / 1000);
     }
 
-    private synchronized Object[][] filter(Object[][] trainingArray, String filename, List<ContItem> newConts ) {
+    private synchronized Object[][] filter(Object[][] trainingArray, String filename, List<ContDTO> newConts ) {
         long millis0 = System.currentTimeMillis();
-        List<ContItem> conts = null;
+        List<ContDTO> conts = null;
         try {
              conts = IclijDbDao.badDS.getAllConts();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
         Set<String> md5s = new HashSet<>();
-        for (ContItem cont : conts) {
+        for (ContDTO cont : conts) {
             if (filename.equals(cont.getMd5())) {
                 md5s.add(cont.getMd5());
             }
@@ -384,7 +384,7 @@ public class MLClassifyGemDS extends MLClassifyDS {
                 continue;
             }
             filtered.add(anArray);
-            ContItem cont = new ContItem();
+            ContDTO cont = new ContDTO();
             cont.setMd5(md5);
             cont.setFilename(filename);
             cont.setDate(LocalDate.now());

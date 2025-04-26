@@ -13,11 +13,9 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
-import org.jfree.util.Log;
-
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 
+import roart.common.model.MetaDTO;
 import roart.iclij.config.ComponentConstants;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.SimulateFilter;
@@ -26,15 +24,10 @@ import roart.iclij.config.SimulateInvestUtils;
 import roart.iclij.model.Parameters;
 import roart.common.config.MLConstants;
 import roart.common.constants.Constants;
-import roart.common.model.IncDecItem;
-import roart.common.model.MetaItem;
-import roart.common.model.SimDataItem;
-import roart.common.model.StockItem;
+import roart.common.model.IncDecDTO;
+import roart.common.model.SimDataDTO;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialListPlain;
-import roart.common.pipeline.data.SerialMapPlain;
-import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.data.SerialVolume;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -135,21 +128,21 @@ public class TestData {
         return aListMap;
     }
 
-    public List<StockItem> getStockItem(String market, boolean weekdays, Double[] data, int period) throws Exception {
-        List<StockItem> list = new ArrayList<>();
+    public List<StockDTO> getStockDTO(String market, boolean weekdays, Double[] data, int period) throws Exception {
+        List<StockDTO> list = new ArrayList<>();
         LocalDate localDate = LocalDate.now().minusDays(60);
         localDate = TimeUtil.add(localDate, weekdays);
         Date mydate = TimeUtil.convertDate(localDate);
-        list.addAll(getStockItem(market, "id1", mydate, weekdays, new Double[] { 1.0 , 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0, 33.0, 34.0, 35.0 }, period));
-        list.addAll(getStockItem(market, "id2", mydate, weekdays, new Double[] { 11.0 , 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0, 33.0, 34.0, 35.0, 36.0, 37.0, 38.0, 39.0, 40.0, 41.0, 42.0, 43.0, 44.0, 45.0 }, period));
+        list.addAll(getStockDTO(market, "id1", mydate, weekdays, new Double[] { 1.0 , 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0, 33.0, 34.0, 35.0 }, period));
+        list.addAll(getStockDTO(market, "id2", mydate, weekdays, new Double[] { 11.0 , 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0, 33.0, 34.0, 35.0, 36.0, 37.0, 38.0, 39.0, 40.0, 41.0, 42.0, 43.0, 44.0, 45.0 }, period));
         return list;
     }
 
-    public List<StockItem> getStockItem(String market, String id, Date date, boolean weekdays, Double[] data, int period) throws Exception {
-        List<StockItem> list = new ArrayList<>();
+    public List<StockDTO> getStockDTO(String market, String id, Date date, boolean weekdays, Double[] data, int period) throws Exception {
+        List<StockDTO> list = new ArrayList<>();
         LocalDate mydate = TimeUtil.convertDate(date);
         for (Double datum : data) {
-            StockItem stock = new StockItem();
+            StockDTO stock = new StockDTO();
             stock.setMarketid(market);
             stock.setId(id);
             stock.setName("name"+id);
@@ -171,22 +164,22 @@ public class TestData {
     }
     
     public StockData getStockdata(IclijConfig conf) throws Exception {
-        List<StockItem> stocks = getStockItem(TestConstants.MARKET, true, null, Constants.INDEXVALUECOLUMN);
-        MetaItem meta = new MetaItem(TestConstants.MARKET, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
+        List<StockDTO> stocks = getStockDTO(TestConstants.MARKET, true, null, Constants.INDEXVALUECOLUMN);
+        MetaDTO meta = new MetaDTO(TestConstants.MARKET, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
         String[] periodText = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
         return new Extract((DbDao)null).getStockData(conf, TestConstants.MARKET, stocks, meta, periodText);
     }
     
     public StockData getStockdata2(IclijConfig conf) throws Exception {
-        List<StockItem> stocks = getStockItem(TestConstants.MARKET2, true, null, Constants.INDEXVALUECOLUMN);
-        MetaItem meta = new MetaItem(TestConstants.MARKET2, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
+        List<StockDTO> stocks = getStockDTO(TestConstants.MARKET2, true, null, Constants.INDEXVALUECOLUMN);
+        MetaDTO meta = new MetaDTO(TestConstants.MARKET2, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
         String[] periodText = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
         return new Extract((DbDao)null).getStockData(conf, TestConstants.MARKET2, stocks, meta, periodText);
     }
     
     public StockData getStockdata3(IclijConfig conf) throws Exception {
-        List<StockItem> stocks = getStockItem(TestConstants.MARKET3, true, null, Constants.INDEXVALUECOLUMN);
-        MetaItem meta = new MetaItem(TestConstants.MARKET3, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
+        List<StockDTO> stocks = getStockDTO(TestConstants.MARKET3, true, null, Constants.INDEXVALUECOLUMN);
+        MetaDTO meta = new MetaDTO(TestConstants.MARKET3, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
         String[] periodText = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
         return new Extract((DbDao)null).getStockData(conf, TestConstants.MARKET3, stocks, meta, periodText);
     }
@@ -199,23 +192,23 @@ public class TestData {
     }
 
     public StockData getStockdata(IclijConfig conf, Date startDate, Date endDate, String marketName, int size, int column, boolean ohlc) throws Exception {
-        List<StockItem> stocks = getStockItem(startDate, endDate, marketName, size, true, column, ohlc, new String[0], null);
-        MetaItem meta = new MetaItem(marketName, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
+        List<StockDTO> stocks = getStockDTO(startDate, endDate, marketName, size, true, column, ohlc, new String[0], null);
+        MetaDTO meta = new MetaDTO(marketName, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
         String[] periodText = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
         return new Extract((DbDao)null).getStockData(conf, marketName, stocks, meta, periodText);
     }
     
     public StockData getStockdata(IclijConfig conf, Date startDate, Date endDate, String market, int size, boolean weekdays, int period, boolean ohlc) throws Exception {
-        List<StockItem> stocks = getStockItem(startDate, endDate, market, size, weekdays, period, ohlc, new String[0], null);
-        MetaItem meta = new MetaItem(TestConstants.MARKET, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
+        List<StockDTO> stocks = getStockDTO(startDate, endDate, market, size, weekdays, period, ohlc, new String[0], null);
+        MetaDTO meta = new MetaDTO(TestConstants.MARKET, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
         String[] periodText = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
         return new Extract((DbDao)null).getStockData(conf, market, stocks, meta, periodText);
     }
     
-    public List<StockItem> getStockItem(Date startDate, Date endDate, String market, int size, boolean weekdays, int period, boolean ohlc, String[] periods, String idTemplate) throws Exception {
+    public List<StockDTO> getStockDTO(Date startDate, Date endDate, String market, int size, boolean weekdays, int period, boolean ohlc, String[] periods, String idTemplate) throws Exception {
         this.periods = periods;
         Random random = new Random();
-        List<StockItem> list = new ArrayList<>();
+        List<StockDTO> list = new ArrayList<>();
         LocalDate startdate = TimeUtil.convertDate(startDate);
         LocalDate enddate = TimeUtil.convertDate(endDate);
         long days = Duration.between(startdate.atStartOfDay(), enddate.atStartOfDay()).toDaysPart();
@@ -241,7 +234,7 @@ public class TestData {
             }
             double datum = random.nextDouble(1000);
             while (mystartdate.isBefore(myenddate)) {
-                StockItem stock = new StockItem();
+                StockDTO stock = new StockDTO();
                 stock.setMarketid(market);
                 stock.setId(id);
                 stock.setName("name"+id);
@@ -288,33 +281,33 @@ public class TestData {
         return datum;
     }
     
-    public List<MetaItem> getMetas(String market) {
-        MetaItem meta = new MetaItem(market, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
+    public List<MetaDTO> getMetas(String market) {
+        MetaDTO meta = new MetaDTO(market, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
         return List.of(meta);
     }
     
-    public List<MetaItem> getMetas() {
-        MetaItem meta = new MetaItem(TestConstants.MARKET, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
+    public List<MetaDTO> getMetas() {
+        MetaDTO meta = new MetaDTO(TestConstants.MARKET, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
         return List.of(meta);
     }
 
-    public List<MetaItem> getMetas(String marketName, String[] periods, boolean ohlc) {
+    public List<MetaDTO> getMetas(String marketName, String[] periods, boolean ohlc) {
         String[] p = new String[] { "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
         for (int i = 0; i < periods.length; i++) {
             p[i] = periods[i];
         }
-        MetaItem meta = new MetaItem(marketName, p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], null, null, ohlc);
+        MetaDTO meta = new MetaDTO(marketName, p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], null, null, ohlc);
         return List.of(meta);
     }
 
-    public List<IncDecItem> incdec(List<StockItem> all) {
+    public List<IncDecDTO> incdec(List<StockDTO> all) {
         Parameters parameters = new Parameters();
         parameters.setThreshold(1.0);
         parameters.setFuturedays(10);
         
-        List<IncDecItem> list = new ArrayList<>();
-        StockItem stock = all.get(0);
-        IncDecItem item = new IncDecItem();
+        List<IncDecDTO> list = new ArrayList<>();
+        StockDTO stock = all.get(0);
+        IncDecDTO item = new IncDecDTO();
         item.setDate(LocalDate.now());
         item.setMarket(stock.getMarketid());
         item.setIncrease(true);
@@ -344,8 +337,8 @@ public class TestData {
         return list;
     }
     
-    public List<SimDataItem> getSimData(String market, Date startDate, Date endDate, IclijConfig config, int num) {
-        List<SimDataItem> list = new ArrayList<>();
+    public List<SimDataDTO> getSimData(String market, Date startDate, Date endDate, IclijConfig config, int num) {
+        List<SimDataDTO> list = new ArrayList<>();
         Random random = new Random();
         LocalDate aStartDate = TimeUtil.convertDate(startDate);
         LocalDate anEndDate = TimeUtil.convertDate(endDate);
@@ -362,7 +355,7 @@ public class TestData {
             LocalDate anotherEndDate = anotherStartDate.plusMonths(1);
             sim.setStartdate(TimeUtil.convertDate2(anotherStartDate));
             sim.setEnddate(TimeUtil.convertDate2(anotherEndDate));
-            SimDataItem simdata = new SimDataItem();
+            SimDataDTO simdata = new SimDataDTO();
             simdata.setDbid(l++);
             simdata.setRecord(LocalDate.now());
             simdata.setStartdate(anotherStartDate);

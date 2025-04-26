@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import roart.iclij.config.IclijConfig;
-import roart.common.model.IncDecItem;
-import roart.common.model.MemoryItem;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MemoryDTO;
 
 public class ProfitData {
     private ProfitInputData inputdata;
@@ -15,13 +15,13 @@ public class ProfitData {
 
     private List<Integer> positions;
     
-    private Map<String, IncDecItem> buys = new HashMap<>();
+    private Map<String, IncDecDTO> buys = new HashMap<>();
     
-    private Map<String, IncDecItem> sells = new HashMap<>();
+    private Map<String, IncDecDTO> sells = new HashMap<>();
     
     private Map<Object[], Double> confMap;
     
-    private Map<Object[], List<MemoryItem>> listMap;
+    private Map<Object[], List<MemoryDTO>> listMap;
     
     public ProfitData() {
         super();
@@ -51,19 +51,19 @@ public class ProfitData {
         this.positions = positions;
     }
 
-    public Map<String, IncDecItem> getBuys() {
+    public Map<String, IncDecDTO> getBuys() {
         return buys;
     }
 
-    public void setBuys(Map<String, IncDecItem> buys) {
+    public void setBuys(Map<String, IncDecDTO> buys) {
         this.buys = buys;
     }
 
-    public Map<String, IncDecItem> getSells() {
+    public Map<String, IncDecDTO> getSells() {
         return sells;
     }
 
-    public void setSells(Map<String, IncDecItem> sells) {
+    public void setSells(Map<String, IncDecDTO> sells) {
         this.sells = sells;
     }
 

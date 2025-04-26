@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import roart.common.constants.Constants;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
@@ -41,7 +41,7 @@ public class AboveBelowComponent extends ComponentML {
         
         int verificationdays = param.getConfig().verificationDays();
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket(), param.getId());
-        List<IncDecItem> allIncDecs = null;
+        List<IncDecDTO> allIncDecs = null;
         LocalDate date = param.getFutureDate();
         date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
         LocalDate prevDate = date.minusDays(market.getConfig().getFindtime());
@@ -50,7 +50,7 @@ public class AboveBelowComponent extends ComponentML {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        List<IncDecItem> incdecs = allIncDecs; // new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
+        List<IncDecDTO> incdecs = allIncDecs; // new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
         List<String> parametersList = new MiscUtil().getParameters(incdecs);
         if (parametersList.isEmpty()) {
             saveTiming(action, param, true, time0, null, null, subcomponent, null, null, null, action.doSaveTiming());
@@ -61,8 +61,8 @@ public class AboveBelowComponent extends ComponentML {
 
     @Override
     public ComponentData improve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata,
-            Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree,
-            List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
+                                 Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree,
+                                 List<MLMetricsDTO> mlTests, Fitness fitness, boolean save) {
         return null;
     }
 
@@ -73,11 +73,11 @@ public class AboveBelowComponent extends ComponentML {
 
     @Override
     public void calculateIncDec(ComponentData param, ProfitData profitdata, Memories positions, Boolean above,
-            List<MLMetricsItem> mlTests, Parameters parameters) {
+                                List<MLMetricsDTO> mlTests, Parameters parameters) {
     }
 
     @Override
-    public List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception {
+    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception {
         return null;
     }
 

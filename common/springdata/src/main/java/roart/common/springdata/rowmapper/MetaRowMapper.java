@@ -5,11 +5,11 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import roart.common.model.MetaItem;
+import roart.common.model.MetaDTO;
 
-public class MetaRowMapper implements RowMapper<MetaItem>{
+public class MetaRowMapper implements RowMapper<MetaDTO>{
     @Override
-    public MetaItem mapRow(ResultSet rs, int rowNum) throws SQLException {
+    public MetaDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
         String marketid = rs.getString("marketid");
         String period1 = rs.getString("period1");
         String period2 = rs.getString("period2");
@@ -23,7 +23,7 @@ public class MetaRowMapper implements RowMapper<MetaItem>{
         String priority = rs.getString("priority");
         String reset = rs.getString("reset");
         Boolean lhc = (Boolean) rs.getObject("lhc");
-        return new MetaItem(marketid, period1, period2, period3, period4, period5, period6, period7, period8, period9, priority, reset, lhc);
+        return new MetaDTO(marketid, period1, period2, period3, period4, period5, period6, period7, period8, period9, priority, reset, lhc);
 
     }
 }

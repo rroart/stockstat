@@ -2,7 +2,7 @@ package roart.common.model;
 
 import java.time.LocalDate;
 
-public class MemoryItem {
+public class MemoryDTO {
     //private Long id;
 
     private String action;
@@ -97,7 +97,7 @@ public class MemoryItem {
     
     private Integer position;
     
-    public MemoryItem() {
+    public MemoryDTO() {
     }
     
     @Override

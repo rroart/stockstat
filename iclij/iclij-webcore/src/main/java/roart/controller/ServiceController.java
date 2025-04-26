@@ -174,7 +174,7 @@ public class ServiceController {
             throws Exception {
         //MainAction.goals.add(new FindProfitAction());
         return ServiceUtil.getFindProfit(iclijConfig, new ComponentInput(param.getConfigData(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()), io);
-        //Map<String, IncDecItem>[] result = new FindProfitAction().getPicks(param.getIclijConfig().getMarket(), false, param.getIclijConfig().getDate(), null, param .getIclijConfig());
+        //Map<String, IncDecDTO>[] result = new FindProfitAction().getPicks(param.getIclijConfig().getMarket(), false, param.getIclijConfig().getDate(), null, param .getIclijConfig());
        //IclijServiceResult ret = new IclijServiceResult();
        //ret.setError(error);
        //return ret;
@@ -186,7 +186,7 @@ public class ServiceController {
             throws Exception {
         //MainAction.goals.add(new FindProfitAction());
         return ServiceUtil.getImproveAboveBelow(iclijConfig, new ComponentInput(param.getConfigData(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()), io);
-        //Map<String, IncDecItem>[] result = new FindProfitAction().getPicks(param.getIclijConfig().getMarket(), false, param.getIclijConfig().getDate(), null, param .getIclijConfig());
+        //Map<String, IncDecDTO>[] result = new FindProfitAction().getPicks(param.getIclijConfig().getMarket(), false, param.getIclijConfig().getDate(), null, param .getIclijConfig());
        //IclijServiceResult ret = new IclijServiceResult();
        //ret.setError(error);
        //return ret;

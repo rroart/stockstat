@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import roart.common.constants.Constants;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MetaItem;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MetaDTO;
 import roart.common.model.util.MetaUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
@@ -29,13 +29,13 @@ public class EvolveFilterMy extends EvolveMy {
 
     @Override
     public ComponentData evolve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata,
-            Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests,
+            Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsDTO> mlTests,
             Map<String, Object> confMap, EvolutionConfig evolutionConfig, String pipeline, Component component,
             List<String> confList) {
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket(), param.getId());
         int verificationdays = param.getConfig().verificationDays();
 
-        List<IncDecItem> allIncDecs = null;
+        List<IncDecDTO> allIncDecs = null;
         LocalDate date = param.getFutureDate();
         date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
         LocalDate prevDate = date.minusDays(market.getConfig().getFindtime());
@@ -44,12 +44,12 @@ public class EvolveFilterMy extends EvolveMy {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        List<IncDecItem> incdecs = allIncDecs; // new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
+        List<IncDecDTO> incdecs = allIncDecs; // new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
         List<String> parametersList = new MiscUtil().getParameters(incdecs);
         for (String aParameter : parametersList) {
-            List<IncDecItem> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              
-        List<MetaItem> metas = param.getService().getMetas();
-        MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
+            List<IncDecDTO> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              
+        List<MetaDTO> metas = param.getService().getMetas();
+        MetaDTO meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
         List<String> categories = new MetaUtil().getCategories(meta);
         MarketFilterGene gene = new MarketFilterGene(market.getFilter(), categories);
         gene.getMarketfilter().categories = categories;

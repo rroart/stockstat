@@ -9,21 +9,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
-import roart.common.constants.Constants;
-import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.inmemory.model.InmemoryMessage;
-import roart.common.model.TimingItem;
+import roart.common.model.TimingDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialVolume;
-import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.MapUtil;
 import roart.common.util.TimeUtil;
@@ -78,7 +73,7 @@ public class ComponentData {
     
     private List<String> disableList = new ArrayList<>();
     
-    private List<TimingItem> timings = new ArrayList<>();
+    private List<TimingDTO> timings = new ArrayList<>();
     
     private Market market;
     
@@ -355,11 +350,11 @@ public class ComponentData {
         this.disableList = disableList;
     }
 
-    public List<TimingItem> getTimings() {
+    public List<TimingDTO> getTimings() {
         return timings;
     }
 
-    public void setTimings(List<TimingItem> timings) {
+    public void setTimings(List<TimingDTO> timings) {
         this.timings = timings;
     }
 

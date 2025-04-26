@@ -38,7 +38,7 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialIncDec;
@@ -1547,7 +1547,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     }
 
     @Override
-    public void addResultItem(ResultItemTableRow row, StockItem stock) {
+    public void addResultItem(ResultItemTableRow row, StockDTO stock) {
         Object[] objs = new Object[fieldSize];
         Object[] fields = objs; 
         if (resultMap != null) {
@@ -1558,7 +1558,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     }
 
     @Override
-    public Object[] getResultItem(StockItem stock) {
+    public Object[] getResultItem(StockDTO stock) {
         String market = conf.getConfigData().getMarket();
         String id = stock.getId();
         Pair<String, String> pair = new ImmutablePair(market, id);

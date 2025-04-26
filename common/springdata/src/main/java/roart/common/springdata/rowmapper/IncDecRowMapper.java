@@ -3,19 +3,15 @@ package roart.common.springdata.rowmapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import java.util.Date;
-
 import org.springframework.jdbc.core.RowMapper;
 
-import roart.common.model.IncDecItem;
+import roart.common.model.IncDecDTO;
 import roart.common.util.TimeUtil;
 
-import org.springframework.jdbc.core.RowMapper;
-
-public class IncDecRowMapper implements RowMapper<IncDecItem>{
+public class IncDecRowMapper implements RowMapper<IncDecDTO>{
     @Override
-    public IncDecItem mapRow(ResultSet rs, int rowNum) throws SQLException {
-        IncDecItem item = new IncDecItem();
+    public IncDecDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+        IncDecDTO item = new IncDecDTO();
         item.setRecord(TimeUtil.convertDate(rs.getDate("record")));
         item.setDate(TimeUtil.convertDate(rs.getDate("date")));
         item.setMarket(rs.getString("market"));

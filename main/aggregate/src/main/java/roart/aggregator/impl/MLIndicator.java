@@ -30,7 +30,7 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialResultMeta;
@@ -260,8 +260,8 @@ public class MLIndicator extends Aggregator {
         PipelineData datareader = PipelineUtils.getPipeline(datareaders, key, inmemory);
         PipelineData extrareader = PipelineUtils.getPipeline(datareaders, PipelineConstants.EXTRAREADER, inmemory);
         /*
-        Map<Pair<String, String>, List<StockItem>> pairStockMap = null; // (Map<Pair<String, String>, List<StockItem>>) localResults.get(PipelineConstants.PAIRSTOCK);
-        Map<Pair<String, String>, Map<Date, StockItem>> pairDateMap = null; // (Map<Pair<String, String>, Map<Date, StockItem>>) localResults.get(PipelineConstants.PAIRDATE);
+        Map<Pair<String, String>, List<StockDTO>> pairStockMap = null; // (Map<Pair<String, String>, List<StockDTO>>) localResults.get(PipelineConstants.PAIRSTOCK);
+        Map<Pair<String, String>, Map<Date, StockDTO>> pairDateMap = null; // (Map<Pair<String, String>, Map<Date, StockDTO>>) localResults.get(PipelineConstants.PAIRDATE);
         Map<Pair<String, String>, String> pairCatMap = null; // (Map<Pair<String, String>, String>) localResults.get(PipelineConstants.PAIRCAT);
         */
         log.info("KEY" + this.key + " " + PipelineUtils.getPipelineMapKeys(datareaders) + " " + title + " ");
@@ -876,7 +876,7 @@ public class MLIndicator extends Aggregator {
     }
 
     @Override
-    public Object[] getResultItem(StockItem stock) {
+    public Object[] getResultItem(StockDTO stock) {
         String market = conf.getConfigData().getMarket();
         String id = stock.getId();
         Pair<String, String> pair = new ImmutablePair<>(market, id);
@@ -926,7 +926,7 @@ public class MLIndicator extends Aggregator {
     }
 
     @Override
-    public void addResultItem(ResultItemTableRow row, StockItem stock) {
+    public void addResultItem(ResultItemTableRow row, StockDTO stock) {
         Object[] objs = new Object[fieldSize];
         Object[] fields = objs;
         if (resultMap != null) {

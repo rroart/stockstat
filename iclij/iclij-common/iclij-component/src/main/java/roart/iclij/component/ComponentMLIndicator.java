@@ -13,9 +13,9 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.config.Extra;
 import roart.common.constants.Constants;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.MapOneDim;
 import roart.common.pipeline.data.OneDim;
@@ -108,7 +108,7 @@ public class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories positions, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories positions, Boolean above, List<MLMetricsDTO> mlTests, Parameters parameters) {
         MLIndicatorData param = (MLIndicatorData) componentparam;
         if (positions == null) {
             //return;
@@ -134,7 +134,7 @@ public class ComponentMLIndicator extends ComponentML {
             }
             Map<Double, String> labelMap = createLabelMapShort();
 
-            MLMetricsItem mltest = search(mlTests, meta);
+            MLMetricsDTO mltest = search(mlTests, meta);
             if (mlTests == null || mltest != null) {
                 //&& (positions == null || !positions.containsBelow(getPipeline(), paircount, above, mltest, param.getInput().getConfig().getFindProfitMemoryFilter()))) {
                 Double score = mltest.getTestAccuracy();
@@ -154,16 +154,16 @@ public class ComponentMLIndicator extends ComponentML {
                     if (above == null || above == true) {
                         if (tfpn.equals(Constants.ABOVE)) {
                             increase = true;
-                            //IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
-                            IncDecItem incdec = mapAdder(profitdata.getBuys(), key, score, profitdata.getInputdata().getNameMap(), param.getBaseDate(), param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
+                            //IncDecDTO incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                            IncDecDTO incdec = mapAdder(profitdata.getBuys(), key, score, profitdata.getInputdata().getNameMap(), param.getBaseDate(), param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
                             incdec.setIncrease(increase);
                         }
                     }
                     if (above == null || above == false) {
                         if (tfpn.equals(Constants.BELOW)) {
                             increase = false;
-                            //IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
-                            IncDecItem incdec = mapAdder(profitdata.getSells(), key, score, profitdata.getInputdata().getNameMap(), param.getBaseDate(), param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
+                            //IncDecDTO incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                            IncDecDTO incdec = mapAdder(profitdata.getSells(), key, score, profitdata.getInputdata().getNameMap(), param.getBaseDate(), param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
                             incdec.setIncrease(increase);
                         }
                     }
@@ -191,7 +191,7 @@ public class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
+    public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsDTO> mlTests, Fitness fitness, boolean save) {
         List<Extra> mses = null;
         try {
             mses = IclijXMLConfig.getMarketImportants(action.getIclijConfig());
@@ -216,9 +216,9 @@ public class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters) throws Exception {
+    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters) throws Exception {
         MLIndicatorData param = (MLIndicatorData) componentparam;
-        List<MemoryItem> memoryList = new ArrayList<>();
+        List<MemoryDTO> memoryList = new ArrayList<>();
         PipelineData resultMap = param.getResultMap();
         // mix text num
         MapOneDim aResultMap = PipelineUtils.getMapOneDim(resultMap.get(PipelineConstants.RESULT));
@@ -227,7 +227,7 @@ public class ComponentMLIndicator extends ComponentML {
         for (int count = 0; count < param.getResultMeta().size(); count++) {
             SerialResultMeta meta = (SerialResultMeta) param.getResultMeta().get(count);
             resultIndex = newResultIndex;
-            MemoryItem memory = new MemoryItem();
+            MemoryDTO memory = new MemoryDTO();
             int returnSize = (int) meta.getReturnSize();
             newResultIndex += returnSize;
             if (meta.getMlName() == null) {

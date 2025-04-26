@@ -13,11 +13,10 @@ import java.util.Objects;
 import java.util.OptionalDouble;
 import java.util.Set;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.model.IncDecItem;
+import roart.common.model.IncDecDTO;
 import roart.common.util.ArraysUtil;
 import roart.common.util.TimeUtil;
 import roart.common.util.ValidateUtil;
@@ -29,11 +28,11 @@ public class VerifyProfit {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Deprecated
-    public void doVerify(List<IncDecItem> list, int days, Map<String, List<List<Double>>> categoryValueMap, LocalDate date, int startoffset, Double threshold) {
+    public void doVerify(List<IncDecDTO> list, int days, Map<String, List<List<Double>>> categoryValueMap, LocalDate date, int startoffset, Double threshold) {
         if (days <= 0) {
             return;
         }
-        for (IncDecItem item : list) {
+        for (IncDecDTO item : list) {
             String id = item.getId();
             List<List<Double>> resultList = categoryValueMap.get(id);
             if (resultList == null || resultList.isEmpty()) {
@@ -54,7 +53,7 @@ public class VerifyProfit {
         }
     }
 
-    public void doVerify(Collection<IncDecItem> list, int days, Map<String, List<List<Double>>> categoryValueMap, LocalDate date, int startoffset, Double threshold, List<String> stockDates) {
+    public void doVerify(Collection<IncDecDTO> list, int days, Map<String, List<List<Double>>> categoryValueMap, LocalDate date, int startoffset, Double threshold, List<String> stockDates) {
         if (days <= 0) {
             return;
         }
@@ -63,7 +62,7 @@ public class VerifyProfit {
         if (indexoffsetLast < 0) {
             return;
         }
-        for (IncDecItem item : list) {
+        for (IncDecDTO item : list) {
             String id = item.getId();
             List<List<Double>> resultList = categoryValueMap.get(id);
             if (resultList == null || resultList.isEmpty()) {

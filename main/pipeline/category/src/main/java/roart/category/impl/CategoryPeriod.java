@@ -6,8 +6,8 @@ import java.util.Map;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.MetaItem;
-import roart.common.model.StockItem;
+import roart.common.model.MetaDTO;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMeta;
@@ -33,7 +33,7 @@ import roart.stockutil.StockUtil;
 
 public class CategoryPeriod extends Category {
 
-    public CategoryPeriod(IclijConfig conf, int i, String periodText, List<StockItem> stocks,PipelineData[] datareaders, Inmemory inmemory) throws Exception {
+    public CategoryPeriod(IclijConfig conf, int i, String periodText, List<StockDTO> stocks,PipelineData[] datareaders, Inmemory inmemory) throws Exception {
         super(conf, periodText, stocks, datareaders, inmemory);
         period = i;
         createResultMap(conf, stocks);
@@ -46,7 +46,7 @@ public class CategoryPeriod extends Category {
         //Map<String, MarketData> marketdatamap = datareader.getMarketdatamap();
         String market = conf.getConfigData().getMarket();
         //MarketData marketData = marketdatamap.get(market);
-        //List<StockItem>[] datedstocklists = marketData.datedstocklists;
+        //List<StockDTO>[] datedstocklists = marketData.datedstocklists;
         //indicators.add(new IndicatorMove(conf, "Δ" + getTitle(), datedstocklists, period));
         PipelineData metadata = PipelineUtils.getPipeline(datareaders, PipelineConstants.META, inmemory);
         SerialMeta meta = PipelineUtils.getMeta(metadata);
@@ -81,7 +81,7 @@ public class CategoryPeriod extends Category {
     }
 
     @Override
-    public void addResultItem(ResultItemTableRow r, StockItem stock) {
+    public void addResultItem(ResultItemTableRow r, StockDTO stock) {
         try {
             if (StockUtil.hasStockPeriod(stocks, period)) {
                 r.addarr(resultMap.get(stock.getId()));

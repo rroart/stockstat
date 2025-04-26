@@ -38,7 +38,7 @@ import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.ml.NeuralNetCommand;
-import roart.common.model.MetaItem;
+import roart.common.model.MetaDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.util.PipelineThreadUtils;
@@ -242,9 +242,9 @@ public class ControlService {
         return result.getMarkets();    	
     }
     
-    public List<MetaItem> getMetas() {
+    public List<MetaDTO> getMetas() {
         String key = CacheConstants.METAS;
-        List<MetaItem> list = (List<MetaItem>) MyCache.getInstance().get(key);
+        List<MetaDTO> list = (List<MetaDTO>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
@@ -602,7 +602,7 @@ public class ControlService {
         WebData data = new WebData();
         data.setDecs(dataJson.getDecs());
         data.setIncs(dataJson.getIncs());
-        data.setMemoryItems(dataJson.getMemoryItems());
+        data.setMemoryDTOs(dataJson.getMemoryDTOs());
         data.setTimingMap(dataJson.getTimingMap());
         data.setUpdateMap(dataJson.getUpdateMap());
         return data;

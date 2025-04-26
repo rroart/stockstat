@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.iclij.config.IclijConfig;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialList;
@@ -68,7 +68,7 @@ public abstract class Aggregator extends PipelineResultData {
         return titleArray;
     }
 
-    public abstract Object[] getResultItem(StockItem stock);
+    public abstract Object[] getResultItem(StockDTO stock);
 
     public Object calculate(double[][] array) {
         return null;
@@ -86,7 +86,7 @@ public abstract class Aggregator extends PipelineResultData {
         return null;
     }
 
-    public abstract void addResultItem(ResultItemTableRow row, StockItem stock);
+    public abstract void addResultItem(ResultItemTableRow row, StockDTO stock);
 
     public abstract void addResultItemTitle(ResultItemTableRow headrow);
 

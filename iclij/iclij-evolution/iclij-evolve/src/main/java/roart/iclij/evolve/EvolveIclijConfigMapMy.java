@@ -3,7 +3,7 @@ package roart.iclij.evolve;
 import java.util.List;
 import java.util.Map;
 
-import roart.common.model.MLMetricsItem;
+import roart.common.model.MLMetricsDTO;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.iclij.evolution.chromosome.winner.IclijConfigMapChromosomeWinner;
@@ -21,7 +21,7 @@ public class EvolveIclijConfigMapMy extends EvolveMy {
 
     @Override
     public ComponentData evolve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata, Boolean buy,
-            String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, Map<String, Object> confMap,
+            String subcomponent, Parameters parameters, List<MLMetricsDTO> mlTests, Map<String, Object> confMap,
             EvolutionConfig evolutionConfig, String pipeline, Component component, List<String> confList) {
         SimulateInvestData param2 = (SimulateInvestData) param;
         List<String> stockDates = param2.getStockDates();

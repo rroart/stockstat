@@ -351,7 +351,7 @@ public class MyVaadinUI extends UI implements ViewDisplay {
         HorizontalLayout horDb = new HorizontalLayout();
         horDb.setHeight("20%");
         horDb.setWidth("60%");
-        //horDb.addComponent(getDbItem());
+        //horDb.addComponent(getDbDTO());
         horDb.addComponent(getMarkets());
         horDb.addComponent(getMLMarkets());
         horDb.addComponent(resetMLMarkets());
@@ -359,7 +359,7 @@ public class MyVaadinUI extends UI implements ViewDisplay {
         HorizontalLayout horDb2 = new HorizontalLayout();
         horDb2.setHeight("20%");
         horDb2.setWidth("60%");
-        //horDb.addComponent(getDbItem());
+        //horDb.addComponent(getDbDTO());
         /*
         horDb2.addComponent(getDays());
         horDb2.addComponent(getTableDays());
@@ -420,13 +420,13 @@ public class MyVaadinUI extends UI implements ViewDisplay {
         HorizontalLayout horManual = new HorizontalLayout();
         horManual.setHeight("20%");
         horManual.setWidth("60%");
-        //horDb.addComponent(getDbItem());
+        //horDb.addComponent(getDbDTO());
         horManual.addComponent(getMarkets2(horManual, verManualList));
 
         HorizontalLayout horChooseGraph = new HorizontalLayout();
         horChooseGraph.setHeight("20%");
         horChooseGraph.setWidth("60%");
-        //horDb.addComponent(getDbItem());
+        //horDb.addComponent(getDbDTO());
         //horChooseGraph.addComponent(getEqualizeGraph());
         //horChooseGraph.addComponent(getEqualizeUnify());
         horChooseGraph.addComponent(getChooseGraph(verManualList));

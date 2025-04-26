@@ -1,28 +1,15 @@
 package roart.common.springdata.repository;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import roart.common.model.MemoryDTO;
 import roart.common.springdata.rowmapper.MemoryRowMapper;
-import roart.common.model.MemoryItem;
-import roart.common.springdata.model.Memory;
 
 @Repository
 public class MemoryRepository {
@@ -30,7 +17,7 @@ public class MemoryRepository {
     @Autowired
     NamedParameterJdbcTemplate jdbcTemplate;
     
-    public List<MemoryItem> getAll(String market, String action, String component, String subcomponent, String parameters, Date startDate, Date endDate) throws Exception {
+    public List<MemoryDTO> getAll(String market, String action, String component, String subcomponent, String parameters, Date startDate, Date endDate) throws Exception {
         String queryString = "select * from Memory where market = :market";
         if (action != null) {
             queryString += " and action = :action";
@@ -106,7 +93,7 @@ public class MemoryRepository {
 
     }
 
-    public List<MemoryItem> getAll(String mymarket) throws Exception {
+    public List<MemoryDTO> getAll(String mymarket) throws Exception {
         String sql = "select * from memory where marketid = :market";
         MapSqlParameterSource namedParameters = new MapSqlParameterSource();
         namedParameters.addValue("market", mymarket);

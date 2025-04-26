@@ -1,11 +1,9 @@
 package roart.common.model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
-public class ActionComponentItem {
+public class ActionComponentDTO {
 
     private Long dbid;
     private String action;
@@ -15,19 +13,19 @@ public class ActionComponentItem {
     private double time;
     private boolean haverun;
     private int priority;
-    //List<TimingItem> timings;
+    //List<TimingDTO> timings;
     private Boolean buy;
     private String parameters;
     private LocalDate record;
     private BlockingQueue result;
     private LocalDate date;
     
-    public ActionComponentItem() {
+    public ActionComponentDTO() {
         super();
     }
 
-    public ActionComponentItem(String market, String action, String component, String subcomponent, int priority,
-            String parameters) {
+    public ActionComponentDTO(String market, String action, String component, String subcomponent, int priority,
+                              String parameters) {
         super();
         this.market = market;
         this.action = action;

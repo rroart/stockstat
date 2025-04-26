@@ -17,7 +17,7 @@ import roart.common.config.MLConstants;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfigs;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.core.graphindicator.GraphIndicator;
 import roart.core.graphindicator.GraphIndicatorATR;
 import roart.core.graphindicator.GraphIndicatorCCI;
@@ -75,15 +75,15 @@ public class GraphCategoryPrice extends GraphCategory {
                     Pair<String, String> pair2 = ids.iterator().next();
                     String market = pair2.getLeft();
                     MarketData marketdata = marketdatamap.get(market);
-                    List<StockItem>[] datedstocklists = marketdata.datedstocklists;
+                    List<StockDTO>[] datedstocklists = marketdata.datedstocklists;
                     List<Double> endlist = new ArrayList<>();
                     for (int j = days - 1; j >= 0; j--) {
-                        List<StockItem> list = datedstocklists[j];
+                        List<StockDTO> list = datedstocklists[j];
                         if (list == null) {
                             continue;
                         }
                         for (int i = 0; i < list.size(); i++) {
-                            StockItem stock = list.get(i);
+                            StockDTO stock = list.get(i);
                             Pair<String, String> pair = new ImmutablePair(market, stock.getId());
                             if (ids.contains(pair)) {
                                 try {

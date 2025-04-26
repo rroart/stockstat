@@ -9,15 +9,13 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import roart.common.constants.Constants;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.MapOneDim;
 import roart.common.pipeline.data.OneDim;
 import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialIncDec;
-import roart.common.pipeline.data.SerialList;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
@@ -53,7 +51,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
     }
 
     @Override
-    public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
+    public ComponentData improve(MarketActionData action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsDTO> mlTests, Fitness fitness, boolean save) {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().coremlconf);
@@ -63,7 +61,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories memories, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories memories, Boolean above, List<MLMetricsDTO> mlTests, Parameters parameters) {
         ComponentMLData param = (ComponentMLData) componentparam;
         if (memories == null) {
             //return;
@@ -90,7 +88,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
             }
             Map<String, double[]> offsetMap = (Map<String, double[]>) meta.getOffsetMap();
 
-            MLMetricsItem mltest = search(mlTests, meta);
+            MLMetricsDTO mltest = search(mlTests, meta);
             
             //if memory.learnconf > mltest then..above.
             
@@ -128,16 +126,16 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     if (above == null || above == true) {
                         if (tfpn.equals(Constants.TP) || tfpn.equals(Constants.FN)) {
                             increase = true;
-                            //IncDecItem incdec = mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
-                            IncDecItem incdec = mapAdder2(profitdata.getBuys(), key, score, profitdata.getInputdata().getNameMap(), date, mltest.getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
+                            //IncDecDTO incdec = mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                            IncDecDTO incdec = mapAdder2(profitdata.getBuys(), key, score, profitdata.getInputdata().getNameMap(), date, mltest.getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
                             incdec.setIncrease(increase);
                         }
                     }
                     if (above == null || above == false) {
                         if (tfpn.equals(Constants.TN) || tfpn.equals(Constants.FP)) {
                             increase = false;
-                            //IncDecItem incdec = mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
-                            IncDecItem incdec = mapAdder2(profitdata.getSells(), key, score, profitdata.getInputdata().getNameMap(), date, mltest.getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
+                            //IncDecDTO incdec = mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                            IncDecDTO incdec = mapAdder2(profitdata.getSells(), key, score, profitdata.getInputdata().getNameMap(), date, mltest.getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
                             incdec.setIncrease(increase);
                         }
                     }
@@ -147,18 +145,18 @@ public abstract class ComponentMLAggregator extends ComponentML {
     }
 
     @Override
-    public List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters) throws Exception {
+    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters) throws Exception {
         ComponentMLData param = (ComponentMLData) componentparam;
         PipelineData resultMap = param.getResultMap();
         // mix text num
         MapOneDim aResultMap = PipelineUtils.getMapOneDim(resultMap.get(PipelineConstants.RESULT));
-        List<MemoryItem> memoryList = new ArrayList<>();
+        List<MemoryDTO> memoryList = new ArrayList<>();
         int resultIndex = 0;
         int newResultIndex = 0;
         for (int count = 0; count < param.getResultMeta().size(); count++) {
             SerialResultMeta meta = param.getResultMeta().get(count);
             resultIndex = newResultIndex;
-            MemoryItem memory = new MemoryItem();
+            MemoryDTO memory = new MemoryDTO();
             int returnSize = (int) meta.getReturnSize();
             newResultIndex += returnSize;
             if (meta.getMlName() == null) {
@@ -418,7 +416,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
     }
     
     protected abstract ConfigMapChromosome2 getNewChromosome(MarketActionData action, Market market, ProfitData profitdata,
-            Memories positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests);
+            Memories positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsDTO> mlTests);
 
     protected abstract int getDaysAfterLimit(ComponentData componentparam);
     

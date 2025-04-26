@@ -1,25 +1,13 @@
 package roart.common.springdata.repository;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import roart.common.model.ActionComponentItem;
+import roart.common.model.ActionComponentDTO;
 import roart.common.springdata.rowmapper.ActionComponentRowMapper;
 
 @Repository
@@ -28,7 +16,7 @@ public class ActionComponentRepository {
     @Autowired
     NamedParameterJdbcTemplate jdbcTemplate;
 
-    public List<ActionComponentItem> getAll(String market, String action, String component, String subcomponent, String parameters/*, Date startDate, Date endDate*/) throws Exception {
+    public List<ActionComponentDTO> getAll(String market, String action, String component, String subcomponent, String parameters/*, Date startDate, Date endDate*/) throws Exception {
         String queryString = "select * from ActionComponent where market = :market and action = :action and component = :component";
         if (subcomponent != null) {
             queryString += " and subcomponent = :subcomponent";

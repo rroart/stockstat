@@ -33,7 +33,7 @@ import roart.common.config.ConfigMaps;
 import roart.common.config.MLConstants;
 import roart.common.constants.Constants;
 import roart.common.inmemory.factory.InmemoryFactory;
-import roart.common.model.ActionComponentItem;
+import roart.common.model.ActionComponentDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -55,9 +55,9 @@ import roart.iclij.service.IclijServiceResult;
 import roart.model.io.IO;
 import roart.queue.PipelineThread;
 import roart.testdata.TestConstants;
-import roart.common.model.IncDecItem;
+import roart.common.model.IncDecDTO;
 import roart.common.model.MyDataSource;
-import roart.common.model.SimDataItem;
+import roart.common.model.SimDataDTO;
 import roart.testdata.TestData;
 
 @TestInstance(Lifecycle.PER_CLASS)
@@ -133,10 +133,10 @@ public class InmemoryPipelineTest {
         fileSystemDao = mock(FileSystemDao.class);
         doReturn("dummy.txt").when(fileSystemDao).writeFile(any(), any(), any(), any());
 
-        List<IncDecItem> incdecs = new TestData(iconf).incdec(dataSource.getAll(market, iconf, true));
+        List<IncDecDTO> incdecs = new TestData(iconf).incdec(dataSource.getAll(market, iconf, true));
         doReturn(incdecs).when(iclijDbDao).getAllIncDecs(any(), any(), any(), any());
         
-        List<SimDataItem> sims = new TestData(iconf).getSimData(market, TimeUtil.convertDate2(start), TimeUtil.convertDate2(end), iconf, 100);
+        List<SimDataDTO> sims = new TestData(iconf).getSimData(market, TimeUtil.convertDate2(start), TimeUtil.convertDate2(end), iconf, 100);
         doReturn(sims).when(iclijDbDao).getAllSimData(any(), any(), any());
         
         CuratorFramework curatorClient = new TestCuratorFramework();
@@ -165,7 +165,7 @@ public class InmemoryPipelineTest {
     
     @Test
     public void testMachineLearning() throws Exception {
-        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.MACHINELEARNING, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.MACHINELEARNING, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         //aci.setBuy(null);
         //aci.setRecord(LocalDate.now());
         try {
@@ -179,7 +179,7 @@ public class InmemoryPipelineTest {
 
     @Test
     public void testFindProfit() throws Exception {
-        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         //aci.setBuy(null);
         //aci.setRecord(LocalDate.now());
         try {
@@ -191,7 +191,7 @@ public class InmemoryPipelineTest {
 
     @Test
     public void testFindProfitARI() throws Exception {
-        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null, 0, JsonUtil.convert(parameters));
+        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null, 0, JsonUtil.convert(parameters));
         //aci.setBuy(null);
         //aci.setRecord(LocalDate.now());
         try {
@@ -203,7 +203,7 @@ public class InmemoryPipelineTest {
 
     @Test
     public void testFindProfitPredictor() throws Exception {
-        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.PREDICTOR, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.PREDICTOR, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         //aci.setBuy(null);
         //aci.setRecord(LocalDate.now());
         try {
@@ -215,7 +215,7 @@ public class InmemoryPipelineTest {
 
     @Test
     public void testEvolve() throws Exception {
-        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.EVOLVE, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.EVOLVE, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
@@ -227,7 +227,7 @@ public class InmemoryPipelineTest {
 
     @Test
     public void testEvolveARI() throws Exception {
-        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.EVOLVE, PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null, 0, JsonUtil.convert(parameters));
+        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.EVOLVE, PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
@@ -237,7 +237,7 @@ public class InmemoryPipelineTest {
 
     @Test
     public void testImproveProfit() throws Exception {
-        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.IMPROVEPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.IMPROVEPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
@@ -249,7 +249,7 @@ public class InmemoryPipelineTest {
 
     @Test
     public void testImproveProfitMLI() throws Exception {
-        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.IMPROVEPROFIT, PipelineConstants.MLINDICATOR, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.IMPROVEPROFIT, PipelineConstants.MLINDICATOR, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
@@ -261,7 +261,7 @@ public class InmemoryPipelineTest {
 
     @Test
     public void testCrosstest() throws Exception {
-        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.CROSSTEST, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.CROSSTEST, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
@@ -271,7 +271,7 @@ public class InmemoryPipelineTest {
 
     @Test
     public void testFilter() throws Exception {
-        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.IMPROVEFILTER, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.IMPROVEFILTER, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
@@ -283,7 +283,7 @@ public class InmemoryPipelineTest {
 
     @Test
     public void testAboveBelow() throws Exception {
-        ActionComponentItem aci = new ActionComponentItem(TestConstants.MARKET, IclijConstants.IMPROVEABOVEBELOW, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.IMPROVEABOVEBELOW, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {

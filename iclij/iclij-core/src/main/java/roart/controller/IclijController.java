@@ -95,6 +95,7 @@ public class IclijController implements CommandLineRunner {
             startLeaderWorker();
             
             getInstance();
+            // duplicated in pipelinethread
             String path = "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + Constants.LIVE + "/" + instanceC.id;
             try {
                 io.getCuratorClient().create().creatingParentsIfNeeded().forPath(path, new byte[0]);

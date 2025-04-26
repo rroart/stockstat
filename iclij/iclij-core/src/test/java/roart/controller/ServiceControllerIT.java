@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Import;
 
 import roart.action.FindProfitAction;
 import roart.action.MarketAction;
-import roart.common.model.ConfigItem;
-import roart.common.model.TimingBLItem;
+import roart.common.model.ConfigDTO;
+import roart.common.model.TimingBLDTO;
 import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
@@ -38,24 +38,24 @@ public class ServiceControllerIT {
     @Test
     public void t() {
         MarketAction c = new FindProfitAction(iclijConfig);
-        TimingBLItem t = new TimingBLItem();
-        List l = dbDao.getAllTimingBLItem();
+        TimingBLDTO t = new TimingBLDTO();
+        List l = dbDao.getAllTimingBLDTO();
         dbDao.save(t);
-        List l2 = dbDao.getAllTimingBLItem();
+        List l2 = dbDao.getAllTimingBLDTO();
         System.out.println("" + l.size() + " " + l2.size());
     }
 
     @Test
     public void t2() {
         MarketAction c = new FindProfitAction(iclijConfig);
-        List<TimingBLItem> cs = dbDao.getAllTimingBLItem();
+        List<TimingBLDTO> cs = dbDao.getAllTimingBLDTO();
     }
 
     @Test
     public void t4() throws Exception {
-        List<ConfigItem> l0 = dbDaoUtil.getAll("ose", 0);
-        List<ConfigItem> l1 = dbDaoUtil.getAll("ose", 1);
-        List<ConfigItem> l2 = dbDaoUtil.getAll("ose", 2);
+        List<ConfigDTO> l0 = dbDaoUtil.getAll("ose", 0);
+        List<ConfigDTO> l1 = dbDaoUtil.getAll("ose", 1);
+        List<ConfigDTO> l2 = dbDaoUtil.getAll("ose", 2);
                 System.out.println("" + l0.size() + " " + l1.size() + " " + l2.size());
         System.out.println("" + l0.get(0).getValue());
         System.out.println("" + l1.get(0).getValue());

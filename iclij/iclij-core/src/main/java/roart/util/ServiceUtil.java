@@ -21,9 +21,9 @@ import roart.action.MarketAction;
 import roart.action.SimulateInvest2Action;
 import roart.action.SimulateInvestAction;
 import roart.common.constants.Constants;
-import roart.common.model.ActionComponentItem;
-import roart.common.model.MetaItem;
-import roart.common.model.TimingItem;
+import roart.common.model.ActionComponentDTO;
+import roart.common.model.MetaDTO;
+import roart.common.model.TimingDTO;
 import roart.common.model.util.MetaUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
@@ -66,13 +66,13 @@ public class ServiceUtil {
         WebDataJson webDataJson = new WebDataJson();
         webDataJson.setDecs(webData.getDecs());
         webDataJson.setIncs(webData.getIncs());
-        webDataJson.setMemoryItems(webData.getMemoryItems());
+        webDataJson.setMemoryDTOs(webData.getMemoryDTOs());
         webDataJson.setTimingMap(webData.getTimingMap());
         webDataJson.setUpdateMap(webData.getUpdateMap());
         return webDataJson;
     }
 
-    public static IclijServiceResult getFindProfit(ComponentInput componentInput, List<TimingItem> timingList, IclijConfig iclijConfig, IO io) {
+    public static IclijServiceResult getFindProfit(ComponentInput componentInput, List<TimingDTO> timingList, IclijConfig iclijConfig, IO io) {
         actionThreadReady();
         IclijServiceResult result = new IclijServiceResult();
         ComponentData param = null;
@@ -319,20 +319,20 @@ public class ServiceUtil {
         }
         param.setMarket(market);
         String marketName = componentInput.getMarket();
-        List<MetaItem> metas = param.getService().getMetas();
-        MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
+        List<MetaDTO> metas = param.getService().getMetas();
+        MetaDTO meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
         boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
         List<String> components = action.getActionData().getComponents(iclijConfig, wantThree);
         BlockingQueue<WebData> queue = null;
         // currently only suited and tested for actions with one component
         for (String component : components) {
-            ActionComponentItem marketTime = new ActionComponentItem();
+            ActionComponentDTO marketTime = new ActionComponentDTO();
             queue = new ArrayBlockingQueue<>(1);
             marketTime.setMarket(market.getConfig().getMarket());
             marketTime.setAction(action.getActionData().getName());
             marketTime.setComponent(component);
             marketTime.setPriority(-20);
-            List<ActionComponentItem> marketTimes = new ArrayList<>();
+            List<ActionComponentDTO> marketTimes = new ArrayList<>();
             marketTimes.add(marketTime);
             marketTime.setResult(queue);
             ActionThread.queue.addAll(marketTimes);

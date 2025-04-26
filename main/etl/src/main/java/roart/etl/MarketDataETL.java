@@ -8,8 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.iclij.config.IclijConfig;
-import roart.common.model.MetaItem;
-import roart.common.model.StockItem;
+import roart.common.model.MetaDTO;
+import roart.common.model.StockDTO;
 import roart.model.data.MarketData;
 import roart.stockutil.StockUtil;
 
@@ -34,7 +34,7 @@ public class MarketDataETL {
      */
     
     public Map<String, MarketData> getMarketdatamap(int days,
-            String market, IclijConfig conf, List<StockItem> stocks, String[] periodText, MetaItem meta) throws Exception {
+            String market, IclijConfig conf, List<StockDTO> stocks, String[] periodText, MetaDTO meta) throws Exception {
         Map<String, MarketData> marketdatamap = new HashMap();
         log.info("prestocks");
         log.info("stocks {}", stocks.size());
@@ -42,7 +42,7 @@ public class MarketDataETL {
         marketdata.stocks = stocks;
         marketdata.periodtext = periodText;
         marketdata.meta = meta;
-        Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
+        Map<String, List<StockDTO>> stockdatemap = StockUtil.splitDate(stocks);
         stockdatemap = StockUtil.filterFew(stockdatemap, conf.getFilterDate());
         log.info("keyset {}", stockdatemap.keySet());
         // the main list, based on freshest or specific date.
@@ -52,7 +52,7 @@ public class MarketDataETL {
          * Make stock lists based on the intervals
          */
 
-        List<StockItem> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, conf.getConfigData().getDate(), days, conf.getTableIntervalDays());
+        List<StockDTO> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, conf.getConfigData().getDate(), days, conf.getTableIntervalDays());
         marketdata.datedstocklists = datedstocklists;
         marketdatamap.put(market,  marketdata);
         return marketdatamap;

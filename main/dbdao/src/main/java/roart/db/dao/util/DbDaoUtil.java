@@ -2,7 +2,7 @@ package roart.db.dao.util;
 
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
-import roart.common.model.MetaItem;
+import roart.common.model.MetaDTO;
 import roart.db.dao.DbDao;
 
 import org.slf4j.Logger;
@@ -22,7 +22,7 @@ public class DbDaoUtil {
     
     public static String[] getPeriodText(String market, IclijConfig conf, DbDao dbDao) {
         String[] periodText = { "Period1", "Period2", "Period3", "Period4", "Period5", "Period6", "Period7", "Period8", "Period9" };
-        MetaItem meta = null;
+        MetaDTO meta = null;
         try {
             meta = dbDao.getById(market, conf);
         } catch (Exception e) {
@@ -44,8 +44,8 @@ public class DbDaoUtil {
 
     // ?
     @Deprecated
-    public static MetaItem getMeta(String market, IclijConfig conf) {
-        MetaItem meta = null;
+    public static MetaDTO getMeta(String market, IclijConfig conf) {
+        MetaDTO meta = null;
         try {
             //meta = DbDao.getById(market, conf);
         } catch (Exception e) {

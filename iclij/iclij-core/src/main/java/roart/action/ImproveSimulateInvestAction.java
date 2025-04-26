@@ -20,10 +20,10 @@ import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.inmemory.model.InmemoryUtil;
-import roart.common.model.ActionComponentItem;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
+import roart.common.model.ActionComponentDTO;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.util.JsonUtil;
@@ -64,7 +64,7 @@ public class ImproveSimulateInvestAction extends MarketAction {
     }
     
     @Override
-    protected List<IncDecItem> getIncDecItems() {
+    protected List<IncDecDTO> getIncDecDTOs() {
         return null;
     }
 
@@ -84,7 +84,7 @@ public class ImproveSimulateInvestAction extends MarketAction {
     }
 
     @Override
-    protected List<MemoryItem> getMemItems(ActionComponentItem marketTime, WebData myData, ComponentData param,
+    protected List<MemoryDTO> getMemDTOs(ActionComponentDTO marketTime, WebData myData, ComponentData param,
             IclijConfig config, Boolean evolve, Map<String, ComponentData> dataMap) {
         return new ArrayList<>();
     }
@@ -103,7 +103,7 @@ public class ImproveSimulateInvestAction extends MarketAction {
     protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData componentparam,
             Memories listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap,
             Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters,
-            boolean wantThree, List<MLMetricsItem> mlTests) {
+            boolean wantThree, List<MLMetricsDTO> mlTests) {
         log.info("Param id {}", componentparam.getId());
         if (componentparam.getUpdateMap() == null) {
         	componentparam.setUpdateMap(new HashMap<>());
@@ -117,7 +117,7 @@ public class ImproveSimulateInvestAction extends MarketAction {
         } catch (ParseException e) {
             log.error(Constants.EXCEPTION, e);
         }
-        //List<MemoryItem> memories = findAllMarketComponentsToCheckNew(myData, param, 0, config, false, dataMap, componentMap, subcomponent, parameters, market);
+        //List<MemoryDTO> memories = findAllMarketComponentsToCheckNew(myData, param, 0, config, false, dataMap, componentMap, subcomponent, parameters, market);
         
         Inmemory inmemory = componentparam.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
         
@@ -162,7 +162,7 @@ public class ImproveSimulateInvestAction extends MarketAction {
     }
 
     @Deprecated // TODO not deprecated?
-    public List<IncDecItem> getAllIncDecs(Market market, LocalDate investStart,
+    public List<IncDecDTO> getAllIncDecs(Market market, LocalDate investStart,
             LocalDate investEnd, ComponentData param) {
         try {
             return param.getService().getIo().getIdbDao().getAllIncDecs(market.getConfig().getMarket(), investStart, investEnd, null);

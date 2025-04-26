@@ -12,7 +12,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.util.TimeUtil;
 import roart.result.model.GUISize;
 import roart.result.model.ResultItem;
@@ -22,12 +22,12 @@ import roart.core.util.SvgUtil;
 
 public class GraphCategoryPeriodTopBottom extends GraphCategory {
 
-    List<StockItem>[][] stocklistPeriod;
+    List<StockDTO>[][] stocklistPeriod;
 
     private int period;
 
     public GraphCategoryPeriodTopBottom(IclijConfig conf, int i,
-            String periodText, List<StockItem>[][] stocklistPeriod) {
+            String periodText, List<StockDTO>[][] stocklistPeriod) {
         super(conf, periodText);
         period = i;
         this.stocklistPeriod = stocklistPeriod;

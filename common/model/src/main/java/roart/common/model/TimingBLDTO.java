@@ -2,7 +2,7 @@ package roart.common.model;
 
 import java.time.LocalDate;
 
-public class TimingBLItem {
+public class TimingBLDTO {
 
     private Long dbid;
 

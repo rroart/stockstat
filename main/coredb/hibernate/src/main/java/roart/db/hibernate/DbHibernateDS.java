@@ -9,19 +9,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.iclij.config.IclijConfig;
-import roart.common.model.AboveBelowItem;
-import roart.common.model.ActionComponentItem;
-import roart.common.model.ConfigItem;
-import roart.common.model.ContItem;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
-import roart.common.model.MetaItem;
-import roart.common.model.RelationItem;
-import roart.common.model.SimDataItem;
-import roart.common.model.StockItem;
-import roart.common.model.TimingBLItem;
-import roart.common.model.TimingItem;
+import roart.common.model.AboveBelowDTO;
+import roart.common.model.ActionComponentDTO;
+import roart.common.model.ConfigDTO;
+import roart.common.model.ContDTO;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
+import roart.common.model.MetaDTO;
+import roart.common.model.RelationDTO;
+import roart.common.model.SimDataDTO;
+import roart.common.model.StockDTO;
+import roart.common.model.TimingBLDTO;
+import roart.common.model.TimingDTO;
 import roart.db.common.DbDS;
 import roart.db.model.MLMetrics;
 import roart.db.model.Stock;
@@ -33,12 +33,12 @@ public class DbHibernateDS extends DbDS {
     private static DbDS instance;
     
     @Override
-    public List<StockItem> getStocksByMarket(String market) throws Exception {
+    public List<StockDTO> getStocksByMarket(String market) throws Exception {
     	return DbHibernate.getAll(market);
     }
 
 	@Override
-	public MetaItem getMetaByMarket(String market) throws Exception {
+	public MetaDTO getMetaByMarket(String market) throws Exception {
 		return DbHibernate.getMarket(market);
 	}
 
@@ -59,7 +59,7 @@ public class DbHibernateDS extends DbDS {
     }
 
     @Override
-    public List<MetaItem> getAllMetas() {
+    public List<MetaDTO> getAllMetas() {
         try {
         return DbHibernate.getMetas();
         } catch (Exception e) {
@@ -81,54 +81,54 @@ public class DbHibernateDS extends DbDS {
     }
 
     @Override
-    public List<MemoryItem> getAllMemories() {
+    public List<MemoryDTO> getAllMemories() {
         return DbHibernate.getMemories();
     }
 
     @Override
-    public List<MemoryItem> getMemoriesByMarket(String market) {
+    public List<MemoryDTO> getMemoriesByMarket(String market) {
         return DbHibernate.getMemoriesByMarket(market);
     }
 
     @Override
-    public List<MemoryItem> getMemories(String market, String action, String component, String subcomponent,
+    public List<MemoryDTO> getMemories(String market, String action, String component, String subcomponent,
             String parameters, Date startDate, Date endDate) {
         return DbHibernate.getMemories(market, null, null, null, null, startDate, endDate);
     }
 
     @Override
-    public List<TimingItem> getAllTimings() {
+    public List<TimingDTO> getAllTimings() {
         return DbHibernate.getTimings();
     }
 
     @Override
-    public List<TimingItem> getTimings(String market, String action, Date startDate, Date endDate) {
+    public List<TimingDTO> getTimings(String market, String action, Date startDate, Date endDate) {
         return DbHibernate.getTiming(market, action, startDate, endDate);
     }
 
     @Override
-    public List<RelationItem> getAllRelations() {
+    public List<RelationDTO> getAllRelations() {
         return DbHibernate.getRelations();
     }
 
     @Override
-    public List<IncDecItem> getAllIncDecs() {
+    public List<IncDecDTO> getAllIncDecs() {
         return DbHibernate.getIncDecs();
     }
 
     @Override
-    public List<IncDecItem> getIncDecs(String market, Date startDate, Date endDate, String parameters) {
+    public List<IncDecDTO> getIncDecs(String market, Date startDate, Date endDate, String parameters) {
         return DbHibernate.getIncDecs(market, startDate, endDate, parameters);
     }
 
     @Override
-    public List<ConfigItem> getConfigs(String market, String action, String component, String subcomponent,
+    public List<ConfigDTO> getConfigs(String market, String action, String component, String subcomponent,
             String parameters, Date startDate, Date endDate) {
         return DbHibernate.getConfigs(market, action, component, subcomponent, parameters, startDate, endDate);
     }
 
     @Override
-    public List<ConfigItem> getConfigsByMarket(String market) {
+    public List<ConfigDTO> getConfigsByMarket(String market) {
         try {
             return DbHibernate.getConfigsByMarket(market);
         } catch (Exception e) {
@@ -137,33 +137,33 @@ public class DbHibernateDS extends DbDS {
     }
 
     @Override
-    public List<MLMetricsItem> getAllMLMetrics() {
+    public List<MLMetricsDTO> getAllMLMetrics() {
         return DbHibernate.getMLMetrics();
     }
 
     @Override
-    public List<MLMetricsItem> getMLMetrics(String market, Date startDate, Date endDate) {
+    public List<MLMetricsDTO> getMLMetrics(String market, Date startDate, Date endDate) {
         return DbHibernate.getMLMetrics(market, startDate, endDate);
     }
 
     @Override
-    public List<SimDataItem> getAllSimData(String market, LocalDate startDate, LocalDate endDate) {
+    public List<SimDataDTO> getAllSimData(String market, LocalDate startDate, LocalDate endDate) {
         return DbHibernate.getSimData(market, startDate, endDate);
     }
 
     @Override
-    public List<AboveBelowItem> getAllAboveBelow(String market, Date startDate, Date endDate) {
+    public List<AboveBelowDTO> getAllAboveBelow(String market, Date startDate, Date endDate) {
         return DbHibernate.getAllAboveBelow(market, startDate, endDate);
     }
 
     @Override
-    public List<ActionComponentItem> getAllActionComponent() {
+    public List<ActionComponentDTO> getAllActionComponent() {
         return DbHibernate.getAllActionComponent();
     }
 
     @Override
-    public List<TimingBLItem> getAllTimingBL() {
-        return DbHibernate.getAllTimingBLItem();
+    public List<TimingBLDTO> getAllTimingBL() {
+        return DbHibernate.getAllTimingBLDTO();
     }
 
     @Override
@@ -172,32 +172,32 @@ public class DbHibernateDS extends DbDS {
     }
 
     @Override
-    public List<ContItem> getAllConts() {
+    public List<ContDTO> getAllConts() {
         return DbHibernate.getAllCont();
     }
 
     @Override
-    public List<StockItem> getAllStocks() throws Exception {
+    public List<StockDTO> getAllStocks() throws Exception {
         return DbHibernate.getAllStocks();
     }
 
     @Override
-    public List<ConfigItem> getAllConfigs() {
+    public List<ConfigDTO> getAllConfigs() {
         return DbHibernate.getAllConfigs();
     }
 
     @Override
-    public List<SimDataItem> getAllSimData(String market) {
+    public List<SimDataDTO> getAllSimData(String market) {
         return DbHibernate.getAllSimData(market);
     }
 
     @Override
-    public List<AboveBelowItem> getAllAboveBelow() {
+    public List<AboveBelowDTO> getAllAboveBelow() {
         return DbHibernate.getAllAboveBelow();
     }
 
     @Override
-    public List<SimDataItem> getAllSimData() {
+    public List<SimDataDTO> getAllSimData() {
         return DbHibernate.getAllSimData();
     }
 }

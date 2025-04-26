@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class StockItem {
+public class StockDTO {
 
     private String dbid;
     private String marketid;
@@ -24,7 +24,7 @@ public class StockItem {
     private String currency;
     private Double[] period = new Double[9];
 
-    public StockItem(String dbid, String marketid, String id, String isin, String name, Date date, Double indexvalue, Double indexvaluelow, Double indexvaluehigh, Double indexvalueopen, Double price, Double pricelow, Double pricehigh, Double priceopen, Long volume, String currency, Double period1, Double period2, Double period3, Double period4, Double period5, Double period6, Double period7, Double period8, Double period9) throws Exception {
+    public StockDTO(String dbid, String marketid, String id, String isin, String name, Date date, Double indexvalue, Double indexvaluelow, Double indexvaluehigh, Double indexvalueopen, Double price, Double pricelow, Double pricehigh, Double priceopen, Long volume, String currency, Double period1, Double period2, Double period3, Double period4, Double period5, Double period6, Double period7, Double period8, Double period9) throws Exception {
         this.dbid = dbid;
         this.marketid = marketid;
         this.id = id;
@@ -52,7 +52,7 @@ public class StockItem {
         this.period[8] = period9;
     }
 
-    public StockItem() {
+    public StockDTO() {
     }
 
     public String getDbid() {

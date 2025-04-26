@@ -10,20 +10,14 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.common.constants.Constants;
-import roart.common.constants.ResultMetaConstants;
 import roart.common.ml.NeuralNetConfigs;
-import roart.common.model.ConfigItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.pipeline.PipelineConstants;
+import roart.common.model.ConfigDTO;
+import roart.common.model.MLMetricsDTO;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialIncDec;
-import roart.common.pipeline.data.SerialList;
-import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
@@ -40,7 +34,6 @@ import roart.iclij.model.action.MarketActionData;
 import roart.iclij.service.util.MiscUtil;
 import roart.iclij.util.MLUtil;
 import roart.result.model.ResultItem;
-import roart.result.model.ResultMeta;
 
 public abstract class ComponentML extends Component {
 
@@ -133,18 +126,18 @@ public abstract class ComponentML extends Component {
                 log.error("Config value null");
                 return;
             }
-            ConfigItem configItem = new ConfigItem();
-            configItem.setAction(param.getAction());
-            configItem.setComponent(getPipeline());
-            configItem.setDate(param.getBaseDate());
-            configItem.setId(key);
-            configItem.setMarket(param.getMarket());
-            configItem.setRecord(LocalDate.now());
-            configItem.setSubcomponent(subcomponent);
-            configItem.setParameters(JsonUtil.convert(parameters));
-            configItem.setValue(nnconfigString);
+            ConfigDTO configDTO = new ConfigDTO();
+            configDTO.setAction(param.getAction());
+            configDTO.setComponent(getPipeline());
+            configDTO.setDate(param.getBaseDate());
+            configDTO.setId(key);
+            configDTO.setMarket(param.getMarket());
+            configDTO.setRecord(LocalDate.now());
+            configDTO.setSubcomponent(subcomponent);
+            configDTO.setParameters(JsonUtil.convert(parameters));
+            configDTO.setValue(nnconfigString);
             try {
-                param.getService().getIo().getIdbDao().save(configItem);
+                param.getService().getIo().getIdbDao().save(configDTO);
             } catch (Exception e) {
                 log.info(Constants.EXCEPTION, e);
             }
@@ -397,17 +390,17 @@ public abstract class ComponentML extends Component {
         return getConfig().getMLMaps().getMapPersist();
     }
 
-    protected MLMetricsItem search(List<MLMetricsItem> mlTests, List meta) {
+    protected MLMetricsDTO search(List<MLMetricsDTO> mlTests, List meta) {
         Pair<String, String> pair = new MiscUtil().getComponentPair(meta);
         if (mlTests == null) {
-            MLMetricsItem test = new MLMetricsItem();
+            MLMetricsDTO test = new MLMetricsDTO();
             test.setComponent(getPipeline());
             test.setSubcomponent(pair.getLeft());
             test.setLocalcomponent(pair.getRight());
             test.setTestAccuracy(1.0);
             return test;
         }
-        for (MLMetricsItem aTest : mlTests) {
+        for (MLMetricsDTO aTest : mlTests) {
             if (!aTest.getComponent().equals(getPipeline())) {
                 continue;
             }
@@ -420,17 +413,17 @@ public abstract class ComponentML extends Component {
         return null;
     }
 
-    protected MLMetricsItem search(List<MLMetricsItem> mlTests, SerialResultMeta meta) {
+    protected MLMetricsDTO search(List<MLMetricsDTO> mlTests, SerialResultMeta meta) {
         Pair<String, String> pair = new MiscUtil().getComponentPair(meta);
         if (mlTests == null || mlTests.isEmpty()) {
-            MLMetricsItem test = new MLMetricsItem();
+            MLMetricsDTO test = new MLMetricsDTO();
             test.setComponent(getPipeline());
             test.setSubcomponent(pair.getLeft());
             test.setLocalcomponent(pair.getRight());
             test.setTestAccuracy(1.0);
             return test;
         }
-        for (MLMetricsItem aTest : mlTests) {
+        for (MLMetricsDTO aTest : mlTests) {
             if (!aTest.getComponent().equals(getPipeline())) {
                 continue;
             }
@@ -443,16 +436,16 @@ public abstract class ComponentML extends Component {
         return null;
     }
 
-    protected MLMetricsItem search(List<MLMetricsItem> mlTests, SerialIncDec incdec) {
+    protected MLMetricsDTO search(List<MLMetricsDTO> mlTests, SerialIncDec incdec) {
         if (mlTests == null) {
-            MLMetricsItem test = new MLMetricsItem();
+            MLMetricsDTO test = new MLMetricsDTO();
             test.setComponent(getPipeline());
             test.setSubcomponent(incdec.getSubComponent());
             test.setLocalcomponent(incdec.getLocalComponent());
             test.setTestAccuracy(1.0);
             return test;
         }
-        for (MLMetricsItem aTest : mlTests) {
+        for (MLMetricsDTO aTest : mlTests) {
             if (!aTest.getComponent().equals(getPipeline())) {
                 continue;
             }

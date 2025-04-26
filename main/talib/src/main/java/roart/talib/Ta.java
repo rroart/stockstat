@@ -10,7 +10,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.data.SerialTA;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
@@ -70,7 +70,7 @@ public abstract class Ta {
         Set<Pair<String, Integer>> pairs = perioddata.pairs;
         MarketData marketdata = marketdatamap.get(market);
         Integer periodInt = StockUtil.getPeriodByMarket(market, pairs);
-        List<StockItem>[] datedstocklists = marketdata.datedstocklists;
+        List<StockDTO>[] datedstocklists = marketdata.datedstocklists;
         double[][] arrarr = new double[arraysize][];
         for (int i = 0; i < arraysize; i++) {
             arrarr[i] = new double[days];

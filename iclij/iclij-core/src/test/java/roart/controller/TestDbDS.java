@@ -6,19 +6,19 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import roart.common.model.AboveBelowItem;
-import roart.common.model.ActionComponentItem;
-import roart.common.model.ConfigItem;
-import roart.common.model.ContItem;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
-import roart.common.model.MetaItem;
-import roart.common.model.RelationItem;
-import roart.common.model.SimDataItem;
-import roart.common.model.StockItem;
-import roart.common.model.TimingBLItem;
-import roart.common.model.TimingItem;
+import roart.common.model.AboveBelowDTO;
+import roart.common.model.ActionComponentDTO;
+import roart.common.model.ConfigDTO;
+import roart.common.model.ContDTO;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
+import roart.common.model.MetaDTO;
+import roart.common.model.RelationDTO;
+import roart.common.model.SimDataDTO;
+import roart.common.model.StockDTO;
+import roart.common.model.TimingBLDTO;
+import roart.common.model.TimingDTO;
 import roart.db.common.DbDS;
 import roart.iclij.config.IclijConfig;
 
@@ -26,129 +26,129 @@ import roart.iclij.config.IclijConfig;
 public class TestDbDS extends DbDS {
 
     @Override
-    public List<StockItem> getAllStocks() throws Exception {
+    public List<StockDTO> getAllStocks() throws Exception {
         return null;
     }
 
     @Override
-    public List<StockItem> getStocksByMarket(String market) throws Exception {
+    public List<StockDTO> getStocksByMarket(String market) throws Exception {
         return null;
     }
 
     @Override
-    public MetaItem getMetaByMarket(String market) throws Exception {
+    public MetaDTO getMetaByMarket(String market) throws Exception {
         return null;
     }
 
     @Override
-    public List<MetaItem> getAllMetas() {
+    public List<MetaDTO> getAllMetas() {
         return null;
     }
 
     @Override
-    public List<MemoryItem> getAllMemories() {
+    public List<MemoryDTO> getAllMemories() {
         return null;
     }
 
     @Override
-    public List<MemoryItem> getMemoriesByMarket(String market) {
+    public List<MemoryDTO> getMemoriesByMarket(String market) {
         return null;
     }
 
     @Override
-    public List<MemoryItem> getMemories(String market, String action, String component, String subcomponent,
+    public List<MemoryDTO> getMemories(String market, String action, String component, String subcomponent,
             String parameters, Date startDate, Date endDate) {
         return null;
     }
 
     @Override
-    public List<TimingItem> getAllTimings() {
+    public List<TimingDTO> getAllTimings() {
         return null;
     }
 
     @Override
-    public List<TimingItem> getTimings(String market, String action, Date startDate, Date endDate) {
+    public List<TimingDTO> getTimings(String market, String action, Date startDate, Date endDate) {
         return null;
     }
 
     @Override
-    public List<RelationItem> getAllRelations() {
+    public List<RelationDTO> getAllRelations() {
         return null;
     }
 
     @Override
-    public List<IncDecItem> getAllIncDecs() {
+    public List<IncDecDTO> getAllIncDecs() {
         return null;
     }
 
     @Override
-    public List<IncDecItem> getIncDecs(String market, Date startDate, Date endDate, String parameters) {
+    public List<IncDecDTO> getIncDecs(String market, Date startDate, Date endDate, String parameters) {
         return null;
     }
 
     @Override
-    public List<ConfigItem> getAllConfigs() {
+    public List<ConfigDTO> getAllConfigs() {
         return null;
     }
 
     @Override
-    public List<ConfigItem> getConfigs(String market, String action, String component, String subcomponent,
+    public List<ConfigDTO> getConfigs(String market, String action, String component, String subcomponent,
             String parameters, Date startDate, Date endDate) {
         return null;
     }
 
     @Override
-    public List<ConfigItem> getConfigsByMarket(String market) {
+    public List<ConfigDTO> getConfigsByMarket(String market) {
         return null;
     }
 
     @Override
-    public List<MLMetricsItem> getAllMLMetrics() {
+    public List<MLMetricsDTO> getAllMLMetrics() {
         return null;
     }
 
     @Override
-    public List<MLMetricsItem> getMLMetrics(String market, Date startDate, Date endDate) {
+    public List<MLMetricsDTO> getMLMetrics(String market, Date startDate, Date endDate) {
         return null;
     }
 
     @Override
-    public List<SimDataItem> getAllSimData() {
+    public List<SimDataDTO> getAllSimData() {
         return null;
     }
 
     @Override
-    public List<SimDataItem> getAllSimData(String market) {
+    public List<SimDataDTO> getAllSimData(String market) {
         return null;
     }
 
     @Override
-    public List<SimDataItem> getAllSimData(String market, LocalDate startDate, LocalDate endDate) {
+    public List<SimDataDTO> getAllSimData(String market, LocalDate startDate, LocalDate endDate) {
         return null;
     }
 
     @Override
-    public List<AboveBelowItem> getAllAboveBelow() {
+    public List<AboveBelowDTO> getAllAboveBelow() {
         return null;
     }
 
     @Override
-    public List<AboveBelowItem> getAllAboveBelow(String market, Date startDate, Date endDate) {
+    public List<AboveBelowDTO> getAllAboveBelow(String market, Date startDate, Date endDate) {
         return null;
     }
 
     @Override
-    public List<ActionComponentItem> getAllActionComponent() {
+    public List<ActionComponentDTO> getAllActionComponent() {
         return null;
     }
 
     @Override
-    public List<TimingBLItem> getAllTimingBL() {
+    public List<TimingBLDTO> getAllTimingBL() {
         return null;
     }
 
     @Override
-    public List<ContItem> getAllConts() {
+    public List<ContDTO> getAllConts() {
         return null;
     }
 

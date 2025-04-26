@@ -5,17 +5,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import roart.common.config.ConfigConstants;
-import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.ConfigItem;
+import roart.common.model.ConfigDTO;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
-import roart.component.model.RecommenderData;
 import roart.constants.IclijConstants;
 import roart.evolution.config.EvolutionConfig;
 import roart.iclij.config.EvolveMLConfig;
@@ -28,7 +25,6 @@ import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.service.util.MiscUtil;
 import roart.result.model.ResultItem;
-import roart.service.model.ProfitData;
 
 public abstract class ComponentNoML extends Component {
 
@@ -75,21 +71,21 @@ public abstract class ComponentNoML extends Component {
         //for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
             String key = IclijConstants.ALL;
             Object object = JsonUtil.convert(anUpdateMap);
-            ConfigItem configItem = new ConfigItem();
-            configItem.setAction(param.getAction());
-            configItem.setComponent(getPipeline());
-            configItem.setDate(param.getBaseDate());
-            configItem.setId(key);
-            configItem.setMarket(param.getMarket());
-            configItem.setRecord(LocalDate.now());
+            ConfigDTO configDTO = new ConfigDTO();
+            configDTO.setAction(param.getAction());
+            configDTO.setComponent(getPipeline());
+            configDTO.setDate(param.getBaseDate());
+            configDTO.setId(key);
+            configDTO.setMarket(param.getMarket());
+            configDTO.setRecord(LocalDate.now());
             String value = JsonUtil.convert(object);
-            configItem.setValue(value);
+            configDTO.setValue(value);
             if (value == null) {
                 log.error("Config value null");
                 return;
             }
             try {
-                param.getService().getIo().getIdbDao().save(configItem);
+                param.getService().getIo().getIdbDao().save(configDTO);
             } catch (Exception e) {
                 log.info(Constants.EXCEPTION, e);
             }

@@ -4,11 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import roart.common.config.ConfigConstants;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.component.model.ComponentData;
-import roart.component.model.ComponentMLData;
 import roart.component.model.DatasetData;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.Fitness;
@@ -50,7 +49,7 @@ public class DatasetComponent extends ComponentML {
 
     @Override
     public ComponentData improve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata,
-            Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save) {
+                                 Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsDTO> mlTests, Fitness fitness, boolean save) {
         return null;
     }
 
@@ -60,11 +59,11 @@ public class DatasetComponent extends ComponentML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData param, ProfitData profitdata, Memories positions, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
+    public void calculateIncDec(ComponentData param, ProfitData profitdata, Memories positions, Boolean above, List<MLMetricsDTO> mlTests, Parameters parameters) {
     }
 
     @Override
-    public List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception {
+    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception {
         return null;
     }
 

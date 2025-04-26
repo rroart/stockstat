@@ -3,19 +3,15 @@ package roart.common.springdata.rowmapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import java.util.Date;
-
 import org.springframework.jdbc.core.RowMapper;
 
-import roart.common.model.RelationItem;
+import roart.common.model.RelationDTO;
 import roart.common.util.TimeUtil;
 
-import org.springframework.jdbc.core.RowMapper;
-
-public class RelationRowMapper implements RowMapper<RelationItem>{
+public class RelationRowMapper implements RowMapper<RelationDTO>{
     @Override
-    public RelationItem mapRow(ResultSet rs, int rowNum) throws SQLException {
-        RelationItem item = new RelationItem();
+    public RelationDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+        RelationDTO item = new RelationDTO();
         item.setRecord(TimeUtil.convertDate(rs.getDate("record")));
         item.setMarket(rs.getString("market"));
         item.setId(rs.getString("id"));

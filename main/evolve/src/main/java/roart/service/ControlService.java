@@ -45,8 +45,8 @@ import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.ml.NeuralNetCommand;
-import roart.common.model.MetaItem;
-import roart.common.model.StockItem;
+import roart.common.model.MetaDTO;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
@@ -79,9 +79,9 @@ public class ControlService {
         super();
     }
     
-    public List<MetaItem> getMetas() {
+    public List<MetaDTO> getMetas() {
         String key = CacheConstants.METAS;
-        List<MetaItem> list = (List<MetaItem>) MyCache.getInstance().get(key);
+        List<MetaDTO> list = (List<MetaItem>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
@@ -93,7 +93,7 @@ public class ControlService {
         return list;
     }
     
-    public List<StockItem> getStocks(String market) {
+    public List<StockDTO> getStocks(String market) {
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(conf.getConfigData());
         param.setMarket(market);
@@ -190,7 +190,7 @@ public class ControlService {
         }
     }
 
-    private void createRows(IclijConfig conf, ResultItemTable table, List<StockItem> datedstocks, AbstractCategory[] categories,
+    private void createRows(IclijConfig conf, ResultItemTable table, List<StockDTO> datedstocks, AbstractCategory[] categories,
             AbstractPredictor[] predictors, Aggregator[] aggregates) {
         if (conf.getConfigData().getMarket() == null) {
             return;
@@ -209,7 +209,7 @@ public class ControlService {
             }
         }
         */
-        for (StockItem stock : datedstocks) {
+        for (StockDTO stock : datedstocks) {
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(stock.getId());
             row.add(stock.getIsin());

@@ -82,7 +82,7 @@ public class IclijConfigMapChromosome extends AbstractChromosome {
         for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
             String key = entry.getKey();
             Object object = entry.getValue();
-            ConfigItem configItem = new ConfigItem();
+            ConfigDTO configItem = new ConfigDTO();
             configItem.setAction(param.getAction());
             configItem.setComponent(componentName);
             configItem.setDate(LocalDate.now());

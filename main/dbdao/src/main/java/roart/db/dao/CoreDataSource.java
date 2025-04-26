@@ -18,9 +18,9 @@ import roart.common.config.ConfigConstantMaps;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.common.config.MyXMLConfig;
-import roart.common.model.MetaItem;
+import roart.common.model.MetaDTO;
 import roart.common.model.MyDataSource;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.util.TimeUtil;
 import roart.common.cache.MyCache;
 import roart.db.common.DbDS;
@@ -50,20 +50,20 @@ public class CoreDataSource extends MyDataSource {
         log.info("Hibernate enabled: {}", hibernate);
    }
     
-    public List<StockItem> getAll(String type, String language) throws Exception {
+    public List<StockDTO> getAll(String type, String language) throws Exception {
         if (ds == null) {
             return null;
         }
         long time0 = System.currentTimeMillis();
-        List<StockItem> list = ds.getStocksByMarket(type);
-        log.info("StockItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        List<StockDTO> list = ds.getStocksByMarket(type);
+        log.info("StockDTO getall {}", (System.currentTimeMillis() - time0) / 1000);
         return list;
     }
 
-    public List<StockItem> getAll(String market, IclijConfig conf, boolean disableCache) throws Exception {
+    public List<StockDTO> getAll(String market, IclijConfig conf, boolean disableCache) throws Exception {
         String key = CacheConstants.STOCKS + market + conf.getConfigData().getDate();
-        log.info("StockItem getall {}", key);
-        List<StockItem> list = (List<StockItem>) MyCache.getInstance().get(key);
+        log.info("StockDTO getall {}", key);
+        List<StockDTO> list = (List<StockDTO>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
@@ -71,7 +71,7 @@ public class CoreDataSource extends MyDataSource {
         long time0 = System.currentTimeMillis();
         list = ds.getStocksByMarket(market);
         list = StockETL.filterWeekend(conf, list);
-        log.info("StockItem getall {} {}", market, (System.currentTimeMillis() - time0) / 1000);
+        log.info("StockDTO getall {} {}", market, (System.currentTimeMillis() - time0) / 1000);
         if (!disableCache) {
             MyCache.getInstance().put(key, list);
         } else {
@@ -93,7 +93,7 @@ public class CoreDataSource extends MyDataSource {
         dates = dates.stream().filter(e -> !e.after(confDate)).collect(Collectors.toList());
         }
         List<String> retlist = StockETL.filterWeekendConvert(conf, dates);
-        log.info("StockItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        log.info("StockDTO getall {}", (System.currentTimeMillis() - time0) / 1000);
         MyCache.getInstance().put(key, retlist);
         return retlist;
     }
@@ -109,18 +109,18 @@ public class CoreDataSource extends MyDataSource {
         return list;
     }
 
-    public List<MetaItem> getMetas() throws Exception {
+    public List<MetaDTO> getMetas() throws Exception {
         String key = CacheConstants.METAS;
-        List<MetaItem> list =  (List<MetaItem>) MyCache.getInstance().get(key);
+        List<MetaDTO> list =  (List<MetaDTO>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
         long time0 = System.currentTimeMillis();
-        List<MetaItem> metas = ds.getAllMetas();
-        List<MetaItem> metaitems = new ArrayList<>();
+        List<MetaDTO> metas = ds.getAllMetas();
+        List<MetaDTO> metaitems = new ArrayList<>();
         /*
         for (Meta meta : metas) {
-            MetaItem metaItem = new MetaItem(meta.getMarketid(), meta.getPeriod1(), meta.getPeriod2(), meta.getPeriod3(), meta.getPeriod4(), meta.getPeriod5(), meta.getPeriod6(), meta.getPeriod7(), meta.getPeriod8(), meta.getPeriod9(), meta.getPriority(), meta.getReset(), meta.isLhc());
+            MetaDTO metaItem = new MetaDTO(meta.getMarketid(), meta.getPeriod1(), meta.getPeriod2(), meta.getPeriod3(), meta.getPeriod4(), meta.getPeriod5(), meta.getPeriod6(), meta.getPeriod7(), meta.getPeriod8(), meta.getPeriod9(), meta.getPriority(), meta.getReset(), meta.isLhc());
             metaitems.add(metaItem);
         }
         */
@@ -129,7 +129,7 @@ public class CoreDataSource extends MyDataSource {
         return metas;
     }
 
-    public MetaItem getById(String market, IclijConfig conf) throws Exception {
+    public MetaDTO getById(String market, IclijConfig conf) throws Exception {
         return ds.getMetaByMarket(market);
     }
 }

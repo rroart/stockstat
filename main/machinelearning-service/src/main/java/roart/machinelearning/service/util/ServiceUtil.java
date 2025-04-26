@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.data.PipelineData;
 import roart.iclij.config.IclijConfig;
 import roart.pipeline.common.predictor.AbstractPredictor;

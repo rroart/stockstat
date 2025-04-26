@@ -31,7 +31,7 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.NeuralNetTensorflowConfig;
 import roart.common.ml.TensorflowPredictorLSTMConfig;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialResultMeta;
@@ -507,7 +507,7 @@ public abstract class Predictor extends AbstractPredictor {
     }
 
     @Override
-    public Object[] getResultItem(StockItem stock) {
+    public Object[] getResultItem(StockDTO stock) {
         String market = conf.getConfigData().getMarket();
         String id = stock.getId();
         Pair<String, String> pair = new ImmutablePair<>(market, id);

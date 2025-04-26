@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.IncDecItem;
-import roart.common.model.MemoryItem;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.util.PipelineUtils;
@@ -72,8 +72,8 @@ public class MarketUtil {
         return filtered;
     }
 
-    public List<MemoryItem> getMarketMemory(Market market, IclijDbDao dbDao) {
-        List<MemoryItem> marketMemory = null;
+    public List<MemoryDTO> getMarketMemory(Market market, IclijDbDao dbDao) {
+        List<MemoryDTO> marketMemory = null;
         try {
             marketMemory = dbDao.getAll(market.getConfig().getMarket());
         } catch (Exception e) {
@@ -82,8 +82,8 @@ public class MarketUtil {
         return marketMemory;
     }
 
-    public List<MemoryItem> getMarketMemory(Market market, String action, String component, String subcomponent, String parameters, LocalDate startDate, LocalDate endDate, IclijDbDao dbDao) {
-        List<MemoryItem> marketMemory = null;
+    public List<MemoryDTO> getMarketMemory(Market market, String action, String component, String subcomponent, String parameters, LocalDate startDate, LocalDate endDate, IclijDbDao dbDao) {
+        List<MemoryDTO> marketMemory = null;
         try {
             marketMemory = dbDao.getAllMemories(market.getConfig().getMarket(), action, component, subcomponent, parameters, startDate, endDate);
         } catch (Exception e) {
@@ -97,11 +97,11 @@ public class MarketUtil {
         return startoffset != null ? startoffset : 0;
     }
 
-    public Map<String, IncDecItem> incdecFilterOnIncreaseValue(Market market, Map<String, IncDecItem> incdecs,
+    public Map<String, IncDecDTO> incdecFilterOnIncreaseValue(Market market, Map<String, IncDecDTO> incdecs,
             Double threshold, PipelineData categoryMap, Map<String, List<List<Double>>> listMap3,
             Integer offsetDays, boolean inc) {
-        Map<String, IncDecItem> incdecsFilter = new HashMap<>();
-        for(IncDecItem item : incdecs.values()) {
+        Map<String, IncDecDTO> incdecsFilter = new HashMap<>();
+        for(IncDecDTO item : incdecs.values()) {
             String key = item.getId();
             if (listMap3 == null) {
                 if (categoryMap != null) {
@@ -164,8 +164,8 @@ public class MarketUtil {
         return listMap3;
     }
 
-    public void fillProfitdata(ProfitData profitdata, List<IncDecItem> incdecitems) {
-        for (IncDecItem item : incdecitems) {
+    public void fillProfitdata(ProfitData profitdata, List<IncDecDTO> incdecitems) {
+        for (IncDecDTO item : incdecitems) {
             String id = item.getId() + item.getDate().toString();
             if (item.isIncrease()) {
                 profitdata.getBuys().put(id, item);

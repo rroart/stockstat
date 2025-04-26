@@ -3,32 +3,26 @@ package roart.iclij.component;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.curator.framework.CuratorFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.Extra;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
-import roart.common.model.ConfigItem;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
-import roart.common.model.TimingItem;
+import roart.common.model.ConfigDTO;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
+import roart.common.model.TimingDTO;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialList;
-import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialObject;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.pipeline.data.SerialScoreChromosome;
@@ -56,9 +50,7 @@ import roart.iclij.model.config.ActionComponentConfig;
 import roart.iclij.service.ControlService;
 import roart.iclij.service.util.MiscUtil;
 import roart.iclij.util.MLUtil;
-import roart.result.model.ResultMeta;
 import roart.service.model.ProfitData;
-import roart.filesystem.FileSystemDao;
 
 public abstract class Component {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
@@ -95,7 +87,7 @@ public abstract class Component {
     
     public abstract ComponentData handle(MarketActionData action, Market market, ComponentData param, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters, boolean hasParent);
     
-    public abstract ComponentData improve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests, Fitness fitness, boolean save);
+    public abstract ComponentData improve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsDTO> mlTests, Fitness fitness, boolean save);
 
     public abstract void handleMLMeta(ComponentData param, PipelineData mlMaps);
 
@@ -249,8 +241,8 @@ public abstract class Component {
         log.info("Disable {}", disableML);
     }
 
-    public TimingItem saveTiming(MarketActionData actionData, ComponentData param, boolean evolve, long time0, Double score, Boolean buy, String subcomponent, String mlmarket, String description, Parameters parameters, boolean save) {
-        TimingItem timing = new TimingItem();
+    public TimingDTO saveTiming(MarketActionData actionData, ComponentData param, boolean evolve, long time0, Double score, Boolean buy, String subcomponent, String mlmarket, String description, Parameters parameters, boolean save) {
+        TimingDTO timing = new TimingDTO();
         timing.setAction(param.getAction());
         timing.setBuy(buy);
         timing.setMarket(param.getInput().getMarket());
@@ -295,9 +287,9 @@ public abstract class Component {
         */
     }
 
-    public abstract void calculateIncDec(ComponentData param, ProfitData profitdata, Memories positions, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters);
+    public abstract void calculateIncDec(ComponentData param, ProfitData profitdata, Memories positions, Boolean above, List<MLMetricsDTO> mlTests, Parameters parameters);
 
-    public abstract List<MemoryItem> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception;
+    public abstract List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception;
 
     public abstract String getPipeline();
     
@@ -390,18 +382,18 @@ public abstract class Component {
                 log.error("Config value null");
                 return;
             }
-            ConfigItem configItem = new ConfigItem();
-            configItem.setAction(param.getAction());
-            configItem.setComponent(getPipeline());
-            configItem.setDate(LocalDate.now());
-            configItem.setId(key);
-            configItem.setMarket(param.getMarket());
-            configItem.setRecord(LocalDate.now());
-            configItem.setSubcomponent(subcomponent);
+            ConfigDTO configDTO = new ConfigDTO();
+            configDTO.setAction(param.getAction());
+            configDTO.setComponent(getPipeline());
+            configDTO.setDate(LocalDate.now());
+            configDTO.setId(key);
+            configDTO.setMarket(param.getMarket());
+            configDTO.setRecord(LocalDate.now());
+            configDTO.setSubcomponent(subcomponent);
             String value = JsonUtil.convert(object);
-            configItem.setValue(value);
+            configDTO.setValue(value);
             try {
-                param.getService().getIo().getIdbDao().save(configItem);
+                param.getService().getIo().getIdbDao().save(configDTO);
             } catch (Exception e) {
                 log.info(Constants.EXCEPTION, e);
             }
@@ -519,7 +511,7 @@ public abstract class Component {
     // the implementation for jenetics
     /*
     public ComponentData improveJ(MarketActionData action, ComponentData param, Market market,
-            ProfitData profitdata, Object object, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, EvolveJ evolveJ) {
+            ProfitData profitdata, Object object, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsDTO> mlTests, EvolveJ evolveJ) {
         long time0 = System.currentTimeMillis();
         Map<String, Object> confMap = new HashMap<>();
         EvolutionConfig evolutionConfig = JsonUtil.convert(action.getEvolutionConfig(param.getInput().getConfig()), EvolutionConfig.class);
@@ -529,7 +521,7 @@ public abstract class Component {
         try {
             // fix mlmarket;
             double score = 0;
-            TimingItem timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null, action.getParent() != null);
+            TimingDTO timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null, action.getParent() != null);
             param.getTimings().add(timing);
             configSaves(param, confMap, subcomponent);
         } catch (Exception e) {
@@ -551,7 +543,7 @@ public abstract class Component {
             if (meta.getMlName() == null) {
                 continue;
             }
-            MLMetricsItem item = new MLMetricsItem();
+            MLMetricsDTO item = new MLMetricsDTO();
             item.setRecord(LocalDate.now());
             item.setDate(param.getFutureDate());
             item.setComponent(getPipeline());
@@ -579,7 +571,7 @@ public abstract class Component {
         List<SerialScoreChromosome> myList = PipelineUtils.getList(results, id);
         double score = myList.get(0).getLeft();
         
-        MLMetricsItem item = new MLMetricsItem();
+        MLMetricsDTO item = new MLMetricsDTO();
         item.setRecord(LocalDate.now());
         item.setDate(param.getFutureDate());
         item.setComponent(getPipeline());
@@ -592,10 +584,10 @@ public abstract class Component {
         param.getService().getIo().getIdbDao().save(item);
     }
 
-    protected IncDecItem mapAdder(Map<String, IncDecItem> map, String key, Double add, Map<String, String> nameMap, LocalDate date, String market, String subcomponent, String localcomponent, String parameters) {
-        IncDecItem val = map.get(key);
+    protected IncDecDTO mapAdder(Map<String, IncDecDTO> map, String key, Double add, Map<String, String> nameMap, LocalDate date, String market, String subcomponent, String localcomponent, String parameters) {
+        IncDecDTO val = map.get(key);
         if (val == null) {
-            val = new IncDecItem();
+            val = new IncDecDTO();
             val.setRecord(LocalDate.now());
             val.setDate(date);
             val.setId(key);
@@ -620,11 +612,11 @@ public abstract class Component {
         return val;
     }
 
-    protected IncDecItem mapAdder2(Map<String, IncDecItem> map, String key, Double add, Map<String, String> nameMap, LocalDate date, String market, String subcomponent, String localcomponent, String parameters) {
+    protected IncDecDTO mapAdder2(Map<String, IncDecDTO> map, String key, Double add, Map<String, String> nameMap, LocalDate date, String market, String subcomponent, String localcomponent, String parameters) {
         String newkey = key + date;
-        IncDecItem val = map.get(newkey);
+        IncDecDTO val = map.get(newkey);
         if (val == null) {
-            val = new IncDecItem();
+            val = new IncDecDTO();
             val.setRecord(LocalDate.now());
             val.setDate(date);
             val.setId(key);
@@ -670,7 +662,7 @@ public abstract class Component {
         scoreDescription = action.getScoreDescription(calculateAccuracy(param), scoreMap);
         Double score = (Double) scoreDescription[0];
         String description = (String) scoreDescription[1];
-        TimingItem timing = component.saveTiming(action, param, evolve, time0, score, null, subcomponent, mlmarket, description, parameters, hasParent);
+        TimingDTO timing = component.saveTiming(action, param, evolve, time0, score, null, subcomponent, mlmarket, description, parameters, hasParent);
         param.getTimings().add(timing);
     }
 }

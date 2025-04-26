@@ -12,6 +12,6 @@ import org.springframework.stereotype.Component;
 @Repository
 public interface SpringActionComponentRepository extends CrudRepository<ActionComponent, Long>{
     //@Query("SELECT m FROM Movie m WHERE m.title LIKE %:title%")
-    //List<StockItem> searchByTitleLike(@Param("title") String title);
+    //List<StockDTO> searchByTitleLike(@Param("title") String title);
     //List<Stock> findByMarketid(String marketid);
 }

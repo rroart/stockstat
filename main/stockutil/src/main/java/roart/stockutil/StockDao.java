@@ -15,7 +15,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.OHLC;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.util.ArraysUtil;
 import roart.common.util.MapUtil;
 import roart.common.util.TimeUtil;
@@ -23,26 +23,26 @@ import roart.model.data.MarketData;
 
 public class StockDao {
 
-    public static Double getMainPeriod(StockItem stock, int i) throws Exception {
+    public static Double getMainPeriod(StockDTO stock, int i) throws Exception {
         return stock.getPeriod(i);
     }
 
-    public static Double[] getPeriod(StockItem stock, int i) throws Exception {
+    public static Double[] getPeriod(StockDTO stock, int i) throws Exception {
         Double[] retValue = new Double[1];
         retValue[0] = stock.getPeriod(i);
         return retValue;
     }
 
     /**
-     * Get specific period or special type from StockItem
+     * Get specific period or special type from StockDTO
      * 
-     * @param stock the desired StockItem
+     * @param stock the desired StockDTO
      * @param i period/special
      * @return the value
      * @throws Exception
      */
 
-    public static Double[] getValue(StockItem stock, int i) throws Exception {
+    public static Double[] getValue(StockDTO stock, int i) throws Exception {
         if (i >= 0) {
             return getPeriod(stock, i);
         } else {
@@ -50,7 +50,7 @@ public class StockDao {
         }
     }
 
-    public static Double getMainValue(StockItem stock, int i) throws Exception {
+    public static Double getMainValue(StockDTO stock, int i) throws Exception {
         if (i >= 0) {
             return getMainPeriod(stock, i);
         } else {
@@ -58,7 +58,7 @@ public class StockDao {
         }
     }
 
-    public static Double getMainSpecial(StockItem stock, int i) throws Exception {
+    public static Double getMainSpecial(StockDTO stock, int i) throws Exception {
         if (i == Constants.INDEXVALUECOLUMN) {
             return stock.getIndexvalue();
         }
@@ -68,7 +68,7 @@ public class StockDao {
         throw new Exception("Out of range " + i);
     }
 
-    public static OHLC getSpecialOHLC(StockItem stock, int i) throws Exception {
+    public static OHLC getSpecialOHLC(StockDTO stock, int i) throws Exception {
         if (i == Constants.INDEXVALUECOLUMN) {
             return stock.getIndexvalueOHLC();
         }
@@ -78,7 +78,7 @@ public class StockDao {
         throw new Exception("Out of range " + i);
     }
 
-    public static Double[] getSpecial(StockItem stock, int i) throws Exception {
+    public static Double[] getSpecial(StockDTO stock, int i) throws Exception {
         if (i == Constants.INDEXVALUECOLUMN) {
             return stock.getIndexvalues();
         }
@@ -106,12 +106,12 @@ public class StockDao {
     public static Map<String, List<Double>[]> getArr(IclijConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
             Map<String, MarketData> marketdataMap) throws Exception {
         Map<String, List<Double>[]> retMap = new HashMap<>();
-        List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
+        List<StockDTO> datedstocklists[] = marketdataMap.get(market).datedstocklists;
         int index = 0;
         if (index >= 0) {
             for (int i = index; i < datedstocklists.length; i++) {
-                List<StockItem> stocklist = datedstocklists[i];
-                for (StockItem stock : stocklist) {
+                List<StockDTO> stocklist = datedstocklists[i];
+                for (StockDTO stock : stocklist) {
                     String stockid = stock.getId();
                     Double[] value = StockDao.getValue(stock, periodInt);
                     if (value != null) {
@@ -125,9 +125,9 @@ public class StockDao {
 
     public static List<String> getDateList(String market, Map<String, MarketData> marketdataMap) throws Exception {
         List<String> retList = new ArrayList<>();
-        List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
+        List<StockDTO> datedstocklists[] = marketdataMap.get(market).datedstocklists;
         for (int i = datedstocklists.length - 1; i >= 0; i--) {
-            List<StockItem> list = datedstocklists[i];
+            List<StockDTO> list = datedstocklists[i];
             if (!list.isEmpty()) {
                 retList.add(TimeUtil.convertDate3(list.get(0).getDate()));
             }
@@ -138,9 +138,9 @@ public class StockDao {
     public static Map<String, String> getNameMap(IclijConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
             Map<String, MarketData> marketdataMap, boolean currentyear) throws Exception {
         Map<String, String> retList = new HashMap<>();
-        List<StockItem>[] datedstocklists = marketdataMap.get(market).datedstocklists;
-        List<StockItem> list = datedstocklists[0];
-        for (StockItem stock : list) {
+        List<StockDTO>[] datedstocklists = marketdataMap.get(market).datedstocklists;
+        List<StockDTO> list = datedstocklists[0];
+        for (StockDTO stock : list) {
             retList.put(stock.getId(), stock.getName());
         }
         return retList;
@@ -156,7 +156,7 @@ public class StockDao {
         return retMap;
     }
     
-    public static Pair<Long, String> getVolume(StockItem stock) throws Exception {
+    public static Pair<Long, String> getVolume(StockDTO stock) throws Exception {
         return new ImmutablePair<Long, String>(stock.getVolume(), stock.getCurrency());   
     }
 

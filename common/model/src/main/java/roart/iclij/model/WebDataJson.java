@@ -3,18 +3,18 @@ package roart.iclij.model;
 import java.util.List;
 import java.util.Map;
 
-import roart.common.model.IncDecItem;
-import roart.common.model.MemoryItem;
-import roart.common.model.TimingItem;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MemoryDTO;
+import roart.common.model.TimingDTO;
 
 public class WebDataJson {
-    private List<MemoryItem> memoryItems;
+    private List<MemoryDTO> memoryDTOS;
     
-    private List<IncDecItem> incs;
+    private List<IncDecDTO> incs;
     
-    private List<IncDecItem> decs;
+    private List<IncDecDTO> decs;
     
-    private Map<String, List<TimingItem>> timingMap;
+    private Map<String, List<TimingDTO>> timingMap;
     
     private Map<String, Object> updateMap;
     
@@ -22,35 +22,35 @@ public class WebDataJson {
         super();
     }
 
-    public List<MemoryItem> getMemoryItems() {
-        return memoryItems;
+    public List<MemoryDTO> getMemoryDTOs() {
+        return memoryDTOS;
     }
 
-    public void setMemoryItems(List<MemoryItem> memoryItems) {
-        this.memoryItems = memoryItems;
+    public void setMemoryDTOs(List<MemoryDTO> memoryDTOS) {
+        this.memoryDTOS = memoryDTOS;
     }
 
-    public List<IncDecItem> getIncs() {
+    public List<IncDecDTO> getIncs() {
         return incs;
     }
 
-    public void setIncs(List<IncDecItem> incs) {
+    public void setIncs(List<IncDecDTO> incs) {
         this.incs = incs;
     }
 
-    public List<IncDecItem> getDecs() {
+    public List<IncDecDTO> getDecs() {
         return decs;
     }
 
-    public void setDecs(List<IncDecItem> decs) {
+    public void setDecs(List<IncDecDTO> decs) {
         this.decs = decs;
     }
 
-    public Map<String, List<TimingItem>> getTimingMap() {
+    public Map<String, List<TimingDTO>> getTimingMap() {
         return timingMap;
     }
 
-    public void setTimingMap(Map<String, List<TimingItem>> timingMap) {
+    public void setTimingMap(Map<String, List<TimingDTO>> timingMap) {
         this.timingMap = timingMap;
     }
 

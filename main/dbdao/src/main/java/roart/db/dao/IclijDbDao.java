@@ -12,17 +12,17 @@ import roart.common.util.TimeUtil;
 import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
 import roart.common.config.ConfigConstantMaps;
-import roart.common.model.AboveBelowItem;
-import roart.common.model.ActionComponentItem;
-import roart.common.model.ConfigItem;
-import roart.common.model.ContItem;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
-import roart.common.model.RelationItem;
-import roart.common.model.SimDataItem;
-import roart.common.model.TimingBLItem;
-import roart.common.model.TimingItem;
+import roart.common.model.AboveBelowDTO;
+import roart.common.model.ActionComponentDTO;
+import roart.common.model.ConfigDTO;
+import roart.common.model.ContDTO;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
+import roart.common.model.RelationDTO;
+import roart.common.model.SimDataDTO;
+import roart.common.model.TimingBLDTO;
+import roart.common.model.TimingDTO;
 import roart.db.common.DbDS;
 import roart.db.hibernate.DbHibernateDS;
 import roart.db.spring.DbSpringDS;
@@ -56,157 +56,157 @@ public class IclijDbDao {
     }
     
     @Deprecated
-    public List<MemoryItem> getAll() throws Exception {
+    public List<MemoryDTO> getAll() throws Exception {
         String key = CacheConstants.MEMORIES;
-        List<MemoryItem> list =  (List<MemoryItem>) MyCache.getInstance().get(key);
+        List<MemoryDTO> list =  (List<MemoryDTO>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
         long time0 = System.currentTimeMillis();
         list = access.getAllMemories();
-        log.info("MemoryItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        log.info("MemoryDTO getall {}", (System.currentTimeMillis() - time0) / 1000);
         MyCache.getInstance().put(key, list);
         return list;
     }
 
-    public List<MemoryItem> getAll(String type) throws Exception {
+    public List<MemoryDTO> getAll(String type) throws Exception {
         String key = CacheConstants.MEMORIES + type;
-        List<MemoryItem> list =  (List<MemoryItem>) MyCache.getInstance().get(key);
+        List<MemoryDTO> list =  (List<MemoryDTO>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
         long time0 = System.currentTimeMillis();
         list =  access.getMemoriesByMarket(type);
-        log.info("MemoryItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        log.info("MemoryDTO getall {}", (System.currentTimeMillis() - time0) / 1000);
         MyCache.getInstance().put(key, list);
         return list;
     }
 
-    public List<MemoryItem> getAllMemories(String market, String action, String component, String subcomponent, String parameters, LocalDate startDate, LocalDate endDate) throws Exception {
+    public List<MemoryDTO> getAllMemories(String market, String action, String component, String subcomponent, String parameters, LocalDate startDate, LocalDate endDate) throws Exception {
         String key = CacheConstants.MEMORIES + market + action + component + subcomponent + parameters + startDate + endDate;
-        List<MemoryItem> list =  (List<MemoryItem>) MyCache.getInstance().get(key);
+        List<MemoryDTO> list =  (List<MemoryDTO>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
         long time0 = System.currentTimeMillis();
         list = access.getMemories(market, action, component, subcomponent, parameters, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));
-        log.info("MemoryItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        log.info("MemoryDTO getall {}", (System.currentTimeMillis() - time0) / 1000);
         MyCache.getInstance().put(key, list);
         return list;
     }
 
-    public List<TimingItem> getAllTiming() throws Exception {
+    public List<TimingDTO> getAllTiming() throws Exception {
         String key = CacheConstants.TIMINGS;
-        List<TimingItem> list =  (List<TimingItem>) MyCache.getInstance().get(key);
+        List<TimingDTO> list =  (List<TimingDTO>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
         long time0 = System.currentTimeMillis();
         list = access.getAllTimings();        
-        log.info("TimingItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        log.info("TimingDTO getall {}", (System.currentTimeMillis() - time0) / 1000);
         MyCache.getInstance().put(key, list);
         return list;
     }
 
-    public List<TimingItem> getAllTiming(String market, String action, LocalDate startDate, LocalDate endDate) throws Exception {
+    public List<TimingDTO> getAllTiming(String market, String action, LocalDate startDate, LocalDate endDate) throws Exception {
         String key = CacheConstants.TIMINGS + market + action + startDate + endDate;
-        List<TimingItem> list =  (List<TimingItem>) MyCache.getInstance().get(key);
+        List<TimingDTO> list =  (List<TimingDTO>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
         long time0 = System.currentTimeMillis();
         list = access.getTimings(market, action, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));        
-        log.info("TimingItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        log.info("TimingDTO getall {}", (System.currentTimeMillis() - time0) / 1000);
         MyCache.getInstance().put(key, list);
         return list;
     }
 
-    public List<RelationItem> getAllRelations() throws Exception {
+    public List<RelationDTO> getAllRelations() throws Exception {
         String key = CacheConstants.RELATIONS;
-        List<RelationItem> list =  (List<RelationItem>) MyCache.getInstance().get(key);
+        List<RelationDTO> list =  (List<RelationDTO>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
         long time0 = System.currentTimeMillis();
         list = access.getAllRelations();        
-        log.info("RelationItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        log.info("RelationDTO getall {}", (System.currentTimeMillis() - time0) / 1000);
         MyCache.getInstance().put(key, list);
         return list;
     }
 
-    public List<IncDecItem> getAllIncDecs() throws Exception {
+    public List<IncDecDTO> getAllIncDecs() throws Exception {
         String key = CacheConstants.INCDECS;
-        List<IncDecItem> list =  (List<IncDecItem>) MyCache.getInstance().get(key);
+        List<IncDecDTO> list =  (List<IncDecDTO>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
         long time0 = System.currentTimeMillis();
         list = access.getAllIncDecs();        
-        log.info("IncDecItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        log.info("IncDecDTO getall {}", (System.currentTimeMillis() - time0) / 1000);
         MyCache.getInstance().put(key, list);
         return list;
     }
 
-    public List<IncDecItem> getAllIncDecs(String market, LocalDate startDate, LocalDate endDate, String parameters) throws Exception {
+    public List<IncDecDTO> getAllIncDecs(String market, LocalDate startDate, LocalDate endDate, String parameters) throws Exception {
         String key = CacheConstants.INCDECS + market + startDate + endDate + parameters;
-        List<IncDecItem> list = (List<IncDecItem>) MyCache.getInstance().get(key);
+        List<IncDecDTO> list = (List<IncDecDTO>) MyCache.getInstance().get(key);
         if (list == null) {
             long time0 = System.currentTimeMillis();
             list =  access.getIncDecs(market, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate), parameters);
             MyCache.getInstance().put(key, list);
-            log.info("IncDecItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+            log.info("IncDecDTO getall {}", (System.currentTimeMillis() - time0) / 1000);
         }
         return list;
     }
 
-    public List<ConfigItem> getAllConfigs(String market, String action, String component, String subcomponent, String parameters, LocalDate startDate, LocalDate endDate) throws Exception {
+    public List<ConfigDTO> getAllConfigs(String market, String action, String component, String subcomponent, String parameters, LocalDate startDate, LocalDate endDate) throws Exception {
         String key = CacheConstants.CONFIGS + market + action + component + subcomponent + parameters + startDate + endDate;
-        List<ConfigItem> list =  (List<ConfigItem>) MyCache.getInstance().get(key);
+        List<ConfigDTO> list =  (List<ConfigDTO>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
         long time0 = System.currentTimeMillis();
         list = access.getConfigs(market, action, component, subcomponent, parameters, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));        
-        log.info("ConfigItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        log.info("ConfigDTO getall {}", (System.currentTimeMillis() - time0) / 1000);
         MyCache.getInstance().put(key, list);
         return list;
     }
 
-    public List<ConfigItem> getAllConfigs(String market) throws Exception {
+    public List<ConfigDTO> getAllConfigs(String market) throws Exception {
         String key = CacheConstants.CONFIGS + market;
-        List<ConfigItem> list =  (List<ConfigItem>) MyCache.getInstance().get(key);
+        List<ConfigDTO> list =  (List<ConfigDTO>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
         long time0 = System.currentTimeMillis();
         list = access.getConfigsByMarket(market);        
-        log.info("ConfigItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        log.info("ConfigDTO getall {}", (System.currentTimeMillis() - time0) / 1000);
         MyCache.getInstance().put(key, list);
         return list;
     }
 
-    public List<MLMetricsItem> getAllMLMetrics() throws Exception {
+    public List<MLMetricsDTO> getAllMLMetrics() throws Exception {
         String key = CacheConstants.MLMETRICS ;
-        List<MLMetricsItem> list =  (List<MLMetricsItem>) MyCache.getInstance().get(key);
+        List<MLMetricsDTO> list =  (List<MLMetricsDTO>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
         long time0 = System.currentTimeMillis();
         list = access.getAllMLMetrics();        
-        log.info("MLMetricsItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        log.info("MLMetricsDTO getall {}", (System.currentTimeMillis() - time0) / 1000);
         MyCache.getInstance().put(key, list);
         return list;
     }
 
-    public List<MLMetricsItem> getAllMLMetrics(String market, LocalDate startDate, LocalDate endDate) throws Exception {
+    public List<MLMetricsDTO> getAllMLMetrics(String market, LocalDate startDate, LocalDate endDate) throws Exception {
         String key = CacheConstants.MLMETRICS + market + startDate + endDate;
-        List<MLMetricsItem> list =  (List<MLMetricsItem>) MyCache.getInstance().get(key);
+        List<MLMetricsDTO> list =  (List<MLMetricsDTO>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
         long time0 = System.currentTimeMillis();
         list = access.getMLMetrics(market, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));        
-        log.info("MLMetricsItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        log.info("MLMetricsDTO getall {}", (System.currentTimeMillis() - time0) / 1000);
         MyCache.getInstance().put(key, list);
         return list;
     }
@@ -215,11 +215,11 @@ public class IclijDbDao {
         access.save(object);
     }
 
-    public List<SimDataItem> getAllSimData(String market, LocalDate startDate, LocalDate endDate) {
+    public List<SimDataDTO> getAllSimData(String market, LocalDate startDate, LocalDate endDate) {
         return access.getAllSimData(market, startDate, endDate);
     }
 
-    public List<AboveBelowItem> getAllAboveBelow(String market, Date startDate, Date endDate) {
+    public List<AboveBelowDTO> getAllAboveBelow(String market, Date startDate, Date endDate) {
         return access.getAllAboveBelow(market, startDate, endDate);
     }
 
@@ -231,15 +231,15 @@ public class IclijDbDao {
         access.delete(object, market, action, component, subcomponent, startDate, endDate);
     }
 
-    public List<ActionComponentItem> getAllActionComponent() {
+    public List<ActionComponentDTO> getAllActionComponent() {
         return access.getAllActionComponent();
     }
 
-    public List<TimingBLItem> getAllTimingBLItem() {
+    public List<TimingBLDTO> getAllTimingBLDTO() {
         return access.getAllTimingBL();
     }
 
-    public List<ContItem> getAllCont() {
+    public List<ContDTO> getAllCont() {
         return access.getAllConts();
     }
 }

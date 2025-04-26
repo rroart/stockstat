@@ -76,8 +76,8 @@ public abstract class Indicator extends AbstractIndicator {
         Map<String, Map<String, double[][]>> marketListMap = new HashMap<>();
         PipelineData localResults =  extrareader;
         /*
-        Map<Pair<String, String>, List<StockItem>> pairStockMap = null; // (Map<Pair<String, String>, List<StockItem>>) localResults.get(PipelineConstants.PAIRSTOCK);
-        //Map<Pair<String, String>, Map<Date, StockItem>> pairDateMap = (Map<Pair<String, String>, Map<Date, StockItem>>) localResults.get(PipelineConstants.PAIRDATE);
+        Map<Pair<String, String>, List<StockDTO>> pairStockMap = null; // (Map<Pair<String, String>, List<StockDTO>>) localResults.get(PipelineConstants.PAIRSTOCK);
+        //Map<Pair<String, String>, Map<Date, StockDTO>> pairDateMap = (Map<Pair<String, String>, Map<Date, StockDTO>>) localResults.get(PipelineConstants.PAIRDATE);
         //Map<Pair<String, String>, String> pairCatMap = (Map<Pair<String, String>, String>) localResults.get(PipelineConstants.PAIRCAT);
         //Map<Pair<String, String>, Double[][]> pairListMap = (Map<Pair<String, String>, Double[][]>) localResults.get(PipelineConstants.PAIRLIST);
         //Map<Pair<String, String>, List<Date>> pairDateListMap = (Map<Pair<String, String>, List<Date>>) localResults.get(PipelineConstants.PAIRDATELIST);
@@ -88,7 +88,7 @@ public abstract class Indicator extends AbstractIndicator {
         // all from here is already read from eventual inmemory
         Map<String, SerialList<PipelineData>> dataReaderMap = PipelineUtils.getDatareader(localResults);
         log.debug("lockeys {}", localResults.keySet());
-        //Map<Pair<String, String>, List<StockItem>> pairMap = pairStockMap;
+        //Map<Pair<String, String>, List<StockDTO>> pairMap = pairStockMap;
         for(SerialMarketStock ms : marketStocks) {
             String market = ms.getMarket();
             String id = ms.getId();

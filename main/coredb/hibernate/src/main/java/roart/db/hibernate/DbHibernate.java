@@ -2,19 +2,19 @@ package roart.db.hibernate;
 
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
-import roart.common.model.AboveBelowItem;
-import roart.common.model.ActionComponentItem;
-import roart.common.model.ConfigItem;
-import roart.common.model.ContItem;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
-import roart.common.model.MetaItem;
-import roart.common.model.RelationItem;
-import roart.common.model.SimDataItem;
-import roart.common.model.StockItem;
-import roart.common.model.TimingBLItem;
-import roart.common.model.TimingItem;
+import roart.common.model.AboveBelowDTO;
+import roart.common.model.ActionComponentDTO;
+import roart.common.model.ConfigDTO;
+import roart.common.model.ContDTO;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
+import roart.common.model.MetaDTO;
+import roart.common.model.RelationDTO;
+import roart.common.model.SimDataDTO;
+import roart.common.model.StockDTO;
+import roart.common.model.TimingBLDTO;
+import roart.common.model.TimingDTO;
 import roart.common.pipeline.data.SerialTA;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
@@ -58,7 +58,7 @@ public class DbHibernate {
     public DbHibernate() {
     }
 
-    public static List<StockItem> getAll(String market) throws Exception {
+    public static List<StockDTO> getAll(String market) throws Exception {
         try {
             return Stock.getAll(market).stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -67,8 +67,8 @@ public class DbHibernate {
         }
     }
 
-    public static List<StockItem> getAll2(String market) throws Exception {
-        List<StockItem> stockitems = new ArrayList<>();
+    public static List<StockDTO> getAll2(String market) throws Exception {
+        List<StockDTO> stockitems = new ArrayList<>();
         long time0 = System.currentTimeMillis();
         Connection conn = DriverManager.getConnection(System.getProperty("connection.url"));
         PreparedStatement st = conn.prepareStatement("select * from Stock where marketid = ?");
@@ -101,7 +101,7 @@ public class DbHibernate {
             Double period8 = rs.getDouble("period8");
             Double period9 = rs.getDouble("period9");
             // \([A-Za-z]+\) \([A-Za-z]+\) → \1 \2 = rs.get\1("\2")
-            StockItem stockItem = new StockItem(dbid, marketid, id, isin, name, date, indexvalue, indexvaluelow, indexvaluehigh, indexvalueopen, price, pricelow, pricehigh, priceopen, volume, currency, period1, period2, period3, period4, period5, period6, period7, period8, period9);
+            StockDTO stockItem = new StockDTO(dbid, marketid, id, isin, name, date, indexvalue, indexvaluelow, indexvaluehigh, indexvalueopen, price, pricelow, pricehigh, priceopen, volume, currency, period1, period2, period3, period4, period5, period6, period7, period8, period9);
             // stock.get\([A-Z]\) → \,(downcase \1))
             stockitems.add(stockItem);
         }
@@ -109,24 +109,24 @@ public class DbHibernate {
         return stockitems;
     }
 
-    public static List<MetaItem> getAll() throws Exception {
+    public static List<MetaDTO> getAll() throws Exception {
         long time0 = System.currentTimeMillis();
-        List<MetaItem> metas = getMetas();
+        List<MetaDTO> metas = getMetas();
         log.info("time0 " + (System.currentTimeMillis() - time0));
         return metas;
     }
 
-    public static MetaItem getMarket(String market) throws Exception {
+    public static MetaDTO getMarket(String market) throws Exception {
         List<Meta> metas = Meta.getAll(market);
         if (metas == null || metas.isEmpty() || metas.size() > 1) {
             return null;
         }
         Meta meta = metas.get(0);
-        return new MetaItem(meta.getMarketid(), meta.getPeriod1(), meta.getPeriod2(), meta.getPeriod3(), meta.getPeriod4(), meta.getPeriod5(), meta.getPeriod6(), meta.getPeriod7(), meta.getPeriod8(), meta.getPeriod9(), meta.getPriority(), meta.getReset(), meta.isLhc());
+        return new MetaDTO(meta.getMarketid(), meta.getPeriod1(), meta.getPeriod2(), meta.getPeriod3(), meta.getPeriod4(), meta.getPeriod5(), meta.getPeriod6(), meta.getPeriod7(), meta.getPeriod8(), meta.getPeriod9(), meta.getPriority(), meta.getReset(), meta.isLhc());
     }
 
-    private static AboveBelowItem map(AboveBelow data) {
-        AboveBelowItem item = new AboveBelowItem();
+    private static AboveBelowDTO map(AboveBelow data) {
+        AboveBelowDTO item = new AboveBelowDTO();
         item.setComponents(data.getComponents());
         item.setDate(data.getDate());
         item.setMarket(data.getMarket());
@@ -136,8 +136,8 @@ public class DbHibernate {
         return item;
     }
 
-    private static ActionComponentItem map(ActionComponent ac) {
-        ActionComponentItem item = new ActionComponentItem();
+    private static ActionComponentDTO map(ActionComponent ac) {
+        ActionComponentDTO item = new ActionComponentDTO();
         item.setAction(ac.getAction());
         item.setBuy(ac.getBuy());
         item.setDbid(ac.getDbid());
@@ -154,7 +154,7 @@ public class DbHibernate {
         return item;
     }
 
-    private static Stock map(StockItem item) {
+    private static Stock map(StockDTO item) {
         Stock stock = new Stock();
         stock.setDbid(item.getDbid());
         stock.setMarketid(item.getMarketid());
@@ -184,8 +184,8 @@ public class DbHibernate {
         return stock;
     }
 
-    private static StockItem map(Stock stock) {
-        StockItem item = new StockItem();
+    private static StockDTO map(Stock stock) {
+        StockDTO item = new StockDTO();
         item.setDbid(stock.getDbid());
         item.setMarketid(stock.getMarketid());
         item.setId(stock.getId());
@@ -214,20 +214,20 @@ public class DbHibernate {
         return item;
     }
 
-    private static StockItem map2(Stock stock) {
+    private static StockDTO map2(Stock stock) {
         try {
-            return new StockItem(stock.getDbid(), stock.getMarketid(), stock.getId(), stock.getIsin(), stock.getName(), stock.getDate(), stock.getIndexvalue(), stock.getIndexvaluelow(), stock.getIndexvaluehigh(), stock.getIndexvalueopen(), stock.getPrice(), stock.getPricelow(), stock.getPricehigh(), stock.getPriceopen(), stock.getVolume(), stock.getCurrency(), stock.getPeriod1(), stock.getPeriod2(), stock.getPeriod3(), stock.getPeriod4(), stock.getPeriod5(), stock.getPeriod6(), stock.getPeriod7(), stock.getPeriod8(), stock.getPeriod9());
+            return new StockDTO(stock.getDbid(), stock.getMarketid(), stock.getId(), stock.getIsin(), stock.getName(), stock.getDate(), stock.getIndexvalue(), stock.getIndexvaluelow(), stock.getIndexvaluehigh(), stock.getIndexvalueopen(), stock.getPrice(), stock.getPricelow(), stock.getPricehigh(), stock.getPriceopen(), stock.getVolume(), stock.getCurrency(), stock.getPeriod1(), stock.getPeriod2(), stock.getPeriod3(), stock.getPeriod4(), stock.getPeriod5(), stock.getPeriod6(), stock.getPeriod7(), stock.getPeriod8(), stock.getPeriod9());
         } catch (Exception e) {
             return null;
         }
     }
 
-    private static MetaItem map2(Meta meta) {
-        return new MetaItem(meta.getMarketid(), meta.getPeriod1(), meta.getPeriod2(), meta.getPeriod3(), meta.getPeriod4(), meta.getPeriod5(), meta.getPeriod6(), meta.getPeriod7(), meta.getPeriod8(), meta.getPeriod9(), meta.getPriority(), meta.getReset(), meta.isLhc());
+    private static MetaDTO map2(Meta meta) {
+        return new MetaDTO(meta.getMarketid(), meta.getPeriod1(), meta.getPeriod2(), meta.getPeriod3(), meta.getPeriod4(), meta.getPeriod5(), meta.getPeriod6(), meta.getPeriod7(), meta.getPeriod8(), meta.getPeriod9(), meta.getPriority(), meta.getReset(), meta.isLhc());
     }
 
-    private static MetaItem map(Meta meta) {
-        MetaItem item = new MetaItem();
+    private static MetaDTO map(Meta meta) {
+        MetaDTO item = new MetaDTO();
         item.setMarketid(meta.getMarketid());
         item.setPeriod(0, meta.getPeriod1());
         item.setPeriod(1, meta.getPeriod2());
@@ -243,7 +243,7 @@ public class DbHibernate {
         return item;
     }
 
-    private static Meta map(MetaItem meta) {
+    private static Meta map(MetaDTO meta) {
         Meta item = new Meta();
         item.setMarketid(meta.getMarketid());
         item.setPeriod1(meta.getPeriod(0));
@@ -260,8 +260,8 @@ public class DbHibernate {
         return item;
     }
 
-    private static ConfigItem map(Config config) {
-        ConfigItem configItem = new ConfigItem();
+    private static ConfigDTO map(Config config) {
+        ConfigDTO configItem = new ConfigDTO();
         configItem.setAction(config.getAction());
         configItem.setBuy(config.getBuy());
         configItem.setDate(TimeUtil.convertDate(config.getDate()));
@@ -278,7 +278,7 @@ public class DbHibernate {
         return configItem;
     }
 
-    private static Cont map(ContItem item) {
+    private static Cont map(ContDTO item) {
         Cont cont = new Cont();
         cont.setDate(item.getDate());
         cont.setFilename(item.getFilename());
@@ -286,16 +286,16 @@ public class DbHibernate {
         return cont;
     }
 
-    private static ContItem map(Cont cont) {
-        ContItem contItem = new ContItem();
+    private static ContDTO map(Cont cont) {
+        ContDTO contItem = new ContDTO();
         contItem.setDate(cont.getDate());
         contItem.setFilename(cont.getFilename());
         contItem.setMd5(cont.getMd5());
         return contItem;
     }
 
-    private static IncDecItem map(IncDec incdec) {
-        IncDecItem incdecItem = new IncDecItem();
+    private static IncDecDTO map(IncDec incdec) {
+        IncDecDTO incdecItem = new IncDecDTO();
         incdecItem.setComponent(incdec.getComponent());
         incdecItem.setDate(TimeUtil.convertDate(incdec.getDate()));
         incdecItem.setDescription(incdec.getDescription());
@@ -311,8 +311,8 @@ public class DbHibernate {
         return incdecItem;
     }
 
-    private static MemoryItem map(Memory memory) {
-        MemoryItem memoryItem = new MemoryItem();
+    private static MemoryDTO map(Memory memory) {
+        MemoryDTO memoryItem = new MemoryDTO();
         memoryItem.setAction(memory.getAction());
         memoryItem.setAbovepositives(memory.getAbovepositives());
         memoryItem.setAbovesize(memory.getAbovesize());
@@ -362,8 +362,8 @@ public class DbHibernate {
         return memoryItem;
     }
 
-    private static MLMetricsItem map(MLMetrics mltest) {
-        MLMetricsItem mltestItem = new MLMetricsItem();
+    private static MLMetricsDTO map(MLMetrics mltest) {
+        MLMetricsDTO mltestItem = new MLMetricsDTO();
         mltestItem.setDate(TimeUtil.convertDate(mltest.getDate()));
         mltestItem.setComponent(mltest.getComponent());
         mltestItem.setMarket(mltest.getMarket());
@@ -377,8 +377,8 @@ public class DbHibernate {
         return mltestItem;
     }
 
-    private static RelationItem map(Relation relation) {
-        RelationItem relationItem = new RelationItem();
+    private static RelationDTO map(Relation relation) {
+        RelationDTO relationItem = new RelationDTO();
         relationItem.setAltId(relation.getAltId());
         relationItem.setId(relation.getId());
         relationItem.setMarket(relation.getMarket());
@@ -391,8 +391,8 @@ public class DbHibernate {
         return relationItem;
     }
 
-    private static SimDataItem map(SimData data) {
-        SimDataItem item = new SimDataItem();
+    private static SimDataDTO map(SimData data) {
+        SimDataDTO item = new SimDataDTO();
         item.setConfig(new String(data.getConfig(), StandardCharsets.UTF_8));
         item.setDbid(data.getDbid());
         item.setEnddate(data.getEnddate());
@@ -406,8 +406,8 @@ public class DbHibernate {
         return item;
     }
 
-    private static TimingItem map(Timing timing) {
-        TimingItem timingItem = new TimingItem();
+    private static TimingDTO map(Timing timing) {
+        TimingDTO timingItem = new TimingDTO();
         timingItem.setAction(timing.getAction());
         timingItem.setBuy(timing.getBuy());
         timingItem.setComponent(timing.getComponent());
@@ -424,8 +424,8 @@ public class DbHibernate {
         return timingItem;
     }
 
-    private static TimingBLItem map(TimingBL timing) {
-        TimingBLItem timingItem = new TimingBLItem();
+    private static TimingBLDTO map(TimingBL timing) {
+        TimingBLDTO timingItem = new TimingBLDTO();
         timingItem.setCount(timing.getCount());
         timingItem.setDbid(timing.getDbid());
         timingItem.setId(timing.getId());
@@ -433,7 +433,7 @@ public class DbHibernate {
         return timingItem;
     }
 
-    public static AboveBelow map(AboveBelowItem item) {
+    public static AboveBelow map(AboveBelowDTO item) {
         AboveBelow data = new AboveBelow();
         data.setComponents(item.getComponents());
         data.setDate(item.getDate());
@@ -444,7 +444,7 @@ public class DbHibernate {
         return data;
     }
 
-    public static ActionComponent map(ActionComponentItem item) {
+    public static ActionComponent map(ActionComponentDTO item) {
         ActionComponent config = new ActionComponent();
         config.setAction(item.getAction());
         config.setBuy(item.getBuy());
@@ -457,7 +457,7 @@ public class DbHibernate {
         return config;
     }
 
-    public static Config map(ConfigItem item) {
+    public static Config map(ConfigDTO item) {
         Config config = new Config();
         config.setAction(item.getAction());
         config.setBuy(item.getBuy());
@@ -475,7 +475,7 @@ public class DbHibernate {
         return config;
     }
 
-    public static IncDec map(IncDecItem item) {
+    public static IncDec map(IncDecDTO item) {
         IncDec incdec = new IncDec();
         incdec.setComponent(item.getComponent());
         incdec.setDate(TimeUtil.convertDate(item.getDate()));
@@ -492,7 +492,7 @@ public class DbHibernate {
         return incdec;
     }
 
-    public static MLMetrics map(MLMetricsItem item) {
+    public static MLMetrics map(MLMetricsDTO item) {
         MLMetrics mltest = new MLMetrics();
         mltest.setComponent(item.getComponent());
         mltest.setDate(TimeUtil.convertDate(item.getDate()));
@@ -507,7 +507,7 @@ public class DbHibernate {
         return mltest;
     }
 
-    public static Relation map(RelationItem item) {
+    public static Relation map(RelationDTO item) {
         Relation relation = new Relation();
         relation.setAltId(item.getAltId());
         relation.setId(item.getId());
@@ -521,7 +521,7 @@ public class DbHibernate {
         return relation;
     }
 
-    public static Memory map(MemoryItem item) {
+    public static Memory map(MemoryDTO item) {
         Memory memory = new Memory();
         memory.setAction(item.getAction());
         memory.setAbovepositives(item.getAbovepositives());
@@ -572,7 +572,7 @@ public class DbHibernate {
         return memory;
     }
 
-    public static SimData map(SimDataItem item) {
+    public static SimData map(SimDataDTO item) {
         SimData data = new SimData();
         data.setConfig(item.getConfig().getBytes(StandardCharsets.UTF_8));
         data.setEnddate(item.getEnddate());
@@ -586,7 +586,7 @@ public class DbHibernate {
         return data;
     }
 
-    public static TimingBL map(TimingBLItem item) {
+    public static TimingBL map(TimingBLDTO item) {
         TimingBL timing = new TimingBL();
         timing.setCount(item.getCount());
         timing.setId(item.getId());
@@ -594,7 +594,7 @@ public class DbHibernate {
         return timing;
     }
 
-    public static Timing map(TimingItem item) {
+    public static Timing map(TimingDTO item) {
         Timing timing = new Timing();
         timing.setAction(item.getAction());
         timing.setBuy(item.getBuy());
@@ -616,11 +616,11 @@ public class DbHibernate {
         return Stock.getMarkets();
     }
 
-    public static List<MetaItem> getMetas() throws Exception {
+    public static List<MetaDTO> getMetas() throws Exception {
         return Meta.getAll().stream().map(e -> map(e)).toList();
     }
 
-    public static List<MemoryItem> getMemories() {
+    public static List<MemoryDTO> getMemories() {
         try {
             return Memory.getAll().stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -629,7 +629,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<MemoryItem> getMemoriesByMarket(String market) {
+    public static List<MemoryDTO> getMemoriesByMarket(String market) {
         try {
             return Memory.getAll(market).stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -638,7 +638,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<MemoryItem> getMemories(String market, String action, String component, String subcomponent, String parameters, Date startDate, Date endDate) {
+    public static List<MemoryDTO> getMemories(String market, String action, String component, String subcomponent, String parameters, Date startDate, Date endDate) {
         try {
             return Memory.getAll(market, action, component, subcomponent, parameters, startDate, endDate).stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -647,7 +647,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<TimingItem> getTimings() {
+    public static List<TimingDTO> getTimings() {
         try {
             return Timing.getAll().stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -656,7 +656,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<TimingItem> getTiming(String market, String action, Date startDate, Date endDate) {
+    public static List<TimingDTO> getTiming(String market, String action, Date startDate, Date endDate) {
         try {
             return Timing.getAll(market, action, startDate, endDate).stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -665,7 +665,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<RelationItem> getRelations() {
+    public static List<RelationDTO> getRelations() {
         try {
             return Relation.getAll().stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -674,7 +674,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<IncDecItem> getIncDecs() {
+    public static List<IncDecDTO> getIncDecs() {
         try {
             return IncDec.getAll().stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -683,7 +683,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<IncDecItem> getIncDecs(String market, Date startDate, Date endDate, String parameters) {
+    public static List<IncDecDTO> getIncDecs(String market, Date startDate, Date endDate, String parameters) {
         try {
             return IncDec.getAll(market, startDate, endDate, parameters).stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -692,7 +692,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<ConfigItem> getConfigs(String market, String action, String component, String subcomponent, String parameters, Date startDate, Date endDate) {
+    public static List<ConfigDTO> getConfigs(String market, String action, String component, String subcomponent, String parameters, Date startDate, Date endDate) {
         try {
             return Config.getAll(market, action, component, subcomponent, parameters, startDate, endDate).stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -701,7 +701,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<ConfigItem> getConfigsByMarket(String market) {
+    public static List<ConfigDTO> getConfigsByMarket(String market) {
         try {
             return Config.getAll(market).stream().map(e -> map(e)).toList();        
         } catch (Exception e) {
@@ -710,7 +710,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<MLMetricsItem> getMLMetrics() {
+    public static List<MLMetricsDTO> getMLMetrics() {
         try {
             return MLMetrics.getAll().stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -719,7 +719,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<MLMetricsItem> getMLMetrics(String market, Date startDate, Date endDate) {
+    public static List<MLMetricsDTO> getMLMetrics(String market, Date startDate, Date endDate) {
         try {
             return MLMetrics.getAll(market, startDate, endDate).stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -730,43 +730,43 @@ public class DbHibernate {
 
     public static Object save(Object object) {
         Object obj2 = null;
-        if (object instanceof AboveBelowItem obj) {
+        if (object instanceof AboveBelowDTO obj) {
             obj2 = map(obj);
         }
-        if (object instanceof ActionComponentItem obj) {
+        if (object instanceof ActionComponentDTO obj) {
             obj2 = map(obj);
         }
-        if (object instanceof ConfigItem obj) {
+        if (object instanceof ConfigDTO obj) {
             obj2 = map(obj);
         }
-        if (object instanceof ContItem obj) {
+        if (object instanceof ContDTO obj) {
             obj2 = map(obj);
         }
-        if (object instanceof MemoryItem obj) {
+        if (object instanceof MemoryDTO obj) {
             obj2 = map(obj);
         }
-        if (object instanceof MetaItem obj) {
+        if (object instanceof MetaDTO obj) {
             obj2 = map(obj);
         }
-        if (object instanceof MLMetricsItem obj) {
+        if (object instanceof MLMetricsDTO obj) {
             obj2 = map(obj);
         }
-        if (object instanceof RelationItem obj) {
+        if (object instanceof RelationDTO obj) {
             obj2 = map(obj);
         }
-        if (object instanceof SimDataItem obj) {
+        if (object instanceof SimDataDTO obj) {
             obj2 = map(obj);
         }
-        if (object instanceof StockItem obj) {
+        if (object instanceof StockDTO obj) {
             obj2 = map(obj);
         }
-        if (object instanceof TimingItem obj) {
+        if (object instanceof TimingDTO obj) {
             obj2 = map(obj);
         }
-        if (object instanceof TimingBLItem obj) {
+        if (object instanceof TimingBLDTO obj) {
             obj2 = map(obj);
         }
-        if (object instanceof IncDecItem obj) {
+        if (object instanceof IncDecDTO obj) {
             obj2 = map(obj);
         }
         if (object instanceof List list) {
@@ -780,7 +780,7 @@ public class DbHibernate {
         }
         Queues.queue.add(obj2);
         if (true)         return null;
-        if (object instanceof IncDecItem) {
+        if (object instanceof IncDecDTO) {
             //IncDec.save(map((IncDec) object)) ;
         }
         return null;
@@ -788,10 +788,10 @@ public class DbHibernate {
 
     public static void deleteById(Object object, String dbid) {
         try {
-            if (object instanceof ActionComponentItem) {
+            if (object instanceof ActionComponentDTO) {
                 ActionComponent.delete(Long.valueOf(dbid));
             }
-            if (object instanceof TimingBLItem) {
+            if (object instanceof TimingBLDTO) {
                 // not the @id
                 TimingBL.delete(dbid);
             }
@@ -803,18 +803,18 @@ public class DbHibernate {
     }
     public static void delete(Object object, String market, String action, String component, String subcomponent, Date startDate, Date endDate) {
         try {
-            if (object instanceof AboveBelowItem) {
+            if (object instanceof AboveBelowDTO) {
                 AboveBelow.delete(market, startDate, endDate);
 
             }
-            if (object instanceof IncDecItem) {
+            if (object instanceof IncDecDTO) {
                 IncDec.delete(market, component, subcomponent, startDate, endDate);
             }
-            if (object instanceof MemoryItem) {
+            if (object instanceof MemoryDTO) {
                 Memory.delete(market, component, subcomponent, startDate, endDate);
 
             }
-            if (object instanceof TimingItem) {
+            if (object instanceof TimingDTO) {
                 Timing.delete(market, action, component, subcomponent, startDate, endDate);
             }
         } catch (Exception e) {
@@ -825,7 +825,7 @@ public class DbHibernate {
         //delete(market, action, component, subcomponent, startDate, endDate);
     }
 
-    public static List<SimDataItem> getSimData(String market, LocalDate startDate, LocalDate endDate) {
+    public static List<SimDataDTO> getSimData(String market, LocalDate startDate, LocalDate endDate) {
         try {
             return SimData.getAll(market, startDate, endDate).stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -834,7 +834,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<AboveBelowItem> getAllAboveBelow(String market, Date startDate, Date endDate) {
+    public static List<AboveBelowDTO> getAllAboveBelow(String market, Date startDate, Date endDate) {
         try {
             return AboveBelow.getAll(market, startDate, endDate).stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -843,7 +843,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<ActionComponentItem> getAllActionComponent() {
+    public static List<ActionComponentDTO> getAllActionComponent() {
         try {
             return ActionComponent.getAll().stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -852,7 +852,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<TimingBLItem> getAllTimingBLItem() {
+    public static List<TimingBLDTO> getAllTimingBLDTO() {
         try {
             return TimingBL.getAll().stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -870,7 +870,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<ContItem> getAllCont() {
+    public static List<ContDTO> getAllCont() {
         try {
             return Cont.getAll().stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -879,7 +879,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<StockItem> getAllStocks() {
+    public static List<StockDTO> getAllStocks() {
         try {
             return Stock.getAll().stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -888,7 +888,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<ConfigItem> getAllConfigs() {
+    public static List<ConfigDTO> getAllConfigs() {
         try {
             return Config.getAll().stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -897,7 +897,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<SimDataItem> getAllSimData() {
+    public static List<SimDataDTO> getAllSimData() {
         try {
             return SimData.getAll().stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -906,7 +906,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<AboveBelowItem> getAllAboveBelow() {
+    public static List<AboveBelowDTO> getAllAboveBelow() {
         try {
             return AboveBelow.getAll().stream().map(e -> map(e)).toList();
         } catch (Exception e) {
@@ -915,7 +915,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<SimDataItem> getAllSimData(String market) {
+    public static List<SimDataDTO> getAllSimData(String market) {
         try {
             return SimData.getAll().stream().map(e -> map(e)).toList();
         } catch (Exception e) {

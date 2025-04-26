@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.util.TimeUtil;
 import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
@@ -47,7 +47,7 @@ public class Math3Util {
      * @param stockdatemap a map of date to stocklists
      */
 
-    public static void getStats(ResultItemTable table, LocalDate datedate, int count, Map<String, List<StockItem>> stockidmap, Map<String, List<StockItem>> stockdatemap) {
+    public static void getStats(ResultItemTable table, LocalDate datedate, int count, Map<String, List<StockDTO>> stockidmap, Map<String, List<StockDTO>> stockdatemap) {
         List<String> list = new ArrayList<>(stockdatemap.keySet());
         Collections.sort(list);
         String date = null;
@@ -56,22 +56,22 @@ public class Math3Util {
         }
         int index = list.size() - 1 - StockUtil.getStockDate(list, date);
         log.info("index {}", index);
-        for (Entry<String, List<StockItem>> entry1 : stockidmap.entrySet()) {
+        for (Entry<String, List<StockDTO>> entry1 : stockidmap.entrySet()) {
             String id1 = entry1.getKey();
-            List<StockItem> stocks1 = entry1.getValue();
+            List<StockDTO> stocks1 = entry1.getValue();
             stocks1.sort(StockUtil.StockDateComparator);
             for (int i = 0; i < Constants.PERIODS; i++) {
-                List<StockItem> stockstrunc1 = listtrunc(stocks1, count, i, index);
-                for (Entry<String, List<StockItem>> entry2 : stockidmap.entrySet()) {
+                List<StockDTO> stockstrunc1 = listtrunc(stocks1, count, i, index);
+                for (Entry<String, List<StockDTO>> entry2 : stockidmap.entrySet()) {
                     String id2 = entry2.getKey();
                     if (id2.equals(id1)) {
                         continue;
                     }
                     try {
-                        List<StockItem> stocks2 = entry2.getValue();
+                        List<StockDTO> stocks2 = entry2.getValue();
                         stocks2.sort(StockUtil.StockDateComparator);
-                        List<StockItem> stockstrunc2 = listtrunc(stocks2, stockstrunc1, i);
-                        List<StockItem> stockstrunc3 = listtrunc(stockstrunc1, stockstrunc2, i);
+                        List<StockDTO> stockstrunc2 = listtrunc(stocks2, stockstrunc1, i);
+                        List<StockDTO> stockstrunc3 = listtrunc(stockstrunc1, stockstrunc2, i);
                         double[] sample1 = getSample(stockstrunc3, i, false);
                         double[] sample2 = getSample(stockstrunc2, i, false);
                         double[] sample1e = getSample(stockstrunc3, i, true);
@@ -128,7 +128,7 @@ public class Math3Util {
         } 
     }
 
-    public static void getStats2(ResultItemTable table, Date datedate, int count, Map<String, List<StockItem>> stockidmap, Map<String, List<StockItem>> stockdatemap) {
+    public static void getStats2(ResultItemTable table, Date datedate, int count, Map<String, List<StockDTO>> stockidmap, Map<String, List<StockDTO>> stockdatemap) {
         List<String> list = new ArrayList(stockdatemap.keySet());
         Collections.sort(list);
         String date = null;
@@ -138,21 +138,21 @@ public class Math3Util {
         int index = list.size() - 1 - StockUtil.getStockDate(list, date);
         log.info("index {}", index);
         for (int i = 0; i < Constants.PERIODS; i++) {
-            for (Entry<String, List<StockItem>> entry : stockidmap.entrySet()) {
+            for (Entry<String, List<StockDTO>> entry : stockidmap.entrySet()) {
                 String id = entry.getKey();
-                List<StockItem> stocks = entry.getValue();
+                List<StockDTO> stocks = entry.getValue();
                 stocks.sort(StockUtil.StockDateComparator);
-                List<StockItem> stockstrunc = listtrunc(stocks, count, i, index);
-                for (Entry<String, List<StockItem>> entryNot : stockidmap.entrySet()) {
+                List<StockDTO> stockstrunc = listtrunc(stocks, count, i, index);
+                for (Entry<String, List<StockDTO>> entryNot : stockidmap.entrySet()) {
                     String idnot = entryNot.getKey();
                     if (idnot.equals(id)) {
                         continue;
                     }
                     try {
-                        List<StockItem> stocksnot = entryNot.getValue();
+                        List<StockDTO> stocksnot = entryNot.getValue();
                         stocksnot.sort(StockUtil.StockDateComparator);
-                        List<StockItem> stockstruncnot2 = listtrunc(stocksnot, stockstrunc, i);
-                        List<StockItem> stockstrunc3 = listtrunc(stockstrunc, stockstruncnot2, i);
+                        List<StockDTO> stockstruncnot2 = listtrunc(stocksnot, stockstrunc, i);
+                        List<StockDTO> stockstrunc3 = listtrunc(stockstrunc, stockstruncnot2, i);
                         double[] sample1 = getSample(stockstrunc3, i, false);
                         double[] sample2 = getSample(stockstruncnot2, i, false);
                         double[] sample1e = getSample(stockstrunc3, i, true);
@@ -216,7 +216,7 @@ public class Math3Util {
      * @return sample for t test
      */
 
-    private static double[] getSample(List<StockItem> stockstrunc, int period, boolean equalize) {
+    private static double[] getSample(List<StockDTO> stockstrunc, int period, boolean equalize) {
         double[] ret = new double[stockstrunc.size()];
         double max = StockUtil.getMax(stockstrunc, period);
         for (int i = 0; i < stockstrunc.size(); i++) {
@@ -247,9 +247,9 @@ public class Math3Util {
      * @return truncated list
      */
 
-    private static List<StockItem> listtrunc(List<StockItem> stocks2,
-            List<StockItem> stocks1, int period) {
-        List<StockItem> newList = new ArrayList<StockItem>();
+    private static List<StockDTO> listtrunc(List<StockDTO> stocks2,
+            List<StockDTO> stocks1, int period) {
+        List<StockDTO> newList = new ArrayList<StockDTO>();
         for (int i = 0, j = 0; i < stocks1.size() && j < stocks1.size(); i++) {
             for (int k = 0; k < stocks2.size(); k++) {
                 if (stocks1.get(i).getDate().equals(stocks2.get(k).getDate())) {
@@ -278,8 +278,8 @@ public class Math3Util {
      * @return truncated list
      */
 
-    private static List<StockItem> listtrunc(List<StockItem> stocks, int count, int period, int startoffset) {
-        List<StockItem> newList = new ArrayList<>();
+    private static List<StockDTO> listtrunc(List<StockDTO> stocks, int count, int period, int startoffset) {
+        List<StockDTO> newList = new ArrayList<>();
         for (int i = 0, j = 0; (i + startoffset) < stocks.size() && j < count ; i++) {
             Double periodval = null;
             try {

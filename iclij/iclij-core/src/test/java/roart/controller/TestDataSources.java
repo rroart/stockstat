@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
 import roart.common.constants.Constants;
-import roart.common.model.MetaItem;
+import roart.common.model.MetaDTO;
 import roart.common.model.MyDataSource;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.iclij.config.IclijConfig;
 
 public class TestDataSources extends MyDataSource {
@@ -21,9 +21,9 @@ public class TestDataSources extends MyDataSource {
 
     private List<TestDataSource> testDataSources;
     
-    private List<MetaItem> metas = new ArrayList<>();
+    private List<MetaDTO> metas = new ArrayList<>();
     
-    private Map<String, List<StockItem>> stockMap = new HashMap<>();
+    private Map<String, List<StockDTO>> stockMap = new HashMap<>();
 
     public TestDataSources(List<TestDataSource> testDataSources) {
         super();
@@ -35,12 +35,12 @@ public class TestDataSources extends MyDataSource {
     }
 
     @Override
-    public List<MetaItem> getMetas() {
+    public List<MetaDTO> getMetas() {
         return metas;
     }
 
     @Override
-    public List<StockItem> getAll(String market, IclijConfig conf, boolean disableCache) {
+    public List<StockDTO> getAll(String market, IclijConfig conf, boolean disableCache) {
         if (false) {
             try {
                 String s = null;
@@ -50,8 +50,8 @@ public class TestDataSources extends MyDataSource {
             }
         }
         String key = CacheConstants.STOCKS + market + conf.getConfigData().getDate();
-        log.info("StockItem getall {}", key);
-        List<StockItem> list = (List<StockItem>) MyCache.getInstance().get(key);
+        log.info("StockDTO getall {}", key);
+        List<StockDTO> list = (List<StockDTO>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
@@ -65,7 +65,7 @@ public class TestDataSources extends MyDataSource {
     }
 
     @Override
-    public List<StockItem> getAll(String type, String language) throws Exception {
+    public List<StockDTO> getAll(String type, String language) throws Exception {
         log.error("Should not be here");
         return null;
     }
@@ -83,7 +83,7 @@ public class TestDataSources extends MyDataSource {
     }
 
     @Override
-    public MetaItem getById(String market, IclijConfig conf) throws Exception {
+    public MetaDTO getById(String market, IclijConfig conf) throws Exception {
         return metas.stream().filter(d -> d.getMarketid().equals(market)).findFirst().orElse(null);
     }
 

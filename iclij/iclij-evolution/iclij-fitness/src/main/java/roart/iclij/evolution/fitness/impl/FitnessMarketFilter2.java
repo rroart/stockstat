@@ -22,9 +22,9 @@ import roart.iclij.model.action.MarketActionData;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.iclij.component.Component;
@@ -68,13 +68,13 @@ public class FitnessMarketFilter2 {
     
     private Parameters parameters;
 
-    private List<MLMetricsItem> mlTests;
+    private List<MLMetricsDTO> mlTests;
 
     private List<String> stockDates;
 
-    private List<IncDecItem> incdecs;
+    private List<IncDecDTO> incdecs;
     
-    public FitnessMarketFilter2(MarketActionData action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, Memories positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, List<String> stockDates, List<IncDecItem> incdecs) {
+    public FitnessMarketFilter2(MarketActionData action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, Memories positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsDTO> mlTests, List<String> stockDates, List<IncDecDTO> incdecs) {
         this.action = action;
         this.param = param;
         this.profitdata = profitdata;
@@ -95,20 +95,20 @@ public class FitnessMarketFilter2 {
 
     public synchronized double fitness1(MarketFilterChromosome chromosome) {
         log.info("Fitness");
-        List<MemoryItem> memoryItems = null;
+        List<MemoryDTO> memoryItems = null;
         WebData myData = new WebData();
         myData.setIncs(new ArrayList<>());
         myData.setDecs(new ArrayList<>());
         myData.setUpdateMap(new HashMap<>());
-        myData.setMemoryItems(new ArrayList<>());
+        myData.setMemoryDTOs(new ArrayList<>());
         myData.setUpdateMap2(new HashMap<>());
         //myData.profitData = new ProfitData();
         myData.setTimingMap(new HashMap<>());
         int b = param.getService().coremlconf.hashCode();
         boolean c = param.getService().coremlconf.wantIndicatorRecommender();
-        Set<IncDecItem> listInc = new HashSet<>(profitdata.getBuys().values());
-        Set<IncDecItem> listDec = new HashSet<>(profitdata.getSells().values());
-        Set<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec);
+        Set<IncDecDTO> listInc = new HashSet<>(profitdata.getBuys().values());
+        Set<IncDecDTO> listDec = new HashSet<>(profitdata.getSells().values());
+        Set<IncDecDTO> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec);
         Trend incProp = null;
         // TODO getcontent
         incProp = extracted(chromosome, myData, listInc, listDec, mlTests);
@@ -126,7 +126,7 @@ public class FitnessMarketFilter2 {
                 long countDec = 0;
                 long sizeDec = 0;
                 if (buy == null || buy == false) {
-                    List<Boolean> listDecBoolean = listDec.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
+                    List<Boolean> listDecBoolean = listDec.stream().map(IncDecDTO::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
                     countDec = listDecBoolean.stream().filter(i -> i).count();                            
                     sizeDec = listDecBoolean.size();
                 }
@@ -137,7 +137,7 @@ public class FitnessMarketFilter2 {
                 long countInc = 0;                            
                 long sizeInc = 0;
                 if (buy == null || buy == true) {
-                    List<Boolean> listIncBoolean = listInc.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
+                    List<Boolean> listIncBoolean = listInc.stream().map(IncDecDTO::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
                     countInc = listIncBoolean.stream().filter(i -> i).count();                            
                     sizeInc = listIncBoolean.size();
                 }
@@ -170,8 +170,8 @@ public class FitnessMarketFilter2 {
             log.error(Constants.EXCEPTION, e);
         }
         double fitness = 0;
-        memoryItems = myData.getMemoryItems();
-        for (MemoryItem memoryItem : memoryItems) {
+        memoryItems = myData.getMemoryDTOs();
+        for (MemoryDTO memoryItem : memoryItems) {
             Double value = memoryItem.getConfidence();
             if (value == null) {
                 int jj = 0;
@@ -192,7 +192,7 @@ public class FitnessMarketFilter2 {
         return incdecFitness;
     }
 
-    public Trend extracted(MarketFilterChromosome chromosome, WebData myData, Collection<IncDecItem> listInc, Collection<IncDecItem> listDec, List<MLMetricsItem> mlTests) {
+    public Trend extracted(MarketFilterChromosome chromosome, WebData myData, Collection<IncDecDTO> listInc, Collection<IncDecDTO> listDec, List<MLMetricsDTO> mlTests) {
         Trend incProp = null;
         try {
             int verificationdays = param.getConfig().verificationDays();
@@ -233,20 +233,20 @@ public class FitnessMarketFilter2 {
             ComponentData componentData = component.handle(action, market, param, profitdata, new Memories(market), myevolve /*evolve && evolvefirst*/, map, subcomponent, null, parameters, false);
             //componentData.setUsedsec(time0);
             myData.getUpdateMap().putAll(componentData.getUpdateMap());
-            List<MemoryItem> memories;
+            List<MemoryDTO> memories;
             try {
                 memories = component.calculateMemory(action, componentData, parameters);
                 if (memories == null || memories.isEmpty()) {
                     int jj = 0;
                 }
-                myData.getMemoryItems().addAll(memories);
+                myData.getMemoryDTOs().addAll(memories);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
 
             Memories listMap =  new Memories(market);
             ProfitInputData inputdata = new ProfitInputData();
-            listMap.method(myData.getMemoryItems(), param.getConfig());        
+            listMap.method(myData.getMemoryDTOs(), param.getConfig());        
             //ProfitData profitdata = new ProfitData();
             profitdata.setInputdata(inputdata);
             inputdata.setNameMap(new HashMap<>());

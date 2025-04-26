@@ -2,7 +2,7 @@ package roart.common.model;
 
 import java.time.LocalDate;
 
-public class MLMetricsItem {
+public class MLMetricsDTO {
     private LocalDate record;
 
     private LocalDate date;
@@ -23,7 +23,7 @@ public class MLMetricsItem {
 
     private Double threshold;
 
-    public MLMetricsItem() {
+    public MLMetricsDTO() {
         super();
     }
 
@@ -112,14 +112,14 @@ public class MLMetricsItem {
         return market + " " + component + " " + subcomponent + " " + localcomponent + " " + testAccuracy + " " + loss + " " + threshold + " " + record + " " + date + "\n"; 
     }
 
-    public Boolean moreGeneralThan(MLMetricsItem another) {
+    public Boolean moreGeneralThan(MLMetricsDTO another) {
         if (market.equals(another.market) && component.equals(another.component) && subcomponent.equals(another.subcomponent)) {
             return localcomponent == null && another.localcomponent != null;
         }
         return null;
     }
 
-    public Boolean olderThan(MLMetricsItem another) {
+    public Boolean olderThan(MLMetricsDTO another) {
         if (market.equals(another.market) && component.equals(another.component) && subcomponent.equals(another.subcomponent)) {
             if (localcomponent == null || localcomponent.equals(another.localcomponent)) {
                 return getRecord().isBefore(another.record);

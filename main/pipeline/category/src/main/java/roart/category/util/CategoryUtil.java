@@ -8,13 +8,13 @@ import roart.category.impl.CategoryPeriod;
 import roart.category.impl.CategoryPrice;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.data.PipelineData;
 import roart.iclij.config.IclijConfig;
 
 public class CategoryUtil {
 
-    public AbstractCategory[] getCategories(IclijConfig conf, List<StockItem> stocks,
+    public AbstractCategory[] getCategories(IclijConfig conf, List<StockDTO> stocks,
             String[] periodText,
             PipelineData[] datareaders, Inmemory inmemory) throws Exception {
         AbstractCategory[] categories = new AbstractCategory[Constants.PERIODS + 2];

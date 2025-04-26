@@ -16,10 +16,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
 import roart.common.config.ConfigConstants;
-import roart.common.model.IncDecItem;
+import roart.common.model.IncDecDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.MapUtil;
 import roart.component.model.ComponentData;
@@ -40,8 +39,8 @@ public class DayAdviser extends Adviser {
         day = simulateConfig.getDay();
         if (false) {
             int period = simulateConfig.getPeriod();
-            //List<MetaItem> metas = param.getService().getMetas();
-            //MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
+            //List<MetaDTO> metas = param.getService().getMetas();
+            //MetaDTO meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
             //List<String> categories = new MetaUtil().getCategories(meta);
             Map<String, Object> aMap = new HashMap<>();
             aMap.put(ConfigConstants.MACHINELEARNING, false);
@@ -96,7 +95,7 @@ public class DayAdviser extends Adviser {
     }
 
     //@Override
-    public List<IncDecItem> getIncs2(String aParameter, int buytop, LocalDate date, int indexOffset, List<String> stockDates, List<String> excludes) {
+    public List<IncDecDTO> getIncs2(String aParameter, int buytop, LocalDate date, int indexOffset, List<String> stockDates, List<String> excludes) {
         int idx = stockDates.size() - 1 - indexOffset;
         if (idx < 0) {
             return new ArrayList<>();
@@ -105,7 +104,7 @@ public class DayAdviser extends Adviser {
         if (valueList == null) {
             return new ArrayList<>();
         }
-        List<IncDecItem> list = new ArrayList<>();
+        List<IncDecDTO> list = new ArrayList<>();
         for (Pair<String, Double> value : valueList) {
             if (excludes.contains(value.getKey())) {
                 continue;
@@ -114,7 +113,7 @@ public class DayAdviser extends Adviser {
             if (myvalue == null) {
                 continue;
             }
-            IncDecItem item = new IncDecItem();
+            IncDecDTO item = new IncDecDTO();
             item.setId(value.getKey());
             if (myvalue <= 0) {
                 myvalue = -myvalue;

@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
-import roart.common.model.MetaItem;
+import roart.common.model.MetaDTO;
 import roart.common.model.MyDataSource;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.util.TimeUtil;
 import roart.common.util.ValidateUtil;
 import roart.db.dao.DbDao;
@@ -52,7 +52,7 @@ public class Extract {
     */
     
     public StockData getStockData(IclijConfig conf, String market, boolean disableCache) {
-        List<StockItem> stocks = null;
+        List<StockDTO> stocks = null;
         try {
             stocks = dbDao.getAll(market, conf, disableCache);
         } catch (Exception e) {
@@ -64,7 +64,7 @@ public class Extract {
         log.info("stocks {}", stocks.size());
         String[] periodText;
         periodText = DbDaoUtil.getPeriodText(market, conf, dbDao);
-        MetaItem meta = null;
+        MetaDTO meta = null;
         try {
             meta = dbDao.getById(market, conf);
         } catch (Exception e) {
@@ -73,9 +73,9 @@ public class Extract {
         return getStockData(conf, market, stocks, meta, periodText);
     }
 
-    public StockData getStockData(IclijConfig conf, String market, List<StockItem> stocks, MetaItem meta, String[] periodText) {    
-        Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
-        Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
+    public StockData getStockData(IclijConfig conf, String market, List<StockDTO> stocks, MetaDTO meta, String[] periodText) {    
+        Map<String, List<StockDTO>> stockidmap = StockUtil.splitId(stocks);
+        Map<String, List<StockDTO>> stockdatemap = StockUtil.splitDate(stocks);
         stockdatemap = StockUtil.filterFew(stockdatemap, conf.getFilterDate());
         if (conf.getConfigData().getDate() == null) {
             try {
@@ -128,9 +128,9 @@ public class Extract {
          * Make stock lists based on the intervals
          */
     
-        List<StockItem>[] datedstocklists = StockUtil.getDatedstocklists(stockdatemap, conf.getConfigData().getDate(), 2, conf.getTableMoveIntervalDays());
+        List<StockDTO>[] datedstocklists = StockUtil.getDatedstocklists(stockdatemap, conf.getConfigData().getDate(), 2, conf.getTableMoveIntervalDays());
     
-        List<StockItem> datedstocks = datedstocklists[0];
+        List<StockDTO> datedstocks = datedstocklists[0];
         if (datedstocks == null) {
             return null;
         }
@@ -152,18 +152,18 @@ public class Extract {
         return stockData;
     }
 
-    private Map<String, String> getIdNameMap(Map<String, List<StockItem>> stockidmap) {
+    private Map<String, String> getIdNameMap(Map<String, List<StockDTO>> stockidmap) {
         Map<String, String> idNameMap = new HashMap<>();
         // sort based on date
         for (String key : stockidmap.keySet()) {
-            List<StockItem> stocklist = stockidmap.get(key);
+            List<StockDTO> stocklist = stockidmap.get(key);
             stocklist.sort(StockUtil.StockDateComparator);
             idNameMap.put(key, stocklist.get(0).getName());
         }
         return idNameMap;
     }
 
-    private void getCurrentDate(IclijConfig conf, Map<String, List<StockItem>> stockdatemap) throws ParseException {
+    private void getCurrentDate(IclijConfig conf, Map<String, List<StockDTO>> stockdatemap) throws ParseException {
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String date = null;
         TreeSet<String> set = new TreeSet<>(stockdatemap.keySet());
@@ -179,7 +179,7 @@ public class Extract {
     
     private static String[] getPeriodText(String market, IclijConfig conf, MyDataSource dataSource) {
         String[] periodText = { "Period1", "Period2", "Period3", "Period4", "Period5", "Period6", "Period7", "Period8", "Period9" };
-        MetaItem meta = null;
+        MetaDTO meta = null;
         try {
             meta = dataSource.getById(market, conf);
         } catch (Exception e) {

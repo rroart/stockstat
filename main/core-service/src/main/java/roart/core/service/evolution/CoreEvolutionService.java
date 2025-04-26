@@ -18,7 +18,7 @@ import roart.aggregatorindicator.impl.Recommend;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.MetaItem;
+import roart.common.model.MetaDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialInteger;
@@ -102,7 +102,7 @@ public class CoreEvolutionService {
             datareaders[0] = dataReader;
             PipelineData singlePipelineData = new PipelineData();
             singlePipelineData.setName(PipelineConstants.META);
-            MetaItem meta = stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta;
+            MetaDTO meta = stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta;
             singlePipelineData.put(PipelineConstants.META, new SerialMeta(meta.getMarketid(), meta.getPeriod(), meta.getPriority(), meta.getReset(), meta.isLhc()));
             singlePipelineData.put(PipelineConstants.CATEGORY, stockData.catName);
             singlePipelineData.put(PipelineConstants.WANTEDCAT, stockData.cat);

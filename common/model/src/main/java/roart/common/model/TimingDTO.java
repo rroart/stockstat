@@ -2,7 +2,7 @@ package roart.common.model;
 
 import java.time.LocalDate;
 
-public class TimingItem {
+public class TimingDTO {
     private LocalDate record;
     
     private LocalDate date;

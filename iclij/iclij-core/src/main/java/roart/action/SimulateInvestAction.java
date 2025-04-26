@@ -18,10 +18,10 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.ActionComponentItem;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
+import roart.common.model.ActionComponentDTO;
+import roart.common.model.IncDecDTO;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.util.PipelineThreadUtils;
@@ -53,7 +53,7 @@ public class SimulateInvestAction extends MarketAction {
     }
     
     @Override
-    protected List<IncDecItem> getIncDecItems() {
+    protected List<IncDecDTO> getIncDecDTOs() {
         return null;
     }
 
@@ -73,7 +73,7 @@ public class SimulateInvestAction extends MarketAction {
     }
 
     @Override
-    protected List<MemoryItem> getMemItems(ActionComponentItem marketTime, WebData myData, ComponentData param,
+    protected List<MemoryDTO> getMemDTOs(ActionComponentDTO marketTime, WebData myData, ComponentData param,
             IclijConfig config, Boolean evolve, Map<String, ComponentData> dataMap) {
         return new ArrayList<>();
     }
@@ -92,7 +92,7 @@ public class SimulateInvestAction extends MarketAction {
     protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param,
             Memories listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap,
             Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters,
-            boolean wantThree, List<MLMetricsItem> mlTests) {
+            boolean wantThree, List<MLMetricsDTO> mlTests) {
         log.info("Param id {}", param.getId());
         if (param.getUpdateMap() == null) {
             param.setUpdateMap(new HashMap<>());
@@ -106,7 +106,7 @@ public class SimulateInvestAction extends MarketAction {
         } catch (ParseException e) {
             log.error(Constants.EXCEPTION, e);
         }
-        //List<MemoryItem> memories = findAllMarketComponentsToCheckNew(myData, param, 0, config, false, dataMap, componentMap, subcomponent, parameters, market);
+        //List<MemoryDTO> memories = findAllMarketComponentsToCheckNew(myData, param, 0, config, false, dataMap, componentMap, subcomponent, parameters, market);
         
         for (Entry<String, Component> entry : componentMap.entrySet()) {
             Component component = entry.getValue();

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.IncDecItem;
+import roart.common.model.IncDecDTO;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.component.model.ComponentData;
@@ -67,7 +67,7 @@ public class IncDecUtil {
                 }
                 Map<String, List<List<Double>>> listMap3 = new MarketUtil().getCategoryList(maps, category, param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig()));
                 System.out.println("lm3" + listMap3.keySet());
-                Map<String, IncDecItem> buysFilter = new MarketUtil().incdecFilterOnIncreaseValue(market, inc ? profitdata.getBuys() : profitdata.getSells(), threshold, categoryMap, listMap3,
+                Map<String, IncDecDTO> buysFilter = new MarketUtil().incdecFilterOnIncreaseValue(market, inc ? profitdata.getBuys() : profitdata.getSells(), threshold, categoryMap, listMap3,
                         offsetDays, inc);
                 if (inc) {
                     profitdata.setBuys(buysFilter);

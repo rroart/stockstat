@@ -13,7 +13,7 @@ import org.apache.commons.math3.genetics.SelectionPolicy;
 import org.apache.commons.math3.genetics.StoppingCondition;
 import org.apache.commons.math3.genetics.TournamentSelection;
 
-import roart.common.model.MLMetricsItem;
+import roart.common.model.MLMetricsDTO;
 import roart.component.model.ComponentData;
 import roart.evolution.config.EvolutionConfig;
 import roart.iclij.config.Market;
@@ -24,7 +24,7 @@ public abstract class EvolveA extends Evolve {
     
     /*
     public abstract double evolve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata, Boolean buy,
-            String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, Map<String, Object> confMap,
+            String subcomponent, Parameters parameters, List<MLMetricsDTO> mlTests, Map<String, Object> confMap,
             EvolutionConfig evolutionConfig, String pipeline, Component component, List<String> confList);
     */
 }

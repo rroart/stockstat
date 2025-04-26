@@ -25,8 +25,8 @@ import roart.category.AbstractCategory;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.MetaItem;
-import roart.common.model.StockItem;
+import roart.common.model.MetaDTO;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.util.PipelineUtils;
@@ -48,7 +48,7 @@ public class StockUtil {
      * @throws Exception
      */
 
-    public static Map<String, Integer>[][] getListMove(int count, List<StockItem>[][] stocklistPeriod)
+    public static Map<String, Integer>[][] getListMove(int count, List<StockDTO>[][] stocklistPeriod)
             throws Exception {
 
         // make sorted period1, sorted current day
@@ -85,7 +85,7 @@ public class StockUtil {
         return periodmaps;
     }
 
-    public static Map<String, Integer>[] getListMove(int count, List<StockItem>[] stocklistPeriod, int period)
+    public static Map<String, Integer>[] getListMove(int count, List<StockDTO>[] stocklistPeriod, int period)
             throws Exception {
 
         // make sorted period1, sorted current day
@@ -130,13 +130,13 @@ public class StockUtil {
      * @throws Exception
      */
 
-    public static List<StockItem>[][] getListSorted(List<StockItem> datedstocklists[], int count)
+    public static List<StockDTO>[][] getListSorted(List<StockDTO> datedstocklists[], int count)
             throws Exception {
         Comparator[] comparators = { StockUtil.StockPeriod1Comparator, StockUtil.StockPeriod2Comparator, StockUtil.StockPeriod3Comparator, StockUtil.StockPeriod4Comparator, StockUtil.StockPeriod5Comparator, StockUtil.StockPeriod6Comparator , StockUtil.StockPeriod7Comparator , StockUtil.StockPeriod8Comparator , StockUtil.StockPeriod9Comparator };
 
         // make sorted period1, sorted current day
         // make sorted period1, sorted day offset
-        List<StockItem>[][] stocklistPeriod = new ArrayList[Constants.PERIODS][count];
+        List<StockDTO>[][] stocklistPeriod = new ArrayList[Constants.PERIODS][count];
 
         // Do for all wanted days
 
@@ -153,10 +153,10 @@ public class StockUtil {
                 // If it has, add it to the table
 
                 if (datedstocklists[j] != null && hasPeriod) {
-                    stocklistPeriod[i][j] = new ArrayList<StockItem>(datedstocklists[j]);
+                    stocklistPeriod[i][j] = new ArrayList<StockDTO>(datedstocklists[j]);
                     stocklistPeriod[i][j].sort(comparators[i]);
                 } else {
-                    stocklistPeriod[i][j] = new ArrayList<StockItem>();
+                    stocklistPeriod[i][j] = new ArrayList<StockDTO>();
                 }
 
             }
@@ -164,13 +164,13 @@ public class StockUtil {
         return stocklistPeriod;
     }
 
-    public static List<StockItem>[] getListSorted(List<StockItem> datedstocklists[], int count, int period)
+    public static List<StockDTO>[] getListSorted(List<StockDTO> datedstocklists[], int count, int period)
             throws Exception {
         Comparator[] comparators = { StockUtil.StockPeriod1Comparator, StockUtil.StockPeriod2Comparator, StockUtil.StockPeriod3Comparator, StockUtil.StockPeriod4Comparator, StockUtil.StockPeriod5Comparator, StockUtil.StockPeriod6Comparator , StockUtil.StockPeriod7Comparator , StockUtil.StockPeriod8Comparator , StockUtil.StockPeriod9Comparator };
 
         // make sorted period1, sorted current day
         // make sorted period1, sorted day offset
-        List<StockItem>[] stocklistPeriod = new ArrayList[count];
+        List<StockDTO>[] stocklistPeriod = new ArrayList[count];
 
         // Do for all wanted days
 
@@ -186,10 +186,10 @@ public class StockUtil {
             // If it has, add it to the table
 
             if (datedstocklists[j] != null && hasPeriod) {
-                stocklistPeriod[j] = new ArrayList<StockItem>(datedstocklists[j]);
+                stocklistPeriod[j] = new ArrayList<StockDTO>(datedstocklists[j]);
                 stocklistPeriod[j].sort(comparators[period]);
             } else {
-                stocklistPeriod[j] = new ArrayList<StockItem>();
+                stocklistPeriod[j] = new ArrayList<StockDTO>();
             }
         }
         return stocklistPeriod;
@@ -205,12 +205,16 @@ public class StockUtil {
      * @return array of stock lists based on date
      */
 
+    static boolean swap = false;
+    
     // TODO if list has not right date
-    public static List<StockItem>[] getDatedstocklists(Map<String, List<StockItem>> stockdatemap, LocalDate datedate, int count, int mytableintervaldays) {
-        List<StockItem>[] datedstocklists = null;
+    public static List<StockDTO>[] getDatedstocklists(Map<String, List<StockDTO>> stockdatemap, LocalDate datedate, int count, int mytableintervaldays) {
+        List<StockDTO>[] datedstocklists = null;
+        if (!swap) {
         datedstocklists = new ArrayList[count];
         for (int i = 0; i < count; i ++) {
             datedstocklists[i] = new ArrayList<>();          
+        }
         }
         List<String> list = new ArrayList<>(stockdatemap.keySet());
         Collections.sort(list);
@@ -220,6 +224,13 @@ public class StockUtil {
         }
         log.info("datemapsize {}", list.size());
         int index = getStockDate(list, date);
+
+        if (swap) {
+        datedstocklists = new ArrayList[index + 1];
+        for (int i = 0; i < datedstocklists.length; i ++) {
+            datedstocklists[i] = new ArrayList<>();          
+        }
+        }
         
         if (index >= 0) {
             if (date == null) {
@@ -249,7 +260,7 @@ public class StockUtil {
      */
 
     public static Map<String, Integer> getPeriodmap(
-            List<StockItem> stocklistPeriod1Day0, List<StockItem> stocklistPeriod1Day1) {
+            List<StockDTO> stocklistPeriod1Day0, List<StockDTO> stocklistPeriod1Day1) {
         Map<String, Integer> periodmap = new HashMap<String, Integer>();
         for (int i = 0; i < stocklistPeriod1Day1.size(); i++) {
             for (int j = 0; j < stocklistPeriod1Day0.size(); j++) {
@@ -268,12 +279,12 @@ public class StockUtil {
     }
 
     @Deprecated
-    private static List<StockItem> getOffsetList(
-            Map<String, List<StockItem>> stockmap, Date datedate, int mydays) {
-        List<StockItem> retstocklist = new ArrayList<StockItem>();
+    private static List<StockDTO> getOffsetList(
+            Map<String, List<StockDTO>> stockmap, Date datedate, int mydays) {
+        List<StockDTO> retstocklist = new ArrayList<StockDTO>();
         for (String key : stockmap.keySet()) {
-            StockItem stock = null;
-            List<StockItem> stocklist = stockmap.get(key);
+            StockDTO stock = null;
+            List<StockDTO> stocklist = stockmap.get(key);
             if (datedate == null) {
                 if (stocklist.size() > mydays) {
                     stock = stocklist.get(mydays);
@@ -303,12 +314,12 @@ public class StockUtil {
      * @return the split list
      */
 
-    public static Map<String, List<StockItem>> splitId(List<StockItem> stocks) {
-        Map<String, List<StockItem>> mymap = new HashMap<String, List<StockItem>>();
-        for (StockItem stock : stocks) {
-            List<StockItem> stocklist = mymap.get(stock.getId());
+    public static Map<String, List<StockDTO>> splitId(List<StockDTO> stocks) {
+        Map<String, List<StockDTO>> mymap = new HashMap<String, List<StockDTO>>();
+        for (StockDTO stock : stocks) {
+            List<StockDTO> stocklist = mymap.get(stock.getId());
             if (stocklist == null) {
-                stocklist = new ArrayList<StockItem>();
+                stocklist = new ArrayList<StockDTO>();
                 mymap.put(stock.getId(), stocklist);
             }
             stocklist.add(stock);
@@ -323,14 +334,14 @@ public class StockUtil {
      * @return the split list
      */
 
-    public static Map<String, List<StockItem>> splitDate(List<StockItem> stocks) {
-        Map<String, List<StockItem>> mymap = new HashMap<String, List<StockItem>>();
-        for (StockItem stock : stocks) {
+    public static Map<String, List<StockDTO>> splitDate(List<StockDTO> stocks) {
+        Map<String, List<StockDTO>> mymap = new HashMap<String, List<StockDTO>>();
+        for (StockDTO stock : stocks) {
             try {
             String date = TimeUtil.format(stock.getDate());
-            List<StockItem> stocklist = mymap.get(date);
+            List<StockDTO> stocklist = mymap.get(date);
             if (stocklist == null) {
-                stocklist = new ArrayList<StockItem>();
+                stocklist = new ArrayList<StockDTO>();
                 mymap.put(date, stocklist);
             }
             stocklist.add(stock);
@@ -353,7 +364,7 @@ public class StockUtil {
     public static boolean hasSpecial(Map<String, MarketData> marketdatamap, int i) throws Exception {
         for (Entry<String, MarketData> entry : marketdatamap.entrySet()) { 
             MarketData marketdata = entry.getValue();
-            List<StockItem> stocks = marketdata.stocks;
+            List<StockDTO> stocks = marketdata.stocks;
             if (hasSpecial(stocks, i)) {
                 return true;
             }
@@ -370,8 +381,8 @@ public class StockUtil {
      * @throws Exception
      */
 
-    public static boolean hasSpecial(List<StockItem> stocks, int i) throws Exception {
-        for (StockItem s : stocks) {
+    public static boolean hasSpecial(List<StockDTO> stocks, int i) throws Exception {
+        for (StockDTO s : stocks) {
             if (StockDao.getSpecial(s, i)[0] != null) {
                 return true;
             }
@@ -388,8 +399,8 @@ public class StockUtil {
      * @throws Exception
      */
 
-    public static boolean hasStockPeriod(List<StockItem> stocks, int i) throws Exception {
-        for (StockItem s : stocks) {
+    public static boolean hasStockPeriod(List<StockDTO> stocks, int i) throws Exception {
+        for (StockDTO s : stocks) {
             if (StockDao.getPeriod(s, i)[0] != null) {
                 return true;
             }
@@ -407,11 +418,11 @@ public class StockUtil {
      * @throws Exception
      */
 
-    public static boolean hasStockValue(List<StockItem> stocks, int i) throws Exception {
+    public static boolean hasStockValue(List<StockDTO> stocks, int i) throws Exception {
         if (stocks == null) {
             int jj = 0;
         }
-        for (StockItem s : stocks) {
+        for (StockDTO s : stocks) {
             if (StockDao.getValue(s, i)[0] != null) {
                 return true;
             }
@@ -426,8 +437,8 @@ public class StockUtil {
      * @return
      */
 
-    public static boolean hasStockPeriod1(List<StockItem> stocks) {
-        for (StockItem s : stocks) {
+    public static boolean hasStockPeriod1(List<StockDTO> stocks) {
+        for (StockDTO s : stocks) {
             if (s.getPeriod(0) != null) {
                 return true;
             }
@@ -442,8 +453,8 @@ public class StockUtil {
      * @return
      */
 
-    public static boolean hasStockPeriod2(List<StockItem> stocks) {
-        for (StockItem s : stocks) {
+    public static boolean hasStockPeriod2(List<StockDTO> stocks) {
+        for (StockDTO s : stocks) {
             if (s.getPeriod(1) != null) {
                 return true;
             }
@@ -458,8 +469,8 @@ public class StockUtil {
      * @return
      */
 
-    public static boolean hasStockPeriod3(List<StockItem> stocks) {
-        for (StockItem s : stocks) {
+    public static boolean hasStockPeriod3(List<StockDTO> stocks) {
+        for (StockDTO s : stocks) {
             if (s.getPeriod(2) != null) {
                 return true;
             }
@@ -474,8 +485,8 @@ public class StockUtil {
      * @return
      */
 
-    public static boolean hasStockPeriod4(List<StockItem> stocks) {
-        for (StockItem s : stocks) {
+    public static boolean hasStockPeriod4(List<StockDTO> stocks) {
+        for (StockDTO s : stocks) {
             if (s.getPeriod(3) != null) {
                 return true;
             }
@@ -490,8 +501,8 @@ public class StockUtil {
      * @return
      */
 
-    public static boolean hasStockPeriod5(List<StockItem> stocks) {
-        for (StockItem s : stocks) {
+    public static boolean hasStockPeriod5(List<StockDTO> stocks) {
+        for (StockDTO s : stocks) {
             if (s.getPeriod(4) != null) {
                 return true;
             }
@@ -506,8 +517,8 @@ public class StockUtil {
      * @return
      */
 
-    public static boolean hasStockPeriod6(List<StockItem> stocks) {
-        for (StockItem s : stocks) {
+    public static boolean hasStockPeriod6(List<StockDTO> stocks) {
+        for (StockDTO s : stocks) {
             if (s.getPeriod(5) != null) {
                 return true;
             }
@@ -515,41 +526,41 @@ public class StockUtil {
         return false;
     }
 
-    public static final Comparator<StockItem> StockDateComparator =
-            (StockItem comp1, StockItem comp2) -> comp2.getDate().compareTo(comp1.getDate());
+    public static final Comparator<StockDTO> StockDateComparator =
+            (StockDTO comp1, StockDTO comp2) -> comp2.getDate().compareTo(comp1.getDate());
 
-    public static final Comparator<StockItem> StockPeriod1Comparator = 
-            (StockItem stock1, StockItem stock2) -> compDoubleInner(stock1.getPeriod(0), stock2.getPeriod(0));
+    public static final Comparator<StockDTO> StockPeriod1Comparator = 
+            (StockDTO stock1, StockDTO stock2) -> compDoubleInner(stock1.getPeriod(0), stock2.getPeriod(0));
 
-    public static final Comparator<StockItem> StockPeriod2Comparator = 
-            (StockItem stock1, StockItem stock2) -> compDoubleInner(stock1.getPeriod(1), stock2.getPeriod(1));
+    public static final Comparator<StockDTO> StockPeriod2Comparator = 
+            (StockDTO stock1, StockDTO stock2) -> compDoubleInner(stock1.getPeriod(1), stock2.getPeriod(1));
              
-    public static final Comparator<StockItem> StockPeriod3Comparator = 
-            (StockItem stock1, StockItem stock2) -> compDoubleInner(stock1.getPeriod(2), stock2.getPeriod(2));
+    public static final Comparator<StockDTO> StockPeriod3Comparator = 
+            (StockDTO stock1, StockDTO stock2) -> compDoubleInner(stock1.getPeriod(2), stock2.getPeriod(2));
 
-    public static final Comparator<StockItem> StockPeriod4Comparator = 
-            (StockItem stock1, StockItem stock2) -> compDoubleInner(stock1.getPeriod(3), stock2.getPeriod(3));
+    public static final Comparator<StockDTO> StockPeriod4Comparator = 
+            (StockDTO stock1, StockDTO stock2) -> compDoubleInner(stock1.getPeriod(3), stock2.getPeriod(3));
   
-    public static final Comparator<StockItem> StockPeriod5Comparator = 
-            (StockItem stock1, StockItem stock2) -> compDoubleInner(stock1.getPeriod(4), stock2.getPeriod(4));
+    public static final Comparator<StockDTO> StockPeriod5Comparator = 
+            (StockDTO stock1, StockDTO stock2) -> compDoubleInner(stock1.getPeriod(4), stock2.getPeriod(4));
 
-    public static final Comparator<StockItem> StockPeriod6Comparator = 
-            (StockItem stock1, StockItem stock2) -> compDoubleInner(stock1.getPeriod(5), stock2.getPeriod(5));
+    public static final Comparator<StockDTO> StockPeriod6Comparator = 
+            (StockDTO stock1, StockDTO stock2) -> compDoubleInner(stock1.getPeriod(5), stock2.getPeriod(5));
 
-    public static final Comparator<StockItem> StockPeriod7Comparator = 
-            (StockItem stock1, StockItem stock2) -> compDoubleInner(stock1.getPeriod(6), stock2.getPeriod(6));
+    public static final Comparator<StockDTO> StockPeriod7Comparator = 
+            (StockDTO stock1, StockDTO stock2) -> compDoubleInner(stock1.getPeriod(6), stock2.getPeriod(6));
 
-    public static final Comparator<StockItem> StockPeriod8Comparator = 
-            (StockItem stock1, StockItem stock2) -> compDoubleInner(stock1.getPeriod(7), stock2.getPeriod(7));
+    public static final Comparator<StockDTO> StockPeriod8Comparator = 
+            (StockDTO stock1, StockDTO stock2) -> compDoubleInner(stock1.getPeriod(7), stock2.getPeriod(7));
             
-    public static final Comparator<StockItem> StockPeriod9Comparator = 
-            (StockItem stock1, StockItem stock2) -> compDoubleInner(stock1.getPeriod(8), stock2.getPeriod(8));
+    public static final Comparator<StockDTO> StockPeriod9Comparator = 
+            (StockDTO stock1, StockDTO stock2) -> compDoubleInner(stock1.getPeriod(8), stock2.getPeriod(8));
 
     void dummy() {
         // the comparator messes up indentation
     }
 
-    public static AbstractCategory getWantedCategory(AbstractCategory[] categories, MetaItem meta) throws Exception {
+    public static AbstractCategory getWantedCategory(AbstractCategory[] categories, MetaDTO meta) throws Exception {
         String[] defaultPriorities = { Constants.PRICE, Constants.INDEX };
         String[] priorities;
         String priority = null;
@@ -581,7 +592,7 @@ public class StockUtil {
         return null;
     }
 
-    public static Integer getWantedCategory(List<StockItem> stocks, PeriodData periodData) throws Exception {
+    public static Integer getWantedCategory(List<StockDTO> stocks, PeriodData periodData) throws Exception {
         if (hasStockValue(stocks, Constants.PRICECOLUMN)) {
             return Constants.PRICECOLUMN;
         }
@@ -601,7 +612,7 @@ public class StockUtil {
         return null;
     }
 
-    public static Integer getWantedCategory(List<StockItem> stocks, MetaItem meta) throws Exception {
+    public static Integer getWantedCategory(List<StockDTO> stocks, MetaDTO meta) throws Exception {
         Integer[] defaultPris = { Constants.PRICECOLUMN, Constants.INDEXVALUECOLUMN };
         String[] defaultPriorities = { Constants.PRICE, Constants.INDEX };
         String[] priorities;
@@ -680,7 +691,7 @@ public class StockUtil {
      * Not used
      */
 
-    public static int getStockDate(List<StockItem> stocklist, Date mydate2) {
+    public static int getStockDate(List<StockDTO> stocklist, Date mydate2) {
         if (mydate2 == null) {
             return 0;
         }
@@ -708,16 +719,16 @@ public class StockUtil {
     }
 
     public static DefaultCategoryDataset getTopChart(int days,
-            int topbottom, List<StockItem>[][] stocklistPeriod, int period) {
+            int topbottom, List<StockDTO>[][] stocklistPeriod, int period) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
         for (int j = days - 1; j >= 0; j--) {
-            List<StockItem> list = stocklistPeriod[period][j];
+            List<StockDTO> list = stocklistPeriod[period][j];
             if (j > 0) {
                 list = StockUtil.listFilterTop(stocklistPeriod[period][j], stocklistPeriod[period][0], topbottom);
             }
             for (int i = 0; i < topbottom; i++) {
                 if (i < list.size()) {
-                    StockItem stock = list.get(i);
+                    StockDTO stock = list.get(i);
                     try {
                         dataset.addValue(StockDao.getMainPeriod(stock, period), stock.getName() , new Integer(-j));
                     } catch (Exception e) {
@@ -733,12 +744,12 @@ public class StockUtil {
     }
 
     public static DefaultCategoryDataset getFilterChartPeriod(int days,
-            List<String> ids, List<StockItem>[][] stocklistPeriod, int period) {
+            List<String> ids, List<StockDTO>[][] stocklistPeriod, int period) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
         for (int j = days - 1; j >= 0; j--) {
-            List<StockItem> list = stocklistPeriod[period][j];
+            List<StockDTO> list = stocklistPeriod[period][j];
             for (int i = 0; i < list.size(); i++) {
-                StockItem stock = list.get(i);
+                StockDTO stock = list.get(i);
                 if (ids.contains(stock.getId())) {
                     try {
                         dataset.addValue(StockDao.getMainValue(stock, period), stock.getName() , new Integer(-j));
@@ -797,14 +808,14 @@ public class StockUtil {
             int period = periodInt;
             MarketData marketdata = entry.getValue();
             for (int j = days - 1; j >= 0; j--) {
-                List<StockItem>[] datedstocklists = marketdata.datedstocklists;
-                List<StockItem> list = datedstocklists[j];
+                List<StockDTO>[] datedstocklists = marketdata.datedstocklists;
+                List<StockDTO> list = datedstocklists[j];
                 if (list == null) {
                     log.info("listnull {} {}", market, j);
                     continue;
                 }
                 for (int i = 0; i < list.size(); i++) {
-                    StockItem stock = list.get(i);
+                    StockDTO stock = list.get(i);
                     Pair<String, String> pair = new ImmutablePair(market, stock.getId());
                     if (ids.contains(pair)) {
                         try {
@@ -840,12 +851,12 @@ public class StockUtil {
      */
 
     public static DefaultCategoryDataset getFilterChartDated(int days,
-            List<String> ids, List<StockItem>[] datedstocklists, int type) {
+            List<String> ids, List<StockDTO>[] datedstocklists, int type) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
         for (int j = days - 1; j >= 0; j--) {
-            List<StockItem> list = datedstocklists[j];
+            List<StockDTO> list = datedstocklists[j];
             for (int i = 0; i < list.size(); i++) {
-                StockItem stock = list.get(i);
+                StockDTO stock = list.get(i);
                 if (ids.contains(stock.getId())) {
                     try {
                         dataset.addValue(StockDao.getMainSpecial(stock, type), stock.getName() , new Integer(-j));
@@ -885,13 +896,13 @@ public class StockUtil {
         for (int j = days - 1; j >= 0; j--) {
             for (Entry<String, MarketData> entry : marketdatamap.entrySet()) {
                 MarketData marketdata = entry.getValue();
-                List<StockItem>[] datedstocklists = marketdata.datedstocklists;
-                List<StockItem> list = datedstocklists[j];
+                List<StockDTO>[] datedstocklists = marketdata.datedstocklists;
+                List<StockDTO> list = datedstocklists[j];
                 if (list == null) {
                     continue;
                 }
                 for (int i = 0; i < list.size(); i++) {
-                    StockItem stock = list.get(i);
+                    StockDTO stock = list.get(i);
                     Pair<String, String> pair = new ImmutablePair(entry.getKey(), stock.getId());
                     if (ids.contains(pair)) {
                         try {
@@ -1009,10 +1020,10 @@ public class StockUtil {
     }
 
     public static DefaultCategoryDataset getBottomChart(int periods,
-            int topbottom, List<StockItem>[][] stocklistPeriod, int period) {
+            int topbottom, List<StockDTO>[][] stocklistPeriod, int period) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
         for (int j = periods - 1; j >= 0; j--) {
-            List<StockItem> list = StockUtil.listFilterBottom(stocklistPeriod[period][0], stocklistPeriod[period][0], topbottom, period);
+            List<StockDTO> list = StockUtil.listFilterBottom(stocklistPeriod[period][0], stocklistPeriod[period][0], topbottom, period);
             if (list.isEmpty()) {
                 continue;
             }
@@ -1021,7 +1032,7 @@ public class StockUtil {
             }
             for (int i = list.size() - 1; i >= (list.size() - topbottom); i--) {
                 if (i >= 0) {
-                    StockItem stock = list.get(i);
+                    StockDTO stock = list.get(i);
                     try {
                         dataset.addValue(StockDao.getMainPeriod(stock, period ), stock.getName() , new Integer(-j));
                     } catch (Exception e) {
@@ -1047,7 +1058,7 @@ public class StockUtil {
      */
 
     public static DefaultCategoryDataset getRisingChart(int days,
-            int topbottom, List<StockItem>[][] stocklistPeriod,
+            int topbottom, List<StockDTO>[][] stocklistPeriod,
             Map<String, Integer> mymap, int period) {
         List<String> list0 = new ArrayList<>();
         List<Integer> list1 = new ArrayList<>();
@@ -1070,7 +1081,7 @@ public class StockUtil {
         }
         DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
         if (false && list0.isEmpty()) {
-            List<StockItem> list2 = stocklistPeriod[period][9];
+            List<StockDTO> list2 = stocklistPeriod[period][9];
             int max = Math.min(topbottom, list2.size());
             for (int i = 0; i < max; i++) {
                 System.out.println("test " + list2.get(i).getDbid() + " " + list2.get(i).getName());
@@ -1078,13 +1089,13 @@ public class StockUtil {
             return null;
         }
         for (int j = days - 1; j >= 0; j--) {
-            List<StockItem> list2 = stocklistPeriod[period][j];
+            List<StockDTO> list2 = stocklistPeriod[period][j];
             int max = Math.min(topbottom, list2.size());
             for (int i = 0; i < max; i++) {
                 String id = list0.get(i);
-                StockItem stock = null;
+                StockDTO stock = null;
                 for (int k = 0; k < list2.size(); k++) {
-                    StockItem tmpstock = list2.get(k); 
+                    StockDTO tmpstock = list2.get(k); 
                     if (id.equals(tmpstock.getId())) {
                         stock = tmpstock;
                         break;
@@ -1115,8 +1126,8 @@ public class StockUtil {
      * @return a list of size from list
      */
 
-    public static List<StockItem> listFilterTop(List<StockItem> list, List<StockItem> listmain, int size) {
-        List<StockItem> retlist = new ArrayList<StockItem>();
+    public static List<StockDTO> listFilterTop(List<StockDTO> list, List<StockDTO> listmain, int size) {
+        List<StockDTO> retlist = new ArrayList<StockDTO>();
         int max = Math.min(size, listmain.size());
         for (int i = 0; i < max; i ++) {
             String id = listmain.get(i).getId();
@@ -1140,12 +1151,12 @@ public class StockUtil {
      * @return a list of size from list
      */
 
-    public static List<StockItem> listFilterBottom(List<StockItem> list, List<StockItem> listmain, int size, int period) {
-        List<StockItem> retlist = new ArrayList<>();
+    public static List<StockDTO> listFilterBottom(List<StockDTO> list, List<StockDTO> listmain, int size, int period) {
+        List<StockDTO> retlist = new ArrayList<>();
         int start;
         for (start = listmain.size() -1; start >= 0; start --) {
             if (start >= 0) {
-                StockItem stock = listmain.get(start);
+                StockDTO stock = listmain.get(start);
                 try {
                     if (StockDao.getPeriod(stock, period)[0] != null) {
                         break;
@@ -1175,7 +1186,7 @@ public class StockUtil {
      * @param period for the given period
      */
 
-    public static double getMax(List<StockItem> stocklist, int period) {
+    public static double getMax(List<StockDTO> stocklist, int period) {
         double max = -1000000;
         for (int i = 0; i < stocklist.size() ; i++) {
             double cur = -1000000;
@@ -1204,7 +1215,7 @@ public class StockUtil {
      * @param period for the given period/special
      */
 
-    public static double getMax2(List<StockItem> stocklist, int period) {
+    public static double getMax2(List<StockDTO> stocklist, int period) {
         double max = -1000000;
         for (int i = 0; i < stocklist.size() ; i++) {
             double cur = -1000000;
@@ -1233,7 +1244,7 @@ public class StockUtil {
      * @param period for the given period/special
      */
 
-    public static double getMin(List<StockItem> stocklist, int period) {
+    public static double getMin(List<StockDTO> stocklist, int period) {
         double min = 1000000;
         for (int i = 0; i < stocklist.size() ; i++) {
             double cur = 1000000;
@@ -1255,7 +1266,7 @@ public class StockUtil {
         return min;
     }
     
-    public static Map<String, List<StockItem>> filterFew(Map<String, List<StockItem>> stockdatemap, double filter) {
+    public static Map<String, List<StockDTO>> filterFew(Map<String, List<StockDTO>> stockdatemap, double filter) {
         double mysum = stockdatemap.values().stream().mapToInt(List::size).sum();
         double avg = mysum / stockdatemap.size();
         double limit = avg * filter;

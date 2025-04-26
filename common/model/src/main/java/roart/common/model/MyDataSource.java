@@ -1,7 +1,6 @@
 package roart.common.model;
 
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,13 +20,13 @@ public abstract class MyDataSource {
     public abstract Map<String, StockData> getExtraStockData(ExtraReader extraReader);
     */
     
-    public abstract List<MetaItem> getMetas() throws Exception;
+    public abstract List<MetaDTO> getMetas() throws Exception;
 
-    public abstract List<StockItem> getAll(String market, IclijConfig conf, boolean disableCache) throws Exception;
+    public abstract List<StockDTO> getAll(String market, IclijConfig conf, boolean disableCache) throws Exception;
 
-    public MetaItem getById(String market, IclijConfig conf) throws Exception {
-        List<MetaItem> metas = getMetas();
-        for (MetaItem item : metas) {
+    public MetaDTO getById(String market, IclijConfig conf) throws Exception {
+        List<MetaDTO> metas = getMetas();
+        for (MetaDTO item : metas) {
             if (market.equals(item.getMarketid())) {
                 return item;
             }
@@ -35,18 +34,18 @@ public abstract class MyDataSource {
         return null;
     }
 
-    public List<StockItem> getAll(String type, String language) throws Exception {
-        // TODO Auto-generated method stub
+    public List<StockDTO> getAll(String type, String language) throws Exception {
+        //  TODO Auto-generated method stub
         return null;
     }
 
     public List<String> getDates(String market, IclijConfig conf) throws Exception {
-        // TODO Auto-generated method stub
+        //  TODO Auto-generated method stub
         return null;
     }
 
     public List<String> getMarkets() throws Exception {
-        // TODO Auto-generated method stub
+        //  TODO Auto-generated method stub
         return null;
     }
 }

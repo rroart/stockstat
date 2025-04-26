@@ -7,12 +7,12 @@ import java.util.Date;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 
-public class StockRowMapper implements RowMapper<StockItem> {
+public class StockRowMapper implements RowMapper<StockDTO> {
 
     @Override
-    public StockItem mapRow(ResultSet rs, int rowNum) throws SQLException {
+    public StockDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
         String dbid = rs.getString("dbid");
         String marketid = rs.getString("marketid");
         String id = rs.getString("id");
@@ -39,9 +39,9 @@ public class StockRowMapper implements RowMapper<StockItem> {
         Double period8 = (Double) rs.getObject("period8");
         Double period9 = (Double) rs.getObject("period9");
         // \([A-Za-z]+\) \([A-Za-z]+\) → \1 \2 = rs.get\1("\2")
-        StockItem stockItem;
+        StockDTO stockDTO;
         try {
-            return new StockItem(dbid, marketid, id, isin, name, date, indexvalue, indexvaluelow, indexvaluehigh, indexvalueopen, price, pricelow, pricehigh, priceopen, volume, currency, period1, period2, period3, period4, period5, period6, period7, period8, period9);
+            return new StockDTO(dbid, marketid, id, isin, name, date, indexvalue, indexvaluelow, indexvaluehigh, indexvalueopen, price, pricelow, pricehigh, priceopen, volume, currency, period1, period2, period3, period4, period5, period6, period7, period8, period9);
         } catch (Exception e) {
             e.printStackTrace();
         }

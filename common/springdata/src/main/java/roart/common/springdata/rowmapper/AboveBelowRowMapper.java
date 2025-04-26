@@ -3,19 +3,15 @@ package roart.common.springdata.rowmapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import java.util.Date;
-
 import org.springframework.jdbc.core.RowMapper;
 
-import roart.common.model.AboveBelowItem;
+import roart.common.model.AboveBelowDTO;
 import roart.common.util.TimeUtil;
 
-import org.springframework.jdbc.core.RowMapper;
-
-public class AboveBelowRowMapper implements RowMapper<AboveBelowItem>{
+public class AboveBelowRowMapper implements RowMapper<AboveBelowDTO>{
     @Override
-    public AboveBelowItem mapRow(ResultSet rs, int rowNum) throws SQLException {
-        AboveBelowItem item = new AboveBelowItem();
+    public AboveBelowDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+        AboveBelowDTO item = new AboveBelowDTO();
         item.setRecord(TimeUtil.convertDate(rs.getDate("record")));
         item.setDate(rs.getDate("date"));
         item.setMarket(rs.getString("market"));

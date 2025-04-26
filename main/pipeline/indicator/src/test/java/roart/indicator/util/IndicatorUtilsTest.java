@@ -18,7 +18,7 @@ import java.util.Map;
 
 import roart.category.AbstractCategory;
 import roart.common.constants.Constants;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMapTA;

@@ -17,13 +17,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.curator.RetryPolicy;
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,10 +28,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -54,13 +46,10 @@ import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.ml.MLMapsML;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
-import roart.common.model.AboveBelowItem;
-import roart.common.model.ActionComponentItem;
-import roart.common.model.ConfigItem;
-import roart.common.model.IncDecItem;
-import roart.common.model.MLMetricsItem;
-import roart.common.model.MemoryItem;
-import roart.common.model.TimingItem;
+import roart.common.model.AboveBelowDTO;
+import roart.common.model.ActionComponentDTO;
+import roart.common.model.ConfigDTO;
+import roart.common.model.MLMetricsDTO;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialScoreChromosome;
 import roart.common.pipeline.util.PipelineUtils;
@@ -70,22 +59,15 @@ import roart.common.util.TimeUtil;
 import roart.db.dao.IclijDbDao;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.NeuralNetChromosome;
-import roart.filesystem.FileSystemDao;
 import roart.gene.NeuralNetConfigGene;
 import roart.iclij.evolution.marketfilter.chromosome.impl.AboveBelowChromosome;
-import roart.iclij.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
 import roart.iclij.model.Parameters;
 import roart.iclij.service.util.MiscUtil;
-import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.constants.IclijConstants;
 import roart.gene.impl.ConfigMapGene;
-import roart.common.inmemory.factory.InmemoryFactory;
-import roart.common.inmemory.model.InmemoryMessage;
-import roart.common.inmemory.model.Inmemory;
-import roart.common.communication.factory.CommunicationFactory;
 import roart.common.communication.model.Communication;
 import roart.common.util.ServiceConnectionUtil;
 import roart.model.io.IO;
@@ -133,20 +115,20 @@ public class Evolve {
         String myclass = parts[3];
         NeuralNetConfig conf = new NeuralNetConfigs().getClass(myclass);
         Pair<String, String> subcomponent = new NeuralNetConfigs().getSubcomponent(myclass);
-        List<MLMetricsItem> mltests = null;
+        List<MLMetricsDTO> mltests = null;
         try {
             mltests = io.getIdbDao().getAllMLMetrics(market, null, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        Map<Pair<String, String>, List<MLMetricsItem>> met = getMLMetrics(mltests, null);
+        Map<Pair<String, String>, List<MLMetricsDTO>> met = getMLMetrics(mltests, null);
         //System.out.println("co" + component);
         //System.out.println("su" + subcomponent);
         //System.out.println("met" + met.keySet());
-        List<MLMetricsItem> blbl = met.get(new ImmutablePair(component, subcomponent.getLeft() + " " + subcomponent.getRight()));
+        List<MLMetricsDTO> blbl = met.get(new ImmutablePair(component, subcomponent.getLeft() + " " + subcomponent.getRight()));
         double avg = 0;
         if (blbl != null) {
-            avg = blbl.stream().map(MLMetricsItem::getTestAccuracy).mapToDouble(e -> e).average().orElse(0);
+            avg = blbl.stream().map(MLMetricsDTO::getTestAccuracy).mapToDouble(e -> e).average().orElse(0);
         }
         // TODO
         double newer = myList.get(0).getLeft();
@@ -185,7 +167,7 @@ public class Evolve {
         Parameters p = new Parameters();
         p.setFuturedays(10);
         p.setThreshold(1.0);
-        ConfigItem i = new ConfigItem();
+        ConfigDTO i = new ConfigDTO();
         i.setMarket(market);
         i.setComponent(component);
         i.setSubcomponent(subcomponent.getLeft() + " " + subcomponent.getRight());
@@ -206,7 +188,7 @@ public class Evolve {
         	return;
         }
         // save to markettime
-        ActionComponentItem mct = new ActionComponentItem();
+        ActionComponentDTO mct = new ActionComponentDTO();
         if (otherAction != null) {
         	mct.setAction(otherAction);
         } else {
@@ -230,13 +212,13 @@ public class Evolve {
     }
 
     // dup
-    protected Map<Pair<String, String>, List<MLMetricsItem>> getMLMetrics(List<MLMetricsItem> mltests, Double confidence) {
-        List<MLMetricsItem> returnedMLMetrics = new ArrayList<>();
-        for (MLMetricsItem test : mltests) {
+    protected Map<Pair<String, String>, List<MLMetricsDTO>> getMLMetrics(List<MLMetricsDTO> mltests, Double confidence) {
+        List<MLMetricsDTO> returnedMLMetrics = new ArrayList<>();
+        for (MLMetricsDTO test : mltests) {
             addNewest(returnedMLMetrics, test, 0.0);
         }
-        Map<Pair<String, String>, List<MLMetricsItem>> moreReturnedMLMetrics = new HashMap<>();
-        for (MLMetricsItem metric : returnedMLMetrics) {
+        Map<Pair<String, String>, List<MLMetricsDTO>> moreReturnedMLMetrics = new HashMap<>();
+        for (MLMetricsDTO metric : returnedMLMetrics) {
             Pair key = new ImmutablePair(metric.getComponent(), metric.getSubcomponent());
             new MiscUtil().listGetterAdder(moreReturnedMLMetrics, key, metric);  
         }
@@ -244,15 +226,15 @@ public class Evolve {
     }
 
     // dup
-    private void addNewest(List<MLMetricsItem> mlTests, MLMetricsItem test, Double confidence) {
+    private void addNewest(List<MLMetricsDTO> mlTests, MLMetricsDTO test, Double confidence) {
         if (test.getTestAccuracy() == null || test.getTestAccuracy() < confidence) {
             return;
         }
         if (test.getThreshold() == null || test.getThreshold() != 1.0) {
             return;
         }
-        MLMetricsItem replace = null;
-        for (MLMetricsItem aTest : mlTests) {
+        MLMetricsDTO replace = null;
+        for (MLMetricsDTO aTest : mlTests) {
             Boolean moregeneralthan = aTest.moreGeneralThan(test);
             // we don't need this anymore
             if (false && moregeneralthan != null && moregeneralthan) {
@@ -317,20 +299,20 @@ public class Evolve {
         //anotherMap.keySet().removeAll(keys);
 
         Pair<String, String> subComponent = new ImmutablePair<>(subcomponent, subsubcomponent);
-        List<MLMetricsItem> mltests = null;
+        List<MLMetricsDTO> mltests = null;
         try {
             mltests = io.getIdbDao().getAllMLMetrics(market, null, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        Map<Pair<String, String>, List<MLMetricsItem>> met = getMLMetrics(mltests, null);
+        Map<Pair<String, String>, List<MLMetricsDTO>> met = getMLMetrics(mltests, null);
         //System.out.println("co" + component);
         //System.out.println("su" + subcomponent);
         //System.out.println("met" + met.keySet());
-        List<MLMetricsItem> blbl = met.get(new ImmutablePair(component, subComponent.getLeft() + " " + subComponent.getRight()));
+        List<MLMetricsDTO> blbl = met.get(new ImmutablePair(component, subComponent.getLeft() + " " + subComponent.getRight()));
         double avg = 0;
         if (blbl != null) {
-            avg = blbl.stream().map(MLMetricsItem::getTestAccuracy).mapToDouble(e -> e).average().orElse(0);
+            avg = blbl.stream().map(MLMetricsDTO::getTestAccuracy).mapToDouble(e -> e).average().orElse(0);
         }
         double newer = myList.get(0).getLeft();
         boolean better = avg < newer;
@@ -375,10 +357,10 @@ public class Evolve {
             try {
             	String mysubcomponent = subComponent.getLeft() + " " + subComponent.getRight();
             	log.info("Deleting AboveBelow etc {} {} {}", market, component, mysubcomponent);
-                new TimingItem().delete(market, IclijConstants.FINDPROFIT, component, mysubcomponent, null, null);
-                new IncDecItem().delete(market, component, mysubcomponent, null, null);
-                new MemoryItem().delete(market, component, mysubcomponent, null, null);
-                new AboveBelowItem().delete(market, null, null);
+                new TimingDTO().delete(market, IclijConstants.FINDPROFIT, component, mysubcomponent, null, null);
+                new IncDecDTO().delete(market, component, mysubcomponent, null, null);
+                new MemoryDTO().delete(market, component, mysubcomponent, null, null);
+                new AboveBelowDTO().delete(market, null, null);
                 IclijConfig instance = IclijXMLConfig.getConfigInstance();
                 send(ServiceConstants.POPULATE, new String[] { market, component, mysubcomponent }, instance);            
             } catch (Exception e) {
@@ -464,7 +446,7 @@ public class Evolve {
                 mysubcomponents.add(subcomponent);
                 }
             }
-            AboveBelowItem abovebelow = new AboveBelowItem();
+            AboveBelowDTO abovebelow = new AboveBelowDTO();
             abovebelow.setComponents(JsonUtil.convert(mycomponents));
             String date = PipelineUtils.getString(data, EvolveConstants.DATE);
             Date date2 = null;;

@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.data.SerialTA;
 import roart.common.util.ArraysUtil;
 import roart.model.data.MarketData;
@@ -26,7 +26,7 @@ public class TaUtil {
     private static Logger log = LoggerFactory.getLogger(TaUtil.class);
 
     public int getArr(int days, String market, String id, Set<Pair<String, String>> ids, Integer periodInt,
-            List<StockItem>[] datedstocklists, double[][] arrarr) {
+            List<StockDTO>[] datedstocklists, double[][] arrarr) {
         double[] values = arrarr[0];
         double[] low = null;
         double[] high = null;
@@ -42,7 +42,7 @@ public class TaUtil {
         List<Double> liste = new ArrayList<>();
         List<Double> listf = new ArrayList<>();
         for (int j = 0; j < datedstocklists.length  && downcount > 0 ; j++) {
-            List<StockItem> list = datedstocklists[j];
+            List<StockDTO> list = datedstocklists[j];
             if (list == null) {
                 log.info("listnull {} {}", market, j);
                 continue;
@@ -52,7 +52,7 @@ public class TaUtil {
             }
             int period = periodInt;
             grr:  for (int i = 0; i < list.size(); i++) {
-                StockItem stock = list.get(i);
+                StockDTO stock = list.get(i);
                 //System.out.print(" " + stock.getId());
                 Pair<String, String> pair = new ImmutablePair(market, stock.getId());
                 if (ids.contains(pair)) {
@@ -120,17 +120,17 @@ public class TaUtil {
 
     @Deprecated
     private int getArrForOrig(int days, String market, Set<Pair> ids, Integer periodInt,
-            List<StockItem>[] datedstocklists, double[] values) {
+            List<StockDTO>[] datedstocklists, double[] values) {
         int size = 0;
         for (int j = days - 1; j >= 0; j--) {
-            List<StockItem> list = datedstocklists[j];
+            List<StockDTO> list = datedstocklists[j];
             if (list == null) {
                 log.info("listnull " + market + " " + " " + j);
                 continue;
             }
             int period = periodInt;
             for (int i = 0; i < list.size(); i++) {
-                StockItem stock = list.get(i);
+                StockDTO stock = list.get(i);
                 Pair<String, String> pair = new ImmutablePair(market, stock.getId());
                 if (ids.contains(pair)) {
                     try {

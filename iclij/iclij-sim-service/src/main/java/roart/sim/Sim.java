@@ -9,7 +9,6 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -25,11 +24,8 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -37,18 +33,14 @@ import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 
 import roart.iclij.config.IclijConfig;
-import roart.iclij.config.IclijConfig;
 import roart.common.config.MyXMLConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
-import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
 import roart.common.util.MathUtil;
 import roart.common.util.TimeUtil;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapChromosome;
-import roart.filesystem.FileSystemDao;
-import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.SimulateFilter;
@@ -59,10 +51,9 @@ import roart.simulate.util.SimUtil;
 import roart.constants.SimConstants;
 import roart.db.dao.IclijDbDao;
 import roart.common.inmemory.model.InmemoryMessage;
-import roart.common.model.SimDataItem;
+import roart.common.model.SimDataDTO;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialDouble;
-import roart.common.pipeline.data.SerialKeyValue;
 import roart.common.pipeline.data.SerialListMap;
 import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialListSimulateStock;
@@ -72,10 +63,6 @@ import roart.common.pipeline.data.SerialScoreChromosome;
 import roart.common.pipeline.data.SerialString;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.inmemory.factory.InmemoryFactory;
-import org.apache.commons.math3.stat.correlation.KendallsCorrelation;
-import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
-import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -269,7 +256,7 @@ public class Sim {
             }
             if (filter.isUseclusters() && b && commonScore[0] != null) {
                 IclijConfigMapChromosome chromosome = (IclijConfigMapChromosome) chromosomeMap.get(commonScore[0]).get(0);
-                SimDataItem simdata = new SimDataItem();
+                SimDataDTO simdata = new SimDataDTO();
                 simdata.setRecord(LocalDate.now());
                 simdata.setScore(commonScore[1]);
                 simdata.setMarket(market);
@@ -295,7 +282,7 @@ public class Sim {
             if (!b) {
                 return;
             }
-            SimDataItem simdata = new SimDataItem();
+            SimDataDTO simdata = new SimDataDTO();
             simdata.setRecord(LocalDate.now());
             simdata.setScore(min);
             simdata.setMarket(market);
@@ -572,7 +559,7 @@ public class Sim {
             }
             if (filter.isUseclusters() && b && commonScore[0] != null) {
                 IclijConfigMapChromosome chromosome = (IclijConfigMapChromosome) chromosomeMap.get(commonScore[0]).get(0);
-                SimDataItem simdata = new SimDataItem();
+                SimDataDTO simdata = new SimDataDTO();
                 simdata.setRecord(LocalDate.now());
                 simdata.setScore(commonScore[1]);
                 simdata.setMarket(market);
@@ -598,7 +585,7 @@ public class Sim {
             if (!b) {
                 return;
             }
-            SimDataItem simdata = new SimDataItem();
+            SimDataDTO simdata = new SimDataDTO();
             simdata.setRecord(LocalDate.now());
             simdata.setScore(min);
             simdata.setMarket(market);

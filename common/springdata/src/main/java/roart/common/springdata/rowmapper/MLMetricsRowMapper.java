@@ -3,19 +3,15 @@ package roart.common.springdata.rowmapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import java.util.Date;
-
 import org.springframework.jdbc.core.RowMapper;
 
-import roart.common.model.MLMetricsItem;
+import roart.common.model.MLMetricsDTO;
 import roart.common.util.TimeUtil;
 
-import org.springframework.jdbc.core.RowMapper;
-
-public class MLMetricsRowMapper implements RowMapper<MLMetricsItem>{
+public class MLMetricsRowMapper implements RowMapper<MLMetricsDTO>{
     @Override
-    public MLMetricsItem mapRow(ResultSet rs, int rowNum) throws SQLException {
-        MLMetricsItem item = new MLMetricsItem();
+    public MLMetricsDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+        MLMetricsDTO item = new MLMetricsDTO();
         item.setRecord(TimeUtil.convertDate(rs.getDate("record")));
         item.setDate(TimeUtil.convertDate(rs.getDate("date")));
         item.setMarket(rs.getString("market"));

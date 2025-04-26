@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import roart.common.model.MetaItem;
+import roart.common.model.MetaDTO;
 import roart.common.model.MyDataSource;
-import roart.common.model.StockItem;
+import roart.common.model.StockDTO;
 import roart.db.spring.DbSpringDS;
 import roart.iclij.config.IclijConfig;
 
@@ -22,11 +22,11 @@ public class DbDao {
         this.dataSource = dataSource;
     }
     
-    public List<StockItem> getAll(String type, String language) throws Exception {
+    public List<StockDTO> getAll(String type, String language) throws Exception {
         return dataSource.getAll(language, iclijConfig, false); // TODO bool
     }
 
-    public List<StockItem> getAll(String market, IclijConfig conf, boolean disableCache) throws Exception {
+    public List<StockDTO> getAll(String market, IclijConfig conf, boolean disableCache) throws Exception {
         return dataSource.getAll(market, iclijConfig, disableCache);      
     }
 
@@ -38,11 +38,11 @@ public class DbDao {
         return dataSource.getMarkets();
     }
     
-    public List<MetaItem> getMetas() throws Exception {
+    public List<MetaDTO> getMetas() throws Exception {
         return dataSource.getMetas();
     }
     
-    public MetaItem getById(String market, IclijConfig conf) throws Exception {
+    public MetaDTO getById(String market, IclijConfig conf) throws Exception {
         return dataSource.getById(market, conf);
     }
 }
