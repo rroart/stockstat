@@ -79,7 +79,7 @@ public class CoreEvolutionService {
         log.info("mydate {}", conf.getDays());
         EvolutionConfig evolutionConfig = JsonUtil.convertnostrip(conf.getEvolveIndicatorrecommenderEvolutionConfig(), EvolutionConfig.class);
     
-        StockData stockData = new Extract(io.getDataSource()).getStockData(conf, true);
+        StockData stockData = new Extract(io.getDbDao()).getStockData(conf, true);
         if (stockData == null) {
             return result;
         }

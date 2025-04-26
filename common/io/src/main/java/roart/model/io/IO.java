@@ -4,20 +4,17 @@ import org.apache.curator.framework.CuratorFramework;
 
 import roart.common.communication.factory.CommunicationFactory;
 import roart.common.inmemory.factory.InmemoryFactory;
-import roart.common.model.MyDataSource;
 import roart.common.webflux.WebFluxUtil;
+import roart.db.dao.DbDao;
 import roart.db.dao.DbDao;
 import roart.db.dao.IclijDbDao;
 import roart.filesystem.FileSystemDao;
-import roart.iclij.config.IclijConfig;
 
 public class IO {
     private IclijDbDao idbDao;
 
     private DbDao dbDao;
 
-    private MyDataSource dataSource;
-    
     private WebFluxUtil webFluxUtil;
     
     private FileSystemDao fileSystemDao;
@@ -28,12 +25,11 @@ public class IO {
     
     private CuratorFramework curatorClient;
  
-    public IO(IclijDbDao idbDao, DbDao dbDao, MyDataSource dataSource, WebFluxUtil webFluxUtil,
-            FileSystemDao fileSystemDao, InmemoryFactory inmemoryFactory, CommunicationFactory communicationFactory, CuratorFramework curatorClient) {
+    public IO(IclijDbDao idbDao, DbDao dbDao, WebFluxUtil webFluxUtil, FileSystemDao fileSystemDao,
+            InmemoryFactory inmemoryFactory, CommunicationFactory communicationFactory, CuratorFramework curatorClient) {
         super();
         this.idbDao = idbDao;
         this.dbDao = dbDao;
-        this.dataSource = dataSource;
         this.webFluxUtil = webFluxUtil;
         this.fileSystemDao = fileSystemDao;
         this.inmemoryFactory = inmemoryFactory;
@@ -55,14 +51,6 @@ public class IO {
 
     public void setDbDao(DbDao dbDao) {
         this.dbDao = dbDao;
-    }
-
-    public MyDataSource getDataSource() {
-        return dataSource;
-    }
-
-    public void setDataSource(MyDataSource dataSource) {
-        this.dataSource = dataSource;
     }
 
     public WebFluxUtil getWebFluxUtil() {

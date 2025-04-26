@@ -62,10 +62,10 @@ import roart.iclij.service.IclijServiceResult;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
-import roart.spark.MLClassifySparkAccess;
-import roart.ml.common.MLClassifyAccess;
+import roart.spark.MLClassifySparkDS;
+import roart.ml.common.MLClassifyDS;
 import roart.ml.model.LearnTestClassify;
-import roart.ml.model.LearnTestClassifyAccess;
+import roart.ml.model.LearnTestClassifyDS;
 import roart.ml.model.LearnTestClassifyResult;
 import roart.ml.common.MLClassifyModel;
 import roart.spark.MLClassifySparkModel;
@@ -98,11 +98,11 @@ public class ServiceController implements CommandLineRunner {
 
     @RequestMapping(value = "/" + EurekaConstants.CLEAN,
             method = RequestMethod.POST)
-    public LearnTestClassifyResult clean(@RequestBody LearnTestClassifyAccess param)
+    public LearnTestClassifyResult clean(@RequestBody LearnTestClassifyDS param)
             throws Exception {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
         try {
-            MLClassifyAccess access = new MLClassifySparkAccess(iclijConfig);            
+            MLClassifyDS access = new MLClassifySparkDS(iclijConfig);            
             access.clean();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -113,13 +113,13 @@ public class ServiceController implements CommandLineRunner {
 
     @RequestMapping(value = "/" + EurekaConstants.LEARNTESTCLASSIFY,
             method = RequestMethod.POST)
-    public LearnTestClassifyResult learntestclassify(@RequestBody LearnTestClassifyAccess param)
+    public LearnTestClassifyResult learntestclassify(@RequestBody LearnTestClassifyDS param)
             throws Exception {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
         try {
             //param.model.setConf(iclijConfig);
             MLClassifyModel model = getModel(param.modelid);
-            MLClassifyAccess access = new MLClassifySparkAccess(iclijConfig);            
+            MLClassifyDS access = new MLClassifySparkDS(iclijConfig);            
             result = access.learntestclassify(param.nnconfigs, null, param.learnTestMap, model, param.size, param.outcomes, param.classifyMap, param.shortMap, param.path, param.filename, param.neuralnetcommand, param.mlmeta, param.classify);
             
             //result.setConfigData(iclijConfig.getConfigData());

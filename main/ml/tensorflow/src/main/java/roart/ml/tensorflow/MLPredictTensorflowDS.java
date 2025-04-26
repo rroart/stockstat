@@ -16,12 +16,12 @@ import roart.common.ml.NeuralNetConfigs;
 import roart.common.webflux.WebFluxUtil;
 import roart.ml.model.LearnTestPredict;
 import roart.ml.model.LearnTestPredictResult;
-import roart.ml.model.MLPredictAccess;
+import roart.ml.model.MLPredictDS;
 import roart.ml.model.MLPredictModel;
 import roart.pipeline.common.predictor.AbstractPredictor;
 
 @Deprecated
-public class MLPredictTensorflowAccess extends MLPredictAccess {
+public class MLPredictTensorflowDS extends MLPredictDS {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -31,7 +31,7 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
     
     private WebFluxUtil webFluxUtil = new WebFluxUtil();
     
-    public MLPredictTensorflowAccess(IclijConfig conf) {
+    public MLPredictTensorflowDS(IclijConfig conf) {
         this.conf = conf;
         findModels();
         tensorflowServer = conf.getTensorflowServer();

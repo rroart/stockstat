@@ -161,6 +161,7 @@ public class ServiceController {
 
     @RequestMapping(value = "/" + EurekaConstants.GETVERIFY,
             method = RequestMethod.POST)
+    @Deprecated
     public IclijServiceResult getVerify(@RequestBody IclijServiceParam param)
             throws Exception {
         return ServiceUtil.getVerify(iclijConfig, new ComponentInput(param.getConfigData(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()), io);
@@ -168,6 +169,7 @@ public class ServiceController {
 
     @RequestMapping(value = "/findprofit",
             method = RequestMethod.POST)
+    @Deprecated
     public IclijServiceResult getFindProfitMarket(@RequestBody IclijServiceParam param)
             throws Exception {
         //MainAction.goals.add(new FindProfitAction());

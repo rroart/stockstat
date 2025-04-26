@@ -1,6 +1,7 @@
 package roart.iclij.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -48,8 +49,9 @@ import roart.common.util.MemUtil;
 import roart.common.util.ServiceConnectionUtil;
 import roart.common.webflux.WebFluxUtil;
 import roart.db.dao.IclijDbDao;
-import roart.db.spring.DbSpringAccess;
+import roart.db.spring.DbSpringDS;
 import roart.filesystem.FileSystemDao;
+import roart.iclij.config.ConfigUtils;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.model.WebData;
@@ -343,8 +345,16 @@ public class ControlService {
         IclijServiceResult result;
         
         // TODO retry or queue
+        // TODO cache
         if (useMl) {
             // todo send queue ml
+            /*
+            Map<String, Object> valueMap = new HashMap<>(conf.getConfigData().getConfigValueMap());
+            valueMap.keySet().removeAll(new ConfigUtils().getMLComponentConfigList());
+            String key2 = CacheConstants.CONTENT + coremlconf.getConfigData().getMarket() + coremlconf.getConfigData().getMlmarket() + coremlconf.getConfigData().getDate() + valueMap);
+            log.info("Content key {}", key2.hashCode());
+            */
+            
             result = io.getWebFluxUtil().sendMMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
         } else {
             // todo send queue core
@@ -499,6 +509,7 @@ public class ControlService {
         neuralnetcommand.setMldynamic(true);
         param.setNeuralnetcommand(neuralnetcommand);
         // TODO retry or queue
+        // TODO cache not
         IclijServiceResult result = io.getWebFluxUtil().sendMMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVENN);
         
         if (doSet) {

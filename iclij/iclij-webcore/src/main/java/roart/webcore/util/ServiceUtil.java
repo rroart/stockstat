@@ -627,6 +627,7 @@ public class ServiceUtil {
         return subLists;
     }
 
+    @Deprecated
     public static IclijServiceResult getVerify(IclijConfig iclijConfig, ComponentInput componentInput, IO io) throws Exception {
         String type = "Verify";
         //componentInput.setDoSave(componentInput.getConfig().wantVerificationSave());
@@ -639,6 +640,8 @@ public class ServiceUtil {
         return result;
     }
 
+    // TODO use some parts of rerun for sim?
+    @Deprecated
     private static IclijServiceResult getFindProfitVerify(IclijConfig iclijConfig, ComponentInput componentInput, String type, int verificationdays, boolean rerun, IO io) throws Exception {
 
         componentInput.setDoSave(iclijConfig.wantsFindProfitRerunSave());
@@ -1097,6 +1100,7 @@ public class ServiceUtil {
     }
      */
 
+    @Deprecated
     public static IclijServiceResult getFindProfit(IclijConfig iclijConfig, ComponentInput componentInput, IO io) throws Exception {
         String type = "FindProfit";
         int days = 0;  // config.verificationDays();

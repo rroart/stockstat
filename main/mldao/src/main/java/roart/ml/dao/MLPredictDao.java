@@ -12,10 +12,10 @@ import roart.common.config.MLConstants;
 import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.ml.model.LearnTestPredictResult;
-import roart.ml.model.MLPredictAccess;
+import roart.ml.model.MLPredictDS;
 import roart.ml.model.MLPredictModel;
 //import roart.ml.spark.MLPredictSparkAccess;
-import roart.ml.tensorflow.MLPredictTensorflowAccess;
+import roart.ml.tensorflow.MLPredictTensorflowDS;
 import roart.pipeline.common.predictor.AbstractPredictor;
 
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 public class MLPredictDao {
     private static Logger log = LoggerFactory.getLogger(MLPredictDao.class);
 
-    private MLPredictAccess access = null;
+    private MLPredictDS access = null;
 
     public MLPredictDao(String instance, IclijConfig conf) {
         instance(instance, conf);
@@ -42,7 +42,7 @@ public class MLPredictDao {
                 access = null; //new MLPredictSparkAccess(conf);
             }
             if (type.equals(MLConstants.TENSORFLOW)) {
-                access = new MLPredictTensorflowAccess(conf);
+                access = new MLPredictTensorflowDS(conf);
             }
         }
     }

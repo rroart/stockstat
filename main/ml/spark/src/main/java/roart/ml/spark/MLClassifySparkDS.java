@@ -4,29 +4,28 @@ import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 
-import roart.ml.common.MLClassifyAccess;
+import roart.ml.common.MLClassifyDS;
 import roart.common.webflux.WebFluxUtil;
 import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.ml.model.LearnTestClassifyResult;
 import roart.pipeline.common.aggregate.Aggregator;
-import roart.ml.common.MLClassifyModel;
 import roart.common.config.MLConstants;
 import roart.common.constants.EurekaConstants;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
 import roart.ml.model.LearnClassify;
 import roart.ml.model.LearnTestClassify;
-import roart.ml.model.LearnTestClassifyAccess;
+import roart.ml.model.LearnTestClassifyDS;
 
-public class MLClassifySparkAccess extends MLClassifyAccess {
+public class MLClassifySparkDS extends MLClassifyDS {
 
     private IclijConfig conf;
 
     private WebFluxUtil webFluxUtil = new WebFluxUtil();
     
-    public MLClassifySparkAccess(IclijConfig conf) {
+    public MLClassifySparkDS(IclijConfig conf) {
         this.conf = conf;
         findModels();   
     }
@@ -68,7 +67,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
 
     @Override
     public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, List<LearnClassify> learnTestMap, MLClassifyModel model, int size, int outcomes, List<LearnClassify> classifyMap, Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta, boolean classify) {
-        LearnTestClassifyAccess param = new LearnTestClassifyAccess();
+        LearnTestClassifyDS param = new LearnTestClassifyDS();
         param.nnconfigs = nnconfigs;
         param.learnTestMap = learnTestMap;
         param.modelid = model.getId();
@@ -97,7 +96,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
 
     @Override
     public void clean() {
-        LearnTestClassifyResult result = webFluxUtil.sendSMe(LearnTestClassifyResult.class, new LearnTestClassifyAccess(), EurekaConstants.CLEAN);
+        LearnTestClassifyResult result = webFluxUtil.sendSMe(LearnTestClassifyResult.class, new LearnTestClassifyDS(), EurekaConstants.CLEAN);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package roart.ml.pytorch;
+package roart.ml.tensorflow;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,26 +7,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang3.tuple.MutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.ResourceAccessException;
 
-import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
-import roart.common.ml.PytorchCNNConfig;
-import roart.common.ml.PytorchCNN2Config;
-import roart.common.ml.PytorchGRUConfig;
-import roart.common.ml.PytorchLSTMConfig;
-import roart.common.ml.PytorchMLPConfig;
-import roart.common.ml.PytorchRNNConfig;
+import roart.common.ml.TensorflowCNNConfig;
+import roart.common.ml.TensorflowDNNConfig;
+import roart.common.ml.TensorflowGRUConfig;
+import roart.common.ml.TensorflowLICConfig;
+import roart.common.ml.TensorflowLIRConfig;
+import roart.common.ml.TensorflowLSTMConfig;
+import roart.common.ml.TensorflowMLPConfig;
+import roart.common.ml.TensorflowRNNConfig;
 import roart.common.util.InetUtil;
 import roart.common.webflux.WebFluxUtil;
-import roart.ml.common.MLClassifyAccess;
+import roart.ml.common.MLClassifyDS;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
 import roart.ml.model.LearnClassify;
@@ -34,51 +34,59 @@ import roart.ml.model.LearnTestClassify;
 import roart.ml.model.LearnTestClassifyResult;
 import roart.pipeline.common.aggregate.Aggregator;
 
-public class MLClassifyPytorchAccess extends MLClassifyAccess {
+public class MLClassifyTensorflowDS extends MLClassifyDS {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private IclijConfig conf;
 
-    private List<String> pytorchServers;
+    private List<String> tensorflowServers;
 
     private List<MLClassifyModel>  mymodels;
 
     private WebFluxUtil webFluxUtil = new WebFluxUtil();
     
-    public MLClassifyPytorchAccess(IclijConfig conf) {
+    public MLClassifyTensorflowDS(IclijConfig conf) {
         this.conf = conf;
         findModels();
-        String serverString = conf.getPytorchServer();
-        pytorchServers = new InetUtil().getServers(serverString);
+        String serverString = conf.getTensorflowServer();
+        tensorflowServers = new InetUtil().getServers(serverString);
     }
 
     private void findModels() {
         models = new ArrayList<>();
-        if (conf.wantPytorchMLP()) {
-            MLClassifyModel model = new MLClassifyPytorchMLPModel(conf);
+        if (conf.wantTensorflowDNN()) {
+            MLClassifyModel model = new MLClassifyTensorflowDNNModel(conf);
             models.add(model);
         }
-        if (conf.wantPytorchCNN()) {
-            MLClassifyModel model = new MLClassifyPytorchCNNModel(conf);
+        if (conf.wantTensorflowLIC()) {
+            MLClassifyModel model = new MLClassifyTensorflowLICModel(conf);
             models.add(model);
-        }
-        if (conf.wantPytorchCNN2()) {
-            MLClassifyModel model = new MLClassifyPytorchCNN2Model(conf);
+        }	    
+        if (conf.wantTensorflowMLP()) {
+            MLClassifyModel model = new MLClassifyTensorflowMLPModel(conf);
             models.add(model);
-        }
-        if (conf.wantPytorchRNN()) {
-            MLClassifyModel model = new MLClassifyPytorchRNNModel(conf);
+        }           
+        if (conf.wantTensorflowCNN()) {
+            MLClassifyModel model = new MLClassifyTensorflowCNNModel(conf);
             models.add(model);
-        }	
-        if (conf.wantPytorchLSTM()) {
-            MLClassifyModel model = new MLClassifyPytorchLSTMModel(conf);
+        }           
+        if (conf.wantTensorflowCNN2()) {
+            MLClassifyModel model = new MLClassifyTensorflowCNN2Model(conf);
             models.add(model);
-        }       
-        if (conf.wantPytorchGRU()) {
-            MLClassifyModel model = new MLClassifyPytorchGRUModel(conf);
+        }           
+        if (conf.wantTensorflowRNN()) {
+            MLClassifyModel model = new MLClassifyTensorflowRNNModel(conf);
             models.add(model);
-        }       
+        }           
+        if (conf.wantTensorflowGRU()) {
+            MLClassifyModel model = new MLClassifyTensorflowGRUModel(conf);
+            models.add(model);
+        }           
+        if (conf.wantTensorflowLSTM()) {
+            MLClassifyModel model = new MLClassifyTensorflowLSTMModel(conf);
+            models.add(model);
+        }           
     }
 
     @Override
@@ -98,20 +106,24 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
             return mymodels;
         }
         mymodels = new ArrayList<>();
-        if (model.equals(MLConstants.MLP) && conf.wantPredictorPytorchMLP()) {
-            MLClassifyModel amodel = new MLClassifyPytorchMLPModel(conf);
+        if (model.equals(MLConstants.LIR) && conf.wantPredictorTensorflowLIR()) {
+            MLClassifyModel amodel = new MLClassifyTensorflowLIRModel(conf);
             mymodels.add(amodel);
         }           
-        if (model.equals(MLConstants.RNN) && conf.wantPredictorPytorchRNN()) {
-            MLClassifyModel amodel = new MLClassifyPytorchRNNModel(conf);
+        if (model.equals(MLConstants.MLP) && conf.wantPredictorTensorflowMLP()) {
+            MLClassifyModel amodel = new MLClassifyTensorflowMLPModel(conf);
             mymodels.add(amodel);
         }           
-        if (model.equals(MLConstants.LSTM) && conf.wantPredictorPytorchLSTM()) {
-            MLClassifyModel amodel = new MLClassifyPytorchLSTMModel(conf);
+        if (model.equals(MLConstants.RNN) && conf.wantPredictorTensorflowRNN()) {
+            MLClassifyModel amodel = new MLClassifyTensorflowRNNModel(conf);
             mymodels.add(amodel);
         }           
-        if (model.equals(MLConstants.GRU) && conf.wantPredictorPytorchGRU()) {
-            MLClassifyModel amodel = new MLClassifyPytorchGRUModel(conf);
+        if (model.equals(MLConstants.LSTM) && conf.wantPredictorTensorflowLSTM()) {
+            MLClassifyModel amodel = new MLClassifyTensorflowLSTMModel(conf);
+            mymodels.add(amodel);
+        }           
+        if (model.equals(MLConstants.GRU) && conf.wantPredictorTensorflowGRU()) {
+            MLClassifyModel amodel = new MLClassifyTensorflowGRUModel(conf);
             mymodels.add(amodel);
         }           
         return mymodels;
@@ -125,15 +137,21 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         Object[] cat = new Object[map.size()];
         getTrainingSet(map, objobj, cat);
         LearnTestClassify param = new LearnTestClassify();
-        //param.setPytorchDNNConfig(nnconfigs.getPytorchDNNConfig());
-        //param.setPytorchLConfig(nnconfigs.getPytorchLConfig());
+        param.setTensorflowDNNConfig(nnconfigs.getTensorflowConfig().getTensorflowDNNConfig());
+        param.setTensorflowLICConfig(nnconfigs.getTensorflowConfig().getTensorflowLICConfig());
+        param.setTensorflowLIRConfig(nnconfigs.getTensorflowConfig().getTensorflowLIRConfig());
+        param.setTensorflowMLPConfig(nnconfigs.getTensorflowConfig().getTensorflowMLPConfig());
+        param.setTensorflowCNNConfig(nnconfigs.getTensorflowConfig().getTensorflowCNNConfig());
+        param.setTensorflowRNNConfig(nnconfigs.getTensorflowConfig().getTensorflowRNNConfig());
+        param.setTensorflowGRUConfig(nnconfigs.getTensorflowConfig().getTensorflowGRUConfig());
+        param.setTensorflowLSTMConfig(nnconfigs.getTensorflowConfig().getTensorflowLSTMConfig());
         param.setTrainingarray(objobj);
         param.setTrainingcatarray(cat);
         param.setModelInt(model.getId());
         param.setSize(size);
         param.setClasses(classes);
         log.info("evalin {} {} {}", param.getModelInt());
-        LearnTestClassify test = webFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServers.get(0) + "/learntest");
+        LearnTestClassify test = webFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServers.get(0) + "/learntest");
         return test.getAccuracy();
     }
 
@@ -163,7 +181,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         LearnTestClassify param = new LearnTestClassify();
         param.setModelInt(modelInt);
         log.info("evalout {}", modelInt);
-        LearnTestClassify test = webFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServers.get(0) + "/eval");
+        LearnTestClassify test = webFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServers.get(0) + "/eval");
         return test.getAccuracy();
     }
 
@@ -192,7 +210,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         }
         LearnTestClassify ret = null;
         try {
-            ret = webFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServers.get(0) + "/classify");
+            ret = webFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServers.get(0) + "/classify");
         } catch (Exception e) {
             log.error("Exception", e);
         }
@@ -208,7 +226,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
             String id = retList.get(j);
             if (classify) {
                 Double acat = Double.valueOf((Integer) cat[j]);
-                Double aprob = null; // (Double) prob[j];
+                Double aprob = (Double) prob[j];
                 retMap.put(id, new Double[]{ acat, aprob });
             } else {
                 ArrayList list = (ArrayList) cat[j];
@@ -238,12 +256,12 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
 
     @Override
     public String getName() {
-        return MLConstants.PYTORCH;
+        return MLConstants.TENSORFLOW;
     }
 
     @Override
     public String getShortName() {
-        return MLConstants.PT;
+        return MLConstants.TF;
     }
 
     @Override
@@ -265,10 +283,10 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         param.setPath(path);
         param.setFilename(filename);
         param.setNeuralnetcommand(neuralnetcommand);
-        for (String pytorchServer : pytorchServers) {
+        for (String tensorflowServer : tensorflowServers) {
         try {
             LearnTestClassify ret = null;
-            ret = webFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/filename");
+            ret = webFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/filename");
             boolean exists = ret.getExists();
             if (!exists && (!neuralnetcommand.isMldynamic() && neuralnetcommand.isMlclassify())) {
                 return result;
@@ -287,13 +305,13 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
             nnconfigs = new NeuralNetConfigs();
         }
         nnconfigs.getAndSet(config);
-        NeuralNetConfig m = ((MLClassifyPytorchModel) model).getModelAndSet(nnconfigs, param);
+        NeuralNetConfig m = ((MLClassifyTensorflowModel) model).getModelAndSet(nnconfigs, param);
         param.setTrainingarray(trainingArray);
         param.setClassify(classify);
-        if (classify) {
-          param.setTrainingcatarray(trainingCatArray);
+          if (classify) {
+            param.setTrainingcatarray(trainingCatArray);
         } else {
-          param.setTrainingcatarray(new Object[0]);
+            param.setTrainingcatarray(new Object[0]);
         }
         param.setModelInt(model.getId());
         param.setSize(size);
@@ -308,20 +326,27 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
             }
         }
         LearnTestClassify ret = null;
-        for (String pytorchServer : pytorchServers) {
+        for (String tensorflowServer : tensorflowServers) {
         try {
-            ret = webFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/learntestclassify");
+            ret = webFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/learntestclassify");
             boolean exception = ret.getException() != null && ret.getException();
             boolean gpu = ret.getGpu() != null && ret.getGpu();
+            boolean cudnn = ret.getCudnn() != null && ret.getCudnn();
             boolean memory = ret.getMemory() != null && ret.getMemory();
             if (exception) {
-                if (gpu && memory) {
-                    log.error("CUDA out of memory for {}", filename);
-                } else {
-                    break;
+                if (gpu) { 
+                    if (memory) {
+                        log.error("CUDA out of memory for {}", filename);
+                        continue;
+                    }
+                    if (cudnn) {
+                        log.error("CUDNN initialization for {}", filename);
+                        continue;
+                    }
                 }
+                log.error("Tensorflow aborted?");
             } else {
-                log.info("Completed {} on {}", filename, pytorchServer);
+                log.info("Completed {} on {}", filename, tensorflowServer);
                 break;
             }
         } catch (ResourceAccessException e) {
@@ -361,25 +386,32 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
             nnconfigs = new NeuralNetConfigs();
         }
         nnconfigs.getAndSet(config);
-        NeuralNetConfig m = ((MLClassifyPytorchModel) model).getModelAndSet(nnconfigs, param);
+        NeuralNetConfig m = ((MLClassifyTensorflowModel) model).getModelAndSet(nnconfigs, param);
         param.setModelInt(model.getId());
         param.setDataset(dataset);
         param.setZero(true);
         LearnTestClassify ret = null;
-        for (String pytorchServer : pytorchServers) {
+        for (String tensorflowServer : tensorflowServers) {
         try {
-            ret = webFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/dataset");
+            ret = webFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/dataset");
             boolean exception = ret.getException() != null && ret.getException();
             boolean gpu = ret.getGpu() != null && ret.getGpu();
+            boolean cudnn = ret.getCudnn() != null && ret.getCudnn();
             boolean memory = ret.getMemory() != null && ret.getMemory();
             if (exception) {
-                if (gpu && memory) {
-                    log.error("CUDA out of memory for {}", dataset);
-                } else {
-                    break;
+                if (gpu) { 
+                    if (memory) {
+                        log.error("CUDA out of memory for {}", dataset);
+                        continue;
+                    }
+                    if (cudnn) {
+                        log.error("CUDNN initialization for {}", dataset);
+                        continue;
+                    }
                 }
+                log.error("Tensorflow aborted?");
             } else {
-                log.info("Completed {} on {}", dataset, pytorchServer);
+                log.info("Completed {} on {}", dataset, tensorflowServer);
                 break;
             }
         } catch (ResourceAccessException e) {

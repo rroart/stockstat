@@ -29,7 +29,7 @@ import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.webflux.WebFluxUtil;
 import roart.common.model.ContItem;
-import roart.ml.common.MLClassifyAccess;
+import roart.ml.common.MLClassifyDS;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
 import roart.ml.model.LearnClassify;
@@ -38,7 +38,7 @@ import roart.ml.model.LearnTestClassifyResult;
 import roart.pipeline.common.aggregate.Aggregator;
 import roart.db.dao.IclijDbDao;
 
-public class MLClassifyGemAccess extends MLClassifyAccess {
+public class MLClassifyGemDS extends MLClassifyDS {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -48,7 +48,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
 
     private WebFluxUtil webFluxUtil = new WebFluxUtil();
     
-    public MLClassifyGemAccess(IclijConfig conf) {
+    public MLClassifyGemDS(IclijConfig conf) {
         this.conf = conf;
         findModels();
         gemServer = conf.getGEMServer();
@@ -353,7 +353,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         long millis0 = System.currentTimeMillis();
         for (ContItem cont : newConts) {
             try {
-                IclijDbDao.badAccess.save(cont);
+                IclijDbDao.badDS.save(cont);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
@@ -365,7 +365,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         long millis0 = System.currentTimeMillis();
         List<ContItem> conts = null;
         try {
-             conts = IclijDbDao.badAccess.getAllConts();
+             conts = IclijDbDao.badDS.getAllConts();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

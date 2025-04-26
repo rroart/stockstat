@@ -39,6 +39,8 @@ import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
 import roart.constants.IclijConstants;
+import roart.db.dao.CoreDataSource;
+import roart.db.dao.DbDao;
 import roart.db.dao.IclijDbDao;
 import roart.filesystem.FileSystemDao;
 import roart.iclij.config.AutoSimulateInvestConfig;
@@ -54,6 +56,7 @@ import roart.model.io.IO;
 import roart.queue.PipelineThread;
 import roart.testdata.TestConstants;
 import roart.common.model.IncDecItem;
+import roart.common.model.MyDataSource;
 import roart.common.model.SimDataItem;
 import roart.testdata.TestData;
 
@@ -75,12 +78,12 @@ public class InmemoryPipelineTest {
     // no autowiring
     IclijConfig conf = null;
    
-    TestDataSources dataSource;
+    MyDataSource dataSource;
     
     private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
 
-    IclijDbDao dbDao = mock(IclijDbDao.class);
-
+    DbDao dbDao;
+    
     WebFluxUtil webFluxUtil;
     
     FileSystemDao fileSystemDao;
@@ -119,7 +122,10 @@ public class InmemoryPipelineTest {
         TestDataSource dataSource1 = new TestDataSource(conf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), market, 26, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null);
         TestDataSource dataSource2 = new TestDataSource(conf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), TestConstants.MARKET2, 20, false, Constants.PRICECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, "impid");
         dataSource = new TestDataSources(List.of(dataSource1, dataSource2));
-        webFluxUtil = new TestWebFluxUtil(conf, dataSource);
+
+        dbDao = new DbDao(iconf, dataSource);
+        
+        webFluxUtil = new TestWebFluxUtil(conf, null);
         parameters = new Parameters();
         parameters.setThreshold(1.0);
         parameters.setFuturedays(10);
@@ -135,7 +141,7 @@ public class InmemoryPipelineTest {
         
         CuratorFramework curatorClient = new TestCuratorFramework();
         
-        io = new IO(iclijDbDao, null, dataSource, webFluxUtil, fileSystemDao, inmemoryFactory, communicationFactory, curatorClient);
+        io = new IO(iclijDbDao, dbDao, webFluxUtil, fileSystemDao, inmemoryFactory, communicationFactory, curatorClient);
         ((TestWebFluxUtil)webFluxUtil).setIo(io);
         ((TestCommunicationFactory)communicationFactory).setIo(io);
         ((TestCommunicationFactory)communicationFactory).setConfig(iconf);

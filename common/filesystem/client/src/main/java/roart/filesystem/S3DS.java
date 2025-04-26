@@ -3,9 +3,9 @@ package roart.filesystem;
 import roart.common.config.ConfigData;
 import roart.common.constants.EurekaConstants;
 
-public class S3Access extends FileSystemAccess{
+public class S3DS extends FileSystemDS {
 
-    public S3Access(ConfigData conf) {
+    public S3DS(ConfigData conf) {
 	super(conf);
     }
     

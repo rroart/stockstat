@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
 import roart.common.constants.Constants;
@@ -13,7 +16,8 @@ import roart.common.model.MyDataSource;
 import roart.common.model.StockItem;
 import roart.iclij.config.IclijConfig;
 
-public class TestDataSources extends MyDataSource{
+public class TestDataSources extends MyDataSource {
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private List<TestDataSource> testDataSources;
     
@@ -58,6 +62,29 @@ public class TestDataSources extends MyDataSource{
             log.info("Cache disabled for {}", key.hashCode());
         }
         return list;
+    }
+
+    @Override
+    public List<StockItem> getAll(String type, String language) throws Exception {
+        log.error("Should not be here");
+        return null;
+    }
+
+    @Override
+    public List<String> getDates(String market, IclijConfig conf) throws Exception {
+        log.error("Should not be here");
+        return null;
+    }
+
+    @Override
+    public List<String> getMarkets() throws Exception {
+        log.error("Should not be here");
+        return null;
+    }
+
+    @Override
+    public MetaItem getById(String market, IclijConfig conf) throws Exception {
+        return metas.stream().filter(d -> d.getMarketid().equals(market)).findFirst().orElse(null);
     }
 
 }

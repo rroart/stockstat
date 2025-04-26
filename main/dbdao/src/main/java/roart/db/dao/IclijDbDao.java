@@ -23,9 +23,9 @@ import roart.common.model.RelationItem;
 import roart.common.model.SimDataItem;
 import roart.common.model.TimingBLItem;
 import roart.common.model.TimingItem;
-import roart.db.common.DbAccess;
-import roart.db.hibernate.DbHibernateAccess;
-import roart.db.spring.DbSpringAccess;
+import roart.db.common.DbDS;
+import roart.db.hibernate.DbHibernateDS;
+import roart.db.spring.DbSpringDS;
 
 import org.springframework.stereotype.Component;
 import roart.iclij.config.IclijConfig;
@@ -35,24 +35,24 @@ public class IclijDbDao {
     private static Logger log = LoggerFactory.getLogger(IclijDbDao.class);
 
     // for gem
-    public static DbAccess badAccess;
+    public static DbDS badDS;
     
-    private DbAccess access;
+    private DbDS access;
 
-    DbAccess dbSpringAccess;
+    DbDS dbSpringDS;
 
     @Autowired
-    public IclijDbDao(IclijConfig iclijConfig, DbAccess dbSpringAccess) {
+    public IclijDbDao(IclijConfig iclijConfig, DbDS dbSpringDS) {
         boolean hibernate = iclijConfig.wantDbHibernate();
 
-        this.dbSpringAccess = dbSpringAccess;
+        this.dbSpringDS = dbSpringDS;
         if (hibernate) {
-            access = new DbHibernateAccess();
+            access = new DbHibernateDS();
         } else {
-            access = dbSpringAccess;
+            access = dbSpringDS;
         }
         log.info("Hibernate enabled: {}", hibernate);
-        badAccess = access;
+        badDS = access;
     }
     
     @Deprecated

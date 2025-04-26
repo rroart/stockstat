@@ -33,7 +33,7 @@ public class FileSystemDao {
 
     private Logger log = LoggerFactory.getLogger(FileSystemDao.class);
 
-    private FileSystemAccess filesystemJpa = null;
+    private FileSystemDS filesystemJpa = null;
 
     //private Map<String, MyServer> myservers = new HashMap<>();
 
@@ -148,10 +148,10 @@ public class FileSystemDao {
     }
 
     // TODO make this OO
-    private FileSystemAccess getFileSystemAccess(FileObject f) {
+    private FileSystemDS getFileSystemAccess(FileObject f) {
         if (f == null) {
             log.error("f null");
-            return new LocalFileSystemAccess(conf.getConfigData());
+            return new LocalFileSystemDS(conf.getConfigData());
         }
         /*
         if (f.fs == null) {
@@ -169,7 +169,7 @@ public class FileSystemDao {
         return getFileSystemAccess(f.location, f.object);
     }
     
-    private FileSystemAccess getFileSystemAccess(Location fs, String path) {
+    private FileSystemDS getFileSystemAccess(Location fs, String path) {
         Location fs2 = new Location(fs.nodename, fs.fs, fs.extra);
         if (fs2.fs == null || fs2.fs.isEmpty()) {
             fs2.fs = FileSystemConstants.LOCALTYPE;
@@ -179,7 +179,7 @@ public class FileSystemDao {
             log.error("URL null for {} {}", fs, path);
             return null;
         }
-        FileSystemAccess access = new FileSystemAccess(conf.getConfigData());
+        FileSystemDS access = new FileSystemDS(conf.getConfigData());
         access.constructor("http://" + url + "/");
         return access;
     }

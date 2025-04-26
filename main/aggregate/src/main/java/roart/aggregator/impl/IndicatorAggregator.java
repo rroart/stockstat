@@ -56,7 +56,7 @@ import roart.common.util.TimeUtil;
 import roart.executor.MyExecutors;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
-import roart.ml.common.MLClassifyAccess;
+import roart.ml.common.MLClassifyDS;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
 import roart.ml.dao.MLClassifyDao;

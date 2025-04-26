@@ -13,7 +13,7 @@ import roart.ml.model.LearnClassify;
 import roart.ml.model.LearnTestClassifyResult;
 import roart.pipeline.common.aggregate.Aggregator;
 
-public abstract class MLClassifyAccess {
+public abstract class MLClassifyDS {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 

@@ -39,26 +39,22 @@ public class Extract {
 
     private DbDao dbDao;
     
-    private MyDataSource dataSource;
-    
     public Extract(DbDao dbDao) {
         super();
         this.dbDao = dbDao;
     }
 
+    /*
     public Extract(MyDataSource dataSource) {
         super();
         this.dataSource = dataSource;
     }
+    */
     
     public StockData getStockData(IclijConfig conf, String market, boolean disableCache) {
         List<StockItem> stocks = null;
         try {
-            if (dbDao != null) {
-                stocks = dbDao.getAll(market, conf, disableCache);
-            } else {
-                stocks = dataSource.getAll(market, conf, disableCache);
-            }
+            stocks = dbDao.getAll(market, conf, disableCache);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -67,18 +63,10 @@ public class Extract {
         }
         log.info("stocks {}", stocks.size());
         String[] periodText;
-        if (dbDao != null) {
-            periodText = DbDaoUtil.getPeriodText(market, conf, dbDao);
-        } else {
-            periodText = this.getPeriodText(market, conf, dataSource);
-        }
+        periodText = DbDaoUtil.getPeriodText(market, conf, dbDao);
         MetaItem meta = null;
         try {
-            if (dbDao != null) {
-                meta = dbDao.getById(market, conf);
-            } else {
-                meta = dataSource.getById(market, conf);
-            }
+            meta = dbDao.getById(market, conf);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

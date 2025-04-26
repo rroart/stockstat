@@ -53,7 +53,7 @@ public class SimTest {
     public void before() {
         fileSystemDao = mock(FileSystemDao.class);
         doReturn("dummy.txt").when(fileSystemDao).writeFile(any(), any(), any(), any());
-        io = new IO(null, null, null, null, fileSystemDao, null, null, null);
+        io = new IO(null, null, null, fileSystemDao, null, null, null);
     }
  
     public SimTest() {

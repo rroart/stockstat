@@ -24,6 +24,7 @@ import roart.common.util.TimeUtil;
 import roart.common.constants.Constants;
 
 public class TestDataSource extends MyDataSource {
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private IclijConfig conf;
     private Date startDate;
@@ -102,5 +103,29 @@ public class TestDataSource extends MyDataSource {
     @Override
     public List<StockItem> getAll(String market, IclijConfig conf, boolean disableCache) {
         return stocks;
+    }
+
+    @Override
+    public List<StockItem> getAll(String type, String language) throws Exception {
+        log.error("Should not be here");
+        return null;
+    }
+
+    @Override
+    public List<String> getDates(String market, IclijConfig conf) throws Exception {
+        log.error("Should not be here");
+       return null;
+    }
+
+    @Override
+    public List<String> getMarkets() throws Exception {
+        log.error("Should not be here");
+        return null;
+    }
+
+    @Override
+    public MetaItem getById(String market, IclijConfig conf) throws Exception {
+        log.error("Should not be here");
+        return null;
     }
 }

@@ -637,7 +637,7 @@ public class IndicatorUtils {
     }
 
     private static int getExtraIndicatorsSize(List<AbstractIndicator> allIndicators, ExtraData extraData) throws Exception {
-        //DbAccess dbDao = DbDao.instance(conf);
+        //DbDS dbDao = DbDao.instance(conf);
         int size = 0;
         //Set<MarketStock> allMarketStocks = (Set<MarketStock>) extraData.extrareader.get(PipelineConstants.MARKETSTOCKS);
         for (AbstractIndicator indicator : allIndicators) {
@@ -915,6 +915,7 @@ public class IndicatorUtils {
         return stockDataMap;
     }
     
+/*
     public Map<String, StockData> getExtraStockDataMap(IclijConfig conf, MyDataSource dbDao,ExtraReader extraReader, boolean disableCache) {
         Map<String, StockData> stockDataMap;
         stockDataMap = new HashMap<>();
@@ -924,6 +925,7 @@ public class IndicatorUtils {
         }
         return stockDataMap;
     }
+   */
     
     public PipelineData getMetadata(IclijConfig conf, StockData stockData) {
         PipelineData singlePipelineData = new PipelineData();

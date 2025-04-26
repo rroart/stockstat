@@ -115,7 +115,7 @@ public class CoreControlService {
 
     public List<MetaItem> getMetas() {
         try {
-            return io.getDataSource().getMetas();
+            return io.getDbDao().getMetas();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -133,7 +133,7 @@ public class CoreControlService {
         // TODO pipeline
         try {
             Map<String, String> stockMap = new HashMap<>();
-            List<StockItem> stocks = io.getDataSource().getAll(market, conf, true);
+            List<StockItem> stocks = io.getDbDao().getAll(market, conf, true);
             stocks.remove(null);
             for (StockItem stock : stocks) {
                 String name = stock.getName();
@@ -180,14 +180,14 @@ public class CoreControlService {
         List<AbstractCategory> categories = new ArrayList<>();
         List<Aggregator> aggregates = new ArrayList<>();
         try {
-            StockData stockData = new Extract(io.getDataSource()).getStockData(conf, true);
+            StockData stockData = new Extract(io.getDbDao()).getStockData(conf, true);
             if (stockData == null) {
                 return new ArrayList<>();
             }
 
             IndicatorUtils iu = new IndicatorUtils();
             ExtraReader extraReader = new ExtraReader(conf, stockData.marketdatamap, 0, stockData);
-            Map<String, StockData> extraStockDataMap = new IndicatorUtils().getExtraStockDataMap(conf, io.getDataSource(), extraReader, true);
+            Map<String, StockData> extraStockDataMap = new IndicatorUtils().getExtraStockDataMap(conf, io.getDbDao(), extraReader, true);
 
             Pipeline[] datareaders = iu.getDataReaders(conf, stockData.periodText,
                     stockData.marketdatamap, stockData, extraStockDataMap, extraReader);
@@ -643,7 +643,7 @@ public class CoreControlService {
         conf.setConfigValueMap(new HashMap<>(conf.getConfigValueMap()));
         */
         conf.getConfigData().getConfigValueMap().putAll(aMap);
-        StockData stockData = new Extract(io.getDataSource()).getStockData(conf, true);
+        StockData stockData = new Extract(io.getDbDao()).getStockData(conf, true); // TODO false
         if (stockData != null) {
             PipelineData map = new PipelineData();
             map.setName(PipelineConstants.DATELIST);

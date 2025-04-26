@@ -34,8 +34,8 @@ public class SparkIT {
     //@Test
     public void test() {
         try {
-            MLClassifySparkAccess b = new MLClassifySparkAccess(null);
-        MLClassifySparkAccess a = new MLClassifySparkAccess(iclijConfig);
+            MLClassifySparkDS b = new MLClassifySparkDS(null);
+        MLClassifySparkDS a = new MLClassifySparkDS(iclijConfig);
         a.clean();
         } catch (Exception e) {
             e.printStackTrace();

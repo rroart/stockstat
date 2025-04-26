@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import roart.ml.spark.MLClassifySparkAccess;
+import roart.ml.spark.MLClassifySparkDS;
 import roart.ml.spark.MLClassifySparkMLPCModel;
 import roart.ml.common.MLClassifyModel;
-import roart.ml.model.LearnTestClassifyAccess;
+import roart.ml.model.LearnTestClassifyDS;
 import roart.common.util.JsonUtil;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -34,15 +34,15 @@ public class JsonTest {
     
     @Test
     public void test() {
-        //MLClassifySparkAccess m = new MLClassifySparkAccess(null);
+        //MLClassifySparkDS m = new MLClassifySparkDS(null);
         //MLClassifyModel m0 = new MLClassifySparkMLPCModel(null);
-        LearnTestClassifyAccess param = new LearnTestClassifyAccess();
+        LearnTestClassifyDS param = new LearnTestClassifyDS();
         List<Triple<String, Object, Double>> learnTestMap = new ArrayList<>();
         learnTestMap.add(new ImmutableTriple("one", "two", 3.0));
         //param.learnTestMap = learnTestMap;
         String j = JsonUtil.convert(learnTestMap);
         System.out.println(j);
-        LearnTestClassifyAccess param2 = JsonUtil.convert(j, LearnTestClassifyAccess.class);
+        LearnTestClassifyDS param2 = JsonUtil.convert(j, LearnTestClassifyDS.class);
         System.out.println(param2);
     }
     

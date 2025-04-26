@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import roart.common.ml.NeuralNetConfigs;
 import roart.pipeline.common.predictor.AbstractPredictor;
 
-public abstract class MLPredictAccess {
+public abstract class MLPredictDS {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 

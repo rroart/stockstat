@@ -8,7 +8,7 @@ import roart.common.ml.NeuralNetConfigs;
 import roart.ml.common.MLMeta;
 import roart.ml.common.MLClassifyModel;
 
-public class LearnTestClassifyAccess {
+public class LearnTestClassifyDS {
     public NeuralNetConfigs nnconfigs;
     public List<LearnClassify> learnTestMap;
     public int modelid;

@@ -3,15 +3,15 @@ package roart.filesystem;
 import roart.common.config.ConfigData;
 import roart.common.constants.EurekaConstants;
 
-public class HDFSAccess extends FileSystemAccess {
+public class SwiftDS extends FileSystemDS {
 
-    public HDFSAccess(ConfigData conf) {
+    public SwiftDS(ConfigData conf) {
         super(conf);
     }
     
     @Override
     public String getAppName() {
-        return EurekaConstants.HDFS;
+        return EurekaConstants.SWIFT;
     }
 
 }

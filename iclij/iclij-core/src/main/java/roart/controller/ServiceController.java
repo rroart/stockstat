@@ -30,9 +30,9 @@ import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.model.TimingItem;
 import roart.common.webflux.WebFluxUtil;
-import roart.db.dao.DbAccessFactory;
+import roart.db.dao.DbDSFactory;
 import roart.db.dao.IclijDbDao;
-import roart.db.spring.DbSpringAccess;
+import roart.db.spring.DbSpringDS;
 import roart.iclij.config.AutoSimulateInvestConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
@@ -44,7 +44,7 @@ import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 import roart.model.io.IO;
 import roart.util.ServiceUtil;
-import roart.db.common.DbAccess;
+import roart.db.common.DbDS;
 
 @CrossOrigin
 @RestController
@@ -56,7 +56,7 @@ public class ServiceController {
     IclijConfig iclijConfig;
 
     @Autowired
-    private DbSpringAccess dbSpringAccess;
+    private DbSpringDS dbSpringDS;
     
     @Autowired
     private IO io;
@@ -107,6 +107,7 @@ public class ServiceController {
 
     @RequestMapping(value = "/" + EurekaConstants.GETVERIFY,
             method = RequestMethod.POST)
+    @Deprecated
     public IclijServiceResult getVerify(@RequestBody IclijServiceParam param)
             throws Exception {
         IclijConfig myConfig = new IclijConfig(param.getConfigData());
@@ -342,8 +343,8 @@ public class ServiceController {
     @PostMapping(value = "/" + "copy" + "/{dbin}/{dbout}")
     public void cp(@PathVariable("dbin") String dbIn, @PathVariable("dbout") String dbOut)
             throws Exception {
-        DbAccess in = DbAccessFactory.get(dbIn, dbSpringAccess);
-        DbAccess out = DbAccessFactory.get(dbOut, dbSpringAccess);
+        DbDS in = DbDSFactory.get(dbIn, dbSpringDS);
+        DbDS out = DbDSFactory.get(dbOut, dbSpringDS);
         out.save(in.getAllStocks());
         out.save(in.getAllMetas());
         out.save(in.getAllMemories());

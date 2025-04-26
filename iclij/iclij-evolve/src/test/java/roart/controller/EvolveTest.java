@@ -67,7 +67,7 @@ public class EvolveTest {
 
         CuratorFramework curatorClient = mock(CuratorFramework.class);
         
-        io = new IO(dbDao, null, null, webFluxUtil, fileSystemDao, null, null, curatorClient);
+        io = new IO(dbDao, null, webFluxUtil, fileSystemDao, null, null, curatorClient);
     }
 
     @Test

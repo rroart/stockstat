@@ -58,11 +58,11 @@ import roart.common.springdata.repository.SpringAboveBelowRepository;
 import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
 import roart.common.util.TimeUtil;
-import roart.db.common.DbAccess;
+import roart.db.common.DbDS;
 import roart.db.dao.DbDao;
 import roart.db.dao.IclijDbDao;
 import roart.db.spring.DbSpring;
-import roart.db.spring.DbSpringAccess;
+import roart.db.spring.DbSpringDS;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
@@ -115,7 +115,7 @@ import roart.common.inmemory.model.Inmemory;
 //@TestPropertySource("file:${user.dir}/../../../../config/test/application.properties") 
 //@ComponentScan(basePackages = "roart.testdata")
 //@SpringBootTest(classes = TestConfiguration.class)
-@SpringBootTest(classes = { IclijConfig.class, DbSpring.class, DbSpringAccess.class, DbDao.class, ConfigI.class, ConfigDb.class, SpringAboveBelowRepository.class, AboveBelowRepository.class } )
+@SpringBootTest(classes = { IclijConfig.class, DbSpring.class, DbSpringDS.class, DbDao.class, ConfigI.class, ConfigDb.class, SpringAboveBelowRepository.class, AboveBelowRepository.class } )
 public class AllIT {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());    
@@ -325,7 +325,7 @@ public class AllIT {
         
         inmemory = inmemoryFactory.get(iconf);
 
-        io = new IO(iclijDbDao, null, dataSource, webFluxUtil, fileSystemDao, inmemoryFactory, communicationFactory, curatorClient);
+        io = new IO(iclijDbDao, null, webFluxUtil, fileSystemDao, inmemoryFactory, communicationFactory, curatorClient);
         ((TestWebFluxUtil)webFluxUtil).setIo(io);
         ((TestCommunicationFactory)communicationFactory).setIo(io);
         ((TestCommunicationFactory)communicationFactory).setConfig(iconf);

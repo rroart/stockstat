@@ -28,10 +28,10 @@ import roart.common.model.TimingBLItem;
 import roart.common.model.TimingItem;
 import roart.common.springdata.repository.SpringStockRepository;
 import roart.common.springdata.repository.StockRepository;
-import roart.db.common.DbAccess;
+import roart.db.common.DbDS;
 
 @Component
-public class DbSpringAccess extends DbAccess {
+public class DbSpringDS extends DbDS {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 

@@ -48,6 +48,7 @@ import roart.common.config.MLConstants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.model.ActionComponentItem;
 import roart.common.model.MetaItem;
+import roart.common.model.MyDataSource;
 import roart.common.model.StockItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
@@ -56,7 +57,7 @@ import roart.common.pipeline.data.SerialMapTA;
 import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
 import roart.common.util.TimeUtil;
-import roart.db.common.DbAccess;
+import roart.db.common.DbDS;
 import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
@@ -123,7 +124,7 @@ public class AllTest {
     // no autowiring
     IclijConfig conf = null;
    
-    TestDataSource dataSource;
+    MyDataSource dataSource;
     
     private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
 
@@ -317,7 +318,7 @@ public class AllTest {
         
         inmemory = inmemoryFactory.get(iconf);
 
-        io = new IO(iclijDbDao, null, dataSource, webFluxUtil, fileSystemDao, inmemoryFactory, communicationFactory, curatorClient);
+        io = new IO(iclijDbDao, null, webFluxUtil, fileSystemDao, inmemoryFactory, communicationFactory, curatorClient);
         ((TestWebFluxUtil)webFluxUtil).setIo(io);
         ((TestCommunicationFactory)communicationFactory).setIo(io);
         ((TestCommunicationFactory)communicationFactory).setConfig(iconf);

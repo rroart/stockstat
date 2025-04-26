@@ -48,7 +48,7 @@ public class IoBean {
     
     @Bean
     public IO getIo(IclijDbDao iclijDbDao, DbDao dbDao, MyDataSource dataSource, WebFluxUtil webFluxUtil, FileSystemDao fileSystemDao, InmemoryFactory inmemoryFactory, CommunicationFactory communicationFactory, CuratorFramework curatorClient) {
-        return new IO(iclijDbDao, dbDao, dataSource, webFluxUtil, fileSystemDao, inmemoryFactory, communicationFactory, curatorClient);
+        return new IO(iclijDbDao, dbDao, webFluxUtil, fileSystemDao, inmemoryFactory, communicationFactory, curatorClient);
 
     }
 

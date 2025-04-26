@@ -34,7 +34,7 @@ import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
-import roart.ml.common.MLClassifyAccess;
+import roart.ml.common.MLClassifyDS;
 import roart.ml.spark.MLClassifySparkLORModel;
 import roart.ml.spark.MLClassifySparkLSVCModel;
 import roart.ml.spark.MLClassifySparkMLPCModel;
@@ -48,7 +48,7 @@ import roart.spark.util.SparkUtil;
 import roart.pipeline.common.aggregate.Aggregator;
 import scala.Option;
 
-public class MLClassifySparkAccess extends MLClassifyAccess {
+public class MLClassifySparkDS extends MLClassifyDS {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -61,7 +61,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
     private Map<String, Model> modelMap = new HashMap<>();
     private Map<String, Double> accuracyMap = new HashMap<>();
 
-    public MLClassifySparkAccess(IclijConfig conf) {
+    public MLClassifySparkDS(IclijConfig conf) {
         this.conf = conf;
         String sparkmaster = conf.getMLSparkMaster();
         Integer timeout = conf.getMLSparkTimeout();

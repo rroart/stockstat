@@ -21,7 +21,7 @@ import roart.common.model.StockItem;
 import roart.common.model.TimingBLItem;
 import roart.common.model.TimingItem;
 
-public abstract class DbAccess {
+public abstract class DbDS {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 

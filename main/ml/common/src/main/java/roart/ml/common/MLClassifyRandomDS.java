@@ -20,7 +20,7 @@ import roart.ml.model.LearnClassify;
 import roart.ml.model.LearnTestClassifyResult;
 import roart.pipeline.common.aggregate.Aggregator;
 
-public class MLClassifyRandomAccess extends MLClassifyAccess {
+public class MLClassifyRandomDS extends MLClassifyDS {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -28,7 +28,7 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
 
     private Random random = new Random();
 
-    public MLClassifyRandomAccess(IclijConfig conf) {
+    public MLClassifyRandomDS(IclijConfig conf) {
         this.conf = conf;
         findModels();
     }

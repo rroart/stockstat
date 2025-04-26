@@ -30,7 +30,7 @@ import roart.common.webflux.WebFluxUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FileSystemAccess {
+public class FileSystemDS {
 
     private String url;
 
@@ -40,7 +40,7 @@ public class FileSystemAccess {
     
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public FileSystemAccess(ConfigData conf) {
+    public FileSystemDS(ConfigData conf) {
 	this.configData = conf;
     }
     

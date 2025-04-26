@@ -2,13 +2,13 @@ package roart.controller;
 
 import org.springframework.context.annotation.Bean;
 
-import roart.db.common.DbAccess;
+import roart.db.common.DbDS;
 
 public class ConfigDb {
 
     @Bean
-    private DbAccess getDbAccess() {
-        return new TestDbAccess();
+    private DbDS getDbAccess() {
+        return new TestDbDS();
     }
     
 }

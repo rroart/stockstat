@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import roart.db.hibernate.DbHibernate;
-import roart.db.hibernate.DbHibernateAccess;
+import roart.db.hibernate.DbHibernateDS;
 import roart.common.model.ConfigItem;
 import roart.common.model.StockItem;
 import roart.common.springdata.model.Config;
@@ -41,7 +41,7 @@ public class DbDaoUtil {
         List<StockItem> list = new ArrayList<>();
         long time0 = System.currentTimeMillis();
         if (type == 0) {
-            return DbHibernateAccess.instance().getConfigsByMarket(market);
+            return DbHibernateDS.instance().getConfigsByMarket(market);
         }
         if (type == 1) {
             return repo2.getAll(market);
