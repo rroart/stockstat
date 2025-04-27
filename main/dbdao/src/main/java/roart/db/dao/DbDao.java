@@ -3,6 +3,7 @@ package roart.db.dao;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import roart.common.model.MetaDTO;
 import roart.common.model.MyDataSource;
@@ -10,6 +11,7 @@ import roart.common.model.StockDTO;
 import roart.db.spring.DbSpringDS;
 import roart.iclij.config.IclijConfig;
 
+@Component
 public class DbDao {
 
     private MyDataSource dataSource;

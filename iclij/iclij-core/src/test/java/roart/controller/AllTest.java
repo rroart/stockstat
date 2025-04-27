@@ -58,6 +58,7 @@ import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
 import roart.common.util.TimeUtil;
 import roart.db.common.DbDS;
+import roart.db.dao.DbDao;
 import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
@@ -318,7 +319,8 @@ public class AllTest {
         
         inmemory = inmemoryFactory.get(iconf);
 
-        io = new IO(iclijDbDao, null, webFluxUtil, fileSystemDao, inmemoryFactory, communicationFactory, curatorClient);
+        DbDao coreDbDao = new DbDao(iconf, dataSource);
+        io = new IO(iclijDbDao, coreDbDao , webFluxUtil, fileSystemDao, inmemoryFactory, communicationFactory, curatorClient);
         ((TestWebFluxUtil)webFluxUtil).setIo(io);
         ((TestCommunicationFactory)communicationFactory).setIo(io);
         ((TestCommunicationFactory)communicationFactory).setConfig(iconf);

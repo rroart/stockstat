@@ -31,11 +31,6 @@ public class IoBean {
     }
 
     @Bean
-    public MyDataSource getDataSource() {
-        return new DummyDataSource();
-    }
-    
-    @Bean
     public WebFluxUtil getWebFluxUtil() {
         return new WebFluxUtil();
     }
@@ -46,7 +41,7 @@ public class IoBean {
     }
     
     @Bean
-    public IO getIo(IclijDbDao iclijDbDao, DbDao dbDao, MyDataSource dataSource, WebFluxUtil webFluxUtil, FileSystemDao fileSystemDao, InmemoryFactory inmemoryFactory, CommunicationFactory communicationFactory, CuratorFramework curatorClient) {
+    public IO getIo(IclijDbDao iclijDbDao, DbDao dbDao, WebFluxUtil webFluxUtil, FileSystemDao fileSystemDao, InmemoryFactory inmemoryFactory, CommunicationFactory communicationFactory, CuratorFramework curatorClient) {
         return new IO(iclijDbDao, dbDao, webFluxUtil, fileSystemDao, inmemoryFactory, communicationFactory, curatorClient);
 
     }

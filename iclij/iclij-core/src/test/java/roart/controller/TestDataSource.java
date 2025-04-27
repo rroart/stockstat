@@ -125,7 +125,6 @@ public class TestDataSource extends MyDataSource {
 
     @Override
     public MetaDTO getById(String market, IclijConfig conf) throws Exception {
-        log.error("Should not be here");
-        return null;
+        return metas.stream().filter(d -> d.getMarketid().equals(market)).findFirst().orElse(null);
     }
 }

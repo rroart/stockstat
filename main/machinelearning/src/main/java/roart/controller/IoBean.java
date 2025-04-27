@@ -31,11 +31,6 @@ public class IoBean {
     }
 
     @Bean
-    public MyDataSource getDataSource() {
-        return new DummyDataSource();
-    }
-    
-    @Bean
     public WebFluxUtil getWebFluxUtil() {
         return new WebFluxUtil();
     }
