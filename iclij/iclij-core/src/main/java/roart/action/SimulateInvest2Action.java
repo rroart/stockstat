@@ -143,6 +143,27 @@ public class SimulateInvest2Action extends MarketAction {
         }
         //if (true) return;
         
+        //param.getAndSetCategoryValueMap();
+        //component.set(market, param, profitdata, positions, evolve);
+        //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
+        // 0 ok?
+        param.getConfigValueMap().put(ConfigConstants.MISCMYTABLEDAYS, 0);
+        param.getConfigValueMap().put(ConfigConstants.MISCMYDAYS, 0);
+
+        Map<String, Object> aMap = new HashMap<>();
+        aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
+        aMap.put(ConfigConstants.MISCMYDAYS, 0);
+         //valueMap.put(ConfigConstants.MACHINELEARNING, false);
+        aMap.put(ConfigConstants.AGGREGATORS, false);
+        aMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, false);
+        aMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, false);
+        aMap.put(ConfigConstants.AGGREGATORS, false);
+        
+        // TODO
+        // TODO getName() gives null
+        log.info("cache enabled {}", param.isDisableCache());
+        param.getResultMap(getName(), aMap, false);
+
         for (int i = 0; i < 3; i++) {
             SimulateInvestConfig aConf = simsConfigs.get(i).getRight();
             
@@ -172,28 +193,9 @@ public class SimulateInvest2Action extends MarketAction {
             }
 
             boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
-            //param.getAndSetCategoryValueMap();
-            //component.set(market, param, profitdata, positions, evolve);
-            //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
-            // 0 ok?
-            param.getConfigValueMap().put(ConfigConstants.MISCMYTABLEDAYS, 0);
-            param.getConfigValueMap().put(ConfigConstants.MISCMYDAYS, 0);
-
-            Map<String, Object> aMap = new HashMap<>();
-            aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
-            aMap.put(ConfigConstants.MISCMYDAYS, 0);
-             //valueMap.put(ConfigConstants.MACHINELEARNING, false);
-            aMap.put(ConfigConstants.AGGREGATORS, false);
-            aMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, false);
-            aMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, false);
-            aMap.put(ConfigConstants.AGGREGATORS, false);
-            
             //aMap.putAll(aConf.asValuedMap()); // TODO
             param.getConfig().getConfigData().getConfigValueMap().putAll(aConf.asValuedMap());
                    
-            // TODO
-            // TODO getName() gives null
-            param.getResultMap(getName(), aMap, false);
             Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
             //PipelineData metaData = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
             //SerialMeta meta = PipelineUtils.getMeta(metaData);
