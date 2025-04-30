@@ -31,7 +31,12 @@ def getfashionmnist(myobj, config):
     print("sh", x_train.shape, y_train.shape)
 
     # Rescale the images from [0,255] to the [0.0,1.0] range.
-    x_train, x_test = x_train/255.0, x_test/255.0
+    # this is the pqk way
+    #x_train, x_test = x_train/255.0, x_test/255.0
+    # TODO differs here, this seems to be the way it is done for non pqk, with extra dim
+    normalizevalue = 255.0
+    x_train, x_test = x_train[..., np.newaxis]/normalizevalue, x_test[..., np.newaxis]/normalizevalue
+    print("shape",x_train.shape, y_train.shape)
 
     print("Number of original training examples:", len(x_train))
     print("Number of original test examples:", len(x_test))
@@ -64,6 +69,8 @@ def getmnistcommon(myobj, config, x_train, y_train, x_test, y_test):
         x_train_small = tf.image.resize(x_train, (4,4)).numpy()
         x_test_small = tf.image.resize(x_test, (4,4)).numpy()
         x_train_nocon, y_train_nocon = remove_contradicting(x_train_small, y_train)
+        print("sh3", x_train_small.shape)
+        print("sh3", x_train_nocon.shape)
         THRESHOLD = 0.5
 
         x_train_bin = np.array(x_train_nocon > THRESHOLD, dtype=np.float32)
@@ -155,8 +162,10 @@ def getpqkmnist(myobj, config):
 
         #print(type(y_train))
         #exit
-        normalizevalue = 255.0
-        x_train, x_test = x_train[..., np.newaxis]/normalizevalue, x_test[..., np.newaxis]/normalizevalue
+        #normalizevalue = 255.0
+        #x_train, x_test = x_train[..., np.newaxis]/normalizevalue, x_test[..., np.newaxis]/normalizevalue
+        # differs here, this seems to be the way it is done for pqk, with no extra dim
+        x_train, x_test = x_train/255.0, x_test/255.0
         print("shape",x_train.shape, y_train.shape)
         x_train, y_train = filter_36(x_train, y_train)
         x_test, y_test = filter_36(x_test, y_test)
