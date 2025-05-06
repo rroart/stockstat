@@ -240,6 +240,8 @@ public class ServiceUtil {
         ComponentData param = null;
         try {
             param = ComponentData.getParam(iclijConfig, componentInput, 0, io);
+            // TODO mess not kept
+            param.setKeepPipeline(true);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
@@ -263,6 +265,8 @@ public class ServiceUtil {
         ComponentData param = null;
         try {
             param = ComponentData.getParam(iclijConfig, componentInput, 0, io);
+            // TODO mess not kept
+            param.setKeepPipeline(true);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;

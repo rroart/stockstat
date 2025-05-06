@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import roart.common.cache.MyCache;
+import roart.common.inmemory.model.Inmemory;
+import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.iclij.config.AutoSimulateInvestConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
@@ -204,4 +207,11 @@ public class TestUtils {
         return simConfig;
     }
 
+    public void deletepipeline(String controlId)
+            throws Exception {
+        Inmemory inmemory = io.getInmemoryFactory().get(iconf.getInmemoryServer(), iconf.getInmemoryHazelcast(), iconf.getInmemoryRedis());
+        for (String id : MyCache.getInstance().pipeline()) {
+            new PipelineThreadUtils(iconf, inmemory, io.getCuratorClient()).cleanPipeline(controlId, id);            
+        }
+    }
 }

@@ -2783,22 +2783,33 @@ def dbupdateend():
 def cacheinvalidate():
     request.cacheinvalidate()
     
+def deletepipeline():
+    request.deletepipeline()
+    
 def copydb(indb, outdb):
     request.copydb(indb, outdb)
     
-if not 'allstocks' in globals():
-    print("Loadings stocks")
-    allstocks = getstocks(session)
-    print("Stocks loaded");
-    if filterweekend:
+def main():
+    import sys
+    #if not 'allstocks' in vars() and not 'allstocks' in globals():
+    if len(sys.argv) == 1:
+      print("Loadings stocks")
+      allstocks = getstocks(session)
+      print("Stocks loaded");
+      if filterweekend:
         allstocks = etl.filterweekend(allstocks)
-    allmetas = getmetas(session)
+        allmetas = getmetas(session)
+    else:
+      print("Stocks already set")
+    
+    plt.close('all')
 
-plt.close('all')
-
-today = datetime.today().strftime('%Y-%m-%d')
-yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
+    today = datetime.today().strftime('%Y-%m-%d')
+    yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
 
 #print(len(stock))
 #print(meta)
 #print(type(meta))
+
+if __name__=="__main__":
+    main()

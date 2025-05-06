@@ -162,7 +162,7 @@ public class SimulateInvest2Action extends MarketAction {
         // TODO
         // TODO getName() gives null
         log.info("cache enabled {}", param.isDisableCache());
-        param.getResultMap(getName(), aMap, false);
+        param.getResultMap(getName(), aMap, false, param.isKeepPipeline()); // TODO cache
 
         for (int i = 0; i < 3; i++) {
             SimulateInvestConfig aConf = simsConfigs.get(i).getRight();

@@ -36,6 +36,7 @@ public class TestInmemory extends Inmemory {
     
     @Override
     public String read(InmemoryMessage m) {
+        log.info("reading {}", m.getId());
         return (String) map.get(m.getId());
     }
     

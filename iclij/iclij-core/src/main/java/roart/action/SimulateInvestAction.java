@@ -132,7 +132,7 @@ public class SimulateInvestAction extends MarketAction {
             aMap.put(ConfigConstants.AGGREGATORS, false);
             // TODO
             // TODO getName() gives null
-            param.getResultMap(getName(), aMap, false);
+            param.getResultMap(getName(), aMap, false, param.isKeepPipeline()); // TODO cache
             Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
             //PipelineData metaData = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
             //SerialMeta meta = PipelineUtils.getMeta(metaData);

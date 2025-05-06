@@ -109,6 +109,7 @@ public class ImproveSimulateInvestAction extends MarketAction {
         	componentparam.setUpdateMap(new HashMap<>());
         }
         componentparam.getInput().setDoSave(false);
+        componentparam.setKeepPipeline(true);
 
         try {
         	componentparam.setFuturedays(0);

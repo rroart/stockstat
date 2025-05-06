@@ -302,14 +302,15 @@ public class ControlService {
  * @param uuid TODO
  * @param useMl TODO
  * @param disableCache TODO
+ * @param keepPipeline TODO
  * @return the tabular result lists
      */
 
-    public PipelineData[] getContent(String uuid, boolean useMl, boolean disableCache) {
-        return getContent(uuid, useMl, new ArrayList<>(), disableCache);
+    public PipelineData[] getContent(String uuid, boolean useMl, boolean disableCache, boolean keepPipeline) {
+        return getContent(uuid, useMl, new ArrayList<>(), disableCache, keepPipeline);
     }
     
-    public PipelineData[] getContent(String uuid, boolean useMl, List<String> disableList, boolean disableCache) {
+    public PipelineData[] getContent(String uuid, boolean useMl, List<String> disableList, boolean disableCache, boolean keepPipeline) {
         if (false) {
             try {
                 String s = null;
@@ -367,6 +368,9 @@ public class ControlService {
         // TODO list = ImmutabilityUtil.immute(list2);
         if (!disableCache) {
             MyCache.getInstance().put(key, list);
+            if (keepPipeline) {
+                MyCache.getInstance().pipeline(uuid);
+            }
         } else {
             log.info("Cache disabled for {} {} {}", id, uuid, key.hashCode());
         }

@@ -187,6 +187,7 @@ public class InmemoryPipelineTest {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+        inmemory.stat();
     }
 
     @Test
@@ -199,6 +200,7 @@ public class InmemoryPipelineTest {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+        inmemory.stat();
     }
 
     @Test
@@ -211,6 +213,7 @@ public class InmemoryPipelineTest {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+        inmemory.stat();
     }
 
     @Test
@@ -233,6 +236,7 @@ public class InmemoryPipelineTest {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+        inmemory.stat();
     }
 
     @Test
@@ -259,6 +263,7 @@ public class InmemoryPipelineTest {
         assertEquals(true, inmemory.isEmpty());
     }
 
+    // TODO already
     @Test
     public void testCrosstest() throws Exception {
         ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.CROSSTEST, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
@@ -267,6 +272,7 @@ public class InmemoryPipelineTest {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+        inmemory.stat();
     }
 
     @Test
@@ -345,6 +351,7 @@ public class InmemoryPipelineTest {
         }
         System.out.println("map" + result.getWebdatajson().getUpdateMap());
         System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+        testutils.deletepipeline(ControlService.id);
         inmemory.stat();
         assertEquals(true, inmemory.isEmpty());
     }
@@ -363,6 +370,31 @@ public class InmemoryPipelineTest {
         }
         //System.out.println("map" + result.getWebdatajson().getUpdateMap());
         //System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+        testutils.deletepipeline(ControlService.id);
+        inmemory.stat();
+        assertEquals(true, inmemory.isEmpty());
+    }
+
+    @Test
+    public void testImproveSimTwice() throws Exception {
+        SimulateInvestConfig simConfig = testutils.getImproveSimConfigDefault();
+        String market = TestConstants.MARKET;
+        simConfig.setStartdate("2024-11-01");
+        simConfig.setEnddate("2024-12-01");
+        IclijServiceResult result = null;
+        try {
+            result = testutils.getImproveSimulateInvest(market, simConfig);
+            log.info("First done");
+            simConfig = testutils.getImproveSimConfigDefault();
+            simConfig.setStartdate("2024-11-01");
+            simConfig.setEnddate("2024-12-01");
+            result = testutils.getImproveSimulateInvest(market, simConfig);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        //System.out.println("map" + result.getWebdatajson().getUpdateMap());
+        //System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+        testutils.deletepipeline(ControlService.id);
         inmemory.stat();
         assertEquals(true, inmemory.isEmpty());
     }
@@ -381,6 +413,7 @@ public class InmemoryPipelineTest {
         }
         //System.out.println("map" + result.getWebdatajson().getUpdateMap());
         //System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+        testutils.deletepipeline(ControlService.id);
         inmemory.stat();
         assertEquals(true, inmemory.isEmpty());
     }

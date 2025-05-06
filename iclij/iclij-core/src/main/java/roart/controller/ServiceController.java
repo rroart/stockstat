@@ -28,7 +28,9 @@ import roart.action.ActionThread;
 import roart.common.cache.MyCache;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.TimingDTO;
+import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.webflux.WebFluxUtil;
 import roart.db.dao.DbDSFactory;
 import roart.db.dao.IclijDbDao;
@@ -302,6 +304,18 @@ public class ServiceController {
     public void cacheinvalidate()
             throws Exception {
         MyCache.getInstance().invalidate();          
+    }
+
+    @RequestMapping(value = "cache/deletepipeline",
+            method = RequestMethod.POST)
+    public void deletepipeline()
+            throws Exception {
+        log.info("Delete pipeline");
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        for (String id : MyCache.getInstance().pipeline()) {
+            log.info("Delete pipeline in loop {}", id);
+            new PipelineThreadUtils(iclijConfig, inmemory, io.getCuratorClient()).cleanPipeline(instance.id, id);            
+        }
     }
 
     @PostMapping(value = "db/update/start")

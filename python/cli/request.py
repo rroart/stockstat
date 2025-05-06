@@ -36,6 +36,7 @@ url8 = 'http://' + ahost + ':' + aport + '/db/update/start'
 url9 = 'http://' + ahost + ':' + aport + '/db/update/end'
 url10 = 'http://' + ahost + ':' + aport + '/cache/invalidate'
 url11 = 'http://' + ahost + ':' + aport + '/copy/'
+url12 = 'http://' + ahost + ':' + aport + '/cache/deletepipeline'
 
 def geturl(cf):
     if istf(cf):
@@ -97,6 +98,9 @@ def cacheinvalidate():
 
 def copydb(indb, outdb):
     return requests.post(url11 + indb + "/" + outdb, headers=headers)
+
+def deletepipeline():
+    return requests.post(url12, headers=headers)
 
 def imgrequest1(cf, files):
     return requests.post(imgurl1(cf), files=files)

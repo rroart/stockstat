@@ -97,6 +97,7 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
         	componentparam.setUpdateMap(new HashMap<>());
         }
         componentparam.getInput().setDoSave(false);
+        componentparam.setKeepPipeline(true);
 
         try {
         	componentparam.setFuturedays(0);
@@ -116,7 +117,7 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
             }
             SimulateInvestData param = new SimulateInvestData(componentparam);
             // TODO
-            param.setAllIncDecs(getAllIncDecs(market, null, null));
+            param.setAllIncDecs(getAllIncDecs(market, null, null, param));
             param.setAllMetas(((ImproveAutoSimulateInvestComponent)component).getAllMetas(componentparam));
             // TODO getcontent
             ((ImproveAutoSimulateInvestComponent)component).getResultMaps(param, market);
@@ -148,9 +149,9 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
     
     @Deprecated // ?
     public List<IncDecDTO> getAllIncDecs(Market market, LocalDate investStart,
-            LocalDate investEnd) {
+            LocalDate investEnd, ComponentData param) {
         try {
-            return null; //param.getService().getIo().getIdbDao().getAllIncDecs(market.getConfig().getMarket(), investStart, investEnd, null);
+            return param.getService().getIo().getIdbDao().getAllIncDecs(market.getConfig().getMarket(), investStart, investEnd, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

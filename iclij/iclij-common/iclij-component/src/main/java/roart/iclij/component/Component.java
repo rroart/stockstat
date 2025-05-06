@@ -643,7 +643,7 @@ public abstract class Component {
 
     protected void handleMLMetaCommon(ComponentData param, Map<String, Object> valueMap) {
         // TODO second getcontent call, special
-        PipelineData resultMaps = param.getResultMap(getPipeline(), valueMap, true);
+        PipelineData resultMaps = param.getResultMap(getPipeline(), valueMap, true, param.isKeepPipeline());
         param.setCategory(resultMaps);
         // TODO 3rd call, ordinary again
         param.getAndSetCategoryValueMapAlt();

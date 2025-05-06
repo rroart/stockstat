@@ -42,6 +42,7 @@ public class MyCache {
 
     private CacheLoader<String, Object> loader;
     private Cache<Object, Object> cache;
+    private Set<String> pipeline = new HashSet<>();
     
     private static MyCache instance = null;
     
@@ -77,6 +78,17 @@ public class MyCache {
         log.info("Cache put {} {}", key.hashCode(), key.substring(0, Math.min(key.length(), 20)));
     }
     
+    public void pipeline(String key) {
+        pipeline.add(key);
+    }
+
+    public Set<String> pipeline() {
+        log.info("Pipeline {}", pipeline);
+        Set<String> set = pipeline;
+        pipeline = new HashSet<>();
+        return set;
+    }
+
     public Object get(String key) {
         if (!cacheme) {
             return null;
@@ -111,4 +123,5 @@ public class MyCache {
         List<String> keys = ((Set<String>) keySet).stream().map(s -> s.substring(0, Math.min(s.length(), 20))).toList();
         return "" + cache.size() + " " + keys;
     }
+
 }

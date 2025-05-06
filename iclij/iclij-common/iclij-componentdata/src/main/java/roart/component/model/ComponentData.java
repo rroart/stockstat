@@ -79,6 +79,8 @@ public class ComponentData {
     
     private boolean disableCache;
     
+    private boolean keepPipeline;
+    
     public ComponentData() {
         
     }
@@ -118,6 +120,7 @@ public class ComponentData {
         this.timings = componentparam.timings;
         this.market = componentparam.market;
         this.disableCache = componentparam.disableCache;
+        this.keepPipeline = componentparam.keepPipeline;
     }
 
     public ComponentData(ComponentInput input) {
@@ -370,6 +373,14 @@ public class ComponentData {
         this.disableCache = disableCache;
     }
 
+    public boolean isKeepPipeline() {
+        return keepPipeline;
+    }
+
+    public void setKeepPipeline(boolean keepPipeline) {
+        this.keepPipeline = keepPipeline;
+    }
+
     public int setDatesNot() throws ParseException {
         List<String> stockdates = service.getDates(getMarket(), null);
         String date = TimeUtil.convertDate2(this.getInput().getEnddate());
@@ -416,7 +427,7 @@ public class ComponentData {
 
         service.coremlconf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
         service.coremlconf.getConfigData().getConfigValueMap().putAll(setValueMap);
-        PipelineData[] result = getService().getContent(id, useMl, disableCache);
+        PipelineData[] result = getService().getContent(id, useMl, disableCache, keepPipeline);
         this.resultMaps = result;
         try {
             // TODO null name, fix later
@@ -490,7 +501,7 @@ public class ComponentData {
 	
         service.coremlconf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
         service.coremlconf.getConfigData().getConfigValueMap().putAll(setValueMap);
-        PipelineData[] result = getService().getContent(id, useMl, disableCache);
+        PipelineData[] result = getService().getContent(id, useMl, disableCache, keepPipeline);
         this.resultMaps = result;
         try {
             //log.info("" + result.keySet());
@@ -513,7 +524,7 @@ public class ComponentData {
         }
     }
 
-    public PipelineData getResultMap(String mapName, Map<String, Object> setValueMap, boolean useMl) {
+    public PipelineData getResultMap(String mapName, Map<String, Object> setValueMap, boolean useMl, boolean keepPipeline) {
         zerokey(configValueMap);
         service.coremlconf.getConfigData().setConfigValueMap(new HashMap<>(configValueMap));
         zerokey(setValueMap);
@@ -523,7 +534,7 @@ public class ComponentData {
             service.coremlconf.getConfigData().getConfigValueMap().putAll(updateMap);
         }
         service.coremlconf.getConfigData().setDate(getBaseDate());
-        PipelineData[] maps = service.getContent(id, useMl, getDisableList(), disableCache);
+        PipelineData[] maps = service.getContent(id, useMl, getDisableList(), disableCache, keepPipeline);
         this.resultMaps = maps;
         //System.out.println(maps.keySet());
         PipelineData aMap = null;

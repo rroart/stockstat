@@ -185,6 +185,7 @@ public abstract class MarketAction extends Action {
             ComponentInput input = new ComponentInput(config.getConfigData(), null, marketName, enddate, 0, paramTemplate.getInput().isDoSave(), false, new ArrayList<>(), paramTemplate.getInput().getValuemap());
             ComponentData param = null;
             try {
+                // TODO mess?
                 param = ComponentData.getParam(iclijConfig, input, 0, market, paramTemplate.getService().getIo());
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
@@ -562,8 +563,10 @@ public abstract class MarketAction extends Action {
             throw e;
         } finally {
             IclijController.taskList.remove(actionDTO);
+            if (!param.isKeepPipeline()) {
             Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
             new PipelineThreadUtils(config, inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
+            }
         }
     }
 

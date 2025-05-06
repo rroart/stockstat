@@ -171,7 +171,7 @@ public class ImproveSimulateInvestComponent extends ComponentML {
         aMap.put(ConfigConstants.AGGREGATORS, false);
     // different line
         // todo
-        param.getResultMap(null, aMap, false);
+        param.getResultMap(null, aMap, true, param.isKeepPipeline()); // TODO cache
         Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
         //PipelineData metaData = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
         //SerialMeta meta = PipelineUtils.getMeta(metaData);
