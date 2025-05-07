@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import roart.common.cache.MyCache;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
@@ -566,6 +567,7 @@ public abstract class MarketAction extends Action {
             if (!param.isKeepPipeline()) {
             Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
             new PipelineThreadUtils(config, inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
+            MyCache.getInstance().invalidate(param.getId());
             }
         }
     }

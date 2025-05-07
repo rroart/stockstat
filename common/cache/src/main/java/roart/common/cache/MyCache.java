@@ -118,6 +118,17 @@ public class MyCache {
         cache.invalidateAll();
     }
     
+    public void invalidate(String id) {
+        if (!cacheme) {
+            return;
+        }
+        for (Object key : cache.asMap().keySet()) {
+            if (key instanceof String str && str.startsWith(id)) {
+                cache.invalidate(key);
+            }
+        }
+    }
+    
     public String toString() {
         Set keySet = new HashSet(cache.asMap().keySet());
         List<String> keys = ((Set<String>) keySet).stream().map(s -> s.substring(0, Math.min(s.length(), 20))).toList();

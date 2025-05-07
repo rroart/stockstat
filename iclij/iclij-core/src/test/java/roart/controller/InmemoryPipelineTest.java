@@ -273,6 +273,7 @@ public class InmemoryPipelineTest {
             log.error(Constants.EXCEPTION, e);
         }
         inmemory.stat();
+        assertEquals(true, inmemory.isEmpty());
     }
 
     @Test
@@ -351,7 +352,6 @@ public class InmemoryPipelineTest {
         }
         System.out.println("map" + result.getWebdatajson().getUpdateMap());
         System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
-        testutils.deletepipeline(ControlService.id);
         inmemory.stat();
         assertEquals(true, inmemory.isEmpty());
     }
@@ -370,6 +370,8 @@ public class InmemoryPipelineTest {
         }
         //System.out.println("map" + result.getWebdatajson().getUpdateMap());
         //System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+        assertEquals(false, inmemory.isEmpty());
+        testutils.cacheinvalidate();
         testutils.deletepipeline(ControlService.id);
         inmemory.stat();
         assertEquals(true, inmemory.isEmpty());
@@ -394,6 +396,8 @@ public class InmemoryPipelineTest {
         }
         //System.out.println("map" + result.getWebdatajson().getUpdateMap());
         //System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+        assertEquals(false, inmemory.isEmpty());
+        testutils.cacheinvalidate();
         testutils.deletepipeline(ControlService.id);
         inmemory.stat();
         assertEquals(true, inmemory.isEmpty());
@@ -413,6 +417,8 @@ public class InmemoryPipelineTest {
         }
         //System.out.println("map" + result.getWebdatajson().getUpdateMap());
         //System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+        assertEquals(false, inmemory.isEmpty());
+        testutils.cacheinvalidate();
         testutils.deletepipeline(ControlService.id);
         inmemory.stat();
         assertEquals(true, inmemory.isEmpty());

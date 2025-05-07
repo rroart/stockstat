@@ -322,7 +322,12 @@ public class ControlService {
         long[] mem0 = MemUtil.mem();
         log.info("MEM {}", MemUtil.print(mem0));
 
-        String key = CacheConstants.CONTENT + coremlconf.getConfigData().getMarket() + coremlconf.getConfigData().getMlmarket() + coremlconf.getConfigData().getDate() + coremlconf.getConfigData().getConfigValueMap();
+        String common = "";
+        if (!keepPipeline) {
+            common = uuid;
+        }
+        
+        String key = common + CacheConstants.CONTENT + coremlconf.getConfigData().getMarket() + coremlconf.getConfigData().getMlmarket() + coremlconf.getConfigData().getDate() + coremlconf.getConfigData().getConfigValueMap();
         log.info("Content key {}", key.hashCode());
         PipelineData[] list = (PipelineData[]) MyCache.getInstance().get(key);
         if (list != null) {

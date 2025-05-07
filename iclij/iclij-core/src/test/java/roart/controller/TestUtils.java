@@ -206,6 +206,11 @@ public class TestUtils {
         simConfig.setVote(false);
         return simConfig;
     }
+    
+    public void cacheinvalidate()
+            throws Exception {
+        MyCache.getInstance().invalidate();          
+    }
 
     public void deletepipeline(String controlId)
             throws Exception {

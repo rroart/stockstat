@@ -15,13 +15,16 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.cache.MyCache;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.ActionComponentDTO;
 import roart.common.model.IncDecDTO;
 import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.model.TimingDTO;
+import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
@@ -88,6 +91,9 @@ public class CrossTestAction extends MarketAction {
                 Memories positions = null;
                 param.getService().coremlconf.getConfigData().setDate(param.getFutureDate());
                 ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, getParent() != null);
+                Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
+                new PipelineThreadUtils(config, inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
+                MyCache.getInstance().invalidate(param.getId());
                 Map<String, Object> updateMap = componentData.getUpdateMap();
                 if (updateMap != null) {
                     param.getUpdateMap().putAll(updateMap);
