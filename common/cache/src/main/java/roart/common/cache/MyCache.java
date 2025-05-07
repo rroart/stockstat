@@ -106,7 +106,7 @@ public class MyCache {
         String keyHead = key.substring(0, Math.min(80, key.length()));
         log.debug("Cache key {} {}", keyHead, object != null);
         if (object != null) {
-            log.info("Cache get {} {}", key.hashCode(), key.substring(0, Math.min(key.length(), 20)));
+            log.debug("Cache get {} {}", key.hashCode(), key.substring(0, Math.min(key.length(), 20)));
         }
         return object;
     }
