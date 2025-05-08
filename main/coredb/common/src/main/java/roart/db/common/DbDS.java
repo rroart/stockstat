@@ -16,6 +16,7 @@ import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.model.MetaDTO;
 import roart.common.model.RelationDTO;
+import roart.common.model.SimRunDataDTO;
 import roart.common.model.SimDataDTO;
 import roart.common.model.StockDTO;
 import roart.common.model.TimingBLDTO;
@@ -84,6 +85,8 @@ public abstract class DbDS {
     public abstract List<String> getMarkets();
 
     public abstract List<Date> getDates(String market);
+
+    public abstract List<SimRunDataDTO> getAllSimRunData(String market, LocalDate startDate, LocalDate endDate);
 
 }
 

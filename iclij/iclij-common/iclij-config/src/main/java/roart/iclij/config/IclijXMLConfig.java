@@ -700,6 +700,7 @@ public class IclijXMLConfig {
             SimulateFilter simulateFilter = getConfig(configMap, "simulatefilter", SimulateFilter.class, config);
             MLConfigs mlConfigs = getConfig(configMap, "mlconfig", MLConfigs.class, config);
             SimulateInvestConfig simulate = getConfig(configMap, "simulate", SimulateInvestConfig.class, config);
+            SimulateInvestConfig simulaterun = getConfig(configMap, "simulaterun", SimulateInvestConfig.class, config);
             //MLConfigs defaultMlConfigs = getDefaultMlConfigs(config, mapper, text);
             //defaultMlConfigs.merge(mlConfigs);
             market.setConfig(marketConfig);
@@ -707,6 +708,7 @@ public class IclijXMLConfig {
             //market.setSimulateFilter(simulateFilter);
             market.setMlconfig(mlConfigs);
             market.setSimulate(simulate);
+            market.setSimulaterun(simulaterun);
             //String text2 = (String) config.getConfigValueMap().get(text);
             //MarketConfig market = mapper.readValue(text2, new TypeReference<MarketConfig>(){});
             retList.add(market);

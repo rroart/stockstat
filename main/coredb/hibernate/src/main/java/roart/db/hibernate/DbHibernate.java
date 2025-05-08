@@ -11,6 +11,7 @@ import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.model.MetaDTO;
 import roart.common.model.RelationDTO;
+import roart.common.model.SimRunDataDTO;
 import roart.common.model.SimDataDTO;
 import roart.common.model.StockDTO;
 import roart.common.model.TimingBLDTO;
@@ -32,6 +33,7 @@ import roart.db.model.IncDec;
 import roart.db.model.MLMetrics;
 import roart.db.model.Relation;
 import roart.db.model.SimData;
+import roart.db.model.SimRunData;
 import roart.db.model.TimingBL;
 import roart.db.thread.Queues;
 
@@ -406,6 +408,18 @@ public class DbHibernate {
         return item;
     }
 
+    public static SimRunDataDTO map(SimRunData item) {
+        SimRunDataDTO data = new SimRunDataDTO();
+        data.setDbid(item.getDbid());
+        data.setEnddate(item.getEnddate());
+        data.setMarket(item.getMarket());
+        data.setRecorddate(item.getRecorddate());
+        data.setScore(item.getScore());
+        data.setSimdatadbid(item.getSimdatadbid());
+        data.setStartdate(item.getStartdate());
+        return data;
+    }
+
     private static TimingDTO map(Timing timing) {
         TimingDTO timingItem = new TimingDTO();
         timingItem.setAction(timing.getAction());
@@ -582,6 +596,18 @@ public class DbHibernate {
         data.setMarket(item.getMarket());
         data.setRecord(item.getRecord());
         data.setScore(item.getScore());
+        data.setStartdate(item.getStartdate());
+        return data;
+    }
+
+    public static SimRunData map(SimRunDataDTO item) {
+        SimRunData data = new SimRunData();
+        data.setDbid(item.getDbid());
+        data.setEnddate(item.getEnddate());
+        data.setMarket(item.getMarket());
+        data.setRecorddate(item.getRecorddate());
+        data.setScore(item.getScore());
+        data.setSimdatadbid(item.getSimdatadbid());
         data.setStartdate(item.getStartdate());
         return data;
     }
@@ -900,6 +926,15 @@ public class DbHibernate {
     public static List<SimDataDTO> getAllSimData() {
         try {
             return SimData.getAll().stream().map(e -> map(e)).toList();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+
+    public static List<SimRunDataDTO> getAllSimData2() {
+        try {
+            return SimRunData.getAll().stream().map(e -> map(e)).toList();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return null;

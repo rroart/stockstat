@@ -34,11 +34,11 @@ public class TestUtils {
         return ServiceUtil.getSimulateInvest(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), myConfig, io);
     }
 
-    IclijServiceResult getSimulateInvestMarket2(SimulateInvestConfig simConfig, String market) {
+    IclijServiceResult getSimulateInvestRunMarket(SimulateInvestConfig simConfig, String market) {
         Map<String, Object> map = simConfig.asMap();
         IclijConfig myConfig = iconf.copy();
         myConfig.getConfigData().getConfigValueMap().putAll(map);
-        return ServiceUtil.getSimulateInvest2(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), myConfig, io);
+        return ServiceUtil.getSimulateInvestRun(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), myConfig, io);
     }
 
     public IclijServiceResult getImproveSimulateInvest(String market, SimulateInvestConfig simConfig)

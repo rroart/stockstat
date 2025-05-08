@@ -20,6 +20,7 @@ import roart.common.model.IncDecDTO;
 import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.model.RelationDTO;
+import roart.common.model.SimRunDataDTO;
 import roart.common.model.SimDataDTO;
 import roart.common.model.TimingBLDTO;
 import roart.common.model.TimingDTO;
@@ -217,6 +218,10 @@ public class IclijDbDao {
 
     public List<SimDataDTO> getAllSimData(String market, LocalDate startDate, LocalDate endDate) {
         return access.getAllSimData(market, startDate, endDate);
+    }
+
+    public List<SimRunDataDTO> getAllSimDataRun(String market, LocalDate startDate, LocalDate endDate) {
+        return access.getAllSimRunData(market, startDate, endDate);
     }
 
     public List<AboveBelowDTO> getAllAboveBelow(String market, Date startDate, Date endDate) {

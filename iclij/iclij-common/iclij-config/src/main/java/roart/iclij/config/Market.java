@@ -11,6 +11,8 @@ public class Market {
 
     private SimulateInvestConfig simulate;
     
+    private SimulateInvestConfig simulaterun;
+    
     private Extra extra;
     
     private SimulateFilter simulateFilter;
@@ -45,6 +47,14 @@ public class Market {
 
     public void setSimulate(SimulateInvestConfig simulate) {
         this.simulate = simulate;
+    }
+
+    public SimulateInvestConfig getSimulaterun() {
+        return simulaterun;
+    }
+
+    public void setSimulaterun(SimulateInvestConfig simulaterun) {
+        this.simulaterun = simulaterun;
     }
 
     public SimulateFilter getSimulateFilter() {

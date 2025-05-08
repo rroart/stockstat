@@ -18,7 +18,7 @@ import roart.action.ImproveFilterAction;
 import roart.action.ImproveProfitAction;
 import roart.action.ImproveSimulateInvestAction;
 import roart.action.MarketAction;
-import roart.action.SimulateInvest2Action;
+import roart.action.SimulateInvestRunAction;
 import roart.action.SimulateInvestAction;
 import roart.common.constants.Constants;
 import roart.common.model.ActionComponentDTO;
@@ -183,7 +183,7 @@ public class ServiceUtil {
         return result;
     }
 
-    public static IclijServiceResult getSimulateInvest2(ComponentInput componentInput, IclijConfig iclijConfig, IO io) {
+    public static IclijServiceResult getSimulateInvestRun(ComponentInput componentInput, IclijConfig iclijConfig, IO io) {
         actionThreadReady();
         IclijServiceResult result = new IclijServiceResult();
         ComponentData param = null;
@@ -194,7 +194,7 @@ public class ServiceUtil {
             return result;
         }
 
-        MarketAction simulateInvestAction = new SimulateInvest2Action(iclijConfig);
+        MarketAction simulateInvestAction = new SimulateInvestRunAction(iclijConfig);
         Market market = new MarketUtil().findMarket(param.getInput().getMarket(), iclijConfig);
         param.setMarket(market);
         LocalDate date = null;

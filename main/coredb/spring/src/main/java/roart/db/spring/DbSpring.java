@@ -11,6 +11,7 @@ import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.model.MetaDTO;
 import roart.common.model.RelationDTO;
+import roart.common.model.SimRunDataDTO;
 import roart.common.model.SimDataDTO;
 import roart.common.model.StockDTO;
 import roart.common.model.TimingBLDTO;
@@ -27,6 +28,7 @@ import roart.common.springdata.model.MLMetrics;
 import roart.common.springdata.model.Memory;
 import roart.common.springdata.model.Meta;
 import roart.common.springdata.model.SimData;
+import roart.common.springdata.model.SimRunData;
 import roart.common.springdata.model.Stock;
 import roart.common.springdata.model.Timing;
 import roart.common.springdata.model.TimingBL;
@@ -52,10 +54,12 @@ import roart.common.springdata.repository.SpringMLMetricsRepository;
 import roart.common.springdata.repository.SpringMemoryRepository;
 import roart.common.springdata.repository.SpringMetaRepository;
 import roart.common.springdata.repository.SpringRelationRepository;
+import roart.common.springdata.repository.SpringSimRunDataRepository;
 import roart.common.springdata.repository.SpringTimingRepository;
 import roart.common.springdata.repository.SpringTimingBLRepository;
 import roart.common.springdata.repository.SpringStockRepository;
 import roart.common.springdata.repository.SimDataRepository;
+import roart.common.springdata.repository.SimRunDataRepository;
 import roart.common.springdata.repository.StockRepository;
 
 import java.nio.charset.StandardCharsets;
@@ -141,6 +145,9 @@ public class DbSpring {
 
     @Autowired
     SpringSimDataRepository springSimDataRepo;
+
+    @Autowired
+    SpringSimRunDataRepository springSimData2Repo;
 
     @Autowired
     SimDataRepository simDataRepo;
@@ -472,6 +479,30 @@ public class DbSpring {
         data.setMarket(item.getMarket());
         data.setRecord(item.getRecord());
         data.setScore(item.getScore());
+        data.setStartdate(item.getStartdate());
+        return data;
+    }
+
+    public static SimRunDataDTO map(SimRunData item) {
+        SimRunDataDTO data = new SimRunDataDTO();
+        data.setDbid(item.getDbid());
+        data.setEnddate(item.getEnddate());
+        data.setMarket(item.getMarket());
+        data.setRecorddate(item.getRecorddate());
+        data.setScore(item.getScore());
+        item.setSimdatadbid(item.getSimdatadbid());
+        data.setStartdate(item.getStartdate());
+        return data;
+    }
+
+    public static SimRunData map(SimRunDataDTO item) {
+        SimRunData data = new SimRunData();
+        data.setDbid(item.getDbid());
+        data.setEnddate(item.getEnddate());
+        data.setMarket(item.getMarket());
+        data.setRecorddate(item.getRecorddate());
+        data.setScore(item.getScore());
+        item.setSimdatadbid(item.getSimdatadbid());
         data.setStartdate(item.getStartdate());
         return data;
     }
@@ -886,6 +917,15 @@ public class DbSpring {
     public List<SimDataDTO> getAllSimData() {
         try {
             return StreamSupport.stream(springSimDataRepo.findAll().spliterator(), false).map(e -> map(e)).toList();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+
+    public List<SimRunDataDTO> getAllSimData2() {
+        try {
+            return StreamSupport.stream(springSimData2Repo.findAll().spliterator(), false).map(e -> map(e)).toList();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return null;

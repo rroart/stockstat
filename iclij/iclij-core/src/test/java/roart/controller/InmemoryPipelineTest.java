@@ -320,7 +320,7 @@ public class InmemoryPipelineTest {
     }
 
     @Test
-    public void testSim2() throws Exception {
+    public void testSimRun() throws Exception {
         log.info("Wants it {}", iconf.wantsInmemoryPipeline());
         SimulateInvestConfig simConfig = testutils.getSimConfigDefault();
         String market = TestConstants.MARKET;
@@ -328,7 +328,7 @@ public class InmemoryPipelineTest {
         simConfig.setEnddate("2025-01-01");
         IclijServiceResult result = null;
         try {
-            result = testutils.getSimulateInvestMarket2(simConfig, market);
+            result = testutils.getSimulateInvestRunMarket(simConfig, market);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
