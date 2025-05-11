@@ -62,6 +62,9 @@ public class TestCommunication extends Communication {
         if (getService().equals(ServiceConstants.SIMAUTO)) {
             new Sim(conf, io).method((String) content, "simauto", true);
         }
+        if (getService().equals(ServiceConstants.SIMRUN)) {
+            new Sim(conf, io).method3((String) content, "simrun", true);
+        }
         log.error("No service {}", getService());
     }
 

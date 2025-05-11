@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,8 +53,11 @@ import roart.constants.SimConstants;
 import roart.db.dao.IclijDbDao;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.SimDataDTO;
+import roart.common.model.SimRunDataDTO;
+import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialDouble;
+import roart.common.pipeline.data.SerialKeyValue;
 import roart.common.pipeline.data.SerialListMap;
 import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialListSimulateStock;
@@ -184,7 +188,6 @@ public class Sim {
                 List<AbstractChromosome> chromosomes = entry.getValue();
                 IclijConfigMapChromosome chromosome = (IclijConfigMapChromosome) chromosomes.get(0);
                 SerialListMap resultMap = chromosome.getResultMap();
-                //Map<String, SerialListMap> resultMap = (Map<String, SerialListMap>) resultMap0;
                 Double keyScore = filterResultMap(filter, output, summary, score, resultMap);
                 String mysummary = "";
                 boolean success = true;
@@ -400,16 +403,10 @@ public class Sim {
             return;
         }
         String id = PipelineUtils.getString(data, EvolveConstants.ID);
+        List<SerialKeyValue> me = PipelineUtils.getListMap(data, PipelineConstants.RESULT);
+        SerialListMap resultMap = new SerialListMap(me);
         // TODO
-        List<SerialScoreChromosome> myList = PipelineUtils.getList(data, id);
-        if (myList.size() > 0) {
-            //for ()
-            for (SerialScoreChromosome aPair : myList) {
-                IclijConfigMapChromosome aChromosome = (IclijConfigMapChromosome) aPair.getRight();
-                Map<String, Object> aMap = aChromosome.getMap();
-                aMap.remove(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
-                aMap.remove(IclijConfigConstants.SIMULATEINVESTFILTERS);
-            }
+        {
             Map<String, String> shortMap;
             if (!b) {
                 shortMap = getAutoShortMap();
@@ -422,19 +419,12 @@ public class Sim {
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
-            SerialScoreChromosome winnerPair = myList.get(0);
-            IclijConfigMapChromosome winnerChromosome = (IclijConfigMapChromosome) winnerPair.getRight();
-            String filterString = getFilter(winnerChromosome);
-            int adviser = getAdviser(winnerChromosome);
-            if (adviser == -1) {
-                adviser = 0;
-            }
-            SimulateFilter filter;
-            if (!b) {
-                filter = getFilter();
-            } else {
-                filter = getFilter(adviser);
-            }
+            SimulateFilter filter = getFilter();
+            filter.setAllabove(false);
+            filter.setLucky(0.0);
+            filter.setShortrun(0);
+            filter.setStable(0.0);
+            filter.setCorrelation(0.5);
             {
                 SimulateFilter[] listoverrides = null;
                 SerialString o = (SerialString) data.get(SimConstants.FILTER);
@@ -454,10 +444,6 @@ public class Sim {
                 }
                 }
             }
-            if (!list.isEmpty() && b) {
-                SimulateFilter[] filters = list.get(0);
-                filter = filters[adviser];
-            }
             if (!list.isEmpty() && !b) {
                 Set<String> set = filter.getPrintconfig();
                 filter = list.get(0)[0];
@@ -465,29 +451,12 @@ public class Sim {
             }
             List<String> output = new ArrayList<>();
 
-            //output.add("Sim " + simtext);
-            //output.add("File: " + id);
-            // config compare always true
-            if (filter.getPopulationabove() > 0) {
-                getPopulationAbove(myList, filter, output);
-                output.add("");
-            }
-            Map<Double, List<AbstractChromosome>> chromosomeMap = groupCommon(myList, output);
-            Double[] commonScore = getCommon(chromosomeMap, output, filter.isAllabove());
-            Map<Double, List<AbstractChromosome>> minChromosomeMap = new HashMap<>(chromosomeMap);
             Set<Double> scores = new HashSet<>();
             Set<Double> minScores = new HashSet<>();
             List<Pair<Double, String>> summaries = new ArrayList<>();
-            for (Entry<Double, List<AbstractChromosome>> entry : chromosomeMap.entrySet()) {
+            {
                 List<Summary> summary = new ArrayList<>();
-                Double score = entry.getKey();
-                if (score < 1) {
-                    break;
-                }
-                //output.add("Score " + score);
-                List<AbstractChromosome> chromosomes = entry.getValue();
-                IclijConfigMapChromosome chromosome = (IclijConfigMapChromosome) chromosomes.get(0);
-                SerialListMap resultMap = chromosome.getResultMap();
+                Double score = 0.5;
                 Double keyScore = filterResultMap(filter, output, summary, score, resultMap);
                 String mysummary = "";
                 boolean success = true;
@@ -496,12 +465,7 @@ public class Sim {
                     mysummary += ", ";
                     mysummary += aSummary.text + " : " + aSummary.success + " ";
                 }
-                Map<String, Object> map = chromosome.getMap();
-                Map<String, Object> shorts = new HashMap<>();
-                for (String key : filter.getPrintconfig()) {
-                    shorts.put(shortMap.get(key), map.get(key));
-                }
-                mysummary = "Summary : " + success + " Score " + MathUtil.round(score, 2) + " " + mysummary + " Config : " + shorts;
+                mysummary = "Summary : " + success + " Score " + MathUtil.round(score, 2) + " " + mysummary;
                 output.add(mysummary);
                 output.add("");
                 if (success) {
@@ -509,7 +473,6 @@ public class Sim {
                     scores.add(score);
                     if (score.doubleValue() != keyScore.doubleValue()) {
                         minScores.add(keyScore);
-                        minChromosomeMap.put(keyScore, chromosomes);
                     }
                 }
             }
@@ -523,8 +486,6 @@ public class Sim {
             String mypath = iclijConfig.getEvolveSavePath();
             // TODO_
             // configCurator(iclijConfig);
-            String text = printtext(string + " " + simtext, "File " + id, output);
-            io.getFileSystemDao().writeFile(node, mypath, null, text);
             
             //Map<String, Object> resultMap = winnerChromosome.getResultMap();
             String[] parts = simtext.split(" ");
@@ -554,52 +515,92 @@ public class Sim {
                     log.error(Constants.EXCEPTION, e);
                 }
             }
+
+            Double score = null;
+            {
+                SerialListMap aMap = (SerialListMap) resultMap.get("0");
+                SerialListPlain capitalList0 = (SerialListPlain) aMap.get(SimConstants.PLOTCAPITAL);
+                List<Double> capitalList = (List<Double>) capitalList0.getList();
+                Double sum = capitalList.get(capitalList.size() - 1);
+                
+                long days = 0;
+                if (startdate != null && enddate != null) {
+                    days = ChronoUnit.DAYS.between(startdate, enddate);
+                }
+                double years = (double) days / 365;
+                score = sum; // / aOneRun.resultavg;
+                if (score < -0.1) {
+                    log.error("Negative amount");
+                }
+                if (score < 0) {
+                    score = 0.0;
+                }
+                if (years != 0) {
+                    score = Math.pow(score, 1 / years);
+                } else {
+                    score = 0.0;
+                }
+                output.add("Score " + score);
+            }
+            String aConf = PipelineUtils.getString(data, EvolveConstants.DEFAULT);
+            output.add(aConf);
+           
+            String text = printtext(string + " " + simtext, "File " + id, output);
+            io.getFileSystemDao().writeFile(node, mypath, null, text);
+            System.out.println(output);
+            
             if (scores.isEmpty()) {
                 return;
-            }
-            if (filter.isUseclusters() && b && commonScore[0] != null) {
-                IclijConfigMapChromosome chromosome = (IclijConfigMapChromosome) chromosomeMap.get(commonScore[0]).get(0);
-                SimDataDTO simdata = new SimDataDTO();
-                simdata.setRecord(LocalDate.now());
-                simdata.setScore(commonScore[1]);
-                simdata.setMarket(market);
-                //data.setAdviser(adviser);
-                simdata.setStartdate(startdate);
-                simdata.setEnddate(enddate);
-                simdata.setFilter(JsonUtil.convert(filter));
-                simdata.setConfig(JsonUtil.convert(chromosome.getMap()));
-                try {
-                    io.getIdbDao().save(simdata);
-                } catch (Exception e) {
-                    log.error(Constants.EXCEPTION, e);
-                }
             }
             Double max = Collections.max(scores);
             if (minScores.isEmpty()) {
                 minScores = scores;
             }
             Double min = Collections.max(minScores);
-            List<AbstractChromosome> chromosomes = minChromosomeMap.get(min);            
-            IclijConfigMapChromosome chromosome = (IclijConfigMapChromosome) chromosomes.get(0);
             //String adviser = parts[4];
             if (!b) {
                 return;
             }
-            SimDataDTO simdata = new SimDataDTO();
-            simdata.setRecord(LocalDate.now());
-            simdata.setScore(min);
+            
+            SerialListMap aMap = (SerialListMap) resultMap.get("0");
+            SerialListPlain capitalList0 = (SerialListPlain) aMap.get(SimConstants.PLOTCAPITAL);
+            List<Double> capitalList = (List<Double>) capitalList0.getList();
+            if (capitalList.size() < 2) {
+                return;
+            }
+            double average = getCorrelationAvg(filter, output, capitalList);
+            
+            SimRunDataDTO simdata = new SimRunDataDTO();
+            simdata.setRecorddate(LocalDate.now());
+            simdata.setCorrelation(average);
+            simdata.setScore(score);
             simdata.setMarket(market);
             //data.setAdviser(adviser);
             simdata.setStartdate(startdate);
             simdata.setEnddate(enddate);
-            simdata.setFilter(JsonUtil.convert(filter));
-            simdata.setConfig(JsonUtil.convert(chromosome.getMap()));
             try {
                 io.getIdbDao().save(simdata);
+                log.info("TODO {}", simdata);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
         }
+    }
+
+    private double getCorrelationAvg(SimulateFilter filter, List<String> output, List<Double> capitalList) {
+        List<Double> correlations = new ArrayList<>();
+        boolean correlation = true;
+        correlation &= SimUtil.isCorrelating(filter, capitalList, correlations);
+        double average;
+        if (!correlations.isEmpty()) {
+            OptionalDouble averageOpt = correlations.stream().mapToDouble(e -> e).average();
+            average = averageOpt.orElse(0);
+            output.add("Correlation " + MathUtil.round(correlations.get(0), 2) + " " + MathUtil.round(correlations.get(1), 2) + " " + MathUtil.round(correlations.get(2), 2) + " " + MathUtil.round(average, 2));
+        } else {
+            average = 1.0;
+            output.add("Correlation " + MathUtil.round(average, 2));                
+        }
+        return average;
     }
 
     private LocalDate dateRound(LocalDate enddate) {

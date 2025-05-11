@@ -17,6 +17,8 @@ public class SimRunDataDTO {
     
     private Double score;
 
+    private Double correlation;
+    
     public Long getDbid() {
         return dbid;
     }
@@ -73,4 +75,16 @@ public class SimRunDataDTO {
         this.score = score;
     }
     
+    public Double getCorrelation() {
+        return correlation;
+    }
+
+    public void setCorrelation(Double correlation) {
+        this.correlation = correlation;
+    }
+
+    @Override
+    public String toString() {
+        return market + " " + score + " " + correlation + " " + startdate + " " + enddate + "\n"; 
+    }
 }

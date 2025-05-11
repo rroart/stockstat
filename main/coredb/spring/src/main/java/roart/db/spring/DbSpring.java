@@ -485,24 +485,26 @@ public class DbSpring {
 
     public static SimRunDataDTO map(SimRunData item) {
         SimRunDataDTO data = new SimRunDataDTO();
+        data.setCorrelation(item.getCorrelation());
         data.setDbid(item.getDbid());
         data.setEnddate(item.getEnddate());
         data.setMarket(item.getMarket());
         data.setRecorddate(item.getRecorddate());
         data.setScore(item.getScore());
-        item.setSimdatadbid(item.getSimdatadbid());
+        data.setSimdatadbid(item.getSimdatadbid());
         data.setStartdate(item.getStartdate());
         return data;
     }
 
     public static SimRunData map(SimRunDataDTO item) {
         SimRunData data = new SimRunData();
+        data.setCorrelation(item.getCorrelation());
         data.setDbid(item.getDbid());
         data.setEnddate(item.getEnddate());
         data.setMarket(item.getMarket());
         data.setRecorddate(item.getRecorddate());
         data.setScore(item.getScore());
-        item.setSimdatadbid(item.getSimdatadbid());
+        data.setSimdatadbid(item.getSimdatadbid());
         data.setStartdate(item.getStartdate());
         return data;
     }

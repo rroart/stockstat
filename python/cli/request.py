@@ -37,6 +37,7 @@ url9 = 'http://' + ahost + ':' + aport + '/db/update/end'
 url10 = 'http://' + ahost + ':' + aport + '/cache/invalidate'
 url11 = 'http://' + ahost + ':' + aport + '/copy/'
 url12 = 'http://' + ahost + ':' + aport + '/cache/deletepipeline'
+url13 = 'http://' + ahost + ':' + aport + '/action/simulateinvestrun'
 
 def geturl(cf):
     if istf(cf):
@@ -73,6 +74,9 @@ def request3(market, data):
 
 def request4(market, data):
     return requests.post(url4 + '/market/' + str(market), json=data, headers=headers)
+
+def request5(market, data):
+    return requests.post(url13 + '/market/' + str(market), json=data, headers=headers)
 
 def requestpause():
     return requests.post(url5, headers=headers)

@@ -410,6 +410,7 @@ public class DbHibernate {
 
     public static SimRunDataDTO map(SimRunData item) {
         SimRunDataDTO data = new SimRunDataDTO();
+        data.setCorrelation(item.getCorrelation());
         data.setDbid(item.getDbid());
         data.setEnddate(item.getEnddate());
         data.setMarket(item.getMarket());
@@ -602,6 +603,7 @@ public class DbHibernate {
 
     public static SimRunData map(SimRunDataDTO item) {
         SimRunData data = new SimRunData();
+        data.setCorrelation(item.getCorrelation());
         data.setDbid(item.getDbid());
         data.setEnddate(item.getEnddate());
         data.setMarket(item.getMarket());

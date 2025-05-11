@@ -181,6 +181,28 @@ public class ServiceController {
         return ServiceUtil.getSimulateInvest(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), myConfig, io);
     }
 
+    @RequestMapping(value = "action/simulateinvestrun",
+            method = RequestMethod.POST)
+    public IclijServiceResult getSimulateInvestRun(@RequestBody IclijServiceParam param)
+            throws Exception {
+        //MainAction.goals.add(new ImproveProfitAction());
+        //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
+        IclijConfig myConfig = new IclijConfig(param.getConfigData());
+        return ServiceUtil.getSimulateInvestRun(new ComponentInput(param.getConfigData(), null, null, null, param.getOffset(), true, false, new ArrayList<>(), new HashMap<>()), myConfig, io);
+    }
+
+    @RequestMapping(value = "action/simulateinvestrun/market/{market}",
+            method = RequestMethod.POST)
+    public IclijServiceResult getSimulateInvestMarketRun(@PathVariable("market") String market, @RequestBody SimulateInvestConfig simConfig)
+            throws Exception {
+        //MainAction.goals.add(new ImproveProfitAction());
+        //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
+        Map<String, Object> map = simConfig.asMap();
+        IclijConfig myConfig = iclijConfig.copy();
+        myConfig.getConfigData().getConfigValueMap().putAll(map);
+        return ServiceUtil.getSimulateInvestRun(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), myConfig, io);
+    }
+
     @RequestMapping(value = "action/improvesimulateinvest/market/{market}",
             method = RequestMethod.POST)
     public IclijServiceResult getImproveSimulateInvest(@PathVariable("market") String market, @RequestBody SimulateInvestConfig simConfig)

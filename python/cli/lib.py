@@ -2383,8 +2383,8 @@ def rangei(stop):
     return range(stop + 1)
 
 
-def simulateinvest2(market, startdate = None, enddate = None, confidence = False, confidencevalue = 0.7, confidencefindtimes = 4, stoploss = True, stoplossvalue = 0.9, indicatorpure = False, indicatorrebase = False, indicatorreverse = False, mldate = False, stocks = 5, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalstoploss = True, intervalstoplossvalue = 0.9, day = 1, delay = None, intervalwhole = False, confidenceholdincrease = False, noconfidenceholdincrease = True, noconfidencetrenddecrease = False, noconfidencetrenddecreasetimes = 1, confidencetrendincrease = False, confidencetrendincreasetimes = 1, indicatordirection = False, indicatordirectionup = True, volumelimits = None, abovebelow = False):
-    simulateinvest(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay, intervalwhole, confidenceholdincrease, noconfidenceholdincrease, noconfidencetrenddecrease, noconfidencetrenddecreasetimes, confidencetrendincrease, confidencetrendincreasetimes, indicatordirection, indicatordirectionup, volumelimits, abovebelow)
+def simulateinvest2(market, startdate = None, enddate = None, confidence = False, confidencevalue = 0.7, confidencefindtimes = 4, stoploss = True, stoplossvalue = 0.9, indicatorPure = False, indicatorrebase = False, indicatorreverse = False, mldate = False, stocks = 5, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalstoploss = True, intervalstoplossvalue = 0.9, day = 1, delay = None, intervalwhole = False, confidenceholdincrease = False, noconfidenceholdincrease = True, noconfidencetrenddecrease = False, noconfidencetrenddecreasetimes = 1, confidencetrendincrease = False, confidencetrendincreasetimes = 1, indicatordirection = False, indicatordirectionup = True, volumelimits = None, abovebelow = False):
+    simulateinvest(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorPure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay, intervalwhole, confidenceholdincrease, noconfidenceholdincrease, noconfidencetrenddecrease, noconfidencetrenddecreasetimes, confidencetrendincrease, confidencetrendincreasetimes, indicatordirection, indicatordirectionup, volumelimits, abovebelow)
     
 def simulateinvest(market, startdate = None, enddate = None, confidence = False, confidenceValue = 0.7, confidenceFindTimes = 4, stoploss = True, stoplossValue = 0.9, indicatorPure = False, indicatorRebase = False, indicatorReverse = False, mldate = False, stocks = 5, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalStoploss = True, intervalStoplossValue = 0.9, day = 1, delay = None, intervalwhole = False, confidenceholdincrease = False, noconfidenceholdincrease = True, noconfidencetrenddecrease = False, noconfidencetrenddecreasetimes = 1, confidencetrendincrease = False, confidencetrendincreasetimes = 1, indicatordirection = False, indicatordirectionup = True, volumelimits = None, abovebelow = False):
     data = { 'startdate' : startdate, 'enddate' : enddate, 'confidence' : confidence, 'confidenceValue' : confidenceValue, 'confidenceFindTimes' : confidenceFindTimes, 'stoploss' : stoploss, 'stoplossValue' : stoplossValue, 'indicatorPure' : indicatorPure, 'indicatorRebase' : indicatorRebase, 'indicatorReverse' : indicatorReverse, 'mldate' : mldate, 'stocks' : stocks, 'buyweight' : buyweight, 'interval' : interval, 'adviser' : adviser, 'period' : period, 'interpolate' : interpolate, 'intervalStoploss' : intervalStoploss, 'intervalStoplossValue' : intervalStoplossValue, 'day' : day, 'delay' : delay, 'intervalwhole' : intervalwhole, 'confidenceholdincrease' : confidenceholdincrease, 'noconfidenceholdincrease': noconfidenceholdincrease, 'noconfidencetrenddecrease' : noconfidencetrenddecrease, 'noconfidencetrenddecreaseTimes' : noconfidencetrenddecreasetimes, 'confidencetrendincrease' : confidencetrendincrease, 'confidencetrendincreaseTimes' : confidencetrendincreasetimes, 'indicatorDirection' : indicatordirection, 'indicatorDirectionUp' : indicatordirectionup, 'volumelimits' : volumelimits, 'abovebelow' : abovebelow }
@@ -2473,8 +2473,8 @@ def simulateinvest(market, startdate = None, enddate = None, confidence = False,
     mypost.post(updatemap['lastbuysell'])
     return
 
-def improvesimulateinvest(market = None, startdate = None, enddate = None, ga = 0, adviser = None, indicatorpure = None, delay = 1, intervalwhole = True, stocks = None, indicatorreverse = None, interval = None, buyweight = None, volumelimits = None, filters = None, futurecount = 0, futuretime = 0, improvefilters = False):
-    data = { 'startdate' : startdate, 'enddate' : enddate, 'ga' : ga, 'adviser' : adviser, 'indicatorPure' : indicatorpure, 'delay' : delay, 'intervalwhole' : intervalwhole, 'stocks' : stocks, 'indicatorReverse' : indicatorreverse, 'interval' : interval, 'buyweight' : buyweight, 'volumelimits' : volumelimits, 'filters' : filters, 'futurecount' : futurecount, 'futuretime' : futuretime, 'improveFilters' : improvefilters }
+def improvesimulateinvest(market = None, startdate = None, enddate = None, ga = 0, adviser = None, indicatorPure = None, delay = 1, intervalwhole = True, stocks = None, indicatorreverse = None, interval = None, buyweight = None, volumelimits = None, filters = None, futurecount = 0, futuretime = 0, improvefilters = False):
+    data = { 'startdate' : startdate, 'enddate' : enddate, 'ga' : ga, 'adviser' : adviser, 'indicatorPure' : indicatorPure, 'delay' : delay, 'intervalwhole' : intervalwhole, 'stocks' : stocks, 'indicatorReverse' : indicatorreverse, 'interval' : interval, 'buyweight' : buyweight, 'volumelimits' : volumelimits, 'filters' : filters, 'futurecount' : futurecount, 'futuretime' : futuretime, 'improveFilters' : improvefilters }
     from datetime import datetime
     tsstart = datetime.now().timestamp()
     response = request.request2(market, data)
@@ -2577,20 +2577,20 @@ def gettopgraphG(market, start, end, numberdays, tablemoveintervaldays, topbotto
     import multiprocessing as mp
     mp.Process(target = gettopgraphGwrap, args = (market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, wantrise, wantmacd, wantrsi, sort, macddays, reverse, deltadays, percentize, wantchart, interpolate, wantdays, days, wantgrid, interpolation)).start()
 
-def simulateinvest2Gwrap(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay, intervalwhole, confidenceholdincrease, noconfidenceholdincrease, noconfidencetrenddecrease, noconfidencetrenddecreasetimes, confidencetrendincrease, confidencetrendincreasetimes, indicatordirection, indicatordirectionup, volumelimits, abovebelow):
+def simulateinvest2Gwrap(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorPure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay, intervalwhole, confidenceholdincrease, noconfidenceholdincrease, noconfidencetrenddecrease, noconfidencetrenddecreasetimes, confidencetrendincrease, confidencetrendincreasetimes, indicatordirection, indicatordirectionup, volumelimits, abovebelow):
     import io
     from contextlib import redirect_stdout
     file = io.StringIO()
     with redirect_stdout(file):
-        simulateinvest2(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay, intervalwhole, confidenceholdincrease, noconfidenceholdincrease, noconfidencetrenddecrease, noconfidencetrenddecreasetimes, confidencetrendincrease, confidencetrendincreasetimes, indicatordirection, indicatordirectionup, volumelimits, abovebelow)
+        simulateinvest2(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorPure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay, intervalwhole, confidenceholdincrease, noconfidenceholdincrease, noconfidencetrenddecrease, noconfidencetrenddecreasetimes, confidencetrendincrease, confidencetrendincreasetimes, indicatordirection, indicatordirectionup, volumelimits, abovebelow)
     output = file.getvalue()
     myfile = open("/tmp/" + str(time.time()) + ".txt", "w")
     myfile.write(output)
     myfile.close()
     gui.view(output)
 
-def simulateinvest2G(market, startdate = None, enddate = None, confidence = False, confidencevalue = 0.7, confidencefindtimes = 4, stoploss = True, stoplossvalue = 0.9, indicatorpure = False, indicatorrebase = False, indicatorreverse = False, mldate = False, stocks = 5, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalstoploss = True, intervalstoplossvalue = 0.9, day = 1, delay = 1, intervalwhole = False, confidenceholdincrease = False, noconfidenceholdincrease = True, noconfidencetrenddecrease = False, noconfidencetrenddecreasetimes = 1, confidencetrendincrease = False, confidencetrendincreasetimes = 1, indicatordirection = False, indicatordirectionup = True, volumelimits = None, abovebelow = False):
-    mp.Process(target=simulateinvest2Gwrap, args=(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay, intervalwhole, confidenceholdincrease, noconfidenceholdincrease, noconfidencetrenddecrease, noconfidencetrenddecreasetimes, confidencetrendincrease, confidencetrendincreasetimes, indicatordirection, indicatordirectionup, volumelimits, abovebelow)).start()
+def simulateinvest2G(market, startdate = None, enddate = None, confidence = False, confidencevalue = 0.7, confidencefindtimes = 4, stoploss = True, stoplossvalue = 0.9, indicatorPure = False, indicatorrebase = False, indicatorreverse = False, mldate = False, stocks = 5, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalstoploss = True, intervalstoplossvalue = 0.9, day = 1, delay = 1, intervalwhole = False, confidenceholdincrease = False, noconfidenceholdincrease = True, noconfidencetrenddecrease = False, noconfidencetrenddecreasetimes = 1, confidencetrendincrease = False, confidencetrendincreasetimes = 1, indicatordirection = False, indicatordirectionup = True, volumelimits = None, abovebelow = False):
+    mp.Process(target=simulateinvest2Gwrap, args=(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorPure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay, intervalwhole, confidenceholdincrease, noconfidenceholdincrease, noconfidencetrenddecrease, noconfidencetrenddecreasetimes, confidencetrendincrease, confidencetrendincreasetimes, indicatordirection, indicatordirectionup, volumelimits, abovebelow)).start()
 
 f = False
 t = True
@@ -2611,7 +2611,7 @@ def improvesimulateinvestGwrap(market, startdate, enddate, ga, adviser, indicato
     gui.view(output)
 
 def improvesimulateinvestG(market, startdate = None, enddate = None, ga = 0, adviser = None, indicatorPure = None, delay = 1, intervalwhole = True, stocks = None, volumelimits = None, filters = None, futurecount = 0, futuretime = 0, improvefilters = False):
-    mp.Process(target=improvesimulateinvestGwrap, args=(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole, stocks, volumelimits, filters, futurecount, futuretime, improvefilters)).start()
+    mp.Process(target=improvesimulateinvestGwrap, args=(market, startdate, enddate, ga, adviser, indicatorPure, delay, intervalwhole, stocks, volumelimits, filters, futurecount, futuretime, improvefilters)).start()
 
 engine = create_engine('postgresql://stockread:password@localhost:5432/stockstat')
 session = Session(bind=engine)
@@ -2758,8 +2758,55 @@ def improveautosimulateinvestGwrap(market, startdate, enddate, ga, stocks, inter
     output = file.getvalue()
     gui.view(output)
 
-def improveautosimulateinvestG(market, startdate = None, enddate = None, ga = 0, intervalwhole = False, futurecount = 0, futuretime = 0, improvefilters = False, vote = False):
+def improveautosimulateinvestG(market, startdate = None, enddate = None, ga = 0, stocks = 5, intervalwhole = False, filters = None, volumelimits = None, futurecount = 0, futuretime = 0, improvefilters = False, vote = False):
     mp.Process(target=improveautosimulateinvestGwrap, args=(market, startdate, enddate, ga, stocks, intervalwhole, filters, volumelimits, futurecount, futuretime, improvefilters, vote)).start()
+
+
+def simulateinvestrun(market=None, startdate=None, enddate=None,
+                              filters=None, volumelimits=None, improvefilters=False):
+    data = {'startdate': startdate, 'enddate': enddate,
+            'volumelimits': volumelimits, 'filters': filters,
+            'improveFilters': improvefilters}
+    from datetime import datetime
+    tsstart = datetime.now().timestamp()
+    response = request.request5(market, data)
+    tsend = datetime.now().timestamp()
+    time = tsend - tsstart
+    resp = response.json()
+    webdata = resp['webdatajson']
+    updatemap = webdata['updateMap']
+    # timingmap = webdata['timingMap']
+    # key = list(timingmap.keys())[0]
+    # timing = timingmap[key]
+    # print(timing)
+    # print(type(timing))
+    # print(timing.keys)
+    # print(updatemap.keys())
+    # print(updatemap['scores'])
+    # print(updatemap['stats'])
+    # print(updatemap['minmax'])
+    print("run complete", market, startdate, enddate, time)
+    # print(response.text)
+
+
+def simulateinvestrunGwrap(market, startdate, enddate, ga, stocks, intervalwhole, filters, volumelimits,
+                                   futurecount, futuretime, improvefilters, vote):
+    import io
+    from contextlib import redirect_stdout
+    file = io.StringIO()
+    with redirect_stdout(file):
+        simulateinvestrun(market, startdate, enddate, ga, stocks, intervalwhole, filters, volumelimits,
+                                  futurecount, futuretime, improvefilters, vote)
+    output = file.getvalue()
+    gui.view(output)
+
+
+def simulateinvestrunG(market, startdate=None, enddate=None, ga=0, stocks=5, intervalwhole=False, filters=None,
+                               volumelimits=None, futurecount=0, futuretime=0, improvefilters=False, vote=False):
+    mp.Process(target=simulateinvestrunGwrap,
+               args=(market, startdate, enddate, ga, stocks, intervalwhole, filters, volumelimits, futurecount,
+                     futuretime, improvefilters, vote)).start()
+
 
 def eventpause():
     request.requestpause()
@@ -2788,7 +2835,10 @@ def deletepipeline():
     
 def copydb(indb, outdb):
     request.copydb(indb, outdb)
-    
+
+allstocks = None
+allmetas = None
+
 def main():
     import sys
     #if not 'allstocks' in vars() and not 'allstocks' in globals():

@@ -36,6 +36,10 @@ import roart.common.model.SimDataDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialList;
+import roart.common.pipeline.data.SerialListMap;
+import roart.common.pipeline.data.SerialListPlain;
+import roart.common.pipeline.data.SerialListSimulateStock;
+import roart.common.pipeline.data.SerialListStockHistory;
 import roart.common.pipeline.data.SerialScoreChromosome;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.queue.QueueElement;
@@ -58,7 +62,11 @@ import roart.iclij.model.WebData;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.model.action.SimulateInvestActionData;
 import roart.service.model.ProfitData;
+import roart.simulate.model.SimulateStock;
+import roart.simulate.model.StockHistory;
+
 import java.util.function.Function;
+import roart.common.pipeline.data.SerialObject;
 
 public class SimulateInvestRunAction extends MarketAction {
 
@@ -137,6 +145,7 @@ public class SimulateInvestRunAction extends MarketAction {
         List<SimulateFilter> autofilter = new ArrayList<>();
         List<SimulateFilter[]> filters = new ArrayList<>();
         // TODO Auto-generated method stub
+        /*
         Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> simConfigs = getSimConfigs(market.getConfig().getMarket(), autoSimConfig, autofilter, filters, config, getActionData(), param);
         Mydate mydate = new Mydate();
         try {
@@ -148,20 +157,23 @@ public class SimulateInvestRunAction extends MarketAction {
         Set<Pair<LocalDate, LocalDate>> keys = simConfigs.keySet();
         log.info("aconf" + simConfigs.size());
         log.info("aconf" + simConfigs.keySet().stream().map(k -> k.getLeft().toString() + " " + k.getRight().toString()).toList());
-
+*/
+        /*
         List<Pair<Long, SimulateInvestConfig>> simsConfigs = new ArrayList<>();
         for (Entry<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> entry : simConfigs.entrySet()) {
             log.info("aconf" + entry.getValue().size());
             simsConfigs.addAll(entry.getValue());
         }
+        */
 
         //List<Pair<Long, SimulateInvestConfig>> simsConfigs = getSimConfigs(simConfigs, mydate, keys, market);
-
+/*
         log.info("aconf" + simsConfigs.size());
         for (Pair<Long, SimulateInvestConfig> pair : simsConfigs) {
             SimulateInvestConfig aConf = pair.getRight();
             log.info("aconf" + aConf);
         }
+        */
         //if (true) return;
 
         //param.getAndSetCategoryValueMap();
@@ -197,14 +209,14 @@ public class SimulateInvestRunAction extends MarketAction {
             boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
             int i = 0;
             for (Entry<Long, SimDataDTO> entry2 : restmap.entrySet()) {
-                if (i++ > 9) break;
-                SimulateInvestConfig aConf = simsConfigs.get(i).getRight();
+                if (i++ > 3) break;
+                SimulateInvestConfig aConf; // = simsConfigs.get(i).getRight();
                 SimDataDTO simData = entry2.getValue();
                 String configStr = simData.getConfig();
                 Map configMap = JsonUtil.convert(configStr, Map.class);
                 Map newMap = new HashMap<>();
                 newMap.putAll(defaultMap);
-                newMap.putAll(map);
+                newMap.putAll(configMap);
                 IclijConfig dummy = new IclijConfig(config);
                 dummy.getConfigData().setConfigValueMap(newMap);
                 SimulateInvestConfig simConf = getSimConfig(dummy);
@@ -262,19 +274,32 @@ public class SimulateInvestRunAction extends MarketAction {
                 PipelineData results = new PipelineData();
                 results.setName("name");
                 results.put(filename, new SerialList(result));
-                results.put(EvolveConstants.TITLETEXT, "title");
+                results.put(EvolveConstants.TITLETEXT, "title mark1 what 2022-03-03-2022-04-04");
                 results.put(EvolveConstants.SUBTITLETEXT, "subtitle");
                 results.put(EvolveConstants.ID, filename);
-
+                results.put(EvolveConstants.DEFAULT, JsonUtil.convert(aConf.asValuedMap()));
+                //componentData.getUpdateMap().keySet()
                 Object filters2 = param.getConfigValueMap().remove(IclijConfigConstants.SIMULATEINVESTFILTERS);
                 // filters is already a serialized string
                 filters2 = param.getInput().getValuemap().get(IclijConfigConstants.SIMULATEINVESTFILTERS);
                 results.put(SimConstants.FILTER, filters2);
+                log.info("TODO {}", updateMap.keySet());
+                Map<String, Object> resultMap = new HashMap<>();
+                //resultMap.put(SimConstants.HISTORY, new SerialListStockHistory((List<StockHistory>) updateMap.get(SimConstants.HISTORY)));
+                resultMap.put(SimConstants.STOCKHISTORY, new SerialListSimulateStock((List<SimulateStock>) updateMap.get(SimConstants.STOCKHISTORY)));
+                resultMap.put(SimConstants.PLOTCAPITAL, new SerialListPlain((List) updateMap.get(SimConstants.PLOTCAPITAL)));
+                //resultMap.put(SimConstants.SCORE, updateMap.get(SimConstants.SCORE));
+                //resultMap.put("" + updateMap.get(SimConstants.SCORE), updateMap.get(SimConstants.SCORE));
+                //resultMap.put(SimConstants.STARTDATE, TimeUtil.convertDate2((LocalDate)updateMap.get(SimConstants.STARTDATE)));
+                //resultMap.put(SimConstants.ENDDATE, TimeUtil.convertDate2((LocalDate)updateMap.get(SimConstants.ENDDATE)));
+                Map<String, Object> anotherResultMap =  Map.of("0", new SerialListMap(resultMap));
+                results.put(PipelineConstants.RESULT, new SerialListMap(anotherResultMap));
                 QueueElement element = new QueueElement();
-                InmemoryMessage msg = inmemory.send(ServiceConstants.SIMTEST + UUID.randomUUID(), results, null);
+                //log.info("Content {}", JsonUtil.convert(results));
+                InmemoryMessage msg = inmemory.send(ServiceConstants.SIMRUN + UUID.randomUUID(), results, null);
                 element.setOpid(ServiceConstants.SIM);
                 element.setMessage(msg);
-                componentData.getService().send(ServiceConstants.SIMTEST, element, param.getConfig());
+                componentData.getService().send(ServiceConstants.SIMRUN, element, param.getConfig());
 
 
 
@@ -567,6 +592,7 @@ public class SimulateInvestRunAction extends MarketAction {
 
     }
 
+    @Deprecated
     private Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> getSimConfigs2(String market, AutoSimulateInvestConfig autoSimConf, List<SimulateFilter> filter, List<SimulateFilter[]> filters, IclijConfig config, MarketActionData actionData, ComponentData param) {
         List<SimDataDTO> all = new ArrayList<>();
         try {

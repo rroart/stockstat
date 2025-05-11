@@ -23,6 +23,8 @@ public class SimRunData {
     
     private Double score;
 
+    private Double correlation;
+    
     public Long getDbid() {
         return dbid;
     }
@@ -77,6 +79,14 @@ public class SimRunData {
 
     public void setScore(Double score) {
         this.score = score;
+    }
+
+    public Double getCorrelation() {
+        return correlation;
+    }
+
+    public void setCorrelation(Double correlation) {
+        this.correlation = correlation;
     }
 
 }

@@ -11,6 +11,7 @@ public class SimRunDataRowMapper implements RowMapper<SimRunDataDTO>{
     @Override
     public SimRunDataDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
         SimRunDataDTO item = new SimRunDataDTO();
+        item.setCorrelation(item.getCorrelation());
         item.setDbid(item.getDbid());
         item.setEnddate(item.getEnddate());
         item.setMarket(item.getMarket());
