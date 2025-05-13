@@ -8,6 +8,13 @@
   </formats>
   <fileSets>
     <fileSet>
+      <directory>${project.basedir}/../input/target</directory>
+      <includes>
+       <include>stockstat*jar-with-dependencies.jar</include>
+      </includes>
+      <outputDirectory>lib</outputDirectory>
+    </fileSet>
+    <fileSet>
       <directory>${project.basedir}/../web/target</directory>
       <includes>
 	<!--include>stockstat*.jar</include-->

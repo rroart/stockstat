@@ -9,6 +9,7 @@
     <module>common</module>
     <module>eureka</module>
     <module>iclij</module>
+    <module>input</module>
     <module>main</module>
     <module>testdata</module>
     <!--module>web</module-->

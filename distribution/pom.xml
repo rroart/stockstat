@@ -25,7 +25,7 @@
       <dependencies>
         <dependency>
           <groupId>roart</groupId>
-          <artifactId>stockstat-iclij-core</artifactId>
+          <artifactId>stockstat-input</artifactId>
           <version>${stockstat.version}</version>
         </dependency>
         <!--dependency>
