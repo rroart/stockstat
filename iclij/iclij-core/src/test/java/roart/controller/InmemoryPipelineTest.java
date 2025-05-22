@@ -117,7 +117,7 @@ public class InmemoryPipelineTest {
         MyCache.setCacheTTL(iconf.getCacheTTL());
 
         String market = TestConstants.MARKET;
-        String start = "2024.01.01";
+        String start = "2022.01.01";
         String end = "2025.01.01";
         TestDataSource dataSource1 = new TestDataSource(conf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), market, 26, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null);
         TestDataSource dataSource2 = new TestDataSource(conf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), TestConstants.MARKET2, 20, false, Constants.PRICECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, "impid");
@@ -324,8 +324,8 @@ public class InmemoryPipelineTest {
         log.info("Wants it {}", iconf.wantsInmemoryPipeline());
         SimulateInvestConfig simConfig = testutils.getSimConfigDefault();
         String market = TestConstants.MARKET;
-        simConfig.setStartdate("2024-01-01");
-        simConfig.setEnddate("2025-01-01");
+        simConfig.setStartdate("2023-01-01");
+        simConfig.setEnddate("2024-01-01");
         IclijServiceResult result = null;
         try {
             result = testutils.getSimulateInvestRunMarket(simConfig, market);

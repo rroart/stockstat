@@ -785,6 +785,9 @@ public class DbHibernate {
         if (object instanceof SimDataDTO obj) {
             obj2 = map(obj);
         }
+        if (object instanceof SimRunDataDTO obj) {
+            obj2 = map(obj);
+        }
         if (object instanceof StockDTO obj) {
             obj2 = map(obj);
         }

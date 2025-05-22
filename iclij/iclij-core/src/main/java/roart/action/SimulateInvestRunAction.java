@@ -137,8 +137,8 @@ public class SimulateInvestRunAction extends MarketAction {
         log.info("set {}", restmap.keySet());
 
         AutoSimulateInvestConfig autoSimConfig = new AutoSimulateInvestConfig();
-        autoSimConfig.setStartdate("2020.07.01");
-        autoSimConfig.setEnddate("2025.01.01");
+        autoSimConfig.setStartdate(startDate);
+        autoSimConfig.setEnddate(endDate);
         autoSimConfig.setScorelimit(0.5);
         autoSimConfig.setPeriod(0); // meaning 1 month
         autoSimConfig.setInterval(1);
@@ -274,7 +274,7 @@ public class SimulateInvestRunAction extends MarketAction {
                 PipelineData results = new PipelineData();
                 results.setName("name");
                 results.put(filename, new SerialList(result));
-                results.put(EvolveConstants.TITLETEXT, "title mark1 what 2022-03-03-2022-04-04");
+                results.put(EvolveConstants.TITLETEXT, "simrun " + market.getConfig().getMarket() + " " + simData.getDbid() + " " +  startDate + "-" + endDate);
                 results.put(EvolveConstants.SUBTITLETEXT, "subtitle");
                 results.put(EvolveConstants.ID, filename);
                 results.put(EvolveConstants.DEFAULT, JsonUtil.convert(aConf.asValuedMap()));
@@ -283,6 +283,7 @@ public class SimulateInvestRunAction extends MarketAction {
                 // filters is already a serialized string
                 filters2 = param.getInput().getValuemap().get(IclijConfigConstants.SIMULATEINVESTFILTERS);
                 results.put(SimConstants.FILTER, filters2);
+                log.info("Misc {} {}", simData.getDbid(), simData.getScore());
                 log.info("TODO {}", updateMap.keySet());
                 Map<String, Object> resultMap = new HashMap<>();
                 //resultMap.put(SimConstants.HISTORY, new SerialListStockHistory((List<StockHistory>) updateMap.get(SimConstants.HISTORY)));

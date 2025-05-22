@@ -200,7 +200,7 @@ public class DbSpringDS extends DbDS {
 
     @Override
     public List<SimRunDataDTO> getAllSimRunData(String market, LocalDate startDate, LocalDate endDate) {
-        return service.getAllSimData2();
+        return service.getAllSimRunData();
     }
 
 }

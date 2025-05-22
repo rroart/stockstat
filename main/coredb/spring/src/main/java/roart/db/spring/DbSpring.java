@@ -1,6 +1,17 @@
 package roart.db.spring;
 
-import roart.iclij.config.IclijConfig;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.StreamSupport;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import roart.common.constants.Constants;
 import roart.common.model.AboveBelowDTO;
 import roart.common.model.ActionComponentDTO;
@@ -11,14 +22,11 @@ import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.model.MetaDTO;
 import roart.common.model.RelationDTO;
-import roart.common.model.SimRunDataDTO;
 import roart.common.model.SimDataDTO;
+import roart.common.model.SimRunDataDTO;
 import roart.common.model.StockDTO;
 import roart.common.model.TimingBLDTO;
 import roart.common.model.TimingDTO;
-import roart.common.util.ArraysUtil;
-import roart.common.util.JsonUtil;
-import roart.common.util.TimeUtil;
 import roart.common.springdata.model.AboveBelow;
 import roart.common.springdata.model.ActionComponent;
 import roart.common.springdata.model.Config;
@@ -27,24 +35,22 @@ import roart.common.springdata.model.IncDec;
 import roart.common.springdata.model.MLMetrics;
 import roart.common.springdata.model.Memory;
 import roart.common.springdata.model.Meta;
+import roart.common.springdata.model.Relation;
 import roart.common.springdata.model.SimData;
 import roart.common.springdata.model.SimRunData;
 import roart.common.springdata.model.Stock;
 import roart.common.springdata.model.Timing;
 import roart.common.springdata.model.TimingBL;
-import roart.common.springdata.model.Relation;
 import roart.common.springdata.repository.AboveBelowRepository;
 import roart.common.springdata.repository.ActionComponentRepository;
 import roart.common.springdata.repository.ConfigRepository;
 import roart.common.springdata.repository.ContRepository;
-import roart.common.springdata.repository.SpringSimDataRepository;
 import roart.common.springdata.repository.IncDecRepository;
 import roart.common.springdata.repository.MLMetricsRepository;
 import roart.common.springdata.repository.MemoryRepository;
 import roart.common.springdata.repository.MetaRepository;
 import roart.common.springdata.repository.RelationRepository;
-import roart.common.springdata.repository.TimingRepository;
-import roart.common.springdata.repository.TimingBLRepository;
+import roart.common.springdata.repository.SimDataRepository;
 import roart.common.springdata.repository.SpringAboveBelowRepository;
 import roart.common.springdata.repository.SpringActionComponentRepository;
 import roart.common.springdata.repository.SpringConfigRepository;
@@ -54,29 +60,16 @@ import roart.common.springdata.repository.SpringMLMetricsRepository;
 import roart.common.springdata.repository.SpringMemoryRepository;
 import roart.common.springdata.repository.SpringMetaRepository;
 import roart.common.springdata.repository.SpringRelationRepository;
+import roart.common.springdata.repository.SpringSimDataRepository;
 import roart.common.springdata.repository.SpringSimRunDataRepository;
-import roart.common.springdata.repository.SpringTimingRepository;
-import roart.common.springdata.repository.SpringTimingBLRepository;
 import roart.common.springdata.repository.SpringStockRepository;
-import roart.common.springdata.repository.SimDataRepository;
-import roart.common.springdata.repository.SimRunDataRepository;
+import roart.common.springdata.repository.SpringTimingBLRepository;
+import roart.common.springdata.repository.SpringTimingRepository;
 import roart.common.springdata.repository.StockRepository;
-
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.StreamSupport;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import roart.common.springdata.repository.TimingBLRepository;
+import roart.common.springdata.repository.TimingRepository;
+import roart.common.util.JsonUtil;
+import roart.common.util.TimeUtil;
 
 @Service
 public class DbSpring {
@@ -147,7 +140,7 @@ public class DbSpring {
     SpringSimDataRepository springSimDataRepo;
 
     @Autowired
-    SpringSimRunDataRepository springSimData2Repo;
+    SpringSimRunDataRepository springSimRunDataRepo;
 
     @Autowired
     SimDataRepository simDataRepo;
@@ -667,6 +660,9 @@ public class DbSpring {
             if (object instanceof SimDataDTO obj) {
                 obj2 = springSimDataRepo.save(map(obj));
             }
+            if (object instanceof SimRunDataDTO obj) {
+                obj2 = springSimRunDataRepo.save(map(obj));
+            }
             if (object instanceof StockDTO obj) {
                 obj2 = springStockRepo.save(map(obj));
             }
@@ -925,9 +921,9 @@ public class DbSpring {
         }
     }
 
-    public List<SimRunDataDTO> getAllSimData2() {
+    public List<SimRunDataDTO> getAllSimRunData() {
         try {
-            return StreamSupport.stream(springSimData2Repo.findAll().spliterator(), false).map(e -> map(e)).toList();
+            return StreamSupport.stream(springSimRunDataRepo.findAll().spliterator(), false).map(e -> map(e)).toList();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return null;

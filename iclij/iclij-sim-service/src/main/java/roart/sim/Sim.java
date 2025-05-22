@@ -432,8 +432,10 @@ public class Sim {
                 // TODO if o null
                 //System.out.println("ooo" + o.getClass().getCanonicalName());
                 SimulateFilter[] listoverrides2 = null;
+                //o = null;
                 if (o != null) {
                     listoverrides2 = JsonUtil.convert(o.getString(), SimulateFilter[].class);
+                    //log.info("Avg {}", listoverrides2.);
                 }
                 SimulateFilter[] listoverride = listoverrides2;
                 if (listoverride != null) {
@@ -446,7 +448,7 @@ public class Sim {
             }
             if (!list.isEmpty() && !b) {
                 Set<String> set = filter.getPrintconfig();
-                filter = list.get(0)[0];
+                //filter = list.get(0)[0];
                 filter.setPrintconfig(set);
             }
             List<String> output = new ArrayList<>();
@@ -490,6 +492,7 @@ public class Sim {
             //Map<String, Object> resultMap = winnerChromosome.getResultMap();
             String[] parts = simtext.split(" ");
             String market = parts[1];
+            String dbid = parts[2];
             String dates = parts[3];
             String startdateStr = dates.substring(0, 10);
             String enddateStr = dates.substring(11);
@@ -546,31 +549,40 @@ public class Sim {
             output.add(aConf);
            
             String text = printtext(string + " " + simtext, "File " + id, output);
-            io.getFileSystemDao().writeFile(node, mypath, null, text);
-            System.out.println(output);
             
             if (scores.isEmpty()) {
-                return;
+                //return;
             }
-            Double max = Collections.max(scores);
+            //Double max = Collections.max(scores);
             if (minScores.isEmpty()) {
                 minScores = scores;
             }
-            Double min = Collections.max(minScores);
+            //Double min = Collections.max(minScores);
             //String adviser = parts[4];
             if (!b) {
-                return;
+                //return;
             }
             
             SerialListMap aMap = (SerialListMap) resultMap.get("0");
             SerialListPlain capitalList0 = (SerialListPlain) aMap.get(SimConstants.PLOTCAPITAL);
             List<Double> capitalList = (List<Double>) capitalList0.getList();
+            log.info("Capital list {}", capitalList.size());
             if (capitalList.size() < 2) {
                 return;
             }
             double average = getCorrelationAvg(filter, output, capitalList);
             
+            String filename = null;
+            log.info("Avg {}", average);
+            if (average >= 0.75 && score > 1.0) {
+                filename = io.getFileSystemDao().writeFile(node, mypath, null, text);
+            }
+            if ("dummy.txt".equals(filename)) {
+                System.out.println(output);
+            }
+            
             SimRunDataDTO simdata = new SimRunDataDTO();
+            simdata.setSimdatadbid(new Long(dbid));
             simdata.setRecorddate(LocalDate.now());
             simdata.setCorrelation(average);
             simdata.setScore(score);
