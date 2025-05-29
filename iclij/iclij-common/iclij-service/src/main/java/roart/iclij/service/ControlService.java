@@ -259,11 +259,27 @@ public class ControlService {
     // (Un)used
     public Map<String, String> getStocks(String market) {
         // TODO pipeline
+        if (false) {
+            try {
+                String s = null;
+                s.length();
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
+        String key = CacheConstants.STOCKS + coremlconf.getConfigData().getMarket() + coremlconf.getConfigData().getMlmarket() + coremlconf.getConfigData().getDate() + coremlconf.getConfigData().getConfigValueMap();
+        log.info("Content key {}", key.hashCode());
+        Map<String, String> list = (Map<String, String>) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(coremlconf.getConfigData());
         param.setMarket(market);
         IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETSTOCKS);
-        return result.getStocks();   	
+        list = result.getStocks();
+        MyCache.getInstance().put(key, list);
+        return list;   	
     }
     
     public List<String> getDates(String market, String uuid) {
