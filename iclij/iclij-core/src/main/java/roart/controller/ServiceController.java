@@ -181,6 +181,19 @@ public class ServiceController {
         return ServiceUtil.getSimulateInvest(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), myConfig, io);
     }
 
+    @RequestMapping(value = "action/simulateinvest/market/{market}/{dbid}",
+            method = RequestMethod.POST)
+    public IclijServiceResult getSimulateInvestDbidMarket(@PathVariable("market") String market, @PathVariable("dbid") String dbid, @RequestBody SimulateInvestConfig simConfig)
+            throws Exception {
+        //MainAction.goals.add(new ImproveProfitAction());
+        //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
+        Map<String, Object> map = simConfig.asMap();
+        IclijConfig myConfig = iclijConfig.copy();
+        myConfig.getConfigData().getConfigValueMap().putAll(map);
+        myConfig.getConfigData().getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTDBID, dbid);
+        return ServiceUtil.getSimulateInvest(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()), myConfig, io);
+    }
+
     @RequestMapping(value = "action/simulateinvestrun",
             method = RequestMethod.POST)
     public IclijServiceResult getSimulateInvestRun(@RequestBody IclijServiceParam param)

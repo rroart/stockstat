@@ -152,6 +152,29 @@ public class SimData implements Serializable {
 
     @Transient
     @Transactional
+    public static List<SimData> getById(String market, String dbid) throws Exception {
+        HibernateUtil hu = new HibernateUtil(false);
+        String queryString = "from SimData where ";
+        if (market != null) {
+            queryString += " market = :market";
+        } else {
+            queryString += " market like '%'";
+        }
+        if (dbid != null) {
+            queryString += " and dbid = :dbid";
+        }
+        SelectionQuery<SimData> query = hu.createQuery(queryString);
+        if (market != null) {
+            query.setParameter("market", market);
+        }
+        if (dbid != null) {
+            query.setParameter("dbid", dbid);
+        }
+        return hu.get(query);
+    }
+
+    @Transient
+    @Transactional
     public void save() throws Exception {
         Queues.queue.add(this);
     }

@@ -78,6 +78,9 @@ def request4(market, data):
 def request5(market, data):
     return requests.post(url13 + '/market/' + str(market), json=data, headers=headers)
 
+def request6(market, dbid, data):
+    return requests.post(url1 + '/market/' + str(market) + "/" + str(dbid), json=data, headers=headers)
+
 def requestpause():
     return requests.post(url5, headers=headers)
 

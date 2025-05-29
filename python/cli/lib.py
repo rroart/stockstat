@@ -2808,6 +2808,120 @@ def simulateinvestrunG(market, startdate=None, enddate=None, ga=0, stocks=5, int
                      futuretime, improvefilters, vote)).start()
 
 
+# TODO refactor common
+def simulateinvestid(market, dbid, startdate = None, enddate = None):
+    data = { 'startdate' : startdate, 'enddate' : enddate }
+    print(market, dbid, data)
+    response = request.request6(market, dbid, data)
+    #print(type(response))
+    #print(response)
+    #print(response.text)
+    #print(response.json())
+    resp = response.json()
+    #print(resp)
+    webdata = resp['webdatajson']
+    #print(webdata)
+    #print(type(webdata))
+    #print(webdata.keys())
+    updatemap = webdata['updateMap']
+    #print(updatemap)
+    #print(updatemap.keys())
+    if 'empty' in updatemap:
+        return
+    dates = updatemap['plotdates']
+    commondays = dates
+    #print(type(dates))
+    default = updatemap['plotdefault']
+    capital = updatemap['plotcapital']
+    if len(capital) == 0:
+        return
+    else:
+        print("Capital: ", capital[-1])
+        print("Last stocks: ", updatemap['laststocks'])
+    geom = np.geomspace(capital[0], capital[-1],num=len(capital),endpoint=True, dtype=None, axis=0)
+    if len(capital) >= 2:
+        pearson = scipy.stats.pearsonr(capital, geom)
+        spearman = scipy.stats.spearmanr(capital, geom)
+        kendalltau = scipy.stats.kendalltau(capital, geom)
+        pearson = round(pearson[0], 2)
+        spearman = round(spearman[0], 2)
+        kendalltau = round(kendalltau[0], 2)
+    else:
+        pearson = 0
+        spearman = 0
+        kendalltau = 0
+    commonls = [ default, capital, geom ]
+    mynames = [ "default", "capital", "geom" ]
+    plt.rc('axes', grid=True)
+    plt.rc('grid', color='0.75', linestyle='-', linewidth=0.5)
+
+    mynames=["default","my" + " " + str(pearson) + " " + str(spearman) + " " + str(kendalltau), "geom"]
+    olddate = dates[0]
+    newdate = dates[len(dates) - 1]
+    
+    textsize = 9
+    left, width = 0.1, 0.8
+    rect1 = [left, 0.5, width, 0.4]
+    #rect2 = [left, 0.3, width, 0.2]
+    #rect3 = [left, 0.1, width, 0.2]
+    plt.ion()
+    #print("TT" + str(type(mynames[0])))
+    title = market + " " + str(mynames) + " " + str(olddate) + " - " + str(newdate)
+    fig = plt.figure(facecolor='white')
+    axescolor = '#f6f6f6'  # the axes background color
+
+    ax1 = fig.add_axes(rect1, facecolor=axescolor)  # left, bottom, width, height
+    print(type(commondays[0]))
+    #print(commondays)
+    commondays = [ w.replace('.', '-') for w in commondays ]
+    commondays = [ np.datetime64(x) for x in commondays ]
+    #print(type(commondays[0]))
+    displayax(ax1, commonls, commondays, mynames, None, None, newdate, olddate, None, title, "Value")
+    plt.show()
+    for x in updatemap['stockhistory']:
+        print(x)
+    for x in updatemap['sumhistory']:
+        print(x)
+    for x in updatemap['tradestocks'][:10]:
+        print(x)
+    #print(webdata.keys())
+    print(webdata['timingMap'])
+    print(updatemap['startdate'])
+    print(updatemap['enddate'])
+    if intervalwhole:
+      print(updatemap['scores'])
+      print(updatemap['stats'])
+      print(updatemap['minmax'])
+    print(updatemap['lastbuysell'])
+    mypost.post(updatemap['lastbuysell'])
+    return
+
+
+def simulateinvestid2(market, dbid, startdate = None, enddate = None):
+    simulateinvestid(market, dbid, startdate, enddate)
+    
+    
+def simulateinvestid2Gwrap(market, dbid, startdate, enddate):
+    import io
+    from contextlib import redirect_stdout
+    file = io.StringIO()
+    with redirect_stdout(file):
+        simulateinvestid2(market, dbid, startdate, enddate)
+    output = file.getvalue()
+    myfile = open("/tmp/" + str(time.time()) + ".txt", "w")
+    myfile.write(output)
+    myfile.close()
+    gui.view(output)
+    
+
+def simulateinvestid2G(market, dbid, startdate = None, enddate = None):
+    mp.Process(target=simulateinvestid2Gwrap, args=(market, dbid, startdate, enddate)).start()
+
+
+def simulateinvestids(market, dbid, startdate = None, enddate = None):
+    simulateinvestid2Gwrap(market, dbid, startdate, enddate)
+
+
 def eventpause():
     request.requestpause()
     

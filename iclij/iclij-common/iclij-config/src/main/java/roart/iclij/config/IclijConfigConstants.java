@@ -297,6 +297,7 @@ public class IclijConfigConstants {
     // special
     public static final String SIMULATEINVESTSTARTDATE = "simulateinvest.startdate";
     public static final String SIMULATEINVESTENDDATE = "simulateinvest.enddate";
+    public static final String SIMULATEINVESTDBID = "simulateinvest.dbid";
     public static final String IMPROVESIMULATEINVEST = "improvesimulateinvest";
     public static final String IMPROVEAUTOSIMULATEINVEST = "improveautosimulateinvest";
     public static final String IMPROVEAUTOSIMULATEINVESTEVOLUTIONCONFIG = "improveautosimulateinvest.evolutionconfig";

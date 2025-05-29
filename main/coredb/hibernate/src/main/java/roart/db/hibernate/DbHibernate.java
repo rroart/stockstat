@@ -856,6 +856,15 @@ public class DbHibernate {
         //delete(market, action, component, subcomponent, startDate, endDate);
     }
 
+    public static SimDataDTO getSimData(String market, String dbid) {
+        try {
+            return SimData.getById(market, dbid).stream().map(e -> map(e)).findFirst().orElse(null);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+
     public static List<SimDataDTO> getSimData(String market, LocalDate startDate, LocalDate endDate) {
         try {
             return SimData.getAll(market, startDate, endDate).stream().map(e -> map(e)).toList();

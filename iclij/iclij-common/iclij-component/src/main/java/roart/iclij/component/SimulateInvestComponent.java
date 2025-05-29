@@ -38,6 +38,7 @@ import roart.common.constants.EvolveConstants;
 import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.model.MetaDTO;
+import roart.common.model.SimDataDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialListMap;
@@ -125,6 +126,13 @@ public class SimulateInvestComponent extends ComponentML {
         String confautofilters = (String) param.getConfigValueMap().remove(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
         AutoSimulateInvestConfig autoSimConfig = getAutoSimConfig(config);
         SimulateInvestConfig simConfig = SimulateInvestUtils.getSimConfig(config);
+        String dbid = (String) config.getConfigData().getConfigValueMap().get(IclijConfigConstants.SIMULATEINVESTDBID);
+        if (dbid != null) {
+            SimDataDTO simdata = param.getService().getIo().getIdbDao().getSimData(market.getConfig().getMarket(), dbid);
+            if (simdata != null) {
+                simConfig = JsonUtil.convert(simdata.getConfig(), SimulateInvestConfig.class);
+            }
+        }
         // coming from improvesim
         List<SimulateFilter> filter = get(conffilters);
         List<SimulateFilter> autofilter = get(confautofilters);
@@ -276,7 +284,7 @@ public class SimulateInvestComponent extends ComponentML {
         if (parametersList.isEmpty()) {
             parametersList.add(null);
         }
-        if (!evolving) {
+        if (!evolving) { // TODO
             data.stocks = param.getService().getStocks(market.getConfig().getMarket());           
         }
         
@@ -285,7 +293,7 @@ public class SimulateInvestComponent extends ComponentML {
         //LocalDate date = TimeUtil.getEqualBefore(data.stockDates, investStart);
         //int indexOffset = data.stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(data.stockDates, datestring2);
         // TODO investend and other reset of more params
-        log.info("My sim {}", simConfig.asValuedMap());
+        log.debug("My sim {}", simConfig.asValuedMap());
         Parameters realParameters = parameters;
         if (realParameters == null || realParameters.getThreshold() == 1.0) {
             String aParameter = JsonUtil.convert(realParameters);

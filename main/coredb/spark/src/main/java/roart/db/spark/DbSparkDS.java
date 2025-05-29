@@ -203,6 +203,11 @@ public class DbSparkDS extends DbDS {
     }
 
     @Override
+    public SimDataDTO getSimData(String market, String dbid) {
+        return null;
+    }
+
+    @Override
     public List<SimDataDTO> getAllSimData() {
         // TODO Auto-generated method stub
         return null;

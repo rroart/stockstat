@@ -752,6 +752,10 @@ public class DbSpring {
         }
     }
 
+    public SimDataDTO getSimData(String market, String dbid) throws Exception {
+        return simDataRepo.getById(market, dbid);
+    }
+
     public List<SimDataDTO> getSimData(String market, LocalDate startDate, LocalDate endDate) throws Exception {
         return simDataRepo.getAll(market, startDate, endDate);
     }

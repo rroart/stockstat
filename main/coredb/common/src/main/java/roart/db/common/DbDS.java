@@ -59,6 +59,8 @@ public abstract class DbDS {
     public abstract List<MLMetricsDTO> getAllMLMetrics();
 
     public abstract List<MLMetricsDTO> getMLMetrics(String market, Date startDate, Date endDate);
+    
+    public abstract SimDataDTO getSimData(String market, String dbid);
 
     public abstract List<SimDataDTO> getAllSimData();
 

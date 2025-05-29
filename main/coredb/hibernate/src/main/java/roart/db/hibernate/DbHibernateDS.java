@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.iclij.config.IclijConfig;
+import roart.common.constants.Constants;
 import roart.common.model.AboveBelowDTO;
 import roart.common.model.ActionComponentDTO;
 import roart.common.model.ConfigDTO;
@@ -145,6 +146,11 @@ public class DbHibernateDS extends DbDS {
     @Override
     public List<MLMetricsDTO> getMLMetrics(String market, Date startDate, Date endDate) {
         return DbHibernate.getMLMetrics(market, startDate, endDate);
+    }
+
+    @Override
+    public SimDataDTO getSimData(String market, String dbid) {
+        return DbHibernate.getSimData(market, dbid);
     }
 
     @Override
