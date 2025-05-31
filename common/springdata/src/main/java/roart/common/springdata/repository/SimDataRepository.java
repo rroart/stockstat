@@ -19,20 +19,12 @@ public class SimDataRepository {
     @Autowired
     NamedParameterJdbcTemplate jdbcTemplate;
         
-    public SimDataDTO getById(String market, String dbid) throws Exception {
+    public SimDataDTO getById(String dbid) throws Exception {
         String queryString = "select * from sim where ";
-        if (market != null) {
-            queryString += " market = :market";
-        } else {
-            queryString += " market like '%'";
-        }
         if (dbid != null) {
-            queryString += " and dbid = :dbid";
+            queryString += "dbid = :dbid";
         }
         MapSqlParameterSource query = new MapSqlParameterSource();
-        if (market != null) {
-            query.addValue("market", market);
-        }
         if (dbid != null) {
             query.addValue("dbid", dbid);
         }

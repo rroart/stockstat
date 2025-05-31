@@ -201,16 +201,7 @@ public class SimUtil {
                     String amarket = data.getMarket();
                     if (market.equals(amarket)) {
                         Long dbid = data.getDbid();
-                        String configStr = data.getConfig();
-                        //SimulateInvestConfig s = JsonUtil.convert(configStr, SimulateInvestConfig.class);
-                        Map defaultMap = config.getConfigData().getConfigMaps().deflt;
-                        Map map = JsonUtil.convert(configStr, Map.class);
-                        Map newMap = new HashMap<>();
-                        newMap.putAll(defaultMap);
-                        newMap.putAll(map);
-                        IclijConfig dummy = new IclijConfig(config);
-                        dummy.getConfigData().setConfigValueMap(newMap);
-                        SimulateInvestConfig simConf = SimulateInvestUtils.getSimConfig(dummy);
+                        SimulateInvestConfig simConf = getSimulateInvestConfig(config, data);
                         if (simConf.getInterval().intValue() != autoSimConf.getInterval().intValue()) {
                             continue;
                         }
@@ -268,6 +259,20 @@ public class SimUtil {
         MyCache.getInstance().put(key, retMap);
         log.info("retmap" + retMap.size() + " " + retMap.keySet());
         return retMap;
+    }
+
+    public SimulateInvestConfig getSimulateInvestConfig(IclijConfig config, SimDataDTO data) {
+        String configStr = data.getConfig();
+        //SimulateInvestConfig s = JsonUtil.convert(configStr, SimulateInvestConfig.class);
+        Map defaultMap = config.getConfigData().getConfigMaps().deflt;
+        Map map = JsonUtil.convert(configStr, Map.class);
+        Map newMap = new HashMap<>();
+        newMap.putAll(defaultMap);
+        newMap.putAll(map);
+        IclijConfig dummy = new IclijConfig(config);
+        dummy.getConfigData().setConfigValueMap(newMap);
+        SimulateInvestConfig simConf = SimulateInvestUtils.getSimConfig(dummy);
+        return simConf;
     }
 
     public List<SimulateFilter[]> getDefaultList(MarketActionData action) {

@@ -87,4 +87,5 @@ open module iclij.core {
     requires common.filesystem.client;
     requires curator.client;
     requires pipeline.util;
+    requires iclij.common.simulate;
 }

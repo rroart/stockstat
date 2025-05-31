@@ -114,7 +114,8 @@ public class TestDbDS extends DbDS {
     }
 
     @Override
-    public SimDataDTO getSimData(String market, String dbid) {
+    public SimDataDTO getSimData(String dbid) {
+        System.out.println("Should not be here");
         return null;
     }
 

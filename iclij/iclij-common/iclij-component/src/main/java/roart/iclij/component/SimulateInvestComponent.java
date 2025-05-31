@@ -128,9 +128,14 @@ public class SimulateInvestComponent extends ComponentML {
         SimulateInvestConfig simConfig = SimulateInvestUtils.getSimConfig(config);
         String dbid = (String) config.getConfigData().getConfigValueMap().get(IclijConfigConstants.SIMULATEINVESTDBID);
         if (dbid != null) {
-            SimDataDTO simdata = param.getService().getIo().getIdbDao().getSimData(market.getConfig().getMarket(), dbid);
+            log.info("Getting dbid {}", dbid);
+            SimDataDTO simdata = param.getService().getIo().getIdbDao().getSimData(dbid);
             if (simdata != null) {
-                simConfig = JsonUtil.convert(simdata.getConfig(), SimulateInvestConfig.class);
+                SimulateInvestConfig oldSimConfig = simConfig;
+                simConfig = new SimUtil().getSimulateInvestConfig(config, simdata);
+                simConfig.setStartdate(oldSimConfig.getStartdate());
+                simConfig.setEnddate(oldSimConfig.getEnddate());
+                log.info("Found dbid");
             }
         }
         // coming from improvesim

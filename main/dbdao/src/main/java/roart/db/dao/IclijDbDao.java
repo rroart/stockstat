@@ -216,8 +216,8 @@ public class IclijDbDao {
         access.save(object);
     }
 
-    public SimDataDTO getSimData(String market, String dbid) {
-        return access.getSimData(market, dbid);
+    public SimDataDTO getSimData(String dbid) {
+        return access.getSimData(dbid);
     }
 
     public List<SimDataDTO> getAllSimData(String market, LocalDate startDate, LocalDate endDate) {

@@ -134,9 +134,9 @@ public class DbSpringDS extends DbDS {
     }
 
     @Override
-    public SimDataDTO getSimData(String market, String dbid) {
+    public SimDataDTO getSimData(String dbid) {
         try {
-            return service.getSimData(market, dbid);
+            return service.getSimData(dbid);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return null;

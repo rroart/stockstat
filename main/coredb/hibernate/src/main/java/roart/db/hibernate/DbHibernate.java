@@ -856,9 +856,9 @@ public class DbHibernate {
         //delete(market, action, component, subcomponent, startDate, endDate);
     }
 
-    public static SimDataDTO getSimData(String market, String dbid) {
+    public static SimDataDTO getSimData(String dbid) {
         try {
-            return SimData.getById(market, dbid).stream().map(e -> map(e)).findFirst().orElse(null);
+            return SimData.getById(dbid).stream().map(e -> map(e)).findFirst().orElse(null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return null;

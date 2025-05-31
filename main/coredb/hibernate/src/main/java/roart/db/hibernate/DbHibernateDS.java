@@ -149,8 +149,8 @@ public class DbHibernateDS extends DbDS {
     }
 
     @Override
-    public SimDataDTO getSimData(String market, String dbid) {
-        return DbHibernate.getSimData(market, dbid);
+    public SimDataDTO getSimData(String dbid) {
+        return DbHibernate.getSimData(dbid);
     }
 
     @Override

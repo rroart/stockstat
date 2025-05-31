@@ -66,6 +66,7 @@ import roart.iclij.model.action.SimulateInvestActionData;
 import roart.service.model.ProfitData;
 import roart.simulate.model.SimulateStock;
 import roart.simulate.model.StockHistory;
+import roart.simulate.util.SimUtil;
 
 import java.util.function.Function;
 import roart.common.pipeline.data.SerialObject;
@@ -232,14 +233,7 @@ public class SimulateInvestRunAction extends MarketAction {
                     //if (i++ > 30) break;
                     SimulateInvestConfig aConf; // = simsConfigs.get(i).getRight();
                     SimDataDTO simData = entry2.getValue();
-                    String configStr = simData.getConfig();
-                    Map configMap = JsonUtil.convert(configStr, Map.class);
-                    Map newMap = new HashMap<>();
-                    newMap.putAll(defaultMap);
-                    newMap.putAll(configMap);
-                    IclijConfig dummy = new IclijConfig(config);
-                    dummy.getConfigData().setConfigValueMap(newMap);
-                    SimulateInvestConfig simConf = getSimConfig(dummy);
+                    SimulateInvestConfig simConf = new SimUtil().getSimulateInvestConfig(config, simData);
                     aConf = simConf;
 
                     aConf.setStartdate(startDate);
@@ -443,16 +437,7 @@ public class SimulateInvestRunAction extends MarketAction {
                     String amarket = data.getMarket();
                     if (market.equals(amarket)) {
                         Long dbid = data.getDbid();
-                        String configStr = data.getConfig();
-                        //SimulateInvestConfig s = JsonUtil.convert(configStr, SimulateInvestConfig.class);
-                        Map defaultMap = config.getConfigData().getConfigMaps().deflt;
-                        Map map = JsonUtil.convert(configStr, Map.class);
-                        Map newMap = new HashMap<>();
-                        newMap.putAll(defaultMap);
-                        newMap.putAll(map);
-                        IclijConfig dummy = new IclijConfig(config);
-                        dummy.getConfigData().setConfigValueMap(newMap);
-                        SimulateInvestConfig simConf = getSimConfig(dummy);
+                        SimulateInvestConfig simConf = new SimUtil().getSimulateInvestConfig(config, data);
                         // different
                         /*
                         log.info("aconf" + simConf.getInterval() + " " + autoSimConf.getInterval());
@@ -673,16 +658,7 @@ public class SimulateInvestRunAction extends MarketAction {
                     String amarket = data.getMarket();
                     if (market.equals(amarket)) {
                         Long dbid = data.getDbid();
-                        String configStr = data.getConfig();
-                        //SimulateInvestConfig s = JsonUtil.convert(configStr, SimulateInvestConfig.class);
-                        Map defaultMap = config.getConfigData().getConfigMaps().deflt;
-                        Map map = JsonUtil.convert(configStr, Map.class);
-                        Map newMap = new HashMap<>();
-                        newMap.putAll(defaultMap);
-                        newMap.putAll(map);
-                        IclijConfig dummy = new IclijConfig(config);
-                        dummy.getConfigData().setConfigValueMap(newMap);
-                        SimulateInvestConfig simConf = getSimConfig(dummy);
+                        SimulateInvestConfig simConf = new SimUtil().getSimulateInvestConfig(config, data);
                         // different
                         /*
                         log.info("aconf" + simConf.getInterval() + " " + autoSimConf.getInterval());

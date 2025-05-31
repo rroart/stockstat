@@ -203,7 +203,7 @@ public class DbSparkDS extends DbDS {
     }
 
     @Override
-    public SimDataDTO getSimData(String market, String dbid) {
+    public SimDataDTO getSimData(String dbid) {
         return null;
     }
 

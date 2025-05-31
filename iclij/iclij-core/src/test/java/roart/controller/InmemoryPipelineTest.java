@@ -320,6 +320,28 @@ public class InmemoryPipelineTest {
     }
 
     @Test
+    public void testSimWithDbid() throws Exception {
+        log.info("Wants it {}", iconf.wantsInmemoryPipeline());
+        SimulateInvestConfig simConfig = new SimulateInvestConfig();
+        String market = TestConstants.MARKET;
+        SimDataDTO simData = iclijDbDao.getAllSimData(market, null, null).get(0);
+        String dbid = "" + simData.getDbid();
+        doReturn(simData).when(iclijDbDao).getSimData(dbid);
+        simConfig.setStartdate("2024-11-01");
+        simConfig.setEnddate("2024-12-01");
+        IclijServiceResult result = null;
+        try {
+            result = testutils.getSimulateInvestMarketDbid(simConfig, market, dbid);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        System.out.println("map" + result.getWebdatajson().getUpdateMap());
+        System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+        inmemory.stat();
+        assertEquals(true, inmemory.isEmpty());
+    }
+
+    @Test
     public void testSimRun() throws Exception {
         log.info("Wants it {}", iconf.wantsInmemoryPipeline());
         SimulateInvestConfig simConfig = testutils.getSimConfigDefault();
