@@ -26,7 +26,7 @@ public class SimDataRepository {
         }
         MapSqlParameterSource query = new MapSqlParameterSource();
         if (dbid != null) {
-            query.addValue("dbid", dbid);
+            query.addValue("dbid", Long.valueOf(dbid));
         }
         return jdbcTemplate.query(queryString, query, new SimDataRowMapper()).get(0);
     }

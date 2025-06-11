@@ -160,7 +160,7 @@ public class SimData implements Serializable {
         }
         SelectionQuery<SimData> query = hu.createQuery(queryString);
         if (dbid != null) {
-            query.setParameter("dbid", dbid);
+            query.setParameter("dbid", Long.valueOf(dbid));
         }
         return hu.get(query);
     }
