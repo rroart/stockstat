@@ -120,27 +120,33 @@ public class SimulateInvestRunAction extends MarketAction {
             Memories listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap,
             Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters,
             boolean wantThree, List<MLMetricsDTO> mlTests) {
-        String startDate = config.getSimulateInvestStartdate();
-        String endDate = config.getSimulateInvestEnddate();
-        LocalDate startLocalDate = null;
-        LocalDate endLocalDate = null;
-        try {
-            startLocalDate = TimeUtil.convertDate(TimeUtil.replace(startDate));
-            endLocalDate = TimeUtil.convertDate(TimeUtil.replace(endDate));
-        } catch (ParseException e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        final LocalDate aStartLocalDate = startLocalDate;
-        final LocalDate anEndLocalDate = endLocalDate;
+        log.info("Component {}", componentMap.keySet());
+        for (Entry<String, Component> entry : componentMap.entrySet()) {
+            log.info("Component {}", entry.getKey());
+            Component component = entry.getValue();
+            if (component == null) {
+                continue;
+            }
+            String startDate = config.getSimulateInvestStartdate();
+            String endDate = config.getSimulateInvestEnddate();
+            LocalDate startLocalDate = null;
+            LocalDate endLocalDate = null;
+            try {
+                startLocalDate = TimeUtil.convertDate(TimeUtil.replace(startDate));
+                endLocalDate = TimeUtil.convertDate(TimeUtil.replace(endDate));
+            } catch (ParseException e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            final LocalDate aStartLocalDate = startLocalDate;
+            final LocalDate anEndLocalDate = endLocalDate;
 
-        String[] otherMarkets = market.getConfig().getMlmarkets();
-        List<String> markets = new ArrayList<>(1 + otherMarkets.length);
-        Collections.addAll(markets, market.getConfig().getMarket());
-        Collections.addAll(markets, otherMarkets);
+            String[] otherMarkets = market.getConfig().getMlmarkets();
+            List<String> markets = new ArrayList<>(1 + otherMarkets.length);
+            Collections.addAll(markets, market.getConfig().getMarket());
+            Collections.addAll(markets, otherMarkets);
 
-        for (String amarket : markets) {
-            List<SimDataDTO> all = param.getService().getIo().getIdbDao().getAllSimData(amarket, null, null); // fix later: , startDate, endDate);
-            List<SimRunDataDTO> all2 = param.getService().getIo().getIdbDao().getAllSimDataRun(amarket, null, null); // fix later: , startDate, endDate);
+            List<SimDataDTO> all = param.getService().getIo().getIdbDao().getAllSimData(market.getConfig().getMarket(), null, null); // fix later: , startDate, endDate);
+            List<SimRunDataDTO> all2 = param.getService().getIo().getIdbDao().getAllSimDataRun(market.getConfig().getMarket(), null, null); // fix later: , startDate, endDate);
 
             Map<Long, SimDataDTO> map = all.stream().collect(Collectors.toMap(SimDataDTO::getDbid, Function.identity()));
             Map<Long, SimRunDataDTO> map2 = all2.stream().collect(Collectors.toMap(SimRunDataDTO::getDbid, Function.identity()));
@@ -157,16 +163,20 @@ public class SimulateInvestRunAction extends MarketAction {
             restmap.keySet().retainAll(set);
             log.info("set {}", restmap.keySet());
 
-            AutoSimulateInvestConfig autoSimConfig = new AutoSimulateInvestConfig();
-            autoSimConfig.setStartdate(startDate);
-            autoSimConfig.setEnddate(endDate);
-            autoSimConfig.setScorelimit(0.5);
-            autoSimConfig.setPeriod(0); // meaning 1 month
-            autoSimConfig.setInterval(1);
-            List<SimulateFilter> autofilter = new ArrayList<>();
-            List<SimulateFilter[]> filters = new ArrayList<>();
-            // TODO Auto-generated method stub
-            /*
+            for (String amarket : markets) {
+
+                /*
+                AutoSimulateInvestConfig autoSimConfig = new AutoSimulateInvestConfig();
+                autoSimConfig.setStartdate(startDate);
+                autoSimConfig.setEnddate(endDate);
+                autoSimConfig.setScorelimit(0.5);
+                autoSimConfig.setPeriod(0); // meaning 1 month
+                autoSimConfig.setInterval(1);
+                List<SimulateFilter> autofilter = new ArrayList<>();
+                List<SimulateFilter[]> filters = new ArrayList<>();
+                */
+                // TODO Auto-generated method stub
+                /*
         Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> simConfigs = getSimConfigs(market.getConfig().getMarket(), autoSimConfig, autofilter, filters, config, getActionData(), param);
         Mydate mydate = new Mydate();
         try {
@@ -178,59 +188,52 @@ public class SimulateInvestRunAction extends MarketAction {
         Set<Pair<LocalDate, LocalDate>> keys = simConfigs.keySet();
         log.info("aconf" + simConfigs.size());
         log.info("aconf" + simConfigs.keySet().stream().map(k -> k.getLeft().toString() + " " + k.getRight().toString()).toList());
-             */
-            /*
+                 */
+                /*
         List<Pair<Long, SimulateInvestConfig>> simsConfigs = new ArrayList<>();
         for (Entry<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> entry : simConfigs.entrySet()) {
             log.info("aconf" + entry.getValue().size());
             simsConfigs.addAll(entry.getValue());
         }
-             */
+                 */
 
-            //List<Pair<Long, SimulateInvestConfig>> simsConfigs = getSimConfigs(simConfigs, mydate, keys, market);
-            /*
+                //List<Pair<Long, SimulateInvestConfig>> simsConfigs = getSimConfigs(simConfigs, mydate, keys, market);
+                /*
         log.info("aconf" + simsConfigs.size());
         for (Pair<Long, SimulateInvestConfig> pair : simsConfigs) {
             SimulateInvestConfig aConf = pair.getRight();
             log.info("aconf" + aConf);
         }
-             */
-            //if (true) return;
+                 */
+                //if (true) return;
 
-            //param.getAndSetCategoryValueMap();
-            //component.set(market, param, profitdata, positions, evolve);
-            //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
-            // 0 ok?
-            param.getConfigValueMap().put(ConfigConstants.MISCMYTABLEDAYS, 0);
-            param.getConfigValueMap().put(ConfigConstants.MISCMYDAYS, 0);
+                //param.getAndSetCategoryValueMap();
+                //component.set(market, param, profitdata, positions, evolve);
+                //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
+                // 0 ok?
+                param.getConfigValueMap().put(ConfigConstants.MISCMYTABLEDAYS, 0);
+                param.getConfigValueMap().put(ConfigConstants.MISCMYDAYS, 0);
 
-            Map<String, Object> aMap = new HashMap<>();
-            aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
-            aMap.put(ConfigConstants.MISCMYDAYS, 0);
-            //valueMap.put(ConfigConstants.MACHINELEARNING, false);
-            aMap.put(ConfigConstants.AGGREGATORS, false);
-            aMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, false);
-            aMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, false);
-            aMap.put(ConfigConstants.AGGREGATORS, false);
+                Map<String, Object> aMap = new HashMap<>();
+                aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
+                aMap.put(ConfigConstants.MISCMYDAYS, 0);
+                //valueMap.put(ConfigConstants.MACHINELEARNING, false);
+                aMap.put(ConfigConstants.AGGREGATORS, false);
+                aMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, false);
+                aMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, false);
+                aMap.put(ConfigConstants.AGGREGATORS, false);
 
-            // TODO
-            // TODO getName() gives null
-            log.info("cache disabled {}", param.isDisableCache());
-            param.getResultMap(getName(), aMap, false, param.isKeepPipeline()); // TODO cache
+                // TODO
+                // TODO getName() gives null
+                log.info("cache disabled {}", param.isDisableCache());
+                param.getResultMap(getName(), aMap, false, param.isKeepPipeline()); // TODO cache
 
-            Map defaultMap = config.getConfigData().getConfigMaps().deflt;
-            log.info("Component {}", componentMap.keySet());
-            for (Entry<String, Component> entry : componentMap.entrySet()) {
-                log.info("Component {}", entry.getKey());
-                Component component = entry.getValue();
-                if (component == null) {
-                    continue;
-                }
+                Map defaultMap = config.getConfigData().getConfigMaps().deflt;
 
                 boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
                 int i = 0;
                 for (Entry<Long, SimDataDTO> entry2 : restmap.entrySet()) {
-                    //if (i++ > 30) break;
+                    //if (i++ > 3) break;
                     SimulateInvestConfig aConf; // = simsConfigs.get(i).getRight();
                     SimDataDTO simData = entry2.getValue();
                     SimulateInvestConfig simConf = new SimUtil().getSimulateInvestConfig(config, simData);
