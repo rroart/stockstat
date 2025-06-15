@@ -203,6 +203,7 @@ public class SimulateInvestComponent extends ComponentML {
         if (simConfig.getExtradelay() != null) {
             extradelay = simConfig.getExtradelay();
         }
+        log.info("Extradelay {}", extradelay);
         // coming from improvesim
         //List<SimulateFilter> filter = simConfig.getFilters();
         //simConfig.setFilters(null);
@@ -1306,7 +1307,7 @@ public class SimulateInvestComponent extends ComponentML {
                 }
 
                 onerun.runs++;
-                if (myavg > trend.incAverage) {
+                if (trend != null && myavg > trend.incAverage) {
                     onerun.beatavg++;
                 }
             }

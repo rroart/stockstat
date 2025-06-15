@@ -115,7 +115,9 @@ public class DataReader extends Pipeline {
         if (category == Constants.EXTRACOLUMN) {
             categoryTitle = Constants.EXTRA;
         }
+        // TODO valid error
         this.dateList = StockDao.getDateList(market, marketdatamap);
+        log.info("Stockdates {} {} {}", conf.getConfigData().getMarket(), conf.getConfigData().getDate(), this.dateList.size());
         //this.dateStringList = StockDao.getDateList(conf, market, dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         this.nameMap = StockDao.getNameMap(conf, market, dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         if (category == Constants.PRICECOLUMN) {

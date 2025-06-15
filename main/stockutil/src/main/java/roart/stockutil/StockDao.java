@@ -130,6 +130,8 @@ public class StockDao {
             List<StockDTO> list = datedstocklists[i];
             if (!list.isEmpty()) {
                 retList.add(TimeUtil.convertDate3(list.get(0).getDate()));
+            } else {
+                int jj = 0;
             }
         }
         return retList;

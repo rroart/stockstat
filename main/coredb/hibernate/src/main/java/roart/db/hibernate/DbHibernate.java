@@ -946,7 +946,7 @@ public class DbHibernate {
         }
     }
 
-    public static List<SimRunDataDTO> getAllSimData2() {
+    public static List<SimRunDataDTO> getAllSimRunData() {
         try {
             return SimRunData.getAll().stream().map(e -> map(e)).toList();
         } catch (Exception e) {

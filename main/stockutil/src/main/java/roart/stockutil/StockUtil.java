@@ -205,7 +205,10 @@ public class StockUtil {
      * @return array of stock lists based on date
      */
 
-    static boolean swap = false;
+    static boolean swap = false; // false is the original behaviour
+    
+    // false returns full length, but with empty stock list after date
+    // true returns shorter list
     
     // TODO if list has not right date
     public static List<StockDTO>[] getDatedstocklists(Map<String, List<StockDTO>> stockdatemap, LocalDate datedate, int count, int mytableintervaldays) {

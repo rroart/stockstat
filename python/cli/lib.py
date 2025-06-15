@@ -2888,7 +2888,7 @@ def simulateinvestid(market, dbid, startdate = None, enddate = None):
     print(webdata['timingMap'])
     print(updatemap['startdate'])
     print(updatemap['enddate'])
-    if intervalwhole:
+    if False: #intervalwhole:
       print(updatemap['scores'])
       print(updatemap['stats'])
       print(updatemap['minmax'])

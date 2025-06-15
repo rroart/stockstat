@@ -108,7 +108,11 @@ public class PipelineUtils {
                 } else {
                     InmemoryMessage msg = JsonUtil.convertnostrip(datareader.getMessage(), InmemoryMessage.class);                    
                     String str = inmemory.read(msg);
+                    if (str != null) {
                     log.info("Pipeline reading {}", str.length());
+                    } else {
+                        log.error("No pipeline reading {}", msg.getId());
+                    }
                     datareaders[i] = JsonUtil.convertnostrip(str, PipelineData.class, mapper);
                     datareaders[i].setLoaded(true);
                     log.info("Pipeline read {} {}", datareaders[i].getId(), datareaders[i].getName());
@@ -662,6 +666,14 @@ public class PipelineUtils {
     }
 
     public static PipelineData[] setPipelineMap(PipelineData[] pipelineData, Inmemory inmemory, CuratorFramework curatorClient) {
+        if (false) {
+            try {
+                String s = null;
+                s.length();
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
         PipelineData[] newPipelineData = new PipelineData[pipelineData.length];
         int i = 0;
         for (PipelineData data : pipelineData) {

@@ -148,7 +148,9 @@ public class Extract {
         stockData.catName = catName;
         stockData.datedstocks = datedstocks;
         stockData.days = days;
-        
+        log.info("Stockdates {} {} {} {}", conf.getConfigData().getMarket(), conf.getConfigData().getDate(), stockData.datedstocklists.length, stockData.stockdates.size());
+        log.info("mystockdates {} {} {}", stockdates.size(), stockdatemap.keySet().size(), datedstocklists.length);        
+
         return stockData;
     }
 

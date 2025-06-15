@@ -63,6 +63,7 @@ import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.model.action.SimulateInvestActionData;
+import roart.iclij.service.util.MarketUtil;
 import roart.service.model.ProfitData;
 import roart.simulate.model.SimulateStock;
 import roart.simulate.model.StockHistory;
@@ -141,79 +142,49 @@ public class SimulateInvestRunAction extends MarketAction {
             final LocalDate anEndLocalDate = endLocalDate;
 
             String[] otherMarkets = market.getConfig().getMlmarkets();
-            List<String> markets = new ArrayList<>(1 + otherMarkets.length);
+            Set<String> markets = new HashSet<>(1 + otherMarkets.length);
             Collections.addAll(markets, market.getConfig().getMarket());
             Collections.addAll(markets, otherMarkets);
 
             List<SimDataDTO> all = param.getService().getIo().getIdbDao().getAllSimData(market.getConfig().getMarket(), null, null); // fix later: , startDate, endDate);
-            List<SimRunDataDTO> all2 = param.getService().getIo().getIdbDao().getAllSimDataRun(market.getConfig().getMarket(), null, null); // fix later: , startDate, endDate);
-
             Map<Long, SimDataDTO> map = all.stream().collect(Collectors.toMap(SimDataDTO::getDbid, Function.identity()));
-            Map<Long, SimRunDataDTO> map2 = all2.stream().collect(Collectors.toMap(SimRunDataDTO::getDbid, Function.identity()));
-            Map<Long, SimRunDataDTO> map2sim = all2.stream().filter(e -> e.getStartdate().equals(aStartLocalDate)).filter(e -> e.getEnddate().equals(anEndLocalDate)).collect(Collectors.toMap(SimRunDataDTO::getSimdatadbid, Function.identity()));
-
-            // TODO date check
-
-            Set<Long> set = new HashSet<>(map.keySet());
-            Set<Long> set2 = new HashSet<>(map2sim.keySet());
-            log.info("set {}", set);
-            log.info("set2 {}", set2);
-            set.removeAll(set2);
-            Map<Long, SimDataDTO> restmap = new HashMap(map);
-            restmap.keySet().retainAll(set);
-            log.info("set {}", restmap.keySet());
-
+            
             for (String amarket : markets) {
+                Market myMarket = new MarketUtil().findMarket(amarket, config);
+                param.getService().coremlconf.getConfigData().setMarket(amarket);
 
-                /*
-                AutoSimulateInvestConfig autoSimConfig = new AutoSimulateInvestConfig();
-                autoSimConfig.setStartdate(startDate);
-                autoSimConfig.setEnddate(endDate);
-                autoSimConfig.setScorelimit(0.5);
-                autoSimConfig.setPeriod(0); // meaning 1 month
-                autoSimConfig.setInterval(1);
-                List<SimulateFilter> autofilter = new ArrayList<>();
-                List<SimulateFilter[]> filters = new ArrayList<>();
-                */
-                // TODO Auto-generated method stub
-                /*
-        Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> simConfigs = getSimConfigs(market.getConfig().getMarket(), autoSimConfig, autofilter, filters, config, getActionData(), param);
-        Mydate mydate = new Mydate();
-        try {
-            mydate.date = TimeUtil.convertDate("2020.07.01");
-            mydate.date = TimeUtil.convertDate("2024.01.01");
-        } catch (ParseException e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        Set<Pair<LocalDate, LocalDate>> keys = simConfigs.keySet();
-        log.info("aconf" + simConfigs.size());
-        log.info("aconf" + simConfigs.keySet().stream().map(k -> k.getLeft().toString() + " " + k.getRight().toString()).toList());
-                 */
-                /*
-        List<Pair<Long, SimulateInvestConfig>> simsConfigs = new ArrayList<>();
-        for (Entry<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> entry : simConfigs.entrySet()) {
-            log.info("aconf" + entry.getValue().size());
-            simsConfigs.addAll(entry.getValue());
-        }
-                 */
+                List<SimRunDataDTO> all2 = param.getService().getIo().getIdbDao().getAllSimDataRun(amarket, null, null).stream().filter(e -> amarket.equals(e.getMarket())).toList(); // TODO fix later: market, startDate, endDate);
+                Map<Long, SimRunDataDTO> map2 = all2.stream().collect(Collectors.toMap(SimRunDataDTO::getDbid, Function.identity()));
+                Map<Long, SimRunDataDTO> map2sim = all2.stream().filter(e -> e.getStartdate().equals(aStartLocalDate)).filter(e -> e.getEnddate().equals(anEndLocalDate)).collect(Collectors.toMap(SimRunDataDTO::getSimdatadbid, Function.identity()));
 
-                //List<Pair<Long, SimulateInvestConfig>> simsConfigs = getSimConfigs(simConfigs, mydate, keys, market);
-                /*
-        log.info("aconf" + simsConfigs.size());
-        for (Pair<Long, SimulateInvestConfig> pair : simsConfigs) {
-            SimulateInvestConfig aConf = pair.getRight();
-            log.info("aconf" + aConf);
-        }
-                 */
-                //if (true) return;
+                // TODO date check
 
-                //param.getAndSetCategoryValueMap();
-                //component.set(market, param, profitdata, positions, evolve);
-                //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
+                Set<Long> set = new HashSet<>(map.keySet());
+                Set<Long> set2 = new HashSet<>(map2sim.keySet());
+                log.info("set {}", set);
+                log.info("set2 {}", set2);
+                set.removeAll(set2);
+                Map<Long, SimDataDTO> restmap = new HashMap(map);
+                restmap.keySet().retainAll(set);
+                log.info("set {}", restmap.keySet());
+
                 // 0 ok?
                 param.getConfigValueMap().put(ConfigConstants.MISCMYTABLEDAYS, 0);
                 param.getConfigValueMap().put(ConfigConstants.MISCMYDAYS, 0);
 
+                log.info("Param id {}", param.getId());
+                if (param.getUpdateMap() == null) {
+                    param.setUpdateMap(new HashMap<>());
+                }
+                //param.getInput().setDoSave(false);
+
+                try {
+                    param.setFuturedays(0);
+                    param.setOffset(0);
+                    param.setDates(null, null, action.getActionData(), myMarket);
+                } catch (ParseException e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
                 Map<String, Object> aMap = new HashMap<>();
                 aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
                 aMap.put(ConfigConstants.MISCMYDAYS, 0);
@@ -233,30 +204,17 @@ public class SimulateInvestRunAction extends MarketAction {
                 boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
                 int i = 0;
                 for (Entry<Long, SimDataDTO> entry2 : restmap.entrySet()) {
-                    //if (i++ > 3) break;
+                    if (i++ > 3) break;
                     SimulateInvestConfig aConf; // = simsConfigs.get(i).getRight();
                     SimDataDTO simData = entry2.getValue();
                     SimulateInvestConfig simConf = new SimUtil().getSimulateInvestConfig(config, simData);
                     aConf = simConf;
+                    log.info("My sim u {}", aConf.asValuedMap());
 
                     aConf.setStartdate(startDate);
                     aConf.setEnddate(endDate);
 
-                    log.info("Param id {}", param.getId());
-                    log.info("My sim u {}", aConf.asValuedMap());
-                    if (param.getUpdateMap() == null) {
-                        param.setUpdateMap(new HashMap<>());
-                    }
-                    //param.getInput().setDoSave(false);
-
-                    try {
-                        param.setFuturedays(0);
-                        param.setOffset(0);
-                        param.setDates(null, null, action.getActionData(), market);
-                    } catch (ParseException e) {
-                        log.error(Constants.EXCEPTION, e);
-                    }
-                    //List<MemoryDTO> memories = findAllMarketComponentsToCheckNew(myData, param, 0, config, false, dataMap, componentMap, subcomponent, parameters, market);
+                   //List<MemoryDTO> memories = findAllMarketComponentsToCheckNew(myData, param, 0, config, false, dataMap, componentMap, subcomponent, parameters, market);
 
                     //aMap.putAll(aConf.asValuedMap()); // TODO
                     param.getConfig().getConfigData().getConfigValueMap().putAll(aConf.asValuedMap());
@@ -273,8 +231,7 @@ public class SimulateInvestRunAction extends MarketAction {
                     param.setCategoryTitle(catName);
                     param.getAndSetCategoryValueMapAlt();
 
-
-                    ComponentData componentData = component.handle(getActionData(), market, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null, getParent() != null);
+                    ComponentData componentData = component.handle(getActionData(), myMarket, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null, getParent() != null);
                     log.info("acont" + componentData.getResultMap());
                     //log.info("acont" + componentData.getResultMap().keySet());
 
@@ -325,10 +282,10 @@ public class SimulateInvestRunAction extends MarketAction {
                 //component.calculateIncDec(componentData, profitdata, positions);
                 //System.out.println("Buys: " + market.getMarket() + buys);
                 //System.out.println("Sells: " + market.getMarket() + sells);           
+                Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
+                new PipelineThreadUtils(config, inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
+                MyCache.getInstance().invalidate(param.getId());
             }    
-            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
-            new PipelineThreadUtils(config, inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
-            MyCache.getInstance().invalidate(param.getId());
         }
     }
 

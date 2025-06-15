@@ -135,6 +135,14 @@ public class PipelineThreadUtils {
     }
 
     public void cleanPipeline(String serviceId, String id) {
+        if (false) {
+            try {
+                String s = null;
+                s.length();
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
         if (iclijConfig.wantsInmemoryPipeline()) {
             String path3 = "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id;
             try {

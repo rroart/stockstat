@@ -645,6 +645,7 @@ public class CoreControlService {
         conf.getConfigData().getConfigValueMap().putAll(aMap);
         StockData stockData = new Extract(io.getDbDao()).getStockData(conf, true); // TODO false
         if (stockData != null) {
+            log.info("Stockdates {} {} {}", conf.getConfigData().getMarket(), conf.getConfigData().getDate(), stockData.stockdates.size());
             PipelineData map = new PipelineData();
             map.setName(PipelineConstants.DATELIST);
             map.put(PipelineConstants.DATELIST, new SerialListPlain(stockData.stockdates));

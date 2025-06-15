@@ -460,7 +460,6 @@ public class ComponentData {
             Inmemory inmemory = getService().getIo().getInmemoryFactory().get(config);
             List<String> stockdates = PipelineUtils.getDatelist(PipelineUtils.getPipeline(result, this.getCategoryTitle(), inmemory));
             log.info("Category title {}", this.getCategoryTitle());
-            log.info("stockdates {}", stockdates);
             this.setStockDates(stockdates);
             Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, this.getCategoryTitle(), inmemory).get(PipelineConstants.LIST)));
             this.setCategoryValueMap(aCategoryValueMap);

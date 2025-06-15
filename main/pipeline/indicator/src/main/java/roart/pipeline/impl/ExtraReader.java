@@ -157,6 +157,7 @@ public class ExtraReader extends Pipeline {
         this.dataReaderMap = dataReaderMap;
         this.stockDataMap = stockDataMap;
         
+        // TODO valid error
         List<String> dateList = StockDao.getDateList(conf.getConfigData().getMarket(), marketdatamap);
         commonDates = new HashSet<>(dateList);
         for (SerialMarketStock ms : marketStocks) {
