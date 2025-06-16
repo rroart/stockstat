@@ -63,6 +63,7 @@ import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.model.action.SimulateInvestActionData;
+import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.util.MarketUtil;
 import roart.service.model.ProfitData;
 import roart.simulate.model.SimulateStock;
@@ -117,7 +118,7 @@ public class SimulateInvestRunAction extends MarketAction {
     }
 
     @Override
-    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param,
+    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData origparam,
             Memories listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap,
             Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters,
             boolean wantThree, List<MLMetricsDTO> mlTests) {
@@ -146,12 +147,19 @@ public class SimulateInvestRunAction extends MarketAction {
             Collections.addAll(markets, market.getConfig().getMarket());
             Collections.addAll(markets, otherMarkets);
 
-            List<SimDataDTO> all = param.getService().getIo().getIdbDao().getAllSimData(market.getConfig().getMarket(), null, null); // fix later: , startDate, endDate);
+            List<SimDataDTO> all = origparam.getService().getIo().getIdbDao().getAllSimData(market.getConfig().getMarket(), null, null); // fix later: , startDate, endDate);
             Map<Long, SimDataDTO> map = all.stream().collect(Collectors.toMap(SimDataDTO::getDbid, Function.identity()));
             
             for (String amarket : markets) {
                 Market myMarket = new MarketUtil().findMarket(amarket, config);
-                param.getService().coremlconf.getConfigData().setMarket(amarket);
+                ComponentData param = null;
+                try {
+                    // TODO mess?
+                    ComponentInput input = new ComponentInput(config.getConfigData(), null, null, null, origparam.getOffset(), true, false, new ArrayList<>(), new HashMap<>());
+                    param = ComponentData.getParam(config, input, 0, market, origparam.getService().getIo());
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
 
                 List<SimRunDataDTO> all2 = param.getService().getIo().getIdbDao().getAllSimDataRun(amarket, null, null).stream().filter(e -> amarket.equals(e.getMarket())).toList(); // TODO fix later: market, startDate, endDate);
                 Map<Long, SimRunDataDTO> map2 = all2.stream().collect(Collectors.toMap(SimRunDataDTO::getDbid, Function.identity()));
@@ -204,7 +212,7 @@ public class SimulateInvestRunAction extends MarketAction {
                 boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
                 int i = 0;
                 for (Entry<Long, SimDataDTO> entry2 : restmap.entrySet()) {
-                    if (i++ > 3) break;
+                    //if (i++ > 3) break;
                     SimulateInvestConfig aConf; // = simsConfigs.get(i).getRight();
                     SimDataDTO simData = entry2.getValue();
                     SimulateInvestConfig simConf = new SimUtil().getSimulateInvestConfig(config, simData);
