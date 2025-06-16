@@ -38,6 +38,7 @@
 	<mapping class="roart.db.model.Cont"/>
 	<mapping class="roart.db.model.MLMetrics"/>
 	<mapping class="roart.db.model.SimData"/>
+	<mapping class="roart.db.model.SimRunData"/>
 	<mapping class="roart.db.model.ActionComponent"/>
 	<mapping class="roart.db.model.AboveBelow"/>
 

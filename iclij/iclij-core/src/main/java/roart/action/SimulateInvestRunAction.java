@@ -160,6 +160,7 @@ public class SimulateInvestRunAction extends MarketAction {
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
+                param.getService().coremlconf.getConfigData().setMarket(amarket);
 
                 List<SimRunDataDTO> all2 = param.getService().getIo().getIdbDao().getAllSimDataRun(amarket, null, null).stream().filter(e -> amarket.equals(e.getMarket())).toList(); // TODO fix later: market, startDate, endDate);
                 Map<Long, SimRunDataDTO> map2 = all2.stream().collect(Collectors.toMap(SimRunDataDTO::getDbid, Function.identity()));
