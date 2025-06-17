@@ -241,8 +241,6 @@ public class SimulateInvestRunAction extends MarketAction {
                     param.getAndSetCategoryValueMapAlt();
 
                     ComponentData componentData = component.handle(getActionData(), myMarket, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null, getParent() != null);
-                    log.info("acont" + componentData.getResultMap());
-                    //log.info("acont" + componentData.getResultMap().keySet());
 
                     Map<String, Object> updateMap = componentData.getUpdateMap();
                     if (updateMap != null) {

@@ -395,7 +395,6 @@ public class Sim {
 
     public void method3(String param, String string, boolean b) {
         //param = getParam(param);
-        log.info("Content " + param);
         PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class, mapper);
         // TODO
         if (data.getSmap().getMap().isEmpty()) {

@@ -53,7 +53,7 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
         inmemory.delete(element.getMessage());
         IclijServiceResult r = null;
         log.debug("Cserv {}", c.getService());
-        log.info("Content {}", content);
+        log.debug("Content {}", content);
         if (serviceMatch(ServiceConstants.SIMFILTER, c)) {
             new Sim(iclijConfig, io).method((String) content, "sim", true);
         }
