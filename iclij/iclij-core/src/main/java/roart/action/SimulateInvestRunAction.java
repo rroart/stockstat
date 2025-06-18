@@ -245,8 +245,8 @@ public class SimulateInvestRunAction extends MarketAction {
                     Map<String, Object> updateMap = componentData.getUpdateMap();
                     if (updateMap != null) {
                         param.getUpdateMap().putAll(updateMap);
-                        log.info("acont" + componentData.getUpdateMap());
-                        log.info("acont" + componentData.getUpdateMap().keySet());
+                        log.debug("acont" + componentData.getUpdateMap());
+                        log.debug("acont" + componentData.getUpdateMap().keySet());
                     }
 
                     String filename = UUID.randomUUID().toString();
