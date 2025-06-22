@@ -62,17 +62,7 @@ public class QueueThread extends Thread {
             } else {
                 log.info("I am queue leader");
                 try {
-                    String path = QueueUtils.getLivePath();
-                    if (curatorClient.checkExists().forPath(path) != null) {
-                        List<String> elems = getOld(curatorClient, path, 2 * 60 * 1000, false, false);
-                        for (String elem : elems) {
-                            String path3 = QueueUtils.getQueuePath(elem);
-                            requeueOld(curatorClient, path3, 2 * 60 * 1000, false, false);
-                            String path2 = QueueUtils.getLivePath();
-                            log.info("Deleting {}", path2 + "/" + elem);
-                            curatorClient.delete().forPath(path2 + "/" + elem);
-                        }
-                    }
+                    getOldRequeueAndDelete(curatorClient, 2 * 60 * 1000);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                     break;
@@ -91,6 +81,23 @@ public class QueueThread extends Thread {
         }
     }
 
+    public void getOldRequeueAndDelete(CuratorFramework curatorClient, int deleteTime) throws Exception {
+        // get a path like /stockstat/queueNNN/live
+        String path = QueueUtils.getLivePath();
+        if (curatorClient.checkExists().forPath(path) != null) {
+            // get elems two levels down like,
+            // /stockstat/queueNNN/live/HOST/SERVICE
+            List<String> elems = getOld(curatorClient, path, deleteTime, false, false);
+            for (String elem : elems) {
+                String path3 = QueueUtils.getQueuePath(elem);
+                requeueOld(curatorClient, path3, deleteTime, false, false);
+                String path2 = QueueUtils.getLivePath();
+                log.info("Deleting {}", path2 + "/" + elem);
+                curatorClient.delete().forPath(path2 + "/" + elem);
+            }
+        }
+    }
+
     private List<String> getOld(CuratorFramework curatorClient, String path, int deleteTime, boolean deleteQueue, boolean deleteInmemory) throws Exception {
         List<String> list = new ArrayList<>();
         Stat b = curatorClient.checkExists().forPath(path);
@@ -98,10 +105,10 @@ public class QueueThread extends Thread {
             //continue;
         }
         List<String> children = curatorClient.getChildren().forPath(path);
-        log.debug("Children {}", children.size());
+        log.info("Children {}", children.size());
         for (String child : children) {
             List<String> children2 = curatorClient.getChildren().forPath(path + "/" + child);
-            log.debug("Children2 {}", children2);
+            log.info("Children2 {}", children2);
             for (String child2 : children2) {
                 Stat stat = curatorClient.checkExists().forPath(path + "/" + child + "/" + child2);
                 log.debug("Time {} {}", System.currentTimeMillis(), stat.getMtime());;
@@ -135,7 +142,7 @@ public class QueueThread extends Thread {
             String str = new String(data);
             QueueElement element = JsonUtil.convert(str, QueueElement.class);
             controlService.send(element.getQueue(), element, iclijConfig);
-            log.info("Element requeued " + element.getQueue() + " " + element.getId());
+            log.info("Element requeued {} {}", element.getQueue(), element.getId());
             curatorClient.delete().forPath(path + "/" + child);
             
         }
