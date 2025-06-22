@@ -67,6 +67,7 @@ public class TestProtectACLCreateModeStatPathAndBytesable implements ProtectACLC
 
     @Override
     public Object forPath(String path) throws Exception {
+        Files.createDirectories(Paths.get("/tmp" + path).getParent());
         return null;
     }
 

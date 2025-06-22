@@ -268,8 +268,16 @@ public class SimulateInvestRunAction extends MarketAction {
                     log.info("TODO {}", updateMap.keySet());
                     Map<String, Object> resultMap = new HashMap<>();
                     //resultMap.put(SimConstants.HISTORY, new SerialListStockHistory((List<StockHistory>) updateMap.get(SimConstants.HISTORY)));
+                    // TODO updatemap no?
+                    if (updateMap.get(SimConstants.STOCKHISTORY) == null || updateMap.get(SimConstants.PLOTCAPITAL) == null) {
+                        int jj = 0;
+                    }
                     resultMap.put(SimConstants.STOCKHISTORY, new SerialListSimulateStock((List<SimulateStock>) updateMap.get(SimConstants.STOCKHISTORY)));
                     resultMap.put(SimConstants.PLOTCAPITAL, new SerialListPlain((List) updateMap.get(SimConstants.PLOTCAPITAL)));
+                    if (updateMap.get(SimConstants.EMPTY) != null) {
+                        resultMap.put(SimConstants.STOCKHISTORY, new SerialListSimulateStock(new ArrayList<>()));
+                        resultMap.put(SimConstants.PLOTCAPITAL, new SerialListPlain(new ArrayList<>()));                            
+                    }
                     //resultMap.put(SimConstants.SCORE, updateMap.get(SimConstants.SCORE));
                     //resultMap.put("" + updateMap.get(SimConstants.SCORE), updateMap.get(SimConstants.SCORE));
                     //resultMap.put(SimConstants.STARTDATE, TimeUtil.convertDate2((LocalDate)updateMap.get(SimConstants.STARTDATE)));

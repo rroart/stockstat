@@ -49,7 +49,7 @@ public class TestSetDataBuilder implements SetDataBuilder {
     public Stat forPath(String path, byte[] data) throws Exception {
         Files.createDirectories(Paths.get("/tmp" + path).getParent());
         try {
-            Files.createFile(Paths.get("/tmp" + path));
+            Files.write(Paths.get("/tmp" + path), data);
         } catch (Exception e) {
             
         }
@@ -58,6 +58,12 @@ public class TestSetDataBuilder implements SetDataBuilder {
 
     @Override
     public Stat forPath(String path) throws Exception {
+        Files.createDirectories(Paths.get("/tmp" + path).getParent());
+        try {
+            Files.createFile(Paths.get("/tmp" + path));
+        } catch (Exception e) {
+            
+        }
         return null;
     }
 
