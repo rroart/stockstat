@@ -46,7 +46,7 @@ public class QueueUtils {
         String path = getPath(elem);
         String str = path;
         try {
-            if (curatorClient.checkExists().forPath(str) == null) {
+            if (curatorClient.checkExists().forPath(str) != null) {
                 curatorClient.delete().forPath(str);
             }
         } catch (Exception e) {
