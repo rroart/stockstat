@@ -523,7 +523,11 @@ public class Sim {
                 SerialListMap aMap = (SerialListMap) resultMap.get("0");
                 SerialListPlain capitalList0 = (SerialListPlain) aMap.get(SimConstants.PLOTCAPITAL);
                 List<Double> capitalList = (List<Double>) capitalList0.getList();
-                Double sum = capitalList.get(capitalList.size() - 1);
+                // todo empty
+                Double sum = 0.0;
+                if (!(capitalList.size() < 2)) {
+                    sum = capitalList.get(capitalList.size() - 1);
+                }
                 
                 long days = 0;
                 if (startdate != null && enddate != null) {
@@ -566,15 +570,15 @@ public class Sim {
             SerialListPlain capitalList0 = (SerialListPlain) aMap.get(SimConstants.PLOTCAPITAL);
             List<Double> capitalList = (List<Double>) capitalList0.getList();
             log.info("Capital list {}", capitalList.size());
-            if (capitalList.size() < 2) {
-                return;
+            double average = 0;
+            if (!(capitalList.size() < 2)) {
+                average = getCorrelationAvg(filter, output, capitalList);
             }
-            double average = getCorrelationAvg(filter, output, capitalList);
             
             String filename = null;
             log.info("Avg {}", average);
             if (average >= 0.75 && score > 1.0) {
-                filename = io.getFileSystemDao().writeFile(node, mypath, null, text);
+                //filename = io.getFileSystemDao().writeFile(node, mypath, null, text);
             }
             if ("dummy.txt".equals(filename)) {
                 System.out.println(output);
@@ -779,7 +783,7 @@ public class Sim {
         boolean correlation = true;
         for (Entry<String, SerialObject> entry : resultMap.entrySet()) {
             SerialListMap aMap = (SerialListMap) entry.getValue();
-            SerialListPlain capitalList0 = (SerialListPlain) aMap.get(SimConstants.PLOTCAPITAL);
+            SerialListPlain capitalList0 = (SerialListPlain) aMap.get(SimConstants.PLOTCAPITAL );
             List<Double> capitalList = (List<Double>) capitalList0.getList();
             if (capitalList.size() < 2) {
                 continue;
