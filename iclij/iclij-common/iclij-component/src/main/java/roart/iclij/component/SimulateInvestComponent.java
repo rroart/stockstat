@@ -98,7 +98,7 @@ public class SimulateInvestComponent extends ComponentML {
     public ComponentData handle(MarketActionData action, Market market, ComponentData param, ProfitData profitdata,
             Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket,
             Parameters parameters, boolean hasParent) {
-        log.info("Param id {}", param.getId());
+        log.debug("Param id {}", param.getId());
         ComponentData componentData = new ComponentData(param);
         SimulateInvestData simulateParam;
         if (param instanceof SimulateInvestData) {
@@ -203,7 +203,7 @@ public class SimulateInvestComponent extends ComponentML {
         if (simConfig.getExtradelay() != null) {
             extradelay = simConfig.getExtradelay();
         }
-        log.info("Extradelay {}", extradelay);
+        log.debug("Extradelay {}", extradelay);
         // coming from improvesim
         //List<SimulateFilter> filter = simConfig.getFilters();
         //simConfig.setFilters(null);
