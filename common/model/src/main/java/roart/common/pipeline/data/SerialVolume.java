@@ -1,8 +1,12 @@
 package roart.common.pipeline.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class SerialVolume extends SerialObject {
+    @JsonProperty("V")
     private Long volume;
     
+    @JsonProperty("C")
     private String currency;
 
     public SerialVolume() {
