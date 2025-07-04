@@ -34,6 +34,7 @@ import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.SerialMapDD;
+import roart.common.pipeline.data.SerialMapL;
 import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialMapTA;
 import roart.common.pipeline.data.SerialMapVolume;
@@ -534,8 +535,16 @@ public class PipelineUtils {
         return null;
     }
 
-    public static Map<String, SerialVolume[]> getVolume(PipelineData data) {
-        SerialMapVolume list = (SerialMapVolume) data.get(PipelineConstants.VOLUME);
+    public static Map<String, Long[]> getVolume(PipelineData data) {
+        SerialMapL list = (SerialMapL) data.get(PipelineConstants.VOLUME);
+        if (list != null) {
+            return list.getMap();
+        }
+        return null;
+    }
+
+    public static Map getCurrency(PipelineData data) {
+        SerialMapPlain list = (SerialMapPlain) data.get(PipelineConstants.CURRENCY);
         if (list != null) {
             return list.getMap();
         }
@@ -688,7 +697,7 @@ public class PipelineUtils {
                     String[] split = serviceIdUuid.split("/");
                     String serviceId = split[0];
                     String id = split[1];
-                    msg = inmemory.send(id + "-" + data.getName(), data, md5);
+                    msg = inmemory. send(id + "-" + data.getName(), data, md5);
                     log.info("Sent size {} {} {}", msg.getId(), msg.getCount(), JsonUtil.convert(data, mapper).length());
                     //result.message = msg;
                     curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());

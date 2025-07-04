@@ -86,6 +86,7 @@ public class DatelistToMapETL {
         return Collections.unmodifiableMap(retMap);
     }
 
+    @Deprecated
     public static Map<String, SerialVolume[]> getVolumes(IclijConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
             Map<String, MarketData> marketdataMap, boolean currentyear) throws Exception {
         Map<String, SerialVolume[]> retMap = new HashMap<>();
@@ -102,6 +103,36 @@ public class DatelistToMapETL {
         return retMap;
     }
 
+    public static Map<String, Long[]> getVolumes2(IclijConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
+            Map<String, MarketData> marketdataMap, boolean currentyear) throws Exception {
+        Map<String, Long[]> retMap = new HashMap<>();
+        List<StockDTO> datedstocklists[] = marketdataMap.get(market).datedstocklists;
+        for (int i = datedstocklists.length - 1; i >= 0; i--) {
+            List<StockDTO> stocklist = datedstocklists[i];
+            for (StockDTO stock : stocklist) {
+                String stockid = stock.getId();
+                Long value = stock.getVolume();
+                mapAdd(retMap, stockid, datedstocklists.length - 1 - i, value, datedstocklists.length);
+            }
+        }
+        return retMap;
+    }
+
+    public static Map<String, String> getCurrencies(IclijConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
+            Map<String, MarketData> marketdataMap, boolean currentyear) throws Exception {
+        Map<String, String> retMap = new HashMap<>();
+        List<StockDTO> datedstocklists[] = marketdataMap.get(market).datedstocklists;
+        for (int i = datedstocklists.length - 1; i >= 0; i--) {
+            List<StockDTO> stocklist = datedstocklists[i];
+            for (StockDTO stock : stocklist) {
+                String stockid = stock.getId();
+                String value = stock.getCurrency();
+                mapAdd(retMap, stockid, datedstocklists.length - 1 - i, value, datedstocklists.length);
+            }
+        }
+        return retMap;
+    }
+
     public static void mapAdd(Map<String, SerialVolume[]> aMap, String id, int index, SerialVolume value, int length) {
         SerialVolume[] array = aMap.get(id);
         if (array == null) {
@@ -109,6 +140,22 @@ public class DatelistToMapETL {
             aMap.put(id, array);
         }
         array[index] = value;
+    }
+
+    public static void mapAdd(Map<String, Long[]> aMap, String id, int index, Long value, int length) {
+        Long[] array = aMap.get(id);
+        if (array == null) {
+            array = new Long[length];
+            aMap.put(id, array);
+        }
+        array[index] = value;
+    }
+
+    public static void mapAdd(Map<String, String> aMap, String id, int index, String value, int length) {
+        String array = aMap.get(id);
+        if (array == null) {
+            aMap.put(id, value);
+        }
     }
 
 }

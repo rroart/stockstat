@@ -61,7 +61,9 @@ public class ComponentData {
     
     private Map<String, List<List<Double>>> fillCategoryValueMap;
     
-    private Map<String, SerialVolume[]> volumeMap;
+    private Map<String, Long[]> volumeMap;
+    
+    private Map<String, String> currencyMap;
     
     private Integer usedsec;
 
@@ -112,6 +114,7 @@ public class ComponentData {
         this.categoryValueMap = componentparam.categoryValueMap;
         this.fillCategoryValueMap = componentparam.fillCategoryValueMap;
         this.volumeMap = componentparam.volumeMap;
+        this.currencyMap = componentparam.currencyMap;
         this.usedsec = componentparam.usedsec;
         this.updateMap = new HashMap<>(); //componentparam.updateMap;
         this.configValueMap = new HashMap<>(this.service.coremlconf.getConfigData().getConfigValueMap());
@@ -305,12 +308,20 @@ public class ComponentData {
         this.fillCategoryValueMap = fillCategoryValueMap;
     }
 
-    public Map<String, SerialVolume[]> getVolumeMap() {
+    public Map<String, Long[]> getVolumeMap() {
         return volumeMap;
     }
 
-    public void setVolumeMap(Map<String, SerialVolume[]> aVolumeMap) {
+    public void setVolumeMap(Map<String, Long[]> aVolumeMap) {
         this.volumeMap = aVolumeMap;
+    }
+
+    public Map<String, String> getCurrencyMap() {
+        return currencyMap;
+    }
+
+    public void setCurrencyMap(Map<String, String> currencyMap) {
+        this.currencyMap = currencyMap;
     }
 
     public Integer getUsedsec() {
@@ -440,8 +451,10 @@ public class ComponentData {
             this.setCategoryValueMap(aCategoryValueMap);
             Map<String, List<List<Double>>> aFillCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, this.getCategoryTitle(), inmemory).get(PipelineConstants.FILLLIST)));
             this.setFillCategoryValueMap(aFillCategoryValueMap);
-            Map<String, SerialVolume[]> aVolumeMap = PipelineUtils.getVolume(PipelineUtils.getPipeline(result, this.getCategoryTitle()));
+            Map<String, Long[]> aVolumeMap = PipelineUtils.getVolume(PipelineUtils.getPipeline(result, this.getCategoryTitle()));
             this.setVolumeMap(aVolumeMap);
+            Map<String, String> aCurrencyMap = PipelineUtils.getCurrency(PipelineUtils.getPipeline(result, this.getCategoryTitle()));
+            this.setCurrencyMap(aCurrencyMap);
         } catch (Exception e) {
             int jj = 0;
             if (this.getCategoryTitle() != null) {
@@ -465,8 +478,10 @@ public class ComponentData {
             this.setCategoryValueMap(aCategoryValueMap);
             Map<String, List<List<Double>>> aFillCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, this.getCategoryTitle(), inmemory).get(PipelineConstants.FILLLIST)));
             this.setFillCategoryValueMap(aFillCategoryValueMap);
-            Map<String, SerialVolume[]> aVolumeMap = PipelineUtils.getVolume(PipelineUtils.getPipeline(result, this.getCategoryTitle()));
+            Map<String, Long[]> aVolumeMap = PipelineUtils.getVolume(PipelineUtils.getPipeline(result, this.getCategoryTitle()));
             this.setVolumeMap(aVolumeMap);
+            Map<String, String> aCurrencyMap = PipelineUtils.getCurrency(PipelineUtils.getPipeline(result, this.getCategoryTitle()));
+            this.setCurrencyMap(aCurrencyMap);
         } catch (Exception e) {
             int jj = 0;
             if (this.getCategoryTitle() != null) {
@@ -515,8 +530,10 @@ public class ComponentData {
             Map<String, List<List<Double>>> aFillCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, cat, inmemory).get(PipelineConstants.FILLLIST)));
             this.setFillCategoryValueMap(aFillCategoryValueMap);
 
-            Map<String, SerialVolume[]> aVolumeMap = PipelineUtils.getVolume(PipelineUtils.getPipeline(result, cat, inmemory));
+            Map<String, Long[]> aVolumeMap = PipelineUtils.getVolume(PipelineUtils.getPipeline(result, this.getCategoryTitle()));
             this.setVolumeMap(aVolumeMap);
+            Map<String, String> aCurrencyMap = PipelineUtils.getCurrency(PipelineUtils.getPipeline(result, this.getCategoryTitle()));
+            this.setCurrencyMap(aCurrencyMap);
         } catch (Exception e) {
             int jj = 0;
             log.error("Ex", e);

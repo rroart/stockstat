@@ -40,6 +40,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @Type(value = SerialMapD.class, name = "SerialMapD"),
     @Type(value = SerialMapdd.class, name = "SerialMapdd"),
     @Type(value = SerialMapDD.class, name = "SerialMapDD"),
+    @Type(value = SerialMapL.class, name = "SerialMapL"),
     @Type(value = SerialMapTA.class, name = "SerialMapTA"),
     @Type(value = SerialMapVolume.class, name = "SerialMapVolume"),
     @Type(value = SerialNeuralNetConfig.class, name = "SerialNeuralNetworkConfig"),

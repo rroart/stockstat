@@ -28,6 +28,7 @@ public class TestInmemory extends Inmemory {
     @Override
     public InmemoryMessage send(String id, Object data, String md5) {
         Object old = map.put(id, JsonUtil.convert(data, mapper));
+        System.out.println("old" + map.get(id));
         if (old != null) {
             log.error("TODO already sent {}", id);
         }

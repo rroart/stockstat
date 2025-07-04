@@ -32,7 +32,6 @@ import com.google.common.collect.HashBiMap;
 
 import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
-import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.model.MLMetricsDTO;
@@ -45,7 +44,6 @@ import roart.common.pipeline.data.SerialListMap;
 import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialListSimulateStock;
 import roart.common.pipeline.data.SerialListStockHistory;
-import roart.common.pipeline.data.SerialVolume;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
 import roart.common.util.MathUtil;
@@ -239,6 +237,7 @@ public class SimulateInvestComponent extends ComponentML {
         data.categoryValueFillMap = param.getFillCategoryValueMap();
         data.categoryValueMap = param.getCategoryValueMap();
         data.volumeMap = param.getVolumeMap();
+        data.currencyMap = param.getCurrencyMap();
         BiMap<String, LocalDate> stockDatesBiMap = getStockDatesBiMap(market.getConfig().getMarket(), data.stockDates);
 
         //ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters, mlTests);
@@ -1094,7 +1093,7 @@ public class SimulateInvestComponent extends ComponentML {
         Map<Integer, List<String>> newVolumeExcludeMap = null;
         if (volumeExcludeMap == null || VERIFYCACHE) {
             long time00 = System.currentTimeMillis();
-            newVolumeExcludeMap = getVolumeExcludesFull(simConfig, simConfig.getInterval(), data.getCatValMap(interpolate), data.volumeMap, firstidx, lastidx);
+            newVolumeExcludeMap = getVolumeExcludesFull(simConfig, simConfig.getInterval(), data.getCatValMap(interpolate), data.volumeMap, data.currencyMap, firstidx, lastidx);
             log.debug("time0 {}", System.currentTimeMillis() - time00);
         }
         verifyVolumeExcludeMap(newVolumeExcludeMap, verifyVolumeExcludeMap);
@@ -1718,13 +1717,13 @@ public class SimulateInvestComponent extends ComponentML {
     @Deprecated
     private void getVolumeExcludes(SimulateInvestConfig simConfig, int extradelay, List<String> stockDates,
             int interval, Map<String, List<List<Double>>> categoryValueMap,
-            Map<String, SerialVolume[]> volumeMap, int delay, int indexOffset, List<String> volumeExcludes, Map<String, double[]> newVolumeMap) {
+            Map<String, Double[]> volumeMap, int delay, int indexOffset, List<String> volumeExcludes, Map<String, double[]> newVolumeMap) {
         if (simConfig.getVolumelimits() != null) {
             Map<String, Double> volumeLimits = simConfig.getVolumelimits();
             int len = interval * 2;
             for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
                 String id = entry.getKey();
-                String currency = getCurrency(volumeMap, id);
+                String currency = getCurrency(null, id);
                 Double limit = volumeLimits.get(currency);
                 if (limit == null) {
                     continue;
@@ -1743,29 +1742,18 @@ public class SimulateInvestComponent extends ComponentML {
         }
     }
 
-    private String getCurrency(Map<String, SerialVolume[]> volumeMap, String id) {
-        String currency = null;
-        SerialVolume[] list = volumeMap.get(id);
-        for (int i = list.length - 1; i >= 0; i--) {
-            if (list[i] == null) {
-                continue;
-            }
-            currency = (String) list[i].getCurrency();
-            if (currency != null) {
-                break;
-            }
-        }
-        return currency;
+    private String getCurrency(Map<String, String> currencyMap, String id) {
+        return currencyMap.get(id);
     }
 
     Map<Integer, List<String>> getVolumeExcludesFull(SimulateInvestConfig simConfig, int interval, Map<String, List<List<Double>>> categoryValueMap,
-            Map<String, SerialVolume[]> volumeMap, int firstidx, int lastidx) {
+            Map<String, Long[]> volumeMap, Map<String, String> currencyMap, int firstidx, int lastidx) {
         Map<Integer, List<String>> listlist = new HashMap<>(); 
         if (simConfig.getVolumelimits() != null) {
             Map<String, Double> volumeLimits = simConfig.getVolumelimits();
             for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
                 String id = entry.getKey();
-                String currency = getCurrency(volumeMap, id);
+                String currency = getCurrency(currencyMap, id);
                 Double limit = volumeLimits.get(currency);
                 if (limit == null) {
                     continue;
@@ -1777,7 +1765,7 @@ public class SimulateInvestComponent extends ComponentML {
                 }
                 List<Double> mainList = resultList.get(0);
                 //ValidateUtil.validateSizes(mainList, stockDates);
-                SerialVolume[] list = volumeMap.get(id);
+                Long[] list = volumeMap.get(id);
                 if (mainList != null) {
                     int size = mainList.size();
                     MutablePair<Double, Integer>[] newList = new MutablePair[size];
@@ -1788,7 +1776,7 @@ public class SimulateInvestComponent extends ComponentML {
                         if (volumeObject == null) {
                             continue;
                         }
-                        Long volume = list[i].getVolume();
+                        Long volume = list[i];
                         Double price = mainList.get(i /* mainList.size() - 1 - indexOffset */);
                         if (volume != null) {
                             if (price == null) {
@@ -2398,7 +2386,8 @@ public class SimulateInvestComponent extends ComponentML {
         Map<Integer, List<String>> volumeExcludeFillMap;
         List<String> configExcludeList;
         Set<String> abnormExcludes;
-        Map<String, SerialVolume[]> volumeMap;
+        Map<String, Long[]> volumeMap;
+        Map<String, String> currencyMap;
         Map<Integer, Trend> trendMap;
         Map<Integer, Trend> trendFillMap;
         Map<Integer, String> trendStrMap;

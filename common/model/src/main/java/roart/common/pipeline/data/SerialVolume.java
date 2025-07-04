@@ -2,6 +2,7 @@ package roart.common.pipeline.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@Deprecated
 public class SerialVolume extends SerialObject {
     @JsonProperty("V")
     private Long volume;

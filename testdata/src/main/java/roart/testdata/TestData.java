@@ -108,11 +108,11 @@ public class TestData {
         return map;
     }
     
-    public Map<String, SerialVolume[]> getVolumeMap() {
-        Map<String, SerialVolume[]> map = new HashMap<>();
-        SerialVolume nulls = new SerialVolume(null, null);
-        SerialVolume t = new SerialVolume(3L, "DKK");
-        SerialVolume[] l = new SerialVolume[] { t, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, t};
+    public Map<String, Long[]> getVolumeMap() {
+        Map<String, Long[]> map = new HashMap<>();
+        Long nulls = null;
+        Long t = 3L;
+        Long[] l = new Long[] { t, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, nulls, t};
         //List<List<Object>> l2 = new ArrayList<>();
         //l2.add(l);
         map.put("1", l);

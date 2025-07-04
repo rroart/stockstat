@@ -48,7 +48,7 @@ public class SimulateInvestComponentTest {
     public void test() {
         TestData testData = new TestData();
         Map<String, List<List<Double>>> categoryValueMap = testData.getVolumeCatValMap();
-        Map<String, SerialVolume[]> volumeMap = testData.getVolumeMap();
+        Map<String, Long[]> volumeMap = testData.getVolumeMap();
         List<String> stockDates = testData.getStockDates(LocalDate.now(), 14, false);
         SimulateInvestComponent comp = new SimulateInvestComponent();
         int firstidx = 13; 
@@ -58,7 +58,8 @@ public class SimulateInvestComponentTest {
         Map<String, Double> limitMap = new HashMap<>();
         limitMap.put("DKK", 100000.0);
         config.setVolumelimits(limitMap);
-        Map<Integer, List<String>> map = comp.getVolumeExcludesFull(config, interval, categoryValueMap, volumeMap, firstidx, lastidx);
+        Map<String, String> currencyMap = Map.of("1", "DKK");
+        Map<Integer, List<String>> map = comp.getVolumeExcludesFull(config, interval, categoryValueMap, volumeMap, currencyMap, firstidx, lastidx);
         System.out.println(map);
         assertFalse(map.isEmpty());
     }

@@ -13,7 +13,9 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialList;
 import roart.common.pipeline.data.SerialListPlain;
+import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.SerialMapDD;
+import roart.common.pipeline.data.SerialMapL;
 import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialMapVolume;
 import roart.common.pipeline.data.SerialMapdd;
@@ -54,7 +56,8 @@ public class DataReader extends Pipeline {
     List<String> dateList;
     String categoryTitle;
 
-    private Map<String, SerialVolume[]> volumeMap;
+    private Map<String, Long[]> volumeMap;
+    private Map<String, String> currencyMap;
     
     @Override
     public PipelineData putData() {
@@ -64,7 +67,8 @@ public class DataReader extends Pipeline {
         }
         map.setName(categoryTitle);
         map.put(PipelineConstants.LIST, new SerialMapDD(listMap));
-        map.put(PipelineConstants.VOLUME, new SerialMapVolume(volumeMap));
+        map.put(PipelineConstants.VOLUME, new SerialMapL(volumeMap));
+        map.put(PipelineConstants.CURRENCY, new SerialMapPlain(currencyMap));
         map.put(PipelineConstants.FILLLIST, new SerialMapDD(fillListMap));
         map.put(PipelineConstants.BASE100LIST, new SerialMapDD(base100ListMap));
         map.put(PipelineConstants.BASE100FILLLIST, new SerialMapDD(base100FillListMap));
@@ -121,7 +125,8 @@ public class DataReader extends Pipeline {
         //this.dateStringList = StockDao.getDateList(conf, market, dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         this.nameMap = StockDao.getNameMap(conf, market, dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         if (category == Constants.PRICECOLUMN) {
-            this.volumeMap = DatelistToMapETL.getVolumes(conf, market, dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
+            this.volumeMap = DatelistToMapETL.getVolumes2(conf, market, dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
+            this.currencyMap = DatelistToMapETL.getCurrencies(conf, market, dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
         }
         this.listMap = DatelistToMapETL.getArrSparse(conf, market, dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
         calculateOtherListMaps(conf, category, marketData);
