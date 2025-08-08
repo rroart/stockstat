@@ -39,10 +39,12 @@ import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
 import roart.constants.IclijConstants;
+import roart.constants.SimConstants;
 import roart.db.dao.CoreDataSource;
 import roart.db.dao.DbDao;
 import roart.db.dao.IclijDbDao;
 import roart.filesystem.FileSystemDao;
+import roart.iclij.component.SimulateInvestComponent;
 import roart.iclij.config.AutoSimulateInvestConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
@@ -339,6 +341,53 @@ public class InmemoryPipelineTest {
         System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
         inmemory.stat();
         assertEquals(true, inmemory.isEmpty());
+    }
+
+    @Test
+    public void testSimWithDbidAndMod() throws Exception {
+        log.info("Wants it {}", iconf.wantsInmemoryPipeline());
+        SimulateInvestConfig simConfig = new SimulateInvestConfig();
+        String market = TestConstants.MARKET;
+        SimDataDTO simData = iclijDbDao.getAllSimData(market, null, null).get(0);
+        String dbid = "" + simData.getDbid();
+        doReturn(simData).when(iclijDbDao).getSimData(dbid);
+        simConfig.setStartdate("2024-11-01");
+        simConfig.setEnddate("2024-12-01");
+        simConfig.setStocks(3);
+        IclijServiceResult result = null;
+        try {
+            result = testutils.getSimulateInvestMarketDbid(simConfig, market, dbid);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        System.out.println("map" + result.getWebdatajson().getUpdateMap());
+        System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+        inmemory.stat();
+        assertEquals(true, inmemory.isEmpty());
+        if (!((List) result.getWebdatajson().getUpdateMap().get(SimConstants.LASTSTOCKS)).isEmpty()) {
+            assertEquals(simConfig.getStocks(), ((List) result.getWebdatajson().getUpdateMap().get(SimConstants.LASTSTOCKS)).size());
+         }
+    }
+
+    @Test
+    public void testSimWithDbidAndModMethod() throws Exception {
+        log.info("Wants it {}", iconf.wantsInmemoryPipeline());
+        SimulateInvestConfig simConfig = new SimulateInvestConfig();
+        String market = TestConstants.MARKET;
+        SimDataDTO simData = iclijDbDao.getAllSimData(market, null, null).get(0);
+        String dbid = "" + simData.getDbid();
+        doReturn(simData).when(iclijDbDao).getSimData(dbid);
+        simConfig.setStartdate("2024-11-01");
+        simConfig.setEnddate("2024-12-01");
+        simConfig.setStocks(13);
+        SimulateInvestConfig newSimConfig = null;
+        try {
+            newSimConfig = new SimulateInvestComponent().getSimConfigByDbidAndMerge(io, iconf, simConfig, dbid);
+            log.info("newSimConfig {}", newSimConfig.asValuedMap());
+       } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        assertEquals(13, newSimConfig.getStocks());
     }
 
     @Test

@@ -586,6 +586,135 @@ public class SimulateInvestConfig {
         }
     }
     
+    public void merge(SimulateInvestConfig other, IclijConfig config) {
+        if (other == null) {
+            return;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTCONFIDENCE) && other.confidence != null) {
+            this.confidence = other.confidence;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES) && other.confidenceFindTimes != null) {
+            this.confidenceFindTimes = other.confidenceFindTimes;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTABOVEBELOW) && other.abovebelow != null) {
+            this.abovebelow = other.abovebelow;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTCONFIDENCEVALUE) && other.confidenceValue != null) {
+            this.confidenceValue = other.confidenceValue;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE) && other.stoplossValue != null) {
+            this.stoplossValue = other.stoplossValue;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTSTOPLOSS) && other.stoploss != null) {
+            this.stoploss = other.stoploss;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE) && other.indicatorReverse != null) {
+            this.indicatorReverse = other.indicatorReverse;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE) && other.indicatorRebase != null) {
+            this.indicatorRebase = other.indicatorRebase;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTINDICATORPURE) && other.indicatorPure != null) {
+            this.indicatorPure = other.indicatorPure;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTMLDATE) && other.mldate != null) {
+            this.mldate = other.mldate;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTSTOCKS) && other.stocks != null) {
+            this.stocks = other.stocks;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT) && other.buyweight != null) {
+            this.buyweight = other.buyweight;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTINTERVAL) && other.interval != null) {
+            this.interval = other.interval;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE) && other.intervalStoplossValue != null) {
+            this.intervalStoplossValue = other.intervalStoplossValue;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTSTOPLOSS) && other.intervalStoploss != null) {
+            this.intervalStoploss = other.intervalStoploss;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTINTERPOLATE) && other.interpolate != null) {
+            this.interpolate = other.interpolate;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTDAY) && other.day != null) {
+            this.day = other.day;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTADVISER) && other.adviser != null) {
+            this.adviser = other.adviser;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTPERIOD) && other.period != null) {
+            this.period = other.period;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTSTARTDATE) && other.startdate != null) {
+            this.startdate = other.startdate;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTENDDATE) && other.enddate != null) {
+            this.enddate = other.enddate;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTFUTURECOUNT) && other.futurecount != null) {
+            this.futurecount = other.futurecount;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTFUTURETIME) && other.futuretime != null) {
+            this.futuretime = other.futuretime;
+        }
+        /*
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTEXCLUDES) && other.excludes != null) {
+            this.excludes = other.excludes;
+        }
+        */
+        /*
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTGA) && other.ga != null) {
+            this.ga = other.ga;
+        }
+        */
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTDELAY) && other.delay != null) {
+            this.delay = other.delay;
+        }
+        /*
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTEXTRADELAY) && other.extradelay != null) {
+            this.extradelay = other.extradelay;
+        }
+        */
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTINTERVALWHOLE) && other.intervalwhole != null) {
+            this.intervalwhole = other.intervalwhole;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTCONFIDENCEHOLDINCREASE) && other.confidenceholdincrease != null) {
+            this.confidenceholdincrease = other.confidenceholdincrease;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCEHOLDINCREASE) && other.noconfidenceholdincrease != null) {
+            this.noconfidenceholdincrease = other.noconfidenceholdincrease;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTVOLUMELIMITS) && other.volumelimits != null) {
+            this.volumelimits = other.volumelimits;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASE) && other.confidencetrendincrease != null) {
+            this.confidencetrendincrease = other.confidencetrendincrease;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASETIMES) && other.confidencetrendincreaseTimes != null) {
+            this.confidencetrendincreaseTimes = other.confidencetrendincreaseTimes;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASE) && other.noconfidencetrenddecrease != null) {
+            this.noconfidencetrenddecrease = other.noconfidencetrenddecrease;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASETIMES) && other.noconfidencetrenddecreaseTimes != null) {
+            this.noconfidencetrenddecreaseTimes = other.noconfidencetrenddecreaseTimes;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTION) && other.indicatorDirection != null) {
+            this.indicatorDirection = other.indicatorDirection;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTIONUP) && other.indicatorDirectionUp != null) {
+            this.indicatorDirectionUp = other.indicatorDirectionUp;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTFILTERS) && other.filters != null) {
+            this.filters = other.filters;
+        }
+        if (config.notNull(IclijConfigConstants.SIMULATEINVESTIMPROVEFILTERS) && other.improveFilters != null) {
+            this.improveFilters = other.improveFilters;
+        }
+    }
+    
     public Map<String, Object> asMap() {
         Map<String, Object> map = new HashMap<>();
         map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCE, confidence);

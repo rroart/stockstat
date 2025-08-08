@@ -68,6 +68,7 @@ import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.verifyprofit.TrendUtil;
+import roart.model.io.IO;
 import roart.service.model.ProfitData;
 import roart.simulate.model.Capital;
 import roart.simulate.model.SimulateStock;
@@ -126,15 +127,7 @@ public class SimulateInvestComponent extends ComponentML {
         SimulateInvestConfig simConfig = SimulateInvestUtils.getSimConfig(config);
         String dbid = (String) config.getConfigData().getConfigValueMap().get(IclijConfigConstants.SIMULATEINVESTDBID);
         if (dbid != null) {
-            log.info("Getting dbid {}", dbid);
-            SimDataDTO simdata = param.getService().getIo().getIdbDao().getSimData(dbid);
-            if (simdata != null) {
-                SimulateInvestConfig oldSimConfig = simConfig;
-                simConfig = new SimUtil().getSimulateInvestConfig(config, simdata);
-                simConfig.setStartdate(oldSimConfig.getStartdate());
-                simConfig.setEnddate(oldSimConfig.getEnddate());
-                log.info("Found dbid");
-            }
+            simConfig = getSimConfigByDbidAndMerge(param.getService().getIo(), config, simConfig, dbid);
         }
         // coming from improvesim
         List<SimulateFilter> filter = get(conffilters);
@@ -802,6 +795,20 @@ public class SimulateInvestComponent extends ComponentML {
 
         // TODO handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent);
         return componentData;
+    }
+
+    public SimulateInvestConfig getSimConfigByDbidAndMerge(IO io, IclijConfig config, SimulateInvestConfig simConfig, String dbid) {
+        log.info("Getting dbid {}", dbid);
+        SimDataDTO simdata = io.getIdbDao().getSimData(dbid);
+        if (simdata != null) {
+            SimulateInvestConfig oldSimConfig = simConfig;
+            simConfig = new SimUtil().getSimulateInvestConfig(config, simdata);
+            simConfig.setStartdate(oldSimConfig.getStartdate());
+            simConfig.setEnddate(oldSimConfig.getEnddate());
+            simConfig.merge(oldSimConfig, config);
+            log.info("Found dbid");
+        }
+        return simConfig;
     }
 
     private int mycompare(Triple<SimulateInvestConfig, OneRun, Results> o1,

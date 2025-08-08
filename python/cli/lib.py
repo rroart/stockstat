@@ -2809,8 +2809,8 @@ def simulateinvestrunG(market, startdate=None, enddate=None, ga=0, stocks=5, int
 
 
 # TODO refactor common
-def simulateinvestid(market, dbid, startdate = None, enddate = None):
-    data = { 'startdate' : startdate, 'enddate' : enddate }
+def simulateinvestid(market, dbid, startdate = None, enddate = None, c = None, cv = None, ct = None, st = None, stv = None, ip = None, ib = None, ir = None, m = None, s = None, b = None, i = None, a = None, p = None, f = None, ist = None, istv = None, d = None, w = None, iw = None, ch = None, nch = None, nctd = None, nctdt = None, cti = None, ctit = None, id = None, idu = None, vl = None, ab = None):
+    data = { 'startdate' : startdate, 'enddate' : enddate, 'confidence' : c ,'confidencevalue' : cv ,'confidencefindtimes' : ct ,'stoploss' : st ,'stoplossvalue' : stv ,'indicatorPure' : ip ,'indicatorrebase' : ib ,'indicatorreverse' : ir ,'mldate' : m ,'stocks' : s ,'buyweight' : b ,'interval' : i ,'adviser' : a ,'period' : p ,'interpolate' : f ,'intervalstoploss' : ist ,'intervalstoplossvalue' : istv ,'day' : d ,'delay' : w ,'intervalwhole' : iw ,'confidenceholdincrease' : ch ,'noconfidenceholdincrease' : nch ,'noconfidencetrenddecrease' : nctd ,'noconfidencetrenddecreasetimes' : nctdt, 'confidencetrendincrease' : cti ,'confidencetrendincreasetimes' : ctit ,'indicatordirection' : id ,'indicatordirectionup' : idu ,'volumelimits' : vl ,'abovebelow' : ab }
     print(market, dbid, data)
     response = request.request6(market, dbid, data)
     #print(type(response))
@@ -2897,16 +2897,16 @@ def simulateinvestid(market, dbid, startdate = None, enddate = None):
     return
 
 
-def simulateinvestid2(market, dbid, startdate = None, enddate = None):
-    simulateinvestid(market, dbid, startdate, enddate)
+def simulateinvestid2(market, dbid, startdate = None, enddate = None, c = None, cv = None, ct = None, st = None, stv = None, ip = None, ib = None, ir = None, m = None, s = None, b = None, i = None, a = None, p = None, f = None, ist = None, istv = None, d = None, w = None, iw = None, ch = None, nch = None, nctd = None, nctdt = None, cti = None, ctit = None, id = None, idu = None, vl = None, ab = None):
+    simulateinvestid(market, dbid, startdate, enddate, c, cv, ct, st, stv, ip, ib, ir, m, s, b, i, a, p, f, ist, istv, d, w, iw, ch, nch, nctd, nctdt, cti, ctit, id, idu, vl, ab)
     
     
-def simulateinvestid2Gwrap(market, dbid, startdate, enddate):
+def simulateinvestid2Gwrap(market, dbid, startdate, enddate, c = None, cv = None, ct = None, st = None, stv = None, ip = None, ib = None, ir = None, m = None, s = None, b = None, i = None, a = None, p = None, f = None, ist = None, istv = None, d = None, w = None, iw = None, ch = None, nch = None, nctd = None, nctdt = None, cti = None, ctit = None, id = None, idu = None, vl = None, ab = None):
     import io
     from contextlib import redirect_stdout
     file = io.StringIO()
     with redirect_stdout(file):
-        simulateinvestid2(market, dbid, startdate, enddate)
+        simulateinvestid2(market, dbid, startdate, enddate, c, cv, ct, st, stv, ip, ib, ir, m, s, b, i, a, p, f, ist, istv, d, w, iw, ch, nch, nctd, nctdt, cti, ctit, id, idu, vl, ab)
     output = file.getvalue()
     myfile = open("/tmp/" + str(time.time()) + ".txt", "w")
     myfile.write(output)
@@ -2918,8 +2918,8 @@ def simulateinvestid2G(market, dbid, startdate = None, enddate = None):
     mp.Process(target=simulateinvestid2Gwrap, args=(market, dbid, startdate, enddate)).start()
 
 
-def simulateinvestids(market, dbid, startdate = None, enddate = None):
-    simulateinvestid2Gwrap(market, dbid, startdate, enddate)
+def simulateinvestids(market, dbid, startdate = None, enddate = None, c = None, cv = None, ct = None, st = None, stv = None, ip = None, ib = None, ir = None, m = None, s = None, b = None, i = None, a = None, p = None, f = None, ist = None, istv = None, d = None, w = None, iw = None, ch = None, nch = None, nctd = None, nctdt = None, cti = None, ctit = None, id = None, idu = None, vl = None, ab = None):
+    simulateinvestid2Gwrap(market, dbid, startdate, enddate, c, cv, ct, st, stv, ip, ib, ir, m, s, b, i, a, p, f, ist, istv, d, w, iw, ch, nch, nctd, nctdt, cti, ctit, id, idu, vl, ab)
 
 
 def eventpause():

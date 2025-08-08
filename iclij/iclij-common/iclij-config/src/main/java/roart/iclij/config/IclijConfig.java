@@ -1365,4 +1365,8 @@ public class IclijConfig extends MyMyConfig {
         return Optional.ofNullable(retVal).orElse(getConfigData().getConfigMaps().deflt.get(key));
     }
 
+    public boolean notNull(String key) {
+        return getConfigData().getConfigValueMap().get(key) != null;
+    }
+
 }
