@@ -669,6 +669,9 @@ public class SimulateInvestComponent extends ComponentML {
                             if (autoSimConfig != null && !advMap.isEmpty()) {
                                 map.put(SimConstants.ADVISERS, advMap);
                             }
+                            if (dbid != null) {
+                                map.put(SimConstants.CONFIG, JsonUtil.convert(simConfig));
+                            }
                             param.getUpdateMap().putAll(map);
                             param.getUpdateMap().putIfAbsent(SimConstants.LASTBUYSELL, "Not buying or selling today");
                             componentData.getUpdateMap().putAll(map);

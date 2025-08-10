@@ -2884,6 +2884,7 @@ def simulateinvestid(market, dbid, startdate = None, enddate = None, c = None, c
         print(x)
     for x in updatemap['tradestocks'][:10]:
         print(x)
+    print('config', updatemap['config'])
     #print(webdata.keys())
     print(webdata['timingMap'])
     print(updatemap['startdate'])
