@@ -34,11 +34,6 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-pipeline-common</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
       <artifactId>stockstat-common-evolution-gene</artifactId>
       <version>${stockstat.version}</version>
     </dependency>

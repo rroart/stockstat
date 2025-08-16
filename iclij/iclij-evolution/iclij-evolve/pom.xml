@@ -84,11 +84,6 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-common-evolution-model</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
       <artifactId>stockstat-iclij-evolution-chromosome</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
