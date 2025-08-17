@@ -106,6 +106,8 @@ public class InmemoryPipelineTest {
     
     private TestInmemory inmemory;
     
+    TestDataSource[][] periodDataSources;
+    
     @BeforeAll
     public void before() throws Exception {
         ConfigMaps configMaps = IclijConfig.instanceC();
@@ -124,7 +126,13 @@ public class InmemoryPipelineTest {
         TestDataSource dataSource1 = new TestDataSource(conf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), market, 26, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null);
         TestDataSource dataSource2 = new TestDataSource(conf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), TestConstants.MARKET2, 20, false, Constants.PRICECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, "impid");
         dataSource = new TestDataSources(List.of(dataSource1, dataSource2));
-
+        periodDataSources = new TestDataSource[4][4];
+        for (int i = 1; i < periodDataSources.length; i++) { // stockcount
+            for (int j = 1; j < periodDataSources[i].length; j++) { // days
+                periodDataSources[i][j] = new TestDataSource(conf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), TestConstants.SLOWMARKET, 20, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null, 0, i, j);
+            }
+        }
+        
         dbDao = new DbDao(iconf, dataSource);
         
         webFluxUtil = new TestWebFluxUtil(conf, null);
@@ -319,6 +327,33 @@ public class InmemoryPipelineTest {
         System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
         inmemory.stat();
         assertEquals(true, inmemory.isEmpty());
+    }
+
+    @Test
+    public void testSimEvent() throws Exception {
+        log.info("Wants it {}", iconf.wantsInmemoryPipeline());
+        SimulateInvestConfig simConfig = testutils.getSimConfigDefault();
+        String market = TestConstants.SLOWMARKET;
+        simConfig.setStocks(2);
+        simConfig.setInterval(1);
+        simConfig.setStartdate("2024-11-01");
+        simConfig.setEnddate("2024-12-01");
+        
+        DbDao origDbDao = io.getDbDao();
+        DbDao dbDao = new DbDao(iconf, periodDataSources[2][1]); // stock 2 day 1
+        io.setDbDao(dbDao);        
+
+        IclijServiceResult result = null;
+        try {
+            result = testutils.getSimulateInvestMarket(simConfig, market);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        System.out.println("map" + result.getWebdatajson().getUpdateMap());
+        System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+        inmemory.stat();
+        assertEquals(true, inmemory.isEmpty());
+        io.setDbDao(origDbDao);
     }
 
     @Test

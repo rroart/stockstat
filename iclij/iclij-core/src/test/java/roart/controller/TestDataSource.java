@@ -63,6 +63,29 @@ public class TestDataSource extends MyDataSource {
         }
     }
 
+    public TestDataSource(IclijConfig conf, Date startDate, Date endDate, String marketName, int size, boolean weekdays, int column,
+            boolean ohlc, String[] periods, String idTemplate, int period, int stockcount, int days) {
+        super();
+        this.conf = conf;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.marketName = marketName;
+        this.size = size;
+        this.weekdays = weekdays;
+        this.column = column;
+        this.ohlc = ohlc;
+        this.isTemplate = idTemplate;
+        
+        this.testData = new TestData(conf);
+        
+        metas = testData.getMetas(marketName, periods, ohlc);
+        try {
+            stocks = testData.getPeriodStockDTO(startDate, endDate, marketName, size, weekdays, column, ohlc, periods, idTemplate, period, stockcount, days);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
     /*
     @Override
     public StockData getStockData() {

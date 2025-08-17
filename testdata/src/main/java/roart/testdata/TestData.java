@@ -8,9 +8,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 
 import java.time.temporal.ChronoUnit;
@@ -271,6 +273,119 @@ public class TestData {
         return list;
     }
 
+    public List<StockDTO> getPeriodStockDTO(Date startDate, Date endDate, String market, int size, boolean weekdays, int period, boolean ohlc, String[] periods, String idTemplate, int periodperiod, int stockcount, int perioddays) throws Exception {
+        this.periods = periods;
+        Random random = new Random();
+        List<StockDTO> list = new ArrayList<>();
+        LocalDate startdate = TimeUtil.convertDate(startDate);
+        LocalDate enddate = TimeUtil.convertDate(endDate);
+        long days = Duration.between(startdate.atStartOfDay(), enddate.atStartOfDay()).toDaysPart();
+        List<String> ids = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            String id;
+            if (idTemplate == null) {
+                id = UUID.randomUUID().toString();
+            } else {
+                id = idTemplate + i;
+            }
+            ids.add(id);
+        }
+        // stocks = testData.getStockDTO(startDate, endDate, marketName, size, weekdays, column, ohlc, periods, idTemplate );
+        double split = random.nextDouble();
+        int startsplit = (int) (days * split);
+        int endsplit = (int) (days - startsplit);
+        LocalDate mystartdate = startdate;
+        if (false && startsplit > 0 && random.nextLong(10) < 2) {
+            mystartdate = mystartdate.plus(random.nextLong(startsplit), ChronoUnit.DAYS);                
+            mystartdate = TimeUtil.add(mystartdate, weekdays);
+        }
+        LocalDate myenddate = enddate;
+        if (false && startsplit > 0 && random.nextLong(10) < 2) {
+            myenddate = myenddate.minus(random.nextLong(startsplit), ChronoUnit.DAYS);
+            myenddate = TimeUtil.add(myenddate, weekdays);
+        }
+	double[] firstData = new double[size];
+        for (int i = 0; i < size; i++) {
+	    double datum = random.nextDouble(1000);
+	    firstData[i] = datum;
+	}	
+        int periodday = 0;
+        Set<String> topSet = new HashSet<>();
+        List<String> topList = new ArrayList<>();
+        List<Double> datumList = new ArrayList<>();
+        Map<String, Double> datumMap = new HashMap<>();
+        System.out.println("Start date: " + mystartdate + " End date: " + myenddate + " periodday: " + periodday + " perioddays: " + perioddays); 
+        while (mystartdate.isBefore(myenddate)) {
+            if (periodday == 0) {
+                topSet = new HashSet<>();
+                topList = new ArrayList<>();
+                datumList = new ArrayList<>();
+                datumMap = new HashMap<>();
+                int i = 0;
+                while (i < stockcount) {
+                    String id = ids.get(random.nextInt(size));
+                    if (topSet.contains(id)) {
+                        continue;
+                    }
+                    topSet.add(id);
+                    topList.add(id);
+                    double datum = 100 + (stockcount - i) * 0.1;
+                    datumList.add(datum);
+                    datumMap.put(id, datum);
+                    i++;
+                }
+                System.out.println("Top set: " + topSet + " Top list: " + topList + " Datum list: " + datumList);
+            }
+            for (int i = 0; i < size; i++) {
+		double datum = firstData[i];
+                String id = ids.get(i);
+                StockDTO stock = new StockDTO();
+                stock.setMarketid(market);
+                stock.setId(id);
+                stock.setName("name"+id);
+                stock.setDate(TimeUtil.convertDate(mystartdate));
+                boolean missing = random.nextInt(100) < 2;
+                // TODO for all
+                if (!missing) {
+                    for (int j = 0; j < periods.length; j++) {
+                        stock.setPeriod(j, datum + j);                        
+                    }
+                    switch (period) {
+                    case Constants.INDEXVALUECOLUMN:
+                        stock.setIndexvalue(datum);
+                        break;
+                    case Constants.PRICECOLUMN:
+                        stock.setPrice(datum);
+                        if (ohlc) {
+                            stock.setPricelow(change(datum, -1, 0.04, random));
+                            stock.setPriceopen(change(datum, -1, 0.04, random));
+                            stock.setPricehigh(change(datum, 1, 0.04, random));
+                        }
+                        break;
+                    default:
+                        stock.setPeriod(period, datum);
+                    }
+                    double datum2 = 100 - random.nextDouble(10);
+                    if (topSet.contains(id)) {
+                        datum2 = datumMap.get(id);
+                    } else {
+                    }
+                    stock.setPeriod(periodperiod, datum2);
+                    //System.out.println("sto" + datum2 + " " + periodperiod + " " + stock.getPeriod(periodperiod));
+                    list.add(stock);
+                }
+                datum = change(random, datum);
+                firstData[i] = datum;
+                // TODO random big change
+            }
+            periodday++;
+            periodday = periodday % perioddays;
+            mystartdate = TimeUtil.add(mystartdate, weekdays);
+        }
+        list = StockETL.filterWeekend(conf, list);
+        return list;
+    }
+
     private Double change(double datum, int i, double d, Random random) {
         datum = datum * (1.0 + i * d * random.nextDouble());
         return datum;
@@ -280,12 +395,12 @@ public class TestData {
         datum = datum * (1.02 - 0.04 * random.nextDouble());
         return datum;
     }
-    
+
     public List<MetaDTO> getMetas(String market) {
         MetaDTO meta = new MetaDTO(market, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
         return List.of(meta);
     }
-    
+
     public List<MetaDTO> getMetas() {
         MetaDTO meta = new MetaDTO(TestConstants.MARKET, "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", null, null, null);
         return List.of(meta);

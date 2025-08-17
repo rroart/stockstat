@@ -8,4 +8,5 @@ public class TestConstants {
     public static final String MARKET = "mark1";
     public static final String MARKET2 = "mark2";
     public static final String MARKET3 = "tradcomm";
+    public static final String SLOWMARKET = "slowmarket";
 }
