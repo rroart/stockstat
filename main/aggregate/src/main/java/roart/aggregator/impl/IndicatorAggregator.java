@@ -458,6 +458,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                                     nnConfigs = null;
                                 }
                             }
+                            Collections.shuffle(learnMLMap);
                             LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, this, learnMLMap, model, size, outcomes, mapTime, classifyMLMap, labelMapShort, path, filename, neuralnetcommand, mlmeta, true);  
                             if (result == null) {
                                 continue;

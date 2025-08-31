@@ -466,6 +466,7 @@ public class MLIndicator extends Aggregator {
                             nnconfigs = null;
                         }
                     }
+                    Collections.shuffle(learnMap);
                     LearnTestClassifyResult result = mldao.learntestclassify(nnconfigs, this, learnMap, model, arrayLength, cats, mapTime, classifyMap, labelMapShort, path, filename, neuralnetcommand, mlmeta, true);  
                     if (result == null) {
                         continue;
