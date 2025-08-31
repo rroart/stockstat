@@ -109,7 +109,7 @@ public class MLIndicator extends Aggregator {
         this.key = title;
         makeMapTypes();
         if (conf.wantML()) {
-            if (true) {
+            if (!Boolean.TRUE.equals(conf.wantsMachineLearningRandom())) {
                 if (conf.wantMLSpark()) {
                     mldaos.add(new MLClassifyDao(MLConstants.SPARK, conf));
                 }

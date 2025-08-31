@@ -35,8 +35,9 @@ public class MLClassifyRandomDS extends MLClassifyDS {
 
     private void findModels() {
         models = new ArrayList<>();
-        MLClassifyModel model = new MLClassifyRandomModel(conf);
-        models.add(model);
+        models.add(new MLClassifyRandomDim2Model(conf));
+        models.add(new MLClassifyRandomDim3Model(conf));
+        models.add(new MLClassifyRandomDim4Model(conf));
     }
 
     @Override
@@ -115,16 +116,12 @@ public class MLClassifyRandomDS extends MLClassifyDS {
         return retMap;
     }
 
-    private void getClassifyArray(List<LearnClassify> list, List<String> retList, Object[][] objobj) {
+    private void getClassifyArray(List<LearnClassify> list, List<String> retList, Object[] objobj) {
         int i = 0;
         for (LearnClassify entry : list) {
             log.info("MMM" + entry.getArray().getClass().getName());
-            double[] value = (double[]) entry.getArray();
-            Object[] obj = new Object[value.length/* + 1*/];
-            for (int j = 0; j < value.length; j ++) {
-                obj[j] = value[j];
-            }
-            objobj[i++] = obj;
+            Object value = entry.getArray();
+            objobj[i++] = value;
             retList.add((String) entry.getId());
         }
     }
@@ -148,6 +145,7 @@ public class MLClassifyRandomDS extends MLClassifyDS {
             result.setCatMap(new HashMap<>());
             return result;
         }
+        //log.info("filename {}", );
         Object[] list = null;
         Map<Object, Long> countMap = null;
         if (classify && learnMap != null) {
@@ -157,7 +155,7 @@ public class MLClassifyRandomDS extends MLClassifyDS {
         }
         List<String> retList = new ArrayList<>();
         if (true || classify) {
-        Object[][] classifyArray = new Object[classifyMap.size()][];
+        Object[] classifyArray = new Object[classifyMap.size()];
         getClassifyArray(classifyMap, retList, classifyArray);
         }
         result.setAccuracy(random.nextDouble());

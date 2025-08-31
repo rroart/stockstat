@@ -4,7 +4,7 @@ import roart.common.config.MLConstants;
 import roart.iclij.config.IclijConfig;
 import roart.pipeline.common.aggregate.Aggregator;
 
-public class MLClassifyRandomModel extends MLClassifyModel {
+public abstract class MLClassifyRandomModel extends MLClassifyModel {
     public MLClassifyRandomModel(IclijConfig conf) {
         super(conf);
     }
@@ -25,18 +25,8 @@ public class MLClassifyRandomModel extends MLClassifyModel {
     }
 
     @Override
-    public int getId() {
-        return 0;
-    }
-
-    @Override
-    public String getName() {
-        return MLConstants.RND;
-    }
-
-    @Override
     public String getShortName() {
-        return MLConstants.RND;
+        return getName();
     }
 
     @Override
