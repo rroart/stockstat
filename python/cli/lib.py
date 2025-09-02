@@ -426,10 +426,11 @@ def getlistsorted(datedstocklists, listid, listdate, count, tableintervaldays, w
     #print("count %d %d" % (count, periods))
     #print(datedstocklists[0])
     #print(datedstocklists[1])
+    periodtext = [ "period1", "period2", "period3", "period4", "period5", "period6", "period7", "period8", "period9", "price", "indexvalue" ]
     for j in range(count):
         for i in range(periods):
             df = datedstocklists[j] # dataframe make?
-            if not i in df:
+            if not periodtext[i] in df: # TODO
                 continue
             hasperiod = False
             #is.infinit
