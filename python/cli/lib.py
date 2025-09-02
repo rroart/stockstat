@@ -2951,13 +2951,13 @@ def deletepipeline():
 def copydb(indb, outdb):
     request.copydb(indb, outdb)
 
-allstocks = None
-allmetas = None
+#allstocks = None
+#allmetas = None
 
 def main():
     import sys
-    #if not 'allstocks' in vars() and not 'allstocks' in globals():
     if len(sys.argv) == 1:
+      allmetas = None
       print("Loadings stocks")
       allstocks = getstocks(session)
       print("Stocks loaded");
@@ -2965,16 +2965,20 @@ def main():
         allstocks = etl.filterweekend(allstocks)
         allmetas = getmetas(session)
     else:
-      print("Stocks already set")
-    
+      print("Stocks not to be set")
+      return None, None, None, None
     plt.close('all')
 
     today = datetime.today().strftime('%Y-%m-%d')
     yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
+    return allmetas, allstocks, yesterday, today
 
 #print(len(stock))
 #print(meta)
 #print(type(meta))
 
 if __name__=="__main__":
-    main()
+  if not 'allstocks' in vars() and not 'allstocks' in globals():
+    allmetas, allstocks, yesterday, today = main()
+  else:
+    print("Stocks already set")
