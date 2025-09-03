@@ -425,6 +425,10 @@ public class MLIndicator extends Aggregator {
                     List<LearnClassify> learnMap = transformLearnClassifyMap(mergedCatMap, true, mlmeta, model);
                     List<LearnClassify> classifyMap = transformLearnClassifyMap(mergedCatMap, false, mlmeta, model);
                     Map<Object, Long> countMap1 = learnMap.stream().collect(Collectors.groupingBy(e2 -> labelMapShort.get(e2.getClassification()), Collectors.counting()));                            
+                    if (neuralnetcommand.isMllearn() && learnMap.size() < 500) {
+                        log.info("No big learn map for {}", learnMap.size());
+                        //continue;
+                    }
                     long count = countMap1.values().stream().distinct().count();
                     if (count == 1) {
                         log.info("Nothing to learn");
@@ -451,6 +455,9 @@ public class MLIndicator extends Aggregator {
                     String filename = getFilename(mldao, model, "" + arrayLength, "" + cats, conf.getConfigData().getMarket(), indicators, threshold);
                     String path = model.getPath();
                     boolean mldynamic = conf.wantMLDynamic();
+                    log.info("Filename {}", filename);
+                    log.info("Doing {} {} {}", mldao.getName(), model.getName());
+                    log.info("Map {} {}", learnMap.size(), learnMap);
                     if (neuralnetcommand.isMlcross()) {
                         classifyMap = learnMap;
                     }

@@ -3,6 +3,7 @@ package roart.aggregator.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -77,6 +78,9 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
+    public boolean simple = true;
+    public boolean simplelog = true;
+    
     protected static final int CMNTYPE = 0;
     protected static final int NEGTYPE = 1;
     protected static final int POSTYPE = 2;
@@ -201,6 +205,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         //makeWantedSubTypesMap(wantedSubTypes());
         //log.debug("imap " + objectMap.size());
         log.info("time2 {}", (System.currentTimeMillis() - time2));
+        log.info("subtypes {} {}", wantedSubTypes().size(), wantedSubTypes());
         long time1 = System.currentTimeMillis();
         log.debug("listmap {} {}", listMap.size(), listMap.keySet());
 
@@ -212,6 +217,12 @@ public abstract class IndicatorAggregator extends Aggregator {
         // a map from subtype h/m + maptype com/neg/pos to a map<values, label>
         Map<SubType, MLMeta> metaMap = new HashMap<>();
         Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = createPosNegMaps(conf, metaMap, threshold);
+        for (Entry<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> entry : mapMap.entrySet()) {
+            SubType akey = entry.getKey();
+            Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>> avalue = entry.getValue();
+            log.info("Entry {}", akey);
+            log.info("keyset {}", avalue.keySet());
+        }
         doMergeLearn(conf, mapMap, afterbefore, metaMap, threshold);
         
         usedSubTypes = new ArrayList<>(mapMap.keySet());
@@ -374,10 +385,21 @@ public abstract class IndicatorAggregator extends Aggregator {
     private void doLearnTestClassify(NeuralNetConfigs nnConfigs, IclijConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
             Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult,
             Map<Double, String> labelMapShort, Map<SubType, MLMeta> metaMap, NeuralNetCommand neuralnetcommand, Double threshold) {
+        for (Entry<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> entry : mapMap.entrySet()) {
+            SubType akey = entry.getKey();
+            Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>> avalue = entry.getValue();
+            log.info("Entry {}", akey);
+            log.info("keyset {}", avalue.keySet());
+        }
         List<SubType> subTypes = usedSubTypes();
         AfterBeforeLimit afterbefore = getAfterBefore();
         // map from h/m + posnegcom to map<model, results>
         try {
+            log.info("subtypes {} {}", subTypes.size(), subTypes);
+            log.info("mldaos {}", mldaos.size());
+            log.info("models {}", mldaos.get(0).getModels().size());
+            log.info("maptypes {}", getMapTypeList().size());
+            
             for (SubType subType : subTypes) {
                 if (!subType.useDirectly) {
                     continue;
@@ -435,6 +457,10 @@ public abstract class IndicatorAggregator extends Aggregator {
                             log.debug("Outcomes {}", outcomes);
                             int size0 = getValidateSize2(learnMap, mlmeta);
                             List<LearnClassify> learnMLMap = transformLearnClassifyMap(learnMap, true, mlmeta, model);
+                            if (neuralnetcommand.isMllearn() && learnMLMap.size() < 500) {
+                                log.info("No big learn map for {} {}", mapName, learnMLMap.size());
+                                //continue;
+                            }
                             List<LearnClassify> classifyMLMap = transformLearnClassifyMap(classifyMap, false, mlmeta, model);
                             int size = getValidateSize(learnMLMap, mlmeta);
                             List<AbstractIndicator> indicators = new ArrayList<>();
@@ -443,6 +469,10 @@ public abstract class IndicatorAggregator extends Aggregator {
                             boolean mldynamic = conf.wantMLDynamic();
                             //indicators.add(this);
                             log.info("Filename {}", filename);
+                            log.info("Doing {} {} {}", mldao.getName(), model.getName(), mapName);
+                            if (simplelog) {
+                                log.info("Map {} {}", learnMLMap.size(), learnMLMap);
+                            }
                             if (neuralnetcommand.isMlcross()) {
                                 classifyMLMap = learnMLMap;
                             }
@@ -468,6 +498,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             resultMeta.setSubType(subType.getType() + mergeTxt(subType));
                             resultMeta.setSubSubType(mapType);
                             resultMeta.setLearnMap(countMap);
+                            log.info("countmap {}", countMap);
                             resultMeta.setThreshold(threshold);
                             if (neuralnetcommand.isMlcross() && result.getCatMap() != null && classifyMLMap.size() > 0) {
                                 Map<String, Double[]> classifyResult = result.getCatMap();
@@ -1304,6 +1335,128 @@ public abstract class IndicatorAggregator extends Aggregator {
         
     }
 
+    private void getPosNegMap5(Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap, SubType subType, String commonType, String posnegType , String id,
+            double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
+            Map<Integer, Integer> posneg, String[] labels, String[] startlabels, AfterBeforeLimit afterbefore, Double threshold) {
+        //AfterBeforeLimit afterbefore2 = new AfterBeforeLimit(0, afterbefore.after); // differs here
+        //boolean endOnly = subType.filters[0].limit == subType.filters[1].limit;
+        //Map<Integer, Integer> newPosNeg = ArraysUtil.getAcceptedRanges(posneg, afterbefore.before, afterbefore.after, listsize, endOnly);
+        SerialTA objs = subType.taMap.get(id);
+        //int begOfArray = (int) objs[subType.range[0]];
+        int endOfArray = (int) objs.get(subType.range[1]);
+        for (Entry<Integer, Integer> entry : posneg.entrySet()) {
+            String textlabel;
+            int start = 1 + entry.getKey(); // differs here
+            int end = 1 + entry.getValue();
+
+            List<Triple<Integer, Integer, String>> triples = getRangeLabel2(list, listsize, labels, startlabels, afterbefore,
+                    start, end, threshold);
+            for (Triple<Integer, Integer, String> triple : triples) {
+                start = (int) triple.getLeft();
+                end = (int) triple.getMiddle();
+                textlabel = (String) triple.getRight();
+                log.debug("{}: {} at {}", textlabel, id, end);
+                //printme(textlabel, end, list, array, afterbefore);
+                double[] truncArray = ArraysUtil.getSub(array, start, end);
+                if (!Arrays.stream(truncArray).allMatch(e -> !Double.isNaN(e))) {
+                    continue;
+                }
+                Double doublelabel = labelMap2.get(textlabel);
+                Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>> subtypeMap = mapGetter3(mapMap, subType);
+                if (textlabel != null) {
+                    //String commonMapName = subType.getType() + commonType;
+                    //String posnegMapName = subType.getType() + posnegType;
+                    Map<String, List<Pair<double[], Pair<Object, Double>>>> commonMap = mapGetter(subtypeMap, commonType);
+                    Map<String, List<Pair<double[], Pair<Object, Double>>>> posnegMap = mapGetter(subtypeMap, posnegType);
+                    //commonMap.put(id, new ImmutablePair(truncArray, doublelabel));
+                    //posnegMap.put(id, new ImmutablePair(truncArray, doublelabel));
+                    if (doublelabel == null) {
+                        int jj = 0;
+                    }
+                    mapGetter4(commonMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
+                    mapGetter4(posnegMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
+                } else {
+                    //String subNameShort = subType.getType();
+                    //String freshMapName = subType.getType() + posnegType + FRESH;
+                    Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap = mapGetter(subtypeMap, "offset");
+                    Map<String, List<Pair<double[], Pair<Object, Double>>>> commonFreshMap = mapGetter(subtypeMap, FRESH + commonType);
+                    Map<String, List<Pair<double[], Pair<Object, Double>>>> posnegFreshMap = mapGetter(subtypeMap, FRESH + posnegType);
+                    double[] doubleArray = new double[] { (endOfArray - 1) - (end + 1) };
+                    
+                    mapGetter4(offsetMap, id).add(new MutablePair(doubleArray, null));
+                    mapGetter4(commonFreshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
+                    mapGetter4(posnegFreshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
+                }
+            }
+        }
+    }
+
+    private void getPosNegMap6(
+            Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
+            SubType subType, String commonType, String posnegType, String id, double[] list,
+            Map<String, Double> labelMap2, double[][] arrays, int listsize, Map<Integer, Integer> posneg, String[] labels,
+            Object object, AfterBeforeLimit afterbefore, SubType[] subs, Double threshold/*, Pair<Integer, Integer> intersect*/) {
+        //AfterBeforeLimit afterbefore2 = new AfterBeforeLimit(0, afterbefore.after); // differs here
+        SerialTA objs = subType.taMap.get(id);
+        for (Entry<Integer, Integer> entry : posneg.entrySet()) {
+            String textlabel;
+            int start = 1 + entry.getKey(); // differs here
+            int end = 1 + entry.getValue();
+
+            List<Triple<Integer, Integer, String>> triples = getRangeLabel2(list, listsize, labels, null, afterbefore,
+                    start, end, threshold);
+            out:
+            for (Triple<Integer, Integer, String> triple : triples) {
+                start = (int) triple.getLeft();
+                end = (int) triple.getMiddle();
+                textlabel = (String) triple.getRight();
+                log.debug("{}: {} at {}", textlabel, id, end);
+                //printme(textlabel, end, list, array, afterbefore);
+                double[] array = new double[0];
+                double[][] newarrays = new double[arrays.length][afterbefore.before];
+                for (int i = 0; i < arrays.length; i++) {
+                    double[] anArray = arrays[i];
+                    double[] aTruncArray = ArraysUtil.getSub(anArray, start, end);
+                    if (!Arrays.stream(aTruncArray).allMatch(e -> !Double.isNaN(e))) {
+                        int jj = 0;
+                        continue out;
+                    }
+                    array = (double[]) ArrayUtils.addAll(array, aTruncArray);                    
+                    newarrays[i] = aTruncArray;
+                }
+                //double[] truncArray = array;
+                double[][] truncArray = newarrays;
+                Double doublelabel = labelMap2.get(textlabel);
+                Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>> subtypeMap = mapGetter3(mapMap, subType);
+                if (textlabel != null) {
+                    //String commonMapName = subType.getType() + commonType;
+                    //String posnegMapName = subType.getType() + posnegType;
+                    Map<String, List<Pair<double[], Pair<Object, Double>>>> commonMap = mapGetter(subtypeMap, commonType);
+                    Map<String, List<Pair<double[], Pair<Object, Double>>>> posnegMap = mapGetter(subtypeMap, posnegType);
+                    //commonMap.put(id, new ImmutablePair(truncArray, doublelabel));
+                    //posnegMap.put(id, new ImmutablePair(truncArray, doublelabel));
+                    if (doublelabel == null) {
+                        int jj = 0;
+                    }
+                    mapGetter4(commonMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
+                    mapGetter4(posnegMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
+                } else {
+                    //String subNameShort = subType.getType();
+                    //String freshMapName = subType.getType() + posnegType + FRESH;
+                    Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap = mapGetter(subtypeMap, "offset");
+                    Map<String, List<Pair<double[], Pair<Object, Double>>>> commonFreshMap = mapGetter(subtypeMap, FRESH + commonType);
+                    Map<String, List<Pair<double[], Pair<Object, Double>>>> posnegFreshMap = mapGetter(subtypeMap, FRESH + posnegType);
+                    double[] doubleArray = new double[] { (list.length - 1) - (end + 1)};
+                    
+                    mapGetter4(offsetMap, id).add(new MutablePair(doubleArray, null));
+                    mapGetter4(commonFreshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
+                    mapGetter4(posnegFreshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
+                }
+            }
+        }
+        
+    }
+
     private List<Triple<Integer, Integer, String>> getRangeLabel(double[] list, int listsize, String[] labels, String[] startlabels,
             AfterBeforeLimit afterbefore, boolean endOnly, int start, int end, Double threshold) {
         String textlabel = null;
@@ -1389,6 +1542,53 @@ public abstract class IndicatorAggregator extends Aggregator {
         return triples;
     }
 
+    private List<Triple<Integer, Integer, String>> getRangeLabel2(double[] list, int listsize, String[] labels, String[] startlabels,
+            AfterBeforeLimit afterbefore, int start, int end, Double threshold) {
+        String textlabel = null;
+        List<Triple<Integer, Integer, String>> triples = new ArrayList<>();
+        if (end == listsize - 1) {
+            return triples;
+        }
+        int mystart = start;
+        int myend = end;
+        if (true) { // TODO differ here
+            mystart = myend + 1 - afterbefore.before;
+            if (mystart < 0) {
+                if (true) return triples; // differ here
+                mystart = 0;
+            }
+            if (end + 1 + afterbefore.after < listsize) {
+                double change = list[myend + 1 + afterbefore.after] / list[myend + 1];
+                if (change > threshold) {
+                    textlabel = labels[0];
+                } else {
+                    textlabel = labels[1];
+                }
+                //log.info("change {} {} {} {} {}", change, list[myend + 1], list[myend + 1 + afterbefore.after], threshold, textlabel);
+            }
+            triples.add(new ImmutableTriple(mystart, myend, textlabel));
+        }
+        // not updated with + 1
+        /*
+        if (false) {
+            if (start - afterbefore.before >= 0 && start + afterbefore.after < listsize) {
+                int mystart = start;
+                int myend = end;
+                if (myend - mystart + 1 >= afterbefore.after) {
+                    myend = mystart + afterbefore.after - 1;
+                }
+                if (list[mystart] < list[mystart + afterbefore.after]) {
+                    textlabel = startlabels[0];
+                } else {
+                    textlabel = startlabels[1];
+                }
+                triples.add(List.of(mystart, myend, textlabel));
+            }
+        }
+         */
+        return triples;
+    }
+
     protected abstract String getAggregatorsThreshold();
 
     /**
@@ -1411,6 +1611,7 @@ public abstract class IndicatorAggregator extends Aggregator {
      * 
      */
 
+    @Deprecated // ?
     private void getPosNegMap(Map<Pair<SubType, String>, Map<Pair<Integer, Integer>, Double>> mapMap, SubType subType, String commonType, String posnegType , String id,
             double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
             Map<Integer, Integer> posneg, String[] labels, String[] startlabels, AfterBeforeLimit afterbefore, Double threshold) {
@@ -1516,10 +1717,26 @@ public abstract class IndicatorAggregator extends Aggregator {
 
                     double[] anArray = (double[]) taObject.getarray(subType.getArrIdx());
                     //anArray = createArray(anArray, begOfArray, endOfArray);
+                    if (!simple) {
                     for (int i = 0; i < posneg.length; i++) {
                         Map<Integer, Integer>[] map = ArraysUtil.searchForwardLimit(anArray, endOfArray, subType.filters[i].limit, subType.filters[1 - i].limit);
                         // instead of posneg, take from filter
                         getPosNegMap3(mapMap, subType, CMNTYPESTR, posneg[i], id, trunclist, labelMap2, anArray, trunclist.length, map[i], subType.filters[i].texts, null, subType.afterbefore, threshold);
+                    }
+                    } else {
+                        for (int i = 0; i < posneg.length; i++) {
+                            if (simplelog) {
+                            log.info("filter {} {}", subType.filters[i].limit, subType.filters[1 - i].limit);
+                            log.info("anArray {} {} {}", id, anArray.length, Arrays.toString(anArray));
+                            }
+                            Map<Integer, Integer>[] map = ArraysUtil.searchForwardLimit(anArray, endOfArray, subType.filters[i].limit, subType.filters[1 - i].limit);
+                            if (simplelog) {
+                            log.info("posneg {} {} {} {}", map[0], subType, posneg[i], id);
+                            log.info("posneg {} {}", map[1], endOfArray);
+                            }
+                            // instead of posneg, take from filter
+                            getPosNegMap5(mapMap, subType, CMNTYPESTR, posneg[i], id, trunclist, labelMap2, anArray, trunclist.length, map[i], subType.filters[i].texts, null, subType.afterbefore, threshold);
+                        }
                     }
                 }
             }
@@ -1762,6 +1979,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                     }
                     double[] trunclist = ArrayUtils.subarray(list[0], intersectBegOfArray, intersectBegOfArray + intersectEndOfArray);
                     //anArray = createArray(anArray, begOfArray, endOfArray);
+                    if (!simple) {
                     for (int i = 0; i < posneg.length; i++) {
                            /*
                         if (anArray.length < intersectEndOfArray + 1 - newBeg) {
@@ -1776,6 +1994,23 @@ public abstract class IndicatorAggregator extends Aggregator {
                         } catch (Exception e) {
                             log.error(Constants.EXCEPTION, e);
                         }
+                    }
+                    } else {
+                        for (int i = 0; i < posneg.length; i++) {
+                            /*
+                         if (anArray.length < intersectEndOfArray + 1 - newBeg) {
+                             int jj = 0;
+                         }
+                         */
+                         Map<Integer, Integer>[] map = ArraysUtil.searchForwardLimit(triggerArray, triggerArray.length, subType.filters[i].limit, subType.filters[1 - i].limit);
+                         //Map<Integer, Integer>[] map = rangeMap.get(i);
+                         // instead of posneg, take from filter                  
+                         try {
+                             getPosNegMap6(newMapMap, subType, CMNTYPESTR, posneg[i], id, trunclist, labelMap2, arrays, trunclist.length, map[i], subType.filters[i].texts, null, mergeSubType.afterbefore, subs, threshold/*, intersect*/);
+                         } catch (Exception e) {
+                             log.error(Constants.EXCEPTION, e);
+                         }
+                    }
                     }
                 }
             }
@@ -1911,6 +2146,10 @@ public abstract class IndicatorAggregator extends Aggregator {
         public boolean useMerged = false;
         public boolean isMerge = false;
         public MySubType mySubType;
+        @Override
+        public String toString() {
+            return getType();
+        }
     }
 
     protected class MergeSubType extends SubType {
