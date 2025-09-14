@@ -90,8 +90,8 @@ class Model(MyModel):
     self.dense_3 = Dense(32, activation='relu')
     #self.dense_4 = Dense(myobj.classes, activation='sigmoid')
     self.dense_4 = Dense(myobj.classes, activation='softmax')
-    #adam = tf.keras.optimizers.Adam(learning_rate=1)
-    self.model.compile(optimizer='adam',
+    adam = tf.keras.optimizers.Adam(learning_rate = config.lr)
+    self.model.compile(optimizer=adam,
                        loss=loss,
                        metrics=['accuracy'])
     return

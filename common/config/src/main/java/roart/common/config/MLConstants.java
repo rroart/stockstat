@@ -69,15 +69,15 @@ public class MLConstants {
     public static final String PYTORCHGRUCONFIG = "{ \"name\" : \"gru\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01 }";
     public static final String PYTORCHCNNCONFIG = "{ \"name\" : \"cnn\", \"steps\" : 1000, \"stride\" : 1, \"kernelsize\" : 4, \"dropout\" : 0.5, \"lr\" : 0.01 }";
     public static final String PYTORCHCNN2CONFIG = "{ \"name\" : \"cnn2\", \"steps\" : 1000, \"stride\" : 1, \"kernelsize\" : 3, \"maxpool\": 4, \"dropout1\": 0.25, \"dropout2\" : 0.5, \"lr\" : 0.01 }";
-    public static final String TENSORFLOWDNNCONFIG = "{ \"name\" : \"dnn\", \"steps\" : 1000, \"hidden\" : 100, \"layers\": 2, \"lr\" : 0.01 }";
-    public static final String TENSORFLOWLICCONFIG = "{ \"name\" : \"lic\", \"steps\" : 1000, \"lr\" : 0.01 }";
-    public static final String TENSORFLOWMLPCONFIG = "{ \"name\" : \"mlp\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01 }";
-    public static final String TENSORFLOWRNNCONFIG = "{ \"name\" : \"rnn\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01, \"dropout\" : 0, \"dropoutin\" : 0 }";
-    public static final String TENSORFLOWCNNCONFIG = "{ \"name\" : \"cnn\", \"steps\" : 1000, \"stride\" : 1, \"kernelsize\" : 4, \"dropout\" : 0.5 }";
+    public static final String TENSORFLOWDNNCONFIG = "{ \"name\" : \"dnn\", \"steps\" : 1000, \"hidden\" : 100, \"layers\": 2, \"lr\" : 0.001 }";
+    public static final String TENSORFLOWLICCONFIG = "{ \"name\" : \"lic\", \"steps\" : 1000, \"lr\" : 0.001 }";
+    public static final String TENSORFLOWMLPCONFIG = "{ \"name\" : \"mlp\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.001 }";
+    public static final String TENSORFLOWRNNCONFIG = "{ \"name\" : \"rnn\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.001, \"dropout\" : 0, \"dropoutin\" : 0 }";
+    public static final String TENSORFLOWCNNCONFIG = "{ \"name\" : \"cnn\", \"steps\" : 1000, \"lr\" : 0.001, \"stride\" : 1, \"kernelsize\" : 4, \"dropout\" : 0.5 }";
     public static final String TENSORFLOWCNN2CONFIG = "{ \"name\" : \"cnn2\", \"steps\" : 1000, \"stride\" : 1, \"kernelsize\" : 3, \"maxpool\": 4, \"dropout1\": 0.25, \"dropout2\" : 0.5 }";
-    public static final String TENSORFLOWLSTMCONFIG = "{ \"name\" : \"lstm\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01, \"dropout\" : 0, \"dropoutin\" : 0 }";
-    public static final String TENSORFLOWGRUCONFIG = "{ \"name\" : \"gru\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01, \"dropout\" : 0, \"dropoutin\" : 0 }";
-    public static final String TENSORFLOWLIRCONFIG = "{ \"name\" : \"lir\", \"steps\" : 1000, \"lr\" : 0.01 }";
+    public static final String TENSORFLOWLSTMCONFIG = "{ \"name\" : \"lstm\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.001, \"dropout\" : 0, \"dropoutin\" : 0 }";
+    public static final String TENSORFLOWGRUCONFIG = "{ \"name\" : \"gru\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.001, \"dropout\" : 0, \"dropoutin\" : 0 }";
+    public static final String TENSORFLOWLIRCONFIG = "{ \"name\" : \"lir\", \"steps\" : 1000, \"lr\" : 0.001 }";
     public static final String TENSORFLOWDCGANCONFIG = "{ \"name\" : \"dcgan\", \"steps\" : 20, \"lr\" : 0.0001 }";
     public static final String TENSORFLOWCONDITIONALGANCONFIG = "{ \"name\" : \"conditionalgan\", \"steps\" : 20, \"lr\" : 0.0003 }";
 }
