@@ -427,7 +427,7 @@ public class MLIndicator extends Aggregator {
                     Map<Object, Long> countMap1 = learnMap.stream().collect(Collectors.groupingBy(e2 -> labelMapShort.get(e2.getClassification()), Collectors.counting()));                            
                     if (neuralnetcommand.isMllearn() && learnMap.size() < 500) {
                         log.info("No big learn map for {}", learnMap.size());
-                        //continue;
+                        continue;
                     }
                     long count = countMap1.values().stream().distinct().count();
                     if (count == 1) {
