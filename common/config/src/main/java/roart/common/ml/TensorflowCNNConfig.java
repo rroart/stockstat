@@ -55,6 +55,7 @@ public class TensorflowCNNConfig extends TensorflowPreFeedConfig {
             @JsonProperty("stride") int stride, 
             @JsonProperty("dropout") double dropout) {
         super(MLConstants.CNN, steps);
+        this.lr = lr;
         this.kernelsize = kernelsize;
         this.stride = stride;
         this.dropout = dropout;
