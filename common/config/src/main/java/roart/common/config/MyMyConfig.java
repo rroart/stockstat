@@ -1506,6 +1506,10 @@ public abstract class MyMyConfig extends MyConfig {
         return (int) getValueOrDefault(ConfigConstants.AGGREGATORSMINIMUMSIZE);
     }
 
+    public boolean wantAggregatorsUsecurve() {
+        return (boolean) getValueOrDefault(ConfigConstants.AGGREGATORSUSECURVE);
+    }
+
     public String getTensorflowServer() {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER);              
     }

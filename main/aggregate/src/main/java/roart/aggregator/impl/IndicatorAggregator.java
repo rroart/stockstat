@@ -1717,7 +1717,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 
                     double[] anArray = (double[]) taObject.getarray(subType.getArrIdx());
                     //anArray = createArray(anArray, begOfArray, endOfArray);
-                    if (!simple) {
+                    if (conf.wantAggregatorsUsecurve()) {
                     for (int i = 0; i < posneg.length; i++) {
                         Map<Integer, Integer>[] map = ArraysUtil.searchForwardLimit(anArray, endOfArray, subType.filters[i].limit, subType.filters[1 - i].limit);
                         // instead of posneg, take from filter
@@ -1979,7 +1979,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                     }
                     double[] trunclist = ArrayUtils.subarray(list[0], intersectBegOfArray, intersectBegOfArray + intersectEndOfArray);
                     //anArray = createArray(anArray, begOfArray, endOfArray);
-                    if (!simple) {
+                    if (conf.wantAggregatorsUsecurve()) {
                     for (int i = 0; i < posneg.length; i++) {
                            /*
                         if (anArray.length < intersectEndOfArray + 1 - newBeg) {

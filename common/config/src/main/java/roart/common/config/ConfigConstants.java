@@ -383,6 +383,7 @@ public class ConfigConstants {
     public static final String AGGREGATORSMLMULTISTOCHRSI = "aggregators.mlmulti.stochrsi";
     public static final String AGGREGATORSMLMULTITHRESHOLD = "aggregators.mlmulti.threshold";
     public static final String AGGREGATORSMINIMUMSIZE = "aggregators.minimumsize";
+    public static final String AGGREGATORSUSECURVE = "aggregators.usecurve";
     public static final String DATASETMLCONFIG = "dataset.mlconfig";
     public static final String FILESYSTEMLOCAL = "filesystem.local";
     public static final String FILESYSTEMHDFS = "filesystem.hdfs";
