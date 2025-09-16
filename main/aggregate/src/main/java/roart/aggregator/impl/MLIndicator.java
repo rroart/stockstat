@@ -425,7 +425,7 @@ public class MLIndicator extends Aggregator {
                     List<LearnClassify> learnMap = transformLearnClassifyMap(mergedCatMap, true, mlmeta, model);
                     List<LearnClassify> classifyMap = transformLearnClassifyMap(mergedCatMap, false, mlmeta, model);
                     Map<Object, Long> countMap1 = learnMap.stream().collect(Collectors.groupingBy(e2 -> labelMapShort.get(e2.getClassification()), Collectors.counting()));                            
-                    if (neuralnetcommand.isMllearn() && learnMap.size() < 500) {
+                    if (neuralnetcommand.isMllearn() && learnMap.size() < conf.getAggregatorsMinimumsize()) {
                         log.info("No big learn map for {}", learnMap.size());
                         continue;
                     }

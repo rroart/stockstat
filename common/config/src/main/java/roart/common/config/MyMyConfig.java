@@ -1502,6 +1502,10 @@ public abstract class MyMyConfig extends MyConfig {
                 && wantAggregatorsMlmultiML();
     }
 
+    public int getAggregatorsMinimumsize() {
+        return (int) getValueOrDefault(ConfigConstants.AGGREGATORSMINIMUMSIZE);
+    }
+
     public String getTensorflowServer() {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER);              
     }

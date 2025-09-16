@@ -423,6 +423,7 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.AGGREGATORSMLMULTISTOCH, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSMLMULTISTOCHRSI, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSMLMULTITHRESHOLD, String.class);
+        map.put(ConfigConstants.AGGREGATORSMINIMUMSIZE, Integer.class);
         map.put(ConfigConstants.DATASETMLCONFIG, String.class);
         map.put(ConfigConstants.FILESYSTEMLOCAL, Boolean.class);
         map.put(ConfigConstants.FILESYSTEMHDFS, Boolean.class);
@@ -829,6 +830,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.AGGREGATORSMLMULTISTOCH, Boolean.FALSE);
         deflt.put(ConfigConstants.AGGREGATORSMLMULTISTOCHRSI, Boolean.FALSE);
         deflt.put(ConfigConstants.AGGREGATORSMLMULTITHRESHOLD, THRESHOLD);
+        deflt.put(ConfigConstants.AGGREGATORSMINIMUMSIZE, 50);
         deflt.put(ConfigConstants.FILESYSTEMLOCAL, Boolean.TRUE);
         deflt.put(ConfigConstants.FILESYSTEMHDFS, Boolean.FALSE);
         deflt.put(ConfigConstants.FILESYSTEMHDFSHDFSCONFFS, "");
@@ -1236,6 +1238,7 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.AGGREGATORSMLMULTISTOCH, "ML mlmulti STOCH enable");
         text.put(ConfigConstants.AGGREGATORSMLMULTISTOCHRSI, "ML mlmulti STOCHRSI enable");
         text.put(ConfigConstants.AGGREGATORSMLMULTITHRESHOLD, "ML mlmulti threshold for classifier");
+        text.put(ConfigConstants.AGGREGATORSMINIMUMSIZE, "ML minimum size of training data");
         text.put(ConfigConstants.FILESYSTEMLOCAL, "Use Local fs");
         text.put(ConfigConstants.FILESYSTEMHDFS, "Use HDFS");
         text.put(ConfigConstants.FILESYSTEMHDFSHDFSCONFFS, "HDFS fs path");
@@ -1632,6 +1635,7 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.AGGREGATORSMLMULTIDAYSAFTERLIMIT, new XMLType( Integer.class, 10, "ML mlmulti days after limit"));
         mymap.put(ConfigConstants.AGGREGATORSMLMULTIMLCONFIG, new XMLType(null, null, null));
         mymap.put(ConfigConstants.AGGREGATORSMLMULTITHRESHOLD, new XMLType( String.class, THRESHOLD, "ML mlmulti threshold for classifier"));
+        mymap.put(ConfigConstants.AGGREGATORSMINIMUMSIZE, new XMLType( Integer.class, 50, "ML minimum size of training data"));
         mymap.put(ConfigConstants.AGGREGATORSMLATR, new XMLType(Boolean.class, Boolean.TRUE, "MLATR aggregator enable"));
         mymap.put(ConfigConstants.AGGREGATORSMLATRMLCONFIG, new XMLType(String.class, null, "MLATR aggregator ml config"));
         mymap.put(ConfigConstants.AGGREGATORSMLATRBUYLIMIT, new XMLType(Integer.class, 2, "ATR aggregator buy limit"));

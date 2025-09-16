@@ -457,7 +457,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             log.debug("Outcomes {}", outcomes);
                             int size0 = getValidateSize2(learnMap, mlmeta);
                             List<LearnClassify> learnMLMap = transformLearnClassifyMap(learnMap, true, mlmeta, model);
-                            if (neuralnetcommand.isMllearn() && learnMLMap.size() < 100) {
+                            if (neuralnetcommand.isMllearn() && learnMLMap.size() < conf.getAggregatorsMinimumsize()) {
                                 log.info("No big learn map for {} {}", mapName, learnMLMap.size());
                                 continue;
                             }
