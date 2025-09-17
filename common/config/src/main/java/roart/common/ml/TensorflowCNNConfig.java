@@ -7,22 +7,12 @@ import roart.common.config.MLConstants;
 
 public class TensorflowCNNConfig extends TensorflowPreFeedConfig {
 
-    private double lr;
-    
     private int kernelsize;
     
     private int stride;
 
     private double dropout;
     
-    public double getLr() {
-        return lr;
-    }
-
-    public void setLr(double lr) {
-        this.lr = lr;
-    }
-
     public int getKernelsize() {
         return kernelsize;
     }
@@ -49,13 +39,15 @@ public class TensorflowCNNConfig extends TensorflowPreFeedConfig {
 
     @JsonCreator
     public TensorflowCNNConfig(
+            @JsonProperty("normalize") boolean normalize, 
+            @JsonProperty("batchnormalize") boolean batchnormalize, 
+            @JsonProperty("regularize") boolean regularize,           
             @JsonProperty("steps") int steps, 
             @JsonProperty("lr") double lr, 
             @JsonProperty("kernelsize") int kernelsize, 
             @JsonProperty("stride") int stride, 
             @JsonProperty("dropout") double dropout) {
-        super(MLConstants.CNN, steps);
-        this.lr = lr;
+        super(MLConstants.CNN, steps, lr);
         this.kernelsize = kernelsize;
         this.stride = stride;
         this.dropout = dropout;
@@ -71,7 +63,7 @@ public class TensorflowCNNConfig extends TensorflowPreFeedConfig {
     }
 
     public TensorflowCNNConfig(TensorflowCNNConfig config) {
-        this(config.steps, config.lr, config.kernelsize, config.stride, config.dropout);
+        this(config.normalize, config.batchnormalize, config.regularize, config.steps, config.lr, config.kernelsize, config.stride, config.dropout);
     }
 
     @Override

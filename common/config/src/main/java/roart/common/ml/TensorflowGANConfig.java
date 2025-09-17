@@ -12,11 +12,9 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
     @Type(value = TensorflowConditionalGANConfig.class, name = "TensorflowConditionalGANConfig"),
     @Type(value = TensorflowDCGANConfig.class, name = "TensorflowDCGanConfig") })  
 public abstract class TensorflowGANConfig extends TensorflowConfig {
-    protected double lr;
 
     public TensorflowGANConfig(String name, int steps, double lr) {
-        super(name, steps);
-        this.lr = lr;
+        super(name, steps, lr);
     }
 
     public TensorflowGANConfig(String name) {
@@ -27,16 +25,8 @@ public abstract class TensorflowGANConfig extends TensorflowConfig {
         super();
     }
 
-    public double getLr() {
-        return lr;
-    }
-
-    public void setLr(double lr) {
-        this.lr = lr;
-    }
-
     @Override
     public String toString() {
-        return super.toString() + " " + lr;
+        return super.toString();
     }
 }

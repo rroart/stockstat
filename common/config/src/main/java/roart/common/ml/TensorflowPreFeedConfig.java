@@ -14,8 +14,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @Type(value = TensorflowCNN2Config.class, name = "TensorflowCNN2Config") })  
 public abstract class TensorflowPreFeedConfig extends TensorflowConfig {
 
-    public TensorflowPreFeedConfig(String name, int steps) {
-        super(name, steps);
+    public TensorflowPreFeedConfig(String name, int steps, double lr) {
+        super(name, steps, lr);
     }
 
     public TensorflowPreFeedConfig(String name) {

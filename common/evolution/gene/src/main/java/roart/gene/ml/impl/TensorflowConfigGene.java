@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @Type(value = TensorflowPreFeedConfigGene.class, name = "TensorflowPreFeedConfigGene") })  
 public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
     
-    protected static final int RANDOMS = 1;
+    protected static final int RANDOMS = 5;
     
     public TensorflowConfigGene(TensorflowConfig config) {
         super(config);
@@ -34,6 +34,7 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
     public void randomize() {
         TensorflowConfig myconfig = (TensorflowConfig) getConfig();
         myconfig.setSteps(generateSteps());
+        myconfig.setLr(generateLr());
     }
 
     public void mutate(int task) {
@@ -41,6 +42,18 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
         switch (task) {
         case 0:
             myconfig.setSteps(generateSteps());
+            break;
+        case 1:
+            myconfig.setLr(generateLr());
+            break;
+        case 2:
+            myconfig.setNormalize(generateBoolean());
+            break;
+        case 3:
+            myconfig.setBatchnormalize(generateBoolean());
+            break;
+        case 4:
+            myconfig.setRegularize(generateBoolean());
             break;
         default:
 	    log.error(Constants.NOTFOUND, task);

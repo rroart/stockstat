@@ -21,8 +21,6 @@ public abstract class TensorflowFeedConfig extends TensorflowConfig {
     
     protected int hidden;
     
-    protected double lr;
-    
     public int getLayers() {
         return layers;
     }
@@ -39,19 +37,10 @@ public abstract class TensorflowFeedConfig extends TensorflowConfig {
         this.hidden = hidden;
     }
 
-    public double getLr() {
-        return lr;
-    }
-
-    public void setLr(double lr) {
-        this.lr = lr;
-    }
-
     public TensorflowFeedConfig(String name, int steps, int layers, int hidden, double lr) {
-        super(name, steps);
+        super(name, steps, lr);
         this.layers = layers;
         this.hidden = hidden;
-        this.lr = lr;        
     }
 
     public TensorflowFeedConfig(String name) {
@@ -65,6 +54,6 @@ public abstract class TensorflowFeedConfig extends TensorflowConfig {
 
     @Override
     public String toString() {
-        return super.toString() + " " + layers + " " + hidden + " " + " " + lr;
+        return super.toString() + " " + layers + " " + hidden;
     }
 }

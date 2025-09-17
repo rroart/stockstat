@@ -50,6 +50,10 @@ public abstract class NeuralNetConfigGene extends AbstractGene {
     
     public abstract NeuralNetConfigGene copy();
 
+    protected boolean generateBoolean() {
+        return random.nextBoolean();
+    }
+    
     protected int generateSteps() {
         return RandomUtil.random(random, 100, 100, 10);
     }
