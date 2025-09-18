@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @Type(value = PytorchPreFeedConfigGene.class, name = "PytorchPreFeedConfigGene") })  
 public abstract class PytorchConfigGene extends NeuralNetConfigGene {
     
-    protected static final int RANDOMS = 1;
+    protected static final int RANDOMS = 6;
     
     public PytorchConfigGene(PytorchConfig config) {
         super(config);
@@ -34,6 +34,11 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
     public void randomize() {
         PytorchConfig myconfig = (PytorchConfig) getConfig();
         myconfig.setSteps(generateSteps());
+        myconfig.setLr(generateLr());
+        myconfig.setDropout(generateDropout());
+        myconfig.setNormalize(generateBoolean());
+        myconfig.setBatchnormalize(generateBoolean());
+        myconfig.setRegularize(generateBoolean());
     }
 
     public void mutate(int task) {
@@ -41,6 +46,21 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
         switch (task) {
         case 0:
             myconfig.setSteps(generateSteps());
+            break;
+        case 1:
+            myconfig.setLr(generateLr());
+            break;
+        case 2:
+            myconfig.setDropout(generateDropout());
+            break;
+        case 3:
+            myconfig.setNormalize(generateBoolean());
+            break;
+        case 4:
+            myconfig.setBatchnormalize(generateBoolean());
+            break;
+        case 5:
+            myconfig.setRegularize(generateBoolean());
             break;
         default:
 	    log.error(Constants.NOTFOUND, task);
@@ -52,6 +72,21 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
         PytorchConfig otherconfig = (PytorchConfig) other.getConfig();
         if (random.nextBoolean()) {
             myconfig.setSteps(otherconfig.getSteps());
+        }
+        if (random.nextBoolean()) {
+            myconfig.setLr(otherconfig.getLr());
+        }
+        if (random.nextBoolean()) {
+            myconfig.setDropout(otherconfig.getDropout());
+        }
+        if (random.nextBoolean()) {
+            myconfig.setNormalize(otherconfig.isNormalize());
+        }
+        if (random.nextBoolean()) {
+            myconfig.setBatchnormalize(otherconfig.isBatchnormalize());
+        }
+        if (random.nextBoolean()) {
+            myconfig.setRegularize(otherconfig.isRegularize());
         }
     }
     

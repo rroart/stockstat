@@ -28,14 +28,12 @@ public class PytorchCNNConfigGene extends PytorchPreFeedConfigGene {
         PytorchCNNConfig myconfig = (PytorchCNNConfig) getConfig();
         myconfig.setKernelsize(generateKernelsize());
         myconfig.setStride(generateStride());
-        myconfig.setDropout(generateDropout());
-        myconfig.setLr(generateLr());
     }
     
     @Override
     public void mutate() {
         PytorchCNNConfig myconfig = (PytorchCNNConfig) getConfig();
-        int task = random.nextInt(RANDOMS + 4);
+        int task = random.nextInt(RANDOMS + 2);
         if (task < RANDOMS) {
             super.mutate(task);
             return;
@@ -47,12 +45,6 @@ public class PytorchCNNConfigGene extends PytorchPreFeedConfigGene {
             break;
         case 1:
             myconfig.setStride(generateStride());
-            break;
-        case 2:
-            myconfig.setLr(generateLr());
-            break;
-        case 3:
-            myconfig.setDropout(generateDropout());
             break;
         default:
 	    log.error(Constants.NOTFOUND, task);
@@ -71,12 +63,6 @@ public class PytorchCNNConfigGene extends PytorchPreFeedConfigGene {
         }
         if (random.nextBoolean()) {
             myconfig.setStride(otherconfig.getStride());
-        }
-        if (random.nextBoolean()) {
-            myconfig.setDropout(otherconfig.getDropout());
-        }
-        if (random.nextBoolean()) {
-            myconfig.setLr(otherconfig.getLr());
         }
         return offspring;
     }

@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @Type(value = TensorflowPreFeedConfigGene.class, name = "TensorflowPreFeedConfigGene") })  
 public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
     
-    protected static final int RANDOMS = 5;
+    protected static final int RANDOMS = 6;
     
     public TensorflowConfigGene(TensorflowConfig config) {
         super(config);
@@ -35,6 +35,10 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
         TensorflowConfig myconfig = (TensorflowConfig) getConfig();
         myconfig.setSteps(generateSteps());
         myconfig.setLr(generateLr());
+        myconfig.setDropout(generateDropout());
+        myconfig.setNormalize(generateBoolean());
+        myconfig.setBatchnormalize(generateBoolean());
+        myconfig.setRegularize(generateBoolean());
     }
 
     public void mutate(int task) {
@@ -47,9 +51,12 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
             myconfig.setLr(generateLr());
             break;
         case 2:
-            myconfig.setNormalize(generateBoolean());
+            myconfig.setDropout(generateDropout());
             break;
         case 3:
+            myconfig.setNormalize(generateBoolean());
+            break;
+        case 5:
             myconfig.setBatchnormalize(generateBoolean());
             break;
         case 4:
@@ -65,6 +72,21 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
         TensorflowConfig otherconfig = (TensorflowConfig) other.getConfig();
         if (random.nextBoolean()) {
             myconfig.setSteps(otherconfig.getSteps());
+        }
+        if (random.nextBoolean()) {
+            myconfig.setLr(otherconfig.getLr());
+        }
+        if (random.nextBoolean()) {
+            myconfig.setDropout(otherconfig.getDropout());
+        }
+        if (random.nextBoolean()) {
+            myconfig.setNormalize(otherconfig.isNormalize());
+        }
+        if (random.nextBoolean()) {
+            myconfig.setBatchnormalize(otherconfig.isBatchnormalize());
+        }
+        if (random.nextBoolean()) {
+            myconfig.setRegularize(otherconfig.isRegularize());
         }
     }
     

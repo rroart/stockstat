@@ -16,28 +16,29 @@ public class PytorchCNN2Config extends PytorchPreFeedConfig {
     
     private double dropout2;
     
-    private double lr;
-    
     @JsonCreator
     public PytorchCNN2Config(
             @JsonProperty("steps") int steps, 
+            @JsonProperty("lr") double lr,
+            @JsonProperty("dropout") double dropout,
+            @JsonProperty("normalize") boolean normalize, 
+            @JsonProperty("batchnormalize") boolean batchnormalize, 
+            @JsonProperty("regularize") boolean regularize,           
             @JsonProperty("kernelsize") int kernelsize,
             @JsonProperty("maxpool") int maxpool,
             @JsonProperty("stride") int stride, 
             @JsonProperty("dropout1") double dropout1,
-            @JsonProperty("dropout2") double dropout2,
-            @JsonProperty("lr") double lr) {
-        super(MLConstants.CNN2, steps);
+            @JsonProperty("dropout2") double dropout2) {
+        super(MLConstants.CNN2, steps, lr, dropout, normalize, batchnormalize, regularize);
         this.kernelsize = kernelsize;
         this.maxpool = maxpool;
         this.stride = stride;
         this.dropout1 = dropout1;
         this.dropout2 = dropout2;
-        this.lr = lr;
     }
     
     public PytorchCNN2Config(PytorchCNN2Config config) {
-        this(config.steps, config.kernelsize, config.maxpool, config.stride, config.dropout1, config.dropout2, config.lr);
+        this(config.steps, config.lr, config.dropout, config.normalize, config.batchnormalize, config.regularize, config.kernelsize, config.maxpool, config.stride, config.dropout1, config.dropout2);
     }
 
     public PytorchCNN2Config(String name) {
@@ -89,17 +90,9 @@ public class PytorchCNN2Config extends PytorchPreFeedConfig {
         this.dropout2 = dropout2;
     }
 
-    public double getLr() {
-        return lr;
-    }
-
-    public void setLr(double lr) {
-        this.lr = lr;
-    }
-
     @Override
     public String toString() {
-        return super.toString() + " " + kernelsize + " " + maxpool + " " + stride + " " + dropout1 + " " + dropout2 + " " + lr;
+        return super.toString() + " " + kernelsize + " " + maxpool + " " + stride + " " + dropout1 + " " + dropout2;
     }
 
 }

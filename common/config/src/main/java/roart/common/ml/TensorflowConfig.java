@@ -20,6 +20,8 @@ public abstract class TensorflowConfig extends NeuralNetConfig {
 
     protected double lr;
     
+    protected double dropout;
+    
     protected boolean normalize;
 
     protected boolean batchnormalize;
@@ -40,6 +42,14 @@ public abstract class TensorflowConfig extends NeuralNetConfig {
 
     public void setLr(double lr) {
         this.lr = lr;
+    }
+
+    public double getDropout() {
+        return dropout;
+    }
+
+    public void setDropout(double dropout) {
+        this.dropout = dropout;
     }
 
     public boolean isNormalize() {
@@ -66,9 +76,14 @@ public abstract class TensorflowConfig extends NeuralNetConfig {
         this.regularize = regularize;
     }
 
-    public TensorflowConfig(String name, int steps, double lr) {
+    public TensorflowConfig(String name, int steps, double lr, double dropout, boolean normalize, boolean batchnormalize, boolean regularize) {
         super(name);
         this.steps = steps;
+        this.lr = lr;
+        this.dropout = dropout;
+        this.normalize = normalize;
+        this.batchnormalize = batchnormalize;
+        this.regularize = regularize;
     }
     
     public TensorflowConfig(String name) {

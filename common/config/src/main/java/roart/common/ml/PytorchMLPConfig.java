@@ -9,14 +9,18 @@ public class PytorchMLPConfig extends PytorchFeedConfig {
     @JsonCreator
     public PytorchMLPConfig(
             @JsonProperty("steps") int steps, 
+            @JsonProperty("lr") double lr,
+            @JsonProperty("dropout") double dropout,
+            @JsonProperty("normalize") boolean normalize, 
+            @JsonProperty("batchnormalize") boolean batchnormalize, 
+            @JsonProperty("regularize") boolean regularize,           
             @JsonProperty("layers") int layers, 
-            @JsonProperty("hidden") int hidden, 
-            @JsonProperty("lr") double lr) {
-        super(MLConstants.MLP, steps, layers, hidden, lr);
+            @JsonProperty("hidden") int hidden) {
+        super(MLConstants.MLP, steps, lr, dropout, normalize, batchnormalize, regularize, layers, hidden);
     }
 
     public PytorchMLPConfig(PytorchMLPConfig config) {
-        this(config.steps, config.layers, config.hidden, config.lr);
+        this(config.steps, config.lr, config.dropout, config.normalize, config.batchnormalize, config.regularize, config.layers, config.hidden);
     }
 
     public PytorchMLPConfig(String name) {

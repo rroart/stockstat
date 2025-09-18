@@ -10,15 +10,19 @@ public class PytorchRNNConfig extends PytorchRecurrentConfig {
     @JsonCreator
     public PytorchRNNConfig(
             @JsonProperty("steps") int steps, 
+            @JsonProperty("lr") double lr, 
+            @JsonProperty("dropout") double dropout,
+            @JsonProperty("normalize") boolean normalize, 
+            @JsonProperty("batchnormalize") boolean batchnormalize, 
+            @JsonProperty("regularize") boolean regularize,           
             @JsonProperty("layers") int layers, 
             @JsonProperty("hidden") int hidden, 
-            @JsonProperty("lr") double lr, 
             @JsonProperty("slide") int slide) {
-        super(MLConstants.RNN, steps, layers, hidden, lr, slide);
+        super(MLConstants.RNN, steps, lr, dropout, normalize, batchnormalize, regularize, layers, hidden, slide);
     }
 
     public PytorchRNNConfig(PytorchRNNConfig config) {
-        this(config.steps, config.layers, config.hidden, config.lr, config.slide);
+        this(config.steps, config.lr, config.dropout, config.normalize, config.batchnormalize, config.regularize, config.layers, config.hidden, config.slide);
     }
 
     public PytorchRNNConfig(String name) {

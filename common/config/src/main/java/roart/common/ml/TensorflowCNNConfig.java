@@ -11,8 +11,6 @@ public class TensorflowCNNConfig extends TensorflowPreFeedConfig {
     
     private int stride;
 
-    private double dropout;
-    
     public int getKernelsize() {
         return kernelsize;
     }
@@ -29,28 +27,19 @@ public class TensorflowCNNConfig extends TensorflowPreFeedConfig {
         this.stride = stride;
     }
 
-    public double getDropout() {
-        return dropout;
-    }
-
-    public void setDropout(double dropout) {
-        this.dropout = dropout;
-    }
-
     @JsonCreator
     public TensorflowCNNConfig(
+            @JsonProperty("steps") int steps, 
+            @JsonProperty("lr") double lr, 
+            @JsonProperty("dropout") double dropout,
             @JsonProperty("normalize") boolean normalize, 
             @JsonProperty("batchnormalize") boolean batchnormalize, 
             @JsonProperty("regularize") boolean regularize,           
-            @JsonProperty("steps") int steps, 
-            @JsonProperty("lr") double lr, 
             @JsonProperty("kernelsize") int kernelsize, 
-            @JsonProperty("stride") int stride, 
-            @JsonProperty("dropout") double dropout) {
-        super(MLConstants.CNN, steps, lr);
+            @JsonProperty("stride") int stride) {
+        super(MLConstants.CNN, steps, lr, dropout, normalize, batchnormalize, regularize);
         this.kernelsize = kernelsize;
         this.stride = stride;
-        this.dropout = dropout;
     }
  
     public TensorflowCNNConfig(String name) {
@@ -63,11 +52,11 @@ public class TensorflowCNNConfig extends TensorflowPreFeedConfig {
     }
 
     public TensorflowCNNConfig(TensorflowCNNConfig config) {
-        this(config.normalize, config.batchnormalize, config.regularize, config.steps, config.lr, config.kernelsize, config.stride, config.dropout);
+        this(config.steps, config.lr, config.dropout, config.normalize, config.batchnormalize, config.regularize, config.kernelsize, config.stride);
     }
 
     @Override
     public String toString() {
-        return super.toString() + " " + lr + " " + kernelsize + " " + stride + " " + dropout;
+        return super.toString() + " " + kernelsize + " " + stride;
     }
 }

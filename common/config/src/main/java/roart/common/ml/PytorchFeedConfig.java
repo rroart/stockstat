@@ -18,13 +18,10 @@ public abstract class PytorchFeedConfig extends PytorchConfig {
 
     protected int hidden;
 
-    protected double lr;
-
-    public PytorchFeedConfig(String name, int steps, int layers, int hidden, double lr) {
-        super(name, steps);
+    public PytorchFeedConfig(String name, int steps, double lr, double dropout, boolean normalize, boolean batchnormalize, boolean regularize, int layers, int hidden) {
+        super(name, steps, lr, dropout, normalize, batchnormalize, regularize);
         this.layers = layers;
         this.hidden = hidden;
-        this.lr = lr;
     }
 
     public PytorchFeedConfig() {
@@ -50,14 +47,6 @@ public abstract class PytorchFeedConfig extends PytorchConfig {
 
     public void setHidden(int hidden) {
         this.hidden = hidden;
-    }
-
-    public double getLr() {
-        return lr;
-    }
-
-    public void setLr(double lr) {
-        this.lr = lr;
     }
 
     @Override

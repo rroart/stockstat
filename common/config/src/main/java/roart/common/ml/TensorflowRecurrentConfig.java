@@ -18,8 +18,6 @@ public abstract class TensorflowRecurrentConfig extends TensorflowFeedConfig {
     
     protected double dropoutin;
     
-    protected double dropout;
-    
     public int getSlide() {
         return slide;
     }
@@ -36,18 +34,9 @@ public abstract class TensorflowRecurrentConfig extends TensorflowFeedConfig {
         this.dropoutin = dropoutin;
     }
 
-    public double getDropout() {
-        return dropout;
-    }
-
-    public void setDropout(double dropout) {
-        this.dropout = dropout;
-    }
-
-    public TensorflowRecurrentConfig(String name, int steps, int layers, int hidden, double lr, int slide, double dropout, double dropoutin) {
-        super(name, steps, layers, hidden, lr);
+    public TensorflowRecurrentConfig(String name, int steps, double lr, double dropout, boolean normalize, boolean batchnormalize, boolean regularize, int layers, int hidden, int slide, double dropoutin) {
+        super(name, steps, lr, dropout, normalize, batchnormalize, regularize, layers, hidden);
         this.slide = slide;
-        this.dropout = dropout;
         this.dropoutin = dropoutin;
     }
 
@@ -62,6 +51,6 @@ public abstract class TensorflowRecurrentConfig extends TensorflowFeedConfig {
 
     @Override
     public String toString() {
-        return super.toString() + " " + slide + " " + dropout + " " + dropoutin;
+        return super.toString() + " " + slide + " " + dropoutin;
     }
 }

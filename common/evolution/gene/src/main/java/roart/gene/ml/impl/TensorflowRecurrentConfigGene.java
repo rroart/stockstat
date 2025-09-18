@@ -32,27 +32,23 @@ public abstract class TensorflowRecurrentConfigGene extends TensorflowFeedConfig
         super.randomize();
         TensorflowRecurrentConfig myconfig = (TensorflowRecurrentConfig) getConfig();
         myconfig.setSlide(generateSlide());
-        myconfig.setDropout(generateDropout());
         myconfig.setDropoutin(generateDropoutIn());
     }
     
     @Override
     public void mutate() {
         TensorflowRecurrentConfig myconfig = (TensorflowRecurrentConfig) getConfig();
-        int task = random.nextInt(RANDOMS + 3 + 3);
-        if (task < RANDOMS + 3) {
+        int task = random.nextInt(RANDOMS + 2);
+        if (task < RANDOMS + 2) {
             super.mutate();
             return;
         }
-	task = task - RANDOMS - 3;
+	task = task - RANDOMS - 2;
         switch (task) {
         case 0:
             myconfig.setSlide(generateSlide());
             break;
         case 1:
-            myconfig.setDropout(generateDropout());
-            break;
-        case 2:
             myconfig.setDropoutin(generateDropoutIn());
             break;
         default:

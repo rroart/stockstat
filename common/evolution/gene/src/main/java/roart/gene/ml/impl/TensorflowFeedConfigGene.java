@@ -35,13 +35,12 @@ public abstract class TensorflowFeedConfigGene extends TensorflowConfigGene {
         TensorflowFeedConfig myconfig = (TensorflowFeedConfig) getConfig();
         myconfig.setHidden(generateHidden());
         myconfig.setLayers(generateLayers());
-        myconfig.setLr(generateLr());
     }
     
     @Override
     public void mutate() {
         TensorflowFeedConfig myconfig = (TensorflowFeedConfig) getConfig();
-	int task = random.nextInt(RANDOMS + 3);
+	int task = random.nextInt(RANDOMS + 2);
         if (task < RANDOMS) {
             super.mutate(task);
             return;
@@ -53,9 +52,6 @@ public abstract class TensorflowFeedConfigGene extends TensorflowConfigGene {
             break;
         case 1:
             myconfig.setLayers(generateLayers());
-            break;
-        case 2:
-            myconfig.setLr(generateLr());
             break;
         default:
 	    log.error(Constants.NOTFOUND, task);
@@ -72,9 +68,6 @@ public abstract class TensorflowFeedConfigGene extends TensorflowConfigGene {
         }
         if (random.nextBoolean()) {
             myconfig.setLayers(otherconfig.getLayers());
-        }
-        if (random.nextBoolean()) {
-            myconfig.setLr(otherconfig.getLr());
         }
     }
     

@@ -11,10 +11,6 @@ public class PytorchCNNConfig extends PytorchPreFeedConfig {
     
     private int stride;
     
-    private double dropout;
-    
-    private double lr;
-    
     public int getKernelsize() {
         return kernelsize;
     }
@@ -31,39 +27,24 @@ public class PytorchCNNConfig extends PytorchPreFeedConfig {
         this.stride = stride;
     }
 
-    public double getDropout() {
-        return dropout;
-    }
-
-    public void setDropout(double dropout) {
-        this.dropout = dropout;
-    }
-
-    public double getLr() {
-        return lr;
-    }
-
-    public void setLr(double lr) {
-        this.lr = lr;
-    }
-
     @JsonCreator
     public PytorchCNNConfig(
             @JsonProperty("steps") int steps, 
-            @JsonProperty("kernelsize") int kernelsize, 
-            @JsonProperty("stride") int stride, 
+            @JsonProperty("lr") double lr,
             @JsonProperty("dropout") double dropout, 
-            @JsonProperty("lr") double lr) {
-        super(MLConstants.CNN, steps);
+            @JsonProperty("normalize") boolean normalize, 
+            @JsonProperty("batchnormalize") boolean batchnormalize, 
+            @JsonProperty("regularize") boolean regularize,           
+            @JsonProperty("kernelsize") int kernelsize, 
+            @JsonProperty("stride") int stride) {
+        super(MLConstants.CNN, steps, lr, dropout, normalize, batchnormalize, regularize);
         this.kernelsize = kernelsize;
         this.stride = stride;
-        this.dropout = dropout;
-        this.lr = lr;
     }
     
     public PytorchCNNConfig(PytorchCNNConfig config) {
-        this(config.steps, config.kernelsize, config.stride, config.dropout, config.lr);
-    }
+        this(config.steps, config.lr, config.dropout, config.normalize, config.batchnormalize, config.regularize, config.kernelsize, config.stride);
+   }
 
     public PytorchCNNConfig(String name) {
         super(name);

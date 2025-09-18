@@ -13,8 +13,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
     @Type(value = TensorflowDCGANConfig.class, name = "TensorflowDCGanConfig") })  
 public abstract class TensorflowGANConfig extends TensorflowConfig {
 
-    public TensorflowGANConfig(String name, int steps, double lr) {
-        super(name, steps, lr);
+    public TensorflowGANConfig(String name, int steps, double lr, double dropout, boolean normalize, boolean batchnormalize, boolean regularize) {
+        super(name, steps, lr, dropout, normalize, batchnormalize, regularize);
     }
 
     public TensorflowGANConfig(String name) {

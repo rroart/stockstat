@@ -15,8 +15,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @Type(value = TensorflowLIRConfig.class, name = "TensorflowLIRConfig") })  
 public abstract class TensorflowEstimatorConfig extends TensorflowConfig {
 
-    public TensorflowEstimatorConfig(String name, int steps, double lr) {
-        super(name, steps, lr);
+    public TensorflowEstimatorConfig(String name, int steps, double lr, double dropout, boolean normalize, boolean batchnormalize, boolean regularize) {
+        super(name, steps, lr, dropout, normalize, batchnormalize, regularize);
     }
 
     public TensorflowEstimatorConfig(String name) {
