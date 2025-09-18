@@ -2,7 +2,8 @@ import tensorflow as tf
 from tensorflow.keras.optimizers import Adam, RMSprop
 
 from .model import MyModel
-    
+import model.layerutils as layerutils
+
 def create_sample_optimizer(tf_version):
     optimizer = tf.keras.optimizers.Ftrl(
         l1_regularization_strength=0.001,
@@ -26,6 +27,8 @@ class Model(MyModel):
       optimizer = RMSprop(learning_rate  = config.lr)
     self.model = tf.keras.models.Sequential()
     self.model.add(tf.keras.Input(shape = (myobj.size,)))
+    if classify and config.normalize:
+        self.model.add(layerutils.getNormalLayer(myobj.size))
     self.model.add(tf.keras.layers.Dense(config.hidden, activation='relu'))
     if False and classify:
         self.model.add(tf.keras.layers.Dense(myobj.classes, activation = activation))

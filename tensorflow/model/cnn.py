@@ -2,6 +2,7 @@ import tensorflow as tf
 from tensorflow.keras.layers import Dense, Activation, Dropout, Conv1D, MaxPooling1D, Flatten, Convolution1D, BatchNormalization, LeakyReLU, Dropout
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam
+import model.layerutils as layerutils
 
 from .model import MyModel
 
@@ -31,24 +32,29 @@ class Model(MyModel):
     modelm = Sequential()
     # input_shape = (WINDOW, EMB_SIZE),
     modelm.add(tf.keras.Input(shape = myobj.size))
+    if classify and config.normalize:
+        modelm.add(layerutils.getNormalLayer(myobj.size))
     modelm.add(Convolution1D(
                         filters=16,
                         kernel_size = config.kernelsize,
                         strides = config.stride,
                         padding='same'))
-    modelm.add(BatchNormalization())
+    if config.batchnormalize:
+        modelm.add(BatchNormalization())
     modelm.add(LeakyReLU())
     modelm.add(Dropout(config.dropout))
     modelm.add(Convolution1D(filters=8,
                         kernel_size = config.kernelsize,
                         strides = config.stride,
                         padding='same'))
-    modelm.add(BatchNormalization())
+    if config.batchnormalize:
+        modelm.add(BatchNormalization())
     modelm.add(LeakyReLU())
     modelm.add(Dropout(config.dropout))
     modelm.add(Flatten())
     modelm.add(Dense(64))
-    modelm.add(BatchNormalization())
+    if config.batchnormalize:
+        modelm.add(BatchNormalization())
     modelm.add(LeakyReLU())
     modelm.add(Dense(myobj.classes))
     modelm.add(Activation('softmax'))

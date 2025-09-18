@@ -1,10 +1,11 @@
 import tensorflow as tf
 import keras
 #from tensorflow.keras import layers
-from keras.layers import Dense, Activation, Dropout
+from keras.layers import Dense, Activation, Dropout #, regularizers
 #from keras.models import Sequential
 from tensorflow.keras.optimizers import Adam, RMSprop
 
+from . import layerutils
 #from .mymodelseq import MyModelSeq
 from .model import MyModel
 
@@ -21,17 +22,27 @@ class Model(MyModel):
       loss = 'mean_squared_error'
       activation = 'linear'
       optimizer = RMSprop(learning_rate = config.lr)
-    
+
+    #reg = keras.regularizers.l2(0.01)
+    #reg = keras.regularizers.l1_l2(l1=1e-5, l2=1e-4)
+    reg = None
     # Define your layers here.
     amodel=tf.keras.Sequential()
+    if classify and config.normalize:
+        amodel.add(layerutils.getNormalLayer(myobj.size))
     amodel.add(tf.keras.Input(shape = (myobj.size,)))
     amodel.add(tf.keras.layers.Dense(config.hidden, activation='relu'))
     for i in range(0, config.layers):
       print("Adding hidden layer", i)
-      amodel.add(tf.keras.layers.Dense(config.hidden, activation='relu'))
+      amodel.add(tf.keras.layers.Dense(config.hidden, activation='relu', kernel_regularizer=reg))
+      if config.batchnormalize:
+          amodel.add(tf.keras.layers.BatchNormalization())
+      #amodel.add(tf.keras.layers.Dropout(0.5))
     #amodel.add(tf.keras.layers.Dense(myobj.classes))
     if classify:
-      amodel.add(tf.keras.layers.Dense(myobj.classes, activation = activation))
+      amodel.add(tf.keras.layers.Dense(myobj.classes, activation = activation, kernel_regularizer=reg))
+      if config.batchnormalize:
+          amodel.add(tf.keras.layers.BatchNormalization())
     else:
       amodel.add(tf.keras.layers.Dense(1, activation = activation))
     self.model = amodel

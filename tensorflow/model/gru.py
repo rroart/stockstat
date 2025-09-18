@@ -4,6 +4,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam, RMSprop
 
 from .model import MyModel
+import model.layerutils as layerutils
 
 class Model(MyModel):
 
@@ -22,6 +23,8 @@ class Model(MyModel):
     # Define your layers here.
     amodel=Sequential()
     amodel.add(tf.keras.Input(shape = myobj.size))
+    if classify and config.normalize:
+        amodel.add(layerutils.getNormalLayer(myobj.size))
     amodel.add(Dropout(config.dropoutin))
     amodel.add(GRU(config.hidden, return_sequences = True))
     amodel.add(Dropout(config.dropout))

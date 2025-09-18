@@ -1,6 +1,7 @@
 import tensorflow as tf
 
 from .model import MyModel
+import model.layerutils as layerutils
 
 def create_sample_optimizer(tf_version):
     optimizer = tf.keras.optimizers.Ftrl(
@@ -15,6 +16,8 @@ class Model(MyModel):
     super(Model, self).__init__(config, classify, name='my_model')
     self.model = tf.keras.models.Sequential()
     self.model.add(tf.keras.Input(shape = (myobj.size,)))
+    if classify and config.normalize:
+        self.model.add(layerutils.getNormalLayer(myobj.size))
     # Define the model consisting of a single neuron.
     self.model.add(tf.keras.layers.Dense(units=1))
     self.model.compile(loss='mse', optimizer=create_sample_optimizer('tf2'), metrics=['accuracy'])

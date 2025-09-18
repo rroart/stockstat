@@ -2,7 +2,7 @@ import torch.nn as nn
 import torch
 
 class Net(nn.Module):
-    def __init__(self, myobj, config, classify):
+    def __init__(self, myobj, config, classify, shape):
         super(Net, self).__init__()
 
         # Defining some parameters

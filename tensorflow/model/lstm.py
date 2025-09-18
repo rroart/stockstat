@@ -2,6 +2,7 @@ import tensorflow as tf
 from tensorflow.keras.layers import Dense, Activation, Dropout, LSTM, Input, Flatten, TimeDistributed
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam, RMSprop
+import model.layerutils as layerutils
 
 from .model import MyModel
 
@@ -23,6 +24,8 @@ class Model(MyModel):
     amodel=Sequential()
     #print("ooo",myobj.size)
     amodel.add(tf.keras.Input(shape = myobj.size))
+    if classify and config.normalize:
+        amodel.add(layerutils.getNormalLayer(myobj.size))
     amodel.add(Dropout(config.dropoutin))
     amodel.add(LSTM(config.hidden, return_sequences = True))
     amodel.add(Dropout(config.dropout))

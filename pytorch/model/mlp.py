@@ -2,19 +2,25 @@ import torch.nn as nn
 import torch
 import torch.nn.functional as F
 
+from model import layerutils
+
+
 class Net(nn.Module):
-    def __init__(self, myobj, config, classify):
+    def __init__(self, myobj, config, classify, shape):
         super(Net, self).__init__()
 
         # Defining some parameters
         self.myobj = myobj
         self.config = config
 
+        print("sh", shape)
         if classify:
-            sizearr = [myobj.size] + [config.hidden] * config.layers + [myobj.classes]
+            sizearr = [shape[1]] + [config.hidden] * config.layers + [myobj.classes]
         else:
             sizearr = [myobj.size] + [config.hidden] * config.layers + [1]
         mylayers = nn.ModuleList()
+        if classify and self.config.normalize:
+            mylayers.append(layerutils.getNormalLayer(shape))
         for i in range(0, len(sizearr) - 1):
             #print("sizearr", sizearr[i], sizearr[i+1])
             mylayers.append(nn.Linear(sizearr[i], sizearr[i + 1]))

@@ -1,8 +1,11 @@
 import torch.nn as nn
 import torch
 
+from model import layerutils
+
+
 class Net(nn.Module):
-    def __init__(self, myobj, config, classify):
+    def __init__(self, myobj, config, classify, shape):
         super(Net, self).__init__()
 
         # Defining some parameters
@@ -25,6 +28,7 @@ class Net(nn.Module):
         p1 = int(p1)
         p2 = (p1 - config.kernelsize + 2 * (config.kernelsize // 2)) / config.stride + 1
         p2 = int(p2)
+        self.layer0 = layerutils.getNormalLayer(myobj.size)
         self.layer1 = nn.Sequential(
             nn.Conv1d(dim1, c1, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)),
             nn.BatchNorm1d(c1),
@@ -91,7 +95,11 @@ class Net(nn.Module):
         #print("outs", out.size())
         #print("shape")
         #print(x.shape)
-        out = self.layer1(x)
+        if self.classify and self.config.normalize:
+            out = self.layer0(x)
+        else:
+            out =  x
+        out = self.layer1(out)
         out = self.layer2(out)
         
         #r2 = nn.ReLU()
@@ -112,7 +120,8 @@ class Net(nn.Module):
         #print("oo", out.shape)
         out = self.fc1(out)
         #print("oo", out.shape)
-        out = self.b1(out)
+        if self.config.batchnormalize:
+            out = self.b1(out)
         #print("oo", out.shape)
         out = self.r1(out)
         
