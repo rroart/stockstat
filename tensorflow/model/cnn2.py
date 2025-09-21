@@ -9,7 +9,7 @@ from .model import MyModel
 
 class Model(MyModel):
 
-  def __init__(self, myobj, config, classify):
+  def __init__(self, myobj, config, classify, shape):
     super(Model, self).__init__(config, classify, name='my_model')
 
     if classify:
@@ -17,20 +17,23 @@ class Model(MyModel):
     else:
       loss = 'mean_squared_error'
 
+    regularizer = layerutils.getRegularizer(config)
+
     # Define your layers here.
 
     #https://medium.com/@alexrachnog/neural-networks-for-algorithmic-trading-2-1-multivariate-time-series-ab016ce70f57
     modelm = Sequential()
     #print("inputshape");
-    #print(myobj.size);
+    #print(shape);
     # input_shape = (WINDOW, EMB_SIZE),
-    modelm.add(tf.keras.Input(shape = myobj.size))
+    modelm.add(tf.keras.Input(shape = shape))
     if classify and config.normalize:
-        modelm.add(layerutils.getNormalLayer(myobj.size))
+        modelm.add(layerutils.getNormalLayer(shape))
     modelm.add(Convolution2D(
                         filters=32,
                         kernel_size = config.kernelsize,
                         strides = config.stride,
+                        kernel_regularizer=regularizer,
                         padding='same'))
     if config.batchnormalize:
         modelm.add(BatchNormalization())
@@ -39,6 +42,7 @@ class Model(MyModel):
     modelm.add(Convolution2D(filters=64,
                         kernel_size = config.kernelsize,
                         strides = config.stride,
+                        kernel_regularizer=regularizer,
                         padding='same'))
     if config.batchnormalize:
         modelm.add(BatchNormalization())
@@ -47,14 +51,14 @@ class Model(MyModel):
     #modelm.add(MaxPooling2D((4, 4)))
     modelm.add(Dropout(config.dropout1))
     modelm.add(Flatten())
-    modelm.add(Dense(128))
+    modelm.add(Dense(128), kernel_regularizer=regularizer)
     if config.batchnormalize:
         modelm.add(BatchNormalization())
     modelm.add(LeakyReLU())
     modelm.add(Dropout(config.dropout2))
     modelm.add(Dense(64))
     modelm.add(LeakyReLU())
-    modelm.add(Dense(myobj.classes))
+    modelm.add(Dense(myobj.classes, kernel_regularizer=regularizer))
     modelm.add(Activation('softmax'))
     modelm.summary()
     

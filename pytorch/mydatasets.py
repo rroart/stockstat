@@ -123,7 +123,7 @@ def getmnist(myobj, config):
     #print(type(x_train), x_train.shape)
     #print(type(y_train), y_train.shape)
     #print("mydim", mydim)
-    return x_train, y_train, x_valid, y_valid, mydim, 10, True
+    return x_train, y_train, x_valid, y_valid, x_train.shape, 10, True
 
 def getcifar10(myobj, config):
     dir = getpath(myobj)
@@ -195,7 +195,7 @@ def getcifar10(myobj, config):
     #print(type(y_train), y_train.shape)
     #print(type(x_valid), x_valid.shape)
     #print("mydim", mydim)
-    return x_train, y_train, x_valid, y_valid, mydim, 10, True
+    return x_train, y_train, x_valid, y_valid, x_train.shape, 10, True
 
 def getdailymintemperatures(myobj, config):
     dir = getpath(myobj)

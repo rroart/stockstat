@@ -17,9 +17,9 @@ class Net(nn.Module):
 
         #https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/02-intermediate/convolutional_neural_network/main.py
         #print("MO",myobj.size)
-        dim1 = myobj.size[0]
-        dim2 = myobj.size[1]
-        dim3 = myobj.size[2]
+        dim1 = shape[1]
+        dim2 = shape[2]
+        dim3 = shape[3]
         c1 = 32
         c2 = 64
         pool_kernel_size = 2
@@ -36,20 +36,24 @@ class Net(nn.Module):
         o3 = o2 // pool_kernel_size
         p3 = p2 // pool_kernel_size
         q3 = q2 // pool_kernel_size
-        self.layer0 = layerutils.getNormalLayer(myobj.size)
-        self.layer1 = nn.Sequential(
-            nn.Conv2d(dim1, c1, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)),
-            nn.BatchNorm2d(c1),
-            nn.ReLU())
-            #nn.MaxPool2d(kernel_size=2, stride=2))
-        self.layer2 = nn.Sequential(
-            nn.Conv2d(c1, c2, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)),
-            nn.BatchNorm2d(c2),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=pool_kernel_size),
+        #self.layer0 = layerutils.getNormalLayer(shape)
+        layers1 = nn.ModuleList()
+        layers1.append(nn.Conv2d(dim1, c1, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)))
+        if self.config.batchnormalize:
+            layers1.append(nn.BatchNorm2d(c1))
+        layers1.append(nn.ReLU())
+        #nn.MaxPool2d(kernel_size=2, stride=2))
+        self.layer1 = nn.Sequential(*layers1)
+        layers2 = nn.ModuleList()
+        layers2.append(nn.Conv2d(c1, c2, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)))
+        if self.config.batchnormalize:
+            layers2.append(nn.BatchNorm2d(c2))
+        layers2.append(nn.ReLU())
+        layers2.append(nn.MaxPool2d(kernel_size=pool_kernel_size))
             #nn.MaxPool2d(kernel_size=4),
             #, stride=2),
-            nn.Dropout(config.dropout1))
+        layers2.append(nn.Dropout(config.dropout1))
+        self.layer2 = nn.Sequential(*layers2)
         #self.l1 = nn.Conv1d(myobj.size, 16, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2))
             #nn.MaxPool2d(kernel_size=2, stride=2))
         #self.l2 = nn.Conv1d(16, 32, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2))
@@ -83,7 +87,7 @@ class Net(nn.Module):
 
         #Defining the layers
         # RNN Layer
-        #self.rnn = nn.RNN(self.myobj.size, self.config.hidden, self.config.layers, batch_first=True)   
+        #self.rnn = nn.RNN(self.myobj.size, self.config.hidden, self.config.layers, batch_first=True)
         # Fully connected layer
         #self.fc = nn.Linear(self.config.hidden, self.myobj.classes)
     
@@ -116,7 +120,7 @@ class Net(nn.Module):
         #print("shape")
         #print(x.shape)
         if self.classify and self.config.normalize:
-            out = self.layer0(x)
+            out = x #self.layer0(x)
         else:
             out =  x
         out = self.layer1(out)

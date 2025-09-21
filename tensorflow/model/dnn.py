@@ -13,7 +13,7 @@ def create_sample_optimizer(tf_version):
 
 class Model(MyModel):
 
-  def __init__(self, myobj, config, classify):
+  def __init__(self, myobj, config, classify, shape):
     super(Model, self).__init__(config, classify, name='my_model')
     hidden_units = [ config.hidden ] * config.layers
     activation = 'relu'
@@ -25,10 +25,11 @@ class Model(MyModel):
       loss = 'mean_squared_error'
       activation = 'linear'
       optimizer = RMSprop(learning_rate  = config.lr)
+    regularizer = layerutils.getRegularizer(config)
     self.model = tf.keras.models.Sequential()
-    self.model.add(tf.keras.Input(shape = (myobj.size,)))
+    self.model.add(tf.keras.Input(shape = (shape,)))
     if classify and config.normalize:
-        self.model.add(layerutils.getNormalLayer(myobj.size))
+        self.model.add(layerutils.getNormalLayer(shape))
     self.model.add(tf.keras.layers.Dense(config.hidden, activation='relu'))
     if False and classify:
         self.model.add(tf.keras.layers.Dense(myobj.classes, activation = activation))

@@ -25,8 +25,8 @@ public abstract class PytorchRecurrentConfig extends PytorchFeedConfig {
         this.slide = slide;
     }
 
-    public PytorchRecurrentConfig(String name, int steps, double lr, double dropout, boolean normalize, boolean batchnormalize, boolean regularize, int layers, int hidden, int slide) {
-        super(name, steps, lr, dropout, normalize, batchnormalize, regularize, layers, hidden);
+    public PytorchRecurrentConfig(String name, PytorchConfigCommon pytorchConfigCommon, int layers, int hidden, int slide) {
+        super(name, pytorchConfigCommon, layers, hidden);
         this.slide = slide;
     }
     

@@ -9,8 +9,8 @@ class Net(nn.Module):
     self.myobj = myobj
     self.config = config
     self.classify = classify
-    
-    self.rnn = nn.LSTM(self.myobj.size, self.config.hidden, self.config.layers, batch_first=True)   
+
+    self.rnn = nn.LSTM(shape[1], self.config.hidden, self.config.layers, dropout=config.dropout, batch_first=True)
     # Fully connected layer
     if classify:
       self.fc = nn.Linear(self.config.hidden, self.myobj.classes)
@@ -27,6 +27,10 @@ class Net(nn.Module):
       self.bce = torch.nn.MSELoss()
       self.opt = torch.optim.RMSprop(self.parameters(), lr=config.lr)
 
+    self.bn = nn.BatchNorm1d(self.myobj.classes) #shape[1])
+    self.act = nn.ReLU()
+    self.dropout = nn.Dropout(config.dropout)
+
   def forward(self, x):
     batches = x.size(0)
     h0 = torch.zeros([self.config.layers, batches, self.config.hidden]).to(x.device)
@@ -36,6 +40,10 @@ class Net(nn.Module):
     x = x[:,-1,:]  # Keep only the output of the last iteration. Before shape (6,3,50), after shape (6,50)
     #x = nn.relu(x)
     x = self.fc(x)
+    if self.config.batchnormalize:
+        x = self.bn(x)
+    x = self.act(x)
+    x = self.dropout(x)
     return x
   
   def observe(self, x, y):

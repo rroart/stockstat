@@ -46,13 +46,14 @@ def generator():
     )
 
 class Model(tf.keras.Model):
-    def __init__(self, myobj, config):
+    def __init__(self, myobj, config, shape):
         super().__init__()
         #super(Model, self).__init__(config, classify, name='my_model')
         self.myobj = myobj
         self.config = config
+        self.shape = shape
 
-        self.discriminator = discriminator(myobj.size[0], myobj.size[1])
+        self.discriminator = discriminator(shape[1], shape[2])
         self.generator = generator()
         self.seed_generator = keras.random.SeedGenerator(1337)
         self.gen_loss_tracker = keras.metrics.Mean(name="generator_loss")
@@ -74,10 +75,10 @@ class Model(tf.keras.Model):
 
         image_one_hot_labels = one_hot_labels[:, :, None, None]
         image_one_hot_labels = ops.repeat(
-            image_one_hot_labels, repeats=[self.myobj.size[0] * self.myobj.size[1]]
+            image_one_hot_labels, repeats=[self.shape[1] * self.shape[2]]
         )
         image_one_hot_labels = ops.reshape(
-            image_one_hot_labels, (-1, self.myobj.size[0], self.myobj.size[1], num_classes)
+            image_one_hot_labels, (-1, self.shape[1], self.shape[2], num_classes)
         )
 
         batch_size = ops.shape(real_images)[0]

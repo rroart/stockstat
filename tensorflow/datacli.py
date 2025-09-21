@@ -16,6 +16,10 @@ def learntestclassify(classify_x, cf = 'tensorflowMLPConfig', size = None, class
     neuralnetcommand = { 'mldynamic' : True, 'mlclassify' : True, 'mllearn' : True }
     return learntestclassify_inner(cf = cf, steps = steps, size = size, classes = classes, take = take, zero = zero, train_x = train_x, train_y = train_y, test_x = test_x, test_y = test_y , classify_x = classify_x, classify = classify, neuralnetcommand = neuralnetcommand)
 
+def learntestclassifynotest(classify_x, cf = 'tensorflowMLPConfig', size = None, classes = None, train_x = None, train_y = None, steps = None, zero = True, classify = True, take = None):
+    neuralnetcommand = { 'mldynamic' : True, 'mlclassify' : False, 'mllearn' : True }
+    return learntestclassify_inner(cf = cf, steps = steps, size = size, classes = classes, take = take, zero = zero, train_x = train_x, train_y = train_y, classify_x = classify_x, classify = classify, neuralnetcommand = neuralnetcommand)
+
 def learntest(cf = 'tensorflowMLPConfig', size = None, classes = None, train_x = None, train_y = None, test_x = None, test_y = None, classifyarray = None, steps = None, zero = True, classify = True, take = None):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : False, 'mllearn' : True }
     return learntestclassify_inner(cf = cf, steps = steps, size = size, classes = classes, take = take, zero = zero, train_x = train_x, train_y = train_y, test_x = test_x, test_y = test_y , classify_x = None, classify = classify, neuralnetcommand = neuralnetcommand)
@@ -33,7 +37,10 @@ def learntestclassify_inner(cf='tensorflowMLPConfig', size=None, classes=None, t
     if take is not None:
         thecf['take'] = take
     filename = getfilename(thecf, "ds")
-    data = { 'modelInt' : modelInt, 'filename' : filename, 'size' : size, 'trainingarray' : train_x, 'classifyarray' : classify_x, 'classes' : classes, 'trainingcatarray' : train_y, 'testarray' : test_x, 'testcatarray' : test_y, 'neuralnetcommand' : neuralnetcommand, cfname : thecf, 'zero' : zero, 'classify' : classify }
+    if test_x is not None and len(test_x) > 0:
+        data = { 'modelInt' : modelInt, 'filename' : filename, 'size' : size, 'trainingarray' : train_x, 'classifyarray' : classify_x, 'classes' : classes, 'trainingcatarray' : train_y, 'testarray' : test_x, 'testcatarray' : test_y, 'neuralnetcommand' : neuralnetcommand, cfname : thecf, 'zero' : zero, 'classify' : classify }
+    else:
+        data = { 'modelInt' : modelInt, 'filename' : filename, 'size' : size, 'trainingarray' : train_x, 'classifyarray' : classify_x, 'classes' : classes, 'trainingcatarray' : train_y, 'neuralnetcommand' : neuralnetcommand, cfname : thecf, 'zero' : zero, 'classify' : classify }
     myjson = json.dumps(data)
     response = cl.do_learntestclassify(queue, myjson)
     result = queue.get()

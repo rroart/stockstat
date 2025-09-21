@@ -35,10 +35,12 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
         PytorchConfig myconfig = (PytorchConfig) getConfig();
         myconfig.setSteps(generateSteps());
         myconfig.setLr(generateLr());
+        myconfig.setInputdropout(generateDropout());
         myconfig.setDropout(generateDropout());
         myconfig.setNormalize(generateBoolean());
         myconfig.setBatchnormalize(generateBoolean());
         myconfig.setRegularize(generateBoolean());
+        //myconfig.setBatchsize(generateBatchsize());
     }
 
     public void mutate(int task) {
@@ -51,16 +53,22 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
             myconfig.setLr(generateLr());
             break;
         case 2:
-            myconfig.setDropout(generateDropout());
+            myconfig.setInputdropout(generateDropout());
             break;
         case 3:
-            myconfig.setNormalize(generateBoolean());
+            myconfig.setDropout(generateDropout());
             break;
         case 4:
-            myconfig.setBatchnormalize(generateBoolean());
+            myconfig.setNormalize(generateBoolean());
             break;
         case 5:
+            myconfig.setBatchnormalize(generateBoolean());
+            break;
+        case 6:
             myconfig.setRegularize(generateBoolean());
+            break;
+        case 7:
+            //myconfig.setBatchsize(generateBatchsize());
             break;
         default:
 	    log.error(Constants.NOTFOUND, task);
@@ -77,6 +85,9 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
             myconfig.setLr(otherconfig.getLr());
         }
         if (random.nextBoolean()) {
+            myconfig.setInputdropout(otherconfig.getInputdropout());
+        }
+        if (random.nextBoolean()) {
             myconfig.setDropout(otherconfig.getDropout());
         }
         if (random.nextBoolean()) {
@@ -87,6 +98,9 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
         }
         if (random.nextBoolean()) {
             myconfig.setRegularize(otherconfig.isRegularize());
+        }
+        if (random.nextBoolean()) {
+            myconfig.setBatchsize(otherconfig.getBatchsize());
         }
     }
     

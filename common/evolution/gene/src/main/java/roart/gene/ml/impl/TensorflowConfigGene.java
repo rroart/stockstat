@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @Type(value = TensorflowPreFeedConfigGene.class, name = "TensorflowPreFeedConfigGene") })  
 public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
     
-    protected static final int RANDOMS = 6;
+    protected static final int RANDOMS = 7;
     
     public TensorflowConfigGene(TensorflowConfig config) {
         super(config);
@@ -35,6 +35,7 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
         TensorflowConfig myconfig = (TensorflowConfig) getConfig();
         myconfig.setSteps(generateSteps());
         myconfig.setLr(generateLr());
+        myconfig.setInputdropout(generateDropout());
         myconfig.setDropout(generateDropout());
         myconfig.setNormalize(generateBoolean());
         myconfig.setBatchnormalize(generateBoolean());
@@ -51,15 +52,18 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
             myconfig.setLr(generateLr());
             break;
         case 2:
-            myconfig.setDropout(generateDropout());
+            myconfig.setInputdropout(generateDropout());
             break;
         case 3:
+            myconfig.setDropout(generateDropout());
+            break;
+        case 4:
             myconfig.setNormalize(generateBoolean());
             break;
         case 5:
             myconfig.setBatchnormalize(generateBoolean());
             break;
-        case 4:
+        case 6:
             myconfig.setRegularize(generateBoolean());
             break;
         default:
@@ -75,6 +79,9 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
         }
         if (random.nextBoolean()) {
             myconfig.setLr(otherconfig.getLr());
+        }
+        if (random.nextBoolean()) {
+            myconfig.setInputdropout(otherconfig.getInputdropout());
         }
         if (random.nextBoolean()) {
             myconfig.setDropout(otherconfig.getDropout());

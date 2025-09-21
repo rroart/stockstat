@@ -9,14 +9,15 @@ class Net(nn.Module):
         self.myobj = myobj
         self.config = config
         self.classify = classify
-        
+
         #Defining the layers
         # RNN Layer
         #print("sz",self.myobj.size)
         #print("sz",type(self.myobj.size[0]))
         #print("sz",type(self.myobj.size[1]))
         #print("sz",self.myobj.size)
-        self.rnn = nn.RNN(self.myobj.size, self.config.hidden, self.config.layers, batch_first=True)
+        print("shape", shape)
+        self.rnn = nn.RNN(shape[1], self.config.hidden, self.config.layers, dropout=config.dropout, batch_first=True)
         # Fully connected layer
         if classify:
             self.fc = nn.Linear(self.config.hidden, self.myobj.classes)
@@ -33,6 +34,10 @@ class Net(nn.Module):
         else:
             self.bce = torch.nn.MSELoss()
             self.opt = torch.optim.RMSprop(self.parameters(), lr=config.lr)
+
+        self.bn = nn.BatchNorm1d(self.myobj.classes) #shape[1])
+        self.act = nn.ReLU()
+        self.dropout = nn.Dropout(config.dropout)
 
     def forward(self, x):
         
@@ -55,7 +60,11 @@ class Net(nn.Module):
         else:
             out = self.fc(out)
         #print("outs", out.size())
-        
+        if self.config.batchnormalize:
+            out = self.bn(out)
+        out = self.act(out)
+        out = self.dropout(out)
+
         return out
     #, hidden
     
@@ -74,6 +83,22 @@ class Net(nn.Module):
         self.train()
         self.zero_grad()
         #print("sz",self(x).size(),  y.size())
-        self.bce(self(x), y).backward()
+        loss = self.bce(self(x), y)
+
+        if self.config.regularize:
+            regularization_type = 'L2'
+            lambda_reg = 0.01
+            # Apply L1 regularization
+            if regularization_type == 'L1':
+                l1_norm = sum(p.abs().sum() for p in self.parameters())
+                loss += lambda_reg * l1_norm
+
+            # Apply L2 regularization
+            elif regularization_type == 'L2':
+                l2_norm = sum(p.pow(2).sum() for p in self.parameters())
+                loss += lambda_reg * l2_norm
+
+        loss.backward()
         self.opt.step()
+        return loss
     

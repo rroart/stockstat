@@ -14,8 +14,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @Type(value = PytorchCNN2Config.class, name = "PytorchCNN2Config") })  
 public abstract class PytorchPreFeedConfig extends PytorchConfig {
 
-    public PytorchPreFeedConfig(String name, int steps, double lr, double dropout, boolean normalize, boolean batchnormalize, boolean regularize) {
-        super(name, steps, lr, dropout, normalize, batchnormalize, regularize);
+    public PytorchPreFeedConfig(String name, PytorchConfigCommon pytorchConfigCommon) {
+        super(name, pytorchConfigCommon);
     }
 
     public PytorchPreFeedConfig(String name) {

@@ -31,19 +31,25 @@ public class PytorchCNNConfig extends PytorchPreFeedConfig {
     public PytorchCNNConfig(
             @JsonProperty("steps") int steps, 
             @JsonProperty("lr") double lr,
+            @JsonProperty("inputdropout") double inputdropout,
             @JsonProperty("dropout") double dropout, 
             @JsonProperty("normalize") boolean normalize, 
             @JsonProperty("batchnormalize") boolean batchnormalize, 
-            @JsonProperty("regularize") boolean regularize,           
+            @JsonProperty("regularize") boolean regularize,
+            @JsonProperty("batchsize") int batchsize,
+            @JsonProperty("loss") String loss,
+            @JsonProperty("optimizer") String optimizer,
+            @JsonProperty("activation") String activation,
+            @JsonProperty("lastactivation") String lastactivation,
             @JsonProperty("kernelsize") int kernelsize, 
             @JsonProperty("stride") int stride) {
-        super(MLConstants.CNN, steps, lr, dropout, normalize, batchnormalize, regularize);
+        super(MLConstants.CNN, new PytorchConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation));
         this.kernelsize = kernelsize;
         this.stride = stride;
     }
     
     public PytorchCNNConfig(PytorchCNNConfig config) {
-        this(config.steps, config.lr, config.dropout, config.normalize, config.batchnormalize, config.regularize, config.kernelsize, config.stride);
+        this(config.pytorchConfigCommon, config.kernelsize, config.stride);
    }
 
     public PytorchCNNConfig(String name) {
@@ -53,6 +59,10 @@ public class PytorchCNNConfig extends PytorchPreFeedConfig {
     public PytorchCNNConfig() {
         super();
         // JSON
+    }
+
+    public PytorchCNNConfig(PytorchConfigCommon pytorchConfigCommon, int kernelsize2, int stride2) {
+        super(MLConstants.CNN, pytorchConfigCommon);
     }
 
     @Override

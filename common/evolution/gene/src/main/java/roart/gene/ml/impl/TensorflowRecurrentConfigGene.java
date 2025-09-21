@@ -32,7 +32,7 @@ public abstract class TensorflowRecurrentConfigGene extends TensorflowFeedConfig
         super.randomize();
         TensorflowRecurrentConfig myconfig = (TensorflowRecurrentConfig) getConfig();
         myconfig.setSlide(generateSlide());
-        myconfig.setDropoutin(generateDropoutIn());
+        //myconfig.setDropoutin(generateDropoutIn());
     }
     
     @Override
@@ -49,7 +49,7 @@ public abstract class TensorflowRecurrentConfigGene extends TensorflowFeedConfig
             myconfig.setSlide(generateSlide());
             break;
         case 1:
-            myconfig.setDropoutin(generateDropoutIn());
+            //myconfig.setDropoutin(generateDropoutIn());
             break;
         default:
 	    log.error(Constants.NOTFOUND, task);
@@ -68,7 +68,7 @@ public abstract class TensorflowRecurrentConfigGene extends TensorflowFeedConfig
             myconfig.setDropout(otherconfig.getDropout());
         }
         if (random.nextBoolean()) {
-            myconfig.setDropoutin(otherconfig.getDropoutin());
+            //myconfig.setDropoutin(otherconfig.getDropoutin());
         }
     }
 }

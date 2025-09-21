@@ -1,0 +1,38 @@
+tf mlp dropoutin
+
+batch normalization, activation, dropout
+
+https://machinelearningmastery.com/introduction-to-regularization-to-reduce-overfitting-and-improve-generalization-error/
+https://machinelearningmastery.com/how-to-reduce-overfitting-with-dropout-regularization-in-keras/
+https://medium.com/@adelbasli/regularization-techniques-in-deep-learning-dropout-l-norm-and-batch-normalization-with-3fe36bbbd353
+https://medium.com/@maddpublish/demystifying-neural-networks-regularization-and-normalization-in-a-multi-layer-perceptron-ce77153602bf
+https://www.geeksforgeeks.org/machine-learning/how-does-l1-and-l2-regularization-prevent-overfitting/
+
+https://keras.io/api/callbacks/early_stopping/
+https://medium.com/biased-algorithms/a-practical-guide-to-implementing-early-stopping-in-pytorch-for-model-training-99a7cbd46e9d
+
+https://www.geeksforgeeks.org/deep-learning/adding-regularizations-in-tensorflow/
+https://www.geeksforgeeks.org/deep-learning/applying-l2-regularization-to-all-weights-in-tensorflow/
+https://www.geeksforgeeks.org/machine-learning/l1l2-regularization-in-pytorch/
+https://www.geeksforgeeks.org/deep-learning/how-to-handle-overfitting-in-pytorch-models-using-early-stopping/
+
+https://machinelearningmastery.com/training-and-validation-data-in-pytorch/
+
+https://www.kaggle.com/code/siddheshshelke/tensorflow-mlp
+
+https://www.geeksforgeeks.org/deep-learning/dropout-regularization-in-deep-learning/
+https://www.geeksforgeeks.org/deep-learning/instance-normalization-vs-batch-normalization/
+
+Combining Stock Market Indicators Using a Neural Network Model for Trading Signals
+
+https://scholarspace.net/wp-content/uploads/2025/06/ID_171_177_Multi_Indicator_Model.pdf
+
+https://www.researchgate.net/profile/Ugur-Gudelek-2/publication/323131323_A_deep_learning_based_stock_trading_model_with_2-D_CNN_trend_detection/links/5b3641b84585150d23e1b3df/A-deep-learning-based-stock-trading-model-with-2-D-CNN-trend-detection.pdf
+
+A Deep Learning based Stock Trading Model with 2D CNN Trend Detection
+
+No?:
+
+Using a Deep Learning Model to Simulate Human Stock Traders’ Methods of Chart Analysis
+
+https://arxiv.org/pdf/2304.14870v3

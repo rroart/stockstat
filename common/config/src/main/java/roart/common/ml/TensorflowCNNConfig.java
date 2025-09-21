@@ -30,14 +30,20 @@ public class TensorflowCNNConfig extends TensorflowPreFeedConfig {
     @JsonCreator
     public TensorflowCNNConfig(
             @JsonProperty("steps") int steps, 
-            @JsonProperty("lr") double lr, 
+            @JsonProperty("lr") double lr,
+            @JsonProperty("inputdropout") double inputdropout,
             @JsonProperty("dropout") double dropout,
             @JsonProperty("normalize") boolean normalize, 
             @JsonProperty("batchnormalize") boolean batchnormalize, 
             @JsonProperty("regularize") boolean regularize,           
+            @JsonProperty("batchsize") int batchsize,
+            @JsonProperty("loss") String loss,
+            @JsonProperty("optimizer") String optimizer,
+            @JsonProperty("activation") String activation,
+            @JsonProperty("lastactivation") String lastactivation,
             @JsonProperty("kernelsize") int kernelsize, 
             @JsonProperty("stride") int stride) {
-        super(MLConstants.CNN, steps, lr, dropout, normalize, batchnormalize, regularize);
+        super(MLConstants.CNN, new TensorflowConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation));
         this.kernelsize = kernelsize;
         this.stride = stride;
     }
@@ -52,7 +58,7 @@ public class TensorflowCNNConfig extends TensorflowPreFeedConfig {
     }
 
     public TensorflowCNNConfig(TensorflowCNNConfig config) {
-        this(config.steps, config.lr, config.dropout, config.normalize, config.batchnormalize, config.regularize, config.kernelsize, config.stride);
+        super(MLConstants.CNN, config.tensorflowConfigCommon);
     }
 
     @Override

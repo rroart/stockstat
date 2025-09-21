@@ -6,15 +6,18 @@ class MyModel():
         self.config = config
         self.classify = classify
         
-    def train(self, train, traincat):
+    def train(self, train, traincat, x_val = None, y_val = None):
         # this calls call
         #self.fit(train, traincat, epochs = self.config.steps)
-        #print("train")
-        #print(train.shape)
-        #print(traincat.shape)
+        print("train")
+        print(train.shape)
+        print(traincat.shape)
         #dataset = tf.data.Dataset.from_tensor_slices((train, traincat))
         #self.model.fit(dataset, epochs = self.config.steps, verbose = 0)
-        self.model.fit(train, traincat, epochs = self.config.steps, verbose = 0)
+        if x_val is None or y_val is None:
+            x_val = train
+            y_val = traincat
+        return self.model.fit(train, traincat, epochs = self.config.steps, verbose = 0, validation_data=(x_val, y_val),)
 
     def evaluate(self, array, cat):
         #return super(MyModel, self).evaluate(array, cat)

@@ -16,6 +16,11 @@ import shutil
 import importlib
 
 import mydatasets
+from CustomDataset import CustomDataset
+from earlystopping import EarlyStopping
+from model import layerutils, modelutils
+from model.layerutils import avgstdvar
+
 # NONO from datasetcli import dataset
 
 global dicteval
@@ -148,13 +153,14 @@ class Classify:
 
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
-        (train, traincat, test, testcat, size) = self.gettraintest(myobj, config, classify)
-        myobj.size = size
-        model = Model.Net(myobj, config, classify)
+        (train, traincat, test, testcat, shape, avgstdvar) = self.gettraintest(myobj, config, classify)
+        #myobj.size = size
+        model = Model.Net(myobj, config, classify, shape)
         if torch.cuda.is_available():
             model.cuda()
         #testcat = torch.LongTensor(testcat)
-        (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, model, config, train, traincat, test, testcat, classify)
+        (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, model, config, train, traincat,
+                                                                              test, testcat, classify, avgstdvar)
         global dictclass
         #dictclass[str(myobj.modelInt) + myobj.period + myobj.modelname] = model
         global dicteval
@@ -165,16 +171,35 @@ class Classify:
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         return Response(json.dumps({"accuracy": float(accuracy_score), "trainaccuracy": float(train_accuracy_score)}), mimetype='application/json')
 
-    def mytrain(self, model, inputs, labels, myobj, config, classify):
+    def mytrain(self, model, inputs, labels, myobj, config, classify, avgstdvar):
+        early_stopping = EarlyStopping(patience=5, delta=0.01, verbose=True)
         if classify:
             labels = labels.long()
         v_x = inputs
+        if classify and config.normalize:
+            v_x = layerutils.normalize(v_x, avgstdvar)
         dev = self.getdev()
         v_y = labels.to(dev)
+        #ds = CustomDataset(inputs, labels)
+        ds = CustomDataset(v_x, v_y)
+        loader = torch.utils.data.DataLoader(ds, batch_size=config.batchsize, shuffle=True)
+
+        return modelutils.observe(model, config.steps, model.opt, model.bce, loader, loader, config.batchsize, early_stopping, config)
         for i in range(model.config.steps):
             model.train()
             #print(v_x.shape)
-            model.observe(v_x, v_y)
+            val_loss = model.observe(v_x, v_y)
+
+            # Average validation loss
+            val_loss /= v_x.shape[0]
+
+            # Check early stopping condition
+            #early_stopping.check_early_stop(val_loss)
+
+            if early_stopping.stop_training:
+                print(f"Early stopping at epoch {i}")
+                break
+
             torch.cuda.empty_cache()
 
     def getSlideOld(self, inputs, labels, myobj):
@@ -209,6 +234,7 @@ class Classify:
             #print(inputs)
             #print(labels)
 
+    # not used
     def getSlide2(self, inputs, labels, myobj, config):
         #input = torch.from_numpy(np.array([[[0,1,2,3,4,5,6,7,8,9,10],[10,11,12,13,14,15,16,17,18,19,20]]]))
         #inputs = torch.from_numpy(inputs)
@@ -257,6 +283,8 @@ class Classify:
         return inputs, labels
 
     def getSlide(self, inputs, labels, myobj, config):
+        if not len(inputs.shape) == 2:
+            print("getSlide expects 2D array")
         dev = self.getdev()
         #input = torch.from_numpy(np.array([[[0,1,2,3,4,5,6,7,8,9,10],[10,11,12,13,14,15,16,17,18,19,20]]]))
         #inputs = torch.from_numpy(inputs)
@@ -266,7 +294,7 @@ class Classify:
             sliding_window_stride = config.slide_stride
         else:
             sliding_window_stride = 1
-        sliding_window_width = myobj.size
+        sliding_window_width = inputs.shape[2] #myobj.size
         #print(type(size))
         #print(size)
         mysize = size[0]
@@ -302,6 +330,7 @@ class Classify:
         print("lll", labels.shape)
         return inputs, labels
 
+    # not used
     def mytrain2(self, model, inputs, labels, myobj, config):
         if myobj.modelInt == 2 and not hasattr(myobj, 'trainingcatarray'):
             (inputs, labels) = self.getSlide(inputs, labels, myobj, config)
@@ -345,8 +374,9 @@ class Classify:
         return hasattr(myobj, 'zero') and myobj.zero == True
             
     def gettraintest(self, myobj, config, classify):
-        mydim = myobj.size
+        #mydim = myobj.size
         array = np.array(myobj.trainingarray, dtype='f')
+        shape = array.shape
         cat = np.array([], dtype='i')
         if hasattr(myobj, 'trainingcatarray') and not myobj.trainingcatarray is None:
             cat = np.array(myobj.trainingcatarray, dtype='i')
@@ -359,8 +389,8 @@ class Classify:
         #print(cat)
         if not classify:
             (inputs, labels) = self.getSlide(array, None, myobj, config)
-            mydim = myobj.size
-            return inputs, labels, inputs, labels, mydim
+            #mydim = myobj.size
+            return inputs, labels, inputs, labels, shape
         if hasattr(myobj, 'testarray') and hasattr(myobj, 'testcatarray'):
             test = np.array(myobj.testarray, dtype='f')
             testcat = np.array(myobj.testcatarray, dtype='i')
@@ -392,12 +422,13 @@ class Classify:
 
         #print("mydim", mydim)
         #print (train.shape)
-        if config.name == "cnn" or config.name == "cnn2":
-            mydim = train.shape[1:]
-            #print("mydim2", mydim)
+        #if config.name == "cnn" or config.name == "cnn2":
+        #mydim = train.shape[1:]
+        #print("mydim2", mydim)
         #print("mydim", mydim)
-        print("Shapes", train.shape, traincat.shape, mydim)
-        return train, traincat, test, testcat, mydim
+        avgstdvar = layerutils.avgstdvar(train)
+        print("Shapes", train.shape, traincat.shape, shape, avgstdvar)
+        return train, traincat, test, testcat, train.shape, avgstdvar
         #print("classes")
         #print(myobj.classes)
         #print("cwd")
@@ -408,7 +439,7 @@ class Classify:
         #X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.25, random_state=73)
         #net = model.network(train, traincat)
         
-    def do_learntestinner(self, myobj, model, config, train, traincat, test, testcat, classify):
+    def do_learntestinner(self, myobj, model, config, train, traincat, test, testcat, classify, avgstdvar):
         print(model)
         dev = self.getdev()
         print("Device", dev)
@@ -422,7 +453,7 @@ class Classify:
         #print(traincat)
         #print(v_y)
         #print(v_x.size(), v_y.size())
-        self.mytrain(model, v_x, v_y, myobj, config, classify)
+        self.mytrain(model, v_x, v_y, myobj, config, classify, avgstdvar)
         model.eval()
 
         if not classify:
@@ -577,8 +608,8 @@ class Classify:
         classify = not hasattr(myobj, 'classify') or myobj.classify == True
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
-        (train, traincat, test, testcat, size) = self.gettraintest(myobj, config, classify)
-        myobj.size = size
+        (train, traincat, test, testcat, shape, avgstdvar) = self.gettraintest(myobj, config, classify)
+        #myobj.size = size
         if not classify:
             if config.name == 'mlp':
                 ii = 1
@@ -596,7 +627,7 @@ class Classify:
             checkpoint = torch.load(self.getfullpath(myobj), map_location = dev)
             model = checkpoint['model']
         else:
-            model = Model.Net(myobj, config, classify)
+            model = Model.Net(myobj, config, classify, shape)
         if torch.cuda.is_available():
             model.cuda()
         #model.share_memory()
@@ -606,7 +637,8 @@ class Classify:
         train_accuracy_score = None
         loss = None
         if self.wantLearn(myobj):
-            (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, model, config, train, traincat, test, testcat, classify)
+            (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, model, config, train, traincat,
+                                                                                  test, testcat, classify, model.avgstdvar)
         # save model if
         # not dynamic and wantlearn
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
@@ -633,24 +665,26 @@ class Classify:
         torch.cuda.empty_cache()
         dt = datetime.now()
         timestamp = dt.timestamp()
-        #print(myjson)
+        print("myjson", myjson)
         myobj = json.loads(myjson, object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
-        (train, traincat, test, testcat, size, classes, classify) = mydatasets.getdataset(myobj, config, self)
-        myobj.size = size
+        (train, traincat, test, testcat, shape, classes, classify) = mydatasets.getdataset(myobj, config, self)
+        #myobj.size = size
         myobj.classes = classes
         myobj.trainingarray = train
         myobj.trainingcatarray = traincat
-        (train, traincat, test, testcat, size) = self.gettraintest(myobj, config, classify)
-        model = Model.Net(myobj, config, classify)
+        (train, traincat, test, testcat, shape, avgstdvar) = self.gettraintest(myobj, config, classify)
+        model = Model.Net(myobj, config, classify, shape)
         if torch.cuda.is_available():
             model.cuda()
             #cudnn.benchmark = True
         #model.share_memory()
         classifier = model
         print("model", modelname)
-        (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, classifier, model, train, traincat, test, testcat, classify)
+        print("config", config, myobj)
+        (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, classifier, config, train, traincat,
+                                                                              test, testcat, classify, avgstdvar)
         myobj.classifyarray = train
         (intlist, problist) = self.do_classifyinner(myobj, model, classify)
         if not accuracy_score is None:

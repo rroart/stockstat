@@ -14,26 +14,11 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @Type(value = PytorchPreFeedConfig.class, name = "PytorchPreFeedConfig") })  
 public abstract class PytorchConfig extends NeuralNetConfig {
 
-    protected int steps;
-    
-    protected double lr;
-    
-    protected double dropout;
-    
-    protected boolean normalize;
+    protected PytorchConfigCommon pytorchConfigCommon;
 
-    protected boolean batchnormalize;
-
-    protected boolean regularize;
-    
-    public PytorchConfig(String name, int steps, double lr, double dropout, boolean normalize, boolean batchnormalize, boolean regularize) {
+    public PytorchConfig(String name, PytorchConfigCommon pytorchConfigCommon) {
         super(name);
-        this.steps = steps;
-        this.lr = lr;
-        this.dropout = dropout;
-        this.normalize = normalize;
-        this.batchnormalize = batchnormalize;
-        this.regularize = regularize;
+        this.pytorchConfigCommon = pytorchConfigCommon;
     }
 
     public PytorchConfig(String name) {
@@ -45,52 +30,76 @@ public abstract class PytorchConfig extends NeuralNetConfig {
         // JSON
     }
 
+    public PytorchConfigCommon getPytorchConfigCommon() {
+        return pytorchConfigCommon;
+    }
+
+    public void setPytorchConfigCommon(PytorchConfigCommon pytorchConfigCommon) {
+        this.pytorchConfigCommon = pytorchConfigCommon;
+    }
+
     public int getSteps() {
-        return steps;
+        return pytorchConfigCommon.steps;
     }
 
     public void setSteps(int steps) {
-        this.steps = steps;
+        this.pytorchConfigCommon.steps = steps;
     }
 
     public double getLr() {
-        return lr;
+        return pytorchConfigCommon.lr;
     }
 
     public void setLr(double lr) {
-        this.lr = lr;
+        this.pytorchConfigCommon.lr = lr;
+    }
+
+    public double getInputdropout() {
+        return pytorchConfigCommon.inputdropout;
+    }
+
+    public void setInputdropout(double inputdropout) {
+        this.pytorchConfigCommon.inputdropout = inputdropout;
     }
 
     public double getDropout() {
-        return dropout;
+        return pytorchConfigCommon.dropout;
     }
 
     public void setDropout(double dropout) {
-        this.dropout = dropout;
+        this.pytorchConfigCommon.dropout = dropout;
     }
 
     public boolean isNormalize() {
-        return normalize;
+        return pytorchConfigCommon.normalize;
     }
 
     public void setNormalize(boolean normalize) {
-        this.normalize = normalize;
+        this.pytorchConfigCommon.normalize = normalize;
     }
 
     public boolean isBatchnormalize() {
-        return batchnormalize;
+        return pytorchConfigCommon.batchnormalize;
     }
 
     public void setBatchnormalize(boolean batchnormalize) {
-        this.batchnormalize = batchnormalize;
+        this.pytorchConfigCommon.batchnormalize = batchnormalize;
     }
 
     public boolean isRegularize() {
-        return regularize;
+        return pytorchConfigCommon.regularize;
     }
 
     public void setRegularize(boolean regularize) {
-        this.regularize = regularize;
+        this.pytorchConfigCommon.regularize = regularize;
+    }
+
+    public int getBatchsize() {
+        return pytorchConfigCommon.batchsize;
+    }
+
+    public void setBatchsize(int batchsize) {
+        this.pytorchConfigCommon.batchsize = batchsize;
     }
 
     @Override
@@ -105,6 +114,6 @@ public abstract class PytorchConfig extends NeuralNetConfig {
 
     @Override
     public String toString() {
-        return super.toString() + " " + steps + " " + lr + " " + dropout + " " + normalize + " " + batchnormalize + " " + regularize;
+        return super.toString() + " " + pytorchConfigCommon.steps + " " + pytorchConfigCommon.lr + " " + pytorchConfigCommon.dropout + " " + pytorchConfigCommon.normalize + " " + pytorchConfigCommon.batchnormalize + " " + pytorchConfigCommon.regularize;
     }
 }

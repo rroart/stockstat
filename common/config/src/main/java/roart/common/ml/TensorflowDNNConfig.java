@@ -31,13 +31,19 @@ public class TensorflowDNNConfig extends TensorflowFeedConfig {
     public TensorflowDNNConfig(
             @JsonProperty("steps") int steps, 
             @JsonProperty("lr") double lr,
+            @JsonProperty("inputdropout") double inputdropout,
             @JsonProperty("dropout") double dropout,
             @JsonProperty("normalize") boolean normalize, 
             @JsonProperty("batchnormalize") boolean batchnormalize, 
             @JsonProperty("regularize") boolean regularize,           
+            @JsonProperty("batchsize") int batchsize,
+            @JsonProperty("loss") String loss,
+            @JsonProperty("optimizer") String optimizer,
+            @JsonProperty("activation") String activation,
+            @JsonProperty("lastactivation") String lastactivation,
             @JsonProperty("layers") int layers, 
             @JsonProperty("hidden") int hidden) {
-        super(MLConstants.DNN, steps, lr, dropout, normalize, batchnormalize, regularize, layers, hidden);
+        super(MLConstants.DNN, new TensorflowConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation), 0, 0);
         this.layers = layers;
         this.hidden = hidden;
     }
@@ -47,7 +53,7 @@ public class TensorflowDNNConfig extends TensorflowFeedConfig {
     }
 
     public TensorflowDNNConfig(TensorflowDNNConfig config) {
-        this(config.steps, config.lr, config.dropout, config.normalize, config.batchnormalize, config.regularize, config.layers, config.hidden);
+        super(MLConstants.DNN, config.tensorflowConfigCommon, 0, 0);
     }
     
     @Override

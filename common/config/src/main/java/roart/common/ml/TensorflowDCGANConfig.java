@@ -11,11 +11,17 @@ public class TensorflowDCGANConfig extends TensorflowGANConfig {
     public TensorflowDCGANConfig(
             @JsonProperty("steps") int steps, 
             @JsonProperty("lr") double lr,
+            @JsonProperty("inputdropout") double inputdropout,
             @JsonProperty("dropout") double dropout,
             @JsonProperty("normalize") boolean normalize, 
             @JsonProperty("batchnormalize") boolean batchnormalize, 
-            @JsonProperty("regularize") boolean regularize) {
-        super(MLConstants.DCGAN, steps, lr, dropout, normalize, batchnormalize, regularize);
+            @JsonProperty("regularize") boolean regularize,
+            @JsonProperty("batchsize") int batchsize,
+            @JsonProperty("loss") String loss,
+            @JsonProperty("optimizer") String optimizer,
+            @JsonProperty("activation") String activation,
+            @JsonProperty("lastactivation") String lastactivation) {
+        super(MLConstants.DCGAN, new TensorflowConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation));
     }
 
     public TensorflowDCGANConfig(String name) {
@@ -23,7 +29,7 @@ public class TensorflowDCGANConfig extends TensorflowGANConfig {
     }
 
     public TensorflowDCGANConfig(TensorflowConditionalGANConfig config) {
-        this(config.steps, config.lr, config.dropout, config.normalize, config.batchnormalize, config.regularize);
+        super(MLConstants.DCGAN, config.tensorflowConfigCommon);
     }
 
     public TensorflowDCGANConfig() {

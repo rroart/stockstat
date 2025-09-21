@@ -16,74 +16,67 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @Type(value = TensorflowPreFeedConfig.class, name = "TensorflowPreFeedConfig") })  
 public abstract class TensorflowConfig extends NeuralNetConfig {
 
-    protected int steps;
-
-    protected double lr;
-    
-    protected double dropout;
-    
-    protected boolean normalize;
-
-    protected boolean batchnormalize;
-
-    protected boolean regularize;
+    protected TensorflowConfigCommon tensorflowConfigCommon;
     
     public int getSteps() {
-        return steps;
+        return tensorflowConfigCommon.steps;
     }
 
     public void setSteps(int steps) {
-        this.steps = steps;
+        this.tensorflowConfigCommon.steps = steps;
     }
 
     public double getLr() {
-        return lr;
+        return tensorflowConfigCommon.lr;
     }
 
     public void setLr(double lr) {
-        this.lr = lr;
+        this.tensorflowConfigCommon.lr = lr;
+    }
+
+    public double getInputdropout() {
+        return tensorflowConfigCommon.inputdropout;
+    }
+
+    public void setInputdropout(double inputdropout) {
+        this.tensorflowConfigCommon.inputdropout = inputdropout;
     }
 
     public double getDropout() {
-        return dropout;
+        return tensorflowConfigCommon.dropout;
     }
 
     public void setDropout(double dropout) {
-        this.dropout = dropout;
+        this.tensorflowConfigCommon.dropout = dropout;
     }
 
     public boolean isNormalize() {
-        return normalize;
+        return tensorflowConfigCommon.normalize;
     }
 
     public void setNormalize(boolean normalize) {
-        this.normalize = normalize;
+        this.tensorflowConfigCommon.normalize = normalize;
     }
 
     public boolean isBatchnormalize() {
-        return batchnormalize;
+        return tensorflowConfigCommon.batchnormalize;
     }
 
     public void setBatchnormalize(boolean batchnormalize) {
-        this.batchnormalize = batchnormalize;
+        this.tensorflowConfigCommon.batchnormalize = batchnormalize;
     }
 
     public boolean isRegularize() {
-        return regularize;
+        return tensorflowConfigCommon.regularize;
     }
 
     public void setRegularize(boolean regularize) {
-        this.regularize = regularize;
+        this.tensorflowConfigCommon.regularize = regularize;
     }
 
-    public TensorflowConfig(String name, int steps, double lr, double dropout, boolean normalize, boolean batchnormalize, boolean regularize) {
+    public TensorflowConfig(String name, TensorflowConfigCommon tensorflowConfigCommon) {
         super(name);
-        this.steps = steps;
-        this.lr = lr;
-        this.dropout = dropout;
-        this.normalize = normalize;
-        this.batchnormalize = batchnormalize;
-        this.regularize = regularize;
+        this.tensorflowConfigCommon = tensorflowConfigCommon;
     }
     
     public TensorflowConfig(String name) {
@@ -95,9 +88,17 @@ public abstract class TensorflowConfig extends NeuralNetConfig {
         // JSON
     }
 
+    public TensorflowConfigCommon getTensorflowConfigCommon() {
+        return tensorflowConfigCommon;
+    }
+
+    public void setTensorflowConfigCommon(TensorflowConfigCommon tensorflowConfigCommon) {
+        this.tensorflowConfigCommon = tensorflowConfigCommon;
+    }
+
     @Override
     public boolean empty() {
-        return steps == 0;
+        return tensorflowConfigCommon.steps == 0;
     }
 
     @Override
@@ -107,6 +108,6 @@ public abstract class TensorflowConfig extends NeuralNetConfig {
     
     @Override
     public String toString() {
-        return super.toString() + " " + normalize + " " + batchnormalize + " " + regularize + " " + steps + " " + lr;
+        return super.toString() + " " + tensorflowConfigCommon.normalize + " " + tensorflowConfigCommon.batchnormalize + " " + tensorflowConfigCommon.regularize + " " + tensorflowConfigCommon.steps + " " + tensorflowConfigCommon.lr;
     }
 }

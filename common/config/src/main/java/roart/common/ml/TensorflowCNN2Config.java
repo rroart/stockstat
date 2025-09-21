@@ -19,17 +19,23 @@ public class TensorflowCNN2Config extends TensorflowPreFeedConfig {
     @JsonCreator
     public TensorflowCNN2Config(
             @JsonProperty("steps") int steps, 
-            @JsonProperty("lr") double lr, 
+            @JsonProperty("lr") double lr,
+            @JsonProperty("inputdropout") double inputdropout,
             @JsonProperty("dropout") double dropout,
             @JsonProperty("normalize") boolean normalize, 
             @JsonProperty("batchnormalize") boolean batchnormalize, 
             @JsonProperty("regularize") boolean regularize,           
+            @JsonProperty("batchsize") int batchsize,
+            @JsonProperty("loss") String loss,
+            @JsonProperty("optimizer") String optimizer,
+            @JsonProperty("activation") String activation,
+            @JsonProperty("lastactivation") String lastactivation,
             @JsonProperty("kernelsize") int kernelsize,
             @JsonProperty("maxpool") int maxpool,
             @JsonProperty("stride") int stride, 
             @JsonProperty("dropout1") double dropout1,
             @JsonProperty("dropout2") double dropout2) {
-        super(MLConstants.CNN2, steps, lr, dropout, normalize, batchnormalize, regularize);
+        super(MLConstants.CNN2, new TensorflowConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation));
         this.kernelsize = kernelsize;
         this.maxpool = maxpool;
         this.stride = stride;
@@ -42,7 +48,7 @@ public class TensorflowCNN2Config extends TensorflowPreFeedConfig {
     }
 
     public TensorflowCNN2Config(TensorflowCNN2Config config) {
-        this(config.steps, config.lr, config.dropout, config.normalize, config.batchnormalize, config.regularize, config.kernelsize, config.maxpool, config.stride, config.dropout1, config.dropout2);
+        super(MLConstants.CNN2, config.tensorflowConfigCommon);
     }
 
     public TensorflowCNN2Config() {

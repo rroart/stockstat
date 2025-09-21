@@ -8,13 +8,15 @@ from .model import MyModel
 
 class Model(MyModel):
 
-  def __init__(self, myobj, config, classify):
+  def __init__(self, myobj, config, classify, shape):
     super(Model, self).__init__(config, classify, name='my_model')
 
     if classify:
       loss = 'sparse_categorical_crossentropy'
     else:
       loss = 'mean_squared_error'
+
+    regularizer = layerutils.getRegularizer(config)
 
     # Define your layers here.
 
@@ -31,13 +33,14 @@ class Model(MyModel):
     #https://medium.com/@alexrachnog/neural-networks-for-algorithmic-trading-2-1-multivariate-time-series-ab016ce70f57
     modelm = Sequential()
     # input_shape = (WINDOW, EMB_SIZE),
-    modelm.add(tf.keras.Input(shape = myobj.size))
+    modelm.add(tf.keras.Input(shape = shape))
     if classify and config.normalize:
-        modelm.add(layerutils.getNormalLayer(myobj.size))
+        modelm.add(layerutils.getNormalLayer(shape))
     modelm.add(Convolution1D(
                         filters=16,
                         kernel_size = config.kernelsize,
                         strides = config.stride,
+                        kernel_regularizer=regularizer,
                         padding='same'))
     if config.batchnormalize:
         modelm.add(BatchNormalization())
@@ -46,17 +49,18 @@ class Model(MyModel):
     modelm.add(Convolution1D(filters=8,
                         kernel_size = config.kernelsize,
                         strides = config.stride,
+                        kernel_regularizer=regularizer,
                         padding='same'))
     if config.batchnormalize:
         modelm.add(BatchNormalization())
     modelm.add(LeakyReLU())
     modelm.add(Dropout(config.dropout))
     modelm.add(Flatten())
-    modelm.add(Dense(64))
+    modelm.add(Dense(64, kernel_regularizer=regularizer))
     if config.batchnormalize:
         modelm.add(BatchNormalization())
     modelm.add(LeakyReLU())
-    modelm.add(Dense(myobj.classes))
+    modelm.add(Dense(myobj.classes, kernel_regularizer=regularizer))
     modelm.add(Activation('softmax'))
     
     #https://medium.com/@alexrachnog/neural-networks-for-algorithmic-trading-part-one-simple-time-series-forecasting-f992daa1045a

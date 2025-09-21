@@ -46,12 +46,12 @@ def generator():
     return generator
 
 class Model(keras.Model):
-    def __init__(self, myobj, config):
+    def __init__(self, myobj, config, shape):
         super().__init__()
         self.myobj = myobj
         self.config = config
 
-        self.discriminator = discriminator(myobj.size[0], myobj.size[1])
+        self.discriminator = discriminator(shape[1], shape[2])
         self.generator = generator()
         self.seed_generator = keras.random.SeedGenerator(1337)
 

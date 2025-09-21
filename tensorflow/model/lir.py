@@ -1,15 +1,17 @@
 import tensorflow as tf
 
+from . import layerutils
 from .model import MyModel
 
 class Model(MyModel):
 
-  def __init__(self, myobj, config, classify):
+  def __init__(self, myobj, config, classify, shape):
     super(Model, self).__init__(config, classify, name='my_model')
     normalizer = tf.keras.layers.Normalization(input_shape=[1,], axis=None)
+    regularizer = layerutils.getRegularizer(config)
     #normalizer.adapt(
     self.model =  tf.keras.models.Sequential()
-    self.model.add(tf.keras.Input(shape = (myobj.size,)))
+    self.model.add(tf.keras.Input(shape = (shape,)))
     # Define the model consisting of a single neuron.
     self.model.add(tf.keras.layers.Dense(units=1))
     self.model.compile(#optimizer=tf.keras.optimizers.RMSprop(lr=.005),

@@ -37,8 +37,8 @@ public abstract class TensorflowFeedConfig extends TensorflowConfig {
         this.hidden = hidden;
     }
 
-    public TensorflowFeedConfig(String name, int steps, double lr, double dropout, boolean normalize, boolean batchnormalize, boolean regularize, int layers, int hidden) {
-        super(name, steps, lr, dropout, normalize, batchnormalize, regularize);
+    public TensorflowFeedConfig(String name, TensorflowConfigCommon tensorflowConfigCommon, int layers, int hidden) {
+        super(name, tensorflowConfigCommon);
         this.layers = layers;
         this.hidden = hidden;
     }

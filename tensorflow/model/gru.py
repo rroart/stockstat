@@ -8,7 +8,7 @@ import model.layerutils as layerutils
 
 class Model(MyModel):
 
-  def __init__(self, myobj, config, classify):
+  def __init__(self, myobj, config, classify, shape):
     super(Model, self).__init__(config, classify, name='my_model')
 
     if classify:
@@ -20,22 +20,27 @@ class Model(MyModel):
       activation = 'linear'
       optimizer = RMSprop(learning_rate  = config.lr)
 
+    regularizer = layerutils.getRegularizer(config)
+
     # Define your layers here.
     amodel=Sequential()
-    amodel.add(tf.keras.Input(shape = myobj.size))
+    amodel.add(tf.keras.Input(shape = shape))
     if classify and config.normalize:
-        amodel.add(layerutils.getNormalLayer(myobj.size))
-    amodel.add(Dropout(config.dropoutin))
-    amodel.add(GRU(config.hidden, return_sequences = True))
+        amodel.add(layerutils.getNormalLayer(shape))
+    amodel.add(Dropout(config.inputdropout))
+    amodel.add(GRU(config.hidden, return_sequences = True, kernel_regularizer=regularizer))
     amodel.add(Dropout(config.dropout))
     for i in range(1, config.layers):
       print("Adding hidden layer", i)
-      amodel.add(GRU(config.hidden, return_sequences = i != config.layers - 1))
+      amodel.add(GRU(config.hidden, return_sequences = i != config.layers - 1, kernel_regularizer=regularizer))
+      if config.batchnormalize:
+          amodel.add(tf.keras.layers.BatchNormalization())
+      amodel.add(tf.keras.layers.Activation('relu'))
       amodel.add(Dropout(config.dropout))
     if classify:
-      amodel.add(Dense(myobj.classes, activation = activation))
+      amodel.add(Dense(myobj.classes, activation = activation, kernel_regularizer=regularizer))
     else:
-      amodel.add(Dense(1, activation = activation))
+      amodel.add(Dense(1, activation = activation, kernel_regularizer=regularizer))
     self.model = amodel
     self.model.compile(optimizer = optimizer,
                        loss=loss,
