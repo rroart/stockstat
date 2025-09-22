@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @Type(value = PytorchPreFeedConfigGene.class, name = "PytorchPreFeedConfigGene") })  
 public abstract class PytorchConfigGene extends NeuralNetConfigGene {
     
-    protected static final int RANDOMS = 6;
+    protected static final int RANDOMS = 12;
     
     public PytorchConfigGene(PytorchConfig config) {
         super(config);
@@ -40,7 +40,11 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
         myconfig.setNormalize(generateBoolean());
         myconfig.setBatchnormalize(generateBoolean());
         myconfig.setRegularize(generateBoolean());
-        //myconfig.setBatchsize(generateBatchsize());
+        myconfig.setBatchsize(generateBatchsize());
+        myconfig.setLoss(generateLoss());
+        myconfig.setOptimizer(generateOptimizer());
+        myconfig.setActivation(generateActivation());
+        myconfig.setLastactivation(generateLastactivation());
     }
 
     public void mutate(int task) {
@@ -68,7 +72,19 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
             myconfig.setRegularize(generateBoolean());
             break;
         case 7:
-            //myconfig.setBatchsize(generateBatchsize());
+            myconfig.setBatchsize(generateBatchsize());
+            break;
+        case 8:
+            myconfig.setLoss(generateLoss());
+            break;
+        case 9:
+            myconfig.setOptimizer(generateOptimizer());
+            break;
+        case 10:
+            myconfig.setActivation(generateActivation());
+            break;
+        case 11:
+            myconfig.setLastactivation(generateLastactivation());
             break;
         default:
 	    log.error(Constants.NOTFOUND, task);
@@ -102,6 +118,18 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
         if (random.nextBoolean()) {
             myconfig.setBatchsize(otherconfig.getBatchsize());
         }
+        if (random.nextBoolean()) {
+            myconfig.setLoss(otherconfig.getLoss());
+        }
+        if (random.nextBoolean()) {
+            myconfig.setOptimizer(otherconfig.getOptimizer());
+        }
+        if (random.nextBoolean()) {
+            myconfig.setActivation(otherconfig.getActivation());
+        }
+        if (random.nextBoolean()) {
+            myconfig.setLastactivation(otherconfig.getLastactivation());
+        }
     }
     
     protected int getMemories() {
@@ -111,6 +139,32 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
     protected double getMemorystrength() {
         return RandomUtil.random(random, 0.5, 0.5, 5);
     }
+    
+    protected String generateLoss() {
+        String[] losses = { "mse", "nllloss", "crossentropyloss", "l1loss", "smoothl1loss", "poissonloss" };
+        if (predictor) {
+            losses = new String[] { "mse", "l1loss", "smoothl1loss", "poissonloss" };
+        }
+        return losses[random.nextInt(losses.length)];
+    }
+    
+    protected String generateOptimizer() {
+        // TODO add more optimizers
+        String[] optimizers = { "adadelta", "adagrad", "adam", "adamw", "adamax", "ftrl", "nadam", "rmsprop", "sgd", "lion", "lamb", "muon", "loss_scale_optimizer", "adafactor", "sparseadam", "asgd", "lbfgs", "radam", "rprop", "lrscheduler", "lambdalr", "multiplicativelr", "steplr", "exponentiallr", "cosineannealinglr", "cycliclr", "onecyclelr", "reducelronplateau" };
+        return optimizers[random.nextInt(optimizers.length)];
+    }
 
+    protected String generateActivation() {
+        String[] activations = { "relu", "leakyrelu", "tanh", "sigmoid", "softmax", "softplus", "softsign", "elu", "selu", "gelu" };
+        return activations[random.nextInt(activations.length)];
+    }
+    
+    protected String generateLastactivation() {
+        String[] activations = { "relu", "leakyrelu", "tanh", "sigmoid", "softmax", "softplus", "softsign", "elu", "selu", "gelu", "none" };
+        if (predictor) {
+            activations = new String[] { "relu", "leakyrelu", "tanh", "sigmoid", "softmax", "softplus", "softsign", "elu", "selu", "gelu" };
+        }
+        return activations[random.nextInt(activations.length)];
+    }
 }
 

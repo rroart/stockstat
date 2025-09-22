@@ -8,8 +8,9 @@ import roart.gene.NeuralNetConfigGene;
 
 public class TensorflowLIRConfigGene extends TensorflowFeedConfigGene {
 
-    public TensorflowLIRConfigGene(TensorflowConfig config) {
+    public TensorflowLIRConfigGene(TensorflowConfig config, boolean predictor) {
         super(config);
+        this.predictor = predictor;
     }
 
     public TensorflowLIRConfigGene() {        
@@ -18,7 +19,7 @@ public class TensorflowLIRConfigGene extends TensorflowFeedConfigGene {
     
     @Override
     public NeuralNetConfigGene copy() {
-        return new TensorflowLIRConfigGene(new TensorflowLIRConfig((TensorflowLIRConfig) getConfig()));
+        return new TensorflowLIRConfigGene(new TensorflowLIRConfig((TensorflowLIRConfig) getConfig()), predictor);
     }
 
     @Override
@@ -30,7 +31,7 @@ public class TensorflowLIRConfigGene extends TensorflowFeedConfigGene {
     
     @Override
     public AbstractGene crossover(AbstractGene otherNN) {
-        TensorflowLIRConfigGene offspring = new TensorflowLIRConfigGene((TensorflowLIRConfig) getConfig());
+        TensorflowLIRConfigGene offspring = new TensorflowLIRConfigGene((TensorflowLIRConfig) getConfig(), predictor);
         offspring.crossover((TensorflowConfigGene) otherNN);
         return offspring;
      }

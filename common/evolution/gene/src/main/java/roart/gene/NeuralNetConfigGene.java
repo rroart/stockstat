@@ -31,6 +31,8 @@ public abstract class NeuralNetConfigGene extends AbstractGene {
 
     private NeuralNetConfig config;
     
+    protected boolean predictor = false;
+    
     public NeuralNetConfig getConfig() {
         return config;
     }
@@ -98,8 +100,8 @@ public abstract class NeuralNetConfigGene extends AbstractGene {
         return RandomUtil.random(random, 0.0, 0.1, 3);
     }
     
-    protected double generateBatchsize() {
-        return RandomUtil.generatePow(random, 2, 16, 8192);
+    protected int generateBatchsize() {
+        return (int) RandomUtil.generatePow(random, 2, 16, 8192);
     }
 
     public String toString() {

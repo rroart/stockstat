@@ -57,7 +57,14 @@ import roart.gene.ml.impl.TensorflowPredictorLSTMConfigGene;
 import roart.gene.ml.impl.TensorflowRNNConfigGene;
 
 public class NeuralNetConfigGeneFactory {
-    public static NeuralNetConfigGene get(NeuralNetConfig config, String key) {
+    protected boolean predictor;
+
+    public NeuralNetConfigGeneFactory(boolean predictor) {
+        super();
+        this.predictor = predictor;
+    }
+
+    public NeuralNetConfigGene get(NeuralNetConfig config, String key) {
         switch (key) {
         case ConfigConstants.MACHINELEARNINGSPARKMLLOR:
             return get((SparkLORConfig) config);
@@ -129,107 +136,107 @@ public class NeuralNetConfigGeneFactory {
         return null;
     }
     
-    public static NeuralNetConfigGene get(SparkMLPCConfig config) {
+    public NeuralNetConfigGene get(SparkMLPCConfig config) {
         return new SparkMLPCConfigGene(config);
     }
     
-    public static NeuralNetConfigGene get(SparkLORConfig config) {
+    public NeuralNetConfigGene get(SparkLORConfig config) {
         return new SparkLORConfigGene(config);
     }
     
-    public static NeuralNetConfigGene get(SparkOVRConfig config) {
+    public NeuralNetConfigGene get(SparkOVRConfig config) {
         return new SparkOVRConfigGene(config);
     }
     
-    public static NeuralNetConfigGene get(SparkLSVCConfig config) {
+    public NeuralNetConfigGene get(SparkLSVCConfig config) {
         return new SparkLSVCConfigGene(config);
     }
     
-    public static NeuralNetConfigGene get(TensorflowDNNConfig config) {
+    public NeuralNetConfigGene get(TensorflowDNNConfig config) {
         return new TensorflowDNNConfigGene(config);
     }
     
-    public static NeuralNetConfigGene get(TensorflowLICConfig config) {
+    public NeuralNetConfigGene get(TensorflowLICConfig config) {
         return new TensorflowLICConfigGene(config);
     }
     
-    public static NeuralNetConfigGene get(TensorflowLIRConfig config) {
-        return new TensorflowLIRConfigGene(config);
+    public NeuralNetConfigGene get(TensorflowLIRConfig config) {
+        return new TensorflowLIRConfigGene(config, predictor);
     }
      
-    public static NeuralNetConfigGene get(TensorflowMLPConfig config) {
-        return new TensorflowMLPConfigGene(config);
+    public NeuralNetConfigGene get(TensorflowMLPConfig config) {
+        return new TensorflowMLPConfigGene(config, predictor);
     }
     
-    public static NeuralNetConfigGene get(TensorflowCNNConfig config) {
+    public NeuralNetConfigGene get(TensorflowCNNConfig config) {
         return new TensorflowCNNConfigGene(config);
     }
     
-    public static NeuralNetConfigGene get(TensorflowCNN2Config config) {
+    public NeuralNetConfigGene get(TensorflowCNN2Config config) {
         return new TensorflowCNN2ConfigGene(config);
     }
     
-    public static NeuralNetConfigGene get(TensorflowRNNConfig config) {
-        return new TensorflowRNNConfigGene(config);
+    public NeuralNetConfigGene get(TensorflowRNNConfig config) {
+        return new TensorflowRNNConfigGene(config, predictor);
     }
     
-    public static NeuralNetConfigGene get(TensorflowGRUConfig config) {
-        return new TensorflowGRUConfigGene(config);
+    public NeuralNetConfigGene get(TensorflowGRUConfig config) {
+        return new TensorflowGRUConfigGene(config, predictor);
     }
     
-    public static NeuralNetConfigGene get(TensorflowLSTMConfig config) {
-        return new TensorflowLSTMConfigGene(config);
+    public NeuralNetConfigGene get(TensorflowLSTMConfig config) {
+        return new TensorflowLSTMConfigGene(config, predictor);
     }
     
-    public static NeuralNetConfigGene get(TensorflowPredictorLSTMConfig config) {
+    public NeuralNetConfigGene get(TensorflowPredictorLSTMConfig config) {
         return new TensorflowPredictorLSTMConfigGene(config);
     }
     
-    public static NeuralNetConfigGene get(PytorchMLPConfig config) {
-        return new PytorchMLPConfigGene(config);
+    public NeuralNetConfigGene get(PytorchMLPConfig config) {
+        return new PytorchMLPConfigGene(config, predictor);
     }
     
-    public static NeuralNetConfigGene get(PytorchCNNConfig config) {
+    public NeuralNetConfigGene get(PytorchCNNConfig config) {
         return new PytorchCNNConfigGene(config);
     }
     
-    public static NeuralNetConfigGene get(PytorchCNN2Config config) {
+    public NeuralNetConfigGene get(PytorchCNN2Config config) {
         return new PytorchCNN2ConfigGene(config);
     }
     
-    public static NeuralNetConfigGene get(PytorchRNNConfig config) {
-        return new PytorchRNNConfigGene(config);
+    public NeuralNetConfigGene get(PytorchRNNConfig config) {
+        return new PytorchRNNConfigGene(config, predictor);
     }
     
-    public static NeuralNetConfigGene get(PytorchGRUConfig config) {
-        return new PytorchGRUConfigGene(config);
+    public NeuralNetConfigGene get(PytorchGRUConfig config) {
+        return new PytorchGRUConfigGene(config, predictor);
     }
     
-    public static NeuralNetConfigGene get(PytorchLSTMConfig config) {
-        return new PytorchLSTMConfigGene(config);
+    public NeuralNetConfigGene get(PytorchLSTMConfig config) {
+        return new PytorchLSTMConfigGene(config, predictor);
     }
     
-    public static NeuralNetConfigGene get(GemEWCConfig config) {
+    public NeuralNetConfigGene get(GemEWCConfig config) {
         return new GemEWCConfigGene(config);
     }
     
-    public static NeuralNetConfigGene get(GemGEMConfig config) {
+    public NeuralNetConfigGene get(GemGEMConfig config) {
         return new GemGEMConfigGene(config);
     }
     
-    public static NeuralNetConfigGene get(GemIConfig config) {
+    public NeuralNetConfigGene get(GemIConfig config) {
         return new GemIConfigGene(config);
     }
     
-    public static NeuralNetConfigGene get(GemIcarlConfig config) {
+    public NeuralNetConfigGene get(GemIcarlConfig config) {
         return new GemIcarlConfigGene(config);
     }
     
-    public static NeuralNetConfigGene get(GemMMConfig config) {
+    public NeuralNetConfigGene get(GemMMConfig config) {
         return new GemMMConfigGene(config);
     }
     
-    public static NeuralNetConfigGene get(GemSConfig config) {
+    public NeuralNetConfigGene get(GemSConfig config) {
         return new GemSConfigGene(config);
     }
 }

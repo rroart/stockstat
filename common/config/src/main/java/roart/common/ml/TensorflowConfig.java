@@ -17,7 +17,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 public abstract class TensorflowConfig extends NeuralNetConfig {
 
     protected TensorflowConfigCommon tensorflowConfigCommon;
-    
     public int getSteps() {
         return tensorflowConfigCommon.steps;
     }
@@ -72,6 +71,46 @@ public abstract class TensorflowConfig extends NeuralNetConfig {
 
     public void setRegularize(boolean regularize) {
         this.tensorflowConfigCommon.regularize = regularize;
+    }
+
+    public int getBatchsize() {
+        return tensorflowConfigCommon.batchsize;
+    }
+
+    public void setBatchsize(int batchsize) {
+        this.tensorflowConfigCommon.batchsize = batchsize;
+    }
+
+    public String getLoss() {
+        return tensorflowConfigCommon.loss;
+    }
+
+    public void setLoss(String loss) {
+        this.tensorflowConfigCommon.loss = loss;
+    }
+
+    public String getOptimizer() {
+        return tensorflowConfigCommon.optimizer;
+    }
+
+    public void setOptimizer(String optimizer) {
+        this.tensorflowConfigCommon.optimizer = optimizer;
+    }
+
+    public String getActivation() {
+        return tensorflowConfigCommon.activation;
+    }
+
+    public void setActivation(String activation) {
+        this.tensorflowConfigCommon.activation = activation;
+    }
+
+    public String getLastactivation() {
+        return tensorflowConfigCommon.lastactivation;
+    }
+
+    public void setLastactivation(String lastactivation) {
+        this.tensorflowConfigCommon.lastactivation = lastactivation;
     }
 
     public TensorflowConfig(String name, TensorflowConfigCommon tensorflowConfigCommon) {

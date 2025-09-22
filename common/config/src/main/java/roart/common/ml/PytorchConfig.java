@@ -102,6 +102,38 @@ public abstract class PytorchConfig extends NeuralNetConfig {
         this.pytorchConfigCommon.batchsize = batchsize;
     }
 
+    public String getLoss() {
+        return pytorchConfigCommon.loss;
+    }
+
+    public void setLoss(String loss) {
+        this.pytorchConfigCommon.loss = loss;
+    }
+
+    public String getOptimizer() {
+        return pytorchConfigCommon.optimizer;
+    }
+
+    public void setOptimizer(String optimizer) {
+        this.pytorchConfigCommon.optimizer = optimizer;
+    }
+
+    public String getActivation() {
+        return pytorchConfigCommon.activation;
+    }
+
+    public void setActivation(String activation) {
+        this.pytorchConfigCommon.activation = activation;
+    }
+
+    public String getLastactivation() {
+        return pytorchConfigCommon.lastactivation;
+    }
+
+    public void setLastactivation(String lastactivation) {
+        this.pytorchConfigCommon.lastactivation = lastactivation;
+    }
+
     @Override
     public boolean empty() {
         return false;
