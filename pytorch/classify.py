@@ -16,7 +16,7 @@ import shutil
 import importlib
 
 import mydatasets
-from CustomDataset import CustomDataset
+from customdataset import CustomDataset
 from earlystopping import EarlyStopping
 from model import layerutils, modelutils
 from model.layerutils import avgstdvar

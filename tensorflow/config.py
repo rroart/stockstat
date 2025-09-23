@@ -18,6 +18,10 @@ TENSORFLOWGPT2 = 'tensorflowGPT2Config'
 TENSORFLOWPQK = 'tensorflowPQKConfig'
 TENSORFLOWVAE = 'tensorflowVAEConfig'
 
+TENSORFLOWCOMMONCLASSIFY = { 'loss' : 'sparse_categorical_crossentropy', 'optimizer' : 'adam', 'activation' : 'relu', 'lastactivation' : 'softmax' }
+TENSORFLOWCOMMONCLASSIFYCNN = { 'loss' : 'sparse_categorical_crossentropy', 'optimizer' : 'adam', 'activation' : 'leakyrelu', 'lastactivation' : 'softmax' }
+TENSORFLOWCOMMONPREDICT = { 'loss' : 'mse', 'optimizer' : 'rmsprop', 'activation' : 'relu', 'lastactivation' : 'linear' }
+TENSORFLOWCOMMONPREDICTCNN = { 'loss' : 'mse', 'optimizer' : 'rmsprop', 'activation' : 'leakyrelu', 'lastactivation' : 'linear' }
 TENSORFLOWCOMMON = { 'steps' : 1000, 'lr' : 0.001, 'inputdropout' : 0.5, 'dropout' : 0.5, 'normalize' : True, 'batchnormalize' : True, 'regularize' : True }
 TENSORFLOWDNNCONFIG = { 'name' : 'dnn', 'hidden' : 100, 'layers': 2, **TENSORFLOWCOMMON }
 TENSORFLOWLICCONFIG = { 'name' : 'lic', **TENSORFLOWCOMMON }
@@ -39,12 +43,16 @@ TENSORFLOWGPT2CONFIG = { 'name' : 'gpt2', 'steps' : 1 }
 TENSORFLOWPQKCONFIG = { 'name' : 'pqk', 'steps' : 3 }
 TENSORFLOWVAECONFIG = { 'name' : 'vae', 'steps' : 30 }
 
-def get(cf):
+def get(cf, predictor = False):
     if cf == TENSORFLOWDNN:
         return cf, 1, TENSORFLOWDNNCONFIG
     elif cf == TENSORFLOWLIC:
         return cf, 2, TENSORFLOWLICCONFIG
     elif cf == TENSORFLOWMLP:
+        if predictor:
+            TENSORFLOWMLPCONFIG.update(TENSORFLOWCOMMONPREDICT)
+        else:
+            TENSORFLOWMLPCONFIG.update(TENSORFLOWCOMMONCLASSIFY)
         return cf, 3, TENSORFLOWMLPCONFIG
     elif cf == TENSORFLOWRNN:
         return cf, 4, TENSORFLOWRNNCONFIG

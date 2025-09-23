@@ -24,3 +24,37 @@ def getRegularizer(config):
     elif config.l1 > 0:
         return keras.regularizers.l1(config.l1)
     return None
+
+def getOptimizer(config):
+    # "adadelta", "adagrad", "adam", "adamw", "adamax", "ftrl", "nadam", "rmsprop", "sgd", "lion", "lamb", "muon", "loss_scale_optimizer", "adafactor"
+
+    if config.optimizer == 'adam':
+        return keras.optimizers.Adam(learning_rate = config.lr)
+    elif config.optimizer == 'adadelta':
+        return keras.optimizers.Adadelta(learning_rate = config.lr)
+    elif config.optimizer == 'adagrad':
+        return keras.optimizers.Adagrad(learning_rate = config.lr)
+    elif config.optimizer == 'adamw':
+        return keras.optimizers.AdamW(learning_rate = config.lr)
+    elif config.optimizer == 'adamax':
+        return keras.optimizers.Adamax(learning_rate = config.lr)
+    elif config.optimizer == 'ftrl':
+        return keras.optimizers.Ftrl(learning_rate = config.lr)
+    elif config.optimizer == 'nadam':
+        return keras.optimizers.Nadam(learning_rate = config.lr)
+    elif config.optimizer == 'rmsprop':
+        return keras.optimizers.RMSprop(learning_rate = config.lr)
+    elif config.optimizer == 'sgd':
+        return keras.optimizers.SGD(learning_rate = config.lr)
+    elif config.optimizer == 'lion':
+        return keras.optimizers.Lion(learning_rate = config.lr)
+    elif config.optimizer == 'lamb':
+        return keras.optimizers.Lamb(learning_rate = config.lr)
+    elif config.optimizer == 'muon':
+        return keras.optimizers.Muon(learning_rate = config.lr)
+    elif config.optimizer == 'loss_scale_optimizer':
+        return keras.optimizers.LossScaleOptimizer
+    elif config.optimizer == 'adafactor':
+        return keras.optimizers.Adafactor(learning_rate = config.lr)
+    print("return default optimizer")
+    return keras.optimizers.Adam(learning_rate = config.lr)

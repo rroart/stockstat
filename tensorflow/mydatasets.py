@@ -63,7 +63,8 @@ def getmnist2(myobj, config):
 
     print(f"Shape of training images: {all_digits.shape}")
     print(f"Shape of training labels: {all_labels.shape}")
-    mydim = (28, 28, 1)
+    mydim = (None, 28, 28, 1)
+    print("mydim", mydim, x_train.shape)
     return dataset, mydim, 10, True, True
 
 def getmnist3(myobj, config):
@@ -78,7 +79,8 @@ def getmnist3(myobj, config):
     mnist_digits = np.expand_dims(mnist_digits, -1).astype("float32") / 255
 
     print(f"Shape of training images: {mnist_digits.shape}")
-    mydim = (28, 28, 1)
+    mydim = (None, 28, 28, 1)
+    print("mydim", mydim, x_train.shape)
     return mnist_digits, mydim, 10, True, True, mydatasetsmnist.encoder(), mydatasetsmnist.decoder()
 
 def getceleba(myobj, config):
@@ -95,7 +97,8 @@ def getceleba(myobj, config):
         dir + "celeba", label_mode=None, image_size=(64, 64), batch_size=32
     )
     dataset = dataset.map(lambda x: x / 255.0)
-    mydim = (64, 64)
+    mydim = (None, 64, 64)
+    print("mydim", mydim, dataset.shape)
     return dataset, mydim, 10, True, False
 
 def getdataset(myobj, config, classifier):
@@ -133,8 +136,8 @@ def getmnist(myobj, config):
     #print(x_train.shape)
     #print(x_train.shape, x_train.shape[2])
     #print(type(y_train.shape))
-    mydimorig = (x_train.shape[1], x_train.shape[2])
-    mydim = (x_train.shape[1], x_train.shape[2])
+    mydimorig = x_train.shape
+    mydim = x_train.shape
     if not config.name == "cnn" and not config.name == "cnn2":
         if config.name == "rnn" or config.name == "lstm" or config.name == "gru":
             #print("here")
@@ -148,12 +151,12 @@ def getmnist(myobj, config):
         else:
             x_train = x_train.reshape((x_train.shape[0], 784))
             x_test = x_test.reshape((x_test.shape[0], 784))
-            mydim = 784
+            #mydim = 784
         y_train = np.int32(y_train)
         y_test = np.int32(y_test)
     else:
         if config.name == "cnn2":
-            mydim = (28, 28, 1)
+            #mydim = (28, 28, 1)
             x_train = x_train.reshape(x_train.shape[0], 28, 28, 1)
             x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
     x_test = np.float16(x_test)        
@@ -161,7 +164,7 @@ def getmnist(myobj, config):
     #print(y_train.shape)
     dsdict = { 'train' : x_train, 'traincat' : y_train, 'test' : x_test, 'testcat' : y_test }
     ds = DictToObject(dsdict)
-    metadict = { 'origsize' : mydimorig, 'size' : mydim, 'classes' : 10, 'classify' : True }
+    metadict = { 'origsize' : mydimorig, 'size' : x_train.shape, 'classes' : 10, 'classify' : True }
     meta = DictToObject(metadict)
 
     return ds, meta
@@ -184,7 +187,7 @@ def getcifar10(config):
     #print(x_train.shape)
     #print(x_train.shape, x_train.shape[2])
     #print(type(y_train.shape))
-    mydimorig = (x_train.shape[1], x_train.shape[2])
+    mydimorig = x_train.shape
     mydim = (x_train.shape[1], x_train.shape[2])
     if not config.name == "cnn" and not config.name == "cnn2":
         if config.name == "rnn" or config.name == "lstm" or config.name == "gru":
@@ -216,7 +219,7 @@ def getcifar10(config):
     #print(y_train.shape)
     dsdict = { 'train' : x_train, 'traincat' : y_train, 'test' : x_test, 'testcat' : y_test }
     ds = DictToObject(dsdict)
-    metadict = { 'origsize' : mydimorig, 'size' : mydim, 'classes' : 10, 'classify' : True }
+    metadict = { 'origsize' : mydimorig, 'size' : x_train.shape, 'classes' : 10, 'classify' : True }
     meta = DictToObject(metadict)
 
     return ds, meta
@@ -288,7 +291,7 @@ def getiris(myobj, config):
 
     dsdict = {"train_ds": train_ds, "val_ds": None, "test_ds": None}
     ds = DictToObject(dsdict)
-    mydim = 4
+    mydim = train_ds.shape
     metadict = { 'origsize' : mydim, 'size' : mydim, 'classes' : 3, 'classify' : True }
     meta = DictToObject(dsdict)
     return ds, meta

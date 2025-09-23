@@ -23,6 +23,8 @@ class Model(MyModel):
       activation = 'linear'
       optimizer = RMSprop(learning_rate = config.lr)
 
+    optimizer = layerutils.getOptimizer(config)
+    loss = config.loss
     regularizer = layerutils.getRegularizer(config)
     # Define your layers here.
     print("sh", shape, type(shape))
@@ -40,13 +42,13 @@ class Model(MyModel):
       amodel.add(tf.keras.layers.Dense(config.hidden, kernel_regularizer=regularizer))
       if config.batchnormalize:
           amodel.add(tf.keras.layers.BatchNormalization())
-      amodel.add(tf.keras.layers.Activation('relu'))
+      amodel.add(tf.keras.layers.Activation(config.activation))
       amodel.add(Dropout(config.dropout))
     if classify:
       amodel.add(tf.keras.layers.Dense(myobj.classes, kernel_regularizer=regularizer))
     else:
-      amodel.add(tf.keras.layers.Dense(1))
-    amodel.add(tf.keras.layers.Activation(activation))
+      amodel.add(tf.keras.layers.Dense(1), kernel_regularizer=regularizer)
+    amodel.add(tf.keras.layers.Activation(config.lastactivation))
     self.model = amodel
     self.dense_1 = Dense(32, activation='relu')
     self.dense_2 = Dense(32, activation='relu')

@@ -28,3 +28,188 @@ def normalize(input, avgstdvar):
     x = input - mean
     x = x / std
     return x
+
+def getLoss(config):
+    # "l1", "mse", "cross_entropy", "ctc", "nl", "poissonnl", "gaussiannl", "kl", "bce", "bcewithlogits", "marginrank", "hingeembedding", "multilabelmargin", "multilabelsoftmargin", "cosineembedding", "multimargin", "tripletmargin", "tripletmarginwithdistance"
+    if config.loss == "l1":
+        return torch.nn.L1Loss()
+    elif config.loss == "mse":
+        return torch.nn.MSELoss()
+    elif config.loss == "cross_entropy":
+        return torch.nn.CrossEntropyLoss()
+    elif config.loss == "ctc":
+        return torch.nn.CTCLoss()
+    elif config.loss == "nl":
+        return torch.nn.NLLLoss()
+    elif config.loss == "poissonnl":
+        return torch.nn.PoissonNLLLoss()
+    elif config.loss == "gaussiannl":
+        return torch.nn.GaussianNLLLoss()
+    elif config.loss == "kl":
+        return torch.nn.KLDivLoss()
+    elif config.loss == "bce":
+        return torch.nn.BCELoss()
+    elif config.loss == "bcewithlogits":
+        return torch.nn.BCEWithLogitsLoss()
+    elif config.loss == "marginrank":
+        return torch.nn.MarginRankingLoss()
+    elif config.loss == "hingeembedding":
+        return torch.nn.HingeEmbeddingLoss()
+    elif config.loss == "multilabelmargin":
+        return torch.nn.MultiLabelMarginLoss()
+    elif config.loss == "multilabelsoftmargin":
+        return torch.nn.MultiLabelSoftMarginLoss()
+    elif config.loss == "cosineembedding":
+        return torch.nn.CosineEmbeddingLoss()
+    elif config.loss == "multimargin":
+        return torch.nn.MultiMarginLoss()
+    elif config.loss == "tripletmargin":
+        return torch.nn.TripletMarginLoss()
+    elif config.loss == "tripletmarginwithdistance":
+        return torch.nn.TripletMarginWithDistanceLoss()
+    print("return default loss")
+    return torch.nn.BCELoss()
+
+def getOptimizer(config, model):
+     # "adadelta", "adafactor", "adagrad", "adam", "adamw", "sparseadam", "adamax", "asgd", "lbfgs", "nadam",
+     #             "radam", "rmsprop", "rprop", "sgd", "lr_scheduler", "lambda_lr", "multiplicatative_lr", "step_lr",
+     #             "multistep_lr", "constant_lr", "linear_lr", "exponential_lr", "polynomial_lr", "cosine_annealing_lr",
+     #             "chained_scheduler", "sequential_lr", "reduce_lr_on_plateau", "cyclic_lr", "one_cycle_lr",
+     #             "cosine_annealing_warm_restarts", "averaged_model", "swa_lr"
+     if config.optimizer == "adadelta":
+         return torch.optim.Adadelta(model.parameters(), lr = config.lr)
+     elif config.optimizer == "adafactor":
+         return torch.optim.adaf(model.parameters(), lr = config.lr)
+     elif config.optimizer == "adagrad":
+         return torch.optim.Adagrad(model.parameters(), lr = config.lr)
+     elif config.optimizer == "adam":
+         return torch.optim.Adam(model.parameters(), lr = config.lr)
+     elif config.optimizer == "adamw":
+         return torch.optim.AdamW(model.parameters(), lr = config.lr)
+     elif config.optimizer == "sparseadam":
+         return torch.optim.SparseAdam(model.parameters(), lr = config.lr)
+     elif config.optimizer == "adamax":
+         return torch.optim.Adamax(model.parameters(), lr = config.lr)
+     elif config.optimizer == "asgd":
+         return torch.optim.ASGD(model.parameters(), lr = config.lr)
+     elif config.optimizer == "lbfgs":
+         return torch.optim.LBFGS(model.parameters(), lr = config.lr)
+     elif config.optimizer == "nadam":
+         return torch.optim.NAdam(model.parameters(), lr = config.lr)
+     elif config.optimizer == "radam":
+         return torch.optim.RAdam(model.parameters(), lr = config.lr)
+     elif config.optimizer == "rmsprop":
+         return torch.optim.RMSprop(model.parameters(), lr = config.lr)
+     elif config.optimizer == "rprop":
+         return torch.optim.Rprop(model.parameters(), lr = config.lr)
+     elif config.optimizer == "sgd":
+         return torch.optim.SGD(model.parameters(), lr = config.lr)
+     elif config.optimizer == "lr_scheduler":
+         return torch.optim.lr_scheduler.LRScheduler(model.parameters(), lr = config.lr)
+     elif config.optimizer == "lambda_lr":
+         return torch.optim.lr_scheduler.LambdaLR(model.parameters(), lr = config.lr)
+     elif config.optimizer == "multiplicatative_lr":
+         return torch.optim.lr_scheduler.MultiplicativeLR(model.parameters(), lr = config.lr)
+     elif config.optimizer == "step_lr":
+         return torch.optim.lr_scheduler.StepLR(model.parameters(), lr = config.lr)
+     elif config.optimizer == "multistep_lr":
+         return torch.optim.lr_scheduler.MultiStepLR(model.parameters(), lr = config.lr)
+     elif config.optimizer == "constant_lr":
+         return torch.optim.lr_scheduler.ConstantLR(model.parameters(), lr = config.lr)
+     elif config.optimizer == "linear_lr":
+         return torch.optim.lr_scheduler.LinearLR(model.parameters(), lr = config.lr)
+     elif config.optimizer == "exponential_lr":
+         return torch.optim.lr_scheduler.ExponentialLR(model.parameters(), lr = config.lr)
+     elif config.optimizer == "polynomial_lr":
+         return torch.optim.lr_scheduler.PolynomialLR(model.parameters(), lr = config.lr)
+     elif config.optimizer == "cosine_annealing_lr":
+         return torch.optim.lr_scheduler.CosineAnnealingLR(model.parameters(), lr = config.lr)
+     elif config.optimizer == "chained_scheduler":
+         return torch.optim.lr_scheduler.ChainedScheduler(model.parameters(), lr = config.lr)
+     elif config.optimizer == "sequential_lr":
+         return torch.optim.lr_scheduler.SequentialLR(model.parameters(), lr = config.lr)
+     elif config.optimizer == "reduce_lr_on_plateau":
+         return torch.optim.lr_scheduler.ReduceLROnPlateau(model.parameters(), lr = config.lr)
+     elif config.optimizer == "cyclic_lr":
+         return torch.optim.lr_scheduler.CyclicLR(model.parameters(), lr = config.lr)
+     elif config.optimizer == "one_cycle_lr":
+         return torch.optimlr_scheduler.OneCycleLR(model.parameters(), lr = config.lr)
+     elif config.optimizer == "cosine_annealing_warm_restarts":
+         return torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(model.parameters(), lr = config.lr)
+     elif config.optimizer == "averaged_model":
+         return torch.optim.swa_utils.AveragedModel(model.parameters(), lr = config.lr)
+     elif config.optimizer == "swa_lr":
+         return torch.optim.swa_utils.SWALR(model.parameters(), lr = config.lr)
+     print("return default optimizer")
+     return torch.optim.SGD(model.parameters(), lr = config.lr)
+
+def getAnActivation(activation):
+    # "elu", "hard_shrink", "hard_sigmoid", "hard_tanh", "hard_swish", "leakyrelu", "log_sigmoid", "multihead_attention", "prelu", "relu", "relu6", "rrelu", "selu", "celu", "gelu", "sigmoid", "silu", "mish", "soft_plus", "soft_shrink", "soft_sign", "tanh", "tanh_shrink", "threshold", "glu", "soft_min", "soft_max", "soft_max_2d", "log_soft_max", "adaptive_log_soft_max_with_loss"
+    if activation == "elu":
+        return torch.nn.ELU()
+    elif activation == "hard_shrink":
+        return torch.nn.HardShrink()
+    elif activation == "hard_sigmoid":
+        return torch.nn.HardSigmoid()
+    elif activation == "hard_tanh":
+        return torch.nn.HardTanh()
+    elif activation == "hard_swish":
+        return torch.nn.HardSwish()
+    elif activation == "leakyrelu":
+        return torch.nn.LeakyReLU()
+    elif activation == "log_sigmoid":
+        return torch.nn.LogSigmoid()
+    elif activation == "multihead_attention":
+        return torch.nn.MultiheadAttention()
+    elif activation == "prelu":
+        return torch.nn.PReLU()
+    elif activation == "relu":
+        return torch.nn.ReLU()
+    elif activation == "relu6":
+        return torch.nn.ReLU6()
+    elif activation == "rrelu":
+        return torch.nn.RReLU()
+    elif activation == "selu":
+        return torch.nn.SELU()
+    elif activation == "celu":
+        return torch.nn.CELU()
+    elif activation == "gelu":
+        return torch.nn.GELU()
+    elif activation == "sigmoid":
+        return torch.nn.Sigmoid()
+    elif activation == "silu":
+        return torch.nn.SiLU()
+    elif activation == "mish":
+        return torch.nn.Mish()
+    elif activation == "soft_plus":
+        return torch.nn.Softplus()
+    elif activation == "soft_shrink":
+        return torch.nn.Softshrink()
+    elif activation == "soft_sign":
+        return torch.nn.Softsign()
+    elif activation == "tanh":
+        return torch.nn.Tanh()
+    elif activation == "tanh_shrink":
+        return torch.nn.TanhShrink()
+    elif activation == "threshold":
+        return torch.nn.Threshold()
+    elif activation == "glu":
+        return torch.nn.GLU()
+    elif activation == "soft_min":
+        return torch.nn.Softmin()
+    elif activation == "soft_max":
+        return torch.nn.Softmax()
+    elif activation == "soft_max_2d":
+        return torch.nn.Softmax2d()
+    elif activation == "log_soft_max":
+        return torch.nn.LogSoftmax()
+    elif activation == "adaptive_log_soft_max_with_loss":
+        return torch.nn.AdaptiveLogSoftmax()
+    print("return default activation")
+    return torch.nn.ReLU()
+
+def getActivation(config):
+    return getAnActivation(config.activation)
+
+def getLastactivation(config):
+    return getAnActivation(config.lastactivation)

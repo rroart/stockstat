@@ -16,6 +16,10 @@ class Net(nn.Module):
         print("sh", shape, type(shape))
         if len(shape) > 2:
             raise ValueError("MLP only supports 2D input, shape:" + str(shape))
+
+        activation = layerutils.getActivation(config)
+        lastactivation = layerutils.getLastactivation(config)
+
         if classify:
             sizearr = [shape[1]] + [config.hidden] * config.layers + [myobj.classes]
         else:
@@ -33,19 +37,16 @@ class Net(nn.Module):
             if i < (len(sizearr) - 2):
                 if config.batchnormalize:
                     mylayers.append(nn.BatchNorm1d(sizearr[i + 1]))
-                mylayers.append(nn.ReLU())
+                mylayers.append(activation)
                 mylayers.append(nn.Dropout(config.dropout))
         self.layers = nn.Sequential(*mylayers)
         #self.layers.apply(Xavier)
         
         # setup losses
+        self.bce = layerutils.getLoss(config)
+
         # setup optimizer
-        if classify:
-            self.bce = torch.nn.CrossEntropyLoss()
-            self.opt = torch.optim.SGD(self.parameters(), lr=config.lr)
-        else:
-            self.bce = torch.nn.MSELoss()
-            self.opt = torch.optim.RMSprop(self.parameters(), lr=config.lr)
+        self.opt = layerutils.getOptimizer(config, self)
 
     def forward(self, x):
         #print("shape", x.shape)

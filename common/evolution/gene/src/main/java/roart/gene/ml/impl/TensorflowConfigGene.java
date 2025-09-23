@@ -133,9 +133,10 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
     }
     
     protected String generateLoss() {
-        String[] losses = { "binary_crossentropy", "categorical_crossentropy", "sparse_categorical_crossentropy", "poisson", "ctc", "kl_divergence" };
+        //String[] losses = { "binary_crossentropy", "categorical_crossentropy", "sparse_categorical_crossentropy", "poisson", "ctc", "kl_divergence" };"l1", "mse", "cross_entropy", "ctc", "nl", "poissonnl", "gaussiannl", "kl", "bce", "bcewithlogits", "marginrank", "hingeembedding", "multilabelmargin", "multilabelsoftmargin", "cosineembedding", "multimargin", "tripletmargin", "tripletmarginwithdistance" };
+        String[] losses = { "l1", "mse", "cross_entropy", "ctc", "nl", "poissonnl", "gaussiannl", "kl", "bce", "bcewithlogits", "marginrank", "hingeembedding", "multilabelmargin", "multilabelsoftmargin", "cosineembedding", "multimargin", "tripletmargin",  "tripletmarginwithdistance" };
         if (predictor) {
-            losses = new String[] { "mean_squared_error", "mean_absolute_error", "mean_absolute_percentage_error", "mean_squared_logarithmic_error", "cosine_similarity", "huber", "log_cosh", "tversky", "dice" };
+            //losses = new String[] { "mean_squared_error", "mean_absolute_error", "mean_absolute_percentage_error", "mean_squared_logarithmic_error", "cosine_similarity", "huber", "log_cosh", "tversky", "dice" };
         }
         return losses[random.nextInt(losses.length)];
     }

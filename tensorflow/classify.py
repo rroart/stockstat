@@ -103,7 +103,7 @@ class Classify:
             return predicted, problist
         else:
             print("Classify", array.shape)
-            print("Classify", array)
+            #print("Classify", array)
             (intlist, problist) = classifier.predict(array)
         if classify and not self.zero(myobj):
             intlist = np.array(intlist)
@@ -119,11 +119,11 @@ class Classify:
         classify = not hasattr(myobj, 'classify') or myobj.classify == True
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
-        (train, traincat, test, testcat, size) = self.gettraintest(myobj, config, classify)
-        myobj.size = size
-        model = Model.Model(myobj, config, classify)
+        (train, traincat, test, testcat, shape, val, valcat) = self.gettraintest(myobj, config, classify)
+        #myobj.size = size
+        model = Model.Model(myobj, config, classify, shape)
         classifier = model
-        (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, config, classifier, train, traincat, test, testcat, classify)
+        (accuracy_score, loss, train_accuracy_score, train_loss, val_accuracy, val_loss) = self.do_learntestinner(myobj, config, classifier, train, traincat, test, testcat, classify)
         global dictclass
         #dictclass[str(myobj.modelInt) + myobj.period + myobj.modelname] = classifier
         #global dicteval
@@ -134,10 +134,12 @@ class Classify:
         del classifier
         dt = datetime.now()
         #print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put(Response(json.dumps({"accuracy": float(accuracy_score), "trainaccuracy": float(train_accuracy_score)}), mimetype='application/json'))
+        queue.put(Response(json.dumps({"accuracy": float(accuracy_score), "trainaccuracy": float(train_accuracy_score), 'train_loss' : train_loss, 'val_accuracy' : val_accuracy, 'val_loss' : val_loss}), mimetype='application/json'))
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def getSlide(self, inputs, labels, myobj, config):
+        if not len(inputs.shape) == 2:
+            print("getSlide expects 2D array")
         #input = torch.from_numpy(np.array([[[0,1,2,3,4,5,6,7,8,9,10],[10,11,12,13,14,15,16,17,18,19,20]]]))
         #inputs = torch.from_numpy(inputs)
         inputs = np.array(inputs, dtype='f')
@@ -145,14 +147,17 @@ class Classify:
         if  hasattr(config, 'slide_stride'):
             sliding_window_stride = config.slide_stride
         else:
-            sliding_window_stride = 1
-        sliding_window_width = myobj.size
+            sliding_window_stride = 14
+        print("shape", inputs.shape)
+        sliding_window_width = inputs.shape[1] #myobj.size
         #print(type(size))
         #print(size)
         mysize = size[0]
         sequence_length = size[1]
+        print("arange", sequence_length, sliding_window_width, sliding_window_stride, myobj.classes)
         arange = int((sequence_length - (sliding_window_width) - myobj.classes) / sliding_window_stride) + 1
-        #print("arange", arange)
+        print("arange", arange)
+        print("size", size, mysize, sequence_length, sliding_window_width, sliding_window_stride, arange)
         splitInput = np.zeros((mysize * arange, sliding_window_width))
         splitTarget = np.zeros((mysize * arange))
         #print(inputs.shape)
@@ -174,7 +179,7 @@ class Classify:
         else:
             #print("notmlp")
             #print(splitInput.shape)
-            myobj.size = (1, sliding_window_width)
+            #myobj.size = (1, sliding_window_width)
             inputs = inputs.reshape(mysize * arange, 1, sliding_window_width)
             #print(splitInput.shape)
         return inputs, labels
@@ -224,6 +229,7 @@ class Classify:
         #print(labels)
         return inputs, labels
 
+    # not used
     def getSlideT(self, inputs, labels, myobj, config):
         #input = torch.from_numpy(np.array([[[0,1,2,3,4,5,6,7,8,9,10],[10,11,12,13,14,15,16,17,18,19,20]]]))
         #inputs = torch.from_numpy(inputs)
@@ -272,9 +278,17 @@ class Classify:
     def zero(self, myobj):
         return hasattr(myobj, 'zero') and myobj.zero == True
 
-    def gettraintest(self, myobj, config, classify):
-        mydim = myobj.size
+    def gettraintest(self, myobj, config, classify, size = 0.2, size2 = 0.25):
+        #mydim = myobj.size
         array = np.array(myobj.trainingarray, dtype='f')
+        shape = array.shape
+        print("Shape", array.shape)
+        print("grr", array[0])
+        #layer = keras.layers.Normalization(axis=None) #, invert=True)
+        #layer = keras.layers.Normalization(axis=1) #, invert=True)
+        #layer.adapt(array)
+        #array = layer(array)
+        print("Shape", array.shape)
         # TODO no transpose with dataset
         if config.name == "cnn2" and not hasattr(myobj, 'dataset'):
             print("cnn2 shape")
@@ -293,29 +307,38 @@ class Classify:
             cat = cat - 1
         if not classify:
             (inputs, labels) = self.getSlide(array, None, myobj, config)
-            mydim = myobj.size
-            return inputs, labels, inputs, labels, mydim
+            #mydim = myobj.size
+            return inputs, labels, inputs, labels, shape
         if hasattr(myobj, 'testarray') and hasattr(myobj, 'testcatarray'):
+            print("hastestarray")
             test = np.array(myobj.testarray, dtype='f')
             testcat = np.array(myobj.testcatarray, dtype='i')
-            train = array
-            traincat = cat
+
+            lenrow = array.shape[0]
+            half = round(lenrow * 1)
+            train, traincat, val, valcat = self.splitarray(half, size2, array, cat)
             # NOTE class range 1 - 4 will be changed to 0 - 3
             # to avoid risk of being classified as 0 later
             if not self.zero(myobj):
                 testcat = testcat - 1
         else:
             lenrow = array.shape[0]
-            half = round(lenrow / 2)
+            half = round(lenrow * (1 - size))
             train = array[:half, :]
             test = array[half:, :]
             traincat = cat[:half]
             testcat = cat[half:]
+            print("half", half, lenrow)
+
+            train, traincat, val, valcat = self.splitarray(half, size2, train, traincat)
+
             if len(cat) == 1:
                 train = array
                 test = array
+                val = array
                 traincat = cat
                 testcat = cat
+                valcat = cat
         #print("classes")
         #print(myobj.classes)
         #print("cwd")
@@ -331,9 +354,19 @@ class Classify:
             mydim = train.shape[1:]
         #print(mydim)
         print("Shapes ", train.shape, traincat.shape, mydim)
-        return train, traincat, test, testcat, mydim
-    
-    def do_learntestinner(self, myobj, config, classifier, train, traincat, test, testcat, classify):
+        print("Lens", len(traincat), len(valcat), len(testcat))
+        #return array, cat, array, cat, mydim, array, cat
+        return train, traincat, test, testcat, train.shape, val, valcat
+
+    def splitarray(self, half, size, train, traincat):
+        half = round(half * (1 - size))
+        newtrain = train[:half, :]
+        val = train[half:, :]
+        newtraincat = traincat[:half]
+        valcat = traincat[half:]
+        return newtrain, newtraincat, val, valcat
+
+    def do_learntestinner(self, myobj, config, classifier, train, traincat, test, testcat, classify, val = None, valcat = None):
         #print("ttt", train)
         #print("ttt2", traincat)
         #print("ttt3", test)
@@ -342,7 +375,12 @@ class Classify:
         #print(train.shape)
         #print(traincat.shape)
         #print(classifier.train)
-        classifier.train(train, traincat)
+        history = classifier.train(train, traincat, val, valcat)
+        train_accuracy_score = history.history.get('accuracy')[-1]
+        val_accuracy = history.history.get('val_accuracy')[-1]
+        train_loss = history.history.get('loss')[-1]
+        val_loss = history.history.get('val_loss')[-1]
+        print("history", history.history.keys(), train_accuracy_score, val_accuracy, train_loss, val_loss);
         #print(train)
         #print(traincat)
         (intlist, problist) = classifier.predict(test)
@@ -363,15 +401,15 @@ class Classify:
 
         print("Classify", classify)
         # TODO why one?
-        if config.name == 'lir':
-            train_loss = classifier.evaluate(train, traincat)
-            test_loss = classifier.evaluate(test, testcat)
-            train_accuracy_score = None
-            accuracy_score = None
-        else:
-            train_loss, train_accuracy_score = classifier.evaluate(train, traincat)
-            test_loss, accuracy_score = classifier.evaluate(test, testcat)
-
+        #if config.name == 'lir':
+        #    train_loss = classifier.evaluate(train, traincat)
+        #    test_loss = classifier.evaluate(test, testcat)
+        #    train_accuracy_score = None
+        #    accuracy_score = None
+        #else:
+        #    train_loss, train_accuracy_score = classifier.evaluate(train, traincat)
+        #    test_loss, accuracy_score = classifier.evaluate(test, testcat)
+        test_loss, accuracy_score = classifier.evaluate(test, testcat)
         print("Keras model", isinstance(classifier, tf.keras.Model))
         if isinstance(classifier, tf.keras.Model):
             print(classifier.metrics_names)
@@ -380,14 +418,14 @@ class Classify:
         if isinstance(classifier.model, tf.keras.Model):
             print(classifier.model.metrics_names)
             print(classifier.model.summary())
-        print("Accuracy train test", train_accuracy_score, accuracy_score)
-        print("Loss train test", train_loss, test_loss)
+        print("Accuracy train val test", train_accuracy_score, val_accuracy, accuracy_score)
+        print("Loss train val test", train_loss, val_loss, test_loss)
         #print("test_loss")
         #print(test_loss)
         #print(accuracy_score)
         #print(type(accuracy_score))
         #print("\nTest Accuracy: {0:f}\n".format(accuracy_score))
-        return accuracy_score, test_loss, train_accuracy_score
+        return accuracy_score, test_loss, train_accuracy_score, train_loss, val_accuracy, val_loss
 
     def getModel(self, myobj):
       print(tf.__version__)
@@ -521,8 +559,8 @@ class Classify:
         (config, modelname) = self.getModel(myobj)
         print("Model name", modelname)
         Model = importlib.import_module('model.' + modelname)
-        (train, traincat, test, testcat, size) = self.gettraintest(myobj, config, classify)
-        myobj.size = size
+        (train, traincat, test, testcat, shape, val, valcat) = self.gettraintest(myobj, config, classify, 0.2, 0.25)
+        #myobj.size = size
         if not classify:
             if config.name == 'mlp'or config.name == 'lir':
                 ii = 1
@@ -535,14 +573,14 @@ class Classify:
         if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
             if Model.Model.localsave():
                 # dummy variable to allow saver
-                model = Model.Model(myobj, config, classify)
+                model = Model.Model(myobj, config, classify, shape)
                 print("Restoring")
                 model.model = tf.keras.models.load_model( self.getfullpath(myobj))
                 print("Restoring done")
             else:
-                model = Model.Model(myobj, config, classify)
+                model = Model.Model(myobj, config, classify, shape)
         else:
-            model = Model.Model(myobj, config, classify)
+            model = Model.Model(myobj, config, classify, shape)
         classifier = model
         if config.name == "rnnnot":
             train = np.transpose(train, [1, 0, 2])
@@ -551,8 +589,11 @@ class Classify:
         accuracy_score = None
         train_accuracy_score = None
         loss = None
+        train_loss = None
+        val_accuracy = None
+        val_loss = None
         if self.wantLearn(myobj):
-            (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, config, classifier, train, traincat, test, testcat, classify)
+            (accuracy_score, loss, train_accuracy_score, train_loss, val_accuracy, val_loss) = self.do_learntestinner(myobj, config, classifier, train, traincat, test, testcat, classify)
         #print(type(classifier))
 
         #print("neuralnetcommand")
@@ -589,7 +630,7 @@ class Classify:
             loss = float(loss)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "gpu" : self.hasgpu() })
+        queue.put({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, 'train_loss' : train_loss, 'val_accuracy' : val_accuracy, 'val_loss' : val_loss, "gpu" : self.hasgpu() })
 
     def do_dataset(self, queue, myjson):
         dt = datetime.now()
@@ -607,36 +648,36 @@ class Classify:
             train = np.array(ds.train)
             myobj.trainingarray = ds.train
             myobj.trainingcatarray = ds.traincat
-            myobj.size = meta.size
+            #myobj.size = meta.size # TODO
             myobj.classes = meta.classes
-            (ds.train, ds.traincat, ds.test, ds.testcat, size) = self.gettraintest(myobj, config, meta.classify)
+            (ds.train, ds.traincat, ds.test, ds.testcat, shape, val, valcat) = self.gettraintest(myobj, config, meta.classify)
         #print("classez2", myobj.classes)
-        model = Model.Model(myobj, config, meta.classify)
+        model = Model.Model(myobj, config, meta.classify, shape)
         exists = self.exists(myobj)
         # load model if:
         # exists and not dynamic and wantclassify
         if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
             if Model.Model.localsave():
                 # dummy variable to allow saver
-                model = Model.Model(myobj, config, meta.classify)
+                model = Model.Model(myobj, config, meta.classify, shape)
                 print("Restoring")
                 model.model = tf.keras.models.load_model( self.getfullpath(myobj))
                 print("Restoring done")
             else:
-                model = Model.Model(myobj, config, meta.classify)
+                model = Model.Model(myobj, config, meta.classify, shape)
         else:
-            model = Model.Model(myobj, config, meta.classify)
+            model = Model.Model(myobj, config, meta.classify, shape)
         # load end
         #print("classez2", myobj.classes)
         print(model)
         self.printgpus()
         classifier = model
         if hasattr(ds, 'train'):
-            (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, config, classifier, ds.train, ds.traincat, ds.test, ds.testcat, meta.classify)
+            (accuracy_score, loss, train_accuracy_score, train_loss, val_accuracy, val_loss) = self.do_learntestinner(myobj, config, classifier, ds.train, ds.traincat, ds.test, ds.testcat, meta.classify)
             myobj.classifyarray = train
             (intlist, problist) = self.do_classifyinner(myobj, model, meta.classify)
         else:
-            (accuracy_score, loss, train_accuracy_score) = classifier.train(ds)
+            (accuracy_score, loss, train_accuracy_score, train_loss, val_accuracy, val_loss) = classifier.train(ds)
             #(accuracy_score, loss, train_accuracy_score) = (0, 0, 0)
         global dictclass
         #dictclass[str(myobj.modelInt) + myobj.period + myobj.modelname] = classifier
@@ -659,7 +700,7 @@ class Classify:
             loss = float(loss)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify" : meta.classify, "gpu" : self.hasgpu() })
+        queue.put({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, 'train_loss' : train_loss, 'val_accuracy' : val_accuracy, 'val_loss' : val_loss, "classify" : meta.classify, "gpu" : self.hasgpu() })
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def get_file(self, request):
@@ -707,7 +748,7 @@ class Classify:
             if hasattr(config, 'take'):
                 dataset = dataset.take(config.take)
 
-            myobj.size = size
+            #myobj.size = size # TODO
             myobj.classes = classes
 
             model = Model.Model(myobj, config)
@@ -806,25 +847,25 @@ class Classify:
         train = np.array(ds.train)
         myobj.trainingarray = train
         myobj.trainingcatarray = ds.traincat
-        myobj.size = meta.size
+        #myobj.size = meta.size # TODO
         myobj.classes = meta.classes
-        (train, traincat, test, testcat, size) = self.gettraintest(myobj, config, meta.classify)
+        (train, traincat, test, testcat, shape, val, valcat) = self.gettraintest(myobj, config, meta.classify)
         # print("classez2", myobj.classes)
-        model = Model.Model(myobj, config, meta.classify)
+        model = Model.Model(myobj, config, meta.classify, shape)
         exists = self.exists(myobj)
         # load model if:
         # exists and not dynamic and wantclassify
         if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
             if Model.Model.localsave():
                 # dummy variable to allow saver
-                model = Model.Model(myobj, config, meta.classify)
+                model = Model.Model(myobj, config, meta.classify, shape)
                 print("Restoring")
                 model.model = tf.keras.models.load_model(self.getfullpath(myobj))
                 print("Restoring done")
             else:
-                model = Model.Model(myobj, config, meta.classify)
+                model = Model.Model(myobj, config, meta.classify, shape)
         else:
-            model = Model.Model(myobj, config, meta.classify)
+            model = Model.Model(myobj, config, meta.classify, shape)
         # load end
         # print("classez2", myobj.classes)
         print(model)

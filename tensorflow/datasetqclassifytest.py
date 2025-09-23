@@ -15,14 +15,14 @@ class MyTestCase(unittest.TestCase):
         testmap [ config.TENSORFLOWQNN ] = [ 'mnist',  'fashion_mnist' ]
         testmap [ config.TENSORFLOWQNN ] = [ 'pqk_mnist', 'pqk_fashion_mnist' ]
         testmap [ config.TENSORFLOWQNN ] = [ 'mnist', 'fashion_mnist' ]
-        testmap [ config.TENSORFLOWQCNN ] = [ 'fashion_mnist' ]
+        testmap [ config.TENSORFLOWQCNN ] = [ 'mnist',  'fashion_mnist' ]
 
         testlist = [ config.TENSORFLOWQNN, config.TENSORFLOWQCNN ] #, config.TENSORFLOWPQK ]
         #testlist = [ config.TENSORFLOWQCNN, config.TENSORFLOWPQK ]
         #testlist = [config.TENSORFLOWQNN]
         testlist = [config.TENSORFLOWPQK]
         #testlist = [config.TENSORFLOWQNN]
-        #testlist = [config.TENSORFLOWQCNN]
+        testlist = [config.TENSORFLOWQCNN]
 
         # originally:
         # qnn + mnist

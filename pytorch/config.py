@@ -9,6 +9,10 @@ PYTORCHGPTMIDIRPR = 'pytorchGPTMIDIRPRConfig'
 PYTORCHGPTMIDIFIGARO = 'pytorchGPTMIDIFigaroConfig'
 PYTORCHGPTMIDIMMT = 'pytorchGPTMIDIMMTConfig'
 
+PYTORCHCOMMONCLASSIFY = { 'loss' : 'cross_entropy', 'optimizer' : 'sgd', 'activation' : 'relu', 'lastactivation' : 'relu' }
+PYTORCHCOMMONCLASSIFYCNN = { 'loss' : 'cross_entropy', 'optimizer' : 'sgd', 'activation' : 'relu', 'lastactivation' : 'relu' }
+PYTORCHCOMMONPREDICT = { 'loss' : 'mse', 'optimzer' : 'rmsprop', 'activation' : 'relu', 'lastactivation' : 'linear' }
+PYTORCHCOMMONPREDICTCNN = { 'loss' : 'mse', 'optimzer' : 'rmsprop', 'activation' : 'relu', 'lastactivation' : 'linear' }
 PYTORCHCOMMON = { 'steps' : 1000, 'lr' : 0.001, 'inputdropout' : 0.5, 'dropout' : 0.5, 'normalize' : True, 'batchnormalize' : True, 'regularize' : True, 'batchsize' : 64 }
 PYTORCHMLPCONFIG = { 'name' : 'mlp', 'hidden' : 100, 'layers': 1, **PYTORCHCOMMON }
 PYTORCHRNNCONFIG = { 'name' : 'rnn', 'hidden' : 100, 'layers' : 2, **PYTORCHCOMMON }
@@ -21,8 +25,12 @@ PYTORCHGPTMIDIRPRCONFIG = { 'name' : 'gptmidirpr', 'rpr' : True, 'steps' : 1 }
 PYTORCHGPTMIDIFIGAROCONFIG = { 'name' : 'gptmidifigaro', 'steps' : 1 }
 PYTORCHGPTMIDIMMTCONFIG = { 'name' : 'gptmidimmt', 'steps' : 50, 'valid_steps' : 10 }
 
-def get(cf):
+def get(cf, predictor = False):
     if cf == PYTORCHMLP:
+        if predictor:
+            PYTORCHMLPCONFIG.update(PYTORCHCOMMONPREDICT)
+        else:
+            PYTORCHMLPCONFIG.update(PYTORCHCOMMONCLASSIFY)
         return cf, 1, PYTORCHMLPCONFIG
     elif cf == PYTORCHRNN:
         return cf, 2, PYTORCHRNNCONFIG
