@@ -60,8 +60,9 @@ public abstract class NeuralNetConfigGene extends AbstractGene {
         return RandomUtil.random(random, 100, 100, 10);
     }
 
+    // from 1 to 0.0001
     protected double generateLr() {
-        return RandomUtil.generatePow(random, 0.1, 1, 8);
+        return 10 * RandomUtil.generatePow(random, 0.1, 1, 5);
     }
 
     protected int generateLayers() {
@@ -92,16 +93,19 @@ public abstract class NeuralNetConfigGene extends AbstractGene {
         return RandomUtil.generatePow(random, 0.1, 1, 8);
     }
     
+    // down to 0.4
     public double generateDropout() {
-        return RandomUtil.random(random, 0.2, 0.1, 4);
+        return RandomUtil.random(random, 0.0, 0.1, 7);
     }
     
+    // down to 0.5
     public double generateDropoutIn() {
-        return RandomUtil.random(random, 0.0, 0.1, 3);
+        return RandomUtil.random(random, 0.0, 0.1, 6);
     }
     
+    // from 16 to 8192
     protected int generateBatchsize() {
-        return (int) RandomUtil.generatePow(random, 2, 16, 8192);
+        return (int) RandomUtil.generatePow(random, 2, 4, 13);
     }
 
     public String toString() {

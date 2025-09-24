@@ -76,72 +76,77 @@ def getOptimizer(config, model):
      #             "multistep_lr", "constant_lr", "linear_lr", "exponential_lr", "polynomial_lr", "cosine_annealing_lr",
      #             "chained_scheduler", "sequential_lr", "reduce_lr_on_plateau", "cyclic_lr", "one_cycle_lr",
      #             "cosine_annealing_warm_restarts", "averaged_model", "swa_lr"
+     varargs = dict()
+     if config.lr is not None:
+         varargs["lr"] = config.lr
+     print("opt lr", config.optimizer, varargs)
+
      if config.optimizer == "adadelta":
-         return torch.optim.Adadelta(model.parameters(), lr = config.lr)
+         return torch.optim.Adadelta(model.parameters(), **varargs)
      elif config.optimizer == "adafactor":
-         return torch.optim.adaf(model.parameters(), lr = config.lr)
+         return torch.optim.adaf(model.parameters(), **varargs)
      elif config.optimizer == "adagrad":
-         return torch.optim.Adagrad(model.parameters(), lr = config.lr)
+         return torch.optim.Adagrad(model.parameters(), **varargs)
      elif config.optimizer == "adam":
-         return torch.optim.Adam(model.parameters(), lr = config.lr)
+         return torch.optim.Adam(model.parameters(), **varargs)
      elif config.optimizer == "adamw":
-         return torch.optim.AdamW(model.parameters(), lr = config.lr)
+         return torch.optim.AdamW(model.parameters(), **varargs)
      elif config.optimizer == "sparseadam":
-         return torch.optim.SparseAdam(model.parameters(), lr = config.lr)
+         return torch.optim.SparseAdam(model.parameters(), **varargs)
      elif config.optimizer == "adamax":
-         return torch.optim.Adamax(model.parameters(), lr = config.lr)
+         return torch.optim.Adamax(model.parameters(), **varargs)
      elif config.optimizer == "asgd":
-         return torch.optim.ASGD(model.parameters(), lr = config.lr)
+         return torch.optim.ASGD(model.parameters(), **varargs)
      elif config.optimizer == "lbfgs":
-         return torch.optim.LBFGS(model.parameters(), lr = config.lr)
+         return torch.optim.LBFGS(model.parameters(), **varargs)
      elif config.optimizer == "nadam":
-         return torch.optim.NAdam(model.parameters(), lr = config.lr)
+         return torch.optim.NAdam(model.parameters(), **varargs)
      elif config.optimizer == "radam":
-         return torch.optim.RAdam(model.parameters(), lr = config.lr)
+         return torch.optim.RAdam(model.parameters(), **varargs)
      elif config.optimizer == "rmsprop":
-         return torch.optim.RMSprop(model.parameters(), lr = config.lr)
+         return torch.optim.RMSprop(model.parameters(), **varargs)
      elif config.optimizer == "rprop":
-         return torch.optim.Rprop(model.parameters(), lr = config.lr)
+         return torch.optim.Rprop(model.parameters(), **varargs)
      elif config.optimizer == "sgd":
-         return torch.optim.SGD(model.parameters(), lr = config.lr)
+         return torch.optim.SGD(model.parameters(), **varargs)
      elif config.optimizer == "lr_scheduler":
-         return torch.optim.lr_scheduler.LRScheduler(model.parameters(), lr = config.lr)
+         return torch.optim.lr_scheduler.LRScheduler(model.parameters(), **varargs)
      elif config.optimizer == "lambda_lr":
-         return torch.optim.lr_scheduler.LambdaLR(model.parameters(), lr = config.lr)
+         return torch.optim.lr_scheduler.LambdaLR(model.parameters(), **varargs)
      elif config.optimizer == "multiplicatative_lr":
-         return torch.optim.lr_scheduler.MultiplicativeLR(model.parameters(), lr = config.lr)
+         return torch.optim.lr_scheduler.MultiplicativeLR(model.parameters(), **varargs)
      elif config.optimizer == "step_lr":
-         return torch.optim.lr_scheduler.StepLR(model.parameters(), lr = config.lr)
+         return torch.optim.lr_scheduler.StepLR(model.parameters(), **varargs)
      elif config.optimizer == "multistep_lr":
-         return torch.optim.lr_scheduler.MultiStepLR(model.parameters(), lr = config.lr)
+         return torch.optim.lr_scheduler.MultiStepLR(model.parameters(), **varargs)
      elif config.optimizer == "constant_lr":
-         return torch.optim.lr_scheduler.ConstantLR(model.parameters(), lr = config.lr)
+         return torch.optim.lr_scheduler.ConstantLR(model.parameters(), **varargs)
      elif config.optimizer == "linear_lr":
-         return torch.optim.lr_scheduler.LinearLR(model.parameters(), lr = config.lr)
+         return torch.optim.lr_scheduler.LinearLR(model.parameters(), **varargs)
      elif config.optimizer == "exponential_lr":
-         return torch.optim.lr_scheduler.ExponentialLR(model.parameters(), lr = config.lr)
+         return torch.optim.lr_scheduler.ExponentialLR(model.parameters(), **varargs)
      elif config.optimizer == "polynomial_lr":
-         return torch.optim.lr_scheduler.PolynomialLR(model.parameters(), lr = config.lr)
+         return torch.optim.lr_scheduler.PolynomialLR(model.parameters(), **varargs)
      elif config.optimizer == "cosine_annealing_lr":
-         return torch.optim.lr_scheduler.CosineAnnealingLR(model.parameters(), lr = config.lr)
+         return torch.optim.lr_scheduler.CosineAnnealingLR(model.parameters(), **varargs)
      elif config.optimizer == "chained_scheduler":
-         return torch.optim.lr_scheduler.ChainedScheduler(model.parameters(), lr = config.lr)
+         return torch.optim.lr_scheduler.ChainedScheduler(model.parameters(), **varargs)
      elif config.optimizer == "sequential_lr":
-         return torch.optim.lr_scheduler.SequentialLR(model.parameters(), lr = config.lr)
+         return torch.optim.lr_scheduler.SequentialLR(model.parameters(), **varargs)
      elif config.optimizer == "reduce_lr_on_plateau":
-         return torch.optim.lr_scheduler.ReduceLROnPlateau(model.parameters(), lr = config.lr)
+         return torch.optim.lr_scheduler.ReduceLROnPlateau(model.parameters(), **varargs)
      elif config.optimizer == "cyclic_lr":
-         return torch.optim.lr_scheduler.CyclicLR(model.parameters(), lr = config.lr)
+         return torch.optim.lr_scheduler.CyclicLR(model.parameters(), **varargs)
      elif config.optimizer == "one_cycle_lr":
-         return torch.optimlr_scheduler.OneCycleLR(model.parameters(), lr = config.lr)
+         return torch.optimlr_scheduler.OneCycleLR(model.parameters(), **varargs)
      elif config.optimizer == "cosine_annealing_warm_restarts":
-         return torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(model.parameters(), lr = config.lr)
+         return torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(model.parameters(), **varargs)
      elif config.optimizer == "averaged_model":
-         return torch.optim.swa_utils.AveragedModel(model.parameters(), lr = config.lr)
+         return torch.optim.swa_utils.AveragedModel(model.parameters(), **varargs)
      elif config.optimizer == "swa_lr":
-         return torch.optim.swa_utils.SWALR(model.parameters(), lr = config.lr)
+         return torch.optim.swa_utils.SWALR(model.parameters(), **varargs)
      print("return default optimizer")
-     return torch.optim.SGD(model.parameters(), lr = config.lr)
+     return torch.optim.SGD(model.parameters(), **varargs)
 
 def getAnActivation(activation):
     # "elu", "hard_shrink", "hard_sigmoid", "hard_tanh", "hard_swish", "leakyrelu", "log_sigmoid", "multihead_attention", "prelu", "relu", "relu6", "rrelu", "selu", "celu", "gelu", "sigmoid", "silu", "mish", "soft_plus", "soft_shrink", "soft_sign", "tanh", "tanh_shrink", "threshold", "glu", "soft_min", "soft_max", "soft_max_2d", "log_soft_max", "adaptive_log_soft_max_with_loss"

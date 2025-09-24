@@ -25,11 +25,11 @@ public abstract class TensorflowConfig extends NeuralNetConfig {
         this.tensorflowConfigCommon.steps = steps;
     }
 
-    public double getLr() {
+    public Double getLr() {
         return tensorflowConfigCommon.lr;
     }
 
-    public void setLr(double lr) {
+    public void setLr(Double lr) {
         this.tensorflowConfigCommon.lr = lr;
     }
 

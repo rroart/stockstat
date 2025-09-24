@@ -4,7 +4,7 @@ public class PytorchConfigCommon {
 
     protected int steps;
     
-    protected double lr;
+    protected Double lr;
     
     protected double inputdropout;
     

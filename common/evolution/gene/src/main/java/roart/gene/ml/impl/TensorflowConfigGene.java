@@ -34,7 +34,9 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
     public void randomize() {
         TensorflowConfig myconfig = (TensorflowConfig) getConfig();
         myconfig.setSteps(generateSteps());
-        myconfig.setLr(generateLr());
+        if (random.nextBoolean()) {
+            myconfig.setLr(generateLr());
+        }
         myconfig.setInputdropout(generateDropout());
         myconfig.setDropout(generateDropout());
         myconfig.setNormalize(generateBoolean());

@@ -46,11 +46,11 @@ public abstract class PytorchConfig extends NeuralNetConfig {
         this.pytorchConfigCommon.steps = steps;
     }
 
-    public double getLr() {
+    public Double getLr() {
         return pytorchConfigCommon.lr;
     }
 
-    public void setLr(double lr) {
+    public void setLr(Double lr) {
         this.pytorchConfigCommon.lr = lr;
     }
 
