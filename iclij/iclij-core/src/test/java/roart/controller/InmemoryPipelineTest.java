@@ -369,6 +369,14 @@ public class InmemoryPipelineTest {
         }
         System.out.println("map" + result.getWebdatajson().getUpdateMap());
         System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+        try {
+            simConfig.setBuyweight(true);
+            result = testutils.getSimulateInvestMarket(simConfig, market);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        System.out.println("map" + result.getWebdatajson().getUpdateMap());
+        System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
         inmemory.stat();
         assertEquals(true, inmemory.isEmpty());
         io.setDbDao(origDbDao);
