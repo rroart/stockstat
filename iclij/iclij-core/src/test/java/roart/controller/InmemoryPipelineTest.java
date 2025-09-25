@@ -6,7 +6,9 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,6 +28,11 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.action.ActionThread;
 import roart.action.LeaderRunner;
+import roart.aggregator.impl.MLMulti;
+import roart.aggregator.impl.MLIndicator;
+import roart.aggregator.util.AggregatorUtils;
+import roart.category.AbstractCategory;
+import roart.category.util.CategoryUtil;
 import roart.common.cache.MyCache;
 import roart.common.communication.factory.CommunicationFactory;
 import roart.common.config.ConfigConstants;
@@ -33,8 +40,10 @@ import roart.common.config.ConfigMaps;
 import roart.common.config.MLConstants;
 import roart.common.constants.Constants;
 import roart.common.inmemory.factory.InmemoryFactory;
+import roart.common.ml.NeuralNetCommand;
 import roart.common.model.ActionComponentDTO;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
@@ -43,6 +52,7 @@ import roart.constants.SimConstants;
 import roart.db.dao.CoreDataSource;
 import roart.db.dao.DbDao;
 import roart.db.dao.IclijDbDao;
+import roart.etl.db.Extract;
 import roart.filesystem.FileSystemDao;
 import roart.iclij.component.SimulateInvestComponent;
 import roart.iclij.config.AutoSimulateInvestConfig;
@@ -54,12 +64,19 @@ import roart.iclij.model.Parameters;
 import roart.iclij.service.ControlService;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
+import roart.indicator.util.IndicatorUtils;
+import roart.model.data.StockData;
+import roart.category.AbstractCategory;
 import roart.model.io.IO;
+import roart.pipeline.Pipeline;
+import roart.pipeline.common.aggregate.Aggregator;
+import roart.pipeline.impl.ExtraReader;
 import roart.queue.PipelineThread;
 import roart.testdata.TestConstants;
 import roart.common.model.IncDecDTO;
 import roart.common.model.MyDataSource;
 import roart.common.model.SimDataDTO;
+import roart.common.model.StockDTO;
 import roart.testdata.TestData;
 
 @TestInstance(Lifecycle.PER_CLASS)
@@ -345,6 +362,7 @@ public class InmemoryPipelineTest {
 
         IclijServiceResult result = null;
         try {
+            simConfig.setBuyweight(false);
             result = testutils.getSimulateInvestMarket(simConfig, market);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -559,4 +577,64 @@ public class InmemoryPipelineTest {
         testutils2.getImproveProfitMarket(param);
     }
     */
+
+    @Test
+    public void testSome() throws Exception {
+        conf.getConfigData().setMarket(TestConstants.MARKET);
+        List<String> disableList = new ArrayList<>();
+        StockData stockData = new Extract(io.getDbDao()).getStockData(conf, true);
+        
+        NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
+        neuralnetcommand.setMlclassify(false);
+        neuralnetcommand.setMllearn(true);
+        neuralnetcommand.setMldynamic(true);
+        
+        IndicatorUtils iu = new IndicatorUtils();
+        ExtraReader extraReader = new ExtraReader(conf, stockData.marketdatamap, 0, stockData);
+        Map<String, StockData> extraStockDataMap = new IndicatorUtils().getExtraStockDataMap(conf, io.getDbDao(), extraReader, true);
+
+        log.info("grr" + stockData.marketdatamap.keySet() + " " + stockData.periodText + " " + extraStockDataMap.keySet());
+        Pipeline[] datareaders = iu.getDataReaders(conf, stockData.periodText,
+                stockData.marketdatamap, stockData, extraStockDataMap, extraReader);
+
+        /*
+        pipelinedata = iu.createPipeline(conf, disableList, pipelinedata, categories, aggregates, stockData,
+                datareaders);
+        */
+        
+        // pipelinedata from datareaders and new meta
+
+        PipelineData[] pipelinedata = new PipelineData[0];
+        pipelinedata = iu.createDatareaderPipelineData(conf, pipelinedata, stockData, datareaders);
+
+        // for categories and adding to pipelinedata
+
+        List<StockDTO> dayStocks = iu.getDayStocks(conf, stockData);
+        
+        List<AbstractCategory> categories = Arrays.asList(new CategoryUtil().getCategories(conf, dayStocks,
+                stockData.periodText, pipelinedata, inmemory));
+        
+        // add all indicators for the category
+
+        pipelinedata = iu.createPipelineDataCategories(pipelinedata, categories, stockData);
+
+        // for aggregates and adding to the pipeline
+
+        /*
+        Aggregator[] aggregates = Arrays.asList(getAggregates(conf, stockData.periodText,
+                stockData.marketdatamap, categories.toArray(new AbstractCategory[0]), pipelinedata , disableList, stockData.catName, stockData.cat, stockData.stockdates, inmemory));
+*/
+        //new MLIndicator(conf, stockData.catName, stockData.catName, stockData.cat, pipelinedata, neuralnetcommand, stockData.stockdates, inmemory);
+        new MLMulti(conf, stockData.catName, stockData.catName, stockData.cat, stockData.idNameMap, pipelinedata, neuralnetcommand, stockData.stockdates, inmemory);
+        /*
+        Aggregator[] aggregates = new AggregatorUtils().getAggregates(conf, pipelinedata,
+                disableList, stockData.idNameMap, stockData.catName, stockData.cat, neuralnetcommand, stockData.stockdates, inmemory);
+        PipelineData data = aggregates[8].putData();
+        */
+        
+        //log.info("wants " + conf.getConfigData().getConfigValueMap().get(ConfigConstants.MACHINELEARNING));
+        //log.info("wants " + iconf.getConfigData().getConfigValueMap().get(ConfigConstants.MACHINELEARNING));
+        //log.info("wants " + conf.getConfigData().getConfigValueMap());
+
+    }
 }
