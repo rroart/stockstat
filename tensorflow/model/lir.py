@@ -15,7 +15,7 @@ class Model(MyModel):
     # Define the model consisting of a single neuron.
     self.model.add(tf.keras.layers.Dense(units=1))
     self.model.compile(#optimizer=tf.keras.optimizers.RMSprop(lr=.005),
-                       loss='mse')
+                       loss=config.loss)
         
   def call(self, inputs):
     # Define your forward pass here,

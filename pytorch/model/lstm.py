@@ -1,6 +1,9 @@
 import torch.nn as nn
 import torch
 
+from model import layerutils
+
+
 class Net(nn.Module):
   def __init__(self, myobj, config, classify, shape):
     super(Net, self).__init__()
@@ -9,6 +12,9 @@ class Net(nn.Module):
     self.myobj = myobj
     self.config = config
     self.classify = classify
+
+    activation = layerutils.getActivation(config)
+    lastactivation = layerutils.getLastactivation(config)
 
     self.rnn = nn.LSTM(shape[1], self.config.hidden, self.config.layers, dropout=config.dropout, batch_first=True)
     # Fully connected layer

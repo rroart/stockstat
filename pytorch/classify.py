@@ -153,14 +153,14 @@ class Classify:
 
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
-        (train, traincat, test, testcat, shape, avgstdvar) = self.gettraintest(myobj, config, classify)
+        (train, traincat, test, testcat, shape, avgstdvar, val, valcat) = self.gettraintest(myobj, config, classify)
         #myobj.size = size
         model = Model.Net(myobj, config, classify, shape)
         if torch.cuda.is_available():
             model.cuda()
         #testcat = torch.LongTensor(testcat)
         (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, model, config, train, traincat,
-                                                                              test, testcat, classify, avgstdvar)
+                                                                              test, testcat, classify, avgstdvar, val, valcat)
         global dictclass
         #dictclass[str(myobj.modelInt) + myobj.period + myobj.modelname] = model
         global dicteval
@@ -171,7 +171,7 @@ class Classify:
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         return Response(json.dumps({"accuracy": float(accuracy_score), "trainaccuracy": float(train_accuracy_score)}), mimetype='application/json')
 
-    def mytrain(self, model, inputs, labels, myobj, config, classify, avgstdvar):
+    def mytrain(self, model, inputs, labels, myobj, config, classify, avgstdvar, val = None, valcat = None):
         early_stopping = EarlyStopping(patience=5, delta=0.01, verbose=True)
         if classify:
             labels = labels.long()
@@ -183,8 +183,13 @@ class Classify:
         #ds = CustomDataset(inputs, labels)
         ds = CustomDataset(v_x, v_y)
         loader = torch.utils.data.DataLoader(ds, batch_size=config.batchsize, shuffle=True)
+        if not val is None:
 
-        return modelutils.observe(model, config.steps, model.opt, model.bce, loader, loader, config.batchsize, early_stopping, config)
+            valds = CustomDataset(val, valcat.long().to(dev))
+            valloader = torch.utils.data.DataLoader(valds, batch_size=config.batchsize, shuffle=True)
+        else:
+            valloader = loader
+        return modelutils.observe(model, config.steps, model.opt, model.bce, loader, valloader, config.batchsize, early_stopping, config)
         for i in range(model.config.steps):
             model.train()
             #print(v_x.shape)
@@ -373,7 +378,7 @@ class Classify:
     def zero(self, myobj):
         return hasattr(myobj, 'zero') and myobj.zero == True
             
-    def gettraintest(self, myobj, config, classify):
+    def gettraintest(self, myobj, config, classify, size = 0.2, size2 = 0.25):
         #mydim = myobj.size
         array = np.array(myobj.trainingarray, dtype='f')
         shape = array.shape
@@ -394,31 +399,33 @@ class Classify:
         if hasattr(myobj, 'testarray') and hasattr(myobj, 'testcatarray'):
             test = np.array(myobj.testarray, dtype='f')
             testcat = np.array(myobj.testcatarray, dtype='i')
-            train = array
-            traincat = cat
+            #train = array
+            #traincat = cat
+            lenrow = array.shape[0]
+            half = round(lenrow * 1)
+            train, traincat, val, valcat = self.splitarray(half, size2, array, cat)
             # NOTE class range 1 - 4 will be changed to 0 - 3
             # to avoid risk of being classified as 0 later
             if not self.zero(myobj):
                 testcat = testcat - 1
         else:
             lenrow = array.shape[0]
-            half = round(lenrow / 2)
-            # toto
-            # too many indices for array: array is 1-dimensional, but 2 were inde
-            #print("si ", half)
-            #print("si ", array)
-            #print("si ", lenrow)
+            half = round(lenrow * (1 - size))
             train = array[:half, :]
             test = array[half:, :]
-            #print(train)
-            #print(test)
             traincat = cat[:half]
             testcat = cat[half:]
+            print("half", half, lenrow)
+
+            train, traincat, val, valcat = self.splitarray(half, size2, train, traincat)
+
             if len(cat) == 1:
                 train = array
                 test = array
+                val = array
                 traincat = cat
                 testcat = cat
+                valcat = cat
 
         #print("mydim", mydim)
         #print (train.shape)
@@ -428,7 +435,7 @@ class Classify:
         #print("mydim", mydim)
         avgstdvar = layerutils.avgstdvar(train)
         print("Shapes", train.shape, traincat.shape, shape, avgstdvar)
-        return train, traincat, test, testcat, train.shape, avgstdvar
+        return train, traincat, test, testcat, train.shape, avgstdvar, val, valcat
         #print("classes")
         #print(myobj.classes)
         #print("cwd")
@@ -439,7 +446,15 @@ class Classify:
         #X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.25, random_state=73)
         #net = model.network(train, traincat)
         
-    def do_learntestinner(self, myobj, model, config, train, traincat, test, testcat, classify, avgstdvar):
+    def splitarray(self, half, size, train, traincat):
+        half = round(half * (1 - size))
+        newtrain = train[:half, :]
+        val = train[half:, :]
+        newtraincat = traincat[:half]
+        valcat = traincat[half:]
+        return newtrain, newtraincat, val, valcat
+
+    def do_learntestinner(self, myobj, model, config, train, traincat, test, testcat, classify, avgstdvar, val = None, valcat = None):
         print(model)
         dev = self.getdev()
         print("Device", dev)
@@ -453,7 +468,10 @@ class Classify:
         #print(traincat)
         #print(v_y)
         #print(v_x.size(), v_y.size())
-        self.mytrain(model, v_x, v_y, myobj, config, classify, avgstdvar)
+        if val is not None:
+            val = torch.FloatTensor(val).to(dev)
+            valcat = torch.FloatTensor(valcat).to(dev)
+        self.mytrain(model, v_x, v_y, myobj, config, classify, avgstdvar, val, valcat)
         model.eval()
 
         if not classify:
@@ -475,6 +493,7 @@ class Classify:
         y0_hat = model(v_x)
         (max_vals0, arg_maxs0) = torch.max(y0_hat.data, dim=1)
         num_correct0 = torch.sum(v_y==arg_maxs0.to(dtype=torch.float32))
+        print("len", len(v_y), num_correct0)
         acc0 = float(num_correct0) / len(v_y)
         
         #print("test", len(test), len(testcat), testcat.shape, test)
@@ -608,7 +627,7 @@ class Classify:
         classify = not hasattr(myobj, 'classify') or myobj.classify == True
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
-        (train, traincat, test, testcat, shape, avgstdvar) = self.gettraintest(myobj, config, classify)
+        (train, traincat, test, testcat, shape, avgstdvar, val, valcat) = self.gettraintest(myobj, config, classify)
         #myobj.size = size
         if not classify:
             if config.name == 'mlp':
@@ -638,7 +657,7 @@ class Classify:
         loss = None
         if self.wantLearn(myobj):
             (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, model, config, train, traincat,
-                                                                                  test, testcat, classify, model.avgstdvar)
+                                                                                  test, testcat, classify, model.avgstdvar, val, valcat)
         # save model if
         # not dynamic and wantlearn
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
@@ -674,7 +693,7 @@ class Classify:
         myobj.classes = classes
         myobj.trainingarray = train
         myobj.trainingcatarray = traincat
-        (train, traincat, test, testcat, shape, avgstdvar) = self.gettraintest(myobj, config, classify)
+        (train, traincat, test, testcat, shape, avgstdvar, val, valcat) = self.gettraintest(myobj, config, classify)
         model = Model.Net(myobj, config, classify, shape)
         if torch.cuda.is_available():
             model.cuda()
@@ -684,7 +703,7 @@ class Classify:
         print("model", modelname)
         print("config", config, myobj)
         (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, classifier, config, train, traincat,
-                                                                              test, testcat, classify, avgstdvar)
+                                                                              test, testcat, classify, avgstdvar, val, valcat)
         myobj.classifyarray = train
         (intlist, problist) = self.do_classifyinner(myobj, model, classify)
         if not accuracy_score is None:

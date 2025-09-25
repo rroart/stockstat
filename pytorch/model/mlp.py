@@ -17,6 +17,12 @@ class Net(nn.Module):
         if len(shape) > 2:
             raise ValueError("MLP only supports 2D input, shape:" + str(shape))
 
+        # setup losses
+        self.bce = layerutils.getLoss(config)
+
+        # setup optimizer
+        self.opt = layerutils.getOptimizer(config, self)
+
         activation = layerutils.getActivation(config)
         lastactivation = layerutils.getLastactivation(config)
 
@@ -42,11 +48,6 @@ class Net(nn.Module):
         self.layers = nn.Sequential(*mylayers)
         #self.layers.apply(Xavier)
         
-        # setup losses
-        self.bce = layerutils.getLoss(config)
-
-        # setup optimizer
-        self.opt = layerutils.getOptimizer(config, self)
 
     def forward(self, x):
         #print("shape", x.shape)

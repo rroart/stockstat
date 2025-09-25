@@ -15,29 +15,24 @@ class Model(MyModel):
 
   def __init__(self, myobj, config, classify, shape):
     super(Model, self).__init__(config, classify, name='my_model')
-    hidden_units = [ config.hidden ] * config.layers
-    activation = 'relu'
-    if classify:
-      loss = 'sparse_categorical_crossentropy'
-      activation = 'softmax'
-      optimizer = Adam(learning_rate = config.lr)
-    else:
-      loss = 'mean_squared_error'
-      activation = 'linear'
-      optimizer = RMSprop(learning_rate  = config.lr)
+    optimizer = layerutils.getOptimizer(config)
     regularizer = layerutils.getRegularizer(config)
+    activation = config.activation
+    lastactivation = config.lastactivation
+
+    hidden_units = [ config.hidden ] * config.layers
+
     self.model = tf.keras.models.Sequential()
     self.model.add(tf.keras.Input(shape = (shape,)))
     if classify and config.normalize:
         self.model.add(layerutils.getNormalLayer(shape))
-    self.model.add(tf.keras.layers.Dense(config.hidden, activation='relu'))
+    self.model.add(tf.keras.layers.Dense(config.hidden, activation=activation))
     if False and classify:
-        self.model.add(tf.keras.layers.Dense(myobj.classes, activation = activation))
+        self.model.add(tf.keras.layers.Dense(myobj.classes, activation = lastactivation))
     else:
-        self.model.add(tf.keras.layers.Dense(1, activation = activation))
+        self.model.add(tf.keras.layers.Dense(1, activation = lastactivation))
         
-    optimizer = Adam(learning_rate = config.lr)
-    self.model.compile(loss='mse', optimizer=optimizer, metrics=['accuracy'])
+    self.model.compile(loss=config.loss, optimizer=optimizer, metrics=['accuracy'])
 
   def call(self, inputs):
     # Define your forward pass here,

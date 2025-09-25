@@ -12,12 +12,10 @@ class Model(MyModel):
   def __init__(self, myobj, config, classify, shape):
     super(Model, self).__init__(config, classify, name='my_model')
 
-    if classify:
-      loss = 'sparse_categorical_crossentropy'
-    else:
-      loss = 'mean_squared_error'
-
+    optimizer = layerutils.getOptimizer(config)
     regularizer = layerutils.getRegularizer(config)
+    activation = tf.keras.layers.Activation(config.activation)
+    lastactivation = tf.keras.layers.Activation(config.lastactivation)
 
     # Define your layers here.
 
@@ -37,7 +35,7 @@ class Model(MyModel):
                         padding='same'))
     if config.batchnormalize:
         modelm.add(BatchNormalization())
-    modelm.add(LeakyReLU())
+    modelm.add(activation)
     #modelm.add(Dropout(config.dropout))
     modelm.add(Convolution2D(filters=64,
                         kernel_size = config.kernelsize,
@@ -46,7 +44,7 @@ class Model(MyModel):
                         padding='same'))
     if config.batchnormalize:
         modelm.add(BatchNormalization())
-    modelm.add(LeakyReLU())
+    modelm.add(activation)
     modelm.add(MaxPooling2D(2))
     #modelm.add(MaxPooling2D((4, 4)))
     modelm.add(Dropout(config.dropout1))
@@ -54,12 +52,12 @@ class Model(MyModel):
     modelm.add(Dense(128), kernel_regularizer=regularizer)
     if config.batchnormalize:
         modelm.add(BatchNormalization())
-    modelm.add(LeakyReLU())
+    modelm.add(activation)
     modelm.add(Dropout(config.dropout2))
     modelm.add(Dense(64))
-    modelm.add(LeakyReLU())
+    modelm.add(activation)
     modelm.add(Dense(myobj.classes, kernel_regularizer=regularizer))
-    modelm.add(Activation('softmax'))
+    modelm.add(Activation(lastactivation))
     modelm.summary()
     
     #https://medium.com/@alexrachnog/neural-networks-for-algorithmic-trading-part-one-simple-time-series-forecasting-f992daa1045a
@@ -100,9 +98,9 @@ class Model(MyModel):
     #self.dense_4 = Dense(myobj.classes, activation='sigmoid')
     self.dense_4 = Dense(myobj.classes, activation='softmax')
     #adam = tf.keras.optimizers.Adam(learning_rate=1)
-    optimizer = Adadelta(learning_rate = config.lr)
+
     self.model.compile(optimizer=optimizer,
-                       loss=loss,
+                       loss=config.loss,
                        metrics=['accuracy'])
     return
     # https://www.kaggle.com/heyhello/mnist-simple-convnet/data

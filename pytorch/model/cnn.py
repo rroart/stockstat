@@ -13,6 +13,9 @@ class Net(nn.Module):
         self.config = config
         self.classify = classify
 
+        activation = layerutils.getActivation(config)
+        lastactivation = layerutils.getLastactivation(config)
+
         #https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/02-intermediate/convolutional_neural_network/main.py
         #print("MO",myobj.size)
         dim1 = shape[1]

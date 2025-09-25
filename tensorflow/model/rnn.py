@@ -11,17 +11,11 @@ class Model(MyModel):
   def __init__(self, myobj, config, classify, shape):
     super(Model, self).__init__(config, classify, name='my_model')
 
-    #print("class", classify)
-    if classify:
-      loss = 'sparse_categorical_crossentropy'
-      activation = 'softmax'
-      optimizer = Adam(learning_rate = config.lr)
-    else:
-      loss = 'mean_squared_error'
-      activation = 'linear'
-      optimizer = RMSprop(learning_rate  = config.lr)
-
+    optimizer = layerutils.getOptimizer(config)
     regularizer = layerutils.getRegularizer(config)
+    activation = tf.keras.layers.Activation(config.activation)
+    lastactivation = tf.keras.layers.Activation(config.lastactivation)
+
     #loss = 'sparse_categorical_crossentropy'
     # Define your layers here.
     # https://subscription.packtpub.com/book/big_data_and_business_intelligence/9781788292061/7/ch07lvl1sec59/simple-rnn-with-keras
@@ -41,16 +35,16 @@ class Model(MyModel):
       amodel.add(SimpleRNN(config.hidden, return_sequences = i != config.layers - 1, kernel_regularizer=regularizer))
       if config.batchnormalize:
           amodel.add(tf.keras.layers.BatchNormalization())
-      amodel.add(tf.keras.layers.Activation('relu'))
+      amodel.add(activation)
       amodel.add(Dropout(config.dropout))
     amodel.add(Flatten())
     if classify:
-      amodel.add(Dense(myobj.classes, activation = activation, kernel_regularizer=regularizer))
+      amodel.add(Dense(myobj.classes, activation = lastactivation, kernel_regularizer=regularizer))
     else:
-      amodel.add(Dense(1, activation = activation, kernel_regularizer=regularizer))
+      amodel.add(Dense(1, activation = lastactivation, kernel_regularizer=regularizer))
     self.model = amodel
     self.model.compile(optimizer = optimizer,
-                       loss=loss,
+                       loss=config.loss,
                        metrics=['accuracy'])
 
   def call(self, inputs):

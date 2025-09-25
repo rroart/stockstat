@@ -123,7 +123,7 @@ class Classify:
         #myobj.size = size
         model = Model.Model(myobj, config, classify, shape)
         classifier = model
-        (accuracy_score, loss, train_accuracy_score, train_loss, val_accuracy, val_loss) = self.do_learntestinner(myobj, config, classifier, train, traincat, test, testcat, classify)
+        (accuracy_score, loss, train_accuracy_score, train_loss, val_accuracy, val_loss) = self.do_learntestinner(myobj, config, classifier, train, traincat, test, testcat, classify, val, valcat)
         global dictclass
         #dictclass[str(myobj.modelInt) + myobj.period + myobj.modelname] = classifier
         #global dicteval
@@ -381,6 +381,10 @@ class Classify:
         train_loss = history.history.get('loss')[-1]
         val_loss = history.history.get('val_loss')[-1]
         print("history", history.history.keys(), train_accuracy_score, val_accuracy, train_loss, val_loss);
+        print(history.history.get('accuracy'))
+        print(history.history.get('val_accuracy'))
+        print(history.history.get('loss'))
+        print(history.history.get('val_loss'))
         #print(train)
         #print(traincat)
         (intlist, problist) = classifier.predict(test)
@@ -593,7 +597,7 @@ class Classify:
         val_accuracy = None
         val_loss = None
         if self.wantLearn(myobj):
-            (accuracy_score, loss, train_accuracy_score, train_loss, val_accuracy, val_loss) = self.do_learntestinner(myobj, config, classifier, train, traincat, test, testcat, classify)
+            (accuracy_score, loss, train_accuracy_score, train_loss, val_accuracy, val_loss) = self.do_learntestinner(myobj, config, classifier, train, traincat, test, testcat, classify, val, valcat)
         #print(type(classifier))
 
         #print("neuralnetcommand")
@@ -673,7 +677,7 @@ class Classify:
         self.printgpus()
         classifier = model
         if hasattr(ds, 'train'):
-            (accuracy_score, loss, train_accuracy_score, train_loss, val_accuracy, val_loss) = self.do_learntestinner(myobj, config, classifier, ds.train, ds.traincat, ds.test, ds.testcat, meta.classify)
+            (accuracy_score, loss, train_accuracy_score, train_loss, val_accuracy, val_loss) = self.do_learntestinner(myobj, config, classifier, ds.train, ds.traincat, ds.test, ds.testcat, meta.classify, val, valcat)
             myobj.classifyarray = train
             (intlist, problist) = self.do_classifyinner(myobj, model, meta.classify)
         else:

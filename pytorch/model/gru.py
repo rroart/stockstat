@@ -1,6 +1,9 @@
 import torch.nn as nn
 import torch
 
+from model import layerutils
+
+
 class Net(nn.Module):
     def __init__(self, myobj, config, classify, shape):
         super(Net, self).__init__()
@@ -10,6 +13,15 @@ class Net(nn.Module):
         self.config = config
         self.classify = classify
 
+        # setup losses
+        self.bce = layerutils.getLoss(config)
+
+        # setup optimizer
+        self.opt = layerutils.getOptimizer(config, self)
+
+        activation = layerutils.getActivation(config)
+        lastactivation = layerutils.getLastactivation(config)
+
         #Defining the layers
         # RNN Layer
         self.rnn = nn.GRU(shape[1], self.config.hidden, self.config.layers, dropout=config.dropout, batch_first=True)
@@ -18,16 +30,6 @@ class Net(nn.Module):
             self.fc = nn.Linear(self.config.hidden, self.myobj.classes)
         else:
             self.fc = nn.Linear(self.config.hidden, 1)
-
-        # setup losses
-        # setup optimizer
-        self.bce = torch.nn.BCELoss()
-        if classify:
-            self.bce = torch.nn.CrossEntropyLoss()
-            self.opt = torch.optim.SGD(self.parameters(), lr=config.lr)
-        else:
-            self.bce = torch.nn.MSELoss()
-            self.opt = torch.optim.RMSprop(self.parameters(), lr=config.lr)
 
         self.bn = nn.BatchNorm1d(self.myobj.classes) #shape[1])
         self.act = nn.ReLU()

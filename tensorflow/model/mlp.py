@@ -14,18 +14,11 @@ class Model(MyModel):
   def __init__(self, myobj, config, classify, shape):
     super(Model, self).__init__(config, classify, name='my_model')
 
-    if classify:
-      loss = 'sparse_categorical_crossentropy'
-      activation = 'softmax'
-      optimizer = Adam(learning_rate = config.lr)
-    else:
-      loss = 'mean_squared_error'
-      activation = 'linear'
-      optimizer = RMSprop(learning_rate = config.lr)
-
     optimizer = layerutils.getOptimizer(config)
-    loss = config.loss
     regularizer = layerutils.getRegularizer(config)
+    activation = tf.keras.layers.Activation(config.activation)
+    lastactivation = tf.keras.layers.Activation(config.lastactivation)
+
     # Define your layers here.
     print("sh", shape, type(shape))
     if len(shape) != 2:
@@ -42,22 +35,22 @@ class Model(MyModel):
       amodel.add(tf.keras.layers.Dense(config.hidden, kernel_regularizer=regularizer))
       if config.batchnormalize:
           amodel.add(tf.keras.layers.BatchNormalization())
-      amodel.add(tf.keras.layers.Activation(config.activation))
+      amodel.add(activation)
       amodel.add(Dropout(config.dropout))
     if classify:
       amodel.add(tf.keras.layers.Dense(myobj.classes, kernel_regularizer=regularizer))
     else:
       amodel.add(tf.keras.layers.Dense(1), kernel_regularizer=regularizer)
-    amodel.add(tf.keras.layers.Activation(config.lastactivation))
+    amodel.add(lastactivation)
     self.model = amodel
-    self.dense_1 = Dense(32, activation='relu')
-    self.dense_2 = Dense(32, activation='relu')
-    self.dense_3 = Dense(32, activation='relu')
+    self.dense_1 = Dense(32, activation=config.activation)
+    self.dense_2 = Dense(32, activation=config.activation)
+    self.dense_3 = Dense(32, activation=config.activation)
     #self.dense_4 = Dense(myobj.classes, activation='sigmoid')
-    self.dense_4 = Dense(myobj.classes, activation='softmax')
+    self.dense_4 = Dense(myobj.classes, activation=config.lastactivation)
     #adam = tf.keras.optimizers.Adam(learning_rate=1)
     self.model.compile(optimizer = optimizer,
-                       loss=loss,
+                       loss=config.loss,
                        metrics=['accuracy'])
 
   def call(self, inputs):
