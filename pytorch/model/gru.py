@@ -13,12 +13,6 @@ class Net(nn.Module):
         self.config = config
         self.classify = classify
 
-        # setup losses
-        self.bce = layerutils.getLoss(config)
-
-        # setup optimizer
-        self.opt = layerutils.getOptimizer(config, self)
-
         activation = layerutils.getActivation(config)
         lastactivation = layerutils.getLastactivation(config)
 
@@ -34,6 +28,13 @@ class Net(nn.Module):
         self.bn = nn.BatchNorm1d(self.myobj.classes) #shape[1])
         self.act = nn.ReLU()
         self.dropout = nn.Dropout(config.dropout)
+
+        # setup losses
+        self.bce = layerutils.getLoss(config)
+
+        # setup optimizer
+        self.opt = layerutils.getOptimizer(config, self)
+
 
     def forward(self, x):
         

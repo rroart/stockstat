@@ -77,15 +77,12 @@ class Net(nn.Module):
         # Fully connected layer
         #self.fc = nn.Linear(self.config.hidden, self.myobj.classes)
     
-        # setup optimizer
-        self.opt = torch.optim.SGD(self.parameters(), lr=config.lr)
-
         # setup losses
-        self.bce = torch.nn.BCELoss()
-        if classify:
-            self.bce = torch.nn.CrossEntropyLoss()
-        else:
-            self.bce = torch.nn.MSELoss()
+        self.bce = layerutils.getLoss(config)
+
+        # setup optimizer
+        self.opt = layerutils.getOptimizer(config, self)
+
 
     def forward(self, x):
         

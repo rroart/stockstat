@@ -23,19 +23,16 @@ class Net(nn.Module):
     else:
       self.fc = nn.Linear(self.config.hidden, 1)
 
-    # setup losses
-    # setup optimizer
-    self.bce = torch.nn.BCELoss()
-    if classify:
-      self.bce = torch.nn.CrossEntropyLoss()
-      self.opt = torch.optim.SGD(self.parameters(), lr=config.lr)
-    else:
-      self.bce = torch.nn.MSELoss()
-      self.opt = torch.optim.RMSprop(self.parameters(), lr=config.lr)
-
     self.bn = nn.BatchNorm1d(self.myobj.classes) #shape[1])
     self.act = nn.ReLU()
     self.dropout = nn.Dropout(config.dropout)
+
+    # setup losses
+    self.bce = layerutils.getLoss(config)
+
+    # setup optimizer
+    self.opt = layerutils.getOptimizer(config, self)
+
 
   def forward(self, x):
     batches = x.size(0)

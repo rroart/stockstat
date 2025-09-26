@@ -15,12 +15,6 @@ class Net(nn.Module):
         self.config = config
         self.classify = classify
 
-        # setup losses
-        self.bce = layerutils.getLoss(config)
-
-        # setup optimizer
-        self.opt = layerutils.getOptimizer(config, self)
-
         activation = layerutils.getActivation(config)
         lastactivation = layerutils.getLastactivation(config)
 
@@ -99,7 +93,13 @@ class Net(nn.Module):
         #self.rnn = nn.RNN(self.myobj.size, self.config.hidden, self.config.layers, batch_first=True)
         # Fully connected layer
         #self.fc = nn.Linear(self.config.hidden, self.myobj.classes)
-    
+
+        # setup losses
+        self.bce = layerutils.getLoss(config)
+
+        # setup optimizer
+        self.opt = layerutils.getOptimizer(config, self)
+
 
     def forward(self, x):
         
