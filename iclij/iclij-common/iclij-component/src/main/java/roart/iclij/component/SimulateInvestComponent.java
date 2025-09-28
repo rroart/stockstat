@@ -1264,8 +1264,10 @@ public class SimulateInvestComponent extends ComponentML {
             nextstocks = noConfidenceHoldSell(onerun.mystocks, holdIncrease, sells, simConfig);
         }
 
-        onerun.pendingBuyIds.addAll(buys.stream().map(SimulateStock::getId).collect(Collectors.toList()));
-        onerun.pendingSellIds.addAll(sells.stream().map(SimulateStock::getId).collect(Collectors.toList()));
+        if (!lastInvest) {
+            onerun.pendingBuyIds.addAll(buys.stream().map(SimulateStock::getId).collect(Collectors.toList()));
+            onerun.pendingSellIds.addAll(sells.stream().map(SimulateStock::getId).collect(Collectors.toList()));
+        }
         sells = addEvent(onerun, sells, "SELL", getBSIndexOffset(mydate, simConfig), simConfig);
         buys = addEvent(onerun, buys, "BUY", getBSIndexOffset(mydate, simConfig), simConfig);
         // only when debugging
