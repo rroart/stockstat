@@ -211,7 +211,7 @@ def getAnActivation(activation):
     elif activation == "adaptive_log_soft_max_with_loss":
         return torch.nn.AdaptiveLogSoftmax()
     print("return default activation")
-    return torch.nn.ReLU()
+    return None
 
 def getActivation(config):
     return getAnActivation(config.activation)

@@ -189,11 +189,13 @@ class Classify:
             valloader = torch.utils.data.DataLoader(valds, batch_size=config.batchsize, shuffle=True)
         else:
             valloader = loader
+
         return modelutils.observe(model, config.steps, model.opt, model.bce, loader, valloader, config.batchsize, early_stopping, config)
         for i in range(model.config.steps):
             model.train()
             #print(v_x.shape)
             val_loss = model.observe(v_x, v_y)
+            continue
 
             # Average validation loss
             val_loss /= v_x.shape[0]
@@ -298,8 +300,8 @@ class Classify:
         if  hasattr(config, 'slide_stride'):
             sliding_window_stride = config.slide_stride
         else:
-            sliding_window_stride = 1
-        sliding_window_width = inputs.shape[2] #myobj.size
+            sliding_window_stride = 2
+        sliding_window_width = myobj.size
         #print(type(size))
         #print(size)
         mysize = size[0]
@@ -329,8 +331,8 @@ class Classify:
             inputs = inputs.reshape(mysize * arange, 1, sliding_window_width)
             #print(splitInput.shape)
         labels = torch.FloatTensor(labels)
-        #print(inputs)
-        #print(labels)
+        print(inputs)
+        print(labels)
         print("iii", inputs.shape)
         print("lll", labels.shape)
         return inputs, labels
@@ -395,7 +397,8 @@ class Classify:
         if not classify:
             (inputs, labels) = self.getSlide(array, None, myobj, config)
             #mydim = myobj.size
-            return inputs, labels, inputs, labels, shape
+            avgstdvar = layerutils.avgstdvar(array)
+            return inputs, labels, inputs, labels, inputs.shape, avgstdvar, inputs, labels
         if hasattr(myobj, 'testarray') and hasattr(myobj, 'testcatarray'):
             test = np.array(myobj.testarray, dtype='f')
             testcat = np.array(myobj.testcatarray, dtype='i')
@@ -618,14 +621,16 @@ class Classify:
             dataset = myobj.dataset
         return self.getpath(myobj) + modelname + dataset + ".pt"
 
-    def do_learntestclassify(self, queue, request):
+    def do_learntestclassify(self, queue, myjson):
         dt = datetime.now()
         timestamp = dt.timestamp()
         #print(request.get_data(as_text=True))
         #myobj = json.loads(request, object_hook=lt.LearnTest)
-        myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
+        print("mys", myjson)
+        myobj = json.loads(myjson, object_hook=lt.LearnTest)
         classify = not hasattr(myobj, 'classify') or myobj.classify == True
         (config, modelname) = self.getModel(myobj)
+        print("mo", modelname, config.name, config.loss)
         Model = importlib.import_module('model.' + modelname)
         (train, traincat, test, testcat, shape, avgstdvar, val, valcat) = self.gettraintest(myobj, config, classify)
         #myobj.size = size
@@ -657,7 +662,7 @@ class Classify:
         loss = None
         if self.wantLearn(myobj):
             (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, model, config, train, traincat,
-                                                                                  test, testcat, classify, model.avgstdvar, val, valcat)
+                                                                                  test, testcat, classify, avgstdvar, val, valcat)
         # save model if
         # not dynamic and wantlearn
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):

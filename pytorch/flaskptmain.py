@@ -12,12 +12,14 @@ from werkzeug.wrappers import Response
 def classifyrunner2(queue, request):
     import classify
     cl = classify.Classify()
-    cl.do_learntestclassify(queue, request)
+    myjson = request.get_data(as_text=True)
+    cl.do_learntestclassify(queue, myjson)
 
 def predictrunner(queue, request):
     import classify
     cl = classify.Classify()
-    cl.do_learntestclassify(queue, request)
+    myjson = request.get_data(as_text=True)
+    cl.do_learntestclassify(queue, myjson)
 
 def hasgpu():
     import torch
@@ -51,7 +53,8 @@ def do_learntestclassify():
         try:
             import classify
             cl = classify.Classify()
-            return cl.do_learntestclassify(queue, request)
+            myjson = request.get_data(as_text=True)
+            return cl.do_learntestclassify(queue, myjson)
         except:
             import sys,traceback
             traceback.print_exc(file=sys.stdout)

@@ -147,9 +147,9 @@ class Classify:
         if  hasattr(config, 'slide_stride'):
             sliding_window_stride = config.slide_stride
         else:
-            sliding_window_stride = 14
+            sliding_window_stride = 2
         print("shape", inputs.shape)
-        sliding_window_width = inputs.shape[1] #myobj.size
+        sliding_window_width = myobj.size
         #print(type(size))
         #print(size)
         mysize = size[0]
@@ -171,8 +171,8 @@ class Classify:
         inputs = splitInput
         labels = splitTarget
         #print("hh")
-        #print(inputs)
-        #print(labels)
+        print(inputs)
+        print(labels)
         #myobj.classes = 1
         if config.name == 'mlp' or config.name == 'lir':
             ii = 1
@@ -308,7 +308,7 @@ class Classify:
         if not classify:
             (inputs, labels) = self.getSlide(array, None, myobj, config)
             #mydim = myobj.size
-            return inputs, labels, inputs, labels, shape
+            return inputs, labels, inputs, labels, inputs.shape, inputs, labels
         if hasattr(myobj, 'testarray') and hasattr(myobj, 'testcatarray'):
             print("hastestarray")
             test = np.array(myobj.testarray, dtype='f')
