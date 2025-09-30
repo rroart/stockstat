@@ -2054,7 +2054,7 @@ public class SimulateInvestComponent extends ComponentML {
         // full list
         List<String> myincl = adviser.getIncs(aParameter, simConfig.getStocks(), getValueIndexOffset(mydate, simConfig), stockDates, anExcludeList);
         if (debugFuture) {
-            log.info("myincl {}", myincl.subList(0, simConfig.getStocks()));
+            log.info("myincl {}", myincl.subList(0, Math.min(myincl.size(), simConfig.getStocks())));
             log.info("mystocks {} {}", mydate.date, mystocks.stream().map(SimulateStock::getId).collect(Collectors.toList()));
         }
         Set<String> myincs = new LinkedHashSet<>(myincl);
