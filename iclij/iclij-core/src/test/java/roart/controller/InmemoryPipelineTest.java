@@ -645,4 +645,10 @@ public class InmemoryPipelineTest {
         //log.info("wants " + conf.getConfigData().getConfigValueMap());
 
     }
+
+    @Test
+    public void testWantUseCurve() throws Exception {
+        boolean want = conf.wantAggregatorsUsecurve();
+        System.out.println("want " + want);
+    }
 }

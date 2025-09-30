@@ -1507,7 +1507,7 @@ public abstract class MyMyConfig extends MyConfig {
     }
 
     public boolean wantAggregatorsUsecurve() {
-        return (boolean) getValueOrDefault(ConfigConstants.AGGREGATORSUSECURVE);
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSUSECURVE);
     }
 
     public String getTensorflowServer() {
