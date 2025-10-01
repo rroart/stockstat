@@ -18,7 +18,7 @@ class Model(MyModel):
 
     # Define your layers here.
     amodel=Sequential()
-    amodel.add(tf.keras.Input(shape = shape))
+    amodel.add(tf.keras.Input(shape = shape[1:]))
     if classify and config.normalize:
         amodel.add(layerutils.getNormalLayer(shape))
     amodel.add(Dropout(config.inputdropout))

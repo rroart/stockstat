@@ -14,7 +14,7 @@ cache = {}
 
 def learn(ds = "mnist", path = None, cf = 'tensorflowMLPConfig', steps = None, take = None, q = False):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : False, 'mllearn' : True }
-    cfname, modelInt, thecf = config.get(cf)
+    cfname, modelInt, thecf = config.get(cf, False)
     if steps is not None:
         thecf['steps'] = steps
     if take is not None:

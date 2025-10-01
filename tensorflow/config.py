@@ -20,12 +20,13 @@ TENSORFLOWVAE = 'tensorflowVAEConfig'
 
 TENSORFLOWCOMMONCLASSIFY = { 'loss' : 'sparse_categorical_crossentropy', 'optimizer' : 'adam', 'activation' : 'relu', 'lastactivation' : 'softmax' }
 TENSORFLOWCOMMONCLASSIFYCNN = { 'loss' : 'sparse_categorical_crossentropy', 'optimizer' : 'adam', 'activation' : 'leakyrelu', 'lastactivation' : 'softmax' }
-TENSORFLOWCOMMONPREDICT = { 'loss' : 'mse', 'optimizer' : 'rmsprop', 'activation' : 'relu', 'lastactivation' : 'linear' }
+TENSORFLOWCOMMONCLASSIFYCNN2 = { 'loss' : 'sparse_categorical_crossentropy', 'optimizer' : 'adadelta', 'activation' : 'leakyrelu', 'lastactivation' : 'softmax' }
+TENSORFLOWCOMMONPREDICT = { 'loss' : 'mse', 'optimizer' : 'rmsprop', 'activation' : 'relu', 'lastactivation' : 'linear', 'inputdropout' : 0, 'dropout' : 0, 'normalize' : False, 'batchnormalize' : False, 'regularize' : False }
 TENSORFLOWCOMMONPREDICTCNN = { 'loss' : 'mse', 'optimizer' : 'rmsprop', 'activation' : 'leakyrelu', 'lastactivation' : 'linear' }
 TENSORFLOWCOMMON = { 'steps' : 1000, 'lr' : None, 'inputdropout' : 0.5, 'dropout' : 0.5, 'normalize' : True, 'batchnormalize' : True, 'regularize' : True }
 TENSORFLOWDNNCONFIG = { 'name' : 'dnn', 'hidden' : 100, 'layers': 2, **TENSORFLOWCOMMON }
 TENSORFLOWLICCONFIG = { 'name' : 'lic', **TENSORFLOWCOMMON }
-TENSORFLOWMLPCONFIG = { 'name' : 'mlp', 'hidden' : 100, 'layers' : 1, **TENSORFLOWCOMMON }
+TENSORFLOWMLPCONFIG = { 'name' : 'mlp', 'hidden' : 100, 'layers' : 2, **TENSORFLOWCOMMON }
 TENSORFLOWRNNCONFIG = { 'name' : 'rnn', 'hidden' : 100, 'layers' : 2, **TENSORFLOWCOMMON }
 TENSORFLOWCNNCONFIG = { 'name' : 'cnn', 'stride' : 1, 'kernelsize' : 4, **TENSORFLOWCOMMON }
 TENSORFLOWCNN2CONFIG = { 'name' : 'cnn2', 'stride' : 1, 'kernelsize' : 3, 'maxpool': 4, 'dropout1': 0.25, 'dropout2' : 0.5, **TENSORFLOWCOMMON }
@@ -55,16 +56,21 @@ def get(cf, predictor = False):
             TENSORFLOWMLPCONFIG.update(TENSORFLOWCOMMONCLASSIFY)
         return cf, 3, TENSORFLOWMLPCONFIG
     elif cf == TENSORFLOWRNN:
+        TENSORFLOWRNNCONFIG.update(TENSORFLOWCOMMONCLASSIFY)
         return cf, 4, TENSORFLOWRNNCONFIG
     elif cf == TENSORFLOWCNN:
+        TENSORFLOWCNNCONFIG.update(TENSORFLOWCOMMONCLASSIFYCNN)
         return cf, 5, TENSORFLOWCNNCONFIG
     elif cf == TENSORFLOWLSTM:
+        TENSORFLOWLSTMCONFIG.update(TENSORFLOWCOMMONCLASSIFY)
         return cf, 6, TENSORFLOWLSTMCONFIG
     elif cf == TENSORFLOWGRU:
+        TENSORFLOWGRUCONFIG.update(TENSORFLOWCOMMONCLASSIFY)
         return cf, 7, TENSORFLOWGRUCONFIG
     elif cf == TENSORFLOWLIR:
         return cf, 8, TENSORFLOWLIRCONFIG
     elif cf == TENSORFLOWCNN2:
+        TENSORFLOWCNN2CONFIG.update(TENSORFLOWCOMMONCLASSIFYCNN2)
         return cf, 9, TENSORFLOWCNN2CONFIG
     elif cf == TENSORFLOWQNN:
         return cf, 10, TENSORFLOWQNNCONFIG
@@ -86,4 +92,5 @@ def get(cf, predictor = False):
         return cf, 18, TENSORFLOWPQKCONFIG
     elif cf == TENSORFLOWVAE:
         return cf, 19, TENSORFLOWVAECONFIG
+    print("Unknown config", cf)
     return None

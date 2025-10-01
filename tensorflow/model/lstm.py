@@ -19,7 +19,7 @@ class Model(MyModel):
     # Define your layers here.
     amodel=Sequential()
     #print("ooo",shape)
-    amodel.add(tf.keras.Input(shape = shape))
+    amodel.add(tf.keras.Input(shape = shape[1:]))
     if classify and config.normalize:
         amodel.add(layerutils.getNormalLayer(shape))
     if config.batchnormalize:
@@ -42,7 +42,7 @@ class Model(MyModel):
     #print("classez", myobj.classes)
     self.model = amodel
     self.model.compile(optimizer = optimizer,
-                       loss=configloss,
+                       loss=config.loss,
                        metrics=['accuracy'])
 
   def call(self, inputs):
