@@ -24,7 +24,7 @@ class Model(MyModel):
     #print("inputshape");
     #print(shape);
     # input_shape = (WINDOW, EMB_SIZE),
-    modelm.add(tf.keras.Input(shape = shape))
+    modelm.add(tf.keras.Input(shape = shape[1:]))
     if classify and config.normalize:
         modelm.add(layerutils.getNormalLayer(shape))
     modelm.add(Convolution2D(
@@ -49,7 +49,7 @@ class Model(MyModel):
     #modelm.add(MaxPooling2D((4, 4)))
     modelm.add(Dropout(config.dropout1))
     modelm.add(Flatten())
-    modelm.add(Dense(128), kernel_regularizer=regularizer)
+    modelm.add(Dense(128, kernel_regularizer=regularizer))
     if config.batchnormalize:
         modelm.add(BatchNormalization())
     modelm.add(activation)

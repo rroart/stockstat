@@ -24,33 +24,36 @@ class Net(nn.Module):
             sizearr = [shape[1]] + [config.hidden] * config.layers + [myobj.classes]
         else:
             sizearr = [shape[1]] + [config.hidden] * config.layers + [1]
-        print("sizearr", sizearr)
+
+        print(sizearr)
+
         mylayers = nn.ModuleList()
-        #if classify and self.config.normalize:
-        #    mylayers.append(layerutils.getNormalLayer(shape))
-        if config.batchnormalize:
-            mylayers.append(nn.BatchNorm1d(sizearr[0]))
-        mylayers.append(nn.Dropout(config.inputdropout))
+        #if config.batchnormalize:
+        #    mylayers.append(nn.BatchNorm1d(sizearr[0]))
+        if config.inputdropout > 0:
+            mylayers.append(nn.Dropout(config.inputdropout))
         for i in range(0, len(sizearr) - 1):
             #print("sizearr", sizearr[i], sizearr[i+1])
             mylayers.append(nn.Linear(sizearr[i], sizearr[i + 1]))
             if i < (len(sizearr) - 2):
                 if config.batchnormalize:
                     mylayers.append(nn.BatchNorm1d(sizearr[i + 1]))
-                mylayers.append(activation)
-                mylayers.append(nn.Dropout(config.dropout))
+                if i < (len(sizearr) - 3):
+                    mylayers.append(activation)
+                else:
+                    mylayers.append(lastactivation)
+                if config.dropout > 0:
+                    mylayers.append(nn.Dropout(config.dropout))
         self.layers = nn.Sequential(*mylayers)
         #self.layers.apply(Xavier)
-
+        
         # setup losses
         self.bce = layerutils.getLoss(config)
 
         # setup optimizer
         self.opt = layerutils.getOptimizer(config, self)
 
-
     def forward(self, x):
-        #print("shape", x.shape)
         x = self.layers(x)
         return x
 

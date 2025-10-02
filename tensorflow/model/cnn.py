@@ -31,7 +31,7 @@ class Model(MyModel):
     #https://medium.com/@alexrachnog/neural-networks-for-algorithmic-trading-2-1-multivariate-time-series-ab016ce70f57
     modelm = Sequential()
     # input_shape = (WINDOW, EMB_SIZE),
-    modelm.add(tf.keras.Input(shape = shape))
+    modelm.add(tf.keras.Input(shape = shape[1:]))
     if classify and config.normalize:
         modelm.add(layerutils.getNormalLayer(shape))
     modelm.add(Convolution1D(

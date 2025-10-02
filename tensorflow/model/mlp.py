@@ -29,18 +29,20 @@ class Model(MyModel):
         amodel.add(layerutils.getNormalLayer(shape))
     if config.batchnormalize:
         amodel.add(tf.keras.layers.BatchNormalization())
-    amodel.add(Dropout(config.inputdropout))
+    if config.dropout > 0:
+        amodel.add(Dropout(config.inputdropout))
     for i in range(0, 1 + config.layers):
       print("Adding hidden layer", i)
       amodel.add(tf.keras.layers.Dense(config.hidden, kernel_regularizer=regularizer))
       if config.batchnormalize:
           amodel.add(tf.keras.layers.BatchNormalization())
       amodel.add(activation)
-      amodel.add(Dropout(config.dropout))
+      if config.dropout > 0:
+          amodel.add(Dropout(config.dropout))
     if classify:
       amodel.add(tf.keras.layers.Dense(myobj.classes, kernel_regularizer=regularizer))
     else:
-      amodel.add(tf.keras.layers.Dense(1), kernel_regularizer=regularizer)
+      amodel.add(tf.keras.layers.Dense(1, kernel_regularizer=regularizer))
     amodel.add(lastactivation)
     self.model = amodel
     self.dense_1 = Dense(32, activation=config.activation)
