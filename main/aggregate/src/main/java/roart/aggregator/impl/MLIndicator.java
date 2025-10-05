@@ -457,7 +457,7 @@ public class MLIndicator extends Aggregator {
                     boolean mldynamic = conf.wantMLDynamic();
                     log.info("Filename {}", filename);
                     log.info("Doing {} {} {}", mldao.getName(), model.getName());
-                    log.info("Map {} {}", learnMap.size(), learnMap);
+                    log.debug("Map {} {}", learnMap.size(), learnMap);
                     if (neuralnetcommand.isMlcross()) {
                         classifyMap = learnMap;
                     }

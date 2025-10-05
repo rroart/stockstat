@@ -79,7 +79,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public boolean simple = true;
-    public boolean simplelog = true;
+    public boolean simplelog = false;
     
     protected static final int CMNTYPE = 0;
     protected static final int NEGTYPE = 1;
