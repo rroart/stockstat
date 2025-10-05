@@ -27,7 +27,7 @@ public class TestUtils {
         this.io = io;
     }
 
-    IclijServiceResult getSimulateInvestMarket(SimulateInvestConfig simConfig, String market) {
+    public IclijServiceResult getSimulateInvestMarket(SimulateInvestConfig simConfig, String market) {
         Map<String, Object> map = simConfig.asMap();
         IclijConfig myConfig = iconf.copy();
         myConfig.getConfigData().getConfigValueMap().putAll(map);
@@ -130,7 +130,7 @@ public class TestUtils {
         return ServiceUtil.getImproveAutoSimulateInvest(new ComponentInput(myConfig.getConfigData(), null, market, null, null, false, false, new ArrayList<>(), map), myConfig, io);
     }
 
-     SimulateInvestConfig getSimConfigDefault() {
+     public SimulateInvestConfig getSimConfigDefault() {
         SimulateInvestConfig simConfig = new SimulateInvestConfig();
         simConfig.setConfidence(false);
         simConfig.setConfidenceValue(0.7);
