@@ -26,7 +26,7 @@ public class PytorchConfigCommon {
     
     protected String lastactivation;
 
-    public PytorchConfigCommon(int steps, double lr, double inputdropout, double dropout, boolean normalize,
+    public PytorchConfigCommon(int steps, Double lr, double inputdropout, double dropout, boolean normalize,
             boolean batchnormalize, boolean regularize, int batchsize, String loss, String optimizer, String activation,
             String lastactivation) {
         super();
@@ -52,11 +52,11 @@ public class PytorchConfigCommon {
         this.steps = steps;
     }
 
-    public double getLr() {
+    public Double getLr() {
         return lr;
     }
 
-    public void setLr(double lr) {
+    public void setLr(Double lr) {
         this.lr = lr;
     }
 

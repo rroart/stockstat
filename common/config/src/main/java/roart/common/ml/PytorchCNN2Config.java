@@ -19,7 +19,7 @@ public class PytorchCNN2Config extends PytorchPreFeedConfig {
     @JsonCreator
     public PytorchCNN2Config(
             @JsonProperty("steps") int steps, 
-            @JsonProperty("lr") double lr,
+            @JsonProperty("lr") Double lr,
             @JsonProperty("inputdropout") double inputdropout,
             @JsonProperty("dropout") double dropout,
             @JsonProperty("normalize") boolean normalize, 

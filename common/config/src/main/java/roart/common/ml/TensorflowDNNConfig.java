@@ -30,7 +30,7 @@ public class TensorflowDNNConfig extends TensorflowFeedConfig {
     @JsonCreator
     public TensorflowDNNConfig(
             @JsonProperty("steps") int steps, 
-            @JsonProperty("lr") double lr,
+            @JsonProperty("lr") Double lr,
             @JsonProperty("inputdropout") double inputdropout,
             @JsonProperty("dropout") double dropout,
             @JsonProperty("normalize") boolean normalize, 
