@@ -1,5 +1,6 @@
 package roart.common.ml;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
@@ -127,6 +128,8 @@ public abstract class TensorflowConfig extends NeuralNetConfig {
         // JSON
     }
 
+    // to avoid getting double content
+    @JsonIgnore
     public TensorflowConfigCommon getTensorflowConfigCommon() {
         return tensorflowConfigCommon;
     }

@@ -16,7 +16,7 @@ class Model(MyModel):
     super(Model, self).__init__(config, classify, name='my_model')
     regularizer = layerutils.getRegularizer(config)
     self.model = tf.keras.models.Sequential()
-    self.model.add(tf.keras.Input(shape = (shape,)))
+    self.model.add(tf.keras.Input(shape = (shape[1:])))
     if classify and config.normalize:
         self.model.add(layerutils.getNormalLayer(shape))
     # Define the model consisting of a single neuron.

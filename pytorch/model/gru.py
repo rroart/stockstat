@@ -18,7 +18,7 @@ class Net(nn.Module):
 
         #Defining the layers
         # RNN Layer
-        self.rnn = nn.GRU(shape[1], self.config.hidden, self.config.layers, dropout=config.dropout, batch_first=True)
+        self.rnn = nn.GRU(shape[2], self.config.hidden, self.config.layers, dropout=config.dropout, batch_first=True)
         # Fully connected layer
         if classify:
             self.fc = nn.Linear(self.config.hidden, self.myobj.classes)
@@ -60,7 +60,8 @@ class Net(nn.Module):
         if self.config.batchnormalize:
             out = self.bn(out)
         out = self.act(out)
-        out = self.dropout(out)
+        if self.config.dropout > 0:
+            out = self.dropout(out)
 
         return out
     #, hidden

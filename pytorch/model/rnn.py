@@ -23,7 +23,7 @@ class Net(nn.Module):
         #print("sz",type(self.myobj.size[1]))
         #print("sz",self.myobj.size)
         print("shape", shape)
-        self.rnn = nn.RNN(shape[1], self.config.hidden, self.config.layers, dropout=config.dropout, batch_first=True)
+        self.rnn = nn.RNN(shape[2], self.config.hidden, self.config.layers, dropout=config.dropout, batch_first=True)
         # Fully connected layer
         if classify:
             self.fc = nn.Linear(self.config.hidden, self.myobj.classes)

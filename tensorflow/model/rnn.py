@@ -25,18 +25,21 @@ class Model(MyModel):
     amodel.add(tf.keras.Input(shape = shape[1:]))
     if classify and config.normalize:
         amodel.add(layerutils.getNormalLayer(shape))
-    amodel.add(Dropout(config.inputdropout))
+    if config.inputdropout > 0:
+        amodel.add(Dropout(config.inputdropout))
     amodel.add(SimpleRNN(config.hidden, return_sequences = True, kernel_regularizer=regularizer))
     if config.batchnormalize:
         amodel.add(tf.keras.layers.BatchNormalization())
-    amodel.add(Dropout(config.dropout))
+    if config.dropout > 0:
+        amodel.add(Dropout(config.dropout))
     for i in range(1, config.layers):
       print("Adding hidden layer", i)
       amodel.add(SimpleRNN(config.hidden, return_sequences = i != config.layers - 1, kernel_regularizer=regularizer))
       if config.batchnormalize:
           amodel.add(tf.keras.layers.BatchNormalization())
       amodel.add(activation)
-      amodel.add(Dropout(config.dropout))
+      if config.dropout > 0:
+          amodel.add(Dropout(config.dropout))
     amodel.add(Flatten())
     if classify:
       amodel.add(Dense(myobj.classes, activation = lastactivation, kernel_regularizer=regularizer))

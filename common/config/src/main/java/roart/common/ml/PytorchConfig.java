@@ -1,5 +1,6 @@
 package roart.common.ml;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
@@ -30,6 +31,8 @@ public abstract class PytorchConfig extends NeuralNetConfig {
         // JSON
     }
 
+    // to avoid getting double content
+    @JsonIgnore
     public PytorchConfigCommon getPytorchConfigCommon() {
         return pytorchConfigCommon;
     }

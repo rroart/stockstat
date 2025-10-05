@@ -16,7 +16,7 @@ class Net(nn.Module):
     activation = layerutils.getActivation(config)
     lastactivation = layerutils.getLastactivation(config)
 
-    self.rnn = nn.LSTM(shape[1], self.config.hidden, self.config.layers, dropout=config.dropout, batch_first=True)
+    self.rnn = nn.LSTM(shape[2], self.config.hidden, self.config.layers, dropout=config.dropout, batch_first=True)
     # Fully connected layer
     if classify:
       self.fc = nn.Linear(self.config.hidden, self.myobj.classes)
@@ -46,7 +46,8 @@ class Net(nn.Module):
     if self.config.batchnormalize:
         x = self.bn(x)
     x = self.act(x)
-    x = self.dropout(x)
+    if self.config.dropout > 0:
+        x = self.dropout(x)
     return x
   
   def observe(self, x, y):
