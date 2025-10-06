@@ -74,6 +74,7 @@ public class IclijController implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws InterruptedException, JsonParseException, JsonMappingException, IOException {	    
+        if (System.getenv("test") != null) return;
         log.info("Using profile {}", activeProfile);
         log.info("Using profile {}", iclijConfig);
         IclijConfig instance = iclijConfig;

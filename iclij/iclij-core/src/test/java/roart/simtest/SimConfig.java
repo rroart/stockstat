@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.jdbc.JdbcRepositoriesAutoConfiguration;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,19 +46,52 @@ import roart.db.dao.DbDao;
 import roart.db.spring.DbSpringDS;
 import roart.iclij.config.IclijConfig;
 import org.springframework.data.relational.core.mapping.RelationalMappingContext;
+import org.springframework.data.relational.core.mapping.RelationalMappingContext;
+import org.springframework.data.jdbc.core.mapping.JdbcMappingContext;
+import org.springframework.data.relational.core.dialect.AbstractDialect;
+import org.springframework.data.relational.core.dialect.PostgresDialect;
+import org.springframework.data.jdbc.core.dialect.JdbcPostgresDialect;
+//import org.springframework.data.relational.core.conversion.AbstractRelationalConverter;
+//import org.springframework.data.relational.core.conversion.MappingRelationalConverter;
+//import org.springframework.data.jdbc.core.convert.MappingJdbcConverter;
+import org.springframework.data.jdbc.core.convert.RelationResolver;
+import org.springframework.data.jdbc.core.convert.BasicJdbcConverter;
+import org.springframework.data.jdbc.core.convert.DefaultDataAccessStrategy;
+import org.springframework.data.jdbc.core.convert.DelegatingDataAccessStrategy;
 
 @Configuration
 public class SimConfig {
 
-    //@Bean
-    public RelationalMappingContext getRelationalMappingContext() {
-        return new RelationalMappingContext();
+    @Bean
+    public JdbcRepositoriesAutoConfiguration getJdbcRepositoriesAutoConfiguration() {
+        //return new SpringBootJdbcConfiguration();
+        return new JdbcRepositoriesAutoConfiguration();
     }
-    /*
+    
+    @Bean
+    public RelationalMappingContext getRelationalMappingContext() {
+        return new JdbcMappingContext();
+    }
+    
+    @Bean
+    public AbstractDialect getJdbcPostgresDialect() {
+        return new JdbcPostgresDialect();
+    }
+    
+    @Bean
+    public BasicJdbcConverter getBasicJdbcConverter(RelationalMappingContext context, RelationResolver relationResolver) {
+        return new BasicJdbcConverter(context, relationResolver);
+    }
+    
+    @Bean
+    public RelationResolver getRelationResolver() {
+        return new DelegatingDataAccessStrategy();
+    }
+
     @Autowired
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate; () {
-        return new NamedParameterJdbcTemplate(dataSource());
-    }*/
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate (DataSource dataSource) {
+        return new NamedParameterJdbcTemplate(dataSource);
+    }
     /*
     @Bean
     public NamedParameterJdbcTemplate jdbcTemplate(DataSource dataSource) {
@@ -72,7 +106,7 @@ public class SimConfig {
     @Bean
     public DataSource getDataSource() {
         return DataSourceBuilder.create()
-          //.driverClassName("org.postgresql.Driver")
+          .driverClassName("org.postgresql.Driver")
           .url(System.getenv("DATASOURCE"))
           //.username("stockstat")
           //.password("password")

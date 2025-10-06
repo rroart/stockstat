@@ -16,6 +16,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.jdbc.JdbcRepositoriesAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -68,6 +70,7 @@ import roart.common.springdata.repository.TimingRepository;
 import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
 import roart.simtest.ConfigDb;
+import roart.controller.IclijController;
 import roart.controller.TestCommunicationFactory;
 import roart.controller.TestCuratorFramework;
 import roart.controller.TestDataSource;
@@ -93,15 +96,16 @@ import roart.testdata.TestConstants;
 import roart.testdata.TestData;
 
 @TestInstance(Lifecycle.PER_CLASS)
-@ComponentScan(basePackages = "roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
-@EnableJdbcRepositories("roart.common.springdata.repository")
+//@ComponentScan(basePackages = "roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
+//@EnableJdbcRepositories("roart.common.springdata.repository")
 @SpringJUnitConfig //(SimConfig.class)
+//@EnableAutoConfiguration 
 //@TestPropertySource("file:${user.dir}/../../../../config/test/application.properties") 
 //@ComponentScan(basePackages = "roart.testdata")
 //@SpringBootTest(classes = TestConfiguration.class)
 //@ExtendWith(SpringExtension.class)
 //@SpringBootTest(classes = SimIT.SimConfiguration.class)//{ IclijConfig.class, /*IclijDbDao.class,*/ DbDao.class, CoreDataSource.class, DbSpringDS.class, DbSpring.class, ConfigI.class, ConfigDb.class, SimConfig.class, SpringAboveBelowRepository.class, NamedParameterJdbcTemplate.class } )
-@SpringBootTest(classes = { IclijConfig.class, IclijDbDao.class, ConfigI.class, DbSpring.class, ConfigDb.class } )
+@SpringBootTest(classes = IclijController.class ) //(classes = { IclijConfig.class, IclijDbDao.class, ConfigI.class, DbSpring.class, ConfigDb.class, SimConfig.class } )
 public class SimIT {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 /*
@@ -123,6 +127,9 @@ public class SimIT {
     @Autowired
     private IclijConfig iconf = null;
 
+    @Autowired
+    private JdbcRepositoriesAutoConfiguration jc;
+    
     //@Autowired
     private IO io;
 
