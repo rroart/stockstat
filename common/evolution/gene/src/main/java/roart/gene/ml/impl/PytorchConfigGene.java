@@ -143,8 +143,9 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
     }
     
     protected String generateLoss() {
-        String[] losses = { "mse", "nllloss", "crossentropyloss", "l1loss", "smoothl1loss", "poissonloss" };
-        if (predictor) {
+        //String[] losses = { "mse", "nllloss", "crossentropyloss", "l1loss", "smoothl1loss", "poissonloss" };
+        String[] losses = { "l1", "mse", "cross_entropy", "ctc", "nl", "poissonnl", "gaussiannl", "kl", "bce", "bcewithlogits", "marginrank", "hingeembedding", "multilabelmargin", "multilabelsoftmargin", "cosineembedding", "multimargin", "tripletmargin",  "tripletmarginwithdistance" };
+                if (predictor) {
             losses = new String[] { "mse", "l1loss", "smoothl1loss", "poissonloss" };
         }
         return losses[random.nextInt(losses.length)];
