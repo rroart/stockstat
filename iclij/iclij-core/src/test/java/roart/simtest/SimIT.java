@@ -5,6 +5,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
+import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.curator.framework.CuratorFramework;
@@ -90,10 +94,19 @@ import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.config.bean.ConfigI;
 import roart.iclij.model.Parameters;
+import roart.iclij.model.WebDataJson;
 import roart.iclij.service.IclijServiceResult;
 import roart.model.io.IO;
 import roart.testdata.TestConstants;
 import roart.testdata.TestData;
+import java.util.Map;
+import java.util.UUID;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
+import org.apache.commons.math3.stat.correlation.KendallsCorrelation;
 
 @TestInstance(Lifecycle.PER_CLASS)
 //@ComponentScan(basePackages = "roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
@@ -226,6 +239,71 @@ public class SimIT {
         System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
         inmemory.stat();
         assertEquals(true, inmemory.isEmpty());
+        WebDataJson webdata = result.getWebdatajson();
+        Map<String, Object> updatemap = result.getWebdatajson().getUpdateMap();
+        if (updatemap.containsKey("empty")) {
+            return;
+        }
+        List<Double> capital = new ArrayList<>();
+        for (Object node : (List<?>) updatemap.get("plotcapital")) {
+            capital.add(((Double)node));
+        }
+        if (capital.isEmpty()) {
+            return;
+        }
+        double[] capitalArr = capital.stream().mapToDouble(Double::doubleValue).toArray();
+        double[] geom = geometricSpace(capitalArr[0], capitalArr[capitalArr.length - 1], capitalArr.length);
+        double pearson = 0, spearman = 0, kendalltau = 0;
+        if (capitalArr.length >= 2) {
+            pearson = new PearsonsCorrelation().correlation(capitalArr, geom);
+            spearman = new SpearmansCorrelation().correlation(capitalArr, geom);
+            kendalltau = new KendallsCorrelation().correlation(capitalArr, geom);
+        }
+        FileOutputStream out = new FileOutputStream("file.txt");
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("Capital: %.2f\n", capitalArr[capitalArr.length - 1]) + "\n");
+        sb.append("Last stocks: " + updatemap.get("laststocks") + "\n");
+        sb.append(String.format("Pearson: %.2f, Spearman: %.2f, KendallTau: %.2f\n", pearson, spearman, kendalltau) + "\n");
+        // Plotting can be done using JFreeChart or similar if needed
+        // Print other info as needed
+        for (Object x : (List<?>) updatemap.get("stockhistory")) {
+            sb.append(x + "\n");
+        }
+        for (Object x : (List<?>) updatemap.get("sumhistory")) {
+            sb.append(x + "\n");
+        }
+        List<?> tradestocks = (List<?>) updatemap.get("tradestocks");
+        for (int i = 0; i < Math.min(10, tradestocks.size()); i++) {
+            sb.append(tradestocks.get(i) + "\n");
+        }
+        // sb.append(webdata.keySet());
+        //sb.append(webdata.get("timingMap"));
+        sb.append(updatemap.get("startdate") + "\n");
+        sb.append(updatemap.get("enddate") + "\n");
+        boolean intervalwhole = true;
+        if (intervalwhole) {
+            sb.append(updatemap.get("scores") + "\n");
+            sb.append(updatemap.get("stats") + "\n");
+            sb.append(updatemap.get("minmax") + "\n");
+        }
+        sb.append(updatemap.get("lastbuysell") + "\n");
+        String str = sb.toString();
+        log.info("File {}", str);
+        Files.write(Path.of("/tmp/" + UUID.randomUUID() + ".txt"), str.getBytes());
+    }
+    
+    void m(Map<String, Object> updatemap) {
+
+    }
+
+    private static double[] geometricSpace(double start, double end, int num) {
+        double[] arr = new double[num];
+        double ratio = Math.pow(end / start, 1.0 / (num - 1));
+        arr[0] = start;
+        for (int i = 1; i < num; i++) {
+            arr[i] = arr[i - 1] * ratio;
+        }
+        return arr;
     }
 
 }

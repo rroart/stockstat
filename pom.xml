@@ -47,6 +47,7 @@
 		    --add-reads iclij.core=pipeline.model
 		    --add-reads iclij.core=stockutil
 		    --add-reads iclij.core=common.filesystem.client
+		    --add-reads iclij.core=java.sql
 		  </argLine>
 		</configuration>
          </plugin>
