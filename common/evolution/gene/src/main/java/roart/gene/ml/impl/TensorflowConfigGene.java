@@ -135,7 +135,8 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
     }
     
     protected String generateLoss() {
-        String[] losses = { "binary_crossentropy", "categorical_crossentropy", "sparse_categorical_crossentropy", "poisson", "ctc", "kl_divergence" };
+        // binary: "binary_crossentropy", "poisson", , "kl_divergence"
+        String[] losses = { "categorical_crossentropy", "sparse_categorical_crossentropy", "ctc" };
         //"l1", "mse", "cross_entropy", "ctc", "nl", "poissonnl", "gaussiannl", "kl", "bce", "bcewithlogits", "marginrank", "hingeembedding", "multilabelmargin", "multilabelsoftmargin", "cosineembedding", "multimargin", "tripletmargin", "tripletmarginwithdistance" };
         //String[] losses = { "l1", "mse", "cross_entropy", "ctc", "nl", "poissonnl", "gaussiannl", "kl", "bce", "bcewithlogits", "marginrank", "hingeembedding", "multilabelmargin", "multilabelsoftmargin", "cosineembedding", "multimargin", "tripletmargin",  "tripletmarginwithdistance" };
         if (predictor) {
