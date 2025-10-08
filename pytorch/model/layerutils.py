@@ -67,6 +67,8 @@ def getLoss(config):
         return torch.nn.TripletMarginLoss()
     elif config.loss == "tripletmarginwithdistance":
         return torch.nn.TripletMarginWithDistanceLoss()
+    elif config.loss == "huber":
+        return torch.nn.HuberLoss()
     print("return default loss")
     return torch.nn.BCELoss()
 
@@ -153,13 +155,13 @@ def getAnActivation(activation):
     if activation == "elu":
         return torch.nn.ELU()
     elif activation == "hard_shrink":
-        return torch.nn.HardShrink()
+        return torch.nn.Hardshrink()
     elif activation == "hard_sigmoid":
-        return torch.nn.HardSigmoid()
+        return torch.nn.Hardsigmoid()
     elif activation == "hard_tanh":
-        return torch.nn.HardTanh()
+        return torch.nn.Hardtanh()
     elif activation == "hard_swish":
-        return torch.nn.HardSwish()
+        return torch.nn.Hardswish()
     elif activation == "leakyrelu":
         return torch.nn.LeakyReLU()
     elif activation == "log_sigmoid":
@@ -195,7 +197,7 @@ def getAnActivation(activation):
     elif activation == "tanh":
         return torch.nn.Tanh()
     elif activation == "tanh_shrink":
-        return torch.nn.TanhShrink()
+        return torch.nn.Tanhshrink()
     elif activation == "threshold":
         return torch.nn.Threshold()
     elif activation == "glu":

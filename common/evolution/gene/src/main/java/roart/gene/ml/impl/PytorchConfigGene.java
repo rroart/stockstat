@@ -143,11 +143,12 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
     }
     
     protected String generateLoss() {
-        // binary: "bcewithlogits", 
+        // binary: "bce", "bcewithlogits", "kl", "poissonnl", 
+        // unknown "marginrank", , "multimargin", "tripletmargin",  "tripletmarginwithdistance" "multilabelmargin", "multilabelsoftmargin", 
         //String[] losses = { "mse", "nllloss", "crossentropyloss", "l1loss", "smoothl1loss", "poissonloss" };
-        String[] losses = { "l1", "mse", "cross_entropy", "ctc", "nl", "poissonnl", "gaussiannl", "kl", "bce", "marginrank", "hingeembedding", "multilabelmargin", "multilabelsoftmargin", "cosineembedding", "multimargin", "tripletmargin",  "tripletmarginwithdistance" };
+        String[] losses = { "cross_entropy", "ctc", "nl", "hingeembedding", "gaussiannl", "cosineembedding" };
         if (predictor) {
-            losses = new String[] { "mse", "l1loss", "smoothl1loss", "poissonloss" };
+            losses = new String[] { "l1", "mse", "l1loss", "smoothl1loss", "poissonloss", "huber" };
         }
         return losses[random.nextInt(losses.length)];
     }
@@ -155,7 +156,8 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
     protected String generateOptimizer() {
         // TODO add more optimizers
         //String[] optimizers = { "adadelta", "adagrad", "adam", "adamw", "adamax", "ftrl", "nadam", "rmsprop", "sgd", "lion", "lamb", "muon", "loss_scale_optimizer", "adafactor", "sparseadam", "asgd", "lbfgs", "radam", "rprop", "lrscheduler", "lambdalr", "multiplicativelr", "steplr", "exponentiallr", "cosineannealinglr", "cycliclr", "onecyclelr", "reducelronplateau" };
-        String[] optimizers = { "adadelta", "adafactor", "adagrad", "adam", "adamw", "sparseadam", "adamax", "asgd", "lbfgs", "nadam", "radam", "rmsprop", "rprop", "sgd", "lr_scheduler", "lambda_lr", "multiplicatative_lr", "step_lr", "multistep_lr", "constant_lr", "linear_lr", "exponential_lr", "polynomial_lr", "cosine_annealing_lr", "chained_scheduler", "sequential_lr", "reduce_lr_on_plateau", "cyclic_lr", "one_cycle_lr", "cosine_annealing_warm_restarts", "averaged_model", "swa_lr" };
+        String[] optimizers = { "adadelta", "adafactor", "adagrad", "adam", "adamw", "sparseadam", "adamax", "asgd", "lbfgs", "nadam", "radam", "rmsprop", "rprop", "sgd" };
+        // schedulers?, "lr_scheduler", "lambda_lr", "multiplicatative_lr", "step_lr", "multistep_lr", "constant_lr", "linear_lr", "exponential_lr", "polynomial_lr", "cosine_annealing_lr", "chained_scheduler", "sequential_lr", "reduce_lr_on_plateau", "cyclic_lr", "one_cycle_lr", "cosine_annealing_warm_restarts", "averaged_model", "swa_lr" };
         return optimizers[random.nextInt(optimizers.length)];
     }
 
