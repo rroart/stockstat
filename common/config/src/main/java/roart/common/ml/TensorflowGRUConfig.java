@@ -41,7 +41,7 @@ public class TensorflowGRUConfig extends TensorflowRecurrentConfig {
     }
 
     public TensorflowGRUConfig(TensorflowConfigCommon tensorflowConfigCommon, int layers, int hidden, int slide) {
-        
+        super(MLConstants.GRU, tensorflowConfigCommon, layers, hidden, slide);
     }
 
 }
