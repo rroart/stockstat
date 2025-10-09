@@ -136,7 +136,7 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
     
     // done
     protected String generateLoss() {
-        // binary: "binary_crossentropy", "poisson", , "kl_divergence"
+        // binary: "binary_crossentropy", "poisson", , "kl_divergence", "hinge"?
         String[] losses = { "categorical_crossentropy", "sparse_categorical_crossentropy", "ctc" };
         //"l1", "mse", "cross_entropy", "ctc", "nl", "poissonnl", "gaussiannl", "kl", "bce", "bcewithlogits", "marginrank", "hingeembedding", "multilabelmargin", "multilabelsoftmargin", "cosineembedding", "multimargin", "tripletmargin", "tripletmarginwithdistance" };
         //String[] losses = { "l1", "mse", "cross_entropy", "ctc", "nl", "poissonnl", "gaussiannl", "kl", "bce", "bcewithlogits", "marginrank", "hingeembedding", "multilabelmargin", "multilabelsoftmargin", "cosineembedding", "multimargin", "tripletmargin",  "tripletmarginwithdistance" };
@@ -152,7 +152,8 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
     }
     
     protected String generateActivation() {
-        String[] activations = { "celu", "elu", "exponential", "gelu", "glu", "hard_shrink", "hard_sigmoid", "hard_silu", "hard_tanh", "leaky_relu", "linear", "log_sigmoid", "log_softmax", "mish", "relu", "relu6", "selu", "sigmoid", "silu", "softmax", "soft_shrink", "softplus", "softsign", "sparse_plus", "sparsemax", "squareplus", "tanh", "tanh_shrink", "threshold" };
+        // not yet celu glu hard_tanh log_sigmoid sparse_plus
+        String[] activations = { /*"celu", */ "elu", "exponential", "gelu", /* "glu", */ "hard_shrink", "hard_sigmoid", "hard_silu", /* "hard_tanh", */ "leaky_relu", "linear", /* "log_sigmoid", */ "log_softmax", "mish", "relu", "relu6", "selu", "sigmoid", "silu", "softmax", "soft_shrink", "softplus", "softsign", /* "sparse_plus", */ "sparsemax", "squareplus", "tanh", "tanh_shrink", "threshold" };
         return activations[random.nextInt(activations.length)];
     }
     
