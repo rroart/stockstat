@@ -18,6 +18,7 @@ def observe(model, epochs, optimizer, loss_fn, train_loader, valid_loader, batch
         valid_losses = []
         for i, (input, labels) in enumerate(train_loader):
 
+            #model.zero_grad()
             optimizer.zero_grad()
             #print(i)
 
@@ -40,6 +41,7 @@ def observe(model, epochs, optimizer, loss_fn, train_loader, valid_loader, batch
         total = 0
         with torch.no_grad():
             for i, (input, labels) in enumerate(valid_loader):
+                #print(i)
                 outputs = model(input)
                 loss = loss_fn(outputs, labels)
 
@@ -67,8 +69,8 @@ def observe(model, epochs, optimizer, loss_fn, train_loader, valid_loader, batch
         #      .format(epoch + 1, train_loss2, valid_loss2, accuracy))
         #print('epoch : {}, train loss : {:.4f}, valid loss : {:.4f}, valid acc : {:.2f}%' \
         #      .format(epoch + 1, train_loss, valid_loss, accuracy))
-        print('epoch : {}, train loss : {:.4f}, valid loss : {:.4f}, valid acc : {:.2f}%' \
-              .format(epoch + 1, np.mean(train_losses), np.mean(valid_losses), accuracy))
+        #print('epoch : {}, train loss : {:.4f}, valid loss : {:.4f}, valid acc : {:.2f}%' \
+        #      .format(epoch + 1, np.mean(train_losses), np.mean(valid_losses), accuracy))
 
         torch.cuda.empty_cache()
 
