@@ -153,13 +153,13 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
     
     protected String generateActivation() {
         // not yet celu glu hard_tanh log_sigmoid sparse_plus
-        String[] activations = { /*"celu", */ "elu", "exponential", "gelu", /* "glu", */ "hard_shrink", "hard_sigmoid", "hard_silu", /* "hard_tanh", */ "leaky_relu", "linear", /* "log_sigmoid", */ "log_softmax", "mish", "relu", "relu6", "selu", "sigmoid", "silu", "softmax", "soft_shrink", "softplus", "softsign", /* "sparse_plus", */ "sparsemax", "squareplus", "tanh", "tanh_shrink", "threshold" };
+        String[] activations = { /*"celu", */ "elu", "exponential", "gelu", /* "glu", */ "hard_shrink", "hard_sigmoid", "hard_silu", /* "hard_tanh", */ "leaky_relu", "linear", /* "log_sigmoid", */ "log_softmax", "mish", "relu", "relu6", "selu", "sigmoid", "silu", "softmax", /* "soft_shrink", */ "softplus", "softsign", /* "sparse_plus", */ "sparsemax", /*squareplus", */ "tanh" /*, "tanh_shrink", "threshold"*/ };
         return activations[random.nextInt(activations.length)];
     }
     
     protected String generateLastactivation() {
         // not yet celu glu hard_tanh log_sigmoid sparse_plus
-        String[] activations = { /*"celu", */ "elu", "exponential", "gelu", /* "glu", */ "hard_shrink", "hard_sigmoid", "hard_silu", /* "hard_tanh", */ "leaky_relu", "linear", /* "log_sigmoid", */ "log_softmax", "mish", "relu", "relu6", "selu", "sigmoid", "silu", "softmax", "soft_shrink", "softplus", "softsign", /* "sparse_plus", */ "sparsemax", "squareplus", "tanh", "tanh_shrink", "threshold" };
+        String[] activations = { /*"celu", */ "elu", "exponential", "gelu", /* "glu", */ "hard_shrink", "hard_sigmoid", "hard_silu", /* "hard_tanh", */ "leaky_relu", "linear", /* "log_sigmoid", */ "log_softmax", "mish", "relu", "relu6", "selu", "sigmoid", "silu", "softmax", /* "soft_shrink", */ "softplus", "softsign", /* "sparse_plus", */ "sparsemax", /*squareplus", */ "tanh" /*, "tanh_shrink", "threshold"*/ };
         //String[] activations = { "celu", "elu", "exponential", "gelu", "glu", "hard_shrink", "hard_sigmoid", "hard_silu", "hard_tanh", "leaky_relu", "linear", "log_sigmoid", "log_softmax", "mish", "relu", "relu6", "selu", "sigmoid", "silu", "softmax", "soft_shrink", "softplus", "softsign", "sparse_plus", "sparsemax", "squareplus", "tanh", "tanh_shrink", "threshold" };
         if (predictor) {
             activations = new String[] { "linear" };
