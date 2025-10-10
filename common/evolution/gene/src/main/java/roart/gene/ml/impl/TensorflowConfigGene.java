@@ -137,7 +137,7 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
     // done
     protected String generateLoss() {
         // binary: "binary_crossentropy", "poisson", , "kl_divergence", "hinge"?
-        String[] losses = { "categorical_crossentropy", "sparse_categorical_crossentropy", "ctc" };
+        String[] losses = { "categorical_crossentropy", "sparse_categorical_crossentropy" /*, "ctc"*/ };
         //"l1", "mse", "cross_entropy", "ctc", "nl", "poissonnl", "gaussiannl", "kl", "bce", "bcewithlogits", "marginrank", "hingeembedding", "multilabelmargin", "multilabelsoftmargin", "cosineembedding", "multimargin", "tripletmargin", "tripletmarginwithdistance" };
         //String[] losses = { "l1", "mse", "cross_entropy", "ctc", "nl", "poissonnl", "gaussiannl", "kl", "bce", "bcewithlogits", "marginrank", "hingeembedding", "multilabelmargin", "multilabelsoftmargin", "cosineembedding", "multimargin", "tripletmargin",  "tripletmarginwithdistance" };
         if (predictor) {
@@ -147,7 +147,7 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
     }
     
     protected String generateOptimizer() {
-        String[] optimizers = { "adadelta", "adagrad", "adam", "adamw", "adamax", "ftrl", "nadam", "rmsprop", "sgd", "lion", "lamb", "muon", "loss_scale_optimizer", "adafactor" };
+        String[] optimizers = { "adadelta", "adagrad", "adam", "adamw", "adamax", "ftrl", "nadam", "rmsprop", "sgd", "lion", "lamb", /*"muon", "loss_scale_optimizer", */ "adafactor" };
         return optimizers[random.nextInt(optimizers.length)];
     }
     
