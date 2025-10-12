@@ -5,10 +5,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import java.util.List;
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,10 +26,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.action.ActionThread;
-import roart.action.LeaderRunner;
 import roart.aggregator.impl.MLMulti;
-import roart.aggregator.impl.MLIndicator;
-import roart.aggregator.util.AggregatorUtils;
 import roart.category.AbstractCategory;
 import roart.category.util.CategoryUtil;
 import roart.common.cache.MyCache;
@@ -42,65 +38,54 @@ import roart.common.constants.Constants;
 import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.model.ActionComponentDTO;
+import roart.common.model.MyDataSource;
+import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.util.JsonUtil;
-import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
 import roart.constants.IclijConstants;
-import roart.constants.SimConstants;
-import roart.db.dao.CoreDataSource;
 import roart.db.dao.DbDao;
 import roart.db.dao.IclijDbDao;
+import roart.db.spring.DbSpringDS;
 import roart.etl.db.Extract;
 import roart.filesystem.FileSystemDao;
-import roart.iclij.component.SimulateInvestComponent;
-import roart.iclij.config.AutoSimulateInvestConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
-import roart.iclij.config.SimulateInvestConfig;
-import roart.iclij.config.bean.ConfigI;
 import roart.iclij.model.Parameters;
-import roart.iclij.service.ControlService;
-import roart.iclij.service.IclijServiceParam;
-import roart.iclij.service.IclijServiceResult;
 import roart.indicator.util.IndicatorUtils;
 import roart.model.data.StockData;
-import roart.category.AbstractCategory;
 import roart.model.io.IO;
 import roart.pipeline.Pipeline;
-import roart.pipeline.common.aggregate.Aggregator;
 import roart.pipeline.impl.ExtraReader;
-import roart.queue.PipelineThread;
 import roart.testdata.TestConstants;
-import roart.common.model.IncDecDTO;
-import roart.common.model.MyDataSource;
-import roart.common.model.SimDataDTO;
-import roart.common.model.StockDTO;
-import roart.testdata.TestData;
 
 @TestInstance(Lifecycle.PER_CLASS)
-@ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
+//@ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
 @SpringJUnitConfig
 //@TestPropertySource("file:${user.dir}/../../../../config/test/application.properties") 
 //@ComponentScan(basePackages = "roart.testdata")
 //@SpringBootTest(classes = TestConfiguration.class)
-@SpringBootTest(classes = { IclijConfig.class, IclijDbDao.class, ConfigI.class, ConfigDb.class } )
+@SpringBootTest(classes = IclijController.class ) //(classes = { IclijConfig.class, IclijDbDao.class, ConfigI.class, ConfigDb.class } )
 public class EvolveIT {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     IclijConfig iconf = null;
     
-    IclijDbDao iclijDbDao = mock(IclijDbDao.class);
+    IclijDbDao iclijDbDao;
     
     // no autowiring
     IclijConfig conf = null;
    
-    MyDataSource dataSource;
-    
     private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
 
+    @Autowired
+    private MyDataSource dataSource;
+
+    @Autowired
+    private DbSpringDS dbSpringDS;
+    
     DbDao dbDao;
     
     WebFluxUtil webFluxUtil;
@@ -117,13 +102,7 @@ public class EvolveIT {
 
     private CommunicationFactory communicationFactory = new TestCommunicationFactory();
 
-    private TestUtils testutils;
-
-    private TestUtils2 testutils2;
-    
     private TestInmemory inmemory;
-    
-    TestDataSource[][] periodDataSources;
     
     @BeforeAll
     public void before() throws Exception {
@@ -137,20 +116,8 @@ public class EvolveIT {
         MyCache.setCache(iconf.wantCache());
         MyCache.setCacheTTL(iconf.getCacheTTL());
 
-        String market = TestConstants.MARKET;
-        String start = "2022.01.01";
-        String end = "2025.01.01";
-        TestDataSource dataSource1 = new TestDataSource(conf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), market, 26, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null);
-        TestDataSource dataSource2 = new TestDataSource(conf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), TestConstants.MARKET2, 20, false, Constants.PRICECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, "impid");
-        dataSource = new TestDataSources(List.of(dataSource1, dataSource2));
-        periodDataSources = new TestDataSource[4][4];
-        for (int i = 1; i < periodDataSources.length; i++) { // stockcount
-            for (int j = 1; j < periodDataSources[i].length; j++) { // days
-                periodDataSources[i][j] = new TestDataSource(conf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), TestConstants.SLOWMARKET, 20, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null, 0, i, j);
-            }
-        }
-        
-        dbDao = new DbDao(iconf, dataSource);
+        dbDao = new DbDao(conf, dataSource);
+        iclijDbDao = new IclijDbDao(iconf, dbSpringDS);
         
         webFluxUtil = new TestWebFluxUtil(conf, null);
         parameters = new Parameters();
@@ -160,12 +127,6 @@ public class EvolveIT {
         fileSystemDao = mock(FileSystemDao.class);
         doReturn("dummy.txt").when(fileSystemDao).writeFile(any(), any(), any(), any());
 
-        List<IncDecDTO> incdecs = new TestData(iconf).incdec(dataSource.getAll(market, iconf, true));
-        doReturn(incdecs).when(iclijDbDao).getAllIncDecs(any(), any(), any(), any());
-        
-        List<SimDataDTO> sims = new TestData(iconf).getSimData(market, TimeUtil.convertDate2(start), TimeUtil.convertDate2(end), iconf, 100);
-        doReturn(sims).when(iclijDbDao).getAllSimData(any(), any(), any());
-        
         CuratorFramework curatorClient = new TestCuratorFramework();
         
         io = new IO(iclijDbDao, dbDao, webFluxUtil, fileSystemDao, inmemoryFactory, communicationFactory, curatorClient);
@@ -174,12 +135,6 @@ public class EvolveIT {
         ((TestCommunicationFactory)communicationFactory).setConfig(iconf);
         
         ac = new ActionThread(iconf, io);
-        
-        testutils = new TestUtils(iconf, io);
-        testutils2 = new TestUtils2(iconf, io);
-        
-        //String content = "";
-        //new Sim(iconf, dbDao, fileSystemDao).method((String) content, "sim", true);
         
         inmemory = (TestInmemory) io.getInmemoryFactory().get(iconf.getInmemoryServer(), iconf.getInmemoryHazelcast(), iconf.getInmemoryRedis());
 
@@ -245,7 +200,9 @@ public class EvolveIT {
 
     @Test
     public void testEvolve() throws Exception {
-        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.EVOLVE, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        String market = System.getenv("MARKET");
+        log.info("Market {}", market);
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.EVOLVE, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
