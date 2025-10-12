@@ -10,24 +10,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
+import org.apache.commons.math3.stat.correlation.KendallsCorrelation;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
 import org.apache.curator.framework.CuratorFramework;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.jdbc.JdbcRepositoriesAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,72 +38,26 @@ import roart.common.config.ConfigConstants;
 import roart.common.config.ConfigMaps;
 import roart.common.constants.Constants;
 import roart.common.inmemory.factory.InmemoryFactory;
-import roart.common.model.IncDecDTO;
 import roart.common.model.MyDataSource;
-import roart.common.model.SimDataDTO;
-import roart.common.springdata.repository.AboveBelowRepository;
-import roart.common.springdata.repository.ActionComponentRepository;
-import roart.common.springdata.repository.ConfigRepository;
-import roart.common.springdata.repository.ContRepository;
-import roart.common.springdata.repository.IncDecRepository;
-import roart.common.springdata.repository.MLMetricsRepository;
-import roart.common.springdata.repository.MemoryRepository;
-import roart.common.springdata.repository.MetaRepository;
-import roart.common.springdata.repository.RelationRepository;
-import roart.common.springdata.repository.SimDataRepository;
-import roart.common.springdata.repository.SpringAboveBelowRepository;
-import roart.common.springdata.repository.SpringActionComponentRepository;
-import roart.common.springdata.repository.SpringConfigRepository;
-import roart.common.springdata.repository.SpringContRepository;
-import roart.common.springdata.repository.SpringIncDecRepository;
-import roart.common.springdata.repository.SpringMLMetricsRepository;
-import roart.common.springdata.repository.SpringMemoryRepository;
-import roart.common.springdata.repository.SpringMetaRepository;
-import roart.common.springdata.repository.SpringRelationRepository;
-import roart.common.springdata.repository.SpringSimDataRepository;
-import roart.common.springdata.repository.SpringSimRunDataRepository;
-import roart.common.springdata.repository.SpringStockRepository;
-import roart.common.springdata.repository.SpringTimingBLRepository;
-import roart.common.springdata.repository.SpringTimingRepository;
-import roart.common.springdata.repository.StockRepository;
-import roart.common.springdata.repository.TimingBLRepository;
-import roart.common.springdata.repository.TimingRepository;
-import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
-import roart.simtest.ConfigDb;
 import roart.controller.IclijController;
 import roart.controller.TestCommunicationFactory;
 import roart.controller.TestCuratorFramework;
-import roart.controller.TestDataSource;
 import roart.controller.TestInmemory;
 import roart.controller.TestInmemoryFactory;
 import roart.controller.TestUtils;
-import roart.controller.TestUtils2;
 import roart.controller.TestWebFluxUtil;
-import roart.db.dao.CoreDataSource;
 import roart.db.dao.DbDao;
 import roart.db.dao.IclijDbDao;
-import roart.db.spring.DbSpring;
 import roart.db.spring.DbSpringDS;
 import roart.filesystem.FileSystemDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.SimulateInvestConfig;
-import roart.iclij.config.bean.ConfigI;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.WebDataJson;
 import roart.iclij.service.IclijServiceResult;
 import roart.model.io.IO;
-import roart.testdata.TestConstants;
-import roart.testdata.TestData;
-import java.util.Map;
-import java.util.UUID;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
-import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
-import org.apache.commons.math3.stat.correlation.KendallsCorrelation;
 
 @TestInstance(Lifecycle.PER_CLASS)
 //@ComponentScan(basePackages = "roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
@@ -140,10 +91,6 @@ public class SimIT {
     @Autowired
     private IclijConfig iconf = null;
 
-    @Autowired
-    private JdbcRepositoriesAutoConfiguration jc;
-    
-    //@Autowired
     private IO io;
 
     IclijDbDao iclijDbDao;
@@ -174,8 +121,6 @@ public class SimIT {
     private CommunicationFactory communicationFactory = new TestCommunicationFactory();
 
     private TestUtils testutils;
-
-    private TestUtils2 testutils2;
     
     private TestInmemory inmemory;
     
@@ -212,10 +157,6 @@ public class SimIT {
         ac = new ActionThread(iconf, io);
         
         testutils = new TestUtils(iconf, io);
-        testutils2 = new TestUtils2(iconf, io);
-        
-        //String content = "";
-        //new Sim(iconf, dbDao, fileSystemDao).method((String) content, "sim", true);
         
         inmemory = (TestInmemory) io.getInmemoryFactory().get(iconf.getInmemoryServer(), iconf.getInmemoryHazelcast(), iconf.getInmemoryRedis());
 
@@ -223,8 +164,17 @@ public class SimIT {
 
     @Test
     public void testSim() throws Exception {
+        String json = System.getenv("json");
+        json = json.replace("'", "\"");
+        json = json.replace("False", "false");
+        json = json.replace("True", "true");
+        json = json.replace("None", "null");
+        SimulateInvestConfig simConfig = new ObjectMapper().readValue(json, SimulateInvestConfig.class);
+        //SimulateInvestConfig s = JsonUtil.convertnostrip(json, SimulateInvestConfig.class);
+        System.out.println(simConfig.asValuedMap());
+        //if (true) return;
+        //if (true) return;
         log.info("Wants it {}", iconf.wantsInmemoryPipeline());
-        SimulateInvestConfig simConfig = testutils.getSimConfigDefault();
         String market = System.getenv("MARKET");
         log.info("Market {}", market);
         simConfig.setStartdate("2024-11-01");
