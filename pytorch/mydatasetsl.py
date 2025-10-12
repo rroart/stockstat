@@ -12,9 +12,9 @@ N_WORKERS = min(os.cpu_count(), float(os.getenv('N_WORKERS', 'inf')))
 CONTEXT_SIZE = int(os.getenv('CONTEXT_SIZE', 256))
 MAX_CONTEXT = min(1024, CONTEXT_SIZE)
 
-def getdatasetmidi(myobj, config, classifier):
+def getdatasetmidi(myobj, config, classifier, kw_args):
     if myobj.dataset == 'lmd_full':
-        return getlmdfull(myobj, config)
+        return getlmdfull(myobj, config, kw_args)
 
 
 def getlmdfullNOT(myobj, config):
@@ -37,7 +37,7 @@ def getlmdfullNOT(myobj, config):
     return ds
 
 
-def getlmdfull(myobj, config):
+def getlmdfull(myobj, config, kw_args):
     import pathlib
     dir = getpath(myobj)
     if not pathlib.Path(dir + "lmd_full").exists():
@@ -46,18 +46,17 @@ def getlmdfull(myobj, config):
         torchvision.datasets.utils.extract_archive(dir + "lmd_full.tar.gz", dir + "lmd_full")
     #dir = myobj.dataset
     midi_files = glob.glob(os.path.join(dir, '**/*.mid'), recursive=True)
-    description_flavor = None
     if hasattr(config, 'take'):
         midi_files = midi_files[:config.take]
     print("len", dir, len(midi_files))
-    if False: #config.type == 'vae':
+    if config.submodel == 'vq-vae':
         context_size=MAX_CONTEXT
         datamodule = MidiDataModule(
             midi_files,
             context_size,
             max_bars_per_context=1,
-            bar_token_mask=MASK_TOKEN
-            #**kwargs
+            bar_token_mask=MASK_TOKEN,
+            **kw_args
         )
     else:
         context_size=256
@@ -67,11 +66,11 @@ def getlmdfull(myobj, config):
         datamodule = MidiDataModule(
       midi_files,
       context_size,
-      description_flavor=description_flavor,
+      #description_flavor=description_flavor,
       max_bars=max_bars,
       max_positions=max_positions,
-      description_options=description_options
-      #**kwargs
+      description_options=description_options,
+      **kw_args
     )
     dsdict = { "datamodule": datamodule }
     print("dsdict")

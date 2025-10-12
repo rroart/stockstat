@@ -20,6 +20,7 @@ from customdataset import CustomDataset
 from earlystopping import EarlyStopping
 from model import layerutils, modelutils
 from model.layerutils import avgstdvar
+from model.vae import VqVaeModule
 
 # NONO from datasetcli import dataset
 
@@ -841,23 +842,36 @@ class Classify:
         timestamp = dt.timestamp()
         filename = filenames[0]
         myobj = json.loads(myjson, object_hook=lt.LearnTest)
-        print("flavour", hasattr(myobj, 'flavour'))
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
+        args = {'vae_module': None}
         if cachedata is not None:
             print("Using cache")
             model = cachedata
             model.myobj = myobj
         else:
-            if not hasattr(myobj, 'flavour'):
+            if not modelname == 'gptmidifigaro':
                 datasets = mydatasets.getdatasetmidi(myobj, config, self)
             else:
+                # todo todo todo
+                amodel = Model.Model(myobj, config, None, **args)
                 import mydatasetsl
-                datamodule = mydatasetsl.getdatasetmidi(myobj, config, self)
+                vae_module = None
+                if config.submodel in ['figaro-learned', 'figaro']:
+                    VAE_CHECKPOINT = '/tmp/vqvae.pt'
+                    vae_module = VqVaeModule.load_from_checkpoint(checkpoint_path=VAE_CHECKPOINT)
+                    args['vae_module'] = vae_module
+                description_flavor = 'none'
+                if hasattr(amodel.model, 'description_flavor'):
+                    description_flavor = amodel.model.description_flavor
+                kw_args = { 'vae_module' : vae_module, 'description_flavor' : description_flavor }
+                print("kw_args", vae_module is not None, description_flavor)
+                datamodule = mydatasetsl.getdatasetmidi(myobj, config, self, kw_args)
                 datasets = datamodule
-            model = Model.Model(myobj, config, datasets)
+            model = Model.Model(myobj, config, datasets, **args)
         exists = self.exists(myobj)
         print("exist", exists)
+        print("path", self.getfullpath(myobj))
         # load model if:
         # exists and not dynamic and wantclassify
         files = None
@@ -870,19 +884,21 @@ class Classify:
                     dev = self.getdev()
                     #checkpoint = torch.load(self.getfullpath(myobj), map_location=dev)
                     #model = checkpoint['model']
-                    print("flavour", hasattr(myobj, 'flavour'))
-                    if not hasattr(myobj, 'flavour'):
+                    #print("flavour", hasattr(myobj, 'flavour'))
+                    if not modelname == 'gptmidifigaro':
                         # not figaro
                         print("not figaro")
                         #model.model.load_state_dict(torch.load("/tmp/data/exp/test_sod/checkpoints/best_model.pt"))
                         model.model.load_state_dict(torch.load(self.getfullpath(myobj)))
                     else:
                         # figaro
-                        pl_ckpt = torch.load(self.getfullpath(myobj), map_location="cpu")
-                        state_dict = pl_ckpt['state_dict']
-                        state_dict = {k: v for k, v in state_dict.items() if not k.endswith('embeddings.position_ids')}
-                        print("state_dict", state_dict.keys())
-                        model.model.load_state_dict(state_dict, strict=False)
+                        print("figaro")
+                        #pl_ckpt = torch.load(self.getfullpath(myobj), map_location="cpu")
+                        #state_dict = pl_ckpt['state_dict']
+                        #state_dict = {k: v for k, v in state_dict.items() if not k.endswith('embeddings.position_ids')}
+                        #print("state_dict", state_dict.keys())
+                        #model.model.load_state_dict(state_dict, strict=False)
+                        model = model.model.load_from_checkpoint(self.getfullpath(myobj))
                         model.model.freeze()
                         model.model.eval()
                     print("Restoring done")
@@ -895,7 +911,7 @@ class Classify:
             else:
                 model = Model.Model(myobj, config, datasets)
         else:
-             model = Model.Model(myobj, config, datasets)
+             model = Model.Model(myobj, config, datasets, **args)
         # load end
         # print("classez2", myobj.classes)
         print(model)
@@ -906,10 +922,14 @@ class Classify:
         # dicteval[myobj.modelname] = float(accuracy_score)
         # print("seteval" + str(myobj.modelname))
 
+        print("here")
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
+            print("model summary")
             #print(model.model.summary())
             print(model.dataset)
             if hasattr(model.dataset, "train_loader") and model.dataset.train_loader is not None:
+                model.fit()
+            if hasattr(model.dataset, "datamodule") and model.dataset.datamodule is not None:
                 model.fit()
             # not used
             if hasattr(model.dataset, "files") and model.dataset.files is not None:
@@ -917,12 +937,17 @@ class Classify:
             if model.localsave():
                 print("Saving")
                 #torch.save({'model': model }, self.getfullpath(myobj))
-                if not hasattr(myobj, 'flavour'):
+                if not modelname == 'gptmidifigaro':
                     # not figaro
                     torch.save(model.model.state_dict(), self.getfullpath(myobj))
                 else:
                     # figaro
-                    torch.save({'state_dict': model.model.state_dict()}, self.getfullpath(myobj))
+                    if config.submodel == 'vq-vae':
+                        model.trainer.save_checkpoint("/tmp/vqvae.pt")
+                    else:
+                        model.trainer.save_checkpoint(self.getfullpath(myobj))
+                        #torch.save({'state_dict': model.model.state_dict()}, self.getfullpath(myobj))
+                    # toto todo todo
                     if modelname == 'gptmidimmt':
                         model.save()
 

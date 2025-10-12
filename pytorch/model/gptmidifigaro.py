@@ -18,6 +18,7 @@ D_LATENT = 1024
 
 #CHECKPOINT = os.getenv('CHECKPOINT', None)
 #VAE_CHECKPOINT = os.getenv('VAE_CHECKPOINT', None)
+#vae todo
 
 BATCH_SIZE = 128
 TARGET_BATCH_SIZE = 512
@@ -40,14 +41,32 @@ N_WORKERS = int(N_WORKERS)
 MAX_CONTEXT = min(1024, CONTEXT_SIZE)
 
 class Model:
-    def __init__(self, myobj, config, dataset):
+    def __init__(self, myobj, config, dataset, vae_module):
         self.myobj = myobj
         self.config = config
         self.dataset = dataset
 
-        MODEL = 'figaro-expert' #config.model
+        MODEL = config.submodel
+        print("submodel", MODEL)
 
-        VAE_CHECKPOINT = None
+        available_models = [
+            'vq-vae',
+            'figaro-learned',
+            'figaro-expert',
+            'figaro',
+            'figaro-inst',
+            'figaro-chord',
+            'figaro-meta',
+            'figaro-no-inst',
+            'figaro-no-chord',
+            'figaro-no-meta',
+            'baseline',
+        ]
+
+        assert MODEL is not None, 'the MODEL needs to be specified'
+        assert MODEL in available_models, f'unknown MODEL: {MODEL}'
+
+        VAE_CHECKPOINT = '/tmp/vqvae.ckpt'
 
         OUTPUT_DIR = "/tmp/data/figaro" + '/' + MODEL # myobj.path
 
@@ -59,6 +78,8 @@ class Model:
 
         else:
             vae_module = None
+
+        print("vqvae", vae_module)
 
         if True:
             seq2seq_kwargs = {
@@ -164,7 +185,8 @@ class Model:
             limit_val_batches=64,
             accumulate_grad_batches=ACCUMULATE_GRADS,
             gradient_clip_val=1.0,
-          )
+            default_root_dir="/tmp"
+        )
 
 
     def localsave(self):
@@ -196,7 +218,10 @@ class Model:
             midi_files = midi_files[:self.config.take]
         print("files", len(midi_files))
 
-        description_options = None # todo
+        description_options = None
+        if self.config.submodel in ['figaro-no-inst', 'figaro-no-chord', 'figaro-no-meta']:
+            description_options = self.model.description_options
+
         dataset = MidiDataset(
             midi_files,
             max_len=-1,

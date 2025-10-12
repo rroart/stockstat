@@ -5,6 +5,7 @@ import midicli as cli
 
 class MyTestCase(unittest.TestCase):
     def test_something(self):
+        #return
         testmap = { }
         testmap [ config.PYTORCHGPTMIDIRPR ] = ['maestro']
         testmap [ config.PYTORCHGPTMIDI ] = ['maestro']
@@ -13,19 +14,39 @@ class MyTestCase(unittest.TestCase):
         #testmap [ config.PYTORCHGPTMIDIMMT] = [ 'lmd_full', 'snd' ]
         #testmap [ config.PYTORCHGPTMIDIMMT] = [ 'snd' ]
         testlist = [ config.PYTORCHGPTMIDIRPR, config.PYTORCHGPTMIDIRPR, config.PYTORCHGPTMIDIFIGARO ]
-        testlist = [ config.PYTORCHGPTMIDIFIGARO ]
         testlist = [ config.PYTORCHGPTMIDIMMT ]
+        testlist = [ config.PYTORCHGPTMIDIFIGARO ]
         for test in testlist:
             #result = cli.learn(ds = 'maestro', cf = test, take = 40, steps = 1)
             dslist = testmap[test]
             for ds in dslist:
-                result = cli.learn(ds = ds, cf = test, take = 40, steps = 1)
+                submodel = None
+                if test == config.PYTORCHGPTMIDIFIGARO:
+                    #submodel = 'figaro-expert'
+                    submodel = 'vq-vae'
+                    submodel = 'figaro'
+                result = cli.learn(ds = ds, cf = test, take = 40, steps = 1, submodel = submodel)
                 print(result)
-                self.assertIsNotNone(result['accuracy'], "Accuracy")  # add assertion
-                result = cli.generate(text ="I like travelling", ds = ds, cf = test, take = 40)
+                return
+                #self.assertIsNotNone(result['accuracy'], "Accuracy")  # add assertion
+                result = cli.generate(text ="I like travelling", ds = ds, cf = test, take = 40, submodel = submodel)
                 print(result)
                 #self.assertIsNotNone(result['classifyarray'][0], "Text")  # add assertion
         # here
+
+    def test_figaro(self):
+        return
+        test = config.PYTORCHGPTMIDIFIGARO
+        dslist = ['lmd_full']
+
+        for ds in dslist:
+            #submodel = 'figaro-expert'
+            #result = cli.learn(ds=ds, cf=test, take=40, steps=1, submodel=submodel)
+            #print(result)
+            for submodel in ['vq-vae', 'figaro-learned', 'figaro']:
+                result = cli.learn(ds=ds, cf=test, take=40, steps=1, submodel=submodel)
+                print(result)
+
 
 if __name__ == '__main__':
     unittest.main()

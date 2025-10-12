@@ -12,7 +12,7 @@ gpt = classify.Classify()
 queue = Queue()
 cache = {}
 
-def learn(ds = None, path = None, cf = config.PYTORCHGPTMIDIRPRCONFIG, steps = None, take = None, vocab = None):
+def learn(ds = None, path = None, cf = config.PYTORCHGPTMIDIRPRCONFIG, steps = None, take = None, vocab = None, submodel = None):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : False, 'mllearn' : True }
     cfname, modelInt, thecf = config.get(cf)
     if steps is not None:
@@ -21,11 +21,12 @@ def learn(ds = None, path = None, cf = config.PYTORCHGPTMIDIRPRCONFIG, steps = N
         thecf['take'] = take
     if vocab is not None:
         thecf['vocab'] = vocab
+    print("submodel", submodel)
+    if submodel is not None:
+        thecf['submodel'] = submodel
     myds = getdsname(ds)
     filename = getfilename(thecf, myds)
     data = { 'modelInt' : modelInt, 'dataset' : ds, 'path' : path, 'filename' : filename, 'classifyarray' : None, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
-    if cf == config.PYTORCHGPTMIDIFIGARO:
-        data['flavour'] = None
     cachedata = cache.get(cf+myds)
     cachedata = None
     myjson = json.dumps(data)
@@ -35,16 +36,19 @@ def learn(ds = None, path = None, cf = config.PYTORCHGPTMIDIRPRCONFIG, steps = N
     print (result)
     return result
 
-def generate(text, ds = None, path = None, cf = config.PYTORCHGPTMIDIRPRCONFIG, take = None, size = 40):
+def generate(text, ds = None, path = None, cf = config.PYTORCHGPTMIDIRPRCONFIG, take = None, size = 40, submodel = None):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : True, 'mllearn' : False }
     cfname, modelInt, thecf = config.get(cf)
     if take is not None:
         thecf['take'] = take
+    print("submodel", submodel)
+    if submodel is not None:
+        thecf['submodel'] = submodel
     myds = getdsname(ds)
     filename = getfilename(thecf, myds)
     data = { 'modelInt' : modelInt, 'dataset' : ds, 'path' : path, 'filename' : filename, 'classifyarray' : [ text ], 'classes' : size, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
-    if cf == config.PYTORCHGPTMIDIFIGARO:
-        data['flavour'] = None
+    #if cf == config.PYTORCHGPTMIDIFIGARO:
+    #    data['flavour'] = None
     cachedata = cache.get(cf+myds)
     cachedata = None
     myjson = json.dumps(data)
@@ -54,7 +58,10 @@ def generate(text, ds = None, path = None, cf = config.PYTORCHGPTMIDIRPRCONFIG, 
     print (result)
 
 def getfilename(cf, ds):
-    return cf['name'] + ds
+    submodel = ''
+    if 'submodel' in cf:
+        submodel = cf['submodel']
+    return cf['name'] + submodel + ds
 
 def getdsname(ds):
     if isinstance(ds, list):
