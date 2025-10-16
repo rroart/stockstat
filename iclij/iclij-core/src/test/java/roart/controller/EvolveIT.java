@@ -201,8 +201,10 @@ public class EvolveIT {
     @Test
     public void testEvolve() throws Exception {
         String market = System.getenv("MARKET");
+        String component = System.getenv("COMPONENT");
+        String subcomponent = System.getenv("SUBCOMPONENT");
         log.info("Market {}", market);
-        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.EVOLVE, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.EVOLVE, component, subcomponent, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
