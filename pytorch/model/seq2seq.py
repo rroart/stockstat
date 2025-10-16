@@ -108,12 +108,12 @@ class Seq2SeqModule(pl.LightningModule):
     if self.description_flavor in ['description', 'both']:
       desc_vocab = DescriptionVocab()
       self.desc_in = nn.Embedding(len(desc_vocab), self.d_model)
-    
+      print("desc_vocab", len(desc_vocab))
+
     if self.description_flavor == 'both':
       self.desc_proj = nn.Linear(2*self.d_model, self.d_model, bias=False)
 
     print("vocab", len(self.vocab))
-    print("vocab", len(desc_vocab))
 
     self.in_layer = nn.Embedding(len(self.vocab), self.d_model)
     self.out_layer = nn.Linear(self.d_model, len(self.vocab), bias=False)
@@ -145,7 +145,12 @@ class Seq2SeqModule(pl.LightningModule):
 
       if desc_bar_ids is not None:
         # Use the fact that description is always longer than latents
-        desc_emb = desc_emb + self.bar_embedding(desc_bar_ids)
+        #desc_emb = desc_emb + self.bar_embedding(desc_bar_ids)
+        emb = self.bar_embedding(desc_bar_ids)
+        print("range", emb.size()[1])
+        for i in range(emb.size()[1]):
+            #print("mysize", emb[:, i:i+1, :].size())
+            desc_emb = desc_emb + emb[:, i:i+1, :]
 
       z_emb = self.desc_proj(torch.cat([desc_emb, latent_emb], dim=-1))
 

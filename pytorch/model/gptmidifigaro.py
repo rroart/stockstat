@@ -18,12 +18,11 @@ D_LATENT = 1024
 
 #CHECKPOINT = os.getenv('CHECKPOINT', None)
 #VAE_CHECKPOINT = os.getenv('VAE_CHECKPOINT', None)
-#vae todo
 
 BATCH_SIZE = 128
 TARGET_BATCH_SIZE = 512
 
-EPOCHS = 2
+EPOCHS = 16 # not used
 WARMUP_STEPS = 4000
 MAX_STEPS = 1e20
 MAX_TRAINING_STEPS = 100_000
@@ -71,6 +70,7 @@ class Model:
         OUTPUT_DIR = "/tmp/data/figaro" + '/' + MODEL # myobj.path
 
         if MODEL in ['figaro-learned', 'figaro'] and VAE_CHECKPOINT:
+            print("Loading vae")
             vae_module = VqVaeModule.load_from_checkpoint(checkpoint_path=VAE_CHECKPOINT)
             vae_module.cpu()
             vae_module.freeze()
@@ -178,7 +178,7 @@ class Model:
             accelerator='auto',
             profiler='simple',
             callbacks=[checkpoint_callback, lr_monitor, swa_callback],
-            max_epochs=EPOCHS,
+            max_epochs=config.steps,
             max_steps=MAX_TRAINING_STEPS,
             log_every_n_steps=max(100, min(25*ACCUMULATE_GRADS, 200)),
             val_check_interval=max(500, min(300*ACCUMULATE_GRADS, 1000)),
@@ -202,13 +202,13 @@ class Model:
         #torch.save( model.state_dict(), "/tmp/e3.ckpt")
         torch.save( { 'state_dict' : self.model.state_dict() }, "/tmp/e4.ckpt")
 
-    def generate(self, filename):
+    def generate(self, filename, vae_module=None):
         num_prime = 256
         batch_size=BATCH_SIZE
         verbose=True
         max_iter=16000
         max_bars=32
-        vae_module=None
+
         datamodule = self.dataset.datamodule
         datamodule.setup("test")
         midi_files = datamodule.test_ds.files
@@ -243,7 +243,9 @@ class Model:
             )
 
         with torch.no_grad():
+            print("here")
             for batch in dl:
+              print("here2")
               reconstruct_sample(self.model, batch,
                 output_dir="/tmp",
                 max_iter=max_iter,

@@ -20,6 +20,7 @@ from customdataset import CustomDataset
 from earlystopping import EarlyStopping
 from model import layerutils, modelutils
 from model.layerutils import avgstdvar
+from model.seq2seq import Seq2SeqModule
 from model.vae import VqVaeModule
 
 # NONO from datasetcli import dataset
@@ -844,7 +845,7 @@ class Classify:
         myobj = json.loads(myjson, object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
-        args = {'vae_module': None}
+        args = {}
         if cachedata is not None:
             print("Using cache")
             model = cachedata
@@ -854,6 +855,7 @@ class Classify:
                 datasets = mydatasets.getdatasetmidi(myobj, config, self)
             else:
                 # todo todo todo
+                args['vae_module'] = None
                 amodel = Model.Model(myobj, config, None, **args)
                 import mydatasetsl
                 vae_module = None
@@ -861,6 +863,7 @@ class Classify:
                     VAE_CHECKPOINT = '/tmp/vqvae.pt'
                     vae_module = VqVaeModule.load_from_checkpoint(checkpoint_path=VAE_CHECKPOINT)
                     args['vae_module'] = vae_module
+                    print("Loading vae")
                 description_flavor = 'none'
                 if hasattr(amodel.model, 'description_flavor'):
                     description_flavor = amodel.model.description_flavor
@@ -879,7 +882,7 @@ class Classify:
             if model.localsave():
                 if cachedata is None:
                     # dummy variable to allow saver
-                    model = Model.Model(myobj, config, datasets)
+                    model = Model.Model(myobj, config, datasets, **args)
                     print("Restoring")
                     dev = self.getdev()
                     #checkpoint = torch.load(self.getfullpath(myobj), map_location=dev)
@@ -898,15 +901,16 @@ class Classify:
                         #state_dict = {k: v for k, v in state_dict.items() if not k.endswith('embeddings.position_ids')}
                         #print("state_dict", state_dict.keys())
                         #model.model.load_state_dict(state_dict, strict=False)
-                        model = model.model.load_from_checkpoint(self.getfullpath(myobj))
-                        model.model.freeze()
-                        model.model.eval()
+                        module = Seq2SeqModule.load_from_checkpoint(self.getfullpath(myobj))
+                        module.freeze()
+                        module.eval()
+                        model.model = module
                     print("Restoring done")
                     print("training", model.model.training)
                     if hasattr(model.model, 'test'):
                         model.model.test()
                     print("training", model.model.training)
-                files = model.generate(filename)
+                files = model.generate(filename, **args)
                 print("files", files)
             else:
                 model = Model.Model(myobj, config, datasets)
