@@ -11,7 +11,7 @@ dependencies:
     - numpy
     - pandas
     #- scikit_learn
-    - tensorflow[and-cuda]==2.20.0
+    - tensorflow==2.20.0
     - tensorflow_datasets
     - Werkzeug
     - cyclonedx-bom
