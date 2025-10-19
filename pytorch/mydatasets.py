@@ -57,7 +57,7 @@ def getmnistdl(myobj, config):
 
 def getmnist(myobj, config):
     dir = getpath(myobj)
-    dl = DataLoader(torchvision.datasets.MNIST(dir + 'datasets/mnist', train=True, download=True))
+    dl = DataLoader(torchvision.datasets.MNIST(dir + 'datasets/mnist', train=True, download=True), shuffle=True, batch_size=64)
 
     tensor = dl.dataset.data
     tensor = tensor.to(dtype=torch.float32)
@@ -323,7 +323,7 @@ def getlmdfull(myobj, config):
     import mmt.dataset
     import mmt.convert_lmd_full
     dir = getpath(myobj)
-    if not pathlib.Path(dir + "lmd_full").exists():
+    if not pathlib.Path(dir + "lmd_full/original-names.txt").exists():
         url = 'http://hog.ee.columbia.edu/craffel/lmd/lmd_full.tar.gz'
         torchvision.datasets.utils.download_url(url, dir)
         torchvision.datasets.utils.extract_archive(dir + "lmd_full.tar.gz", dir + "lmd_full")
