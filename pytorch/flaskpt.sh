@@ -1,7 +1,7 @@
 #!/bin/bash
 
 eval "$(conda shell.bash hook)"
-conda activate gem
+conda activate pt29
 
 PYTHON3=python3
 [ -z "$PYTHON3" ] && PYTHON3=`command -v python3.5`

@@ -1,19 +1,16 @@
-name: pt
+name: pt29
 channels:
-  - pytorch
+  - conda-forge
 dependencies:
-  - pytorch=2.4.1
-  - torchvision
-  - torchaudio
-  - cpuonly
   - pip:
+    - --extra-index-url https://download.pytorch.org/whl/cpu
+    - torchvision==0.24
     - Flask
     - gdown
     - matplotlib
     - numpy
     - scikit_learn
     - torch
-    - torchvision
     - Werkzeug
     - cyclonedx-bom
     - pretty_midi

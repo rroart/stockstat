@@ -1,20 +1,17 @@
-name: tf
+name: pt29
 channels:
-  - pytorch
+  - conda-forge
   - nvidia
 dependencies:
-  - pytorch
-  - torchvision
-  - torchaudio
-  - pytorch-cuda=11.8
   - pip:
-   - Flask
-   - gdown
-   - matplotlib
-   - numpy
-   - scikit_learn
-   - torch
-   - torchvision
-   - Werkzeug
-   - cyclonedx-bom
-   - pretty_midi
+    - --extra-index-url https://download.pytorch.org/whl/cu126
+    - torchvision==0.24
+    - Flask
+    - gdown
+    - matplotlib
+    - numpy
+    - scikit_learn
+    - torch
+    - Werkzeug
+    - cyclonedx-bom
+    - pretty_midi
