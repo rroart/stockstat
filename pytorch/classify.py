@@ -20,8 +20,11 @@ from customdataset import CustomDataset
 from earlystopping import EarlyStopping
 from model import layerutils, modelutils
 from model.layerutils import avgstdvar
-from model.seq2seq import Seq2SeqModule
-from model.vae import VqVaeModule
+try:
+    from model.seq2seq import Seq2SeqModule
+    from model.vae import VqVaeModule
+except ImportError:
+    pass
 
 # NONO from datasetcli import dataset
 
