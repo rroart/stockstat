@@ -86,7 +86,7 @@ def getOptimizer(config, model):
      if config.optimizer == "adadelta":
          return torch.optim.Adadelta(model.parameters(), **varargs)
      elif config.optimizer == "adafactor":
-         return torch.optim.adaf(model.parameters(), **varargs)
+         return torch.optim.Adafactor(model.parameters(), **varargs)
      elif config.optimizer == "adagrad":
          return torch.optim.Adagrad(model.parameters(), **varargs)
      elif config.optimizer == "adam":

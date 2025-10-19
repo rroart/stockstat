@@ -146,7 +146,7 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
         // binary: "bce", "bcewithlogits", "kl", "poissonnl", 
         // unknown "marginrank", , "multimargin", "tripletmargin",  "tripletmarginwithdistance" "multilabelmargin", "multilabelsoftmargin", 
         //String[] losses = { "mse", "nllloss", "crossentropyloss", "l1loss", "smoothl1loss", "poissonloss" };
-        String[] losses = { "cross_entropy", /* "ctc", */ "nl", "hingeembedding", "gaussiannl", "cosineembedding" };
+        String[] losses = { "cross_entropy", /* "ctc", */ "nl" /*, "hingeembedding", "gaussiannl", "cosineembedding"*/ };
         if (predictor) {
             losses = new String[] { "l1", "mse", "l1loss", "smoothl1loss", "poissonloss", "huber" };
         }
@@ -156,14 +156,14 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
     protected String generateOptimizer() {
         // TODO add more optimizers
         //String[] optimizers = { "adadelta", "adagrad", "adam", "adamw", "adamax", "ftrl", "nadam", "rmsprop", "sgd", "lion", "lamb", "muon", "loss_scale_optimizer", "adafactor", "sparseadam", "asgd", "lbfgs", "radam", "rprop", "lrscheduler", "lambdalr", "multiplicativelr", "steplr", "exponentiallr", "cosineannealinglr", "cycliclr", "onecyclelr", "reducelronplateau" };
-        String[] optimizers = { "adadelta", "adafactor", "adagrad", "adam", "adamw", "sparseadam", "adamax", "asgd", "lbfgs", "nadam", "radam", "rmsprop", "rprop", "sgd" };
+        String[] optimizers = { "adadelta", "adafactor", "adagrad", "adam", "adamw", /* "sparseadam",*/ "adamax", "asgd", /*"lbfgs",*/ "nadam", "radam", "rmsprop", "rprop", "sgd" };
         // schedulers?, "lr_scheduler", "lambda_lr", "multiplicatative_lr", "step_lr", "multistep_lr", "constant_lr", "linear_lr", "exponential_lr", "polynomial_lr", "cosine_annealing_lr", "chained_scheduler", "sequential_lr", "reduce_lr_on_plateau", "cyclic_lr", "one_cycle_lr", "cosine_annealing_warm_restarts", "averaged_model", "swa_lr" };
         return optimizers[random.nextInt(optimizers.length)];
     }
 
     protected String generateActivation() {
         //String[] activations = { "relu", "leakyrelu", "tanh", "sigmoid", "softmax", "softplus", "softsign", "elu", "selu", "gelu" };
-        String[] activations = { "elu", "hard_shrink", "hard_sigmoid", "hard_tanh", "hard_swish", "leakyrelu", "log_sigmoid", "multihead_attention", "prelu", "relu", "relu6", "rrelu", "selu", "celu", "gelu", "sigmoid", "silu", "mish", "soft_plus", "soft_shrink", "soft_sign", "tanh", "tanh_shrink", "threshold", "glu", "soft_min", "soft_max", "soft_max_2d", "log_soft_max", "adaptive_log_soft_max_with_loss" };
+        String[] activations = { "elu", "hard_shrink", "hard_sigmoid", "hard_tanh", "hard_swish", "leakyrelu", "log_sigmoid", /*"multihead_attention",*/ "prelu", "relu", "relu6", "rrelu", "selu", "celu", "gelu", "sigmoid", "silu", "mish", "soft_plus", "soft_shrink", "soft_sign", "tanh", "tanh_shrink", /*"threshold", "glu",*/ "soft_min", "soft_max", /*"soft_max_2d",*/ "log_soft_max" /*, "adaptive_log_soft_max_with_loss"*/ };
         return activations[random.nextInt(activations.length)];
     }
     

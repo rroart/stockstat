@@ -12,13 +12,18 @@ dataset = classify.Classify()
 queue = Queue()
 cache = {}
 
-def learn(ds = "mnist", path = None, cf = config.PYTORCHMLP, steps = None, take = None, q = False):
+def learn(ds = "mnist", path = None, cf = config.PYTORCHMLP, steps = None, take = None, q = False, override = None):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : False, 'mllearn' : True }
     cfname, modelInt, thecf = config.get(cf)
+    print("cfname", cfname)
+    print("modelInt", modelInt)
+    print("thecf", thecf)
     if steps is not None:
         thecf['steps'] = steps
     if take is not None:
         thecf['take'] = take
+    if override is not None:
+        thecf.update(override)
     myds = getdsname(ds)
     filename = getfilename(thecf, myds)
     data = { 'modelInt' : modelInt, 'dataset' : ds, 'path' : path, 'filename' : filename, 'classifyarray' : None, 'neuralnetcommand' : neuralnetcommand, cfname : thecf, 'zero' : True }
