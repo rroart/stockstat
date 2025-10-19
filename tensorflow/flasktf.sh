@@ -7,7 +7,7 @@
 rm -rf /tmp/tf*
 
 eval "$(conda shell.bash hook)"
-conda activate tf
+conda activate tf220
 
 PYTHON3=`command -v python3.6`
 PYTHON3=`command -v python3`
