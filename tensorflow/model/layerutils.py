@@ -55,13 +55,12 @@ def getOptimizer(config):
         return keras.optimizers.Lion(**varargs)
     elif config.optimizer == 'lamb':
         return keras.optimizers.Lamb(**varargs)
-    #elif config.optimizer == 'muon':
-    # todo
-    #    return keras.optimizers.Muon(**varargs)
-    #elif config.optimizer == 'loss_scale_optimizer':
-    # todo
-    #    return keras.optimizers.LossScaleOptimizer(**varargs)
+    elif config.optimizer == 'muon':
+        return keras.optimizers.Muon(**varargs)
+    elif config.optimizer == 'loss_scale_optimizer':
+        return keras.optimizers.LossScaleOptimizer(**varargs)
     elif config.optimizer == 'adafactor':
         return keras.optimizers.Adafactor(**varargs)
     print("return default optimizer")
+    return None
     return keras.optimizers.Adam(**varargs)

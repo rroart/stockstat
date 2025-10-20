@@ -11,7 +11,7 @@ losses = [ "sparse_categorical_crossentropy" ]
 
 optimizers = [ "adadelta", "adagrad", "adam", "adamw", "adamax", "ftrl", "nadam", "rmsprop", "sgd", "lion",
               "lamb", "adafactor" ]
-# "muon", "loss_scale_optimizer", 
+# "muon", "loss_scale_optimizer",
 #optimizers = [ ]
 
 activations = [ "celu", "elu", "exponential", "gelu", "hard_shrink", "hard_sigmoid", "hard_silu", "hard_tanh", "leaky_relu", "linear", "log_sigmoid", "log_softmax", "mish", "relu", "relu6", "selu", "sigmoid", "silu", "softmax", "soft_shrink", "softplus", "softsign", "sparse_plus", "sparsemax", "squareplus", "tanh", "tanh_shrink" ]

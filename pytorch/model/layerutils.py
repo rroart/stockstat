@@ -70,6 +70,7 @@ def getLoss(config):
     elif config.loss == "huber":
         return torch.nn.HuberLoss()
     print("return default loss")
+    return None
     return torch.nn.BCELoss()
 
 def getOptimizer(config, model):
@@ -148,6 +149,7 @@ def getOptimizer(config, model):
      elif config.optimizer == "swa_lr":
          return torch.optim.swa_utils.SWALR(model.parameters(), **varargs)
      print("return default optimizer")
+     return None
      return torch.optim.SGD(model.parameters(), **varargs)
 
 def getAnActivation(activation):
@@ -212,7 +214,9 @@ def getAnActivation(activation):
         return torch.nn.LogSoftmax()
     elif activation == "adaptive_log_soft_max_with_loss":
         return torch.nn.AdaptiveLogSoftmaxWithLoss()
-    print("return default activation")
+    elif activation == "linear":
+        return torch.nn.Identity()
+    print("return default activation for", activation)
     return None
 
 def getActivation(config):
