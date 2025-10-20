@@ -147,7 +147,7 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
     }
     
     protected String generateOptimizer() {
-        String[] optimizers = { "adadelta", "adagrad", "adam", "adamw", "adamax", "ftrl", "nadam", "rmsprop", "sgd", "lion", "lamb", "muon", "loss_scale_optimizer", "adafactor" };
+        String[] optimizers = { "adadelta", "adagrad", "adam", "adamw", "adamax", "ftrl", "nadam", "rmsprop", "sgd", "lion", "lamb", /*"muon", "loss_scale_optimizer",*/ "adafactor" };
         return optimizers[random.nextInt(optimizers.length)];
     }
     
