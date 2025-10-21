@@ -27,35 +27,29 @@ class Model(MyModel):
     modelm.add(tf.keras.Input(shape = shape[1:]))
     if classify and config.normalize:
         modelm.add(layerutils.getNormalLayer(shape))
-    modelm.add(Convolution2D(
-                        filters=32,
+    for i in range(config.convlayers):
+        modelm.add(Convolution2D(
+                        filters=64,
                         kernel_size = config.kernelsize,
                         strides = config.stride,
                         kernel_regularizer=regularizer,
                         padding='same'))
-    if config.batchnormalize:
-        modelm.add(BatchNormalization())
-    modelm.add(activation)
-    #modelm.add(Dropout(config.dropout))
-    modelm.add(Convolution2D(filters=64,
-                        kernel_size = config.kernelsize,
-                        strides = config.stride,
-                        kernel_regularizer=regularizer,
-                        padding='same'))
-    if config.batchnormalize:
-        modelm.add(BatchNormalization())
-    modelm.add(activation)
-    modelm.add(MaxPooling2D(2))
-    #modelm.add(MaxPooling2D((4, 4)))
-    modelm.add(Dropout(config.dropout))
+        if config.batchnormalize:
+            modelm.add(BatchNormalization())
+        modelm.add(activation)
+        if config.dropout > 0:
+            modelm.add(Dropout(config.dropout))
+        modelm.add(MaxPooling2D(config.maxpool))
+        #modelm.add(MaxPooling2D((4, 4)))
+        if config.dropout > 0:
+            modelm.add(Dropout(config.dropout))
     modelm.add(Flatten())
-    modelm.add(Dense(128, kernel_regularizer=regularizer))
-    if config.batchnormalize:
-        modelm.add(BatchNormalization())
-    modelm.add(activation)
-    modelm.add(Dropout(config.dropout))
-    modelm.add(Dense(64))
-    modelm.add(activation)
+    for i in range(config.layers):
+        modelm.add(Dense(config.hidden, kernel_regularizer=regularizer))
+        if config.batchnormalize:
+            modelm.add(BatchNormalization())
+        modelm.add(activation)
+        modelm.add(Dropout(config.dropout))
     modelm.add(Dense(myobj.classes, kernel_regularizer=regularizer))
     modelm.add(Activation(lastactivation))
     modelm.summary()

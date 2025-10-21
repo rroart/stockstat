@@ -26,10 +26,13 @@ public class TensorflowCNN2Config extends TensorflowPreFeedConfig {
             @JsonProperty("optimizer") String optimizer,
             @JsonProperty("activation") String activation,
             @JsonProperty("lastactivation") String lastactivation,
+            @JsonProperty("convlayers") int convlayers, 
+            @JsonProperty("layers") int layers, 
+            @JsonProperty("hidden") int hidden, 
             @JsonProperty("kernelsize") int kernelsize,
             @JsonProperty("maxpool") int maxpool,
             @JsonProperty("stride") int stride) {
-        super(MLConstants.CNN2, new TensorflowConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation));
+        super(MLConstants.CNN2, new TensorflowConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation), convlayers, layers, hidden);
         this.kernelsize = kernelsize;
         this.maxpool = maxpool;
         this.stride = stride;
@@ -40,7 +43,10 @@ public class TensorflowCNN2Config extends TensorflowPreFeedConfig {
     }
 
     public TensorflowCNN2Config(TensorflowCNN2Config config) {
-        super(MLConstants.CNN2, config.tensorflowConfigCommon);
+        super(MLConstants.CNN2, config.tensorflowConfigCommon, config.convlayers, config.layers, config.hidden);
+        this.kernelsize = config.kernelsize;
+        this.maxpool = config.maxpool;
+        this.stride = config.stride;
     }
 
     public TensorflowCNN2Config() {
@@ -76,5 +82,4 @@ public class TensorflowCNN2Config extends TensorflowPreFeedConfig {
     public String toString() {
         return super.toString() + " " + kernelsize + " " + maxpool + " " + stride;
     }
-
 }

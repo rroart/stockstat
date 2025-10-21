@@ -21,6 +21,21 @@ public abstract class TensorflowFeedConfig extends TensorflowConfig {
     
     protected int hidden;
     
+    public TensorflowFeedConfig(String name, TensorflowConfigCommon tensorflowConfigCommon, int layers, int hidden) {
+        super(name, tensorflowConfigCommon);
+        this.layers = layers;
+        this.hidden = hidden;
+    }
+
+    public TensorflowFeedConfig(String name) {
+        super(name);
+    }
+
+    public TensorflowFeedConfig() {
+        super();
+        // JSON
+    }
+
     public int getLayers() {
         return layers;
     }
@@ -35,21 +50,6 @@ public abstract class TensorflowFeedConfig extends TensorflowConfig {
 
     public void setHidden(int hidden) {
         this.hidden = hidden;
-    }
-
-    public TensorflowFeedConfig(String name, TensorflowConfigCommon tensorflowConfigCommon, int layers, int hidden) {
-        super(name, tensorflowConfigCommon);
-        this.layers = layers;
-        this.hidden = hidden;
-    }
-
-    public TensorflowFeedConfig(String name) {
-        super(name);
-    }
-
-    public TensorflowFeedConfig() {
-        super();
-        // JSON
     }
 
     @Override

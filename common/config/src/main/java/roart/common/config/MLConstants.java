@@ -68,27 +68,31 @@ public class MLConstants {
     public static final String PYTORCHCOMMONCLASSIFYCNNCONFIG = ", \"loss\" : \"cross_entropy\", \"optimizer\" : \"sgd\", \"activation\" : \"relu\", \"lastactivation\" : \"relu\"";
     public static final String PYTORCHCOMMONCLASSIFYCNN2CONFIG = ", \"loss\" : \"cross_entropy\", \"optimizer\" : \"adadelta\", \"activation\" : \"relu\", \"lastactivation\" : \"relu\"";
     public static final String PYTORCHCOMMONCONFIG = ", \"steps\" : 1000, \"lr\" : null, \"inputdropout\" : 0.5, \"dropout\" : 0.5, \"normalize\" : true, \"batchnormalize\" : true, \"regularize\" : true, \"batchsize\" : 64";
+    public static final String PYTORCHCOMMONFEED = ", \"hidden\" : 100, \"layers\" : 2 ";
+    public static final String PYTORCHCOMMONPREFEED = ", \"hidden\" : 100, \"layers\": 2, \"convlayers\" : 3 ";
 
-    public static final String PYTORCHMLPCONFIG = "{ \"name\" : \"mlp\", \"hidden\" : 100, \"layers\": 2 " + PYTORCHCOMMONCONFIG + PYTORCHCOMMONCLASSIFYCONFIG + " }";
-    public static final String PYTORCHRNNCONFIG = "{ \"name\" : \"rnn\", \"hidden\" : 100, \"layers\" : 2 " + PYTORCHCOMMONCONFIG + PYTORCHCOMMONCLASSIFYCONFIG + " }";
-    public static final String PYTORCHLSTMCONFIG = "{ \"name\" : \"lstm\", \"hidden\" : 100, \"layers\" : 2 " + PYTORCHCOMMONCONFIG + PYTORCHCOMMONCLASSIFYCONFIG + " }";
-    public static final String PYTORCHGRUCONFIG = "{ \"name\" : \"gru\", \"hidden\" : 100, \"layers\" : 2 " + PYTORCHCOMMONCONFIG + PYTORCHCOMMONCLASSIFYCONFIG + " }";
-    public static final String PYTORCHCNNCONFIG = "{ \"name\" : \"cnn\", \"stride\" : 1, \"kernelsize\" : 4.5 " + PYTORCHCOMMONCONFIG + PYTORCHCOMMONCLASSIFYCNNCONFIG + " }";
-    public static final String PYTORCHCNN2CONFIG = "{ \"name\" : \"cnn2\", \"stride\" : 1, \"kernelsize\" : 3, \"maxpool\": 4 " + PYTORCHCOMMONCONFIG + PYTORCHCOMMONCLASSIFYCNN2CONFIG + " }";
+    public static final String PYTORCHMLPCONFIG = "{ \"name\" : \"mlp\" " + PYTORCHCOMMONFEED + PYTORCHCOMMONCONFIG + PYTORCHCOMMONCLASSIFYCONFIG + " }";
+    public static final String PYTORCHRNNCONFIG = "{ \"name\" : \"rnn\" " + PYTORCHCOMMONFEED + PYTORCHCOMMONCONFIG + PYTORCHCOMMONCLASSIFYCONFIG + " }";
+    public static final String PYTORCHLSTMCONFIG = "{ \"name\" : \"lstm\" " + PYTORCHCOMMONFEED + PYTORCHCOMMONCONFIG + PYTORCHCOMMONCLASSIFYCONFIG + " }";
+    public static final String PYTORCHGRUCONFIG = "{ \"name\" : \"gru\"  " + PYTORCHCOMMONFEED + PYTORCHCOMMONCONFIG + PYTORCHCOMMONCLASSIFYCONFIG + " }";
+    public static final String PYTORCHCNNCONFIG = "{ \"name\" : \"cnn\", \"stride\" : 1, \"kernelsize\" : 4.5, \"maxpool\": 2 " + PYTORCHCOMMONPREFEED + PYTORCHCOMMONCONFIG + PYTORCHCOMMONCLASSIFYCNNCONFIG + " }";
+    public static final String PYTORCHCNN2CONFIG = "{ \"name\" : \"cnn2\", \"stride\" : 1, \"kernelsize\" : 3, \"maxpool\": 4 " + PYTORCHCOMMONPREFEED + PYTORCHCOMMONCONFIG + PYTORCHCOMMONCLASSIFYCNN2CONFIG + " }";
 
     public static final String TENSORFLOWCOMMONCLASSIFYCONFIG = ", \"loss\" : \"sparse_categorical_crossentropy\", \"optimizer\" : \"adam\", \"activation\" : \"relu\", \"lastactivation\" : \"softmax\"";
     public static final String TENSORFLOWCOMMONCLASSIFYCNNCONFIG = ", \"loss\" : \"sparse_categorical_crossentropy\", \"optimizer\" : \"adam\", \"activation\" : \"leaky_relu\", \"lastactivation\" : \"softmax\"";
     public static final String TENSORFLOWCOMMONCLASSIFYCNN2CONFIG = ", \"loss\" : \"sparse_categorical_crossentropy\", \"optimizer\" : \"adadelta\", \"activation\" : \"leaky_relu\", \"lastactivation\" : \"softmax\"";
     public static final String TENSORFLOWCOMMONCONFIG = ", \"steps\" : 1000, \"lr\" : null, \"inputdropout\" : 0.5, \"dropout\" : 0.5, \"normalize\" : true, \"batchnormalize\" : true, \"regularize\" : true";
+    public static final String TENSORFLOWCOMMONFEED = ", \"hidden\" : 100, \"layers\" : 2 ";
+    public static final String TENSORFLOWCOMMONPREFEED = ", \"hidden\" : 100, \"layers\": 2, \"convlayers\" : 3 ";
 
-    public static final String TENSORFLOWDNNCONFIG = "{ \"name\" : \"dnn\", \"hidden\" : 100, \"layers\": 2 " + TENSORFLOWCOMMONCONFIG + " }";
+    public static final String TENSORFLOWDNNCONFIG = "{ \"name\" : \"dnn\" " + TENSORFLOWCOMMONFEED + TENSORFLOWCOMMONCONFIG + " }";
     public static final String TENSORFLOWLICCONFIG = "{ \"name\" : \"lic\" " + TENSORFLOWCOMMONCONFIG + " }";
-    public static final String TENSORFLOWMLPCONFIG = "{ \"name\" : \"mlp\", \"hidden\" : 100, \"layers\" : 2 " + TENSORFLOWCOMMONCONFIG + TENSORFLOWCOMMONCLASSIFYCONFIG + " }";
-    public static final String TENSORFLOWRNNCONFIG = "{ \"name\" : \"rnn\", \"hidden\" : 100, \"layers\" : 2 " + TENSORFLOWCOMMONCONFIG + TENSORFLOWCOMMONCLASSIFYCONFIG + " }";
-    public static final String TENSORFLOWCNNCONFIG = "{ \"name\" : \"cnn\", \"stride\" : 1, \"kernelsize\" : 4.5 " + TENSORFLOWCOMMONCONFIG + TENSORFLOWCOMMONCLASSIFYCNNCONFIG + " }";
-    public static final String TENSORFLOWCNN2CONFIG = "{ \"name\" : \"cnn2\", \"stride\" : 1, \"kernelsize\" : 3, \"maxpool\": 4 " + TENSORFLOWCOMMONCONFIG + TENSORFLOWCOMMONCLASSIFYCNN2CONFIG + " }";
-    public static final String TENSORFLOWLSTMCONFIG = "{ \"name\" : \"lstm\", \"hidden\" : 100, \"layers\" : 2 " + TENSORFLOWCOMMONCONFIG + TENSORFLOWCOMMONCLASSIFYCONFIG + " }";
-    public static final String TENSORFLOWGRUCONFIG = "{ \"name\" : \"gru\", \"hidden\" : 100, \"layers\" : 2 " + TENSORFLOWCOMMONCONFIG + TENSORFLOWCOMMONCLASSIFYCONFIG + " }";
+    public static final String TENSORFLOWMLPCONFIG = "{ \"name\" : \"mlp\" " + TENSORFLOWCOMMONFEED + TENSORFLOWCOMMONCONFIG + TENSORFLOWCOMMONCLASSIFYCONFIG + " }";
+    public static final String TENSORFLOWRNNCONFIG = "{ \"name\" : \"rnn\" " + TENSORFLOWCOMMONFEED + TENSORFLOWCOMMONCONFIG + TENSORFLOWCOMMONCLASSIFYCONFIG + " }";
+    public static final String TENSORFLOWCNNCONFIG = "{ \"name\" : \"cnn\", \"stride\" : 1, \"kernelsize\" : 4.5, \"maxpool\": 2 " + TENSORFLOWCOMMONPREFEED + TENSORFLOWCOMMONCONFIG + TENSORFLOWCOMMONCLASSIFYCNNCONFIG + " }";
+    public static final String TENSORFLOWCNN2CONFIG = "{ \"name\" : \"cnn2\", \"stride\" : 1, \"kernelsize\" : 3, \"maxpool\": 4 " + TENSORFLOWCOMMONPREFEED + TENSORFLOWCOMMONCONFIG + TENSORFLOWCOMMONCLASSIFYCNN2CONFIG + " }";
+    public static final String TENSORFLOWLSTMCONFIG = "{ \"name\" : \"lstm\" " + TENSORFLOWCOMMONFEED + TENSORFLOWCOMMONCONFIG + TENSORFLOWCOMMONCLASSIFYCONFIG + " }";
+    public static final String TENSORFLOWGRUCONFIG = "{ \"name\" : \"gru\" " + TENSORFLOWCOMMONFEED + TENSORFLOWCOMMONCONFIG + TENSORFLOWCOMMONCLASSIFYCONFIG + " }";
     public static final String TENSORFLOWLIRCONFIG = "{ \"name\" : \"lir\" " + TENSORFLOWCOMMONCONFIG + " }";
     public static final String TENSORFLOWDCGANCONFIG = "{ \"name\" : \"dcgan\", \"steps\" : 20, \"lr\" : 0.0001 " + TENSORFLOWCOMMONCONFIG + " }";
     public static final String TENSORFLOWCONDITIONALGANCONFIG = "{ \"name\" : \"conditionalgan\", \"steps\" : 20, \"lr\" : 0.0003 " + TENSORFLOWCOMMONCONFIG + " }";

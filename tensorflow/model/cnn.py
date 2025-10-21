@@ -34,30 +34,23 @@ class Model(MyModel):
     modelm.add(tf.keras.Input(shape = shape[1:]))
     if classify and config.normalize:
         modelm.add(layerutils.getNormalLayer(shape))
-    modelm.add(Convolution1D(
+    for i in range(config.convlayers):
+        modelm.add(Convolution1D(
                         filters=16,
                         kernel_size = config.kernelsize,
                         strides = config.stride,
                         kernel_regularizer=regularizer,
                         padding='same'))
-    if config.batchnormalize:
-        modelm.add(BatchNormalization())
-    modelm.add(activation)
-    modelm.add(Dropout(config.dropout))
-    modelm.add(Convolution1D(filters=8,
-                        kernel_size = config.kernelsize,
-                        strides = config.stride,
-                        kernel_regularizer=regularizer,
-                        padding='same'))
-    if config.batchnormalize:
-        modelm.add(BatchNormalization())
-    modelm.add(activation)
-    modelm.add(Dropout(config.dropout))
+        if config.batchnormalize:
+            modelm.add(BatchNormalization())
+        modelm.add(activation)
+        modelm.add(Dropout(config.dropout))
     modelm.add(Flatten())
-    modelm.add(Dense(64, kernel_regularizer=regularizer))
-    if config.batchnormalize:
-        modelm.add(BatchNormalization())
-    modelm.add(activation)
+    for i in range(config.layers):
+        modelm.add(Dense(config.hidden, kernel_regularizer=regularizer))
+        if config.batchnormalize:
+            modelm.add(BatchNormalization())
+        modelm.add(activation)
     modelm.add(Dense(myobj.classes, kernel_regularizer=regularizer))
     modelm.add(lastactivation)
     

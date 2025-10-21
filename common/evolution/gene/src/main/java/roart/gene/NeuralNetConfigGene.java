@@ -69,6 +69,14 @@ public abstract class NeuralNetConfigGene extends AbstractGene {
         return RandomUtil.random(random, 1, 5);
     }
 
+    protected int generateCnnLayers() {
+        return RandomUtil.random(random, 1, 2);
+    }
+
+    protected int generateCnnConvLayers() {
+        return RandomUtil.random(random, 1, 3);
+    }
+
     protected int generateHidden() {
         return RandomUtil.random(random, 10, 10, 10);
     }

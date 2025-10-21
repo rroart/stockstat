@@ -9,24 +9,10 @@ public class PytorchCNNConfig extends PytorchPreFeedConfig {
 
     private int kernelsize;
     
+    private int maxpool;
+    
     private int stride;
     
-    public int getKernelsize() {
-        return kernelsize;
-    }
-
-    public void setKernelsize(int kernelsize) {
-        this.kernelsize = kernelsize;
-    }
-
-    public int getStride() {
-        return stride;
-    }
-
-    public void setStride(int stride) {
-        this.stride = stride;
-    }
-
     @JsonCreator
     public PytorchCNNConfig(
             @JsonProperty("steps") int steps, 
@@ -41,15 +27,23 @@ public class PytorchCNNConfig extends PytorchPreFeedConfig {
             @JsonProperty("optimizer") String optimizer,
             @JsonProperty("activation") String activation,
             @JsonProperty("lastactivation") String lastactivation,
+            @JsonProperty("convlayers") int convlayers, 
+            @JsonProperty("layers") int layers, 
+            @JsonProperty("hidden") int hidden, 
             @JsonProperty("kernelsize") int kernelsize, 
+            @JsonProperty("maxpool") int maxpool,
             @JsonProperty("stride") int stride) {
-        super(MLConstants.CNN, new PytorchConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation));
+        super(MLConstants.CNN, new PytorchConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation), convlayers, layers, hidden);
         this.kernelsize = kernelsize;
+        this.maxpool = maxpool;
         this.stride = stride;
     }
     
     public PytorchCNNConfig(PytorchCNNConfig config) {
-        this(config.pytorchConfigCommon, config.kernelsize, config.stride);
+        super(MLConstants.CNN, config.pytorchConfigCommon, config.convlayers, config.layers, config.hidden);
+        this.kernelsize = config.kernelsize;
+        this.maxpool = config.maxpool;
+        this.stride = config.stride;
    }
 
     public PytorchCNNConfig(String name) {
@@ -61,12 +55,32 @@ public class PytorchCNNConfig extends PytorchPreFeedConfig {
         // JSON
     }
 
-    public PytorchCNNConfig(PytorchConfigCommon pytorchConfigCommon, int kernelsize2, int stride2) {
-        super(MLConstants.CNN, pytorchConfigCommon);
+    public int getKernelsize() {
+        return kernelsize;
+    }
+
+    public void setKernelsize(int kernelsize) {
+        this.kernelsize = kernelsize;
+    }
+
+    public int getMaxpool() {
+        return maxpool;
+    }
+
+    public void setMaxpool(int maxpool) {
+        this.maxpool = maxpool;
+    }
+
+    public int getStride() {
+        return stride;
+    }
+
+    public void setStride(int stride) {
+        this.stride = stride;
     }
 
     @Override
     public String toString() {
-        return super.toString() + " " + kernelsize + " " + stride;
+        return super.toString() + " " + kernelsize + " " + maxpool + " " + stride;
     }
 }

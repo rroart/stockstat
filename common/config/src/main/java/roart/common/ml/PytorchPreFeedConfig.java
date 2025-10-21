@@ -14,7 +14,13 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @Type(value = PytorchCNN2Config.class, name = "PytorchCNN2Config") })  
 public abstract class PytorchPreFeedConfig extends PytorchConfig {
 
-    public PytorchPreFeedConfig(String name, PytorchConfigCommon pytorchConfigCommon) {
+    protected int convlayers;
+
+    protected int layers;
+
+    protected int hidden;
+    
+    public PytorchPreFeedConfig(String name, PytorchConfigCommon pytorchConfigCommon, int convlayers, int layers, int hidden) {
         super(name, pytorchConfigCommon);
     }
 
@@ -27,4 +33,32 @@ public abstract class PytorchPreFeedConfig extends PytorchConfig {
         // JSON
     }
 
+    public int getConvlayers() {
+        return convlayers;
+    }
+
+    public void setConvlayers(int convlayers) {
+        this.convlayers = convlayers;
+    }
+
+    public int getLayers() {
+        return layers;
+    }
+
+    public void setLayers(int layers) {
+        this.layers = layers;
+    }
+
+    public int getHidden() {
+        return hidden;
+    }
+
+    public void setHidden(int hidden) {
+        this.hidden = hidden;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + " " + convlayers + " " + layers + " " + hidden;
+    }
 }

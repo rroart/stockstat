@@ -26,17 +26,23 @@ public class PytorchCNN2Config extends PytorchPreFeedConfig {
             @JsonProperty("optimizer") String optimizer,
             @JsonProperty("activation") String activation,
             @JsonProperty("lastactivation") String lastactivation,
+            @JsonProperty("convlayers") int convlayers, 
+            @JsonProperty("layers") int layers, 
+            @JsonProperty("hidden") int hidden, 
             @JsonProperty("kernelsize") int kernelsize,
             @JsonProperty("maxpool") int maxpool,
             @JsonProperty("stride") int stride) {
-        super(MLConstants.CNN2, new PytorchConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation));
+        super(MLConstants.CNN2, new PytorchConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation), convlayers, layers, hidden);
         this.kernelsize = kernelsize;
         this.maxpool = maxpool;
         this.stride = stride;
     }
     
     public PytorchCNN2Config(PytorchCNN2Config config) {
-        this(config.pytorchConfigCommon, config.kernelsize, config.maxpool, config.stride);
+        super(MLConstants.CNN, config.pytorchConfigCommon, config.convlayers, config.layers, config.hidden);
+        this.kernelsize = config.kernelsize;
+        this.maxpool = config.maxpool;
+        this.stride = config.stride;
     }
 
     public PytorchCNN2Config(String name) {
@@ -46,10 +52,6 @@ public class PytorchCNN2Config extends PytorchPreFeedConfig {
     public PytorchCNN2Config() {
         super();
         // JSON
-    }
-
-    public PytorchCNN2Config(PytorchConfigCommon pytorchConfigCommon, int kernelsize2, int maxpool2, int stride2) {
-        super(MLConstants.CNN2, pytorchConfigCommon);
     }
 
     public int getKernelsize() {
