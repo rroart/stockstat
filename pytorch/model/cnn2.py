@@ -55,7 +55,7 @@ class Net(nn.Module):
         layers2.append(nn.MaxPool2d(kernel_size=pool_kernel_size))
             #nn.MaxPool2d(kernel_size=4),
             #, stride=2),
-        layers2.append(nn.Dropout(config.dropout1))
+        layers2.append(nn.Dropout(config.dropout))
         self.layer2 = nn.Sequential(*layers2)
         #self.l1 = nn.Conv1d(myobj.size, 16, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2))
             #nn.MaxPool2d(kernel_size=2, stride=2))
@@ -83,7 +83,7 @@ class Net(nn.Module):
         #self.fc1 = nn.Linear(int(c2 * m1 * m2 * config.dropout2), 128)
         #self.fc1 = nn.Linear(int(c2 * p1 * p2), 128)
         self.fc1 = nn.Linear(int(c2 * p3 * q3), 128)
-        self.drop = nn.Dropout(config.dropout2)
+        self.drop = nn.Dropout(config.dropout)
         self.fc15 = nn.Linear(128, 64)
         self.fc2 = nn.Linear(64, myobj.classes)
         self.r1 = activation
