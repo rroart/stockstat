@@ -44,14 +44,14 @@ class Net(nn.Module):
         layers1.append(nn.Conv2d(dim1, c1, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)))
         if self.config.batchnormalize:
             layers1.append(nn.BatchNorm2d(c1))
-        layers1.append(nn.ReLU())
+        layers1.append(activation)
         #nn.MaxPool2d(kernel_size=2, stride=2))
         self.layer1 = nn.Sequential(*layers1)
         layers2 = nn.ModuleList()
         layers2.append(nn.Conv2d(c1, c2, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)))
         if self.config.batchnormalize:
             layers2.append(nn.BatchNorm2d(c2))
-        layers2.append(nn.ReLU())
+        layers2.append(activation)
         layers2.append(nn.MaxPool2d(kernel_size=pool_kernel_size))
             #nn.MaxPool2d(kernel_size=4),
             #, stride=2),
@@ -86,7 +86,7 @@ class Net(nn.Module):
         self.drop = nn.Dropout(config.dropout2)
         self.fc15 = nn.Linear(128, 64)
         self.fc2 = nn.Linear(64, myobj.classes)
-        self.r1 = nn.ReLU()
+        self.r1 = activation
 
         #Defining the layers
         # RNN Layer

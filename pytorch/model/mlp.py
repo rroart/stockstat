@@ -44,6 +44,7 @@ class Net(nn.Module):
                     mylayers.append(lastactivation)
                 if config.dropout > 0:
                     mylayers.append(nn.Dropout(config.dropout))
+            mylayers.append(lastactivation)
         self.layers = nn.Sequential(*mylayers)
         #self.layers.apply(Xavier)
         

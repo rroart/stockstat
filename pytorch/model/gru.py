@@ -27,6 +27,7 @@ class Net(nn.Module):
 
         self.bn = nn.BatchNorm1d(self.myobj.classes) #shape[1])
         self.act = nn.ReLU()
+        self.lastact = lastactivation
         self.dropout = nn.Dropout(config.dropout)
 
         # setup losses
@@ -62,6 +63,7 @@ class Net(nn.Module):
         out = self.act(out)
         if self.config.dropout > 0:
             out = self.dropout(out)
+        out = self.lastact(out)
 
         return out
     #, hidden

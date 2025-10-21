@@ -25,6 +25,7 @@ class Net(nn.Module):
 
     self.bn = nn.BatchNorm1d(self.myobj.classes) #shape[1])
     self.act = nn.ReLU()
+    self.lastact = lastactivation
     self.dropout = nn.Dropout(config.dropout)
 
     # setup losses
@@ -48,6 +49,7 @@ class Net(nn.Module):
     x = self.act(x)
     if self.config.dropout > 0:
         x = self.dropout(x)
+    x = self.lastact(x)
     return x
   
   def observe(self, x, y):

@@ -36,16 +36,18 @@ class Net(nn.Module):
         layers1.append(nn.Conv1d(dim1, c1, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)))
         if self.config.batchnormalize:
             layers1.append(nn.BatchNorm1d(c1))
-        layers1.append(nn.ReLU())
-        layers1.append(nn.Dropout(config.dropout))
+        layers1.append(activation)
+        if config.dropout > 0:
+            layers1.append(nn.Dropout(config.dropout))
         #nn.MaxPool2d(kernel_size=2, stride=2))
         self.layer1 = nn.Sequential(*layers1)
         layers2 = nn.ModuleList()
         layers2.append(nn.Conv1d(c1, c2, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)))
         if self.config.batchnormalize:
             layers2.append(nn.BatchNorm1d(c2))
-        layers2.append(nn.ReLU())
-        layers2.append(nn.Dropout(config.dropout))
+        layers2.append(activation)
+        if config.dropout > 0:
+            layers2.append(nn.Dropout(config.dropout))
         self.layer2 = nn.Sequential(*layers2)
         #nn.MaxPool2d(kernel_size=4),
         #, stride=2),
@@ -66,7 +68,7 @@ class Net(nn.Module):
         #     nn.MaxPool2d(kernel_size=2, stride=2))
         #print("O12", o1, o2)
         #print("P12", p1, p2)
-        self.r1 = nn.ReLU()
+        self.r1 = activation
         self.b1 = nn.BatchNorm1d(64)
         self.fc1 = nn.Linear(c2 * p2, 64)
         self.fc2 = nn.Linear(64, myobj.classes)
