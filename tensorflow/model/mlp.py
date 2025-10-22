@@ -31,7 +31,7 @@ class Model(MyModel):
         amodel.add(tf.keras.layers.BatchNormalization())
     if config.dropout > 0:
         amodel.add(Dropout(config.inputdropout))
-    for i in range(0, 1 + config.layers):
+    for i in range(config.layers):
       print("Adding hidden layer", i)
       amodel.add(tf.keras.layers.Dense(config.hidden, kernel_regularizer=regularizer))
       if config.batchnormalize:

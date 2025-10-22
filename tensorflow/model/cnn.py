@@ -44,7 +44,10 @@ class Model(MyModel):
         if config.batchnormalize:
             modelm.add(BatchNormalization())
         modelm.add(activation)
-        modelm.add(Dropout(config.dropout))
+        if config.maxpool > 1:
+            modelm.add(MaxPooling1D(config.maxpool))
+        if config.dropout > 0:
+            modelm.add(Dropout(config.dropout))
     modelm.add(Flatten())
     for i in range(config.layers):
         modelm.add(Dense(config.hidden, kernel_regularizer=regularizer))

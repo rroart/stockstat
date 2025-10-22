@@ -94,7 +94,7 @@ public abstract class NeuralNetConfigGene extends AbstractGene {
     }
 
     protected int generateMaxpool() {
-        return RandomUtil.random(random, 1, 5);
+        return RandomUtil.random(random, 1, 2);
     }
 
     public double generateTol() {

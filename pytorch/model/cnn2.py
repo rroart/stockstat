@@ -18,6 +18,62 @@ class Net(nn.Module):
         activation = layerutils.getActivation(config)
         lastactivation = layerutils.getLastactivation(config)
 
+        inouts = [ 32, 64, 128 ]
+        dims = [ shape[1], *inouts[:config.convlayers], shape[2] ]
+
+        layer1 = nn.ModuleList()
+        for i in range(config.convlayers):
+            layer1.append(nn.Conv2d(dims[i], dims[i+1], kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)))
+            if self.config.batchnormalize:
+                layer1.append(nn.BatchNorm2d(dims[i+1]))
+            layer1.append(activation)
+            if config.maxpool > 1 and i == (config.convlayers - 1):
+                layer1.append(nn.MaxPool2d(kernel_size=config.maxpool))
+            if config.dropout > 0:
+                layer1.append(nn.Dropout(config.dropout))
+        self.layer1 = nn.Sequential(*layer1)
+        p1 = self.calc(config, shape[2])
+        p2 = self.calc(config, p1)
+        q1 = self.calc(config, shape[3])
+        q2 = self.calc(config, q1)
+        p3 = int(p2 // config.maxpool)
+        q3 = int(q2 // config.maxpool)
+        print("P12", shape[1], shape[2], p1, p2)
+        print(inouts[config.convlayers - 1])
+        config.hidden = 64 # todo
+
+        if classify:
+            sizearr = [inouts[config.convlayers - 1] * p3 * q3] + [config.hidden] * (config.layers - 1) + [myobj.classes]
+        else:
+            sizearr = [inouts[config.convlayers - 1] * p3 * q3] + [config.hidden] * (config.layers - 1) + [1]
+
+        mylayers = nn.ModuleList()
+        for i in range(0, len(sizearr) - 1):
+            #print("sizearr", sizearr[i], sizearr[i+1])
+            mylayers.append(nn.Linear(sizearr[i], sizearr[i + 1]))
+            if i < (len(sizearr) - 2):
+                if config.batchnormalize:
+                    mylayers.append(nn.BatchNorm1d(sizearr[i + 1]))
+                if i < (len(sizearr) - 3):
+                    mylayers.append(activation)
+                else:
+                    mylayers.append(lastactivation)
+                if config.dropout > 0:
+                    mylayers.append(nn.Dropout(config.dropout))
+            mylayers.append(lastactivation)
+
+        self.fc1 = nn.Sequential(*mylayers)
+        self.drop = nn.Dropout(config.dropout)
+        self.r1 = activation
+
+        # setup losses
+        self.bce = layerutils.getLoss(config)
+
+        # setup optimizer
+        self.opt = layerutils.getOptimizer(config, self)
+        return
+
+        # prev here
         #https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/02-intermediate/convolutional_neural_network/main.py
         #print("MO",myobj.size)
         dim1 = shape[1]
@@ -40,13 +96,13 @@ class Net(nn.Module):
         p3 = p2 // pool_kernel_size
         q3 = q2 // pool_kernel_size
         #self.layer0 = layerutils.getNormalLayer(shape)
-        layers1 = nn.ModuleList()
-        layers1.append(nn.Conv2d(dim1, c1, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)))
+        layer1 = nn.ModuleList()
+        layer1.append(nn.Conv2d(dim1, c1, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)))
         if self.config.batchnormalize:
-            layers1.append(nn.BatchNorm2d(c1))
-        layers1.append(activation)
+            layer1.append(nn.BatchNorm2d(c1))
+        layer1.append(activation)
         #nn.MaxPool2d(kernel_size=2, stride=2))
-        self.layer1 = nn.Sequential(*layers1)
+        self.layer1 = nn.Sequential(*layer1)
         layers2 = nn.ModuleList()
         layers2.append(nn.Conv2d(c1, c2, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)))
         if self.config.batchnormalize:
@@ -125,7 +181,7 @@ class Net(nn.Module):
             out =  x
         out = self.layer1(out)
         #print("xxx", out.shape)
-        out = self.layer2(out)
+        #out = self.layer2(out)
         #print("xxx", out.shape)
         
         #r2 = nn.ReLU()
@@ -159,8 +215,9 @@ class Net(nn.Module):
         #print("oo", out.shape)
         if self.classify:
             #out = self.fc(out[:, :, -1])
-            out = self.fc15(out)
-            out = self.fc2(out)
+            #out = self.fc15(out)
+            #out = self.fc2(out)
+            ll = 1
         else:
             out = self.fc(out)
         #print("outs", out.size())
@@ -186,3 +243,7 @@ class Net(nn.Module):
         self.bce(self(x), y).backward()
         self.opt.step()
     
+    def calc(self, config, x):
+        o1 = (x - config.kernelsize + 2 * (config.kernelsize // 2)) / config.stride + 1
+        o1 = int(o1)
+        return o1

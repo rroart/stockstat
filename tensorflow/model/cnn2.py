@@ -37,10 +37,8 @@ class Model(MyModel):
         if config.batchnormalize:
             modelm.add(BatchNormalization())
         modelm.add(activation)
-        if config.dropout > 0:
-            modelm.add(Dropout(config.dropout))
-        modelm.add(MaxPooling2D(config.maxpool))
-        #modelm.add(MaxPooling2D((4, 4)))
+        if config.maxpool > 1:
+            modelm.add(MaxPooling2D(config.maxpool))
         if config.dropout > 0:
             modelm.add(Dropout(config.dropout))
     modelm.add(Flatten())
