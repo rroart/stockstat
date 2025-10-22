@@ -27,23 +27,31 @@ class Net(nn.Module):
             if self.config.batchnormalize:
                 layer1.append(nn.BatchNorm2d(dims[i+1]))
             layer1.append(activation)
-            if config.maxpool > 1 and i == (config.convlayers - 1):
+            if config.maxpool > 1:
                 layer1.append(nn.MaxPool2d(kernel_size=config.maxpool))
             if config.dropout > 0:
                 layer1.append(nn.Dropout(config.dropout))
         self.layer1 = nn.Sequential(*layer1)
-        p1 = self.calc(config, shape[2])
+        p1 = self.calc(config, shape[2]) // config.maxpool
         p2 = self.calc(config, p1)
-        q1 = self.calc(config, shape[3])
+        q1 = self.calc(config, shape[3]) // config.maxpool
         q2 = self.calc(config, q1)
         p3 = int(p2 // config.maxpool)
         q3 = int(q2 // config.maxpool)
-        print("P12", shape[1], shape[2], p1, p2)
+        ps = [ p1 ]
+        for i in range(config.convlayers - 1):
+            px = self.calc(config, ps[-1]) // config.maxpool
+            ps.append(px)
+        qs = [ q1 ]
+        for i in range(config.convlayers - 1):
+            qx = self.calc(config, qs[-1]) // config.maxpool
+            qs.append(qx)
+        print("P12", shape[1], shape[2], p1, p2, ps, qs)
         print(inouts[config.convlayers - 1])
         config.hidden = 64 # todo
 
         if classify:
-            sizearr = [inouts[config.convlayers - 1] * p3 * q3] + [config.hidden] * (config.layers - 1) + [myobj.classes]
+            sizearr = [inouts[config.convlayers - 1] * ps[-1] * qs[-1]] + [config.hidden] * (config.layers - 1) + [myobj.classes]
         else:
             sizearr = [inouts[config.convlayers - 1] * p3 * q3] + [config.hidden] * (config.layers - 1) + [1]
 

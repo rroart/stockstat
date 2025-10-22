@@ -47,7 +47,8 @@ class Model(MyModel):
         if config.batchnormalize:
             modelm.add(BatchNormalization())
         modelm.add(activation)
-        modelm.add(Dropout(config.dropout))
+        if config.dropout > 0:
+            modelm.add(Dropout(config.dropout))
     modelm.add(Dense(myobj.classes, kernel_regularizer=regularizer))
     modelm.add(Activation(lastactivation))
     modelm.summary()

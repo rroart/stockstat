@@ -6,6 +6,8 @@ import datasetcli as cli
 steps = 2
 take = None
 
+#todo predict
+
 losses = [ "cross_entropy", "nl" ]
 # "ctc", "hingeembedding", "gaussiannl", , "cosineembedding"
 #losses = [ ]
@@ -19,16 +21,32 @@ activations = [ "elu", "hard_shrink", "hard_sigmoid", "hard_tanh", "hard_swish",
 
 class MyTestCase(unittest.TestCase):
     def test_something(self):
+        steps = 10
         testlist = [ config.PYTORCHMLP, config.PYTORCHRNN, config.PYTORCHLSTM, config.PYTORCHGRU, config.PYTORCHCNN, config.PYTORCHCNN2 ]
 
         testlist = [ config.PYTORCHRNN ]
-        #testlist = [ config.PYTORCHMLP ]
         testlist = [ config.PYTORCHGRU ]
+        testlist = [ config.PYTORCHMLP ]
+        testlist = [ config.PYTORCHCNN2 ]
 
         for test in testlist:
             result = cli.learn(ds = 'mnist', cf = test, take = take, steps = steps)
             print(result)
             self.assertIsNotNone(result['accuracy'], "Accuracy")  # add assertion
+        # here
+
+    def test_cnn(self):
+        steps = 1
+
+        testlist = [ config.PYTORCHCNN2, config.PYTORCHCNN ]
+
+        for test in testlist:
+            for i in range(1, 4):
+                for j in range(1, 3):
+                    override = { 'convlayers' : i, 'layers' : j }
+                    result = cli.learn(ds = 'mnist', cf = test, take = take, steps = steps, override = override)
+                    print(result)
+            #self.assertIsNotNone(result['accuracy'], "Accuracy")  # add assertion
         # here
 
     def test_comb(self):

@@ -24,9 +24,9 @@ class MyTestCase(unittest.TestCase):
         testlist = [ config.TENSORFLOWRNN ]
         testlist = [ config.TENSORFLOWLSTM ]
         testlist = [ config.TENSORFLOWLSTM, config.TENSORFLOWGRU ]
-        testlist = [ config.TENSORFLOWCNN2 ]
         testlist = [ config.TENSORFLOWDNN ]
         testlist = [ config.TENSORFLOWMLP ]
+        testlist = [ config.TENSORFLOWCNN2 ]
         for test in testlist:
           dslist = [ 'mnist', 'cifar10' ]
           dslist = [ 'mnist' ]
@@ -35,6 +35,20 @@ class MyTestCase(unittest.TestCase):
             print(result)
             self.assertIsNotNone(result['accuracy'], "Accuracy")  # add assertion
             # toto classify
+        # here
+
+    def test_cnn(self):
+        steps
+
+        testlist = [ config.TENSORFLOWCNN, config.TENSORFLOWCNN2 ]
+
+        for test in testlist:
+            for i in range(1, 4):
+                for j in range(1, 3):
+                    override = { 'convlayers' : i, 'layers' : j }
+                    result = cli.learn(ds = 'mnist', cf = test, take = take, steps = steps, override = override)
+                    print(result)
+            #self.assertIsNotNone(result['accuracy'], "Accuracy")  # add assertion
         # here
 
     def test_comb(self):

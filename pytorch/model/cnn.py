@@ -19,7 +19,7 @@ class Net(nn.Module):
         #https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/02-intermediate/convolutional_neural_network/main.py
         #print("MO",myobj.size)
 
-        config.convlayers = 2
+        #config.convlayers = 2
 
         inouts = [ 16, 8, 8 ]
         dims = [ shape[1], *inouts[:config.convlayers], shape[2] ]
@@ -30,22 +30,26 @@ class Net(nn.Module):
             if self.config.batchnormalize:
                 layers1.append(nn.BatchNorm1d(dims[i+1]))
             layers1.append(activation)
-            #if config.maxpool > 1:
-            #    layers1.append(nn.MaxPool1d(kernel_size=config.maxpool))
+            if config.maxpool > 1:
+                layers1.append(nn.MaxPool1d(kernel_size=config.maxpool))
             if config.dropout > 0:
                 layers1.append(nn.Dropout(config.dropout))
         # nn.MaxPool2d(kernel_size=2, stride=2))
         self.layer1 = nn.Sequential(*layers1)
         self.r1 = activation
         self.b1 = nn.BatchNorm1d(64) # todo
-        p1 = self.calc(config, shape[2])
+        p1 = self.calc(config, shape[2]) // config.maxpool
         p2 = self.calc(config, p1) # // config.maxpool
-        print("P12", shape[1], shape[2], p1, p2)
+        ps = [ p1 ]
+        for i in range(config.convlayers - 1):
+            px = self.calc(config, ps[-1]) // config.maxpool
+            ps.append(px)
+        print("P12", shape[1], shape[2], p1, p2, ps)
         print(inouts[config.convlayers - 1])
         config.hidden = 64 # todo
 
         if classify:
-            sizearr = [inouts[config.convlayers - 1] * p2] + [config.hidden] * (config.layers - 1) + [myobj.classes]
+            sizearr = [inouts[config.convlayers - 1] * ps[-1]]+ [config.hidden] * (config.layers - 1) + [myobj.classes]
         else:
             sizearr = [inouts[config.convlayers - 1] * p2] + [config.hidden] * (config.layers - 1) + [1]
 
@@ -202,7 +206,8 @@ class Net(nn.Module):
         else:
             out = self.fc(out)
         #print("outs", out.size())
-        
+
+        log = False
         return out
     #, hidden
     
