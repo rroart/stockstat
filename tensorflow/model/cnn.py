@@ -1,10 +1,15 @@
+import math
+
 import tensorflow as tf
 from tensorflow.keras.layers import Dense, Activation, Dropout, Conv1D, MaxPooling1D, Flatten, Convolution1D, BatchNormalization, LeakyReLU, Dropout
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam
 import model.layerutils as layerutils
+from . import cnnutils
 
 from .model import MyModel
+
+dilation = 1
 
 class Model(MyModel):
 
@@ -27,6 +32,27 @@ class Model(MyModel):
     modelj.add(Flatten())
     modelj.add(Dense(50, activation='relu'))
     modelj.add(Dense(1))
+    d11 = self.calc(config, shape[1])
+    d21 = self.calc(config, shape[2])
+    d1s = []
+    d2s = []
+    if not d11 is None:
+        d1s.append(d11)
+    if not d21 is None:
+        d2s.append(d21)
+    for i in range(config.convlayers - 1):
+        if len(d1s) > 0:
+            ad1 = self.calc(config, d1s[-1])
+            if not ad1 is None:
+                d1s.append(ad1)
+        if len(d2s) > 0:
+            ad2 = self.calc(config, d2s[-1])
+            if not ad2 is None:
+                d2s.append(ad2)
+
+    print("P12", shape, d1s, d2s)
+    curShape = shape[1:]
+    print("curShape", curShape)
 
     #https://medium.com/@alexrachnog/neural-networks-for-algorithmic-trading-2-1-multivariate-time-series-ab016ce70f57
     modelm = Sequential()
@@ -36,16 +62,27 @@ class Model(MyModel):
         modelm.add(layerutils.getNormalLayer(shape))
     for i in range(config.convlayers):
         modelm.add(Convolution1D(
-                        filters=16,
+                        filters=16, # todo
                         kernel_size = config.kernelsize,
                         strides = config.stride,
                         kernel_regularizer=regularizer,
                         padding='same'))
+        newShape = cnnutils.calcConvShape(config, curShape)
+        print("newShape", curShape)
+        if newShape is None:
+            print("newShape none")
+            break
+        curShape = newShape
         if config.batchnormalize:
             modelm.add(BatchNormalization())
         modelm.add(activation)
-        if config.maxpool > 1:
+        dopool = len(d1s) > i and len(d2s) > i and d1s[i] > 1 and d2s[i] > 1
+        dopool = len(d1s) > i and d1s[i] > 1
+        newShape = cnnutils.calcPoolShape(config, curShape)
+        print("newShape2", newShape)
+        if newShape is not None and config.maxpool > 1:
             modelm.add(MaxPooling1D(config.maxpool))
+            curShape = newShape
         if config.dropout > 0:
             modelm.add(Dropout(config.dropout))
     modelm.add(Flatten())
@@ -121,3 +158,21 @@ class Model(MyModel):
     x = self.dense_3(x)
     #print(herexxx)
     return self.dense_4(x)
+
+
+  def calc(self, config, x):
+    return self.formula(config, x)
+    x = (x - config.kernelsize + 2 * (config.kernelsize // 2)) / config.stride + 1
+    x = int(x)
+    x = x // config.maxpool
+    if x < config.maxpool:
+        return None
+    return x
+
+  def formula(self, config, x):
+      padding = config.kernelsize // 2
+      x = math.floor((x + 2 * padding - dilation * (config.kernelsize - 1) - 1) / config.stride + 1)
+      x = x // config.maxpool
+      if x < config.maxpool:
+          return None
+      return x

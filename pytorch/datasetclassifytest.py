@@ -27,10 +27,12 @@ class MyTestCase(unittest.TestCase):
         testlist = [ config.PYTORCHRNN ]
         testlist = [ config.PYTORCHGRU ]
         testlist = [ config.PYTORCHMLP ]
+        testlist = [ config.PYTORCHCNN, config.PYTORCHCNN2 ]
         testlist = [ config.PYTORCHCNN2 ]
 
         for test in testlist:
-            result = cli.learn(ds = 'mnist', cf = test, take = take, steps = steps)
+            override = {'convlayers': 3, 'layers': 2, 'steps' : 1, 'kernelsize' : 4, 'maxpool': 4 }
+            result = cli.learn(ds = 'mnist', cf = test, take = take, steps = steps, override = override)
             print(result)
             self.assertIsNotNone(result['accuracy'], "Accuracy")  # add assertion
         # here
@@ -38,14 +40,17 @@ class MyTestCase(unittest.TestCase):
     def test_cnn(self):
         steps = 1
 
-        testlist = [ config.PYTORCHCNN2, config.PYTORCHCNN ]
+        testlist = [ config.PYTORCHCNN, config.PYTORCHCNN2 ]
 
         for test in testlist:
             for i in range(1, 4):
                 for j in range(1, 3):
-                    override = { 'convlayers' : i, 'layers' : j }
-                    result = cli.learn(ds = 'mnist', cf = test, take = take, steps = steps, override = override)
-                    print(result)
+                    for k in [1, 2, 3, 4]:
+                        for l in [1, 2, 3, 4]:
+                            print("i j k", i, j, k)
+                            override = {'convlayers': i, 'layers': j, 'maxpool': k, 'kernelsize' : l }
+                            result = cli.learn(ds = 'mnist', cf = test, take = take, steps = steps, override = override)
+                            print(result)
             #self.assertIsNotNone(result['accuracy'], "Accuracy")  # add assertion
         # here
 

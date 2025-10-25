@@ -16,9 +16,9 @@ def learntestclassify(classify_x, cf = 'tensorflowMLPConfig', size = None, class
     neuralnetcommand = { 'mldynamic' : True, 'mlclassify' : True, 'mllearn' : True }
     return learntestclassify_inner(cf = cf, steps = steps, size = size, classes = classes, take = take, zero = zero, train_x = train_x, train_y = train_y, test_x = test_x, test_y = test_y , classify_x = classify_x, classify = classify, neuralnetcommand = neuralnetcommand, override = override)
 
-def learntestclassifynotest(classify_x, cf = 'tensorflowMLPConfig', size = None, classes = None, train_x = None, train_y = None, steps = None, zero = True, classify = True, take = None):
+def learntestclassifynotest(classify_x, cf = 'tensorflowMLPConfig', size = None, classes = None, train_x = None, train_y = None, steps = None, zero = True, classify = True, take = None, override = None):
     neuralnetcommand = { 'mldynamic' : True, 'mlclassify' : False, 'mllearn' : True }
-    return learntestclassify_inner(cf = cf, steps = steps, size = size, classes = classes, take = take, zero = zero, train_x = train_x, train_y = train_y, classify_x = classify_x, classify = classify, neuralnetcommand = neuralnetcommand)
+    return learntestclassify_inner(cf = cf, steps = steps, size = size, classes = classes, take = take, zero = zero, train_x = train_x, train_y = train_y, classify_x = classify_x, classify = classify, neuralnetcommand = neuralnetcommand, override = override)
 
 def learntest(cf = 'tensorflowMLPConfig', size = None, classes = None, train_x = None, train_y = None, test_x = None, test_y = None, classifyarray = None, steps = None, zero = True, classify = True, take = None):
     neuralnetcommand = { 'mldynamic' : False, 'mlclassify' : False, 'mllearn' : True }

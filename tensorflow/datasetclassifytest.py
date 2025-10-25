@@ -26,28 +26,32 @@ class MyTestCase(unittest.TestCase):
         testlist = [ config.TENSORFLOWLSTM, config.TENSORFLOWGRU ]
         testlist = [ config.TENSORFLOWDNN ]
         testlist = [ config.TENSORFLOWMLP ]
-        testlist = [ config.TENSORFLOWCNN2 ]
+        testlist = [ config.TENSORFLOWCNN, config.TENSORFLOWCNN2 ]
         for test in testlist:
           dslist = [ 'mnist', 'cifar10' ]
+          dslist = [ 'cifar10']
           dslist = [ 'mnist' ]
           for ds in dslist:
-            result = cli.learn(ds = ds, cf = test, take = take, steps = steps)
+            override = {'convlayers': 3, 'layers': 2, 'steps' : 1, 'kernelsize' : 4, 'maxpool': 4 }
+            result = cli.learn(ds = ds, cf = test, take = take, steps = steps, override = override)
             print(result)
             self.assertIsNotNone(result['accuracy'], "Accuracy")  # add assertion
             # toto classify
         # here
 
     def test_cnn(self):
-        steps
+        steps = 1
 
         testlist = [ config.TENSORFLOWCNN, config.TENSORFLOWCNN2 ]
 
         for test in testlist:
             for i in range(1, 4):
                 for j in range(1, 3):
-                    override = { 'convlayers' : i, 'layers' : j }
-                    result = cli.learn(ds = 'mnist', cf = test, take = take, steps = steps, override = override)
-                    print(result)
+                    for k in [1, 2, 3, 4]:
+                        for l in [1, 2, 3, 4]:
+                            override = { 'convlayers' : i, 'layers' : j, 'maxpool' : k, 'kernelsize' : l }
+                            result = cli.learn(ds = 'mnist', cf = test, take = take, steps = steps, override = override)
+                            print(result)
             #self.assertIsNotNone(result['accuracy'], "Accuracy")  # add assertion
         # here
 

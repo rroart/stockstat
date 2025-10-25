@@ -1,10 +1,14 @@
+import math
+
 import torch.nn as nn
 import torch
 import torch.nn as nn
 import torch
 
-from model import layerutils
+from model import layerutils, cnnutils
 
+
+# cnn2 used (n, chan, x, y)
 
 class Net(nn.Module):
     def __init__(self, myobj, config, classify, shape):
@@ -18,42 +22,76 @@ class Net(nn.Module):
         activation = layerutils.getActivation(config)
         lastactivation = layerutils.getLastactivation(config)
 
-        inouts = [ 32, 64, 128 ]
+        print("shape", shape)
+        inouts = [ 32, 32, 32 ] # todo
+
         dims = [ shape[1], *inouts[:config.convlayers], shape[2] ]
+
+        d11 = self.calc(config, shape[1])
+        d21 = self.calc(config, shape[2])
+        d31 = self.calc(config, shape[3])
+        d1s = [  ]
+        d2s = [  ]
+        d3s = [  ]
+        if not d11 is None:
+            d1s.append(d11)
+        if not d21 is None:
+            d2s.append(d21)
+        if not d31 is None:
+            d3s.append(d31)
+        for i in range(config.convlayers - 1):
+            if len(d1s) > 0:
+                ad1 = self.calc(config, d1s[-1])
+                if not ad1 is None:
+                    d1s.append(ad1)
+            if len(d2s) > 0:
+                ad2 = self.calc(config, d2s[-1])
+                if not ad2 is None:
+                    d2s.append(ad2)
+            if len(d3s) > 0:
+                ad3 = self.calc(config, d3s[-1])
+                if not ad3 is None:
+                    d3s.append(ad3)
+        print("P12", shape, d1s, d2s, d3s)
+        print(inouts[config.convlayers - 1])
+        curShape = cnnutils.calcConvShape2(config, shape[1:])
+        curShape = shape[1:]
+        print("curShape", curShape)
 
         layer1 = nn.ModuleList()
         for i in range(config.convlayers):
             layer1.append(nn.Conv2d(dims[i], dims[i+1], kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)))
+            newShape = cnnutils.calcConvShape2(config, curShape)
+            print("newShape", curShape)
+            if newShape is None:
+                print("newShape none")
+                break
+            curShape = newShape
             if self.config.batchnormalize:
                 layer1.append(nn.BatchNorm2d(dims[i+1]))
             layer1.append(activation)
-            if config.maxpool > 1:
+            #dopool = len(d2s) > i and len(d3s) > i and d2s[i] > 1 and d3s[i] > 1
+            #print("bool", len(d1s) > i,len(d2s) > i, d1s[i] > 1, d2s[i] > 1)
+            newShape = cnnutils.calcPoolShape2(config, curShape)
+            print("newShape2", newShape)
+            if newShape is not None and config.maxpool > 1:
                 layer1.append(nn.MaxPool2d(kernel_size=config.maxpool))
+                curShape = newShape
             if config.dropout > 0:
                 layer1.append(nn.Dropout(config.dropout))
         self.layer1 = nn.Sequential(*layer1)
-        p1 = self.calc(config, shape[2]) // config.maxpool
-        p2 = self.calc(config, p1)
-        q1 = self.calc(config, shape[3]) // config.maxpool
-        q2 = self.calc(config, q1)
-        p3 = int(p2 // config.maxpool)
-        q3 = int(q2 // config.maxpool)
-        ps = [ p1 ]
-        for i in range(config.convlayers - 1):
-            px = self.calc(config, ps[-1]) // config.maxpool
-            ps.append(px)
-        qs = [ q1 ]
-        for i in range(config.convlayers - 1):
-            qx = self.calc(config, qs[-1]) // config.maxpool
-            qs.append(qx)
-        print("P12", shape[1], shape[2], p1, p2, ps, qs)
-        print(inouts[config.convlayers - 1])
-        config.hidden = 64 # todo
 
-        if classify:
-            sizearr = [inouts[config.convlayers - 1] * ps[-1] * qs[-1]] + [config.hidden] * (config.layers - 1) + [myobj.classes]
+        d23dim = min(len(d2s), len(d3s)) - 1
+        if d23dim < 0:
+            mlt2 = shape[2]
+            mlt3 = shape[3]
         else:
-            sizearr = [inouts[config.convlayers - 1] * p3 * q3] + [config.hidden] * (config.layers - 1) + [1]
+            mlt2 = d2s[d23dim]
+            mlt3 = d3s[d23dim]
+        if classify:
+            sizearr = [inouts[config.convlayers - 1] * curShape[1] * curShape[2]] + [config.hidden] * (config.layers - 1) + [myobj.classes]
+        else:
+            sizearr = [inouts[config.convlayers - 1] * curShape[1] * curShape[2]] + [config.hidden] * (config.layers - 1) + [1]
 
         mylayers = nn.ModuleList()
         for i in range(0, len(sizearr) - 1):
@@ -94,15 +132,15 @@ class Net(nn.Module):
         #o1 = int(o1)
         o2 = (o1 - config.kernelsize + 2 * (config.kernelsize // 2)) // config.stride + 1
         #o2 = int(o2)
-        p1 = (dim2 - config.kernelsize + 2 * (config.kernelsize // 2)) // config.stride + 1
+        d21 = (dim2 - config.kernelsize + 2 * (config.kernelsize // 2)) // config.stride + 1
         #p1 = int(p1)
-        p2 = (p1 - config.kernelsize + 2 * (config.kernelsize // 2)) / config.stride + 1
+        d22 = (d21 - config.kernelsize + 2 * (config.kernelsize // 2)) / config.stride + 1
         #p2 = int(p2)
-        q1 = (dim3 - config.kernelsize + 2 * (config.kernelsize // 2)) // config.stride + 1
-        q2 = (q1 - config.kernelsize + 2 * (config.kernelsize // 2)) / config.stride + 1
+        d31 = (dim3 - config.kernelsize + 2 * (config.kernelsize // 2)) // config.stride + 1
+        d32 = (d31 - config.kernelsize + 2 * (config.kernelsize // 2)) / config.stride + 1
         o3 = o2 // pool_kernel_size
-        p3 = p2 // pool_kernel_size
-        q3 = q2 // pool_kernel_size
+        p3 = d22 // pool_kernel_size
+        d33 = d32 // pool_kernel_size
         #self.layer0 = layerutils.getNormalLayer(shape)
         layer1 = nn.ModuleList()
         layer1.append(nn.Conv2d(dim1, c1, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)))
@@ -146,7 +184,7 @@ class Net(nn.Module):
         # / 2 is the dropout
         #self.fc1 = nn.Linear(int(c2 * m1 * m2 * config.dropout2), 128)
         #self.fc1 = nn.Linear(int(c2 * p1 * p2), 128)
-        self.fc1 = nn.Linear(int(c2 * p3 * q3), 128)
+        self.fc1 = nn.Linear(int(c2 * p3 * d33), 128)
         self.drop = nn.Dropout(config.dropout)
         self.fc15 = nn.Linear(128, 64)
         self.fc2 = nn.Linear(64, myobj.classes)
@@ -250,8 +288,22 @@ class Net(nn.Module):
         #print("sz",self(x).size(),  y.size())
         self.bce(self(x), y).backward()
         self.opt.step()
-    
+
+    def formula(self, config, x):
+        dilation = 1
+        padding = config.kernelsize // 2
+        x = math.floor((x + 2 * padding - dilation * (config.kernelsize - 1) - 1) / config.stride + 1)
+        x = x // config.maxpool
+        if x < config.maxpool:
+            return None
+        return x
+
     def calc(self, config, x):
-        o1 = (x - config.kernelsize + 2 * (config.kernelsize // 2)) / config.stride + 1
-        o1 = int(o1)
-        return o1
+        return self.formula(config, x)
+        x = (x - config.kernelsize + 2 * (config.kernelsize // 2)) / config.stride + 1
+        x = int(x)
+        x = x // config.maxpool
+        if x < config.maxpool:
+            return None
+        return x
+
