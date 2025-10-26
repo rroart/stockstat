@@ -1,5 +1,7 @@
 import math
 
+# channel first, at 0
+
 dilation = 1
 
 def calcConvShape(config, xy):

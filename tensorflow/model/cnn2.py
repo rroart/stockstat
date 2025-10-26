@@ -64,6 +64,7 @@ class Model(MyModel):
         modelm.add(layerutils.getNormalLayer(shape))
     for i in range(config.convlayers):
         modelm.add(Convolution2D(
+                        data_format = "channels_last",
                         filters=64, # todo
                         kernel_size = config.kernelsize,
                         strides = config.stride,
@@ -82,7 +83,7 @@ class Model(MyModel):
         newShape = cnnutils.calcPoolShape2(config, curShape)
         print("newShape2", newShape)
         if newShape is not None and config.maxpool > 1:
-            modelm.add(MaxPooling2D(config.maxpool))
+            modelm.add(MaxPooling2D(config.maxpool, data_format = "channels_last"))
             curShape = newShape
         if config.dropout > 0:
             modelm.add(Dropout(config.dropout))

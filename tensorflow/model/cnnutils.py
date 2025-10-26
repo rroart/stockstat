@@ -1,35 +1,38 @@
 import math
 
+# channel_last, at 1/2
+
 dilation = 1
 
 def calcConvShape(config, xy):
-    y = calcConv(config, xy[1])
-    if y is None:
+    x = calcConv(config, xy[0])
+    if x is None:
         return None
-    return (xy[0], y)
+    return (x, xy[1])
 
 
+# differs
 def calcPoolShape(config, xy):
-    y = calcPool(config, xy[1])
-    if y is None:
+    x = calcPool(config, xy[0])
+    if x is None:
         return None
-    return (xy[0], y)
+    return (x, xy[1])
 
 
 def calcConvShape2(config, xyz):
+    x = calcConv(config, xyz[0])
     y = calcConv(config, xyz[1])
-    z = calcConv(config, xyz[2])
-    if y is None or z is None:
+    if x is None or y is None:
         return None
-    return (xyz[0], y, z)
+    return (x, y, xyz[2])
 
 
 def calcPoolShape2(config, xyz):
+    x = calcPool(config, xyz[0])
     y = calcPool(config, xyz[1])
-    z = calcPool(config, xyz[2])
-    if y is None or z is None:
+    if x is None or y is None:
         return None
-    return (xyz[0], y, z)
+    return (x, y, xyz[2])
 
 
 def calcConv(config, x):
