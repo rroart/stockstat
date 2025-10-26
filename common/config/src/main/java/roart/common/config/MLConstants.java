@@ -67,7 +67,7 @@ public class MLConstants {
     public static final String PYTORCHCOMMONCLASSIFYCONFIG = ", \"loss\" : \"cross_entropy\", \"optimizer\" : \"sgd\", \"activation\" : \"relu\", \"lastactivation\" : \"relu\"";
     public static final String PYTORCHCOMMONCLASSIFYCNNCONFIG = ", \"loss\" : \"cross_entropy\", \"optimizer\" : \"sgd\", \"activation\" : \"relu\", \"lastactivation\" : \"relu\"";
     public static final String PYTORCHCOMMONCLASSIFYCNN2CONFIG = ", \"loss\" : \"cross_entropy\", \"optimizer\" : \"adadelta\", \"activation\" : \"relu\", \"lastactivation\" : \"relu\"";
-    public static final String PYTORCHCOMMONCONFIG = ", \"steps\" : 1000, \"lr\" : null, \"inputdropout\" : 0.5, \"dropout\" : 0.5, \"normalize\" : true, \"batchnormalize\" : true, \"regularize\" : true, \"batchsize\" : 64";
+    public static final String PYTORCHCOMMONCONFIG = ", \"steps\" : 1000, \"lr\" : null, \"inputdropout\" : 0.25, \"dropout\" : 0.2, \"normalize\" : true, \"batchnormalize\" : true, \"regularize\" : true, \"batchsize\" : 64";
     public static final String PYTORCHCOMMONFEED = ", \"hidden\" : 100, \"layers\" : 2 ";
     public static final String PYTORCHCOMMONPREFEED = ", \"hidden\" : 100, \"layers\": 2, \"convlayers\" : 3 ";
 
@@ -81,7 +81,7 @@ public class MLConstants {
     public static final String TENSORFLOWCOMMONCLASSIFYCONFIG = ", \"loss\" : \"sparse_categorical_crossentropy\", \"optimizer\" : \"adam\", \"activation\" : \"relu\", \"lastactivation\" : \"softmax\"";
     public static final String TENSORFLOWCOMMONCLASSIFYCNNCONFIG = ", \"loss\" : \"sparse_categorical_crossentropy\", \"optimizer\" : \"adam\", \"activation\" : \"leaky_relu\", \"lastactivation\" : \"softmax\"";
     public static final String TENSORFLOWCOMMONCLASSIFYCNN2CONFIG = ", \"loss\" : \"sparse_categorical_crossentropy\", \"optimizer\" : \"adadelta\", \"activation\" : \"leaky_relu\", \"lastactivation\" : \"softmax\"";
-    public static final String TENSORFLOWCOMMONCONFIG = ", \"steps\" : 1000, \"lr\" : null, \"inputdropout\" : 0.5, \"dropout\" : 0.5, \"normalize\" : true, \"batchnormalize\" : true, \"regularize\" : true";
+    public static final String TENSORFLOWCOMMONCONFIG = ", \"steps\" : 1000, \"lr\" : null, \"inputdropout\" : 0.25, \"dropout\" : 0.2, \"normalize\" : true, \"batchnormalize\" : true, \"regularize\" : true";
     public static final String TENSORFLOWCOMMONFEED = ", \"hidden\" : 100, \"layers\" : 2 ";
     public static final String TENSORFLOWCOMMONPREFEED = ", \"hidden\" : 100, \"layers\": 2, \"convlayers\" : 3 ";
 
