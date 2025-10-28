@@ -299,139 +299,139 @@ public class NeuralNetConfigs {
         return null;
     }
 
-    public NeuralNetConfig getAndSetConfig(String key, String config) {
+    public NeuralNetConfig getAndSetConfig(String key, String config, boolean binary) {
         switch (key) {
         case ConfigConstants.MACHINELEARNINGSPARKMLLOR:
             if (sparkConfig.getSparkLORConfig() == null) {
-                sparkConfig.setSparkLORConfig((SparkLORConfig) get(key, config));
+                sparkConfig.setSparkLORConfig((SparkLORConfig) get(key, config, binary));
             }
             return sparkConfig.getSparkLORConfig();
         case ConfigConstants.MACHINELEARNINGSPARKMLMLPC:
             if (sparkConfig.getSparkMLPCConfig() == null) {
-                sparkConfig.setSparkMLPCConfig((SparkMLPCConfig) get(key, config));
+                sparkConfig.setSparkMLPCConfig((SparkMLPCConfig) get(key, config, binary));
             }
             return sparkConfig.getSparkMLPCConfig();
         case ConfigConstants.MACHINELEARNINGSPARKMLOVR:
             if (sparkConfig.getSparkOVRConfig() == null) {
-                sparkConfig.setSparkOVRConfig((SparkOVRConfig) get(key, config));
+                sparkConfig.setSparkOVRConfig((SparkOVRConfig) get(key, config, binary));
             }
             return sparkConfig.getSparkOVRConfig();
         case ConfigConstants.MACHINELEARNINGSPARKMLLSVC:
             if (sparkConfig.getSparkLSVCConfig() == null) {
-                sparkConfig.setSparkLSVCConfig((SparkLSVCConfig) get(key, config));
+                sparkConfig.setSparkLSVCConfig((SparkLSVCConfig) get(key, config, binary));
             }
             return sparkConfig.getSparkLSVCConfig();
         case ConfigConstants.MACHINELEARNINGTENSORFLOWDNN:
             if (tensorflowConfig.getTensorflowDNNConfig() == null) {
-                tensorflowConfig.setTensorflowDNNConfig((TensorflowDNNConfig) get(key, config));
+                tensorflowConfig.setTensorflowDNNConfig((TensorflowDNNConfig) get(key, config, binary));
             }
             return tensorflowConfig.getTensorflowDNNConfig();
         case ConfigConstants.MACHINELEARNINGTENSORFLOWLIC:
             if (tensorflowConfig.getTensorflowLICConfig() == null) {
-                tensorflowConfig.setTensorflowLICConfig((TensorflowLICConfig) get(key, config));
+                tensorflowConfig.setTensorflowLICConfig((TensorflowLICConfig) get(key, config, binary));
             }
             return tensorflowConfig.getTensorflowLICConfig();
         case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR:
             if (tensorflowConfig.getTensorflowLIRConfig() == null) {
-                tensorflowConfig.setTensorflowLIRConfig((TensorflowLIRConfig) get(key, config));
+                tensorflowConfig.setTensorflowLIRConfig((TensorflowLIRConfig) get(key, config, binary));
             }
             return tensorflowConfig.getTensorflowLIRConfig();
         case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLP:
         case ConfigConstants.MACHINELEARNINGTENSORFLOWMLP:
             if (tensorflowConfig.getTensorflowMLPConfig() == null) {
-                tensorflowConfig.setTensorflowMLPConfig((TensorflowMLPConfig) get(key, config));
+                tensorflowConfig.setTensorflowMLPConfig((TensorflowMLPConfig) get(key, config, binary));
             }
             return tensorflowConfig.getTensorflowMLPConfig();
         case ConfigConstants.MACHINELEARNINGTENSORFLOWCNN:
             if (tensorflowConfig.getTensorflowCNNConfig() == null) {
-                tensorflowConfig.setTensorflowCNNConfig((TensorflowCNNConfig) get(key, config));
+                tensorflowConfig.setTensorflowCNNConfig((TensorflowCNNConfig) get(key, config, binary));
             }
             return tensorflowConfig.getTensorflowCNNConfig();
         case ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2:
             if (tensorflowConfig.getTensorflowCNN2Config() == null) {
-                tensorflowConfig.setTensorflowCNN2Config((TensorflowCNN2Config) get(key, config));
+                tensorflowConfig.setTensorflowCNN2Config((TensorflowCNN2Config) get(key, config, binary));
             }
             return tensorflowConfig.getTensorflowCNN2Config();
         case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNN:
         case ConfigConstants.MACHINELEARNINGTENSORFLOWRNN:
             if (tensorflowConfig.getTensorflowRNNConfig() == null) {
-                tensorflowConfig.setTensorflowRNNConfig((TensorflowRNNConfig) get(key, config));
+                tensorflowConfig.setTensorflowRNNConfig((TensorflowRNNConfig) get(key, config, binary));
             }
             return tensorflowConfig.getTensorflowRNNConfig();
         case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRU:
         case ConfigConstants.MACHINELEARNINGTENSORFLOWGRU:
             if (tensorflowConfig.getTensorflowGRUConfig() == null) {
-                tensorflowConfig.setTensorflowGRUConfig((TensorflowGRUConfig) get(key, config));
+                tensorflowConfig.setTensorflowGRUConfig((TensorflowGRUConfig) get(key, config, binary));
             }
             return tensorflowConfig.getTensorflowGRUConfig();
         case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM:
         case ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM:
             if (tensorflowConfig.getTensorflowLSTMConfig() == null) {
-                tensorflowConfig.setTensorflowLSTMConfig((TensorflowLSTMConfig) get(key, config));
+                tensorflowConfig.setTensorflowLSTMConfig((TensorflowLSTMConfig) get(key, config, binary));
             }
             return tensorflowConfig.getTensorflowLSTMConfig();
         case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLP:
         case ConfigConstants.MACHINELEARNINGPYTORCHMLP:
             if (pytorchConfig.getPytorchMLPConfig() == null) {
-                pytorchConfig.setPytorchMLPConfig((PytorchMLPConfig) get(key, config));
+                pytorchConfig.setPytorchMLPConfig((PytorchMLPConfig) get(key, config, binary));
             }
             return pytorchConfig.getPytorchMLPConfig();
         case ConfigConstants.MACHINELEARNINGPYTORCHCNN:
             if (pytorchConfig.getPytorchCNNConfig() == null) {
-                pytorchConfig.setPytorchCNNConfig((PytorchCNNConfig) get(key, config));
+                pytorchConfig.setPytorchCNNConfig((PytorchCNNConfig) get(key, config, binary));
             }
             return pytorchConfig.getPytorchCNNConfig();
         case ConfigConstants.MACHINELEARNINGPYTORCHCNN2:
             if (pytorchConfig.getPytorchCNN2Config() == null) {
-                pytorchConfig.setPytorchCNN2Config((PytorchCNN2Config) get(key, config));
+                pytorchConfig.setPytorchCNN2Config((PytorchCNN2Config) get(key, config, binary));
             }
             return pytorchConfig.getPytorchCNN2Config();
         case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNN:
         case ConfigConstants.MACHINELEARNINGPYTORCHRNN:
             if (pytorchConfig.getPytorchRNNConfig() == null) {
-                pytorchConfig.setPytorchRNNConfig((PytorchRNNConfig) get(key, config));
+                pytorchConfig.setPytorchRNNConfig((PytorchRNNConfig) get(key, config, binary));
             }
             return pytorchConfig.getPytorchRNNConfig();
         case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRU:
         case ConfigConstants.MACHINELEARNINGPYTORCHGRU:
             if (pytorchConfig.getPytorchGRUConfig() == null) {
-                pytorchConfig.setPytorchGRUConfig((PytorchGRUConfig) get(key, config));
+                pytorchConfig.setPytorchGRUConfig((PytorchGRUConfig) get(key, config, binary));
             }
             return pytorchConfig.getPytorchGRUConfig();
         case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTM:
         case ConfigConstants.MACHINELEARNINGPYTORCHLSTM:
             if (pytorchConfig.getPytorchLSTMConfig() == null) {
-                pytorchConfig.setPytorchLSTMConfig((PytorchLSTMConfig) get(key, config));
+                pytorchConfig.setPytorchLSTMConfig((PytorchLSTMConfig) get(key, config, binary));
             }
             return pytorchConfig.getPytorchLSTMConfig();
         case ConfigConstants.MACHINELEARNINGGEMEWC:
             if (gemConfig.getGemEWCConfig() == null) {
-                gemConfig.setGemEWCConfig((GemEWCConfig) get(key, config));
+                gemConfig.setGemEWCConfig((GemEWCConfig) get(key, config, binary));
             }
             return gemConfig.getGemEWCConfig();
         case ConfigConstants.MACHINELEARNINGGEMGEM:
             if (gemConfig.getGemGEMConfig() == null) {
-                gemConfig.setGemGEMConfig((GemGEMConfig) get(key, config));
+                gemConfig.setGemGEMConfig((GemGEMConfig) get(key, config, binary));
             }
             return gemConfig.getGemGEMConfig();
         case ConfigConstants.MACHINELEARNINGGEMICARL:
             if (gemConfig.getGemIcarlConfig() == null) {
-                gemConfig.setGemIcarlConfig((GemIcarlConfig) get(key, config));
+                gemConfig.setGemIcarlConfig((GemIcarlConfig) get(key, config, binary));
             }
             return gemConfig.getGemIcarlConfig();
         case ConfigConstants.MACHINELEARNINGGEMINDEPENDENT:
             if (gemConfig.getGemIConfig() == null) {
-                gemConfig.setGemIConfig((GemIConfig) get(key, config));
+                gemConfig.setGemIConfig((GemIConfig) get(key, config, binary));
             }
             return gemConfig.getGemIConfig();
         case ConfigConstants.MACHINELEARNINGGEMMULTIMODAL:
             if (gemConfig.getGemMMConfig() == null) {
-                gemConfig.setGemMMConfig((GemMMConfig) get(key, config));
+                gemConfig.setGemMMConfig((GemMMConfig) get(key, config, binary));
             }
             return gemConfig.getGemMMConfig();
         case ConfigConstants.MACHINELEARNINGGEMSINGLE:
             if (gemConfig.getGemSConfig() == null) {
-                gemConfig.setGemSConfig((GemSConfig) get(key, config));
+                gemConfig.setGemSConfig((GemSConfig) get(key, config, binary));
             }
             return gemConfig.getGemSConfig();
         }
@@ -475,6 +475,23 @@ public class NeuralNetConfigs {
         map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNN, new ImmutablePair(PytorchRNNConfig.class, MLConstants.PYTORCHRNNCONFIG));
         map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRU, new ImmutablePair(PytorchGRUConfig.class, MLConstants.PYTORCHGRUCONFIG));
         map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTM, new ImmutablePair(PytorchLSTMConfig.class, MLConstants.PYTORCHLSTMCONFIG));
+        return map;
+    }
+    
+    private Map<String, Pair<Class<NeuralNetConfig>, String>> getBinaryMap() {
+        Map<String, Pair<Class<NeuralNetConfig>, String>> map = new HashMap<>();
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWMLP, new ImmutablePair(TensorflowMLPConfig.class, MLConstants.TENSORFLOWMLPBINARYCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN, new ImmutablePair(TensorflowCNNConfig.class, MLConstants.TENSORFLOWCNNBINARYCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2, new ImmutablePair(TensorflowCNN2Config.class, MLConstants.TENSORFLOWCNN2BINARYCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN, new ImmutablePair(TensorflowRNNConfig.class, MLConstants.TENSORFLOWRNNBINARYCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU, new ImmutablePair(TensorflowGRUConfig.class, MLConstants.TENSORFLOWGRUBINARYCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, new ImmutablePair(TensorflowLSTMConfig.class, MLConstants.TENSORFLOWLSTMBINARYCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGPYTORCHMLP, new ImmutablePair(PytorchMLPConfig.class, MLConstants.PYTORCHMLPBINARYCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN, new ImmutablePair(PytorchCNNConfig.class, MLConstants.PYTORCHCNNBINARYCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN2, new ImmutablePair(PytorchCNN2Config.class, MLConstants.PYTORCHCNN2BINARYCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGPYTORCHRNN, new ImmutablePair(PytorchRNNConfig.class, MLConstants.PYTORCHRNNBINARYCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGPYTORCHGRU, new ImmutablePair(PytorchGRUConfig.class, MLConstants.PYTORCHGRUBINARYCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGPYTORCHLSTM, new ImmutablePair(PytorchLSTMConfig.class, MLConstants.PYTORCHLSTMBINARYCONFIG));
         return map;
     }
     
@@ -573,17 +590,25 @@ public class NeuralNetConfigs {
         return nnconfig;
     }
 
-    public NeuralNetConfig get(String key, String config) {
+    public NeuralNetConfig get(String key, String config, boolean binary) {
         NeuralNetConfig nnconfig = null;
         Map<String, Pair<Class<NeuralNetConfig>, String>> map = getMap();
+        if (binary) {
+            Map<String, Pair<Class<NeuralNetConfig>, String>> binaryMap = getBinaryMap();
+            map.putAll(binaryMap);
+        }
         Pair<Class<NeuralNetConfig>, String> nnstring = map.get(key);
         nnconfig = JsonUtil.convert(config, nnstring.getLeft(), mapper);
         return nnconfig;
     }
 
-    public NeuralNetConfig getClass(String aclass) {
+    public NeuralNetConfig getClass(String aclass, boolean binary) {
         NeuralNetConfig nnconfig = null;
         Map<String, Pair<Class<NeuralNetConfig>, String>> map = getMap();
+        if (binary) {
+            Map<String, Pair<Class<NeuralNetConfig>, String>> binaryMap = getBinaryMap();
+            map.putAll(binaryMap);
+        }
         Collection<Pair<Class<NeuralNetConfig>, String>> values = map.values();
         for (Pair<Class<NeuralNetConfig>, String> nnstring : values) {
             if (aclass.equals(nnstring.getLeft().getSimpleName())) {

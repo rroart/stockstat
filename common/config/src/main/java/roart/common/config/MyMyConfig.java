@@ -1510,6 +1510,10 @@ public abstract class MyMyConfig extends MyConfig {
         return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSUSECURVE);
     }
 
+    public boolean wantAggregatorsUseConfusion() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSUSECONFUSION);
+    }
+
     public String getTensorflowServer() {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER);              
     }

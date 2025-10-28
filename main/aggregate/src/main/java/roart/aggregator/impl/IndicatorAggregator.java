@@ -462,6 +462,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                                 continue;
                             }
                             List<LearnClassify> classifyMLMap = transformLearnClassifyMap(classifyMap, false, mlmeta, model);
+                            if (!conf.wantAggregatorsUseConfusion()) {
+                                outcomes = 2;
+                            }
                             int size = getValidateSize(learnMLMap, mlmeta);
                             List<AbstractIndicator> indicators = new ArrayList<>();
                             String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getConfigData().getMarket(), indicators, subType.getType(), mapType, mlmeta, threshold);
@@ -483,7 +486,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                                 if (configValue != null) {
                                     Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev();
                                     String config = configMap.get(model.getKey());
-                                    NeuralNetConfig nnconfig = nnConfigs.getAndSetConfig(config, configValue);
+                                    boolean binary = outcomes == 2;
+                                    NeuralNetConfig nnconfig = nnConfigs.getAndSetConfig(config, configValue, binary);
                                 } else {
                                     nnConfigs = null;
                                 }
@@ -591,7 +595,11 @@ public abstract class IndicatorAggregator extends Aggregator {
                 Object newarray = model.transform(array, mlmeta);
                 boolean classified = arrayclassify.getRight() != null;
                 if (classified == classify) {
-                    mlMap.add(new LearnClassify(entry.getKey(), newarray, arrayclassify.getRight()));
+                    Double classification = arrayclassify.getRight();
+                    if (!conf.wantAggregatorsUseConfusion()) {
+                        mapConfusion.get(classification);
+                    }
+                    mlMap.add(new LearnClassify(entry.getKey(), newarray, classification));
                 }
             }
         }
@@ -671,7 +679,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                                 nnConfigs = new NeuralNetConfigs();
                                 String configValue = (String) conf.getValueOrDefault(key);
                                 if (configValue != null) {
-                                    NeuralNetConfig nnconfig = nnConfigs.getAndSetConfig(key, configValue);
+                                    boolean binary = outcomes == 2;
+                                    NeuralNetConfig nnconfig = nnConfigs.getAndSetConfig(key, configValue, binary);
                                 } else {
                                     nnConfigs = null;
                                 }
@@ -1017,6 +1026,9 @@ public abstract class IndicatorAggregator extends Aggregator {
     protected abstract int fieldSize();
 
     protected List<Integer> getMapTypeList() {
+        if (!conf.wantAggregatorsUseConfusion()) {
+            return List.of(0);
+        }
         List<Integer> retList = new ArrayList<>();
         retList.add(CMNTYPE);
         retList.add(POSTYPE);
@@ -1025,6 +1037,9 @@ public abstract class IndicatorAggregator extends Aggregator {
     }
 
     private boolean isBinary(int mapType) {
+        if (!conf.wantAggregatorsUseConfusion()) {
+            return true;
+        }
         return mapType != CMNTYPE;
     }
     
@@ -1032,7 +1047,17 @@ public abstract class IndicatorAggregator extends Aggregator {
         return listMap;
     }
 
+    Map<Double, Double> mapConfusion = new HashMap<>();
+    
     private void makeMapTypes() {
+        if (!conf.wantAggregatorsUseConfusion()) {
+            mapTypes.put(0, "abovebelow");
+            mapConfusion.put(1.0, 1.0);
+            mapConfusion.put(2.0, 0.0);
+            mapConfusion.put(3.0, 0.0);
+            mapConfusion.put(4.0, 1.0);
+            return;
+        }
         mapTypes.put(CMNTYPE, CMNTYPESTR);
         mapTypes.put(POSTYPE, POSTYPESTR);
         mapTypes.put(NEGTYPE, NEGTYPESTR);

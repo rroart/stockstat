@@ -46,7 +46,7 @@ TENSORFLOWGPT2CONFIG = { 'name' : 'gpt2', 'steps' : 1 }
 TENSORFLOWPQKCONFIG = { 'name' : 'pqk', 'steps' : 3 }
 TENSORFLOWVAECONFIG = { 'name' : 'vae', 'steps' : 30 }
 
-def get(cf, predictor = False):
+def get(cf, predictor = False, binary = False):
     if cf == TENSORFLOWDNN:
         return cf, 1, TENSORFLOWDNNCONFIG
     elif cf == TENSORFLOWLIC:
@@ -56,23 +56,35 @@ def get(cf, predictor = False):
             TENSORFLOWMLPCONFIG.update(TENSORFLOWCOMMONPREDICT)
         else:
             TENSORFLOWMLPCONFIG.update(TENSORFLOWCOMMONCLASSIFY)
+        if binary and not predictor:
+            TENSORFLOWMLPCONFIG['loss'] = 'binary_crossentropy'
         return cf, 3, TENSORFLOWMLPCONFIG
     elif cf == TENSORFLOWRNN:
         TENSORFLOWRNNCONFIG.update(TENSORFLOWCOMMONCLASSIFY)
+        if binary and not predictor:
+            TENSORFLOWRNNCONFIG['loss'] = 'binary_crossentropy'
         return cf, 4, TENSORFLOWRNNCONFIG
     elif cf == TENSORFLOWCNN:
         TENSORFLOWCNNCONFIG.update(TENSORFLOWCOMMONCLASSIFYCNN)
+        if binary and not predictor:
+            TENSORFLOWCNNCONFIG['loss'] = 'binary_crossentropy'
         return cf, 5, TENSORFLOWCNNCONFIG
     elif cf == TENSORFLOWLSTM:
         TENSORFLOWLSTMCONFIG.update(TENSORFLOWCOMMONCLASSIFY)
+        if binary and not predictor:
+            TENSORFLOWLSTMCONFIG['loss'] = 'binary_crossentropy'
         return cf, 6, TENSORFLOWLSTMCONFIG
     elif cf == TENSORFLOWGRU:
         TENSORFLOWGRUCONFIG.update(TENSORFLOWCOMMONCLASSIFY)
+        if binary and not predictor:
+            TENSORFLOWGRUCONFIG['loss'] = 'binary_crossentropy'
         return cf, 7, TENSORFLOWGRUCONFIG
     elif cf == TENSORFLOWLIR:
         return cf, 8, TENSORFLOWLIRCONFIG
     elif cf == TENSORFLOWCNN2:
         TENSORFLOWCNN2CONFIG.update(TENSORFLOWCOMMONCLASSIFYCNN2)
+        if binary and not predictor:
+            TENSORFLOWCNN2CONFIG['loss'] = 'binary_crossentropy'
         return cf, 9, TENSORFLOWCNN2CONFIG
     elif cf == TENSORFLOWQNN:
         return cf, 10, TENSORFLOWQNNCONFIG

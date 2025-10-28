@@ -198,7 +198,8 @@ public class MachineLearningEvolutionService {
             String configKey = nnConfigs.getConfigMap().get(key);
             String configValue = (String) conf.getValueOrDefault(configKey);
             
-            NeuralNetConfig nnconfig = nnConfigs.getAndSetConfig(key, configValue);
+            boolean binary = false; // TODO binary
+            NeuralNetConfig nnconfig = nnConfigs.getAndSetConfig(key, configValue, binary);
             NeuralNetConfigGene nnconfigGene = new NeuralNetConfigGeneFactory(ml.equals(PipelineConstants.PREDICTOR)).get(nnconfig, key);
             NeuralNetChromosome chromosome = new NeuralNetChromosome(nnconfigGene);
             // no, now predictor got accuracy
@@ -289,7 +290,8 @@ public class MachineLearningEvolutionService {
             String configKey = nnConfigs.getConfigMap().get(key);
             String configValue = (String) conf.getValueOrDefault(configKey);
             
-            NeuralNetConfig nnconfig = nnConfigs.getAndSetConfig(key, configValue);
+            boolean binary = false; // TODO binary
+            NeuralNetConfig nnconfig = nnConfigs.getAndSetConfig(key, configValue, binary);
             NeuralNetConfigGene nnconfigGene = new NeuralNetConfigGeneFactory(ml.equals(PipelineConstants.PREDICTOR)).get(nnconfig, key);
             NeuralNetChromosome chromosome = new NeuralNetChromosome(nnconfigGene);
             if (configKey.contains(PipelineConstants.PREDICTOR)) {

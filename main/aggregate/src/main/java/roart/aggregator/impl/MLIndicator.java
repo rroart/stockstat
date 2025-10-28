@@ -468,7 +468,8 @@ public class MLIndicator extends Aggregator {
                         if (configValue != null) {
                         	Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev();
                         	String config = configMap.get(model.getKey());
-                        	NeuralNetConfig nnconfig = nnconfigs.getAndSetConfig(config, configValue);
+                                boolean binary = true;
+                        	NeuralNetConfig nnconfig = nnconfigs.getAndSetConfig(config, configValue, binary);
                         } else {
                             nnconfigs = null;
                         }
@@ -594,7 +595,8 @@ public class MLIndicator extends Aggregator {
                         nnconfigs = new NeuralNetConfigs();
                         String configValue = (String) conf.getValueOrDefault(key);                                
                         if (configValue != null) {
-                            NeuralNetConfig nnconfig = nnconfigs.getAndSetConfig(key, configValue);
+                            boolean binary = true;
+                            NeuralNetConfig nnconfig = nnconfigs.getAndSetConfig(key, configValue, binary);
                         } else {
                             nnconfigs = null;
                         }

@@ -113,7 +113,8 @@ public class Evolve {
         String market = parts[1];
         String component = parts[2];
         String myclass = parts[3];
-        NeuralNetConfig conf = new NeuralNetConfigs().getClass(myclass);
+        boolean binary = true; // TODO binary
+        NeuralNetConfig conf = new NeuralNetConfigs().getClass(myclass, binary);
         Pair<String, String> subcomponent = new NeuralNetConfigs().getSubcomponent(myclass);
         List<MLMetricsDTO> mltests = null;
         try {
@@ -133,7 +134,7 @@ public class Evolve {
         // TODO
         double newer = myList.get(0).getLeft();
         boolean better = avg < newer;
-        myList.add(new ImmutablePair(avg, conf + " (default)"));
+        myList.add(new ImmutablePair(avg, conf + " (default), unknown binary"));
         Comparator<Pair> comparator = new Comparator<>() {
             @Override
             public int compare(Pair o1, Pair o2) {
