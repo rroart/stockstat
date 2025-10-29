@@ -5,6 +5,8 @@ import roart.common.ml.TensorflowFeedConfig;
 import roart.gene.NeuralNetConfigGene;
 import roart.common.constants.Constants;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
@@ -136,10 +138,13 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
     
     // done
     protected String generateLoss() {
-        // binary: "binary_crossentropy", "poisson", , "kl_divergence", "hinge"?
+        String[] binarylosses = { "binary_crossentropy", "poisson", "kl_divergence", "hinge" };
         String[] losses = { /*"categorical_crossentropy",*/ "sparse_categorical_crossentropy" /*, "ctc"*/ };
         //"l1", "mse", "cross_entropy", "ctc", "nl", "poissonnl", "gaussiannl", "kl", "bce", "bcewithlogits", "marginrank", "hingeembedding", "multilabelmargin", "multilabelsoftmargin", "cosineembedding", "multimargin", "tripletmargin", "tripletmarginwithdistance" };
         //String[] losses = { "l1", "mse", "cross_entropy", "ctc", "nl", "poissonnl", "gaussiannl", "kl", "bce", "bcewithlogits", "marginrank", "hingeembedding", "multilabelmargin", "multilabelsoftmargin", "cosineembedding", "multimargin", "tripletmargin",  "tripletmarginwithdistance" };
+        if (getConfig().isBinary()) {
+            losses = ArrayUtils.addAll(binarylosses, losses);
+        }
         if (predictor) {
             losses = new String[] { "mean_squared_error", "mean_absolute_error", "mean_absolute_percentage_error", "mean_squared_logarithmic_error", "cosine_similarity", "huber", "log_cosh", "tversky", "dice" };
         }

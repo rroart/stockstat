@@ -324,6 +324,7 @@ public class MLClassifyGemDS extends MLClassifyDS {
         param.setModelInt(model.getId());
         param.setSize(size);
         param.setClasses(classes);
+        param.setZero(true);
         List<String> retList = new ArrayList<>();
         Object[][] classifyArray = new Object[classifyMap.size()][];
         getClassifyArray(classifyMap, retList, classifyArray);

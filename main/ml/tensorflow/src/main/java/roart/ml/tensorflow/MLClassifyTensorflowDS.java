@@ -316,6 +316,7 @@ public class MLClassifyTensorflowDS extends MLClassifyDS {
         param.setModelInt(model.getId());
         param.setSize(size);
         param.setClasses(classes);
+        param.setZero(true);
         List<String> retList = new ArrayList<>();
         if (true || classify) {
             Object[] classifyArray = new Object[classifyMap.size()];

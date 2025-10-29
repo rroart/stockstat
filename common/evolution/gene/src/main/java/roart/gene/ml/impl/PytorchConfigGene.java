@@ -6,6 +6,8 @@ import roart.common.util.RandomUtil;
 import roart.gene.NeuralNetConfigGene;
 import roart.common.constants.Constants;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
@@ -147,6 +149,9 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
         // unknown "marginrank", , "multimargin", "tripletmargin",  "tripletmarginwithdistance" "multilabelmargin", "multilabelsoftmargin", 
         //String[] losses = { "mse", "nllloss", "crossentropyloss", "l1loss", "smoothl1loss", "poissonloss" };
         String[] losses = { "cross_entropy", /* "ctc", */ "nl" /*, "hingeembedding", "gaussiannl", "cosineembedding"*/ };
+        if (getConfig().isBinary()) {
+            losses = ArrayUtils.addAll(binarylosses, losses);                       
+        }
         if (predictor) {
             losses = new String[] { "l1", "mse", "l1loss", "smoothl1loss", "poissonloss", "huber" };
         }

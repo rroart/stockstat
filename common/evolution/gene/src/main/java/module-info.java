@@ -20,4 +20,5 @@ module evolution.gene {
     requires org.slf4j;
     requires common.constants;
     requires com.fasterxml.jackson.annotation;
+    requires org.apache.commons.lang3;
 }

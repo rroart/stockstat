@@ -467,7 +467,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             }
                             int size = getValidateSize(learnMLMap, mlmeta);
                             List<AbstractIndicator> indicators = new ArrayList<>();
-                            String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getConfigData().getMarket(), indicators, subType.getType(), mapType, mlmeta, threshold);
+                            String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getConfigData().getMarket(), indicators, subType.getType(), mapType, mlmeta, threshold, conf.wantAggregatorsUseConfusion(), conf.wantAggregatorsUsecurve());
                             String path = model.getPath();
                             boolean mldynamic = conf.wantMLDynamic();
                             //indicators.add(this);
@@ -671,7 +671,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             List<LearnClassify> classifyMLMap = transformLearnClassifyMap(classifyMap, false, mlmeta, model);
                             int size = getValidateSize(learnMLMap, mlmeta);
                             List<AbstractIndicator> indicators = new ArrayList<>();
-                            String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getConfigData().getMarket(), indicators, subType.getType(), mapType, mlmeta, threshold);
+                            String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getConfigData().getMarket(), indicators, subType.getType(), mapType, mlmeta, threshold, conf.wantAggregatorsUseConfusion(), conf.wantAggregatorsUsecurve());
                             String path = model.getPath();
                             boolean mldynamic = conf.wantMLDynamic();
                             if (nnConfigs == null) {
@@ -2277,12 +2277,14 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     public abstract String getFilenamePart();
     
-    public String getFilename(MLClassifyDao dao, MLClassifyModel model, String in, String out, String market, List<AbstractIndicator> indicators, String subType, String mapType, MLMeta mlmeta, Double threshold) {
+    public String getFilename(MLClassifyDao dao, MLClassifyModel model, String in, String out, String market, List<AbstractIndicator> indicators, String subType, String mapType, MLMeta mlmeta, Double threshold, boolean confusion, boolean curve) {
         String testmarket = conf.getConfigData().getMlmarket();
         if (testmarket != null) {
             market = testmarket;
         }
-        return market + "_" + getName() + "_" + dao.getName() + "_" + model.getName() + "_" + getFilenamePart() + threshold + "_" + subType + "_" + mapType + "_" + mlmeta.dimString() + in + "_" + out;
+        String abovebelowpart = confusion ? "confusion_" : "abovebelow_";
+        String curvepart = curve ? "curve_" : "nocurve_";
+        return market + "_" + getName() + "_" + dao.getName() + "_" + model.getName() + "_" + abovebelowpart + curvepart + getFilenamePart() + threshold + "_" + subType + "_" + mapType + "_" + mlmeta.dimString() + in + "_" + out;
     }
     
 }

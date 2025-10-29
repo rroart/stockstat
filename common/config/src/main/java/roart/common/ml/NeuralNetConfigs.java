@@ -599,6 +599,7 @@ public class NeuralNetConfigs {
         }
         Pair<Class<NeuralNetConfig>, String> nnstring = map.get(key);
         nnconfig = JsonUtil.convert(config, nnstring.getLeft(), mapper);
+        nnconfig.setBinary(binary);
         return nnconfig;
     }
 
