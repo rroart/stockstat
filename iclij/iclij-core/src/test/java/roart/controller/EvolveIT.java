@@ -147,7 +147,29 @@ public class EvolveIT {
     
     @Test
     public void testMachineLearning() throws Exception {
-        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.MACHINELEARNING, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        String market = System.getenv("MARKET");
+        String component = System.getenv("COMPONENT");
+        String subcomponent = System.getenv("SUBCOMPONENT");
+        log.info("Market {}", market);
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.MACHINELEARNING, component, subcomponent, 0, JsonUtil.convert(parameters));
+        //aci.setBuy(null);
+        //aci.setRecord(LocalDate.now());
+        try {
+            ac.runAction(iconf, aci, new ArrayList<>());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        inmemory.stat();
+        assertEquals(true, inmemory.isEmpty());
+    }
+
+    @Test
+    public void testDataset() throws Exception {
+        String market = System.getenv("MARKET");
+        String component = System.getenv("COMPONENT");
+        String subcomponent = System.getenv("SUBCOMPONENT");
+        log.info("Market {}", market);
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.DATASET, component, subcomponent, 0, JsonUtil.convert(parameters));
         //aci.setBuy(null);
         //aci.setRecord(LocalDate.now());
         try {

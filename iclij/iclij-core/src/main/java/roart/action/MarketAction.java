@@ -179,7 +179,7 @@ public abstract class MarketAction extends Action {
             MetaDTO meta = new MetaUtil().findMeta(metas, marketName);
             boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
             LocalDate enddate = null;
-            boolean siminvestmod = false;
+            boolean siminvestmod = false; // TODO true is broken
             if (siminvestmod && "simulateinvest".equals(this.getName())) {
                 enddate = paramTemplate.getInput().getEnddate();
             }
@@ -624,7 +624,8 @@ public abstract class MarketAction extends Action {
             log.error(Constants.EXCEPTION, e);
         }
         List<MLMetricsDTO> mlTests = null;
-        if (true || config.getFindProfitMemoryFilter()) {
+        //if (true || config.getFindProfitMemoryFilter()) {
+        if (!getActionData().isDataset()) {
         mlTests = getMLMetrics(timings, mltests, market.getFilter().getConfidence());
         }
         Parameters parameters2 = JsonUtil.convert(marketTime.getParameters(), Parameters.class);
