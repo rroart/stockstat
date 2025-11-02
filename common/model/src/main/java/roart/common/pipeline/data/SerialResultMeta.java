@@ -19,6 +19,8 @@ public class SerialResultMeta extends SerialObject {
     
     private Double trainAccuracy;
     
+    private Double valAccuracy;
+    
     private Map<String, Double[]> classifyMap;
     
     @Deprecated
@@ -32,6 +34,8 @@ public class SerialResultMeta extends SerialObject {
     
     private int size;
 
+    private String description;
+    
     public SerialResultMeta() {
         super();
     }
@@ -100,6 +104,14 @@ public class SerialResultMeta extends SerialObject {
         this.trainAccuracy = trainAccuracy;
     }
 
+    public Double getValAccuracy() {
+        return valAccuracy;
+    }
+
+    public void setValAccuracy(Double valAccuracy) {
+        this.valAccuracy = valAccuracy;
+    }
+
     public Map /*<String, Double[]>*/ getClassifyMap() {
         return classifyMap;
     }
@@ -138,6 +150,14 @@ public class SerialResultMeta extends SerialObject {
 
     public void setSize(int size) {
         this.size = size;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
     
 }

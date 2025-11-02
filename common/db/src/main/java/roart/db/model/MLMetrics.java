@@ -59,11 +59,17 @@ public class MLMetrics implements Serializable {
     private Double testAccuracy;
     
     @Column
+    private Double valAccuracy;
+    
+    @Column
     private Double loss;
     
     @Column
     private Double threshold;
 
+    @Column
+    private String description;;
+    
     public Date getRecord() {
         return record;
     }
@@ -128,6 +134,14 @@ public class MLMetrics implements Serializable {
         this.testAccuracy = testAccuracy;
     }
 
+    public Double getValAccuracy() {
+        return valAccuracy;
+    }
+
+    public void setValAccuracy(Double valAccuracy) {
+        this.valAccuracy = valAccuracy;
+    }
+
     public Double getLoss() {
         return loss;
     }
@@ -142,6 +156,14 @@ public class MLMetrics implements Serializable {
 
     public void setThreshold(Double threshold) {
         this.threshold = threshold;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Transient

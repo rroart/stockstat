@@ -31,10 +31,14 @@ public class MLMetrics {
 
     private Double testaccuracy;
 
+    private Double valaccuracy;
+
     private Double loss;
 
     private Double threshold;
 
+    private String description;
+    
     public MLMetrics() {
         super();
     }
@@ -103,6 +107,14 @@ public class MLMetrics {
         this.testaccuracy = testAccuracy;
     }
 
+    public Double getValAccuracy() {
+        return valaccuracy;
+    }
+
+    public void setValAccuracy(Double valaccuracy) {
+        this.valaccuracy = valaccuracy;
+    }
+
     public Double getLoss() {
         return loss;
     }
@@ -117,6 +129,14 @@ public class MLMetrics {
 
     public void setThreshold(Double threshold) {
         this.threshold = threshold;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

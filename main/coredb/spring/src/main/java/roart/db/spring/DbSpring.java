@@ -325,6 +325,7 @@ public class DbSpring {
         MLMetricsDTO mltestItem = new MLMetricsDTO();
         mltestItem.setDate(TimeUtil.convertDate(mltest.getDate()));
         mltestItem.setComponent(mltest.getComponent());
+        mltestItem.setDescription(mltest.getDescription());
         mltestItem.setMarket(mltest.getMarket());
         mltestItem.setRecord(TimeUtil.convertDate(mltest.getRecord()));
         mltestItem.setSubcomponent(mltest.getSubcomponent());
@@ -333,6 +334,7 @@ public class DbSpring {
         mltestItem.setLoss(mltest.getLoss());
         mltestItem.setTestAccuracy(mltest.getTestAccuracy());
         mltestItem.setTrainAccuracy(mltest.getTrainAccuracy());
+        mltestItem.setValAccuracy(mltest.getValAccuracy());
         return mltestItem;
     }
 

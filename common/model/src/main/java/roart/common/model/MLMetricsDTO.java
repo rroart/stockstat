@@ -19,9 +19,13 @@ public class MLMetricsDTO {
 
     private Double testAccuracy;
 
+    private Double valAccuracy;
+
     private Double loss;
 
     private Double threshold;
+    
+    private String description;
 
     public MLMetricsDTO() {
         super();
@@ -91,6 +95,14 @@ public class MLMetricsDTO {
         this.testAccuracy = testAccuracy;
     }
 
+    public Double getValAccuracy() {
+        return valAccuracy;
+    }
+
+    public void setValAccuracy(Double valAccuracy) {
+        this.valAccuracy = valAccuracy;
+    }
+
     public Double getLoss() {
         return loss;
     }
@@ -105,6 +117,14 @@ public class MLMetricsDTO {
 
     public void setThreshold(Double threshold) {
         this.threshold = threshold;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

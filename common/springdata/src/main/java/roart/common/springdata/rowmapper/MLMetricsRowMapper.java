@@ -20,9 +20,11 @@ public class MLMetricsRowMapper implements RowMapper<MLMetricsDTO>{
         item.setLocalcomponent(rs.getString("localcomponent"));
         item.setTrainAccuracy((Double) rs.getObject("trainaccuracy"));
         item.setTestAccuracy((Double) rs.getObject("testaccuracy"));
+        item.setValAccuracy((Double) rs.getObject("valaccuracy"));
         item.setLoss((Double) rs.getObject("loss"));
         item.setThreshold((Double) rs.getObject("threshold"));
-
+        item.setDescription((String) rs.getObject("description"));
+        
         return item;   
     }
 }
