@@ -29,20 +29,20 @@ public class MLClassifyGemIcarlModel  extends MLClassifyGemModel {
     }
     
     @Override
-    public String getKey() {
+    public String getKey(boolean binary) {
         return ConfigConstants.MACHINELEARNINGGEMICARLCONFIG;
     }
 
     @Override
-    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param) {
+    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param, boolean binary) {
         GemIcarlConfig modelConf = null;
         if (conf != null) {
             modelConf = conf.getGemConfig().getGemIcarlConfig();
         }    
         if (modelConf == null) {
-            modelConf = convert(GemIcarlConfig.class);
+            modelConf = convert(GemIcarlConfig.class, binary);
             if (modelConf == null) {
-                modelConf = getDefault(GemIcarlConfig.class);
+                modelConf = getDefault(GemIcarlConfig.class, binary);
             }
         }
         param.setGemIcarlConfig(modelConf);

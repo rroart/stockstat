@@ -24,7 +24,7 @@ public class MLClassifySparkOVRModel  extends MLClassifySparkModel {
     }
 
     @Override
-    public String getKey() {
+    public String getKey(boolean binary) {
         return ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG;
     }
 
@@ -38,16 +38,16 @@ public class MLClassifySparkOVRModel  extends MLClassifySparkModel {
         return 1;
     }
 
-    public NeuralNetConfig getModel(NeuralNetConfigs conf) {
+    public NeuralNetConfig getModel(NeuralNetConfigs conf, boolean binary) {
         SparkOVRConfig modelConf = null;
         if (conf != null) {
             modelConf = conf.getSparkConfig().getSparkOVRConfig();
         }
         if (modelConf == null) {
             //modelConf = convert(getKey(), SparkOVRConfig.class);
-            modelConf = convert(SparkOVRConfig.class);
+            modelConf = convert(SparkOVRConfig.class, binary);
             if (modelConf == null) {
-                modelConf = getDefault(SparkOVRConfig.class);
+                modelConf = getDefault(SparkOVRConfig.class, binary);
             }
         }
         return modelConf;

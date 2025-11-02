@@ -20,6 +20,8 @@ public abstract class MLClassifySparkModel {
     
     protected MLClassifyModel model;
     
+    protected final boolean binary = false;
+
     public MLClassifySparkModel(MLClassifyModel model) {
         this.model = model;
     }
@@ -32,7 +34,7 @@ public abstract class MLClassifySparkModel {
         this.model = model;
     }
 
-    public abstract PipelineModel getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes);
+    public abstract PipelineModel getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes, boolean binary);
     
-    public abstract NeuralNetConfig getModel(NeuralNetConfigs conf);
+    public abstract NeuralNetConfig getModel(NeuralNetConfigs conf, boolean binary);
     }

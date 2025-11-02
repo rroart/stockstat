@@ -24,20 +24,23 @@ public class MLClassifyPytorchGRUModel  extends MLClassifyPytorchRecurrentModel 
     }
     
     @Override
-    public String getKey() {
+    public String getKey(boolean binary) {
+        if (binary) {
+            return ConfigConstants.MACHINELEARNINGPYTORCHGRUBINARYCONFIG;
+        }
         return ConfigConstants.MACHINELEARNINGPYTORCHGRUCONFIG;
     }
 
     @Override
-    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param) {
+    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param, boolean binary) {
         PytorchGRUConfig modelConf = null;
         if (conf != null) {
             modelConf = conf.getPytorchConfig().getPytorchGRUConfig();
         }    
         if (modelConf == null) {
-            modelConf = convert(PytorchGRUConfig.class);
+            modelConf = convert(PytorchGRUConfig.class, binary);
             if (modelConf == null) {
-                modelConf = getDefault(PytorchGRUConfig.class);
+                modelConf = getDefault(PytorchGRUConfig.class, binary);
             }
         }
         param.setPytorchGRUConfig(modelConf);

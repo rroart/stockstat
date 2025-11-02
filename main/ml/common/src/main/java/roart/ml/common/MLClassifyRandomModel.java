@@ -30,7 +30,7 @@ public abstract class MLClassifyRandomModel extends MLClassifyModel {
     }
 
     @Override
-    public String getKey() {
+    public String getKey(boolean binary) {
         return "Random";
     }
 

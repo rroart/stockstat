@@ -29,20 +29,20 @@ public class MLClassifyGemIndependentModel  extends MLClassifyGemModel {
     }
     
     @Override
-    public String getKey() {
+    public String getKey(boolean binary) {
         return ConfigConstants.MACHINELEARNINGGEMINDEPENDENTCONFIG;
     }
 
     @Override
-    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param) {
+    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param, boolean binary) {
         GemIConfig modelConf = null;
         if (conf != null) {
             modelConf = conf.getGemConfig().getGemIConfig();
         }    
         if (modelConf == null) {
-            modelConf = convert(GemIConfig.class);
+            modelConf = convert(GemIConfig.class, binary);
             if (modelConf == null) {
-                modelConf = getDefault(GemIConfig.class);
+                modelConf = getDefault(GemIConfig.class, binary);
             }
         }
         param.setGemIConfig(modelConf);

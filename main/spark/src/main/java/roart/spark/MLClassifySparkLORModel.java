@@ -28,8 +28,8 @@ public class MLClassifySparkLORModel  extends MLClassifySparkModel {
     }
     
     @Override
-    public PipelineModel getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes) {
-        SparkLORConfig modelConf = (SparkLORConfig) getModel(conf);
+    public PipelineModel getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes, boolean binary) {
+        SparkLORConfig modelConf = (SparkLORConfig) getModel(conf, binary);
         LogisticRegression reg = new LogisticRegression();
         reg.setMaxIter(modelConf.getMaxiter());
         reg.setTol(modelConf.getTol());
@@ -45,15 +45,15 @@ public class MLClassifySparkLORModel  extends MLClassifySparkModel {
     }
 
     @Override
-    public NeuralNetConfig getModel(NeuralNetConfigs conf) {
+    public NeuralNetConfig getModel(NeuralNetConfigs conf, boolean binary) {
         SparkLORConfig modelConf = null;
         if (conf != null) {
             modelConf = conf.getSparkConfig().getSparkLORConfig();
         }    
         if (modelConf == null) {
-            modelConf = getModel().convert(SparkLORConfig.class);
+            modelConf = getModel().convert(SparkLORConfig.class, binary);
             if (modelConf == null) {
-                modelConf = getModel().getDefault(SparkLORConfig.class);
+                modelConf = getModel().getDefault(SparkLORConfig.class, binary);
             }
         }
         return modelConf;

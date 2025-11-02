@@ -150,6 +150,6 @@ public abstract class TensorflowConfig extends NeuralNetConfig {
     
     @Override
     public String toString() {
-        return super.toString() + " " + tensorflowConfigCommon.normalize + " " + tensorflowConfigCommon.batchnormalize + " " + tensorflowConfigCommon.regularize + " " + tensorflowConfigCommon.steps + " " + tensorflowConfigCommon.lr;
+        return super.toString() + " " + tensorflowConfigCommon.steps + " " + tensorflowConfigCommon.lr + " " + tensorflowConfigCommon.inputdropout + " " + tensorflowConfigCommon.dropout + " " + tensorflowConfigCommon.normalize + " " + tensorflowConfigCommon.batchnormalize + " " + tensorflowConfigCommon.regularize + " " + tensorflowConfigCommon.batchsize + " " + tensorflowConfigCommon.loss + " " + tensorflowConfigCommon.optimizer + " " + tensorflowConfigCommon.activation + " " + tensorflowConfigCommon.lastactivation;
     }
 }

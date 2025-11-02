@@ -23,24 +23,24 @@ public class MLClassifySparkMLPCModel  extends MLClassifySparkModel {
     }
 
     @Override
-    public String getKey() {
+    public String getKey(boolean binary) {
         return ConfigConstants.MACHINELEARNINGSPARKMLMLPCCONFIG;
     }
 
     @Override
-    public NeuralNetConfig getModel(NeuralNetConfigs conf) {
+    public NeuralNetConfig getModel(NeuralNetConfigs conf, boolean binary) {
         return null;
     }
     
-    private SparkMLPCConfig getModel(NeuralNetConfigs conf, int outcomes) {
+    private SparkMLPCConfig getModel(NeuralNetConfigs conf, int outcomes, boolean binary) {
         SparkMLPCConfig modelConf = null;
         if (conf != null) {
             modelConf = conf.getSparkConfig().getSparkMLPCConfig();
         }
         if (modelConf == null) {
-            modelConf = convert(SparkMLPCConfig.class);
+            modelConf = convert(SparkMLPCConfig.class, binary);
             if (modelConf == null) {
-                modelConf = getDefault(SparkMLPCConfig.class);
+                modelConf = getDefault(SparkMLPCConfig.class, binary);
                 /*
                 int[] layers = modelConf.getNn();
                 layers[0] += outcomes;

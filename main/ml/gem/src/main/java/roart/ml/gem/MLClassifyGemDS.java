@@ -272,8 +272,9 @@ public class MLClassifyGemDS extends MLClassifyDS {
                 return result;
             }
         }
-        Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev();
-        String config = configMap.get(model.getKey());
+        boolean binary = classify && classes == 2;
+        Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev(binary);
+        String config = configMap.get(model.getKey(binary));
         if (nnconfigs == null) {
             nnconfigs = new NeuralNetConfigs();
         }
@@ -318,7 +319,7 @@ public class MLClassifyGemDS extends MLClassifyDS {
         param.setGemEWCConfig(ewcconfig);
         param.setGemGEMConfig(gemconfig);
         */
-        NeuralNetConfig m = ((MLClassifyGemModel) model).getModelAndSet(nnconfigs, param);
+        NeuralNetConfig m = ((MLClassifyGemModel) model).getModelAndSet(nnconfigs, param, binary);
         param.setTrainingarray(trainingArray);
         param.setTrainingcatarray(trainingCatArray);
         param.setModelInt(model.getId());
@@ -415,13 +416,14 @@ public class MLClassifyGemDS extends MLClassifyDS {
         }
         LearnTestClassify param = new LearnTestClassify();
         param.setNeuralnetcommand(neuralnetcommand);
-        Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev();
-        String config = configMap.get(model.getKey());
+        boolean binary = false;
+        Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev(binary);
+        String config = configMap.get(model.getKey(binary));
         if (nnconfigs == null) {
             nnconfigs = new NeuralNetConfigs();
         }
         nnconfigs.getAndSet(config);
-        NeuralNetConfig m = ((MLClassifyGemModel) model).getModelAndSet(nnconfigs, param);
+        NeuralNetConfig m = ((MLClassifyGemModel) model).getModelAndSet(nnconfigs, param, binary);
         param.setModelInt(model.getId());
         param.setDataset(dataset);
         param.setZero(true);

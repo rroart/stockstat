@@ -24,20 +24,23 @@ public class MLClassifyTensorflowGRUModel  extends MLClassifyTensorflowRecurrent
     }
     
     @Override
-    public String getKey() {
+    public String getKey(boolean binary) {
+        if (binary) {
+            return ConfigConstants.MACHINELEARNINGTENSORFLOWGRUBINARYCONFIG;
+        }
         return ConfigConstants.MACHINELEARNINGTENSORFLOWGRUCONFIG;
     }
     
     @Override
-    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param) {
+    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param, boolean binary) {
         TensorflowGRUConfig modelConf = null;
         if (conf != null) {
             modelConf = conf.getTensorflowConfig().getTensorflowGRUConfig();
         }    
         if (modelConf == null) {
-            modelConf = convert(TensorflowGRUConfig.class);
+            modelConf = convert(TensorflowGRUConfig.class, binary);
             if (modelConf == null) {
-                modelConf = getDefault(TensorflowGRUConfig.class);
+                modelConf = getDefault(TensorflowGRUConfig.class, binary);
             }
         }
         param.setTensorflowGRUConfig(modelConf);

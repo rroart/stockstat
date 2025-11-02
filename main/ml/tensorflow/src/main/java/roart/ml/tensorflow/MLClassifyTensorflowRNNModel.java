@@ -24,20 +24,23 @@ public class MLClassifyTensorflowRNNModel  extends MLClassifyTensorflowRecurrent
     }
     
     @Override
-    public String getKey() {
+    public String getKey(boolean binary) {
+        if (binary) {
+            return ConfigConstants.MACHINELEARNINGTENSORFLOWRNNBINARYCONFIG;
+        }
         return ConfigConstants.MACHINELEARNINGTENSORFLOWRNNCONFIG;
     }
     
     @Override
-    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param) {
+    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param, boolean binary) {
         TensorflowRNNConfig modelConf = null;
         if (conf != null) {
             modelConf = conf.getTensorflowConfig().getTensorflowRNNConfig();
         }    
         if (modelConf == null) {
-            modelConf = convert(TensorflowRNNConfig.class);
+            modelConf = convert(TensorflowRNNConfig.class, binary);
             if (modelConf == null) {
-                modelConf = getDefault(TensorflowRNNConfig.class);
+                modelConf = getDefault(TensorflowRNNConfig.class, binary);
             }
         }
         param.setTensorflowRNNConfig(modelConf);

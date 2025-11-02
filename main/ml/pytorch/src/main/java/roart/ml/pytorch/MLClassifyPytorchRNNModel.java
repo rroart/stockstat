@@ -24,20 +24,23 @@ public class MLClassifyPytorchRNNModel  extends MLClassifyPytorchRecurrentModel 
     }
     
     @Override
-    public String getKey() {
+    public String getKey(boolean binary) {
+        if (binary) {
+            return ConfigConstants.MACHINELEARNINGPYTORCHRNNBINARYCONFIG;
+        }
         return ConfigConstants.MACHINELEARNINGPYTORCHRNNCONFIG;
     }
 
     @Override
-    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param) {
+    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param, boolean binary) {
         PytorchRNNConfig modelConf = null;
         if (conf != null) {
             modelConf = conf.getPytorchConfig().getPytorchRNNConfig();
         }    
         if (modelConf == null) {
-            modelConf = convert(PytorchRNNConfig.class);
+            modelConf = convert(PytorchRNNConfig.class, binary);
             if (modelConf == null) {
-                modelConf = getDefault(PytorchRNNConfig.class);
+                modelConf = getDefault(PytorchRNNConfig.class, binary);
             }
         }
         param.setPytorchRNNConfig(modelConf);

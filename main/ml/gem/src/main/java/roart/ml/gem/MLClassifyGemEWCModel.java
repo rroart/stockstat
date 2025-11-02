@@ -29,20 +29,20 @@ public class MLClassifyGemEWCModel  extends MLClassifyGemModel {
     }
     
     @Override
-    public String getKey() {
+    public String getKey(boolean binary) {
         return ConfigConstants.MACHINELEARNINGGEMEWCCONFIG;
     }
 
     @Override
-    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param) {
+    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param, boolean binary) {
         GemEWCConfig modelConf = null;
         if (conf != null) {
             modelConf = conf.getGemConfig().getGemEWCConfig();
         }    
         if (modelConf == null) {
-            modelConf = convert(GemEWCConfig.class);
+            modelConf = convert(GemEWCConfig.class, binary);
             if (modelConf == null) {
-                modelConf = getDefault(GemEWCConfig.class);
+                modelConf = getDefault(GemEWCConfig.class, binary);
             }
         }
         param.setGemEWCConfig(modelConf);

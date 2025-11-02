@@ -462,13 +462,13 @@ public class MLIndicator extends Aggregator {
                         classifyMap = learnMap;
                     }
                     if (nnconfigs == null) {
-                        String key = model.getKey();
+                        boolean binary = true;
+                        String key = model.getKey(binary);
                         nnconfigs = new NeuralNetConfigs();
                         String configValue = (String) conf.getValueOrDefault(key);
                         if (configValue != null) {
-                        	Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev();
-                        	String config = configMap.get(model.getKey());
-                                boolean binary = true;
+                        	Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev(binary);
+                        	String config = configMap.get(model.getKey(binary));
                         	NeuralNetConfig nnconfig = nnconfigs.getAndSetConfig(config, configValue, binary);
                         } else {
                             nnconfigs = null;
@@ -509,6 +509,7 @@ public class MLIndicator extends Aggregator {
                     lossMap.put(mldao.getName() + model.getName() + threshold, result.getLoss());
                     resultMeta1.setTestAccuracy(result.getAccuracy());
                     resultMeta1.setTrainAccuracy(result.getTrainaccuracy());
+                    resultMeta1.setValAccuracy(result.getValaccuracy());
                     resultMeta1.setLoss(result.getLoss());
                     mapResult.put("" + model, classifyResult);
                     Map<String, Long> countMap = new HashMap<>();
@@ -591,11 +592,11 @@ public class MLIndicator extends Aggregator {
                     String path = model.getPath();
                     boolean mldynamic = conf.wantMLDynamic();
                     if (nnconfigs == null) {
-                        String key = model.getKey();
+                        boolean binary = true;
+                        String key = model.getKey(binary);
                         nnconfigs = new NeuralNetConfigs();
                         String configValue = (String) conf.getValueOrDefault(key);                                
                         if (configValue != null) {
-                            boolean binary = true;
                             NeuralNetConfig nnconfig = nnconfigs.getAndSetConfig(key, configValue, binary);
                         } else {
                             nnconfigs = null;
@@ -621,6 +622,7 @@ public class MLIndicator extends Aggregator {
                 lossMap.put(mldao.getName() + model.getName() + threshold, result.getLoss());
                 SerialResultMeta resultMeta = (SerialResultMeta) getResultMetas().get(testCount);
                 resultMeta.setTestAccuracy(result.getAccuracy());
+                resultMeta.setValAccuracy(result.getValaccuracy());
                 resultMeta.setLoss(result.getLoss());
                 //log.info("keys" + Arrays.deepToString(classifyResult.values().toArray()));
                 //log.info("keys" + classifyResult.keySet());

@@ -26,7 +26,7 @@ public class MLClassifySparkMLPCModel  extends MLClassifySparkModel {
     }
     
     @Override
-    public PipelineModel getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes) {
+    public PipelineModel getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes, boolean binary) {
         SparkMLPCConfig modelConf = getModel(conf, outcomes);
         int layer = modelConf.getLayers();
         int hidden = modelConf.getHidden();
@@ -51,7 +51,7 @@ public class MLClassifySparkMLPCModel  extends MLClassifySparkModel {
     }
 
     @Override
-    public NeuralNetConfig getModel(NeuralNetConfigs conf) {
+    public NeuralNetConfig getModel(NeuralNetConfigs conf, boolean binary) {
         return null;
     }
     
@@ -61,9 +61,9 @@ public class MLClassifySparkMLPCModel  extends MLClassifySparkModel {
             modelConf = conf.getSparkConfig().getSparkMLPCConfig();
         }
         if (modelConf == null) {
-            modelConf = getModel().convert(SparkMLPCConfig.class);
+            modelConf = getModel().convert(SparkMLPCConfig.class, binary);
             if (modelConf == null) {
-                modelConf = getModel().getDefault(SparkMLPCConfig.class);
+                modelConf = getModel().getDefault(SparkMLPCConfig.class, binary);
                 /*
                 int[] layers = modelConf.getNn();
                 layers[0] += outcomes;

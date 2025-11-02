@@ -160,6 +160,7 @@ public class MLClassifyRandomDS extends MLClassifyDS {
         }
         result.setAccuracy(random.nextDouble());
         result.setTrainaccuracy(random.nextDouble());
+        result.setValaccuracy(random.nextDouble());
         Map<String, Double[]> retMap = getCatMap(retList, classifyMap, list, outcomes, classify);
         result.setCatMap(retMap);
         return result;

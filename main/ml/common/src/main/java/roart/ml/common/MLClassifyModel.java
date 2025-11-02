@@ -52,7 +52,7 @@ public abstract class MLClassifyModel {
 
     public abstract String getName();
 
-    public abstract String getKey();
+    public abstract String getKey(boolean binary);
     
     public static String roundme(Double eval) {
         if (eval == null) {
@@ -93,18 +93,18 @@ public abstract class MLClassifyModel {
         map.put(key, val);
     }
 
-    public <T> T convert(Class<T> clazz) {
+    public <T> T convert(Class<T> clazz, boolean binary) {
         try {
-            return JsonUtil.convertnostrip((String) getConf().getConfigData().getConfigValueMap().get(getKey()), clazz);
+            return JsonUtil.convertnostrip((String) getConf().getConfigData().getConfigValueMap().get(getKey(binary)), clazz);
         } catch (Exception e) {
             log.info(Constants.ERROR);
             return null;
         }
     }
 
-    public <T> T getDefault(Class<T> clazz) {
+    public <T> T getDefault(Class<T> clazz, boolean binary) {
         try {
-            return JsonUtil.convertnostrip((String) getConf().getConfigData().getConfigMaps().deflt.get(getKey()), clazz);
+            return JsonUtil.convertnostrip((String) getConf().getConfigData().getConfigMaps().deflt.get(getKey(binary)), clazz);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return null;

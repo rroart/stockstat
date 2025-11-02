@@ -24,20 +24,23 @@ public class MLClassifyPytorchCNN2Model extends MLClassifyPytorchModel {
     }
     
     @Override
-    public String getKey() {
+    public String getKey(boolean binary) {
+        if (binary) {
+            return ConfigConstants.MACHINELEARNINGPYTORCHCNN2BINARYCONFIG;
+        }
         return ConfigConstants.MACHINELEARNINGPYTORCHCNN2CONFIG;
     }
 
     @Override
-    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param) {
+    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param, boolean binary) {
         PytorchCNN2Config modelConf = null;
         if (conf != null) {
             modelConf = conf.getPytorchConfig().getPytorchCNN2Config();
         }    
         if (modelConf == null) {
-            modelConf = convert(PytorchCNN2Config.class);
+            modelConf = convert(PytorchCNN2Config.class, binary);
             if (modelConf == null) {
-                modelConf = getDefault(PytorchCNN2Config.class);
+                modelConf = getDefault(PytorchCNN2Config.class, binary);
             }
         }
         param.setPytorchCNN2Config(modelConf);

@@ -192,13 +192,14 @@ public class MachineLearningEvolutionService {
             nnConfigs = new NeuralNetConfigs();            
         }
 
+        boolean binary = true; // TODO binary
+        
         List<String> foundkeys = getFoundKeys(conf, nnConfigs);
 
         for (String key : foundkeys) {
-            String configKey = nnConfigs.getConfigMap().get(key);
+            String configKey = nnConfigs.getConfigMap(binary).get(key);
             String configValue = (String) conf.getValueOrDefault(configKey);
             
-            boolean binary = false; // TODO binary
             NeuralNetConfig nnconfig = nnConfigs.getAndSetConfig(key, configValue, binary);
             NeuralNetConfigGene nnconfigGene = new NeuralNetConfigGeneFactory(ml.equals(PipelineConstants.PREDICTOR)).get(nnconfig, key);
             NeuralNetChromosome chromosome = new NeuralNetChromosome(nnconfigGene);
@@ -256,7 +257,7 @@ public class MachineLearningEvolutionService {
                 myKey = ConfigConstants.AGGREGATORSMLSTOCHMLCONFIG;
             }
             if (ml.equals(PipelineConstants.PREDICTOR)) {
-                myKey = nnConfigs.getConfigMap().get(key);
+                myKey = nnConfigs.getConfigMap(false).get(key);
                 myKey = ConfigConstants.MACHINELEARNINGPREDICTORSMLCONFIG;
                 //newNNConfigstring = mapper.writeValueAsString(newNNConfigs.getTensorflowConfig().getTensorflowLSTMConfig());
             }
@@ -285,12 +286,12 @@ public class MachineLearningEvolutionService {
         if (nnConfigs == null) {
             nnConfigs = new NeuralNetConfigs();            
         }
+        boolean binary = false; // TODO binary
         List<String> foundkeys = getFoundKeys(conf, nnConfigs);
         for (String key : foundkeys) {
-            String configKey = nnConfigs.getConfigMap().get(key);
+            String configKey = nnConfigs.getConfigMap(binary).get(key);
             String configValue = (String) conf.getValueOrDefault(configKey);
             
-            boolean binary = false; // TODO binary
             NeuralNetConfig nnconfig = nnConfigs.getAndSetConfig(key, configValue, binary);
             NeuralNetConfigGene nnconfigGene = new NeuralNetConfigGeneFactory(ml.equals(PipelineConstants.PREDICTOR)).get(nnconfig, key);
             NeuralNetChromosome chromosome = new NeuralNetChromosome(nnconfigGene);

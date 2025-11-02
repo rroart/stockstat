@@ -29,20 +29,20 @@ public class MLClassifyGemMultimodalModel  extends MLClassifyGemModel {
     }
     
     @Override
-    public String getKey() {
+    public String getKey(boolean binary) {
         return ConfigConstants.MACHINELEARNINGGEMMULTIMODALCONFIG;
     }
 
     @Override
-    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param) {
+    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param, boolean binary) {
         GemMMConfig modelConf = null;
         if (conf != null) {
             modelConf = conf.getGemConfig().getGemMMConfig();
         }    
         if (modelConf == null) {
-            modelConf = convert(GemMMConfig.class);
+            modelConf = convert(GemMMConfig.class, binary);
             if (modelConf == null) {
-                modelConf = getDefault(GemMMConfig.class);
+                modelConf = getDefault(GemMMConfig.class, binary);
             }
         }
         param.setGemMMConfig(modelConf);

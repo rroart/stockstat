@@ -24,20 +24,23 @@ public class MLClassifyTensorflowMLPModel  extends MLClassifyTensorflowModel {
     }
     
     @Override
-    public String getKey() {
+    public String getKey(boolean binary) {
+        if (binary) {
+            return ConfigConstants.MACHINELEARNINGTENSORFLOWMLPBINARYCONFIG;
+        }
         return ConfigConstants.MACHINELEARNINGTENSORFLOWMLPCONFIG;
     }
     
     @Override
-    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param) {
+    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param, boolean binary) {
         TensorflowMLPConfig modelConf = null;
         if (conf != null) {
             modelConf = conf.getTensorflowConfig().getTensorflowMLPConfig();
         }    
         if (modelConf == null) {
-            modelConf = convert(TensorflowMLPConfig.class);
+            modelConf = convert(TensorflowMLPConfig.class, binary);
             if (modelConf == null) {
-                modelConf = getDefault(TensorflowMLPConfig.class);
+                modelConf = getDefault(TensorflowMLPConfig.class, binary);
             }
         }
         param.setTensorflowMLPConfig(modelConf);

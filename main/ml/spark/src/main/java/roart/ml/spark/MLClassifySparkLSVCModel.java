@@ -23,24 +23,24 @@ public  class MLClassifySparkLSVCModel  extends MLClassifySparkModel {
     }
 
     @Override
-    public String getKey() {
+    public String getKey(boolean binary) {
         return ConfigConstants.MACHINELEARNINGSPARKMLLSVCCONFIG;
     }
 
     @Override
-    public NeuralNetConfig getModel(NeuralNetConfigs conf) {
+    public NeuralNetConfig getModel(NeuralNetConfigs conf, boolean binary) {
         return null;
     }
     
-    private SparkLSVCConfig getModel(NeuralNetConfigs conf, int outcomes) {
+    private SparkLSVCConfig getModel(NeuralNetConfigs conf, int outcomes, boolean binary) {
         SparkLSVCConfig modelConf = null;
         if (conf != null) {
             modelConf = conf.getSparkConfig().getSparkLSVCConfig();
         }
         if (modelConf == null) {
-            modelConf = convert(SparkLSVCConfig.class);
+            modelConf = convert(SparkLSVCConfig.class, binary);
             if (modelConf == null) {
-                modelConf = getDefault(SparkLSVCConfig.class);
+                modelConf = getDefault(SparkLSVCConfig.class, binary);
             }
         }
         return modelConf;

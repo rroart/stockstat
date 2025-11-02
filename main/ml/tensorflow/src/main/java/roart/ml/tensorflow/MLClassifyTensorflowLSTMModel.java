@@ -24,20 +24,23 @@ public class MLClassifyTensorflowLSTMModel  extends MLClassifyTensorflowRecurren
     }
     
     @Override
-    public String getKey() {
+    public String getKey(boolean binary) {
+        if (binary) {
+            return ConfigConstants.MACHINELEARNINGTENSORFLOWGRUBINARYCONFIG;
+        }
         return ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG;
     }
     
     @Override
-    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param) {
+    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param, boolean binary) {
         TensorflowLSTMConfig modelConf = null;
         if (conf != null) {
             modelConf = conf.getTensorflowConfig().getTensorflowLSTMConfig();
         }    
         if (modelConf == null) {
-            modelConf = convert(TensorflowLSTMConfig.class);
+            modelConf = convert(TensorflowLSTMConfig.class, binary);
             if (modelConf == null) {
-                modelConf = getDefault(TensorflowLSTMConfig.class);
+                modelConf = getDefault(TensorflowLSTMConfig.class, binary);
             }
         }
         param.setTensorflowLSTMConfig(modelConf);

@@ -7,6 +7,8 @@ public class LearnTestClassifyResult {
 
     private Double trainaccuracy;
 
+    private Double valaccuracy;
+
     private Double loss;
 
     private Map<String, Double[]> catMap;
@@ -33,6 +35,14 @@ public class LearnTestClassifyResult {
 
     public void setTrainaccuracy(Double trainaccuracy) {
         this.trainaccuracy = trainaccuracy;
+    }
+
+    public Double getValaccuracy() {
+        return valaccuracy;
+    }
+
+    public void setValaccuracy(Double valaccuracy) {
+        this.valaccuracy = valaccuracy;
     }
 
     public Double getLoss() {

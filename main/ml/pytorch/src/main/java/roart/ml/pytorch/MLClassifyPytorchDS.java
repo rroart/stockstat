@@ -281,13 +281,14 @@ public class MLClassifyPytorchDS extends MLClassifyDS {
         Object[] trainingArray = new Object[learnMap.size()];
         Object[] trainingCatArray = new Object[learnMap.size()];
         getTrainingSet(learnMap, trainingArray, trainingCatArray);
-        Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev();
-        String config = configMap.get(model.getKey());
+        boolean binary = classify && classes == 2;
+        Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev(binary);
+        String config = configMap.get(model.getKey(binary));
         if (nnconfigs == null) {
             nnconfigs = new NeuralNetConfigs();
         }
         nnconfigs.getAndSet(config);
-        NeuralNetConfig m = ((MLClassifyPytorchModel) model).getModelAndSet(nnconfigs, param);
+        NeuralNetConfig m = ((MLClassifyPytorchModel) model).getModelAndSet(nnconfigs, param, binary);
         param.setTrainingarray(trainingArray);
         param.setClassify(classify);
         if (classify) {
@@ -334,6 +335,7 @@ public class MLClassifyPytorchDS extends MLClassifyDS {
         }
         result.setAccuracy(ret.getAccuracy());
         result.setTrainaccuracy(ret.getTrainaccuracy());
+        result.setValaccuracy(ret.getValaccuracy());
         result.setLoss(ret.getLoss());
         if (ret.getClassifycatarray() != null) {
             Map<String, Double[]> retMap = getCatMap(retList, classifyMap, ret, classify);
@@ -356,13 +358,14 @@ public class MLClassifyPytorchDS extends MLClassifyDS {
         }
         LearnTestClassify param = new LearnTestClassify();
         param.setNeuralnetcommand(neuralnetcommand);
-        Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev();
-        String config = configMap.get(model.getKey());
+        boolean binary = false;
+        Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev(binary);
+        String config = configMap.get(model.getKey(binary));
         if (nnconfigs == null) {
             nnconfigs = new NeuralNetConfigs();
         }
         nnconfigs.getAndSet(config);
-        NeuralNetConfig m = ((MLClassifyPytorchModel) model).getModelAndSet(nnconfigs, param);
+        NeuralNetConfig m = ((MLClassifyPytorchModel) model).getModelAndSet(nnconfigs, param, binary);
         param.setModelInt(model.getId());
         param.setDataset(dataset);
         param.setZero(true);
@@ -392,6 +395,7 @@ public class MLClassifyPytorchDS extends MLClassifyDS {
         }
         result.setAccuracy(ret.getAccuracy());
         result.setTrainaccuracy(ret.getTrainaccuracy());
+        result.setValaccuracy(ret.getValaccuracy());
         result.setClassify(ret.getClassify());
         return result;
     }

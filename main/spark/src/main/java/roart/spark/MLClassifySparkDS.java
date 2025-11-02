@@ -61,6 +61,8 @@ public class MLClassifySparkDS extends MLClassifyDS {
     private Map<String, Model> modelMap = new HashMap<>();
     private Map<String, Double> accuracyMap = new HashMap<>();
 
+    protected final boolean binary = false;
+
     public MLClassifySparkDS(IclijConfig conf) {
         this.conf = conf;
         String sparkmaster = conf.getMLSparkMaster();
@@ -166,7 +168,7 @@ public class MLClassifySparkDS extends MLClassifyDS {
                 test = data;
             }
             MLClassifySparkModel sparkModel = map(mlmodel);
-            Model model = sparkModel.getModel(nnconfigs, train, size, classes);
+            Model model = sparkModel.getModel(nnconfigs, train, size, classes, binary);
 
             modelMap.put(filename, model);
             // compute accuracy on the test set                                         
@@ -279,7 +281,7 @@ public class MLClassifySparkDS extends MLClassifyDS {
             MLClassifySparkModel sparkModel = map(mlmodel);
             PipelineModel model = null;
             if (!exists || neuralnetcommand.isMldynamic() || neuralnetcommand.isMllearn()) {
-                model = sparkModel.getModel(nnconfig, train, size, classes);
+                model = sparkModel.getModel(nnconfig, train, size, classes, binary);
             } else {
                 model = PipelineModel.load(path + "/" + filename);
             }

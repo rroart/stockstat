@@ -24,20 +24,23 @@ public class MLClassifyTensorflowCNN2Model extends MLClassifyTensorflowModel{
     }
     
     @Override
-    public String getKey() {
+    public String getKey(boolean binary) {
+        if (binary) {
+            return ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2BINARYCONFIG;
+        }
         return ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2CONFIG;
     }
     
     @Override
-    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param) {
+    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param, boolean binary) {
         TensorflowCNN2Config modelConf = null;
         if (conf != null) {
             modelConf = conf.getTensorflowConfig().getTensorflowCNN2Config();
         }    
         if (modelConf == null) {
-            modelConf = convert(TensorflowCNN2Config.class);
+            modelConf = convert(TensorflowCNN2Config.class, binary);
             if (modelConf == null) {
-                modelConf = getDefault(TensorflowCNN2Config.class);
+                modelConf = getDefault(TensorflowCNN2Config.class, binary);
             }
         }
         param.setTensorflowCNN2Config(modelConf);

@@ -154,7 +154,7 @@ public class Evolve {
             NeuralNetChromosome c = (NeuralNetChromosome) myList0.get(0).getRight();
             NeuralNetConfigGene conf2 = c.getNnConfig();
             String ml = new MLMapsML().getMap().get(subcomponent);
-            String key = new NeuralNetConfigs().getConfigMap().get(ml);
+            String key = new NeuralNetConfigs().getConfigMap(binary).get(ml);
             if (!IclijConfigConstants.DATASET.equals(component)) {
             saveBetter(market, component, subcomponent, IclijConfigConstants.MACHINELEARNING, myList.get(0).getLeft(), key, conf2.getConfig(), true, null);
             } else {

@@ -149,6 +149,6 @@ public abstract class PytorchConfig extends NeuralNetConfig {
 
     @Override
     public String toString() {
-        return super.toString() + " " + pytorchConfigCommon.steps + " " + pytorchConfigCommon.lr + " " + pytorchConfigCommon.dropout + " " + pytorchConfigCommon.normalize + " " + pytorchConfigCommon.batchnormalize + " " + pytorchConfigCommon.regularize;
+        return super.toString() + " " + pytorchConfigCommon.steps + " " + pytorchConfigCommon.lr + " " + pytorchConfigCommon.inputdropout + " " + pytorchConfigCommon.dropout + " " + pytorchConfigCommon.normalize + " " + pytorchConfigCommon.batchnormalize + " " + pytorchConfigCommon.regularize + " " + pytorchConfigCommon.batchsize + " " + pytorchConfigCommon.loss + " " + pytorchConfigCommon.optimizer + " " + pytorchConfigCommon.activation + " " + pytorchConfigCommon.lastactivation;
     }
 }

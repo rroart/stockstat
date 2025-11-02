@@ -28,7 +28,7 @@ public abstract class MLClassifyPytorchModel extends MLClassifyModel {
         return 2;
     }
     
-    public abstract NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param);
+    public abstract NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param, boolean binary);
     
     @Override
     public String getPath() {

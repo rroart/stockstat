@@ -21,7 +21,7 @@ public abstract class MLClassifySparkModel extends MLClassifyModel {
         return MLConstants.SPARK;
     }
 
-    public abstract NeuralNetConfig getModel(NeuralNetConfigs conf);
+    public abstract NeuralNetConfig getModel(NeuralNetConfigs conf, boolean binary);
     
     @Override
     public String getPath() {

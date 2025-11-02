@@ -36,8 +36,8 @@ public class MLClassifySparkOVRModel  extends MLClassifySparkModel {
     }
     
     @Override
-    public PipelineModel getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes) {
-        SparkOVRConfig modelConf = (SparkOVRConfig) getModel(conf);
+    public PipelineModel getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes, boolean binary) {
+        SparkOVRConfig modelConf = (SparkOVRConfig) getModel(conf, binary);
         LogisticRegression lr = new LogisticRegression()
                 .setMaxIter(modelConf.getMaxiter())
                 .setTol(modelConf.getTol())
@@ -50,16 +50,16 @@ public class MLClassifySparkOVRModel  extends MLClassifySparkModel {
         return pipeline.fit(train);
     }
 
-    public NeuralNetConfig getModel(NeuralNetConfigs conf) {
+    public NeuralNetConfig getModel(NeuralNetConfigs conf, boolean binary) {
         SparkOVRConfig modelConf = null;
         if (conf != null) {
             modelConf = conf.getSparkConfig().getSparkOVRConfig();
         }
         if (modelConf == null) {
             //modelConf = convert(getKey(), SparkOVRConfig.class);
-            modelConf = getModel().convert(SparkOVRConfig.class);
+            modelConf = getModel().convert(SparkOVRConfig.class, binary);
             if (modelConf == null) {
-                modelConf = getModel().getDefault(SparkOVRConfig.class);
+                modelConf = getModel().getDefault(SparkOVRConfig.class, binary);
             }
         }
         return modelConf;

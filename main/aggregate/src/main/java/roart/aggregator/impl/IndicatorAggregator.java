@@ -428,6 +428,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             }
                             String mapType = mapTypes.get(mapTypeInt);
                             String mapName = subType.getType() + mapType;
+                            log.info("mldoa" + mapMap.keySet());;
                             Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap = mapMap.get(subType).get("offset");
                             Map<String, List<Pair<double[], Pair<Object, Double>>>> learnMap = mapMap.get(subType).get(mapType);
                             Map<String, List<Pair<double[], Pair<Object, Double>>>> classifyMap = mapMap.get(subType).get(FRESH + mapType);
@@ -442,9 +443,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                                 }
                                 //continue;
                             }
-			    IndicatorUtils.filterNonExistingClassifications3(labelMapShort, learnMap);
+			    IndicatorUtils.filterNonExistingClassifications3(labelMapShortConfusion, learnMap);
                             
-                            Map<String, Long> countMap = getCountMap(labelMapShort, learnMap);
+                            Map<String, Long> countMap = getCountMap(labelMapShortConfusion, learnMap);
                             long count = countMap.values().stream().distinct().count();
                             if (count == 1) {
                                 log.info("Nothing to learn");
@@ -480,19 +481,23 @@ public abstract class IndicatorAggregator extends Aggregator {
                                 classifyMLMap = learnMLMap;
                             }
                             if (nnConfigs == null) {
-                                String key = model.getKey();
+                                boolean binary = outcomes == 2;
+                                String key = model.getKey(binary);
                                 nnConfigs = new NeuralNetConfigs();
                                 String configValue = (String) conf.getValueOrDefault(key);                                
                                 if (configValue != null) {
-                                    Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev();
-                                    String config = configMap.get(model.getKey());
-                                    boolean binary = outcomes == 2;
+                                    Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev(binary);
+                                    String config = configMap.get(model.getKey(binary));
                                     NeuralNetConfig nnconfig = nnConfigs.getAndSetConfig(config, configValue, binary);
                                 } else {
                                     nnConfigs = null;
                                 }
                             }
                             Collections.shuffle(learnMLMap);
+                            log.info("mldoa" + mldao.getName() + mldao.getModels().size() + " model " + model.getName() + " learnmap size " + learnMLMap.size() + " classifymap size " + classifyMLMap.size());
+                            if (outcomes == 2) {
+                                outcomes = 1;
+                            }
                             LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, this, learnMLMap, model, size, outcomes, mapTime, classifyMLMap, labelMapShort, path, filename, neuralnetcommand, mlmeta, true);  
                             if (result == null) {
                                 continue;
@@ -533,6 +538,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             lossMap.put(mldao.getName() + model.getName(), result.getLoss());
                             resultMeta.setTestAccuracy(result.getAccuracy());
                             resultMeta.setTrainAccuracy(result.getTrainaccuracy());
+                            resultMeta.setValAccuracy(result.getValaccuracy());
                             resultMeta.setLoss(result.getLoss());
 
                             Map<String, Double[]> classifyResult = result.getCatMap();
@@ -549,7 +555,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                             if (countMap2 != null) {
                                 addEventRow(subType, countMap2);
                             }
-                            if (countMap2 != null && !isBinary(mapTypeInt)) {
+                            // todo
+                            if (countMap2 != null /*&& !isBinary(mapTypeInt)*/) {
                                 Map<String, List<Pair<double[], Pair<Object, Double>>>> posMap = mapMap.get(subType).get(POSTYPESTR);
                                 if (posMap != null) {
                                     Set<String> posIds = posMap.keySet();
@@ -597,7 +604,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                 if (classified == classify) {
                     Double classification = arrayclassify.getRight();
                     if (!conf.wantAggregatorsUseConfusion()) {
-                        mapConfusion.get(classification);
+                        classification = mapConfusion.get(classification);
                     }
                     mlMap.add(new LearnClassify(entry.getKey(), newarray, classification));
                 }
@@ -656,8 +663,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                                 log.warn("Map null and continue? {}", mapName);
                                 continue;
                             }
-			    IndicatorUtils.filterNonExistingClassifications3(labelMapShort, learnMap);
-			    Map<String, Long> countMap = getCountMap(labelMapShort, learnMap);
+			    IndicatorUtils.filterNonExistingClassifications3(labelMapShortConfusion, learnMap);
+			    Map<String, Long> countMap = getCountMap(labelMapShortConfusion, learnMap);
                             long count = countMap.values().stream().distinct().count();
                             if (count == 1) {
                                 log.info("Nothing to learn");
@@ -675,15 +682,18 @@ public abstract class IndicatorAggregator extends Aggregator {
                             String path = model.getPath();
                             boolean mldynamic = conf.wantMLDynamic();
                             if (nnConfigs == null) {
-                                String key = model.getKey();
+                                boolean binary = outcomes == 2;
+                                String key = model.getKey(binary);
                                 nnConfigs = new NeuralNetConfigs();
                                 String configValue = (String) conf.getValueOrDefault(key);
                                 if (configValue != null) {
-                                    boolean binary = outcomes == 2;
                                     NeuralNetConfig nnconfig = nnConfigs.getAndSetConfig(key, configValue, binary);
                                 } else {
                                     nnConfigs = null;
                                 }
+                            }
+                            if (outcomes == 2) {
+                                outcomes = 1;
                             }
                             Callable callable = new MLClassifyLearnTestPredictCallable(nnConfigs, mldao, this, learnMLMap, model, size, outcomes, mapTime, classifyMLMap, labelMapShort, path, filename, neuralnetcommand, mlmeta);  
                             Future<LearnTestClassifyResult> future = MyExecutors.run(callable, 1);
@@ -805,6 +815,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         SerialResultMeta resultMeta = (SerialResultMeta) getResultMetas().get(testCount);
         resultMeta.setTestAccuracy(result.getAccuracy());
         resultMeta.setTrainAccuracy(result.getTrainaccuracy());
+        resultMeta.setValAccuracy(result.getValaccuracy());
         resultMeta.setLoss(result.getLoss());
     }
 
@@ -880,6 +891,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         }
     } 
 
+    // not used
     private void doClassifications(IclijConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
             Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult) {
         AfterBeforeLimit afterbefore = getAfterBefore();
@@ -1027,7 +1039,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     protected List<Integer> getMapTypeList() {
         if (!conf.wantAggregatorsUseConfusion()) {
-            return List.of(0);
+            return List.of(CMNTYPE);
         }
         List<Integer> retList = new ArrayList<>();
         retList.add(CMNTYPE);
@@ -1051,7 +1063,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     
     private void makeMapTypes() {
         if (!conf.wantAggregatorsUseConfusion()) {
-            mapTypes.put(0, "abovebelow");
+            mapTypes.put(CMNTYPE, CMNTYPESTR);
             mapConfusion.put(1.0, 1.0);
             mapConfusion.put(2.0, 0.0);
             mapConfusion.put(3.0, 0.0);
@@ -1078,6 +1090,9 @@ public abstract class IndicatorAggregator extends Aggregator {
     }
 
     private void handleOtherStats(IclijConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap) {
+        if (!conf.wantAggregatorsUseConfusion()) {
+            return;
+        }
         // and others done with println
         if (conf.wantOtherStats() && conf.wantML()) {
             Map<Double, String> labelMapShort = createLabelMapShort();            
@@ -1175,6 +1190,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     protected String[] pos = { labelTP, labelFP };
     protected String[][] posnegs = { neg, pos };
     protected String[] posneg = { POSTYPESTR, NEGTYPESTR };
+    protected String[] abovebelow = { Constants.ABOVE, Constants.BELOW };
 
     private List<SubType> usedSubTypes;
 
@@ -1187,6 +1203,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         return labelMap2;
     }
 
+    // not used
     protected Map<String, Double> createLabelMap2() {
         Map<String, Double> labelMap2 = new HashMap<>();
         labelMap2.put(labelTP, 1.0);
@@ -1196,6 +1213,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         return labelMap2;
     }
 
+    // not used
     protected Map<Double, String> createLabelMap1() {
         Map<Double, String> labelMap1 = new HashMap<>();
         labelMap1.put(1.0, labelTP);
@@ -1205,7 +1223,24 @@ public abstract class IndicatorAggregator extends Aggregator {
         return labelMap1;
     }
 
-    public static Map<Double, String> createLabelMapShort() {
+    public Map<Double, String> createLabelMapShort() {
+        if (!conf.wantAggregatorsUseConfusion()) {
+            Map<Double, String> labelMap = new HashMap<>();
+            labelMap.put(0.0, Constants.BELOW);
+            labelMap.put(1.0, Constants.ABOVE);
+            return labelMap;
+        }
+        Map<Double, String> labelMap1 = new HashMap<>();
+        labelMap1.put(1.0, Constants.TP);
+        labelMap1.put(2.0, Constants.FP);
+        labelMap1.put(3.0, Constants.TN);
+        labelMap1.put(4.0, Constants.FN);
+        return labelMap1;
+    }
+
+    Map<Double, String> labelMapShortConfusion = createLabelMapShortConfusion();
+    
+    public Map<Double, String> createLabelMapShortConfusion() {
         Map<Double, String> labelMap1 = new HashMap<>();
         labelMap1.put(1.0, Constants.TP);
         labelMap1.put(2.0, Constants.FP);
@@ -1748,6 +1783,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                         // instead of posneg, take from filter
                         getPosNegMap3(mapMap, subType, CMNTYPESTR, posneg[i], id, trunclist, labelMap2, anArray, trunclist.length, map[i], subType.filters[i].texts, null, subType.afterbefore, threshold);
                     }
+                    if (!conf.wantAggregatorsUseConfusion()) {
+                        
+                    }
                     } else {
                         for (int i = 0; i < posneg.length; i++) {
                             if (simplelog) {
@@ -2166,6 +2204,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         protected AfterBeforeLimit afterbefore;
         protected int[] range;
         protected Filter[] filters;
+        protected Filter[] abovebelowfilters;
         public boolean useDirectly = true;
         public boolean useMergeLimitTrigger = false;
         public boolean useMerged = false;

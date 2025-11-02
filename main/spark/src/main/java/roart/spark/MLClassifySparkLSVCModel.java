@@ -26,7 +26,7 @@ public  class MLClassifySparkLSVCModel  extends MLClassifySparkModel {
     }
     
     @Override
-    public PipelineModel getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes) {
+    public PipelineModel getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes, boolean binary) {
         SparkLSVCConfig modelConf = getModel(conf, outcomes);
         log.info("Used ML config {}", modelConf);
         LinearSVC trainer = new LinearSVC()
@@ -41,7 +41,7 @@ public  class MLClassifySparkLSVCModel  extends MLClassifySparkModel {
     }
 
     @Override
-    public NeuralNetConfig getModel(NeuralNetConfigs conf) {
+    public NeuralNetConfig getModel(NeuralNetConfigs conf, boolean binary) {
         return null;
     }
     
@@ -51,9 +51,9 @@ public  class MLClassifySparkLSVCModel  extends MLClassifySparkModel {
             modelConf = conf.getSparkConfig().getSparkLSVCConfig();
         }
         if (modelConf == null) {
-            modelConf = getModel().convert(SparkLSVCConfig.class);
+            modelConf = getModel().convert(SparkLSVCConfig.class, binary);
             if (modelConf == null) {
-                modelConf = getModel().getDefault(SparkLSVCConfig.class);
+                modelConf = getModel().getDefault(SparkLSVCConfig.class, binary);
             }
         }
         return modelConf;

@@ -534,7 +534,7 @@ public class NeuralNetConfigs {
         return map;
     }
 
-    public Map<String, String> getConfigMap() {
+    public Map<String, String> getConfigMap(boolean binary) {
         Map<String, String> map = new HashMap<>();
         map.put(ConfigConstants.MACHINELEARNINGSPARKMLMLPC, ConfigConstants.MACHINELEARNINGSPARKMLMLPCCONFIG);
         map.put(ConfigConstants.MACHINELEARNINGSPARKMLLOR, ConfigConstants.MACHINELEARNINGSPARKMLLORCONFIG);
@@ -570,11 +570,25 @@ public class NeuralNetConfigs {
         map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNN, ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNNCONFIG);
         map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRU, ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRUCONFIG);
         map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTM, ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTMCONFIG);
+        if (binary) {
+            map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWMLP, ConfigConstants.MACHINELEARNINGTENSORFLOWMLPBINARYCONFIG);
+            map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN, ConfigConstants.MACHINELEARNINGTENSORFLOWCNNBINARYCONFIG);
+            map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2, ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2BINARYCONFIG);
+            map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN, ConfigConstants.MACHINELEARNINGTENSORFLOWRNNBINARYCONFIG);
+            map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU, ConfigConstants.MACHINELEARNINGTENSORFLOWGRUBINARYCONFIG);
+            map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMBINARYCONFIG);
+            map.put(ConfigConstants.MACHINELEARNINGPYTORCHMLP, ConfigConstants.MACHINELEARNINGPYTORCHMLPBINARYCONFIG);
+            map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN, ConfigConstants.MACHINELEARNINGPYTORCHCNNBINARYCONFIG);
+            map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN2, ConfigConstants.MACHINELEARNINGPYTORCHCNN2BINARYCONFIG);
+            map.put(ConfigConstants.MACHINELEARNINGPYTORCHRNN, ConfigConstants.MACHINELEARNINGPYTORCHRNNBINARYCONFIG);
+            map.put(ConfigConstants.MACHINELEARNINGPYTORCHGRU, ConfigConstants.MACHINELEARNINGPYTORCHGRUBINARYCONFIG);
+            map.put(ConfigConstants.MACHINELEARNINGPYTORCHLSTM, ConfigConstants.MACHINELEARNINGPYTORCHLSTMBINARYCONFIG);
+        }
         return map;
     }
 
-    public Map<String, String> getConfigMapRev() {
-        Map<String, String> aMap = getConfigMap();
+    public Map<String, String> getConfigMapRev(boolean binary) {
+        Map<String, String> aMap = getConfigMap(binary);
         Map<String, String> retMap = new HashMap<>();
         for (Entry<String, String> entry : aMap.entrySet()) {
             retMap.put(entry.getValue(), entry.getKey());
@@ -594,6 +608,7 @@ public class NeuralNetConfigs {
         NeuralNetConfig nnconfig = null;
         Map<String, Pair<Class<NeuralNetConfig>, String>> map = getMap();
         if (binary) {
+            // TODO not needed here until we have different binary configs
             Map<String, Pair<Class<NeuralNetConfig>, String>> binaryMap = getBinaryMap();
             map.putAll(binaryMap);
         }

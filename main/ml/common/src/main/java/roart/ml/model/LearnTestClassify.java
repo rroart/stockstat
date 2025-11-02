@@ -106,6 +106,8 @@ public class LearnTestClassify {
 
     private Double trainaccuracy;
 
+    private Double valaccuracy;
+
     private Double loss;
     
     private Boolean exists;
@@ -422,6 +424,14 @@ public class LearnTestClassify {
 
     public void setTrainaccuracy(Double trainaccuracy) {
         this.trainaccuracy = trainaccuracy;
+    }
+
+    public Double getValaccuracy() {
+        return valaccuracy;
+    }
+
+    public void setValaccuracy(Double valaccuracy) {
+        this.valaccuracy = valaccuracy;
     }
 
     public Double getLoss() {

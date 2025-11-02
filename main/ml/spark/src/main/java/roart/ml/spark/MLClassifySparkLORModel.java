@@ -28,7 +28,7 @@ public class MLClassifySparkLORModel  extends MLClassifySparkModel {
     }
 
     @Override
-    public String getKey() {
+    public String getKey(boolean binary) {
         return ConfigConstants.MACHINELEARNINGSPARKMLLORCONFIG;
     }
 
@@ -43,15 +43,15 @@ public class MLClassifySparkLORModel  extends MLClassifySparkModel {
     }
 
     @Override
-    public NeuralNetConfig getModel(NeuralNetConfigs conf) {
+    public NeuralNetConfig getModel(NeuralNetConfigs conf, boolean binary) {
         SparkLORConfig modelConf = null;
         if (conf != null) {
             modelConf = conf.getSparkConfig().getSparkLORConfig();
         }    
         if (modelConf == null) {
-            modelConf = convert(SparkLORConfig.class);
+            modelConf = convert(SparkLORConfig.class, binary);
             if (modelConf == null) {
-                modelConf = getDefault(SparkLORConfig.class);
+                modelConf = getDefault(SparkLORConfig.class, binary);
             }
         }
         return modelConf;
