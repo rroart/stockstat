@@ -350,6 +350,8 @@ public class DbSpring {
         mltest.setLoss(item.getLoss());
         mltest.setTrainAccuracy(item.getTrainAccuracy());
         mltest.setTestAccuracy(item.getTestAccuracy());
+        mltest.setValAccuracy(item.getValAccuracy());
+        mltest.setDescription(item.getDescription());
         return mltest;
     }
 

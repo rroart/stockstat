@@ -554,8 +554,11 @@ public abstract class Component {
             }
             item.setTestAccuracy(meta.getTestAccuracy());
             item.setTrainAccuracy(meta.getTrainAccuracy());
+            item.setValAccuracy(meta.getValAccuracy());
             item.setLoss(meta.getLoss());
             item.setThreshold(meta.getThreshold());
+            //item.setDescription(meta.getDescription());
+            item.setDescription(meta.getLearnMap().toString());
             param.getService().getIo().getIdbDao().save(item);
         }
     }
