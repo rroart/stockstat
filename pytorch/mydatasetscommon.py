@@ -1,11 +1,8 @@
-import tensorflow as tf
 import numpy as np
 
-def iriscommon(binary = False):
-    url_train = 'http://download.tensorflow.org/data/iris_training.csv'
-    url_test = 'http://download.tensorflow.org/data/iris_test.csv'
-    file_path_train = tf.keras.utils.get_file(origin=url_train, cache_dir="/tmp")
-    file_path_test = tf.keras.utils.get_file(origin=url_test, cache_dir="/tmp")
+def iriscommon(binary):
+    file_path_train = "/tmp/iris_training.csv"
+    file_path_test = "/tmp/iris_test.csv"
     iris_data_train = np.genfromtxt(file_path_train, delimiter=',', skip_header=1)
     iris_data_test = np.genfromtxt(file_path_test, delimiter=',', skip_header=1)
     print(iris_data_test)
@@ -16,7 +13,6 @@ def iriscommon(binary = False):
         rows = np.where( iris_data_test[:,4] < 2 )
         iris_data_test = iris_data_test[rows]
         classes = 2
-
     print(iris_data_test)
     train_x = iris_data_train[:,:-1].tolist()
     train_y = iris_data_train[:,-1].tolist()

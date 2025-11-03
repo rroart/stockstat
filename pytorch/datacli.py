@@ -31,13 +31,15 @@ def classify(classify_x, path = None, cf = 'pytorchMLPConfig', take = None, size
 def learntestclassify_inner(cf='pytorchMLPConfig', size=None, classes=None, train_x=[], train_y=[], test_x=[],
     test_y=[], classify_x=None, steps=None, zero=True, classify=True, take = None, neuralnetcommand = None, override = None):
 
-    cfname, modelInt, thecf = config.get(cf, not classify)
+    binary = classes == 2
+    cfname, modelInt, thecf = config.get(cf, not classify, binary)
     if steps is not None:
         thecf['steps'] = steps
     if take is not None:
         thecf['take'] = take
     if override is not None:
         thecf.update(override)
+    thecf['binary'] = binary
     filename = getfilename(thecf, "ds")
     if test_x is not None and len(test_x) > 0:
         data = { 'modelInt' : modelInt, 'filename' : filename, 'size' : size, 'trainingarray' : train_x, 'classifyarray' : classify_x, 'classes' : classes, 'trainingcatarray' : train_y, 'testarray' : test_x, 'testcatarray' : test_y, 'neuralnetcommand' : neuralnetcommand, cfname : thecf, 'zero' : zero, 'classify' : classify }
@@ -45,7 +47,7 @@ def learntestclassify_inner(cf='pytorchMLPConfig', size=None, classes=None, trai
         data = { 'modelInt' : modelInt, 'filename' : filename, 'size' : size, 'trainingarray' : train_x, 'classifyarray' : classify_x, 'classes' : classes, 'trainingcatarray' : train_y, 'neuralnetcommand' : neuralnetcommand, cfname : thecf, 'zero' : zero, 'classify' : classify }
     myjson = json.dumps(data)
     result = cl.do_learntestclassify(queue, myjson)
-    #result = queue.get()
+    result = queue.get()
     print (result)
     return result
 

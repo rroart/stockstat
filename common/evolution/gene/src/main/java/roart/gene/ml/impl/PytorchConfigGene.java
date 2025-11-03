@@ -174,6 +174,9 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
     
     protected String generateLastactivation() {
         String[] activations = { "relu", "leakyrelu", "tanh", "sigmoid", "softmax", "softplus", "softsign", "elu", "selu", "gelu", "none" };
+        if (getConfig().isBinary()) {
+            activations = new String[] { "sigmoid" };
+        }
         if (predictor) {
             activations = new String[] { "relu", "leakyrelu", "tanh", "sigmoid", "softmax", "softplus", "softsign", "elu", "selu", "gelu" };
         }

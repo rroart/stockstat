@@ -36,6 +36,7 @@ def get(cf, predictor = False, binary = False):
             PYTORCHMLPCONFIG.update(PYTORCHCOMMONCLASSIFY)
         if binary and not predictor:
             PYTORCHMLPCONFIG['loss'] = 'bce'
+            PYTORCHMLPCONFIG['lastactivation'] = 'sigmoid'
         return cf, 1, PYTORCHMLPCONFIG
     elif cf == PYTORCHRNN:
         if predictor:

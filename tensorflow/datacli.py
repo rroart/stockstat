@@ -31,13 +31,15 @@ def classify(classify_x, path = None, cf = 'tensorflowMLPConfig', take = None, s
 def learntestclassify_inner(cf='tensorflowMLPConfig', size=None, classes=None, train_x=[], train_y=[], test_x=[],
     test_y=[], classify_x=None, steps=None, zero=True, classify=True, take = None, neuralnetcommand = None, override = None):
 
-    cfname, modelInt, thecf = config.get(cf, not classify)
+    binary = classes == 2
+    cfname, modelInt, thecf = config.get(cf, not classify, binary)
     if steps is not None:
         thecf['steps'] = steps
     if take is not None:
         thecf['take'] = take
     if override is not None:
         thecf.update(override)
+    thecf['binary'] = binary
     filename = getfilename(thecf, "ds")
     if test_x is not None and len(test_x) > 0:
         data = { 'modelInt' : modelInt, 'filename' : filename, 'size' : size, 'trainingarray' : train_x, 'classifyarray' : classify_x, 'classes' : classes, 'trainingcatarray' : train_y, 'testarray' : test_x, 'testcatarray' : test_y, 'neuralnetcommand' : neuralnetcommand, cfname : thecf, 'zero' : zero, 'classify' : classify }
