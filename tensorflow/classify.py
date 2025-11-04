@@ -134,7 +134,7 @@ class Classify:
         del classifier
         dt = datetime.now()
         #print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put(Response(json.dumps({"accuracy": float(accuracy_score), "trainaccuracy": float(train_accuracy_score), 'train_loss' : train_loss, 'val_accuracy' : val_accuracy, 'val_loss' : val_loss}), mimetype='application/json'))
+        queue.put({"accuracy": float(accuracy_score), "trainaccuracy": float(train_accuracy_score), 'train_loss' : train_loss, 'val_accuracy' : val_accuracy, 'val_loss' : val_loss})
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def getSlide(self, inputs, labels, myobj, config):
@@ -283,20 +283,36 @@ class Classify:
         array = np.array(myobj.trainingarray, dtype='f')
         shape = array.shape
         print("Shape", array.shape)
-        print("grr", array[0])
+        #print("grr", array[0])
         #layer = keras.layers.Normalization(axis=None) #, invert=True)
         #layer = keras.layers.Normalization(axis=1) #, invert=True)
         #layer.adapt(array)
         #array = layer(array)
         print("Shape", array.shape)
         # TODO no transpose with dataset
-        if config.name == "cnn2" and not hasattr(myobj, 'dataset'):
+        if config.name == "cnn2" and not hasattr(myobj, 'dataset'): #todo
             print("cnn2 shape")
             print(array.shape)
+            if len(array.shape) == 3:
+                print("sh0", array.shape)
+                array = array.reshape(array.shape[0], array.shape[1], array.shape[2], 1)
+                print("sh1", array.shape)
+            else:
             #array = np.transpose(array, [0, 3, 2, 1])
-            array = np.transpose(array, [0, 2, 3, 1])
+            #array = np.transpose(array, [0, 2, 3, 1])
+                array = array.reshape(array.shape[0], 1, array.shape[1], array.shape[2])
+
             print(array.shape)
 
+        if config.name == "cnn" and not hasattr(myobj, 'dataset'): #todo
+            print("cnn shape")
+            print(array.shape)
+            if len(array.shape) == 3:
+                array = array.reshape(array.shape[0], array.shape[2], array.shape[1])
+            if len(array.shape) == 2:
+                array = array.reshape(array.shape[0], array.shape[1], 1)
+
+        print("Shapes0", array.shape)
         cat = np.array([], dtype='i')
         if hasattr(myobj, 'trainingcatarray') and not myobj.trainingcatarray is None:
             cat = np.array(myobj.trainingcatarray, dtype='i')
@@ -375,6 +391,8 @@ class Classify:
         #print(train.shape)
         #print(traincat.shape)
         #print(classifier.train)
+        #if isinstance(classifier.model, tf.keras.Model):
+        #    print(classifier.model.summary())
         history = classifier.train(train, traincat, val, valcat)
         train_accuracy_score = history.history.get('accuracy')[-1]
         val_accuracy = history.history.get('val_accuracy')[-1]
@@ -611,7 +629,7 @@ class Classify:
         (intlist, problist) = (None, None)
         if self.wantClassify(myobj):
             #print("here0");
-            if config.name == "cnn2":
+            if config.name == "cnn2": #todo
                 print("cnn2 shape")
                 array = np.array(myobj.classifyarray, dtype='f')
                 print(array.shape)
@@ -657,7 +675,7 @@ class Classify:
             (ds.train, ds.traincat, ds.test, ds.testcat, shape, val, valcat) = self.gettraintest(myobj, config, meta.classify)
         #print("classez2", myobj.classes)
         model = Model.Model(myobj, config, meta.classify, shape)
-        exists = self.exists(myobj)
+        exists = False # not yet: self.exists(myobj)
         # load model if:
         # exists and not dynamic and wantclassify
         if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
@@ -704,7 +722,7 @@ class Classify:
             loss = float(loss)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, 'train_loss' : train_loss, 'val_accuracy' : val_accuracy, 'val_loss' : val_loss, "classify" : meta.classify, "gpu" : self.hasgpu() })
+        queue.put({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, 'train_loss' : train_loss, 'valaccuracy' : val_accuracy, 'val_loss' : val_loss, "classify" : meta.classify, "gpu" : self.hasgpu() })
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def get_file(self, request):

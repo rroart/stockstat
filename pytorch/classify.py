@@ -35,6 +35,8 @@ dictclass = {}
 global count
 count = 0
 
+best_practise_load_save = True
+
 print("Using gpu: ", torch.cuda.is_available())
 
 class Classify:
@@ -135,6 +137,7 @@ class Classify:
             #correct = (predicted == labels).sum()
             #accuracy = 100 * correct / total
             #print(accuracy)
+            # TODO torch.round
             intlist = predicted.tolist()
             sm = torch.nn.Softmax(1)
             probabilities = sm(predictions)
@@ -149,7 +152,7 @@ class Classify:
             intlist = intlist.tolist()
         return intlist, problist
 
-    def do_learntest(self, request):
+    def do_learntest(self, queue, request):
         dt = datetime.now()
         timestamp = dt.timestamp()
         #print(request.get_data(as_text=True))
@@ -164,7 +167,7 @@ class Classify:
         if torch.cuda.is_available():
             model.cuda()
         #testcat = torch.LongTensor(testcat)
-        (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, model, config, train, traincat,
+        (accuracy_score, loss, train_accuracy_score, val_accuracy_score) = self.do_learntestinner(myobj, model, config, train, traincat,
                                                                               test, testcat, classify, avgstdvar, val, valcat)
         global dictclass
         #dictclass[str(myobj.modelInt) + myobj.period + myobj.modelname] = model
@@ -174,7 +177,7 @@ class Classify:
         
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        return Response(json.dumps({"accuracy": float(accuracy_score), "trainaccuracy": float(train_accuracy_score)}), mimetype='application/json')
+        queue.put({"accuracy": float(accuracy_score), "trainaccuracy": float(train_accuracy_score)})
 
     def mytrain(self, model, inputs, labels, myobj, config, classify, avgstdvar, val = None, valcat = None):
         early_stopping = EarlyStopping(patience=5, delta=0.01, verbose=True)
@@ -389,6 +392,20 @@ class Classify:
         #mydim = myobj.size
         array = np.array(myobj.trainingarray, dtype='f')
         shape = array.shape
+        # TODO check if right reshape
+        print("Shape", array.shape)
+        # TODO no transpose with dataset
+        if config.name == "cnn2" and not hasattr(myobj, 'dataset'): #todo
+            print("cnn2 shape")
+            print(array.shape)
+            if len(array.shape) == 3:
+                print("sh0", array.shape)
+                #array = array.reshape(array.shape[0], 1, array.shape[1], array.shape[2])
+                print("sh1", array.shape)
+            #array = np.transpose(array, [0, 3, 2, 1])
+            #array = np.transpose(array, [0, 2, 3, 1])
+            array = array.reshape(array.shape[0], array.shape[1], array.shape[2], 1)
+            print(array.shape)
         cat = np.array([], dtype='i')
         if hasattr(myobj, 'trainingcatarray') and not myobj.trainingcatarray is None:
             cat = np.array(myobj.trainingcatarray, dtype='i')
@@ -526,6 +543,7 @@ class Classify:
         #accuracy = np.sum(tv_y.reshape(-1,1) == y_hat_class) / len(testcat)
         accuracy_score = acc
         train_accuracy_score = acc0
+        val_accuracy_score = 0
 
         print("Accs", acc0, acc)
         
@@ -540,7 +558,7 @@ class Classify:
         #print(accuracy_score)
         #print(type(accuracy_score))
         print("\nTest Accuracy: {0:f}\n".format(accuracy_score))
-        return accuracy_score, test_loss, train_accuracy_score
+        return accuracy_score, test_loss, train_accuracy_score, val_accuracy_score
 
     def getModel(self, myobj):
       if hasattr(myobj, 'modelInt'):  
@@ -653,8 +671,12 @@ class Classify:
         if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
             print("Loading model")
             dev = self.getdev()
-            checkpoint = torch.load(self.getfullpath(myobj), map_location = dev)
-            model = checkpoint['model']
+            model = Model.Net(myobj, config, classify, shape)
+            if False: #best_practise_load_save:
+                model.model.load_state_dict(torch.load(self.getfullpath(myobj)))
+            else:
+                model = torch.load(self.getfullpath(myobj), weights_only=False)
+            model.eval()
         else:
             model = Model.Net(myobj, config, classify, shape)
         if torch.cuda.is_available():
@@ -664,14 +686,34 @@ class Classify:
         #testcat = torch.LongTensor(testcat)
         accuracy_score = None
         train_accuracy_score = None
+        val_accuracy_score = None
         loss = None
         if self.wantLearn(myobj):
-            (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, model, config, train, traincat,
+            if config.name == "cnn2": #todo
+                print("cnn2 shape")
+                array = np.array(myobj.classifyarray, dtype='f')
+                array = np.array(myobj.trainingarray, dtype='f')
+
+                print(array.shape)
+                # only for debug/test
+                if len(array.shape) == 3:
+                    print("sh0", array.shape)
+                    array = array.reshape(array.shape[0], array.shape[1], array.shape[2], 1)
+                    print("sh1", array.shape)
+                #array = np.transpose(array, [0, 3, 2, 1])
+                array = np.transpose(array, [0, 2, 3, 1])
+                print(array.shape)
+                myobj.classifyarray = array
+            (accuracy_score, loss, train_accuracy_score, val_accuracy_score) = self.do_learntestinner(myobj, model, config, train, traincat,
                                                                                   test, testcat, classify, avgstdvar, val, valcat)
         # save model if
         # not dynamic and wantlearn
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
-            torch.save({'model': model }, self.getfullpath(myobj))
+            if False: #best_practise_load_save:
+                torch.save(model.model.state_dict(), self.getfullpath(myobj))
+            else:
+                torch.save(model, self.getfullpath(myobj))
+
         (intlist, problist) = (None, None)
         if self.wantClassify(myobj):
             (intlist, problist) = self.do_classifyinner(myobj, model, classify)
@@ -688,7 +730,7 @@ class Classify:
             loss = None
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        return(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "gpu" : self.hasgpu()}), mimetype='application/json'))
+        queue.put({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "valaccuracy": val_accuracy_score, "gpu" : self.hasgpu()})
 
     def do_dataset(self, queue, myjson):
         torch.cuda.empty_cache()
@@ -712,7 +754,7 @@ class Classify:
         classifier = model
         print("model", modelname)
         print("config", config, myobj)
-        (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, classifier, config, train, traincat,
+        (accuracy_score, loss, train_accuracy_score, val_accuracy_score) = self.do_learntestinner(myobj, classifier, config, train, traincat,
                                                                               test, testcat, classify, avgstdvar, val, valcat)
         myobj.classifyarray = train
         (intlist, problist) = self.do_classifyinner(myobj, model, classify)
@@ -721,12 +763,12 @@ class Classify:
         if not train_accuracy_score is None:
             train_accuracy_score = float(train_accuracy_score)
         if not loss is None:
-            loss = float(loss)
+            loss = float(loss) # TODO warning
         if not loss is None and np.isnan(loss):
             loss = None
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        return({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify" : classify, "gpu" : self.hasgpu() })
+        queue.put({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify" : classify, "valaccuracy": val_accuracy_score, "gpu" : self.hasgpu() })
 
     def do_dataset_gen(self, queue, request):
         import discriminator
@@ -767,9 +809,8 @@ class Classify:
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
 
-        return (Response(json.dumps(
-                {"accuracy": 0, "trainaccuracy": 0, "loss": discriminator_losses + generator_losses, "classify": "",
-                 "gpu": self.hasgpu()}), mimetype='application/json'))
+        queue.put({"accuracy": 0, "trainaccuracy": 0, "loss": discriminator_losses + generator_losses, "classify": "",
+                 "gpu": self.hasgpu()})
 
     def do_gpt(self, queue, myjson, cachedata):
         dt = datetime.now()
@@ -796,8 +837,12 @@ class Classify:
                     model = Model.Model(myobj, config, datasets)
                     print("Restoring")
                     dev = self.getdev()
-                    checkpoint = torch.load(self.getfullpath(myobj), map_location=dev)
-                    model = checkpoint['model']
+                    if best_practise_load_save:
+                        model.model.load_state_dict(torch.load(self.getfullpath(myobj)))
+                    else:
+                        model.model = torch.load(self.getfullpath(myobj), weights_only=False)
+                    model.model.eval()
+
                     print("Restoring done")
                 text = model.generate(model.model)
                 print("text", text)
@@ -821,7 +866,10 @@ class Classify:
                 model.fit()
             if model.localsave():
                 print("Saving")
-                torch.save({'model': model }, self.getfullpath(myobj))
+                if best_practise_load_save:
+                    torch.save(model.model.state_dict(), self.getfullpath(myobj))
+                else:
+                    torch.save(model.model, self.getfullpath(myobj))
 
         #classifier.tidy()
         del classifier
@@ -896,6 +944,7 @@ class Classify:
                         print("not figaro")
                         #model.model.load_state_dict(torch.load("/tmp/data/exp/test_sod/checkpoints/best_model.pt"))
                         model.model.load_state_dict(torch.load(self.getfullpath(myobj)))
+                        model.model.eval()
                     else:
                         # figaro
                         print("figaro")
