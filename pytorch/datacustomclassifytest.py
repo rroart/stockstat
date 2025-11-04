@@ -46,6 +46,7 @@ class MyTestCase(unittest.TestCase):
         steps = 10
 
         train_x, train_y, test_x, test_y, classes = mydatasetscommon.iriscommon(binary)
+        #train_x, train_y, test_x, test_y, classes = mydatasetscommon.mnistcommon(binary)
         #train_x = np.array(train_x).reshape(120, 2, 2).tolist()  # train_x.values.tolist()
         #test_x = np.array(test_x).reshape(30, 2, 2).tolist()  # test_x.values.tolist()
 
@@ -70,6 +71,34 @@ class MyTestCase(unittest.TestCase):
 
 
         # here
+    def test_mnist(self):
+        binary = True
+        #binary = False
+        steps = 10
+
+        #train_x, train_y, test_x, test_y, classes = mydatasetscommon.iriscommon(binary)
+        train_x, train_y, test_x, test_y, classes = mydatasetscommon.mnistcommon(binary)
+        #train_x = np.array(train_x).reshape(120, 2, 2).tolist()  # train_x.values.tolist()
+        #test_x = np.array(test_x).reshape(30, 2, 2).tolist()  # test_x.values.tolist()
+
+        testlist = [ config.PYTORCHRNN, config.PYTORCHCNN, config.PYTORCHLSTM, config.PYTORCHGRU ]
+        testlist = [ config.PYTORCHMLP ]
+        size = (2, 2)
+        size = 4
+        for test in testlist:
+            print("Doing", test)
+            result = cli.learntestclassify(test_x, cf = test, train_x = train_x, train_y = train_y, test_x = test_x, test_y = test_y, steps = steps, size = size, classes = classes)
+            print(result)
+            #self.assertIsNotNone(result['accuracy'], "Accuracy")
+            #self.assertIsNotNone(result['classifycatarray'], "Classify")
+
+            result = cli.learntest(cf = test, train_x = train_x, train_y = train_y, test_x = test_x, test_y = test_y, steps = steps, size = size, classes = classes)
+            print(result)
+            #self.assertIsNotNone(result['accuracy'], "Accuracy")
+
+            result = cli.classify(test_x, cf=test, train_x = train_x, train_y = train_y, size=size, classes = classes)
+            print(result)
+            #self.assertIsNotNone(result['classifycatarray'], "Classify")
 
 # todo cnn2
 

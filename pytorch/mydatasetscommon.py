@@ -1,4 +1,6 @@
 import numpy as np
+import torchvision
+
 
 def iriscommon(binary):
     file_path_train = "/tmp/iris_training.csv"
@@ -20,3 +22,27 @@ def iriscommon(binary):
     test_y = iris_data_test[:,-1].tolist()
     print(test_x, test_y)
     return train_x, train_y, test_x, test_y, classes
+
+def mnistcommon(binary = False, take = 100):
+    #(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+    data = torchvision.datasets.MNIST('/tmp/mnist', train=True, download=True)
+    print(type(data.train_data.tolist()))
+    x_train = np.array(data.train_data.tolist()[:take])
+    y_train = np.array(data.train_labels.tolist()[:take])
+    x_test = np.array(data.test_data.tolist()[:take])
+    y_test = np.array(data.test_labels.tolist()[:take])
+    classes = 10
+    if binary:
+        rows = np.where( y_train < 2 )
+        x_train = x_train[rows]
+        y_train = y_train[rows]
+        rows = np.where( y_test < 2 )
+        x_test = x_test[rows]
+        y_test = y_test[rows]
+        classes = 2
+    x_train = x_train.reshape(x_train.shape[0], 784).tolist()
+    x_test = x_test.reshape(x_test.shape[0], 784).tolist()
+    y_train = y_train.tolist()
+    y_test = y_test.tolist()
+    return x_train, y_train, x_test, y_test, classes
+
