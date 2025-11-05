@@ -25,7 +25,7 @@ def iriscommon(binary = False):
     print(test_x, test_y)
     return train_x, train_y, test_x, test_y, classes
 
-def mnistcommon(binary = False, take = 100):
+def mnistcommon(binary = False, outcomes = 2, take = 100):
     (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
     x_train = x_train[:take]
     y_train = y_train[:take]
@@ -35,10 +35,10 @@ def mnistcommon(binary = False, take = 100):
     print(type(y_train), y_train.shape)
     classes = 10
     if binary:
-        rows = np.where( y_train < 2 )
+        rows = np.where( y_train < outcomes )
         x_train = x_train[rows]
         y_train = y_train[rows]
-        rows = np.where( y_test < 2 )
+        rows = np.where( y_test < outcomes )
         x_test = x_test[rows]
         y_test = y_test[rows]
         classes = 2

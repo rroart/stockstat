@@ -42,9 +42,10 @@ class MyTestCase(unittest.TestCase):
 
 
     def test_iris(self):
-        binary = False
-        binary = True
-        steps = 10
+      binary = False
+      binary = True
+      steps = 10
+      for binary in [ True, False ]:
 
         train_x, train_y, test_x, test_y, classes = mydatasetscommon.iriscommon(binary)
         #train_x, train_y, test_x, test_y, classes = mydatasetscommon.mnistcommon(binary)
@@ -57,28 +58,30 @@ class MyTestCase(unittest.TestCase):
         size = 4
         for test in testlist:
             print("Doing", test)
-            result = cli.learntestclassify(test_x, cf = test, train_x = train_x, train_y = train_y, test_x = test_x, test_y = test_y, steps = steps, size = size, classes = classes)
+            result = cli.learntestclassify(test_x, cf = test, train_x = train_x, train_y = train_y, test_x = test_x, test_y = test_y, steps = steps, size = size, classes = classes, binary = binary)
             print(result)
             self.assertIsNotNone(result['accuracy'], "Accuracy")
             self.assertIsNotNone(result['classifycatarray'], "Classify")
 
-            result = cli.learntest(cf = test, train_x = train_x, train_y = train_y, test_x = test_x, test_y = test_y, steps = steps, size = size, classes = classes)
+            result = cli.learntest(cf = test, train_x = train_x, train_y = train_y, test_x = test_x, test_y = test_y, steps = steps, size = size, classes = classes, binary = binary)
             print(result)
             self.assertIsNotNone(result['accuracy'], "Accuracy")
 
-            result = cli.classify(test_x, cf=test, train_x = train_x, train_y = train_y, size=size, classes = classes)
+            result = cli.classify(test_x, cf=test, train_x = train_x, train_y = train_y, size=size, classes = classes, binary = binary)
             print(result)
             self.assertIsNotNone(result['classifycatarray'], "Classify")
 
 
         # here
     def test_mnist(self):
-        binary = False
-        binary = True
-        steps = 10
+      binary = False
+      binary = True
+      outcomes = 2
+      steps = 10
+      for binary in [ True, False ]:
 
         #train_x, train_y, test_x, test_y, classes = mydatasetscommon.iriscommon(binary)
-        train_x, train_y, test_x, test_y, classes = mydatasetscommon.mnistcommon(binary)
+        train_x, train_y, test_x, test_y, classes = mydatasetscommon.mnistcommon(binary, outcomes)
         #train_x = np.array(train_x).reshape(120, 2, 2).tolist()  # train_x.values.tolist()
         #test_x = np.array(test_x).reshape(30, 2, 2).tolist()  # test_x.values.tolist()
 
@@ -88,16 +91,16 @@ class MyTestCase(unittest.TestCase):
         size = 4
         for test in testlist:
             print("Doing", test)
-            result = cli.learntestclassify(test_x, cf = test, train_x = train_x, train_y = train_y, test_x = test_x, test_y = test_y, steps = steps, size = size, classes = classes)
+            result = cli.learntestclassify(test_x, cf = test, train_x = train_x, train_y = train_y, test_x = test_x, test_y = test_y, steps = steps, size = size, classes = classes, binary = binary)
             print(result)
             self.assertIsNotNone(result['accuracy'], "Accuracy")
             self.assertIsNotNone(result['classifycatarray'], "Classify")
 
-            result = cli.learntest(cf = test, train_x = train_x, train_y = train_y, test_x = test_x, test_y = test_y, steps = steps, size = size, classes = classes)
+            result = cli.learntest(cf = test, train_x = train_x, train_y = train_y, test_x = test_x, test_y = test_y, steps = steps, size = size, classes = classes, binary = binary)
             print(result)
             self.assertIsNotNone(result['accuracy'], "Accuracy")
 
-            result = cli.classify(test_x, cf=test, train_x = train_x, train_y = train_y, size=size, classes = classes)
+            result = cli.classify(test_x, cf=test, train_x = train_x, train_y = train_y, size=size, classes = classes, binary = binary)
             print(result)
             self.assertIsNotNone(result['classifycatarray'], "Classify")
 

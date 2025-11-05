@@ -3,8 +3,8 @@ import torchvision
 
 
 def iriscommon(binary):
-    file_path_train = "/tmp/iris_training.csv"
-    file_path_test = "/tmp/iris_test.csv"
+    file_path_train = "/tmp/datasets/iris_training.csv"
+    file_path_test = "/tmp/datasets/iris_test.csv"
     iris_data_train = np.genfromtxt(file_path_train, delimiter=',', skip_header=1)
     iris_data_test = np.genfromtxt(file_path_test, delimiter=',', skip_header=1)
     print(iris_data_test)
@@ -23,7 +23,7 @@ def iriscommon(binary):
     print(test_x, test_y)
     return train_x, train_y, test_x, test_y, classes
 
-def mnistcommon(binary = False, take = 100):
+def mnistcommon(binary = False, outcomes = 2, take = 100):
     #(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
     data = torchvision.datasets.MNIST('/tmp/mnist', train=True, download=True)
     print(type(data.train_data.tolist()))
@@ -33,10 +33,10 @@ def mnistcommon(binary = False, take = 100):
     y_test = np.array(data.test_labels.tolist()[:take])
     classes = 10
     if binary:
-        rows = np.where( y_train < 2 )
+        rows = np.where( y_train < outcomes )
         x_train = x_train[rows]
         y_train = y_train[rows]
-        rows = np.where( y_test < 2 )
+        rows = np.where( y_test < outcomes )
         x_test = x_test[rows]
         y_test = y_test[rows]
         classes = 2
