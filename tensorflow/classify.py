@@ -56,7 +56,7 @@ class Classify:
         global dictclass
         classifier = dictclass[myobj.modelname]
         del dictclass[myobj.modelname]
-        (intlist, problist) = self.do_classifyinner(myobj, classifier)
+        (intlist, problist) = self.do_classifyinner(myobj, classifier, config, )
         #print(len(intlist))
         #print(intlist)
         #print(problist)
@@ -65,7 +65,7 @@ class Classify:
         
         return Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist }), mimetype='application/json')
         
-    def do_classifyinner(self, myobj, classifier, classify):
+    def do_classifyinner(self, myobj, classifier, config, classify):
         array = np.array(myobj.classifyarray, dtype='f')
         dataset = tf.data.Dataset.from_tensor_slices((array))
         intlist = []
@@ -105,6 +105,16 @@ class Classify:
             print("Classify", array.shape)
             #print("Classify", array)
             (intlist, problist) = classifier.predict(array)
+            if config.binary:
+                print("problist", problist)
+                intlist = np.round(problist, 0)
+                problist = np.array(problist)
+                # make new probabilities based on the rounded values, 0 with 1 - val, 1 with val
+                print(type(problist), type(intlist))
+                print("problist", problist)
+                problist =  (1 - problist) * (1 - intlist) + problist * intlist # todo
+                print("problist", problist)
+
         if classify and not self.zero(myobj):
             intlist = np.array(intlist)
             intlist = intlist + 1
@@ -637,7 +647,7 @@ class Classify:
                 array = np.transpose(array, [0, 2, 3, 1])
                 print(array.shape)
                 myobj.classifyarray = array
-            (intlist, problist) = self.do_classifyinner(myobj, classifier, classify)
+            (intlist, problist) = self.do_classifyinner(myobj, classifier, config, classify)
         #print("here00");
         #print(len(intlist))
         #print(intlist)
@@ -697,7 +707,7 @@ class Classify:
         if hasattr(ds, 'train'):
             (accuracy_score, loss, train_accuracy_score, train_loss, val_accuracy, val_loss) = self.do_learntestinner(myobj, config, classifier, ds.train, ds.traincat, ds.test, ds.testcat, meta.classify, val, valcat)
             myobj.classifyarray = train
-            (intlist, problist) = self.do_classifyinner(myobj, model, meta.classify)
+            (intlist, problist) = self.do_classifyinner(myobj, model, config, meta.classify)
         else:
             (accuracy_score, loss, train_accuracy_score, train_loss, val_accuracy, val_loss) = classifier.train(ds)
             #(accuracy_score, loss, train_accuracy_score) = (0, 0, 0)
@@ -902,7 +912,7 @@ class Classify:
             print(type(img))
             print(img.shape)
         myobj.classifyarray = img
-        (intlist, problist) = self.do_classifyinner(myobj, model, True)
+        (intlist, problist) = self.do_classifyinner(myobj, model, config, True)
         print("list", intlist, problist)
         classifier.tidy()
         del classifier

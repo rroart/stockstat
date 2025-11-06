@@ -44,64 +44,72 @@ class MyTestCase(unittest.TestCase):
       binary = True
       #binary = False
       steps = 10
-      for binary in [ True, False ]:
+      testlist = [config.PYTORCHRNN, config.PYTORCHCNN, config.PYTORCHLSTM, config.PYTORCHGRU]
+      testlist = [config.PYTORCHMLP]
+      size = (2, 2)
+      size = 4
+      override = { "batchsize" : 8 }
+      for test in testlist:
+          for binary in [ True, False ]:
 
-        train_x, train_y, test_x, test_y, classes = mydatasetscommon.iriscommon(binary)
-        #train_x, train_y, test_x, test_y, classes = mydatasetscommon.mnistcommon(binary)
-        #train_x = np.array(train_x).reshape(120, 2, 2).tolist()  # train_x.values.tolist()
-        #test_x = np.array(test_x).reshape(30, 2, 2).tolist()  # test_x.values.tolist()
+            classes = 2
+            train_x, train_y, test_x, test_y, classes = mydatasetscommon.iriscommon(classes)
+            #train_x, train_y, test_x, test_y, classes = mydatasetscommon.mnistcommon(binary)
+            #train_x = np.array(train_x).reshape(120, 2, 2).tolist()  # train_x.values.tolist()
+            #test_x = np.array(test_x).reshape(30, 2, 2).tolist()  # test_x.values.tolist()
 
-        testlist = [ config.PYTORCHRNN, config.PYTORCHCNN, config.PYTORCHLSTM, config.PYTORCHGRU ]
-        testlist = [ config.PYTORCHMLP ]
-        size = (2, 2)
-        size = 4
-        for test in testlist:
-            print("Doing", test)
-            result = cli.learntestclassify(test_x, cf = test, train_x = train_x, train_y = train_y, test_x = test_x, test_y = test_y, steps = steps, size = size, classes = classes, binary = binary)
-            print(result)
-            #self.assertIsNotNone(result['accuracy'], "Accuracy")
-            #self.assertIsNotNone(result['classifycatarray'], "Classify")
+            self.single_run(binary, classes, size, steps, test, test_x, test_y, train_x, train_y, override)
 
-            result = cli.learntest(cf = test, train_x = train_x, train_y = train_y, test_x = test_x, test_y = test_y, steps = steps, size = size, classes = classes, binary = binary)
-            print(result)
-            #self.assertIsNotNone(result['accuracy'], "Accuracy")
+          binary = False
+          classes = 3
+          train_x, train_y, test_x, test_y, classes = mydatasetscommon.iriscommon()
+          self.single_run(binary, classes, size, steps, test, test_x, test_y, train_x, train_y, override)
+      # here
 
-            result = cli.classify(test_x, cf=test, train_x = train_x, train_y = train_y, size=size, classes = classes, binary = binary)
-            print(result)
-            #self.assertIsNotNone(result['classifycatarray'], "Classify")
+    def single_run(self, binary: bool, classes: int, size: int, steps: int, test: str, test_x, test_y, train_x, train_y,
+                   override):
+        print("Doing", test)
+        result = cli.learntestclassify(test_x, cf=test, train_x=train_x, train_y=train_y, test_x=test_x, test_y=test_y,
+                                       steps=steps, size=size, classes=classes, binary=binary, override = override)
+        print(result)
+        # self.assertIsNotNone(result['accuracy'], "Accuracy")
+        # self.assertIsNotNone(result['classifycatarray'], "Classify")
 
+        result = cli.learntest(cf=test, train_x=train_x, train_y=train_y, test_x=test_x, test_y=test_y, steps=steps,
+                               size=size, classes=classes, binary=binary, override = override)
+        print(result)
+        # self.assertIsNotNone(result['accuracy'], "Accuracy")
 
-        # here
+        result = cli.classify(test_x, cf=test, train_x=train_x, train_y=train_y, size=size, classes=classes,
+                              binary=binary, override = override)
+        print(result)
+        # self.assertIsNotNone(result['classifycatarray'], "Classify")
+
     def test_mnist(self):
       binary = True
       #binary = False
-      outcomes = 2
-      steps = 10
-      for binary in [ True, False ]:
+      classes = 2
+      steps = 100
+      testlist = [config.PYTORCHRNN, config.PYTORCHCNN, config.PYTORCHLSTM, config.PYTORCHGRU]
+      testlist = [config.PYTORCHMLP]
+      size = (2, 2)
+      size = 4
+      override = { "batchsize" : 8 }
+      for test in testlist:
+          for binary in [ True, False ]:
 
-        #train_x, train_y, test_x, test_y, classes = mydatasetscommon.iriscommon(binary)
-        train_x, train_y, test_x, test_y, classes = mydatasetscommon.mnistcommon(binary, outcomes)
-        #train_x = np.array(train_x).reshape(120, 2, 2).tolist()  # train_x.values.tolist()
-        #test_x = np.array(test_x).reshape(30, 2, 2).tolist()  # test_x.values.tolist()
+            #train_x, train_y, test_x, test_y, classes = mydatasetscommon.iriscommon(binary)
+            train_x, train_y, test_x, test_y, classes = mydatasetscommon.mnistcommon(classes)
+            #train_x = np.array(train_x).reshape(120, 2, 2).tolist()  # train_x.values.tolist()
+            #test_x = np.array(test_x).reshape(30, 2, 2).tolist()  # test_x.values.tolist()
 
-        testlist = [ config.PYTORCHRNN, config.PYTORCHCNN, config.PYTORCHLSTM, config.PYTORCHGRU ]
-        testlist = [ config.PYTORCHMLP ]
-        size = (2, 2)
-        size = 4
-        for test in testlist:
-            print("Doing", test)
-            result = cli.learntestclassify(test_x, cf = test, train_x = train_x, train_y = train_y, test_x = test_x, test_y = test_y, steps = steps, size = size, classes = classes, binary = binary)
-            print(result)
-            #self.assertIsNotNone(result['accuracy'], "Accuracy")
+            self.single_run(binary, classes, size, steps, test, test_x, test_y, train_x, train_y, override)
             #self.assertIsNotNone(result['classifycatarray'], "Classify")
 
-            result = cli.learntest(cf = test, train_x = train_x, train_y = train_y, test_x = test_x, test_y = test_y, steps = steps, size = size, classes = classes, binary = binary)
-            print(result)
-            #self.assertIsNotNone(result['accuracy'], "Accuracy")
-
-            result = cli.classify(test_x, cf=test, train_x = train_x, train_y = train_y, size=size, classes = classes, binary = binary)
-            print(result)
-            #self.assertIsNotNone(result['classifycatarray'], "Classify")
+          binary = False
+          classes = 10
+          train_x, train_y, test_x, test_y, _ = mydatasetscommon.mnistcommon()
+          self.single_run(binary, classes, size, steps, test, test_x, test_y, train_x, train_y, override)
 
 # todo cnn2
 

@@ -19,6 +19,8 @@ class Net(nn.Module):
 
         activation = layerutils.getActivation(config)
         lastactivation = layerutils.getLastactivation(config)
+        if config.binary:
+            myobj.classes = 1
 
         if classify:
             sizearr = [shape[1]] + [config.hidden] * config.layers + [myobj.classes]
@@ -38,13 +40,14 @@ class Net(nn.Module):
             if i < (len(sizearr) - 2):
                 if config.batchnormalize:
                     mylayers.append(nn.BatchNorm1d(sizearr[i + 1]))
-                if i < (len(sizearr) - 3):
+                # todo
+                if i < (len(sizearr) - 2):
                     mylayers.append(activation)
-                else:
-                    mylayers.append(lastactivation)
+                #else:
+                #    mylayers.append(lastactivation)
                 if config.dropout > 0:
                     mylayers.append(nn.Dropout(config.dropout))
-            mylayers.append(lastactivation)
+        mylayers.append(lastactivation)
         self.layers = nn.Sequential(*mylayers)
         #self.layers.apply(Xavier)
         

@@ -21,6 +21,8 @@ class Net(nn.Module):
 
         activation = layerutils.getActivation(config)
         lastactivation = layerutils.getLastactivation(config)
+        if config.binary:
+            myobj.classes = 1
 
         print("shape", shape)
         inouts = [ 32, 32, 32 ] # todo

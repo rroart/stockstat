@@ -15,6 +15,8 @@ class Net(nn.Module):
 
         activation = layerutils.getActivation(config)
         lastactivation = layerutils.getLastactivation(config)
+        if config.binary:
+            myobj.classes = 1
 
         #Defining the layers
         # RNN Layer
@@ -26,7 +28,7 @@ class Net(nn.Module):
             self.fc = nn.Linear(self.config.hidden, 1)
 
         self.bn = nn.BatchNorm1d(self.myobj.classes) #shape[1])
-        self.act = nn.ReLU()
+        self.act = activation
         self.lastact = lastactivation
         self.dropout = nn.Dropout(config.dropout)
 

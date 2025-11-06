@@ -20,10 +20,15 @@ def observe(model, epochs, optimizer, loss_fn, train_loader, valid_loader, batch
 
             #model.zero_grad()
             optimizer.zero_grad()
-            #print(i)
+            print(i)
 
             outputs = model(input)
-            loss = loss_fn(outputs, labels)
+            #print("sh", outputs, labels)
+            #print("sh", outputs.shape, labels.shape)
+            loss_outputs, loss_target = get_loss_inputs(config, outputs, labels)
+            #print("sh", outputs.shape, labels.shape)
+            #print("sh", outputs, labels)
+            loss = loss_fn(loss_outputs, loss_target)
 
             loss = regularize(config, loss, model)
 
@@ -43,7 +48,20 @@ def observe(model, epochs, optimizer, loss_fn, train_loader, valid_loader, batch
             for i, (input, labels) in enumerate(valid_loader):
                 #print(i)
                 outputs = model(input)
-                loss = loss_fn(outputs, labels)
+                loss_outputs, loss_target = get_loss_inputs(config, outputs, labels)
+                loss = loss_fn(loss_outputs, loss_target)
+                outputs_for_loss = outputs
+                if False: #config.binary:
+                    print("shape", outputs.shape, labels.shape)
+                    outputs_for_loss = outputs.reshape(outputs.shape[0])
+                    labels = labels.to(dtype=torch.float32).reshape(-1, 1).reshape(outputs.shape[0])
+                    print("shape", outputs_for_loss.shape, labels.shape)
+                    print("l", labels)
+                    print("o", outputs_for_loss)
+                    #outputs_for_loss = torch.round(outputs_for_loss)
+                    #print("o", outputs_for_loss)
+                   # labels = labels.to(torch.float)
+                #loss = loss_fn(outputs_for_loss, labels)
 
                 valid_losses.append(loss.item())
                 valid_loss += loss.item()
@@ -65,8 +83,8 @@ def observe(model, epochs, optimizer, loss_fn, train_loader, valid_loader, batch
 
         accuracy = 100 * correct / total
         valid_acc_list.append(accuracy)
-        #print('epoch : {}, train loss : {:.4f}, valid loss : {:.4f}, valid acc : {:.2f}%' \
-        #      .format(epoch + 1, train_loss2, valid_loss2, accuracy))
+        print('epoch : {}, train loss : {:.4f}, valid loss : {:.4f}, valid acc : {:.2f}%' \
+              .format(epoch + 1, train_loss2, valid_loss2, accuracy))
         #print('epoch : {}, train loss : {:.4f}, valid loss : {:.4f}, valid acc : {:.2f}%' \
         #      .format(epoch + 1, train_loss, valid_loss, accuracy))
         #print('epoch : {}, train loss : {:.4f}, valid loss : {:.4f}, valid acc : {:.2f}%' \
@@ -80,6 +98,16 @@ def observe(model, epochs, optimizer, loss_fn, train_loader, valid_loader, batch
         if early_stopping.stop_training:
             print(f"Early stopping at epoch {i}")
             break
+
+
+def get_loss_inputs(config, outputs, labels):
+    if config.binary:
+        outputs = outputs.reshape(outputs.shape[0])
+        # labels = labels.to(dtype=torch.float32).reshape(-1, 1).reshape(outputs.shape[0])
+        # print("binary")
+        labels = labels.to(torch.float)
+    return outputs, labels
+
 
 def regularize(config, loss, model):
     if config.regularize:
@@ -97,3 +125,15 @@ def regularize(config, loss, model):
 
         return loss
     return loss
+
+
+def print_state_dict(model, optimizer):
+    # Print model's state_dict
+    print("Model's state_dict:")
+    for param_tensor in model.state_dict():
+        print(param_tensor, "\t", model.state_dict()[param_tensor].size())
+
+    # Print optimizer's state_dict
+    print("Optimizer's state_dict:")
+    for var_name in optimizer.state_dict():
+        print(var_name, "\t", optimizer.state_dict()[var_name])

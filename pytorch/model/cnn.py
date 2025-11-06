@@ -17,6 +17,8 @@ class Net(nn.Module):
 
         activation = layerutils.getActivation(config)
         lastactivation = layerutils.getLastactivation(config)
+        if config.binary:
+            myobj.classes = 1
 
         #https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/02-intermediate/convolutional_neural_network/main.py
         #print("MO",myobj.size)
