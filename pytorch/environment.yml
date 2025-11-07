@@ -3,6 +3,7 @@ channels:
   - conda-forge
   - nvidia
 dependencies:
+  - python=3.13
   - pip:
     - --extra-index-url https://download.pytorch.org/whl/cu126
     - torchvision==0.24

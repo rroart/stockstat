@@ -2,6 +2,7 @@ name: ptl255
 channels:
   - conda-forge
 dependencies:
+  - python=3.13
   - pip:
     - lightning==2.5.5
     - torchdata
