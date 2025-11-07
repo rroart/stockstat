@@ -18,6 +18,8 @@ class Model(MyModel):
     regularizer = layerutils.getRegularizer(config)
     activation = tf.keras.layers.Activation(config.activation)
     lastactivation = tf.keras.layers.Activation(config.lastactivation)
+    if config.binary:
+        myobj.classes = 1
 
     # Define your layers here.
     print("sh", shape, type(shape))
@@ -51,6 +53,7 @@ class Model(MyModel):
     #self.dense_4 = Dense(myobj.classes, activation='sigmoid')
     self.dense_4 = Dense(myobj.classes, activation=config.lastactivation)
     #adam = tf.keras.optimizers.Adam(learning_rate=1)
+    # todo binary accuracy
     self.model.compile(optimizer = optimizer,
                        loss=config.loss,
                        metrics=['accuracy'])

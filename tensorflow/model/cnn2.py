@@ -21,6 +21,8 @@ class Model(MyModel):
     regularizer = layerutils.getRegularizer(config)
     activation = tf.keras.layers.Activation(config.activation)
     lastactivation = tf.keras.layers.Activation(config.lastactivation)
+    if config.binary:
+        myobj.classes = 1
 
     # Define your layers here.
 
