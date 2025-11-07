@@ -206,7 +206,7 @@ def getAnActivation(activation):
         return torch.nn.GLU()
     elif activation == "soft_min":
         return torch.nn.Softmin()
-    elif activation == "soft_max":
+    elif activation == "softmax":
         return torch.nn.Softmax()
     elif activation == "soft_max_2d":
         return torch.nn.Softmax2d()

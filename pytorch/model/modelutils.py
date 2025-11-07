@@ -20,7 +20,7 @@ def observe(model, epochs, optimizer, loss_fn, train_loader, valid_loader, batch
 
             #model.zero_grad()
             optimizer.zero_grad()
-            print(i)
+            #print(i)
 
             outputs = model(input)
             #print("sh", outputs, labels)
