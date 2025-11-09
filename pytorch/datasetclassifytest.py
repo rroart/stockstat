@@ -16,7 +16,7 @@ optimizers = [ "adadelta", "adafactor", "adagrad", "adam", "adamw", "adamax", "a
 # "sparseadam", "lbfgs",
 #optimizers = [ ]
 
-activations = [ "elu", "hard_shrink", "hard_sigmoid", "hard_tanh", "hard_swish", "leakyrelu", "log_sigmoid", "prelu", "relu", "relu6", "rrelu", "selu", "celu", "gelu", "sigmoid", "silu", "mish", "soft_plus", "soft_shrink", "soft_sign", "tanh", "tanh_shrink", "soft_min", "soft_max", "log_soft_max" ]
+activations = [ "elu", "hard_shrink", "hard_sigmoid", "hard_tanh", "hard_swish", "leakyrelu", "log_sigmoid", "prelu", "relu", "relu6", "rrelu", "selu", "celu", "gelu", "sigmoid", "silu", "mish", "soft_plus", "soft_shrink", "soft_sign", "tanh", "tanh_shrink", "soft_min", "softmax", "log_soft_max" ]
 # "multihead_attention" "threshold","glu","soft_max_2d",, "adaptive_log_soft_max_with_loss"
 
 class MyTestCase(unittest.TestCase):

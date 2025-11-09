@@ -5,6 +5,8 @@ def observe(model, epochs, optimizer, loss_fn, train_loader, valid_loader, batch
     mean_train_losses = []
     mean_valid_losses = []
     valid_acc_list = []
+    #optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    #loss_fn   = torch.nn.CrossEntropyLoss()
 
     for epoch in range(epochs):
         train_loss = 0.0
@@ -45,6 +47,7 @@ def observe(model, epochs, optimizer, loss_fn, train_loader, valid_loader, batch
         correct = 0
         total = 0
         with torch.no_grad():
+          #if False:
             for i, (input, labels) in enumerate(valid_loader):
                 #print(i)
                 outputs = model(input)

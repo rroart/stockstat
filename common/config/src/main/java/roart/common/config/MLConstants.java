@@ -64,9 +64,9 @@ public class MLConstants {
     public static final String GEMGEMCONFIG = "{ \"name\" : \"GEM\", \"steps\" : 1000, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.001, \"n_memories\" : 256, \"memory_strength\" : 0.5, \"cuda\" : false, \"data_file\" : \"\" }";
     public static final String GEMICARLCONFIG = "{ \"name\" : \"iCaRL\", \"steps\" : 1000, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.001, \"n_memories\" : 1280, \"memory_strength\" : 1, \"samples_per_task\" : 10, \"cuda\" : false, \"data_file\" : \"\" }";
     // TODO
-    public static final String PYTORCHCOMMONCLASSIFYCONFIG = ", \"loss\" : \"cross_entropy\", \"optimizer\" : \"sgd\", \"activation\" : \"relu\", \"lastactivation\" : \"relu\"";
-    public static final String PYTORCHCOMMONCLASSIFYCNNCONFIG = ", \"loss\" : \"cross_entropy\", \"optimizer\" : \"sgd\", \"activation\" : \"relu\", \"lastactivation\" : \"relu\"";
-    public static final String PYTORCHCOMMONCLASSIFYCNN2CONFIG = ", \"loss\" : \"cross_entropy\", \"optimizer\" : \"adadelta\", \"activation\" : \"relu\", \"lastactivation\" : \"relu\"";
+    public static final String PYTORCHCOMMONCLASSIFYCONFIG = ", \"loss\" : \"cross_entropy\", \"optimizer\" : \"sgd\", \"activation\" : \"relu\", \"lastactivation\" : \"softmax\"";
+    public static final String PYTORCHCOMMONCLASSIFYCNNCONFIG = ", \"loss\" : \"cross_entropy\", \"optimizer\" : \"sgd\", \"activation\" : \"relu\", \"lastactivation\" : \"softmax\"";
+    public static final String PYTORCHCOMMONCLASSIFYCNN2CONFIG = ", \"loss\" : \"cross_entropy\", \"optimizer\" : \"adadelta\", \"activation\" : \"relu\", \"lastactivation\" : \"softmax\"";
     public static final String PYTORCHCOMMONCLASSIFYBINARYCONFIG = ", \"loss\" : \"bce\", \"optimizer\" : \"sgd\", \"activation\" : \"relu\", \"lastactivation\" : \"sigmoid\"";
     public static final String PYTORCHCOMMONCLASSIFYBINARYCNNCONFIG = ", \"loss\" : \"bce\", \"optimizer\" : \"sgd\", \"activation\" : \"relu\", \"lastactivation\" : \"sigmoid\"";
     public static final String PYTORCHCOMMONCLASSIFYBINARYCNN2CONFIG = ", \"loss\" : \"bce\", \"optimizer\" : \"adadelta\", \"activation\" : \"relu\", \"lastactivation\" : \"sigmoid\"";

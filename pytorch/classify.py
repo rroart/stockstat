@@ -20,6 +20,8 @@ from customdataset import CustomDataset
 from earlystopping import EarlyStopping
 from model import layerutils, modelutils
 from model.layerutils import avgstdvar
+from model.modelutils import get_loss_inputs
+
 try:
     from model.seq2seq import Seq2SeqModule
     from model.vae import VqVaeModule
@@ -35,6 +37,7 @@ dictclass = {}
 global count
 count = 0
 
+#todo
 best_practise_load_save = True
 
 print("Using gpu: ", torch.cuda.is_available())
@@ -57,7 +60,7 @@ class Classify:
         global dictclass
         classifier = dictclass[myobj.modelname]
         del dictclass[myobj.modelname]
-        (intlist, problist) = self.do_classifyinner(myobj, classifier, classify)
+        (intlist, problist) = self.do_classifyinner(myobj, classifier, config, classify, avgstdvar)
         print(len(intlist))
         #print(intlist)
         #print(problist)
@@ -66,7 +69,7 @@ class Classify:
         
         return Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist }), mimetype='application/json')
         
-    def do_classifyinner(self, myobj, model, classify):
+    def do_classifyinner(self, myobj, model, config, classify, avgstdvar):
         dev = self.getdev()
         array = np.array(myobj.classifyarray, dtype='f')
         #array = myobj.classifyarray
@@ -126,12 +129,18 @@ class Classify:
             predicted = predicted.tolist()
             return predicted, problist
         else:
+          if classify and config.normalize:
+            array = layerutils.normalize(array, avgstdvar)
+          if not config.binary:
             print("Classify", array.shape)
             predictions = model(array)
             #print(type(predictions))
             #print("predictions")
             #print(predictions)
+            print("p1", predictions)
+            # predicted are classifications
             _, predicted = torch.max(predictions, 1)
+            print("p2", predicted)
             #print(_)
             #print(predicted)
             #correct = (predicted == labels).sum()
@@ -139,11 +148,56 @@ class Classify:
             #print(accuracy)
             # TODO torch.round
             intlist = predicted.tolist()
+            sm = torch.nn.Softmax() # 1
+            sm = layerutils.getLastactivation(config)
             sm = torch.nn.Softmax(1)
+            #if config.binary:
+            #    sm = torch.nn.Sigmoid()
             probabilities = sm(predictions)
+            print("p3", probabilities)
+            #probabilities2 = sm2(predictions)
+            #print("p32", probabilities2)
             probability, _ = torch.max(probabilities, 1)
+            # p4 are the probabilities for the classification
+            print("p4", probability)
             problist = probability.detach().to(torch.device("cpu")).numpy().tolist()
             problist = np.where(np.isnan(problist), None, problist).tolist()
+
+            #new?
+            # sm = layerutils.getLastactivation(config)
+            # logits = model(array)
+            # pred_probab = sm(logits)
+            # print("p45", pred_probab)
+            # y_pred = pred_probab.argmax(1)
+            # print("p5", y_pred)
+            # # get probabilities for the classifications, calculated from y_pred and pred_probab
+            # # get probabilities for the classifications, from the indices y_pred in pred_probab
+            # prob = pred_probab.gather(1, y_pred.unsqueeze(1))
+            # print("p6", prob)
+          else:
+            print("Classify", array.shape, array)
+            probability = model(array)
+            print("prob0", probability)
+            probabilityflat = probability.reshape(probability.shape[0])
+            print("prob0", probabilityflat)
+            problist = probabilityflat.detach().to(torch.device("cpu")).numpy().tolist()
+            problist = np.where(np.isnan(problist), None, problist).tolist()
+            predicted = probability.argmax(1)
+            #intlist = predicted.tolist()
+            intlist = np.round(problist, 0)
+
+            print("p1", probability)
+            print("p2", problist)
+            print("p3", predicted)
+            print("p4", intlist)
+            print("problist", problist)
+            intlist = np.array(intlist)
+            problist = np.array(problist)
+            print("problist", problist)
+            print(type(problist), type(intlist))
+            problist = (1 - problist) * (1 - intlist) + problist * intlist  # todo
+            print("problist", problist)
+            predictions = None
         del predictions
         del model
         if classify and not self.zero(myobj):
@@ -152,11 +206,11 @@ class Classify:
             intlist = intlist.tolist()
         return intlist, problist
 
-    def do_learntest(self, queue, request):
+    def do_learntest(self, queue, myjson):
         dt = datetime.now()
         timestamp = dt.timestamp()
-        #print(request.get_data(as_text=True))
-        myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
+        print("myjson", myjson)
+        myobj = json.loads(myjson, object_hook=lt.LearnTest)
         classify = not hasattr(myobj, 'classify') or myobj.classify == True
 
         (config, modelname) = self.getModel(myobj)
@@ -186,6 +240,8 @@ class Classify:
         v_x = inputs
         if classify and config.normalize:
             v_x = layerutils.normalize(v_x, avgstdvar)
+            if not val is None:
+                val = layerutils.normalize(val, avgstdvar)
         dev = self.getdev()
         v_y = labels.to(dev)
         #ds = CustomDataset(inputs, labels)
@@ -515,6 +571,7 @@ class Classify:
         accuracy_score = 0
         train_accuracy_score = 0
 
+        # todo binary
         y0_hat = model(v_x)
         (max_vals0, arg_maxs0) = torch.max(y0_hat.data, dim=1)
         num_correct0 = torch.sum(v_y==arg_maxs0.to(dtype=torch.float32))
@@ -526,11 +583,20 @@ class Classify:
         #print(type(testcat), testcat.shape)
         #tv_y = testcat
         tv_y = torch.LongTensor(testcat).to(dev)
+        # todo binary
         y_hat = model(tv_x)
         #print("yhat", y_hat)
         #print(testcat)
         #print(type(y_hat), y_hat.shape)
-        test_loss = model.bce(y_hat, tv_y)
+        #y_hat2 = y_hat
+        #if config.binary:
+        #    y_hat2 = y_hat.reshape(y_hat.shape[0])
+        #    tv_y = tv_y.to(dtype=torch.float32).reshape(-1, 1).reshape(tv_y.shape[0])
+        #test_loss = model.bce(y_hat2, tv_y)
+        loss_outputs, loss_target = get_loss_inputs(config, y_hat, tv_y)
+        # print("sh", outputs.shape, labels.shape)
+        # print("sh", outputs, labels)
+        test_loss = model.bce(loss_outputs, loss_target)
         #print(len(tv_x),len(tv_y),len(y_hat),y_hat)
         (max_vals, arg_maxs) = torch.max(y_hat.data, dim=1)
         #print("max", max_vals.size(), max_vals);
@@ -649,7 +715,7 @@ class Classify:
         timestamp = dt.timestamp()
         #print(request.get_data(as_text=True))
         #myobj = json.loads(request, object_hook=lt.LearnTest)
-        print("mys", myjson)
+        print("myjson", myjson)
         myobj = json.loads(myjson, object_hook=lt.LearnTest)
         classify = not hasattr(myobj, 'classify') or myobj.classify == True
         (config, modelname) = self.getModel(myobj)
@@ -716,7 +782,7 @@ class Classify:
 
         (intlist, problist) = (None, None)
         if self.wantClassify(myobj):
-            (intlist, problist) = self.do_classifyinner(myobj, model, classify)
+            (intlist, problist) = self.do_classifyinner(myobj, model, config, classify, avgstdvar)
         #print(len(intlist))
         #print(intlist)
         #print(problist)
@@ -757,7 +823,7 @@ class Classify:
         (accuracy_score, loss, train_accuracy_score, val_accuracy_score) = self.do_learntestinner(myobj, classifier, config, train, traincat,
                                                                               test, testcat, classify, avgstdvar, val, valcat)
         myobj.classifyarray = train
-        (intlist, problist) = self.do_classifyinner(myobj, model, classify)
+        (intlist, problist) = self.do_classifyinner(myobj, model, config, classify, avgstdvar)
         if not accuracy_score is None:
             accuracy_score = float(accuracy_score)
         if not train_accuracy_score is None:

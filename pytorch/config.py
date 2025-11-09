@@ -9,9 +9,9 @@ PYTORCHGPTMIDIRPR = 'pytorchGPTMIDIRPRConfig'
 PYTORCHGPTMIDIFIGARO = 'pytorchGPTMIDIFigaroConfig'
 PYTORCHGPTMIDIMMT = 'pytorchGPTMIDIMMTConfig'
 
-PYTORCHCOMMONCLASSIFY = { 'loss' : 'cross_entropy', 'optimizer' : 'sgd', 'activation' : 'relu', 'lastactivation' : 'relu' }
-PYTORCHCOMMONCLASSIFYCNN = { 'loss' : 'cross_entropy', 'optimizer' : 'sgd', 'activation' : 'relu', 'lastactivation' : 'relu' }
-PYTORCHCOMMONCLASSIFYCNN2 = { 'loss' : 'cross_entropy', 'optimizer' : 'adadelta', 'activation' : 'relu', 'lastactivation' : 'relu' }
+PYTORCHCOMMONCLASSIFY = { 'loss' : 'cross_entropy', 'optimizer' : 'sgd', 'activation' : 'relu', 'lastactivation' : 'softmax' }
+PYTORCHCOMMONCLASSIFYCNN = { 'loss' : 'cross_entropy', 'optimizer' : 'sgd', 'activation' : 'relu', 'lastactivation' : 'softmax' }
+PYTORCHCOMMONCLASSIFYCNN2 = { 'loss' : 'cross_entropy', 'optimizer' : 'adadelta', 'activation' : 'relu', 'lastactivation' : 'softmax' }
 PYTORCHCOMMONPREDICT = { 'loss' : 'mse', 'optimizer' : 'rmsprop', 'activation' : 'relu', 'lastactivation' : 'linear' }
 PYTORCHCOMMONPREDICTCNN = { 'loss' : 'mse', 'optimizer' : 'rmsprop', 'activation' : 'relu', 'lastactivation' : 'linear' }
 PYTORCHCOMMON = { 'steps' : 1000, 'lr' : None, 'inputdropout' : 0.25, 'dropout' : 0.2, 'normalize' : True, 'batchnormalize' : True, 'regularize' : True, 'batchsize' : 64 }
