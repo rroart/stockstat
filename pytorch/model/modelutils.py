@@ -130,6 +130,166 @@ def regularize(config, loss, model):
     return loss
 
 
+# from github copilot
+
+def observe_new(model, epochs, optimizer, loss_fn, train_loader, valid_loader, batch_size, early_stopping, config):
+    """Train/validation loop with correct accuracy computation and device handling.
+
+    Improvements:
+    - Move inputs/labels to the model's device.
+    - Support binary (sigmoid + threshold) and multiclass (argmax) predictions.
+    - Handle labels that are one-hot vectors by taking argmax.
+    - Ensure labels have the correct dtype for loss (float for BCE, long for CrossEntropy).
+    - Remove noisy debugging prints and make averages robust.
+    """
+
+    device = next(model.parameters()).device if any(p is not None for p in model.parameters()) else (torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu'))
+
+    mean_train_losses = []
+    mean_valid_losses = []
+    valid_acc_list = []
+
+    for epoch in range(epochs):
+        model.train()
+
+        train_losses = []
+        train_loss_sum = 0.0
+        train_examples = 0
+
+        # Training loop
+        for i, (inputs, labels) in enumerate(train_loader):
+            inputs = inputs.to(device)
+            labels = labels.to(device)
+
+            optimizer.zero_grad()
+
+            outputs = model(inputs)
+
+            loss_inputs, loss_targets = get_loss_inputs_new(config, outputs, labels)
+            loss = loss_fn(loss_inputs, loss_targets)
+            loss = regularize_new(config, loss, model)
+
+            loss.backward()
+            optimizer.step()
+
+            batch_size_effective = inputs.size(0)
+            train_losses.append(loss.item())
+            train_loss_sum += loss.item() * batch_size_effective
+            train_examples += batch_size_effective
+
+        # Validation loop
+        model.eval()
+        valid_losses = []
+        valid_loss_sum = 0.0
+        valid_examples = 0
+        correct = 0
+        total = 0
+
+        with torch.no_grad():
+            for i, (inputs, labels) in enumerate(valid_loader):
+                inputs = inputs.to(device)
+                labels = labels.to(device)
+
+                outputs = model(inputs)
+
+                loss_inputs, loss_targets = get_loss_inputs(config, outputs, labels)
+                loss = loss_fn(loss_inputs, loss_targets)
+
+                batch_size_effective = inputs.size(0)
+                valid_losses.append(loss.item())
+                valid_loss_sum += loss.item() * batch_size_effective
+                valid_examples += batch_size_effective
+
+                # Prepare labels for accuracy check: convert one-hot to indices if needed
+                labels_for_acc = labels
+                if labels_for_acc.dim() > 1 and labels_for_acc.size(1) > 1:
+                    # one-hot or probability vectors -> take argmax
+                    labels_for_acc = torch.argmax(labels_for_acc, dim=1)
+                labels_for_acc = labels_for_acc.view(-1).long()
+
+                # Compute predictions according to binary/multiclass
+                if getattr(config, 'binary', False):
+                    # For binary, accept outputs that may have shape (N,1) or (N,)
+                    probs = torch.sigmoid(outputs)
+                    if probs.dim() > 1 and probs.size(1) == 1:
+                        probs = probs.view(-1)
+                    preds = (probs > 0.5).long()
+                else:
+                    # multiclass logits: take argmax along class dim
+                    if outputs.dim() == 1 or (outputs.dim() > 1 and outputs.size(1) == 1):
+                        # single-dim outputs -> treat as binary-like; round
+                        preds = torch.round(outputs).long().view(-1)
+                    else:
+                        _, preds = torch.max(outputs, dim=1)
+
+                correct += (preds == labels_for_acc).sum().item()
+                total += labels_for_acc.size(0)
+
+        # Compute averaged losses (guard against zero examples)
+        avg_train_loss = (train_loss_sum / train_examples) if train_examples > 0 else float('nan')
+        avg_valid_loss = (valid_loss_sum / valid_examples) if valid_examples > 0 else float('nan')
+        mean_train_losses.append(np.mean(train_losses) if train_losses else float('nan'))
+        mean_valid_losses.append(np.mean(valid_losses) if valid_losses else float('nan'))
+
+        accuracy = 100.0 * (correct / total) if total > 0 else 0.0
+        valid_acc_list.append(accuracy)
+
+        print('epoch : {}, train loss : {:.4f}, valid loss : {:.4f}, valid acc : {:.2f}%' \
+              .format(epoch + 1, avg_train_loss, avg_valid_loss, accuracy))
+
+        torch.cuda.empty_cache()
+
+        # Check early stopping condition
+        if getattr(early_stopping, 'stop_training', False):
+            print(f"Early stopping at epoch {epoch + 1}")
+            break
+
+
+def get_loss_inputs_new(config, outputs, labels):
+    """Return (outputs_for_loss, labels_for_loss) with correct shapes and dtypes.
+
+    - For binary tasks (config.binary==True): outputs are squeezed to (N,) if needed and
+      labels are converted to float.
+    - For multiclass tasks: labels are converted to Long tensors of class indices. If labels
+      are provided as one-hot vectors, argmax is taken.
+    """
+    # Ensure labels are on same device as outputs
+    labels = labels.to(device=outputs.device)
+
+    if getattr(config, 'binary', False):
+        # outputs may be (N,1) or (N,) -> make it (N,)
+        if outputs.dim() > 1 and outputs.size(1) == 1:
+            outputs = outputs.view(-1)
+        labels_proc = labels.view(-1).to(dtype=torch.float)
+        return outputs, labels_proc
+
+    # Multiclass: if labels are one-hot/prob vectors, convert to indices
+    labels_proc = labels
+    if labels_proc.dim() > 1 and labels_proc.size(1) > 1:
+        labels_proc = torch.argmax(labels_proc, dim=1)
+    labels_proc = labels_proc.view(-1).long()
+
+    return outputs, labels_proc
+
+
+def regularize_new(config, loss, model):
+    if getattr(config, 'regularize', False):
+        regularization_type = 'L2'
+        lambda_reg = 0.01
+        # Apply L1 regularization
+        if regularization_type == 'L1':
+            l1_norm = sum(p.abs().sum() for p in model.parameters())
+            loss = loss + lambda_reg * l1_norm
+
+        # Apply L2 regularization
+        elif regularization_type == 'L2':
+            l2_norm = sum(p.pow(2).sum() for p in model.parameters())
+            loss = loss + lambda_reg * l2_norm
+
+        return loss
+    return loss
+
+
 def print_state_dict(model, optimizer):
     # Print model's state_dict
     print("Model's state_dict:")
