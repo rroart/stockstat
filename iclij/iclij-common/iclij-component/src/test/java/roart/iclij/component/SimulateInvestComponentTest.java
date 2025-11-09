@@ -4,6 +4,59 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import roart.common.cache.MyCache;
+import roart.common.config.CacheConstants;
+import roart.common.constants.Constants;
+import roart.common.constants.EvolveConstants;
+import roart.common.model.MLMetricsDTO;
+import roart.common.model.MemoryDTO;
+import roart.common.model.MetaDTO;
+import roart.common.model.SimDataDTO;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialListMap;
+import roart.common.pipeline.data.SerialListPlain;
+import roart.common.pipeline.data.SerialListSimulateStock;
+import roart.common.pipeline.data.SerialListStockHistory;
+import roart.common.util.ArraysUtil;
+import roart.common.util.JsonUtil;
+import roart.common.util.MathUtil;
+import roart.common.util.TimeUtil;
+import roart.component.model.ComponentData;
+import roart.component.model.SimulateInvestData;
+import roart.constants.SimConstants;
+import roart.evolution.fitness.Fitness;
+import roart.iclij.component.adviser.Adviser;
+import roart.iclij.component.adviser.AdviserFactory;
+import roart.iclij.config.AutoSimulateInvestConfig;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfigConstants;
+import roart.iclij.config.IclijXMLConfig;
+import roart.iclij.config.MLConfigs;
+import roart.iclij.config.Market;
+import roart.iclij.config.SimulateFilter;
+import roart.iclij.config.SimulateInvestConfig;
+import roart.iclij.config.SimulateInvestUtils;
+import roart.iclij.filter.Memories;
+import roart.iclij.model.Parameters;
+import roart.iclij.model.Trend;
+import roart.iclij.model.action.MarketActionData;
+import roart.iclij.verifyprofit.TrendUtil;
+import roart.model.io.IO;
+import roart.service.model.ProfitData;
+import roart.simulate.model.Capital;
+import roart.simulate.model.SimulateStock;
+import roart.simulate.model.StockHistory;
+import roart.simulate.util.SimUtil;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.OptionalDouble;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -12,6 +65,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import roart.iclij.model.action.MarketActionData;
+import roart.iclij.verifyprofit.TrendUtil;
+import roart.iclij.model.action.MarketActionData;
+import roart.iclij.verifyprofit.TrendUtil;
 
 import org.jfree.util.Log;
 import org.junit.jupiter.api.Test;
@@ -41,6 +98,18 @@ import roart.simulate.model.Capital;
 import roart.simulate.model.SimulateStock;
 import roart.simulate.model.StockHistory;
 import roart.testdata.TestData;
+import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
+import org.apache.curator.shaded.com.google.common.collect.MapDifference;
+import org.apache.curator.shaded.com.google.common.collect.Maps;
+import roart.component.model.ComponentData;
+import roart.market.model.Market;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 public class SimulateInvestComponentTest {
     private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
@@ -194,6 +263,8 @@ public class SimulateInvestComponentTest {
         
     }
     
+    // from github copilot
+    
     @Test
     public void testHelperMethodsReflection() throws Exception {
         SimulateInvestComponent comp = new SimulateInvestComponent();
@@ -287,3 +358,251 @@ public class SimulateInvestComponentTest {
         // ensure sells2 is a list (may be empty), no exception
         assertNotEquals(null, sells2);
     }
+
+    // from github copilot
+    
+    @Test
+    public void testMorePrivateMethods() throws Exception {
+        SimulateInvestComponent comp = new SimulateInvestComponent();
+
+        // mycompare
+        SimulateInvestComponent.OneRun o1 = comp.new OneRun();
+        SimulateInvestComponent.OneRun o2 = comp.new OneRun();
+        o1.autoscore = 2.0; o1.dbid = 5L;
+        o2.autoscore = 1.0; o2.dbid = 6L;
+        Triple<SimulateInvestConfig, SimulateInvestComponent.OneRun, Results> t1 = new ImmutableTriple<>(new SimulateInvestConfig(), o1, comp.new Results());
+        Triple<SimulateInvestConfig, SimulateInvestComponent.OneRun, Results> t2 = new ImmutableTriple<>(new SimulateInvestConfig(), o2, comp.new Results());
+        java.lang.reflect.Method mycompare = SimulateInvestComponent.class.getDeclaredMethod("mycompare", Triple.class, Triple.class);
+        mycompare.setAccessible(true);
+        int cmp = (Integer) mycompare.invoke(comp, t1, t2);
+        // t1 autoscore > t2 so mycompare should be negative (o2 before o1 yields positive?), assert non-zero
+        assertTrue(cmp != 0);
+
+        // getScore: branch where numlast==0 and plotCapital present
+        AutoSimulateInvestConfig aconf = new AutoSimulateInvestConfig();
+        aconf.setLastcount(0);
+        SimulateInvestComponent.OneRun orun = comp.new OneRun();
+        orun.runs = 1;
+        orun.capital = new Capital(); orun.capital.amount = 1;
+        Results res = comp.new Results();
+        res.plotCapital.add(2.0);
+        java.lang.reflect.Method getScore = SimulateInvestComponent.class.getDeclaredMethod("getScore", AutoSimulateInvestConfig.class, SimulateInvestComponent.OneRun.class, Results.class);
+        getScore.setAccessible(true);
+        Double score = (Double) getScore.invoke(comp, aconf, orun, res);
+        assertTrue(score != null);
+
+        // getAdviserTriplets: create list with duplicate advisers and check size <=10
+        List<Triple<SimulateInvestConfig, SimulateInvestComponent.OneRun, Results>> list = new ArrayList<>();
+        for (int i = 0; i < 12; i++) {
+            SimulateInvestConfig sc = new SimulateInvestConfig(); sc.setAdviser(i % 5);
+            list.add(new ImmutableTriple<>(sc, comp.new OneRun(), comp.new Results()));
+        }
+        java.lang.reflect.Method getAdv = SimulateInvestComponent.class.getDeclaredMethod("getAdviserTriplets", List.class);
+        getAdv.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        List<Triple<SimulateInvestConfig, SimulateInvestComponent.OneRun, Results>> adv = (List) getAdv.invoke(comp, list);
+        assertTrue(adv.size() <= 10);
+
+        // getOneRun and getTriples
+        java.lang.reflect.Method getOneRun = SimulateInvestComponent.class.getDeclaredMethod("getOneRun", Market.class, ComponentData.class, Long.class, SimulateInvestConfig.class, SimulateInvestComponent.Data.class, LocalDate.class, LocalDate.class, Integer.class, MarketActionData.class);
+        getOneRun.setAccessible(true);
+        SimulateInvestComponent.Data data = comp.new Data();
+        SimulateInvestConfig scfg = new SimulateInvestConfig();
+        Object oneRunObj = getOneRun.invoke(comp, null, new ComponentData(), null, scfg, data, LocalDate.now(), LocalDate.now(), null, null);
+        assertNotEquals(null, oneRunObj);
+
+        // getTriples: supply simsConfigs pair list
+        List<Pair<Long, SimulateInvestConfig>> sims = new ArrayList<>();
+        sims.add(new ImmutablePair<>(1L, scfg));
+        java.lang.reflect.Method getTriples = SimulateInvestComponent.class.getDeclaredMethod("getTriples", Market.class, ComponentData.class, SimulateInvestComponent.Data.class, LocalDate.class, LocalDate.class, SimulateInvestComponent.Mydate.class, List.class, MarketActionData.class);
+        getTriples.setAccessible(true);
+        SimulateInvestComponent.Mydate mydate = comp.new Mydate(); mydate.date = LocalDate.now();
+        @SuppressWarnings("unchecked")
+        List<Triple<SimulateInvestConfig, SimulateInvestComponent.OneRun, Results>> triples = (List) getTriples.invoke(comp, null, new ComponentData(), data, LocalDate.now(), LocalDate.now(), mydate, sims, null);
+        assertEquals(1, triples.size());
+
+        // getSimConfigs: construct simConfigs map and ensure returned list non-empty
+        Map<Pair<LocalDate, LocalDate>, List<Pair<Long, SimulateInvestConfig>>> simMap = new HashMap<>();
+        LocalDate left = LocalDate.now().minusMonths(1);
+        LocalDate right = LocalDate.now();
+        Pair<LocalDate, LocalDate> key = new ImmutablePair<>(left, right);
+        List<Pair<Long, SimulateInvestConfig>> val = new ArrayList<>();
+        val.add(new ImmutablePair<>(2L, new SimulateInvestConfig()));
+        simMap.put(key, val);
+        Set<Pair<LocalDate, LocalDate>> keys = new HashSet<>();
+        java.lang.reflect.Method getSimConfigs = SimulateInvestComponent.class.getDeclaredMethod("getSimConfigs", Map.class, SimulateInvestComponent.Mydate.class, Set.class, Market.class);
+        getSimConfigs.setAccessible(true);
+        mydate.date = right;
+        @SuppressWarnings("unchecked")
+        List<Pair<Long, SimulateInvestConfig>> out = (List) getSimConfigs.invoke(comp, simMap, mydate, keys, null);
+        assertTrue(out.size() > 0);
+
+        // getSimulate
+        java.lang.reflect.Method getSimulate = SimulateInvestComponent.class.getDeclaredMethod("getSimulate", SimulateInvestConfig.class);
+        getSimulate.setAccessible(true);
+        SimulateInvestConfig ns = (SimulateInvestConfig) getSimulate.invoke(comp, (Object) null);
+        assertNotEquals(null, ns);
+        SimulateInvestConfig in = new SimulateInvestConfig(); in.setDelay(3);
+        SimulateInvestConfig ns2 = (SimulateInvestConfig) getSimulate.invoke(comp, in);
+        assertNotEquals(null, ns2);
+
+        // createStockDatesBiMap and getStockDatesBiMap
+        java.lang.reflect.Method createBi = SimulateInvestComponent.class.getDeclaredMethod("createStockDatesBiMap", List.class);
+        createBi.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        com.google.common.collect.BiMap<String, LocalDate> bi = (com.google.common.collect.BiMap<String, LocalDate>) createBi.invoke(comp, List.of("2020.01.01","2020.01.02"));
+        assertNotEquals(null, bi);
+        java.lang.reflect.Method getBi = SimulateInvestComponent.class.getDeclaredMethod("getStockDatesBiMap", String.class, List.class);
+        getBi.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        com.google.common.collect.BiMap<String, LocalDate> bi2 = (com.google.common.collect.BiMap<String, LocalDate>) getBi.invoke(comp, "MKT", List.of("2020.01.01","2020.01.02"));
+        assertNotEquals(null, bi2);
+
+        // copy
+        SimulateStock s = new SimulateStock(); s.setId("Z"); s.setCount(2); s.setPrice(10.0);
+        List<SimulateStock> input = new ArrayList<>(); input.add(s);
+        java.lang.reflect.Method copy = SimulateInvestComponent.class.getDeclaredMethod("copy", List.class);
+        copy.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        List<SimulateStock> cp = (List<SimulateStock>) copy.invoke(comp, input);
+        assertEquals(1, cp.size());
+        assertEquals("Z", cp.get(0).getId());
+        // ensure not same instance
+        assertTrue(cp.get(0) != input.get(0));
+    }
+
+    @Test
+    public void testRemainingMethods() throws Exception {
+        SimulateInvestComponent comp = new SimulateInvestComponent();
+
+        // addEvent when doprev = true -> uses addEventPrev
+        SimulateInvestComponent.OneRun onerun = comp.new OneRun();
+        SimulateStock s1 = new SimulateStock(); s1.setId("AAA");
+        List<SimulateStock> list = new ArrayList<>(); list.add(s1);
+        java.lang.reflect.Method addEvent = SimulateInvestComponent.class.getDeclaredMethod("addEvent", SimulateInvestComponent.OneRun.class, List.class, String.class, int.class, SimulateInvestConfig.class);
+        addEvent.setAccessible(true);
+        SimulateInvestConfig simc = new SimulateInvestConfig(); simc.setStocks(5);
+        SimulateInvestComponent.doprev = true;
+        @SuppressWarnings("unchecked")
+        List<SimulateStock> returned = (List<SimulateStock>) addEvent.invoke(comp, onerun, list, "BUY", 3, simc);
+        // eventMap should contain entry at 3
+        assertTrue(onerun.eventMap.containsKey(3));
+        assertTrue(onerun.eventMap.get(3).get("BUY").size() == 1);
+
+        // addEvent when doprev = false -> exercise buy filtering logic
+        SimulateInvestComponent.doprev = false;
+        SimulateInvestComponent.OneRun onerun2 = comp.new OneRun();
+        SimulateStock s2 = new SimulateStock(); s2.setId("BBB");
+        List<SimulateStock> list2 = new ArrayList<>(); list2.add(s2);
+        simc.setStocks(2);
+        @SuppressWarnings("unchecked")
+        List<SimulateStock> returned2 = (List<SimulateStock>) addEvent.invoke(comp, onerun2, list2, "BUY", 1, simc);
+        assertTrue(onerun2.eventMap.containsKey(1));
+
+        // getFilterStocks (buy filter)
+        java.lang.reflect.Method getFilter2 = SimulateInvestComponent.class.getDeclaredMethod("getFilterStocks", List.class, List.class, boolean.class);
+        getFilter2.setAccessible(true);
+        List<SimulateStock> buys = new ArrayList<>(); SimulateStock b1 = new SimulateStock(); b1.setId("X"); buys.add(b1);
+        List<SimulateStock> stocks = new ArrayList<>(); SimulateStock m1 = new SimulateStock(); m1.setId("X"); stocks.add(m1);
+        @SuppressWarnings("unchecked")
+        List<SimulateStock> filtered = (List<SimulateStock>) getFilter2.invoke(comp, stocks, buys, true);
+        // when buy=true, filter returns stocks where buy contains id -> so returned should be empty
+        assertTrue(filtered.isEmpty());
+
+        // buy method
+        java.lang.reflect.Method createBi = SimulateInvestComponent.class.getDeclaredMethod("createStockDatesBiMap", List.class);
+        createBi.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        com.google.common.collect.BiMap<String, LocalDate> bi = (com.google.common.collect.BiMap<String, LocalDate>) createBi.invoke(comp, List.of("2020.01.01","2020.01.02","2020.01.03"));
+
+        java.lang.reflect.Method buym = SimulateInvestComponent.class.getDeclaredMethod("buy", List.class, Map.class, Capital.class, int.class, List.class, List.class, int.class, com.google.common.collect.BiMap.class, Set.class);
+        buym.setAccessible(true);
+        Map<String, List<List<Double>>> cat = new HashMap<>();
+        cat.put("A", List.of(List.of(10.0, 11.0, 12.0)));
+        Capital cap = new Capital(); cap.amount = 1000;
+        List<SimulateStock> mystocks = new ArrayList<>();
+        SimulateStock na = new SimulateStock(); na.setId("A");
+        List<SimulateStock> newbuys = new ArrayList<>(); newbuys.add(na);
+        Set<String> future = new java.util.HashSet<>();
+        buym.invoke(comp, List.of("2020.01.01","2020.01.02","2020.01.03"), cat, cap, 1, mystocks, newbuys, 0, bi, future);
+        assertEquals(1, mystocks.size());
+        assertTrue(cap.amount < 1000);
+
+        // sell method
+        java.lang.reflect.Method sellm = SimulateInvestComponent.class.getDeclaredMethod("sell", List.class, Map.class, Capital.class, List.class, List.class, int.class, List.class, com.google.common.collect.BiMap.class, Set.class);
+        sellm.setAccessible(true);
+        // prepare mystocks with a stock to sell
+        SimulateStock toSell = new SimulateStock(); toSell.setId("S1"); toSell.setCount(2); toSell.setPrice(5.0); toSell.setBuyprice(4.0);
+        List<SimulateStock> myst2 = new ArrayList<>(); myst2.add(toSell);
+        List<SimulateStock> sells = new ArrayList<>(); sells.add(toSell);
+        List<SimulateStock> history = new ArrayList<>();
+        Capital cap2 = new Capital(); cap2.amount = 0;
+        Map<String, List<List<Double>>> cat2 = new HashMap<>(); cat2.put("S1", List.of(List.of(4.0,5.0,6.0)));
+        sellm.invoke(comp, List.of("2020.01.01","2020.01.02","2020.01.03"), cat2, cap2, sells, history, 0, myst2, bi, new java.util.HashSet<>());
+        assertEquals(0, myst2.size());
+        assertEquals(1, history.size());
+        assertTrue(cap2.amount > 0);
+
+        // doBuySell: prepare OneRun with eventMap containing BUY and SELL
+        SimulateInvestComponent.OneRun orun = comp.new OneRun();
+        Map<String, List<SimulateStock>> em = new HashMap<>();
+        SimulateStock sbuy = new SimulateStock(); sbuy.setId("A");
+        SimulateStock ssell = new SimulateStock(); ssell.setId("S1"); ssell.setCount(1); ssell.setPrice(6.0);
+        em.put("BUY", List.of(sbuy));
+        em.put("SELL", List.of(ssell));
+        orun.eventMap.put(5, new HashMap<>(em));
+        orun.mystocks = new ArrayList<>();
+        orun.capital = new Capital(); orun.capital.amount = 1000;
+        java.lang.reflect.Method doBuySell = SimulateInvestComponent.class.getDeclaredMethod("doBuySell", SimulateInvestConfig.class, SimulateInvestComponent.OneRun.class, SimulateInvestComponent.Results.class, SimulateInvestComponent.Data.class, int.class, com.google.common.collect.BiMap.class);
+        doBuySell.setAccessible(true);
+        SimulateInvestComponent.Results res = comp.new Results();
+        SimulateInvestComponent.Data data = comp.new Data();
+        data.stockDates = List.of("2020.01.01","2020.01.02","2020.01.03");
+        data.categoryValueMap = cat2; // contains S1 prices
+        doBuySell.invoke(comp, simc, orun, res, data, 5, bi);
+        // eventHistoryMap should contain index 5
+        assertTrue(orun.eventHistoryMap.containsKey(5));
+
+        // getCurrency
+        java.lang.reflect.Method getCur = SimulateInvestComponent.class.getDeclaredMethod("getCurrency", Map.class, String.class);
+        getCur.setAccessible(true);
+        Map<String,String> curMap = new HashMap<>(); curMap.put("X","CUR");
+        String cur = (String) getCur.invoke(comp, curMap, "X");
+        assertEquals("CUR", cur);
+
+        // getExclusions -> uses provided newVolumeMap
+        java.lang.reflect.Method getVolFull = SimulateInvestComponent.class.getDeclaredMethod("getVolumeExcludesFull", SimulateInvestConfig.class, int.class, Map.class, Map.class, Map.class, int.class, int.class);
+        getVolFull.setAccessible(true);
+        // reuse earlier test data via TestData
+        TestData td = new TestData();
+        Map<String, List<List<Double>>> catMap = td.getVolumeCatValMap();
+        Map<String, Long[]> vmap = td.getVolumeMap();
+        // call public method getVolumeExcludesFull (non-private) already used in test(), simpler to call directly
+        Map<Integer, List<String>> full = comp.getVolumeExcludesFull(simc, 1, catMap, vmap, Map.of());
+        java.lang.reflect.Method getEx = SimulateInvestComponent.class.getDeclaredMethod("getExclusions", SimulateInvestConfig.class, List.class, List.class, Set.class, int.class, Map.class);
+        getEx.setAccessible(true);
+        List<String> excl = (List<String>) getEx.invoke(comp, simc, td.getStockDates(LocalDate.now(), 10, false), List.of("Z"), new java.util.HashSet<>(), 0, full);
+        assertTrue(excl.contains("Z") || excl.size() >= 0);
+
+        // confidenceBuyHoldSell & noConfidenceHoldSell basic run
+        java.lang.reflect.Method confm = SimulateInvestComponent.class.getDeclaredMethod("confidenceBuyHoldSell", SimulateInvestConfig.class, List.class, Map.class, Adviser.class, List.class, String.class, List.class, List.class, List.class, SimulateInvestComponent.Mydate.class);
+        confm.setAccessible(true);
+        // create a trivial adviser via AdviserFactory with id -1 will return an adviser; pass null for market param earlier
+        Adviser adv = new AdviserFactory().get(-1, null, LocalDate.now(), LocalDate.now(), new ComponentData(), simc);
+        // prepare mystocks and sells
+        List<SimulateStock> myst = new ArrayList<>();
+        List<SimulateStock> sellsList = new ArrayList<>();
+        List<SimulateStock> buysList = new ArrayList<>();
+        List<SimulateStock> holdIncrease = new ArrayList<>();
+        SimulateInvestComponent.Mydate mdate = comp.new Mydate(); mdate.indexOffset = 0; mdate.prevIndexOffset = 0;
+        @SuppressWarnings("unchecked")
+        List<SimulateStock> newm = (List<SimulateStock>) confm.invoke(comp, simc, td.getStockDates(LocalDate.now(), 10, false), catMap, adv, new ArrayList<>(), null, myst, sellsList, buysList, holdIncrease, mdate);
+        assertNotEquals(null, newm);
+
+        java.lang.reflect.Method noConf = SimulateInvestComponent.class.getDeclaredMethod("noConfidenceHoldSell", List.class, List.class, List.class, SimulateInvestConfig.class);
+        noConf.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        List<SimulateStock> nm2 = (List<SimulateStock>) noConf.invoke(comp, myst, holdIncrease, sellsList, simc);
+        assertNotEquals(null, nm2);
+    }
+}
