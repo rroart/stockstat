@@ -144,6 +144,11 @@ def observe_new(model, epochs, optimizer, loss_fn, train_loader, valid_loader, b
     """
 
     device = next(model.parameters()).device if any(p is not None for p in model.parameters()) else (torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu'))
+    # if True:
+    #     import traceback
+    #     traceback.print_stack()
+    #print("epochs optimizer loss", epochs, optimizer, loss_fn, loss_fn.reduction)
+    print("loader", train_loader.dataset.__len__(), valid_loader.dataset.__len__())
 
     mean_train_losses = []
     mean_valid_losses = []
@@ -158,6 +163,8 @@ def observe_new(model, epochs, optimizer, loss_fn, train_loader, valid_loader, b
 
         # Training loop
         for i, (inputs, labels) in enumerate(train_loader):
+            #if i == 0 and epoch == 0:
+            #    print("i", inputs, labels)
             inputs = inputs.to(device)
             labels = labels.to(device)
 
@@ -166,6 +173,7 @@ def observe_new(model, epochs, optimizer, loss_fn, train_loader, valid_loader, b
             outputs = model(inputs)
 
             loss_inputs, loss_targets = get_loss_inputs_new(config, outputs, labels)
+            #print("l", loss_inputs, loss_targets)
             loss = loss_fn(loss_inputs, loss_targets)
             loss = regularize_new(config, loss, model)
 
@@ -187,6 +195,8 @@ def observe_new(model, epochs, optimizer, loss_fn, train_loader, valid_loader, b
 
         with torch.no_grad():
             for i, (inputs, labels) in enumerate(valid_loader):
+                if i == 0 and epoch == 0:
+                   print("i", inputs, labels)
                 inputs = inputs.to(device)
                 labels = labels.to(device)
 
@@ -210,10 +220,13 @@ def observe_new(model, epochs, optimizer, loss_fn, train_loader, valid_loader, b
                 # Compute predictions according to binary/multiclass
                 if getattr(config, 'binary', False):
                     # For binary, accept outputs that may have shape (N,1) or (N,)
+                    print("outputs", outputs)
                     probs = torch.sigmoid(outputs)
+                    print("probs", probs)
                     if probs.dim() > 1 and probs.size(1) == 1:
                         probs = probs.view(-1)
                     preds = (probs > 0.5).long()
+                    print("preds", preds)
                 else:
                     # multiclass logits: take argmax along class dim
                     if outputs.dim() == 1 or (outputs.dim() > 1 and outputs.size(1) == 1):
@@ -729,4 +742,8 @@ def print_state_dict_alt(model, optimizer):
         print(var_name, "\t", optimizer.state_dict()[var_name])
 
 
+def print_model_parameters(model):
+    print("Model parameters")
+    for name, param in model.named_parameters():
+        print(name, param.shape)
 

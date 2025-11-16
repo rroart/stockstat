@@ -43,14 +43,21 @@ class MyTestCase(unittest.TestCase):
     def test_iris(self):
       binary = True
       #binary = False
-      steps = 10
+      steps = 100
+      steps = 30
       testlist = [config.PYTORCHRNN, config.PYTORCHCNN, config.PYTORCHLSTM, config.PYTORCHGRU]
       testlist = [config.PYTORCHMLP]
       size = (2, 2)
       size = 4
       override = { "batchsize" : 8 }
+      override = { "lr" : 0.01, "batchsize" : 8 }
+      override = { "lr" : 0.001, "optimizer" : "adam", "batchnormalize" : False, "inputdropout" : 0, "dropout" : 0, "hidden" : 50, "batchsize" : 128 }
+      override = { "lr" : 0.1, "normalize" : False, "batchnormalize" : False, "inputdropout" : 0, "dropout" : 0, "hidden" : 16, "batchsize" : 16, "layers" : 1 }
+      override = { "steps" : 30, "lr" : 0.1, "normalize" : True, "batchnormalize" : False, "inputdropout" : 0, "dropout" : 0, "hidden" : 16, "batchsize" : 16, "layers" : 1 }
+      # , "lastactivation" : None
       for test in testlist:
           for binary in [ True, False ]:
+          #for binary in []: #[ True, False ]:
 
             classes = 2
             train_x, train_y, test_x, test_y, classes = mydatasetscommon.iriscommon(classes)
@@ -72,6 +79,7 @@ class MyTestCase(unittest.TestCase):
         result = cli.learntestclassify(test_x, cf=test, train_x=train_x, train_y=train_y, test_x=test_x, test_y=test_y,
                                        steps=steps, size=size, classes=classes, binary=binary, override = override)
         print(result)
+        #return
         # self.assertIsNotNone(result['accuracy'], "Accuracy")
         # self.assertIsNotNone(result['classifycatarray'], "Classify")
 
@@ -89,13 +97,17 @@ class MyTestCase(unittest.TestCase):
       binary = True
       #binary = False
       classes = 2
-      steps = 100
+      steps = 1000
       testlist = [config.PYTORCHRNN, config.PYTORCHCNN, config.PYTORCHLSTM, config.PYTORCHGRU]
       testlist = [config.PYTORCHMLP]
       size = (2, 2)
       size = 4
       override = { "batchsize" : 8 }
+      override = { "lr" : 0.01 }
+      override = { }
+      override = { "lr" : 0.01 }
       for test in testlist:
+          #for binary in []: #[ True, False ]:
           for binary in [ True, False ]:
 
             #train_x, train_y, test_x, test_y, classes = mydatasetscommon.iriscommon(binary)

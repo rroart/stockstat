@@ -1,3 +1,5 @@
+from torch.utils.data import DataLoader, TensorDataset
+
 import learntest as lt
 import os
 
@@ -20,7 +22,9 @@ from customdataset import CustomDataset
 from earlystopping import EarlyStopping
 from model import layerutils, modelutils
 from model.layerutils import avgstdvar
-from model.modelutils import get_loss_inputs
+from model.modelutils import get_loss_inputs, print_model_parameters
+#from test_iris_observe import get_accuracy_multiclass
+#from test_iris_observe import print_model_parameters
 
 try:
     from model.seq2seq import Seq2SeqModule
@@ -37,7 +41,7 @@ dictclass = {}
 global count
 count = 0
 
-#todo
+# todo
 best_practise_load_save = True
 
 print("Using gpu: ", torch.cuda.is_available())
@@ -137,10 +141,10 @@ class Classify:
             #print(type(predictions))
             #print("predictions")
             #print(predictions)
-            print("p1", predictions)
+            #print("p1", predictions)
             # predicted are classifications
             _, predicted = torch.max(predictions, 1)
-            print("p2", predicted)
+            #print("p2", predicted)
             #print(_)
             #print(predicted)
             #correct = (predicted == labels).sum()
@@ -154,12 +158,12 @@ class Classify:
             #if config.binary:
             #    sm = torch.nn.Sigmoid()
             probabilities = sm(predictions)
-            print("p3", probabilities)
+            #print("p3", probabilities)
             #probabilities2 = sm2(predictions)
             #print("p32", probabilities2)
             probability, _ = torch.max(probabilities, 1)
             # p4 are the probabilities for the classification
-            print("p4", probability)
+            #print("p4", probability)
             problist = probability.detach().to(torch.device("cpu")).numpy().tolist()
             problist = np.where(np.isnan(problist), None, problist).tolist()
 
@@ -175,7 +179,10 @@ class Classify:
             # prob = pred_probab.gather(1, y_pred.unsqueeze(1))
             # print("p6", prob)
           else:
-            print("Classify", array.shape, array)
+           # tod
+           print("Classify", array.shape, array)
+           intlist, problist = self.get_binary_cat_and_probability(model, array)
+           if False:
             probability = model(array)
             print("prob0", probability)
             probabilityflat = probability.reshape(probability.shape[0])
@@ -198,8 +205,8 @@ class Classify:
             problist = (1 - problist) * (1 - intlist) + problist * intlist  # todo
             print("problist", problist)
             predictions = None
-        del predictions
-        del model
+            del predictions
+            del model
         if classify and not self.zero(myobj):
             intlist = np.array(intlist)
             intlist = intlist + 1
@@ -246,15 +253,23 @@ class Classify:
         v_y = labels.to(dev)
         #ds = CustomDataset(inputs, labels)
         ds = CustomDataset(v_x, v_y)
-        loader = torch.utils.data.DataLoader(ds, batch_size=config.batchsize, shuffle=True)
+
+        # Dataloaders
+        loader = DataLoader(TensorDataset(v_x, v_y), batch_size=16, shuffle=True)
+
+        #loader = torch.utils.data.DataLoader(ds, batch_size=config.batchsize, shuffle=True)
         if not val is None:
 
             valds = CustomDataset(val, valcat.long().to(dev))
             valloader = torch.utils.data.DataLoader(valds, batch_size=config.batchsize, shuffle=True)
+            valloader = DataLoader(TensorDataset(val, valcat.long().to(dev)), batch_size=16)
+            print("valloader")
         else:
             valloader = loader
 
-        return modelutils.observe(model, config.steps, model.opt, model.bce, loader, valloader, config.batchsize, early_stopping, config)
+        print("model", model)
+        return modelutils.observe_new(model, config.steps, model.opt, model.bce, loader, valloader, config.batchsize, early_stopping, config)
+        return modelutils.observer_another_new(model, config.steps, model.opt, model.bce, loader, valloader, config.batchsize, early_stopping, config)
         for i in range(model.config.steps):
             model.train()
             #print(v_x.shape)
@@ -537,6 +552,7 @@ class Classify:
 
     def do_learntestinner(self, myobj, model, config, train, traincat, test, testcat, classify, avgstdvar, val = None, valcat = None):
         print(model)
+        print("shapes", train.shape, traincat.shape, test.shape, testcat.shape, val.shape, valcat.shape)
         dev = self.getdev()
         print("Device", dev)
 
@@ -571,19 +587,90 @@ class Classify:
         accuracy_score = 0
         train_accuracy_score = 0
 
+        #print("v_x", v_x)
+        if classify and config.normalize:
+            v_x = layerutils.normalize(v_x, avgstdvar)
         # todo binary
+        if config.binary:
+          tv_x = torch.FloatTensor(test).to(dev)
+          if classify and config.normalize:
+            tv_x = layerutils.normalize(tv_x, avgstdvar)
+            val = layerutils.normalize(val, avgstdvar)
+          tv_y = torch.LongTensor(testcat).to(dev)
+
+          train_accuracy, training_loss = self.get_binary_accuracy_loss(config, model, v_x, v_y)
+          #print("tvx", tv_x)
+          test_accuracy, test_loss = self.get_binary_accuracy_loss(config, model, tv_x, tv_y)
+          #print("val", val)
+          val_accuracy, val_loss = self.get_binary_accuracy_loss(config, model, val, valcat)
+          if False:
+            y_hat = model(tv_x)
+
+            probability = y_hat
+            probabilityflat = y_hat.reshape(y_hat.shape[0])
+            problist = probabilityflat.detach().to(torch.device("cpu")).numpy().tolist()
+            problist = np.where(np.isnan(problist), None, problist).tolist()
+            predicted = probability.argmax(1)
+            intlist = np.round(problist, 0)
+
+            print("p1", probability)
+            print("p2", problist)
+            print("p3", predicted)
+            print("p4", intlist)
+            print("problist", problist)
+            print("predicted", predicted)
+            intlist = np.array(intlist)
+            problist = np.array(problist)
+            print("problist", problist)
+            print(type(problist), type(intlist))
+            problist = (1 - problist) * (1 - intlist) + problist * intlist  # todo
+            print("problist", problist)
+            predictions = None
+            print("sum", tv_y, intlist)
+            num_correct = torch.sum(tv_y == intlist)
+            print("len", len(tv_y), num_correct)
+            acc = float(num_correct) / len(tv_y)
+
+
+            # print("yhat", y_hat)
+            # print(testcat)
+            # print(type(y_hat), y_hat.shape)
+            # y_hat2 = y_hat
+            # if config.binary:
+            #    y_hat2 = y_hat.reshape(y_hat.shape[0])
+            #    tv_y = tv_y.to(dtype=torch.float32).reshape(-1, 1).reshape(tv_y.shape[0])
+            # test_loss = model.bce(y_hat2, tv_y)
+            loss_outputs, loss_target = get_loss_inputs(config, y_hat, tv_y)
+            # print("sh", outputs.shape, labels.shape)
+            # print("sh", outputs, labels)
+            test_loss = model.bce(loss_outputs, loss_target)
+            test_loss = test_loss.item()
+            print("testloss", test_loss)
+            # print(len(tv_x),len(tv_y),len(y_hat),y_hat)
+            (max_vals, arg_maxs) = torch.max(y_hat.data, dim=1)
+            num_correct = torch.sum(tv_y == arg_maxs)
+            #acc = float(num_correct) / len(tv_y)
+          accuracy_score = test_accuracy
+          train_accuracy_score = train_accuracy
+          val_accuracy_score = val_accuracy
+          print("Accs", accuracy_score, train_accuracy_score, val_accuracy_score, test_loss)
+          print("\nTest Accuracy: {0:f}\n".format(accuracy_score))
+          return accuracy_score, test_loss, train_accuracy_score, val_accuracy_score
+
         y0_hat = model(v_x)
         (max_vals0, arg_maxs0) = torch.max(y0_hat.data, dim=1)
+        print("cmp", y0_hat, v_y)
         num_correct0 = torch.sum(v_y==arg_maxs0.to(dtype=torch.float32))
         print("len", len(v_y), num_correct0)
-        acc0 = float(num_correct0) / len(v_y)
+        train_accuracy = float(num_correct0) / len(v_y)
         
         #print("test", len(test), len(testcat), testcat.shape, test)
         tv_x = torch.FloatTensor(test).to(dev)
+        if classify and config.normalize:
+            tv_x = layerutils.normalize(tv_x, avgstdvar)
         #print(type(testcat), testcat.shape)
         #tv_y = testcat
         tv_y = torch.LongTensor(testcat).to(dev)
-        # todo binary
         y_hat = model(tv_x)
         #print("yhat", y_hat)
         #print(testcat)
@@ -608,10 +695,10 @@ class Classify:
         #y_hat_class = np.where(y_hat.detach().numpy()<0.5, 0, 1)
         #accuracy = np.sum(tv_y.reshape(-1,1) == y_hat_class) / len(testcat)
         accuracy_score = acc
-        train_accuracy_score = acc0
+        train_accuracy_score = train_accuracy
         val_accuracy_score = 0
 
-        print("Accs", acc0, acc)
+        print("Accs", train_accuracy, acc)
         
         #y_hat_class = np.where(y_hat.detach().numpy()<0.5, 0, 1)
         #accuracy = np.sum(testcat.reshape(-1,1) == y_hat_class) / len(testcat)
@@ -625,6 +712,50 @@ class Classify:
         #print(type(accuracy_score))
         print("\nTest Accuracy: {0:f}\n".format(accuracy_score))
         return accuracy_score, test_loss, train_accuracy_score, val_accuracy_score
+
+    def get_binary_accuracy_loss(self, config, model, x, cat) -> float:
+        predictedcat, probability = self.get_binary_cat_and_probability(model, x)
+
+        # v_y = v_y.to(dtype=torch.float32).reshape(-1, 1)
+        print("cmp", predictedcat, cat)
+        # (max_vals0, arg_maxs0) = torch.max(y0_hat.data, dim=1)
+        # print("cmp", y0_hat, v_y, arg_maxs0)
+        print("sum", cat, predictedcat)
+        num_correct0 = torch.sum(cat == predictedcat)
+        print("len", len(cat), num_correct0)
+        accuracy = float(num_correct0) / len(cat)
+
+        probability = torch.FloatTensor(probability)
+        loss_outputs, loss_target = get_loss_inputs(config, probability, cat)
+        # print("sh", outputs.shape, labels.shape)
+        # print("sh", outputs, labels)
+        print("loss_outputs", loss_outputs, loss_target)
+        loss = model.bce(loss_outputs, loss_target)
+        loss = loss.item()
+        print("Accuracy loss", accuracy, loss)
+        return accuracy, loss
+
+    def get_binary_cat_and_probability(self, model, x):
+        probability = model(x)
+        probabilityflat = probability.reshape(probability.shape[0])
+        probabilitylist = probabilityflat.detach().to(torch.device("cpu")).numpy().tolist()
+        probabilitylist = np.where(np.isnan(probabilitylist), None, probabilitylist).tolist()
+        predicted = probability.argmax(1)
+        predictedcat = np.round(probabilitylist, 0)
+
+        print("p1", probability.shape, probabilityflat.shape)
+        print("p2", probabilitylist)
+        #print("p3", predicted)
+        print("p4", predictedcat)
+        print("problist", probabilitylist)
+        #print("predicted", predicted)
+        predictedcat = np.array(predictedcat)
+        probabilitylist = np.array(probabilitylist)
+        print("problist", probabilitylist)
+        print(type(probabilitylist), type(predictedcat))
+        catprobabilitylist = (1 - probabilitylist) * (1 - predictedcat) + probabilitylist * predictedcat  # todo
+        print("problist", catprobabilitylist)
+        return predictedcat, catprobabilitylist
 
     def getModel(self, myobj):
       if hasattr(myobj, 'modelInt'):  
@@ -791,11 +922,12 @@ class Classify:
         if not train_accuracy_score is None:
             train_accuracy_score = float(train_accuracy_score)
         if not loss is None:
-            loss = float(loss)
+            loss = float(loss) # todo detach?
         if not loss is None and np.isnan(loss):
             loss = None
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
+        print({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "valaccuracy": val_accuracy_score, "gpu" : self.hasgpu()})
         queue.put({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "valaccuracy": val_accuracy_score, "gpu" : self.hasgpu()})
 
     def do_dataset(self, queue, myjson):
