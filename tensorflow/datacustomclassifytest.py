@@ -49,8 +49,15 @@ class MyTestCase(unittest.TestCase):
       testlist = [config.TENSORFLOWMLP]
       size = (2, 2)
       size = 4
+      override = None
+      #override = { "lastactivation" : None }
+      #override = { "lr" : 0.1, "normalize" : True, "batchnormalize" : False, "inputdropout" : 0, "dropout" : 0, "hidden" : 16, "batchsize" : 16, "layers" : 1, "lastactivation" : None }
+      #override = { "lr" : 0.01, steps : 100, "normalize" : False, "batchnormalize" : False, "inputdropout" : 0, "dropout" : 0, "hidden" : 16, "batchsize" : 16, "layers" : 1, "lastactivation" : None }
+      override = { "steps" : 30, "lr" : 0.1, "normalize" : True, "batchnormalize" : False, "inputdropout" : 0, "dropout" : 0, "hidden" : 16, "batchsize" : 16, "layers" : 1 }
+      override = { "steps" : 30, "lr" : 0.1, "normalize" : False, "batchnormalize" : False, "inputdropout" : 0, "dropout" : 0, "hidden" : 16, "batchsize" : 16, "layers" : 1 }
       for test in testlist:
           for binary in [ True, False ]:
+          #for binary in []: #[ True, False ]:
 
             classes = 2
             train_x, train_y, test_x, test_y, classes = mydatasetscommon.iriscommon(classes)
@@ -58,30 +65,30 @@ class MyTestCase(unittest.TestCase):
             #train_x = np.array(train_x).reshape(120, 2, 2).tolist()  # train_x.values.tolist()
             #test_x = np.array(test_x).reshape(30, 2, 2).tolist()  # test_x.values.tolist()
 
-            self.single_run(binary, classes, size, steps, test, test_x, test_y, train_x, train_y)
+            self.single_run(binary, classes, size, steps, test, test_x, test_y, train_x, train_y, override)
 
           binary = False
           classes = 3
           train_x, train_y, test_x, test_y, classes = mydatasetscommon.iriscommon()
-          self.single_run(binary, classes, size, steps, test, test_x, test_y, train_x, train_y)
+          self.single_run(binary, classes, size, steps, test, test_x, test_y, train_x, train_y, override)
       # here
 
-    def single_run(self, binary: bool, classes: int, size: int, steps: int, test: str, test_x, test_y, train_x,
-                   train_y):
+    def single_run(self, binary: bool, classes: int, size: int, steps: int, test: str, test_x, test_y, train_x, train_y,
+                   override):
         print("Doing", test)
         result = cli.learntestclassify(test_x, cf=test, train_x=train_x, train_y=train_y, test_x=test_x, test_y=test_y,
-                                       steps=steps, size=size, classes=classes, binary=binary)
+                                       steps=steps, size=size, classes=classes, binary=binary, override = override)
         print(result)
         self.assertIsNotNone(result['accuracy'], "Accuracy")
         self.assertIsNotNone(result['classifycatarray'], "Classify")
 
         result = cli.learntest(cf=test, train_x=train_x, train_y=train_y, test_x=test_x, test_y=test_y, steps=steps,
-                               size=size, classes=classes, binary=binary)
+                               size=size, classes=classes, binary=binary, override = override)
         print(result)
         self.assertIsNotNone(result['accuracy'], "Accuracy")
 
         result = cli.classify(test_x, cf=test, train_x=train_x, train_y=train_y, size=size, classes=classes,
-                              binary=binary)
+                              binary=binary, override = override)
         print(result)
         self.assertIsNotNone(result['classifycatarray'], "Classify")
 
@@ -94,6 +101,7 @@ class MyTestCase(unittest.TestCase):
       testlist = [config.TENSORFLOWMLP]
       size = (2, 2)
       size = 4
+      override = { }
       for test in testlist:
           for binary in [ True, False ]:
 
@@ -102,12 +110,12 @@ class MyTestCase(unittest.TestCase):
             #train_x = np.array(train_x).reshape(120, 2, 2).tolist()  # train_x.values.tolist()
             #test_x = np.array(test_x).reshape(30, 2, 2).tolist()  # test_x.values.tolist()
 
-            self.single_run(binary, classes, size, steps, test, test_x, test_y, train_x, train_y)
+            self.single_run(binary, classes, size, steps, test, test_x, test_y, train_x, train_y, override)
 
           binary = False
           classes = 10
           train_x, train_y, test_x, test_y, _ = mydatasetscommon.mnistcommon()
-          self.single_run(binary, classes, size, steps, test, test_x, test_y, train_x, train_y)
+          self.single_run(binary, classes, size, steps, test, test_x, test_y, train_x, train_y, override)
 
 # todo cnn2
 
