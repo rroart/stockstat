@@ -48,10 +48,12 @@ class Net(nn.Module):
     x = self.fc(x)
     if self.config.batchnormalize:
         x = self.bn(x)
-    x = self.act(x)
+    if self.config.activation:
+        x = self.act(x)
     if self.config.dropout > 0:
         x = self.dropout(x)
-    x = self.lastact(x)
+    if self.config.lastactivation:
+        x = self.lastact(x)
     return x
   
   def observe(self, x, y):

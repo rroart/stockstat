@@ -71,7 +71,8 @@ class Net(nn.Module):
             curShape = newShape
             if self.config.batchnormalize:
                 layer1.append(nn.BatchNorm2d(dims[i+1]))
-            layer1.append(activation)
+            if activation:
+                layer1.append(activation)
             #dopool = len(d2s) > i and len(d3s) > i and d2s[i] > 1 and d3s[i] > 1
             #print("bool", len(d1s) > i,len(d2s) > i, d1s[i] > 1, d2s[i] > 1)
             newShape = cnnutils.calcPoolShape2(config, curShape)
@@ -104,11 +105,12 @@ class Net(nn.Module):
                     mylayers.append(nn.BatchNorm1d(sizearr[i + 1]))
                 if i < (len(sizearr) - 3):
                     mylayers.append(activation)
-                else:
-                    mylayers.append(lastactivation)
+                #else:
+                #    mylayers.append(lastactivation)
                 if config.dropout > 0:
                     mylayers.append(nn.Dropout(config.dropout))
-            mylayers.append(lastactivation)
+            if lastactivation:
+                mylayers.append(lastactivation)
 
         self.fc1 = nn.Sequential(*mylayers)
         self.drop = nn.Dropout(config.dropout)
@@ -258,7 +260,7 @@ class Net(nn.Module):
         #print("oo", out.shape)
         #out = b1(out)
         #print("oo", out.shape)
-        out = self.r1(out)
+        # out = self.r1(out) #todo
         
         #print("oo", out.shape)
         if self.classify:

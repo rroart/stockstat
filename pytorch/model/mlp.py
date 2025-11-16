@@ -41,13 +41,14 @@ class Net(nn.Module):
                 if config.batchnormalize:
                     mylayers.append(nn.BatchNorm1d(sizearr[i + 1]))
                 # todo
-                if i < (len(sizearr) - 2):
+                if activation and i < (len(sizearr) - 2):
                     mylayers.append(activation)
                 #else:
                 #    mylayers.append(lastactivation)
                 if config.dropout > 0:
                     mylayers.append(nn.Dropout(config.dropout))
-        mylayers.append(lastactivation)
+        if lastactivation:
+            mylayers.append(lastactivation)
         self.layers = nn.Sequential(*mylayers)
         #self.layers.apply(Xavier)
         

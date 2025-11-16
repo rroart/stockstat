@@ -33,7 +33,8 @@ class Model(MyModel):
       amodel.add(GRU(config.hidden, return_sequences = i != config.layers - 1, kernel_regularizer=regularizer))
       if config.batchnormalize:
           amodel.add(tf.keras.layers.BatchNormalization())
-      amodel.add(activation)
+      if activation:
+          amodel.add(activation)
       if config.dropout > 0:
           amodel.add(Dropout(config.dropout))
     if classify:

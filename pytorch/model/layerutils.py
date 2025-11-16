@@ -207,7 +207,7 @@ def getAnActivation(activation):
     elif activation == "soft_min":
         return torch.nn.Softmin()
     elif activation == "softmax":
-        return torch.nn.Softmax()
+        return torch.nn.Softmax(dim=1)
     elif activation == "soft_max_2d":
         return torch.nn.Softmax2d()
     elif activation == "log_soft_max":

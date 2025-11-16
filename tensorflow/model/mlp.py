@@ -38,14 +38,16 @@ class Model(MyModel):
       amodel.add(tf.keras.layers.Dense(config.hidden, kernel_regularizer=regularizer))
       if config.batchnormalize:
           amodel.add(tf.keras.layers.BatchNormalization())
-      amodel.add(activation)
+      if activation:
+          amodel.add(activation)
       if config.dropout > 0:
           amodel.add(Dropout(config.dropout))
     if classify:
       amodel.add(tf.keras.layers.Dense(myobj.classes, kernel_regularizer=regularizer))
     else:
       amodel.add(tf.keras.layers.Dense(1, kernel_regularizer=regularizer))
-    amodel.add(lastactivation)
+    if config.lastactivation:
+        amodel.add(lastactivation)
     self.model = amodel
     self.dense_1 = Dense(32, activation=config.activation)
     self.dense_2 = Dense(32, activation=config.activation)

@@ -80,7 +80,8 @@ class Model(MyModel):
         curShape = newShape
         if config.batchnormalize:
             modelm.add(BatchNormalization())
-        modelm.add(activation)
+        if activation:
+            modelm.add(activation)
         dopool = len(d1s) > i and len(d2s) > i and d1s[i] > 1 and d2s[i] > 1
         newShape = cnnutils.calcPoolShape2(config, curShape)
         print("newShape2", newShape)
@@ -94,11 +95,13 @@ class Model(MyModel):
         modelm.add(Dense(config.hidden, kernel_regularizer=regularizer))
         if config.batchnormalize:
             modelm.add(BatchNormalization())
-        modelm.add(activation)
+        if activation:
+            modelm.add(activation)
         if config.dropout > 0:
             modelm.add(Dropout(config.dropout))
     modelm.add(Dense(myobj.classes, kernel_regularizer=regularizer))
-    modelm.add(Activation(lastactivation))
+    if lastactivation:
+        modelm.add(Activation(lastactivation))
     modelm.summary()
     
     #https://medium.com/@alexrachnog/neural-networks-for-algorithmic-trading-part-one-simple-time-series-forecasting-f992daa1045a
