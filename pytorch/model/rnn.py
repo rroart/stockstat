@@ -67,10 +67,12 @@ class Net(nn.Module):
         #print("outs", out.size())
         if self.config.batchnormalize:
             out = self.bn(out)
-        out = self.act(out)
+        if self.config.activation:
+            out = self.act(out)
         if self.config.dropout > 0:
             out = self.dropout(out)
-        out = self.lastact(out)
+        if self.config.lastactivation:
+            out = self.lastact(out)
 
         return out
     #, hidden
