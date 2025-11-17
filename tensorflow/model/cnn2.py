@@ -3,8 +3,6 @@ import math
 import tensorflow as tf
 from tensorflow.keras.layers import Dense, Activation, Dropout, Conv2D, MaxPooling2D, Flatten, Convolution2D, BatchNormalization, LeakyReLU, Dropout
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.optimizers import Adadelta
 import model.layerutils as layerutils
 from . import cnnutils
 
@@ -26,11 +24,7 @@ class Model(MyModel):
 
     # Define your layers here.
 
-    #https://medium.com/@alexrachnog/neural-networks-for-algorithmic-trading-2-1-multivariate-time-series-ab016ce70f57
-    modelm = Sequential()
-    #print("inputshape");
-    #print(shape);
-    # input_shape = (WINDOW, EMB_SIZE),
+    model = Sequential()
 
     d11 = self.calc(config, shape[1])
     d21 = self.calc(config, shape[2])
@@ -61,11 +55,11 @@ class Model(MyModel):
     curShape = shape[1:]
     print("curShape", curShape)
 
-    modelm.add(tf.keras.Input(shape = shape[1:]))
+    model.add(tf.keras.Input(shape = shape[1:]))
     if classify and config.normalize:
-        modelm.add(layerutils.getNormalLayer(shape))
+        model.add(layerutils.getNormalLayer(shape))
     for i in range(config.convlayers):
-        modelm.add(Convolution2D(
+        model.add(Convolution2D(
                         data_format = "channels_last",
                         filters=64, # todo
                         kernel_size = config.kernelsize,
@@ -79,85 +73,37 @@ class Model(MyModel):
             break
         curShape = newShape
         if config.batchnormalize:
-            modelm.add(BatchNormalization())
+            model.add(BatchNormalization())
         if activation:
-            modelm.add(activation)
+            model.add(activation)
         dopool = len(d1s) > i and len(d2s) > i and d1s[i] > 1 and d2s[i] > 1
         newShape = cnnutils.calcPoolShape2(config, curShape)
         print("newShape2", newShape)
         if newShape is not None and config.maxpool > 1:
-            modelm.add(MaxPooling2D(config.maxpool, data_format = "channels_last"))
+            model.add(MaxPooling2D(config.maxpool, data_format = "channels_last"))
             curShape = newShape
         if config.dropout > 0:
-            modelm.add(Dropout(config.dropout))
-    modelm.add(Flatten())
+            model.add(Dropout(config.dropout))
+    model.add(Flatten())
     for i in range(config.layers):
-        modelm.add(Dense(config.hidden, kernel_regularizer=regularizer))
+        model.add(Dense(config.hidden, kernel_regularizer=regularizer))
         if config.batchnormalize:
-            modelm.add(BatchNormalization())
+            model.add(BatchNormalization())
         if activation:
-            modelm.add(activation)
+            model.add(activation)
         if config.dropout > 0:
-            modelm.add(Dropout(config.dropout))
-    modelm.add(Dense(myobj.classes, kernel_regularizer=regularizer))
+            model.add(Dropout(config.dropout))
+    model.add(Dense(myobj.classes, kernel_regularizer=regularizer))
     if lastactivation:
-        modelm.add(Activation(lastactivation))
-    modelm.summary()
-    
-    #https://medium.com/@alexrachnog/neural-networks-for-algorithmic-trading-part-one-simple-time-series-forecasting-f992daa1045a
-    model1 = Sequential()
-    # input_shape = (TRAIN_SIZE, EMB_SIZE), 
-    #model1.add(Convolution1D(input_shape = (28, 28),
-    #                    nb_filter=64,
-    #                    filter_length=2,
-    #                    border_mode='valid',
-    #                    activation='relu',
-    #                    subsample_length=1))
-    #model1.add(MaxPooling1D(pool_length=2))
+        model.add(Activation(lastactivation))
+    model.summary()
 
-    # input_shape = (TRAIN_SIZE, EMB_SIZE), 
-    #model1.add(Convolution1D(input_shape = (28, 28),
-    #                    nb_filter=64,
-    #                    filter_length=2,
-    #                    border_mode='valid',
-    #                    activation='relu',
-    #                    subsample_length=1))
-    #model1.add(MaxPooling1D(pool_length=2))
-
-    #model1.add(Dropout(0.25))
-    #model1.add(Flatten())
-
-    #model1.add(Dense(250))
-    #model1.add(Dropout(0.25))
-    #model1.add(Activation('relu'))
-    
-    #model1.add(Dense(1))
-    #model1.add(Activation('linear'))
-    #end
-    
-    self.model = modelm
-    self.dense_1 = Dense(32, activation='relu')
-    self.dense_2 = Dense(32, activation='relu')
-    self.dense_3 = Dense(32, activation='relu')
-    #self.dense_4 = Dense(myobj.classes, activation='sigmoid')
-    self.dense_4 = Dense(myobj.classes, activation='softmax')
-    #adam = tf.keras.optimizers.Adam(learning_rate=1)
+    self.model = model
 
     self.model.compile(optimizer=optimizer,
                        loss=config.loss,
                        metrics=['accuracy'])
     return
-    # https://www.kaggle.com/heyhello/mnist-simple-convnet/data
-    model = models.Sequential()
-    model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)))
-    model.add(layers.MaxPooling2D((2, 2)))
-    model.add(layers.Conv2D(64, (3, 3), activation='relu'))
-    model.add(layers.MaxPooling2D((2, 2)))
-    model.add(layers.Conv2D(64, (3, 3), activation='relu'))
-    model.add(layers.Flatten())
-    model.add(layers.Dense(64, activation='relu'))
-    model.add(layers.Dense(10, activation='softmax'))
-
 
   def call(self, inputs):
     # Define your forward pass here,

@@ -43,15 +43,12 @@ class Net(nn.Module):
                 # todo
                 if activation and i < (len(sizearr) - 2):
                     mylayers.append(activation)
-                #else:
-                #    mylayers.append(lastactivation)
                 if config.dropout > 0:
                     mylayers.append(nn.Dropout(config.dropout))
         if lastactivation:
             mylayers.append(lastactivation)
         self.layers = nn.Sequential(*mylayers)
-        #self.layers.apply(Xavier)
-        
+
         # setup losses
         self.bce = layerutils.getLoss(config)
 
