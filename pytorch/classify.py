@@ -869,8 +869,8 @@ class Classify:
             print("Loading model")
             dev = self.getdev()
             model = Model.Net(myobj, config, classify, shape)
-            if False: #best_practise_load_save:
-                model.model.load_state_dict(torch.load(self.getfullpath(myobj)))
+            if best_practise_load_save:
+                model.load_state_dict(torch.load(self.getfullpath(myobj)))
             else:
                 model = torch.load(self.getfullpath(myobj), weights_only=False)
             model.eval()
@@ -906,8 +906,8 @@ class Classify:
         # save model if
         # not dynamic and wantlearn
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
-            if False: #best_practise_load_save:
-                torch.save(model.model.state_dict(), self.getfullpath(myobj))
+            if best_practise_load_save:
+                torch.save(model.state_dict(), self.getfullpath(myobj))
             else:
                 torch.save(model, self.getfullpath(myobj))
 
