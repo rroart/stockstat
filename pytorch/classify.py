@@ -562,12 +562,11 @@ class Classify:
         train_accuracy_score = 0
 
         #print("v_x", v_x)
-        if classify and config.normalize:
-            v_x = layerutils.normalize(v_x, avgstdvar)
         # todo binary
         if config.binary:
           tv_x = torch.FloatTensor(test).to(dev)
           if classify and config.normalize:
+            v_x = layerutils.normalize(v_x, avgstdvar)
             tv_x = layerutils.normalize(tv_x, avgstdvar)
             val = layerutils.normalize(val, avgstdvar)
           tv_y = torch.LongTensor(testcat).to(dev)
@@ -584,61 +583,36 @@ class Classify:
           print("\nTest Accuracy: {0:f}\n".format(accuracy_score))
           return accuracy_score, test_loss, train_accuracy_score, val_accuracy_score
 
-        y0_hat = model(v_x)
-        (max_vals0, arg_maxs0) = torch.max(y0_hat.data, dim=1)
-        print("cmp", y0_hat, v_y)
-        num_correct0 = torch.sum(v_y==arg_maxs0.to(dtype=torch.float32))
-        print("len", len(v_y), num_correct0)
-        train_accuracy = float(num_correct0) / len(v_y)
-        
-        #print("test", len(test), len(testcat), testcat.shape, test)
         tv_x = torch.FloatTensor(test).to(dev)
         if classify and config.normalize:
+            v_x = layerutils.normalize(v_x, avgstdvar)
             tv_x = layerutils.normalize(tv_x, avgstdvar)
-        #print(type(testcat), testcat.shape)
-        #tv_y = testcat
+
+        v_y = torch.LongTensor(traincat).to(dev)
+        train_accuracy, train_loss = self.get_multi_accuracy_loss(config, model, v_x, v_y)
+
         tv_y = torch.LongTensor(testcat).to(dev)
-        y_hat = model(tv_x)
-        #print("yhat", y_hat)
-        #print(testcat)
-        #print(type(y_hat), y_hat.shape)
-        #y_hat2 = y_hat
-        #if config.binary:
-        #    y_hat2 = y_hat.reshape(y_hat.shape[0])
-        #    tv_y = tv_y.to(dtype=torch.float32).reshape(-1, 1).reshape(tv_y.shape[0])
-        #test_loss = model.bce(y_hat2, tv_y)
-        loss_outputs, loss_target = get_loss_inputs(config, y_hat, tv_y)
-        # print("sh", outputs.shape, labels.shape)
-        # print("sh", outputs, labels)
-        test_loss = model.bce(loss_outputs, loss_target)
-        #print(len(tv_x),len(tv_y),len(y_hat),y_hat)
-        (max_vals, arg_maxs) = torch.max(y_hat.data, dim=1)
-        #print("max", max_vals.size(), max_vals);
-        #print(arg_maxs.size(), arg_maxs)
-        #print(tv_y.size(), tv_y)
-        # arg_maxs is tensor of indices [0, 1, 0, 2, 1, 1 . . ]
-        num_correct = torch.sum(tv_y==arg_maxs)
-        acc = float(num_correct) / len(tv_y)
-        #y_hat_class = np.where(y_hat.detach().numpy()<0.5, 0, 1)
-        #accuracy = np.sum(tv_y.reshape(-1,1) == y_hat_class) / len(testcat)
+
+        acc, test_loss = self.get_multi_accuracy_loss(config, model, tv_x, tv_y)
+
         accuracy_score = acc
         train_accuracy_score = train_accuracy
         val_accuracy_score = 0
 
         print("Accs", train_accuracy, acc)
-        
-        #y_hat_class = np.where(y_hat.detach().numpy()<0.5, 0, 1)
-        #accuracy = np.sum(testcat.reshape(-1,1) == y_hat_class) / len(testcat)
-        #accuracy_score = accuracy
-        #train_loss.append(loss.item())
+        print("Losses", train_loss.item(), test_loss.item())
 
-        #print("testlen", len(testcat))
-        #print("test_loss")
-        #print(test_loss)
-        #print(accuracy_score)
-        #print(type(accuracy_score))
         print("\nTest Accuracy: {0:f}\n".format(accuracy_score))
         return accuracy_score, test_loss, train_accuracy_score, val_accuracy_score
+
+    def get_multi_accuracy_loss(self, config, model, x, cat) -> float:
+        y_hat = model(x)
+        loss_outputs, loss_target = get_loss_inputs(config, y_hat, cat)
+        loss = model.bce(loss_outputs, loss_target)
+        (max_vals0, arg_maxs0) = torch.max(y_hat.data, dim=1)
+        num_correct0 = torch.sum(cat == arg_maxs0.to(dtype=torch.float32))
+        accuracy = float(num_correct0) / len(cat)
+        return accuracy, loss
 
     def get_binary_accuracy_loss(self, config, model, x, cat) -> float:
         predictedcat, probability = self.get_binary_cat_and_probability(model, x)
