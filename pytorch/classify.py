@@ -179,34 +179,8 @@ class Classify:
             # prob = pred_probab.gather(1, y_pred.unsqueeze(1))
             # print("p6", prob)
           else:
-           # tod
-           print("Classify", array.shape, array)
-           intlist, problist = self.get_binary_cat_and_probability(model, array)
-           if False:
-            probability = model(array)
-            print("prob0", probability)
-            probabilityflat = probability.reshape(probability.shape[0])
-            print("prob0", probabilityflat)
-            problist = probabilityflat.detach().to(torch.device("cpu")).numpy().tolist()
-            problist = np.where(np.isnan(problist), None, problist).tolist()
-            predicted = probability.argmax(1)
-            #intlist = predicted.tolist()
-            intlist = np.round(problist, 0)
-
-            print("p1", probability)
-            print("p2", problist)
-            print("p3", predicted)
-            print("p4", intlist)
-            print("problist", problist)
-            intlist = np.array(intlist)
-            problist = np.array(problist)
-            print("problist", problist)
-            print(type(problist), type(intlist))
-            problist = (1 - problist) * (1 - intlist) + problist * intlist  # todo
-            print("problist", problist)
-            predictions = None
-            del predictions
-            del model
+            print("Classify", array.shape, array)
+            intlist, problist = self.get_binary_cat_and_probability(model, array)
         if classify and not self.zero(myobj):
             intlist = np.array(intlist)
             intlist = intlist + 1
@@ -603,53 +577,6 @@ class Classify:
           test_accuracy, test_loss = self.get_binary_accuracy_loss(config, model, tv_x, tv_y)
           #print("val", val)
           val_accuracy, val_loss = self.get_binary_accuracy_loss(config, model, val, valcat)
-          if False:
-            y_hat = model(tv_x)
-
-            probability = y_hat
-            probabilityflat = y_hat.reshape(y_hat.shape[0])
-            problist = probabilityflat.detach().to(torch.device("cpu")).numpy().tolist()
-            problist = np.where(np.isnan(problist), None, problist).tolist()
-            predicted = probability.argmax(1)
-            intlist = np.round(problist, 0)
-
-            print("p1", probability)
-            print("p2", problist)
-            print("p3", predicted)
-            print("p4", intlist)
-            print("problist", problist)
-            print("predicted", predicted)
-            intlist = np.array(intlist)
-            problist = np.array(problist)
-            print("problist", problist)
-            print(type(problist), type(intlist))
-            problist = (1 - problist) * (1 - intlist) + problist * intlist  # todo
-            print("problist", problist)
-            predictions = None
-            print("sum", tv_y, intlist)
-            num_correct = torch.sum(tv_y == intlist)
-            print("len", len(tv_y), num_correct)
-            acc = float(num_correct) / len(tv_y)
-
-
-            # print("yhat", y_hat)
-            # print(testcat)
-            # print(type(y_hat), y_hat.shape)
-            # y_hat2 = y_hat
-            # if config.binary:
-            #    y_hat2 = y_hat.reshape(y_hat.shape[0])
-            #    tv_y = tv_y.to(dtype=torch.float32).reshape(-1, 1).reshape(tv_y.shape[0])
-            # test_loss = model.bce(y_hat2, tv_y)
-            loss_outputs, loss_target = get_loss_inputs(config, y_hat, tv_y)
-            # print("sh", outputs.shape, labels.shape)
-            # print("sh", outputs, labels)
-            test_loss = model.bce(loss_outputs, loss_target)
-            test_loss = test_loss.item()
-            print("testloss", test_loss)
-            # print(len(tv_x),len(tv_y),len(y_hat),y_hat)
-            (max_vals, arg_maxs) = torch.max(y_hat.data, dim=1)
-            num_correct = torch.sum(tv_y == arg_maxs)
-            #acc = float(num_correct) / len(tv_y)
           accuracy_score = test_accuracy
           train_accuracy_score = train_accuracy
           val_accuracy_score = val_accuracy
