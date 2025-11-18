@@ -173,8 +173,8 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
     }
     
     protected String generateLastactivation() {
-        // todo
-        String[] activations = { null, "relu", "leakyrelu", "tanh", "sigmoid", "softmax", "softplus", "softsign", "elu", "selu", "gelu", "none" };
+        //String[] activations = { null, "relu", "leakyrelu", "tanh", "sigmoid", "softmax", "softplus", "softsign", "elu", "selu", "gelu", "none" };
+        String[] activations = { null, "elu", "hard_shrink", "hard_sigmoid", "hard_tanh", "hard_swish", "leakyrelu", "log_sigmoid", /*"multihead_attention",*/ "prelu", "relu", "relu6", "rrelu", "selu", "celu", "gelu", "sigmoid", "silu", "mish", "soft_plus", "soft_shrink", "soft_sign", "tanh", "tanh_shrink", /*"threshold", "glu",*/ "soft_min", "soft_max", /*"soft_max_2d",*/ "log_soft_max" /*, "adaptive_log_soft_max_with_loss"*/ };
         if (getConfig().isBinary()) {
             activations = new String[] { "sigmoid", "hard_sigmoid" };
         }
