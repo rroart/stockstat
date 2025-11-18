@@ -138,6 +138,7 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MACHINELEARNINGGEMSINGLECONFIG, String.class);
         map.put(ConfigConstants.MACHINELEARNINGGEMPATH, String.class);
         map.put(ConfigConstants.MACHINELEARNINGGEMSERVER, String.class);
+        map.put(ConfigConstants.MACHINELEARNINGUSEBINARY, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGMLLEARN, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, Boolean.class);
@@ -566,6 +567,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MACHINELEARNINGGEMPATH, "");
         deflt.put(ConfigConstants.MACHINELEARNINGGEMSERVER, "http://localhost:8040/");
         deflt.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, Boolean.FALSE);
+        deflt.put(ConfigConstants.MACHINELEARNINGUSEBINARY, Boolean.TRUE);
         deflt.put(ConfigConstants.INDICATORS, Boolean.TRUE);
         deflt.put(ConfigConstants.INDICATORSMOVE, Boolean.TRUE);
         deflt.put(ConfigConstants.INDICATORSMACD, Boolean.TRUE);
@@ -990,6 +992,7 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.MACHINELEARNINGGEMPATH, "GEM path");
         text.put(ConfigConstants.MACHINELEARNINGGEMSERVER, "GEM server");
         text.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, "Do machine learning dynamically if no persistent present");
+        text.put(ConfigConstants.MACHINELEARNINGUSEBINARY, "Do machine learning using binary");
         text.put(ConfigConstants.INDICATORS, "Enable indicators");
         text.put(ConfigConstants.INDICATORSMOVE, "Enable move indicator");
         text.put(ConfigConstants.INDICATORSMACD, "Enable MACD indicator");
@@ -1463,6 +1466,7 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MACHINELEARNINGGEMPATH, new XMLType(String.class, "/tmp", "GEM path"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMSERVER, new XMLType(String.class, "http://localhost:8020/", "GEM server"));
         mymap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, new XMLType(Boolean.class, Boolean.FALSE, "Do machine learning dynamically if no persistent present"));
+        mymap.put(ConfigConstants.MACHINELEARNINGUSEBINARY, new XMLType(Boolean.class, Boolean.TRUE, "Do machine learning using binary"));
         mymap.put(ConfigConstants.INDICATORS, new XMLType( Boolean.class, Boolean.TRUE, "Enable indicators"));
         mymap.put(ConfigConstants.INDICATORSMOVE, new XMLType( Boolean.class, Boolean.TRUE, "Enable move indicator"));
         mymap.put(ConfigConstants.INDICATORSMACD, new XMLType( Boolean.class, Boolean.TRUE, "Enable MACD indicator"));

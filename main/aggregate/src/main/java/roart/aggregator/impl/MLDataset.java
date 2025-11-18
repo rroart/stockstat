@@ -171,7 +171,7 @@ public class MLDataset extends Aggregator {
             mlmeta.features = true;
             String dataset = conf.getConfigData().getMarket();
             boolean multi = neuralnetcommand.isMldynamic() || (neuralnetcommand.isMlclassify() && !neuralnetcommand.isMllearn());
-            if (multi /*conf.wantMLMP()*/) {
+            if (false && multi /*conf.wantMLMP()*/) {
                 doLearnTestClassifyFuture(nnConfigs, conf, mlmeta, neuralnetcommand, dataset);
             } else {
                 doLearnTestClassify(nnConfigs, conf, mlmeta, neuralnetcommand, dataset);

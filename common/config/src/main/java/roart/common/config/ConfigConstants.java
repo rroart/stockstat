@@ -151,6 +151,7 @@ public class ConfigConstants {
     public static final String MACHINELEARNINGPREDICTORSPYTORCHGRUPERSIST = "machinelearning.predictors.pytorch.gru.persist";
     public static final String MACHINELEARNINGPREDICTORSPYTORCHGRUCONFIG = "machinelearning.predictors.pytorch.gru.config";
     public static final String MACHINELEARNINGMLDYNAMIC = "machinelearning.mldynamic";
+    public static final String MACHINELEARNINGUSEBINARY = "machinelearning.usebinary";
     // special two, fix
     public static final String MACHINELEARNINGMLLEARN = "machinelearning.mllearn";
     public static final String MACHINELEARNINGMLCLASSIFY = "machinelearning.mlclassify";

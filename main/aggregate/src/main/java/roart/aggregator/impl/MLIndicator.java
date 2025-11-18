@@ -462,7 +462,7 @@ public class MLIndicator extends Aggregator {
                         classifyMap = learnMap;
                     }
                     if (nnconfigs == null) {
-                        boolean binary = true;
+                        boolean binary = conf.wantUseBinary();
                         String key = model.getKey(binary);
                         nnconfigs = new NeuralNetConfigs();
                         String configValue = (String) conf.getValueOrDefault(key);

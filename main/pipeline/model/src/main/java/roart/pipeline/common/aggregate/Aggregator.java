@@ -98,6 +98,10 @@ public abstract class Aggregator extends PipelineResultData {
         return title;
     }
     
+    public IclijConfig getConf() {
+        return conf;
+    }
+
     public abstract String getName();
 
     public PipelineData putData() {

@@ -192,7 +192,7 @@ public class MachineLearningEvolutionService {
             nnConfigs = new NeuralNetConfigs();            
         }
 
-        boolean binary = true; // TODO binary
+        boolean binary = conf.wantUseBinary(); // TODO binary
         
         List<String> foundkeys = getFoundKeys(conf, nnConfigs);
 
@@ -286,7 +286,7 @@ public class MachineLearningEvolutionService {
         if (nnConfigs == null) {
             nnConfigs = new NeuralNetConfigs();            
         }
-        boolean binary = false; // TODO binary
+        boolean binary = conf.wantUseBinary(); // TODO binary
         List<String> foundkeys = getFoundKeys(conf, nnConfigs);
         for (String key : foundkeys) {
             String configKey = nnConfigs.getConfigMap(binary).get(key);

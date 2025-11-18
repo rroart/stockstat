@@ -376,6 +376,11 @@ public abstract class MyMyConfig extends MyConfig {
                 && wantML();
     }
 
+    public  boolean wantUseBinary() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGUSEBINARY)
+                && wantML();
+    }
+
     public  boolean wantMLSpark() {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKML)
                 && wantML();

@@ -281,7 +281,7 @@ public class MLClassifyPytorchDS extends MLClassifyDS {
         Object[] trainingArray = new Object[learnMap.size()];
         Object[] trainingCatArray = new Object[learnMap.size()];
         getTrainingSet(learnMap, trainingArray, trainingCatArray);
-        boolean binary = classify && classes == 2;
+        boolean binary = indicator.getConf().wantUseBinary() && classify && classes == 2; // TODO
         Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev(binary);
         String config = configMap.get(model.getKey(binary));
         if (nnconfigs == null) {
@@ -358,7 +358,8 @@ public class MLClassifyPytorchDS extends MLClassifyDS {
         }
         LearnTestClassify param = new LearnTestClassify();
         param.setNeuralnetcommand(neuralnetcommand);
-        boolean binary = false;
+        //boolean binary = indicator.getConf().wantUseBinary() && classify && classes == 2; // TODO
+        boolean binary = false; // TODO
         Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev(binary);
         String config = configMap.get(model.getKey(binary));
         if (nnconfigs == null) {

@@ -481,7 +481,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                                 classifyMLMap = learnMLMap;
                             }
                             if (nnConfigs == null) {
-                                boolean binary = outcomes == 2;
+                                boolean binary = conf.wantUseBinary() && outcomes == 2;
                                 String key = model.getKey(binary);
                                 nnConfigs = new NeuralNetConfigs();
                                 String configValue = (String) conf.getValueOrDefault(key);                                
@@ -682,7 +682,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             String path = model.getPath();
                             boolean mldynamic = conf.wantMLDynamic();
                             if (nnConfigs == null) {
-                                boolean binary = outcomes == 2;
+                                boolean binary = conf.wantUseBinary() && outcomes == 2;
                                 String key = model.getKey(binary);
                                 nnConfigs = new NeuralNetConfigs();
                                 String configValue = (String) conf.getValueOrDefault(key);

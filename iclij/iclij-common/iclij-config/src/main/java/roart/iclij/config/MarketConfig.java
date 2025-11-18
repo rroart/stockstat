@@ -41,6 +41,8 @@ public class MarketConfig {
     
     private Boolean enable;
     
+    private Boolean binary;
+    
     public MarketConfig() {
         super();
     }
@@ -207,6 +209,14 @@ public class MarketConfig {
 
     public void setEnable(Boolean enable) {
         this.enable = enable;
+    }
+
+    public Boolean getBinary() {
+        return binary;
+    }
+
+    public void setBinary(Boolean binary) {
+        this.binary = binary;
     }
 
 }
