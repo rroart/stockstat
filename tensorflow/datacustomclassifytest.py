@@ -87,7 +87,7 @@ class MyTestCase(unittest.TestCase):
         print(result)
         self.assertIsNotNone(result['accuracy'], "Accuracy")
 
-        result = cli.classify(test_x, cf=test, train_x=train_x, train_y=train_y, size=size, classes=classes,
+        result = cli.classify(test_x, cf=test, train_x=None, train_y=None, size=size, classes=classes,
                               binary=binary, override = override)
         print(result)
         self.assertIsNotNone(result['classifycatarray'], "Classify")

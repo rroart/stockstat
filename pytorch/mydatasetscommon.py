@@ -1,6 +1,10 @@
 import numpy as np
 import torchvision
 
+import torch
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from torch.utils.data import TensorDataset, DataLoader
 
 def iriscommon(classes=3):
     file_path_train = "/tmp/datasets/iris_training.csv"
@@ -19,10 +23,22 @@ def iriscommon(classes=3):
     train_y = iris_data_train[:,-1].tolist()
     test_x = iris_data_test[:,:-1].tolist()
     test_y = iris_data_test[:,-1].tolist()
+    return train_x, train_y, test_x, test_y, classes
     print(test_x, test_y)
+
+    # Load Iris
+    X, y = load_iris(return_X_y=True)
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.long)
+    print(X)
+    print(y)
+    # Split
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.25, random_state=42, stratify=y)
+    return X_train.tolist(), y_train.tolist(), X_val.tolist(), y_val.tolist(), classes
+
     return train_x, train_y, test_x, test_y, classes
 
-def mnistcommon(classes=10, take=1000):
+def mnistcommon(classes=10, take=40000):
     #(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
     data = torchvision.datasets.MNIST('/tmp/mnist', train=True, download=True)
     print(type(data.train_data.tolist()))

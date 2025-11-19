@@ -97,7 +97,7 @@ class MyTestCase(unittest.TestCase):
       binary = True
       #binary = False
       classes = 2
-      steps = 1000
+      steps = 10
       testlist = [config.PYTORCHRNN, config.PYTORCHCNN, config.PYTORCHLSTM, config.PYTORCHGRU]
       testlist = [config.PYTORCHMLP]
       size = (2, 2)

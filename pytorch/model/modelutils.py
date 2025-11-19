@@ -195,8 +195,8 @@ def observe_new(model, epochs, optimizer, loss_fn, train_loader, valid_loader, b
 
         with torch.no_grad():
             for i, (inputs, labels) in enumerate(valid_loader):
-                if i == 0 and epoch == 0:
-                   print("i", inputs, labels)
+                #if i == 0 and epoch == 0:
+                #   print("i", inputs, labels)
                 inputs = inputs.to(device)
                 labels = labels.to(device)
 
@@ -220,13 +220,16 @@ def observe_new(model, epochs, optimizer, loss_fn, train_loader, valid_loader, b
                 # Compute predictions according to binary/multiclass
                 if getattr(config, 'binary', False):
                     # For binary, accept outputs that may have shape (N,1) or (N,)
-                    print("outputs", outputs)
-                    probs = torch.sigmoid(outputs)
-                    print("probs", probs)
+                    if i == 0 and epoch == 0:
+                        print("outputs", outputs)
+                    probs = outputs #torch.sigmoid(outputs)
+                    if i == 0 and epoch == 0:
+                        print("probs", probs)
                     if probs.dim() > 1 and probs.size(1) == 1:
                         probs = probs.view(-1)
                     preds = (probs > 0.5).long()
-                    print("preds", preds)
+                    if i == 0 and epoch == 0:
+                        print("preds", preds)
                 else:
                     # multiclass logits: take argmax along class dim
                     if outputs.dim() == 1 or (outputs.dim() > 1 and outputs.size(1) == 1):
@@ -418,7 +421,7 @@ def observe_new2(model, epochs, optimizer, loss_fn, train_loader, valid_loader, 
 
                 # predictions
                 if getattr(config, 'binary', False):
-                    probs = torch.sigmoid(outputs)
+                    probs = outputs #torch.sigmoid(outputs)
                     if probs.dim() > 1 and probs.size(1) == 1:
                         probs = probs.view(-1)
                     preds = (probs > 0.5).long()
@@ -462,10 +465,10 @@ def observe_new3(model, epochs, optimizer, loss_fn, train_loader, valid_loader, 
 
             optimizer.zero_grad()
             outputs = model(inputs)
-            print("O", outputs)
+            #print("O", outputs)
 
             loss_inputs, loss_targets = get_loss_inputs(config, outputs, labels)
-            print("o2", loss_inputs, loss_targets)
+            #print("o2", loss_inputs, loss_targets)
             loss = loss_fn(loss_inputs, loss_targets)
             loss = regularize(config, loss, model)
 
@@ -502,7 +505,7 @@ def observe_new3(model, epochs, optimizer, loss_fn, train_loader, valid_loader, 
                 labels_for_acc = labels_for_acc.view(-1).long()
 
                 if getattr(config, 'binary', False):
-                    probs = torch.sigmoid(outputs)
+                    probs = outputs #torch.sigmoid(outputs)
                     if probs.dim() > 1 and probs.size(1) == 1:
                         probs = probs.view(-1)
                     preds = (probs > 0.5).long()
@@ -602,7 +605,7 @@ def observer_another_new(model, epochs, optimizer, loss_fn, train_loader, valid_
                 labels_for_acc = labels_for_acc.view(-1).long()
 
                 if getattr(config, 'binary', False):
-                    probs = torch.sigmoid(outputs)
+                    probs = outputs #torch.sigmoid(outputs)
                     if probs.dim() > 1 and probs.size(1) == 1:
                         probs = probs.view(-1)
                     preds = (probs > 0.5).long()

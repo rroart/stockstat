@@ -242,8 +242,9 @@ class Classify:
             valloader = loader
 
         print("model", model)
-        return modelutils.observe_new(model, config.steps, model.opt, model.bce, loader, valloader, config.batchsize, early_stopping, config)
-        return modelutils.observer_another_new(model, config.steps, model.opt, model.bce, loader, valloader, config.batchsize, early_stopping, config)
+        return modelutils.observe(model, config.steps, model.opt, model.bce, loader, valloader, config.batchsize, early_stopping, config)
+        #return modelutils.observe_new3(model, config.steps, model.opt, model.bce, loader, valloader, config.batchsize, early_stopping, config)
+        #return modelutils.observer_another_new(model, config.steps, model.opt, model.bce, loader, valloader, config.batchsize, early_stopping, config)
         for i in range(model.config.steps):
             model.train()
             #print(v_x.shape)
