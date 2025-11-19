@@ -516,7 +516,7 @@ public class SimulateInvestComponentTest {
         Map<String, List<List<Double>>> catMap = td.getVolumeCatValMap();
         Map<String, Long[]> vmap = td.getVolumeMap();
         // call public method getVolumeExcludesFull (non-private) already used in test(), simpler to call directly
-        Map<Integer, List<String>> full = comp.getVolumeExcludesFull(simc, 1, catMap, vmap, Map.of());
+        Map<Integer, List<String>> full = comp.getVolumeExcludesFull(simc, 1, catMap, vmap, Map.of(), 0, 0); // TODO
         java.lang.reflect.Method getEx = SimulateInvestComponent.class.getDeclaredMethod("getExclusions", SimulateInvestConfig.class, List.class, List.class, Set.class, int.class, Map.class);
         getEx.setAccessible(true);
         List<String> excl = (List<String>) getEx.invoke(comp, simc, td.getStockDates(LocalDate.now(), 10, false), List.of("Z"), new java.util.HashSet<>(), 0, full);
