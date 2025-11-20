@@ -144,7 +144,7 @@ class Classify:
         del classifier
         dt = datetime.now()
         #print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put({"accuracy": float(accuracy_score), "trainaccuracy": float(train_accuracy_score), 'train_loss' : train_loss, 'val_accuracy' : val_accuracy, 'val_loss' : val_loss})
+        queue.put({"accuracy": float(accuracy_score), "trainaccuracy": float(train_accuracy_score), 'train_loss' : train_loss, 'valaccuracy' : val_accuracy, 'val_loss' : val_loss})
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def getSlide(self, inputs, labels, myobj, config):
@@ -441,6 +441,8 @@ class Classify:
         #else:
         #    train_loss, train_accuracy_score = classifier.evaluate(train, traincat)
         #    test_loss, accuracy_score = classifier.evaluate(test, testcat)
+        if classify and config.normalize:
+            test = test #layerutils.normalize((test, av)
         test_loss, accuracy_score = classifier.evaluate(test, testcat)
         print("Keras model", isinstance(classifier, tf.keras.Model))
         if isinstance(classifier, tf.keras.Model):
@@ -662,7 +664,7 @@ class Classify:
             loss = float(loss)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, 'train_loss' : train_loss, 'val_accuracy' : val_accuracy, 'val_loss' : val_loss, "gpu" : self.hasgpu() })
+        queue.put({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, 'train_loss' : train_loss, 'valaccuracy' : val_accuracy, 'val_loss' : val_loss, "gpu" : self.hasgpu() })
 
     def do_dataset(self, queue, myjson):
         dt = datetime.now()
