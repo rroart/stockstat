@@ -21,6 +21,7 @@ def learn(ds = "mnist", path = None, cf = 'tensorflowMLPConfig', steps = None, t
         thecf['take'] = take
     if override is not None:
         thecf.update(override)
+    thecf['binary'] = False
     myds = getdsname(ds)
     filename = getfilename(thecf, myds)
     data = { 'modelInt' : modelInt, 'dataset' : ds, 'path' : path, 'filename' : filename, 'classifyarray' : None, 'neuralnetcommand' : neuralnetcommand, cfname : thecf, 'zero' : True }
@@ -39,6 +40,7 @@ def classify(text, ds = "mnist", path = None, cf = 'tensorflowMLPConfig', take =
     cfname, modelInt, thecf = config.get(cf)
     if take is not None:
         thecf['take'] = take
+    thecf['binary'] = False
     myds = getdsname(ds)
     filename = getfilename(thecf, myds)
     data = { 'modelInt' : modelInt, 'dataset' : ds, 'path' : path, 'filename' : filename, 'classifyarray' : [ text ], 'classes' : size, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
