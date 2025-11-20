@@ -26,7 +26,7 @@ public class MLClassifyTensorflowLSTMModel  extends MLClassifyTensorflowRecurren
     @Override
     public String getKey(boolean binary) {
         if (binary) {
-            return ConfigConstants.MACHINELEARNINGTENSORFLOWGRUBINARYCONFIG;
+            return ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMBINARYCONFIG;
         }
         return ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG;
     }
