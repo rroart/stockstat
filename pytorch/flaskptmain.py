@@ -49,9 +49,7 @@ def do_classify():
     cl = classify.Classify()
     return cl.do_classify(request)
 
-@app.route('/learntest', methods=['POST'])
-def do_learntest():
-    def classifyrunner(queue, request_data):
+def learntestrunner(queue, request_data):
         try:
             import classify
             cl = classify.Classify()
@@ -70,11 +68,15 @@ def do_learntest():
                 pass
             memory = "CUDA out of memory" in traceback.format_exc()
             queue.put({"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "gpu" : hasgpu, "memory" : memory, "exception" : True })
+
+
+@app.route('/learntest', methods=['POST'])
+def do_learntest():
     aqueue = Queue()
     request_data = request.get_data(as_text=True)
     # default result to avoid referenced-before-assignment warnings
     result = {"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : False, "cudnn" : False }
-    process = Process(target=classifyrunner, args=(aqueue, request_data))
+    process = Process(target=learntestrunner, args=(aqueue, request_data))
     try:
         import queue
         process.start()
@@ -93,9 +95,7 @@ def do_learntest():
         traceback.print_exc(file=sys.stdout)
     return Response(json.dumps(result), mimetype='application/json')
 
-@app.route('/learntestclassify', methods=['POST'])
-def do_learntestclassify():
-    def classifyrunner(queue, request_data):
+def learntestclassifyrunner(queue, request_data):
         try:
             import classify
             cl = classify.Classify()
@@ -114,11 +114,15 @@ def do_learntestclassify():
                 pass
             memory = "CUDA out of memory" in traceback.format_exc()
             queue.put({"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "gpu" : hasgpu, "memory" : memory, "exception" : True })
+
+
+@app.route('/learntestclassify', methods=['POST'])
+def do_learntestclassify():
     aqueue = Queue()
     request_data = request.get_data(as_text=True)
     # default result to avoid referenced-before-assignment warnings
     result = {"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : False, "cudnn" : False }
-    process = Process(target=classifyrunner, args=(aqueue, request_data))
+    process = Process(target=learntestclassifyrunner, args=(aqueue, request_data))
     try:
         import queue
         process.start()
@@ -157,9 +161,7 @@ def do_learntestpredict():
     process.join()
     return result
 
-@app.route('/dataset', methods=['POST'])
-def do_dataset():
-    def classifyrunner(queue, request_data):
+def datasetrunner(queue, request_data):
         try:
             import classify
             cl = classify.Classify()
@@ -178,11 +180,15 @@ def do_dataset():
                 pass
             memory = "CUDA out of memory" in traceback.format_exc()
             queue.put({"accuracy": None, "loss": None, "gpu" : hasgpu, "memory" : memory, "exception" : True })
+
+
+@app.route('/dataset', methods=['POST'])
+def do_dataset():
     aqueue = Queue()
     request_data = request.get_data(as_text=True)
     # default result to avoid referenced-before-assignment warnings
     result = {"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : False, "cudnn" : False }
-    process = Process(target=classifyrunner, args=(aqueue, request_data))
+    process = Process(target=datasetrunner, args=(aqueue, request_data))
     try:
         import queue
         process.start()
@@ -201,9 +207,7 @@ def do_dataset():
         traceback.print_exc(file=sys.stdout)
     return Response(json.dumps(result), mimetype='application/json')
 
-@app.route('/datasetgen', methods=['POST'])
-def do_dataset_gen():
-    def classifyrunner(queue, request_data):
+def datasetgenrunner(queue, request_data):
         try:
             import classify
             cl = classify.Classify()
@@ -222,11 +226,15 @@ def do_dataset_gen():
                 pass
             memory = "CUDA out of memory" in traceback.format_exc()
             queue.put({"accuracy": None, "loss": None, "gpu" : hasgpu, "memory" : memory, "exception" : True })
+
+
+@app.route('/datasetgen', methods=['POST'])
+def do_dataset_gen():
     aqueue = Queue()
     request_data = request.get_data(as_text=True)
     # default result to avoid referenced-before-assignment warnings
     result = {"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : False, "cudnn" : False }
-    process = Process(target=classifyrunner, args=(aqueue, request_data))
+    process = Process(target=datasetgenrunner, args=(aqueue, request_data))
     try:
         import queue
         process.start()
@@ -266,6 +274,31 @@ def download(filename):
     full_path = os.path.join(app.root_path, "/tmp/download")
     return send_from_directory(full_path, filename, as_attachment=True)
 
+
+def gptmidirunner(queue, request_data, filenames, cachedata):
+    try:
+        import classify
+        cl = classify.Classify()
+        cl.do_gptmidi(queue, request_data, filenames, cachedata)
+    except:
+        import sys, traceback
+        memory = "CUDA error: out of memory" in traceback.format_exc()
+        cudnn = "0 successful operations" in traceback.format_exc()
+        queue.put(Response(json.dumps(
+            {"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception": True,
+             "gpu": hasgpu, "memory": memory, "cudnn": cudnn}), mimetype='application/json'))
+        traceback.print_exc(file=sys.stdout)
+        print("\n")
+        import random
+        try:
+            f = open("/tmp/outpt" + argstr() + str(random.randint(1000, 9999)) + ".txt", "w")
+            f.write(request_data if request_data is not None else "")
+            traceback.print_exc(file=f)
+            f.close()
+        except Exception:
+            pass
+
+
 @app.route('/gptmidi/<ds>', methods=['POST'])
 def do_gptmidi(ds):
     if False:
@@ -290,27 +323,6 @@ def do_gptmidi(ds):
         filenames = [filename]
     except Exception:
         filenames = []
-
-    def gptmidirunner(queue, request_data, filenames, cachedata):
-        try:
-            import classify
-            cl = classify.Classify()
-            cl.do_gptmidi(queue, request_data, filenames, cachedata)
-        except:
-            import sys,traceback
-            memory = "CUDA error: out of memory" in traceback.format_exc()
-            cudnn = "0 successful operations" in traceback.format_exc()
-            queue.put(Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : memory, "cudnn" : cudnn }), mimetype='application/json'))
-            traceback.print_exc(file=sys.stdout)
-            print("\n")
-            import random
-            try:
-                f = open("/tmp/outpt" + argstr() + str(random.randint(1000,9999)) + ".txt", "w")
-                f.write(request_data if request_data is not None else "")
-                traceback.print_exc(file=f)
-                f.close()
-            except Exception:
-                pass
 
     aqueue = Queue()
     # ensure myjson and filenames are serializable strings/lists and set default result
