@@ -136,6 +136,9 @@ class Classify:
           if classify and config.normalize:
             array = layerutils.normalize(array, avgstdvar)
           if not config.binary:
+           if True:
+            intlist, problist = self.get_multi_cat_and_probability(model, array)
+           else:
             print("Classify", array.shape)
             predictions = model(array)
             #print(type(predictions))
@@ -658,6 +661,19 @@ class Classify:
         catprobabilitylist = (1 - probabilitylist) * (1 - predictedcat) + probabilitylist * predictedcat  # todo
         print("problist", catprobabilitylist)
         return predictedcat, catprobabilitylist
+
+    def get_multi_cat_and_probability(self, model, x):
+        predictions = model(x)
+        _, predicted = torch.max(predictions, 1)
+        # TODO torch.round
+        intlist = predicted.tolist()
+        sm = torch.nn.Softmax(1)
+        probabilities = sm(predictions)
+        probability, _ = torch.max(probabilities, 1)
+        problist = probability.detach().to(torch.device("cpu")).numpy().tolist()
+        problist = np.where(np.isnan(problist), None, problist).tolist()
+        return intlist, problist
+
 
     def getModel(self, myobj):
       if hasattr(myobj, 'modelInt'):  
