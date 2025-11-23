@@ -90,12 +90,12 @@ class Net(nn.Module):
             if i < (len(sizearr) - 2):
                 if config.batchnormalize:
                     mylayers.append(nn.BatchNorm1d(sizearr[i + 1]))
-                if activation and i < (len(sizearr) - 3):
+                if activation and i < (len(sizearr) - 2):
                     mylayers.append(activation)
                 if config.dropout > 0:
                     mylayers.append(nn.Dropout(config.dropout))
-            if lastactivation:
-                mylayers.append(lastactivation)
+        if lastactivation:
+            mylayers.append(lastactivation)
 
         self.fc1 = nn.Sequential(*mylayers)
 

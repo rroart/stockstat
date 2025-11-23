@@ -105,8 +105,8 @@ class Net(nn.Module):
                     mylayers.append(activation)
                 if config.dropout > 0:
                     mylayers.append(nn.Dropout(config.dropout))
-            if lastactivation:
-                mylayers.append(lastactivation)
+        if lastactivation:
+            mylayers.append(lastactivation)
 
         self.fc1 = nn.Sequential(*mylayers)
 
