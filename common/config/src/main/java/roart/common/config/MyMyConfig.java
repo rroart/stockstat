@@ -377,8 +377,7 @@ public abstract class MyMyConfig extends MyConfig {
     }
 
     public  boolean wantUseBinary() {
-        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGUSEBINARY)
-                && wantML();
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGUSEBINARY);
     }
 
     public  boolean wantMLSpark() {
