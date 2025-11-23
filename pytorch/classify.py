@@ -245,6 +245,7 @@ class Classify:
             valloader = loader
 
         print("model", model)
+
         return modelutils.observe(model, config.steps, model.opt, model.bce, loader, valloader, config.batchsize, early_stopping, config)
         #return modelutils.observe_new3(model, config.steps, model.opt, model.bce, loader, valloader, config.batchsize, early_stopping, config)
         #return modelutils.observer_another_new(model, config.steps, model.opt, model.bce, loader, valloader, config.batchsize, early_stopping, config)
@@ -575,11 +576,12 @@ class Classify:
             val = layerutils.normalize(val, avgstdvar)
           tv_y = torch.LongTensor(testcat).to(dev)
 
-          train_accuracy, training_loss = self.get_binary_accuracy_loss(config, model, v_x, v_y)
+          print("types", v_x.get_device(), v_y.get_device())
+          train_accuracy, training_loss = self.get_binary_accuracy_loss(config, model, dev, v_x, v_y)
           #print("tvx", tv_x)
-          test_accuracy, test_loss = self.get_binary_accuracy_loss(config, model, tv_x, tv_y)
+          test_accuracy, test_loss = self.get_binary_accuracy_loss(config, model, dev, tv_x, tv_y)
           #print("val", val)
-          val_accuracy, val_loss = self.get_binary_accuracy_loss(config, model, val, valcat)
+          val_accuracy, val_loss = self.get_binary_accuracy_loss(config, model, dev, val, valcat)
           accuracy_score = test_accuracy
           train_accuracy_score = train_accuracy
           val_accuracy_score = val_accuracy
@@ -618,23 +620,24 @@ class Classify:
         accuracy = float(num_correct0) / len(cat)
         return accuracy, loss
 
-    def get_binary_accuracy_loss(self, config, model, x, cat) -> float:
+    def get_binary_accuracy_loss(self, config, model, dev, x, cat) -> float:
         predictedcat, probability = self.get_binary_cat_and_probability(model, x)
 
         # v_y = v_y.to(dtype=torch.float32).reshape(-1, 1)
         print("cmp", predictedcat, cat)
         # (max_vals0, arg_maxs0) = torch.max(y0_hat.data, dim=1)
         # print("cmp", y0_hat, v_y, arg_maxs0)
-        print("sum", cat, predictedcat)
-        num_correct0 = torch.sum(cat == predictedcat)
+        print("sum", type(cat), type(predictedcat))
+        num_correct0 = torch.sum(cat.cpu() == predictedcat)
         print("len", len(cat), num_correct0)
         accuracy = float(num_correct0) / len(cat)
 
-        probability = torch.FloatTensor(probability)
+        probability = torch.FloatTensor(probability).to(dev)
         loss_outputs, loss_target = get_loss_inputs(config, probability, cat)
         # print("sh", outputs.shape, labels.shape)
         # print("sh", outputs, labels)
         print("loss_outputs", loss_outputs, loss_target)
+        print("loss_outputs", loss_outputs.get_device(), loss_target.get_device())
         loss = model.bce(loss_outputs, loss_target)
         loss = loss.item()
         print("Accuracy loss", accuracy, loss)
@@ -832,6 +835,8 @@ class Classify:
         (intlist, problist) = (None, None)
         if self.wantClassify(myobj):
             (intlist, problist) = self.do_classifyinner(myobj, model, config, classify, avgstdvar)
+            intlist = intlist.tolist()
+            problist = problist.tolist()
         #print(len(intlist))
         #print(intlist)
         #print(problist)
