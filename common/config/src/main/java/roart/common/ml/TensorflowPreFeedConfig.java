@@ -22,6 +22,9 @@ public abstract class TensorflowPreFeedConfig extends TensorflowConfig {
     
     public TensorflowPreFeedConfig(String name, TensorflowConfigCommon tensorflowConfigCommon, int convlayers, int layers, int hidden) {
         super(name, tensorflowConfigCommon);
+        this.convlayers = convlayers;
+        this.layers = layers;
+        this.hidden = hidden;
     }
 
     public TensorflowPreFeedConfig(String name) {

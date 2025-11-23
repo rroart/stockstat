@@ -22,6 +22,9 @@ public abstract class PytorchPreFeedConfig extends PytorchConfig {
     
     public PytorchPreFeedConfig(String name, PytorchConfigCommon pytorchConfigCommon, int convlayers, int layers, int hidden) {
         super(name, pytorchConfigCommon);
+        this.convlayers = convlayers;
+        this.layers = layers;
+        this.hidden = hidden;
     }
 
     public PytorchPreFeedConfig(String name) {
