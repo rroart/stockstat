@@ -299,28 +299,7 @@ class Classify:
         #layer.adapt(array)
         #array = layer(array)
         print("Shape", array.shape)
-        # TODO no transpose with dataset
-        if config.name == "cnn2" and not hasattr(myobj, 'dataset'): #todo
-            print("cnn2 shape")
-            print(array.shape)
-            if len(array.shape) == 3:
-                print("sh0", array.shape)
-                array = array.reshape(array.shape[0], array.shape[1], array.shape[2], 1)
-                print("sh1", array.shape)
-            else:
-            #array = np.transpose(array, [0, 3, 2, 1])
-            #array = np.transpose(array, [0, 2, 3, 1])
-                array = array.reshape(array.shape[0], 1, array.shape[1], array.shape[2])
-
-            print(array.shape)
-
-        if config.name == "cnn" and not hasattr(myobj, 'dataset'): #todo
-            print("cnn shape")
-            print(array.shape)
-            if len(array.shape) == 3:
-                array = array.reshape(array.shape[0], array.shape[2], array.shape[1])
-            if len(array.shape) == 2:
-                array = array.reshape(array.shape[0], array.shape[1], 1)
+        array = self.transpose_cnn(myobj, config, array)
 
         print("Shapes0", array.shape)
         cat = np.array([], dtype='i')
@@ -383,6 +362,40 @@ class Classify:
         print("Lens", len(traincat), len(valcat), len(testcat))
         #return array, cat, array, cat, mydim, array, cat
         return train, traincat, test, testcat, train.shape, val, valcat
+
+    def transpose_cnn(self, myobj, config, array):
+        # TODO no transpose with dataset
+        if config.name == "cnn2" and getattr(myobj, 'dataset', None) is None:
+            print("cnn2 shape")
+            print(array.shape)
+            if len(array.shape) == 3:
+                print("sh0", array.shape)
+                array = array.reshape(array.shape[0], array.shape[1], array.shape[2], 1)
+                print("sh1", array.shape)
+            else:
+                # array = np.transpose(array, [0, 3, 2, 1])
+                # array = np.transpose(array, [0, 2, 3, 1])
+                array = array.reshape(array.shape[0], 1, array.shape[1], array.shape[2])
+
+            print(array.shape)
+
+        if config.name == "cnn" and getattr(myobj, 'dataset', None) is None:
+            print("cnn shape")
+            print(array.shape)
+            if len(array.shape) == 3:
+                array = array.reshape(array.shape[0], array.shape[2], array.shape[1])
+            if len(array.shape) == 2:
+                array = array.reshape(array.shape[0], array.shape[1], 1)
+        return array
+        # from classify:
+
+        if config.name == "cnn2":  # todo
+            print("cnn2 shape")
+            array = np.array(myobj.classifyarray, dtype='f')
+            print(array.shape)
+            # array = np.transpose(array, [0, 3, 2, 1])
+            array = np.transpose(array, [0, 2, 3, 1])
+            print(array.shape)
 
     def splitarray(self, half, size, train, traincat):
         half = round(half * (1 - size))
@@ -641,14 +654,7 @@ class Classify:
         (intlist, problist) = (None, None)
         if self.wantClassify(myobj):
             #print("here0");
-            if config.name == "cnn2": #todo
-                print("cnn2 shape")
-                array = np.array(myobj.classifyarray, dtype='f')
-                print(array.shape)
-                #array = np.transpose(array, [0, 3, 2, 1])
-                array = np.transpose(array, [0, 2, 3, 1])
-                print(array.shape)
-                myobj.classifyarray = array
+            myobj.classifyarray = self.transpose_cnn(myobj, config, myobj.classifyarray)
             (intlist, problist) = self.do_classifyinner(myobj, classifier, config, classify)
         #print("here00");
         #print(len(intlist))
