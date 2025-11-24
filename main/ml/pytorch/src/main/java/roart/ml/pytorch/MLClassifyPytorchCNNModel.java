@@ -26,7 +26,7 @@ public class MLClassifyPytorchCNNModel  extends MLClassifyPytorchModel {
     @Override
     public String getKey(boolean binary) {
         if (binary) {
-            return ConfigConstants.MACHINELEARNINGPYTORCHCNN2BINARYCONFIG;
+            return ConfigConstants.MACHINELEARNINGPYTORCHCNNBINARYCONFIG;
         }
         return ConfigConstants.MACHINELEARNINGPYTORCHCNNCONFIG;
     }
