@@ -41,7 +41,7 @@ dictclass = {}
 global count
 count = 0
 
-# todo
+#  todo
 best_practise_load_save = True
 
 print("Using gpu: ", torch.cuda.is_available())
@@ -246,7 +246,7 @@ class Classify:
 
         print("model", model)
 
-        return modelutils.observe(model, config.steps, model.opt, model.bce, loader, valloader, config.batchsize, early_stopping, config)
+        return modelutils.observe_new(model, config.steps, model.opt, model.bce, loader, valloader, config.batchsize, early_stopping, config)
         #return modelutils.observe_new3(model, config.steps, model.opt, model.bce, loader, valloader, config.batchsize, early_stopping, config)
         #return modelutils.observer_another_new(model, config.steps, model.opt, model.bce, loader, valloader, config.batchsize, early_stopping, config)
         for i in range(model.config.steps):
@@ -508,6 +508,7 @@ class Classify:
         #mydim = train.shape[1:]
         #print("mydim2", mydim)
         #print("mydim", mydim)
+        # todo test val
         avgstdvar = layerutils.avgstdvar(train)
         print("Shapes", train.shape, traincat.shape, shape, avgstdvar)
         return train, traincat, test, testcat, train.shape, avgstdvar, val, valcat
@@ -663,6 +664,7 @@ class Classify:
         print(type(probabilitylist), type(predictedcat))
         catprobabilitylist = (1 - probabilitylist) * (1 - predictedcat) + probabilitylist * predictedcat  # todo
         print("problist", catprobabilitylist)
+        # TODO INT
         return predictedcat, catprobabilitylist
 
     def get_multi_cat_and_probability(self, model, x):
@@ -835,8 +837,6 @@ class Classify:
         (intlist, problist) = (None, None)
         if self.wantClassify(myobj):
             (intlist, problist) = self.do_classifyinner(myobj, model, config, classify, avgstdvar)
-            intlist = intlist.tolist()
-            problist = problist.tolist()
         #print(len(intlist))
         #print(intlist)
         #print(problist)
