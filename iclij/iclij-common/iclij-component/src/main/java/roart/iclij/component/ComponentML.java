@@ -48,7 +48,9 @@ public abstract class ComponentML extends Component {
             EvolutionConfig evolveConfig = getEvolutionConfig(param, actionEvolveConfig);
             String newConfStr = JsonUtil.convert(evolveConfig);
             param.getService().coremlconf.getConfigData().getConfigValueMap().put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, newConfStr);
-            param.getService().coremlconf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGUSEBINARY, market.getConfig().getBinary());
+            if (market.getConfig().getBinary() != null) {
+                param.getService().coremlconf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGUSEBINARY, market.getConfig().getBinary());
+            }
 
             // We do not need this with the other subcomp settings?
             //Map<String, Object> evolveMap = setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, true);
