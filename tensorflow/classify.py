@@ -364,18 +364,21 @@ class Classify:
         return train, traincat, test, testcat, train.shape, val, valcat
 
     def transpose_cnn(self, myobj, config, array):
+        # input from java is (N, C, L) and (N, C, H, W)
+        # input from dataset is already the default
+        # tensorflow default (and working) format is (N, L, C) and (N, H, W, C)
         # TODO no transpose with dataset
         if config.name == "cnn2" and getattr(myobj, 'dataset', None) is None:
             print("cnn2 shape")
             print(array.shape)
             if len(array.shape) == 3:
                 print("sh0", array.shape)
-                array = array.reshape(array.shape[0], array.shape[1], array.shape[2], 1)
+                #array = array.reshape(array.shape[0], array.shape[1], array.shape[2], 1)
                 print("sh1", array.shape)
             else:
                 # array = np.transpose(array, [0, 3, 2, 1])
-                # array = np.transpose(array, [0, 2, 3, 1])
-                array = array.reshape(array.shape[0], 1, array.shape[1], array.shape[2])
+                array = np.transpose(array, [0, 2, 3, 1])
+                #array = array.reshape(array.shape[0], 1, array.shape[1], array.shape[2])
 
             print(array.shape)
 
@@ -383,9 +386,10 @@ class Classify:
             print("cnn shape")
             print(array.shape)
             if len(array.shape) == 3:
-                array = array.reshape(array.shape[0], array.shape[2], array.shape[1])
-            if len(array.shape) == 2:
-                array = array.reshape(array.shape[0], array.shape[1], 1)
+                array = np.transpose(array, [0, 2, 1])
+                #array = array.reshape(array.shape[0], array.shape[2], array.shape[1])
+            #if len(array.shape) == 2:
+            #    array = array.reshape(array.shape[0], array.shape[1], 1)
         return array
         # from classify:
 
