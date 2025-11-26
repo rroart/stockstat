@@ -444,18 +444,7 @@ class Classify:
         shape = array.shape
         # TODO check if right reshape
         print("Shape", array.shape)
-        # TODO no transpose with dataset
-        if config.name == "cnn2" and not hasattr(myobj, 'dataset'): #todo
-            print("cnn2 shape")
-            print(array.shape)
-            if len(array.shape) == 3:
-                print("sh0", array.shape)
-                #array = array.reshape(array.shape[0], 1, array.shape[1], array.shape[2])
-                print("sh1", array.shape)
-            #array = np.transpose(array, [0, 3, 2, 1])
-            #array = np.transpose(array, [0, 2, 3, 1])
-            array = array.reshape(array.shape[0], array.shape[1], array.shape[2], 1)
-            print(array.shape)
+        array = self.transpose_cnn(myobj, config, array)
         cat = np.array([], dtype='i')
         if hasattr(myobj, 'trainingcatarray') and not myobj.trainingcatarray is None:
             cat = np.array(myobj.trainingcatarray, dtype='i')
@@ -521,7 +510,42 @@ class Classify:
         #X, Y = make_moons(500, noise=0.2)
         #X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.25, random_state=73)
         #net = model.network(train, traincat)
-        
+
+    def transpose_cnn(self, myobj, config, array):
+        # input from java is (N, C, L) and (N, C, H, W)
+        # input from dataset is already the default
+        # pytorch uses (N, C, L) and (N, C, H, W)
+        # TODO no transpose with dataset
+        return array
+        if config.name == "cnn2" and getattr(myobj, 'dataset', None) is None:  # todo
+            print("cnn2 shape")
+            print(array.shape)
+            if len(array.shape) == 3:
+                print("sh0", array.shape)
+                # array = array.reshape(array.shape[0], 1, array.shape[1], array.shape[2])
+                print("sh1", array.shape)
+            # array = np.transpose(array, [0, 3, 2, 1])
+            # array = np.transpose(array, [0, 2, 3, 1])
+            array = array.reshape(array.shape[0], array.shape[1], array.shape[2], 1)
+            print(array.shape)
+        return array
+
+        if config.name == "cnn2":  # todo
+            print("cnn2 shape")
+            array = np.array(myobj.classifyarray, dtype='f')
+            array = np.array(myobj.trainingarray, dtype='f')
+
+            print(array.shape)
+            # only for debug/test
+            if len(array.shape) == 3:
+                print("sh0", array.shape)
+                array = array.reshape(array.shape[0], array.shape[1], array.shape[2], 1)
+                print("sh1", array.shape)
+            # array = np.transpose(array, [0, 3, 2, 1])
+            array = np.transpose(array, [0, 2, 3, 1])
+            print(array.shape)
+            myobj.classifyarray = array
+
     def splitarray(self, half, size, train, traincat):
         half = round(half * (1 - size))
         newtrain = train[:half, :]
@@ -809,21 +833,7 @@ class Classify:
         val_accuracy_score = None
         loss = None
         if self.wantLearn(myobj):
-            if config.name == "cnn2": #todo
-                print("cnn2 shape")
-                array = np.array(myobj.classifyarray, dtype='f')
-                array = np.array(myobj.trainingarray, dtype='f')
-
-                print(array.shape)
-                # only for debug/test
-                if len(array.shape) == 3:
-                    print("sh0", array.shape)
-                    array = array.reshape(array.shape[0], array.shape[1], array.shape[2], 1)
-                    print("sh1", array.shape)
-                #array = np.transpose(array, [0, 3, 2, 1])
-                array = np.transpose(array, [0, 2, 3, 1])
-                print(array.shape)
-                myobj.classifyarray = array
+            myobj.trainingarray = self.transpose_cnn(myobj, config, myobj.trainingarray)
             (accuracy_score, loss, train_accuracy_score, val_accuracy_score) = self.do_learntestinner(myobj, model, config, train, traincat,
                                                                                   test, testcat, classify, avgstdvar, val, valcat)
         # save model if
