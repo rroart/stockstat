@@ -21,8 +21,7 @@ import mydatasets
 from customdataset import CustomDataset
 from earlystopping import EarlyStopping
 from model import layerutils, modelutils
-from model.layerutils import avgstdvar
-from model.modelutils import get_loss_inputs, print_model_parameters
+ffrom model.modelutils import get_loss_inputs, print_model_parameters
 #from test_iris_observe import get_accuracy_multiclass
 #from test_iris_observe import print_model_parameters
 
@@ -64,7 +63,7 @@ class Classify:
         global dictclass
         classifier = dictclass[myobj.modelname]
         del dictclass[myobj.modelname]
-        (intlist, problist) = self.do_classifyinner(myobj, classifier, config, classify, avgstdvar)
+        (intlist, problist) = self.do_classifyinner(myobj, classifier, config, classify)
         print(len(intlist))
         #print(intlist)
         #print(problist)
@@ -73,7 +72,7 @@ class Classify:
         
         return Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist }), mimetype='application/json')
         
-    def do_classifyinner(self, myobj, model, config, classify, avgstdvar):
+    def do_classifyinner(self, myobj, model, config, classify):
         dev = self.getdev()
         array = np.array(myobj.classifyarray, dtype='f')
         #array = myobj.classifyarray
@@ -134,7 +133,7 @@ class Classify:
             return predicted, problist
         else:
           if classify and config.normalize:
-            array = layerutils.normalize(array, avgstdvar)
+            array = layerutils.normalize(array)
           if not config.binary:
            if True:
             intlist, problist = self.get_multi_cat_and_probability(model, array)
@@ -199,14 +198,16 @@ class Classify:
 
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
-        (train, traincat, test, testcat, shape, avgstdvar, val, valcat) = self.gettraintest(myobj, config, classify)
+        (train, traincat, test, testcat, shape, val, valcat) = self.gettraintest(myobj, config, classify)
         #myobj.size = size
         model = Model.Net(myobj, config, classify, shape)
         if torch.cuda.is_available():
             model.cuda()
         #testcat = torch.LongTensor(testcat)
-        (accuracy_score, loss, train_accuracy_score, val_accuracy_score) = self.do_learntestinner(myobj, model, config, train, traincat,
-                                                                              test, testcat, classify, avgstdvar, val, valcat)
+        (accuracy_score, loss, train_accuracy_score, val_accuracy_score) = self.do_learntestinner(myobj, model, config,
+                                                                                                  train, traincat, test,
+                                                                                                  testcat, classify,
+                                                                                                  val, valcat)
         global dictclass
         #dictclass[str(myobj.modelInt) + myobj.period + myobj.modelname] = model
         global dicteval
@@ -217,15 +218,15 @@ class Classify:
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         queue.put({"accuracy": float(accuracy_score), "trainaccuracy": float(train_accuracy_score)})
 
-    def mytrain(self, model, inputs, labels, myobj, config, classify, avgstdvar, val = None, valcat = None):
+    def mytrain(self, model, inputs, labels, myobj, config, classify, val=None, valcat=None):
         early_stopping = EarlyStopping(patience=5, delta=0.01, verbose=True)
         if classify:
             labels = labels.long()
         v_x = inputs
         if classify and config.normalize:
-            v_x = layerutils.normalize(v_x, avgstdvar)
+            v_x = layerutils.normalize(v_x)
             if not val is None:
-                val = layerutils.normalize(val, avgstdvar)
+                val = layerutils.normalize(val)
         dev = self.getdev()
         v_y = labels.to(dev)
         #ds = CustomDataset(inputs, labels)
@@ -458,8 +459,7 @@ class Classify:
         if not classify:
             (inputs, labels) = self.getSlide(array, None, myobj, config)
             #mydim = myobj.size
-            avgstdvar = layerutils.avgstdvar(array)
-            return inputs, labels, inputs, labels, inputs.shape, avgstdvar, inputs, labels
+            return inputs, labels, inputs, labels, inputs.shape, inputs, labels
         if hasattr(myobj, 'testarray') and hasattr(myobj, 'testcatarray'):
             test = np.array(myobj.testarray, dtype='f')
             testcat = np.array(myobj.testcatarray, dtype='i')
@@ -498,9 +498,8 @@ class Classify:
         #print("mydim2", mydim)
         #print("mydim", mydim)
         # todo test val
-        avgstdvar = layerutils.avgstdvar(train)
-        print("Shapes", train.shape, traincat.shape, shape, avgstdvar)
-        return train, traincat, test, testcat, train.shape, avgstdvar, val, valcat
+        print("Shapes", train.shape, traincat.shape, shape)
+        return train, traincat, test, testcat, train.shape, val, valcat
         #print("classes")
         #print(myobj.classes)
         #print("cwd")
@@ -554,7 +553,7 @@ class Classify:
         valcat = traincat[half:]
         return newtrain, newtraincat, val, valcat
 
-    def do_learntestinner(self, myobj, model, config, train, traincat, test, testcat, classify, avgstdvar, val = None, valcat = None):
+    def do_learntestinner(self, myobj, model, config, train, traincat, test, testcat, classify, val=None, valcat=None):
         print(model)
         print("shapes", train.shape, traincat.shape, test.shape, testcat.shape, val.shape, valcat.shape)
         dev = self.getdev()
@@ -572,7 +571,7 @@ class Classify:
         if val is not None:
             val = torch.FloatTensor(val).to(dev)
             valcat = torch.FloatTensor(valcat).to(dev)
-        self.mytrain(model, v_x, v_y, myobj, config, classify, avgstdvar, val, valcat)
+        self.mytrain(model, v_x, v_y, myobj, config, classify, val, valcat)
         model.eval()
 
         if not classify:
@@ -596,9 +595,9 @@ class Classify:
         if config.binary:
           tv_x = torch.FloatTensor(test).to(dev)
           if classify and config.normalize:
-            v_x = layerutils.normalize(v_x, avgstdvar)
-            tv_x = layerutils.normalize(tv_x, avgstdvar)
-            val = layerutils.normalize(val, avgstdvar)
+            v_x = layerutils.normalize(v_x)
+            tv_x = layerutils.normalize(tv_x)
+            val = layerutils.normalize(val)
           tv_y = torch.LongTensor(testcat).to(dev)
 
           print("types", v_x.get_device(), v_y.get_device())
@@ -616,8 +615,8 @@ class Classify:
 
         tv_x = torch.FloatTensor(test).to(dev)
         if classify and config.normalize:
-            v_x = layerutils.normalize(v_x, avgstdvar)
-            tv_x = layerutils.normalize(tv_x, avgstdvar)
+            v_x = layerutils.normalize(v_x)
+            tv_x = layerutils.normalize(tv_x)
 
         v_y = torch.LongTensor(traincat).to(dev)
         train_accuracy, train_loss = self.get_multi_accuracy_loss(config, model, v_x, v_y)
@@ -799,7 +798,7 @@ class Classify:
         (config, modelname) = self.getModel(myobj)
         print("mo", modelname, config.name, config.loss)
         Model = importlib.import_module('model.' + modelname)
-        (train, traincat, test, testcat, shape, avgstdvar, val, valcat) = self.gettraintest(myobj, config, classify)
+        (train, traincat, test, testcat, shape, val, valcat) = self.gettraintest(myobj, config, classify)
         #myobj.size = size
         if not classify:
             if config.name == 'mlp':
@@ -834,8 +833,11 @@ class Classify:
         loss = None
         if self.wantLearn(myobj):
             myobj.trainingarray = self.transpose_cnn(myobj, config, myobj.trainingarray)
-            (accuracy_score, loss, train_accuracy_score, val_accuracy_score) = self.do_learntestinner(myobj, model, config, train, traincat,
-                                                                                  test, testcat, classify, avgstdvar, val, valcat)
+            (accuracy_score, loss, train_accuracy_score, val_accuracy_score) = self.do_learntestinner(myobj, model,
+                                                                                                      config, train,
+                                                                                                      traincat, test,
+                                                                                                      testcat, classify,
+                                                                                                      val, valcat)
         # save model if
         # not dynamic and wantlearn
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
@@ -846,7 +848,7 @@ class Classify:
 
         (intlist, problist) = (None, None)
         if self.wantClassify(myobj):
-            (intlist, problist) = self.do_classifyinner(myobj, model, config, classify, avgstdvar)
+            (intlist, problist) = self.do_classifyinner(myobj, model, config, classify)
         #print(len(intlist))
         #print(intlist)
         #print(problist)
@@ -876,7 +878,7 @@ class Classify:
         myobj.classes = classes
         myobj.trainingarray = train
         myobj.trainingcatarray = traincat
-        (train, traincat, test, testcat, shape, avgstdvar, val, valcat) = self.gettraintest(myobj, config, classify)
+        (train, traincat, test, testcat, shape, val, valcat) = self.gettraintest(myobj, config, classify)
         model = Model.Net(myobj, config, classify, shape)
         if torch.cuda.is_available():
             model.cuda()
@@ -885,10 +887,13 @@ class Classify:
         classifier = model
         print("model", modelname)
         print("config", config, myobj)
-        (accuracy_score, loss, train_accuracy_score, val_accuracy_score) = self.do_learntestinner(myobj, classifier, config, train, traincat,
-                                                                              test, testcat, classify, avgstdvar, val, valcat)
+        (accuracy_score, loss, train_accuracy_score, val_accuracy_score) = self.do_learntestinner(myobj, classifier,
+                                                                                                  config, train,
+                                                                                                  traincat, test,
+                                                                                                  testcat, classify,
+                                                                                                  val, valcat)
         myobj.classifyarray = train
-        (intlist, problist) = self.do_classifyinner(myobj, model, config, classify, avgstdvar)
+        (intlist, problist) = self.do_classifyinner(myobj, model, config, classify)
         if not accuracy_score is None:
             accuracy_score = float(accuracy_score)
         if not train_accuracy_score is None:
