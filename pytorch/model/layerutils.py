@@ -23,7 +23,7 @@ def avgstdvar(array):
 
 
 def normalize(input):
-    (mean, std, var) = avgstdvar(input.numpy())
+    (mean, std, var) = avgstdvar(input.cpu().numpy())
     x = input / 1  # 255.0
     x = input - mean
     x = x / std
