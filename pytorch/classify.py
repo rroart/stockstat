@@ -21,7 +21,7 @@ import mydatasets
 from customdataset import CustomDataset
 from earlystopping import EarlyStopping
 from model import layerutils, modelutils
-ffrom model.modelutils import get_loss_inputs, print_model_parameters
+from model.modelutils import get_loss_inputs, print_model_parameters
 #from test_iris_observe import get_accuracy_multiclass
 #from test_iris_observe import print_model_parameters
 
@@ -511,6 +511,13 @@ class Classify:
         #net = model.network(train, traincat)
 
     def transpose_cnn(self, myobj, config, array):
+        """
+        Transposing array for cnn, from the format from Java to the Pytorch format
+        :param myobj:
+        :param config:
+        :param array:
+        :return: eventually transposed array
+        """
         # input from java is (N, C, L) and (N, C, H, W)
         # input from dataset is already the default
         # pytorch uses (N, C, L) and (N, C, H, W)

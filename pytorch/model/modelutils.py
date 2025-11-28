@@ -86,8 +86,8 @@ def observe(model, epochs, optimizer, loss_fn, train_loader, valid_loader, batch
 
         accuracy = 100 * correct / total
         valid_acc_list.append(accuracy)
-        print('epoch : {}, train loss : {:.4f}, valid loss : {:.4f}, valid acc : {:.2f}%' \
-              .format(epoch + 1, train_loss2, valid_loss2, accuracy))
+        #print('epoch : {}, train loss : {:.4f}, valid loss : {:.4f}, valid acc : {:.2f}%' \
+        #      .format(epoch + 1, train_loss2, valid_loss2, accuracy))
         #print('epoch : {}, train loss : {:.4f}, valid loss : {:.4f}, valid acc : {:.2f}%' \
         #      .format(epoch + 1, train_loss, valid_loss, accuracy))
         #print('epoch : {}, train loss : {:.4f}, valid loss : {:.4f}, valid acc : {:.2f}%' \
@@ -250,8 +250,8 @@ def observe_new(model, epochs, optimizer, loss_fn, train_loader, valid_loader, b
         accuracy = 100.0 * (correct / total) if total > 0 else 0.0
         valid_acc_list.append(accuracy)
 
-        print('epoch : {}, train loss : {:.4f}, valid loss : {:.4f}, valid acc : {:.2f}%' \
-              .format(epoch + 1, avg_train_loss, avg_valid_loss, accuracy))
+        #print('epoch : {}, train loss : {:.4f}, valid loss : {:.4f}, valid acc : {:.2f}%' \
+        #      .format(epoch + 1, avg_train_loss, avg_valid_loss, accuracy))
 
         torch.cuda.empty_cache()
 
@@ -546,6 +546,7 @@ def observer_another_new(model, epochs, optimizer, loss_fn, train_loader, valid_
     std = None
     if getattr(config, 'normalize', False):
         mean, std = _compute_mean_std(train_loader)
+        print("mean std", mean, std)
         # move to device
         mean = mean.to(device)
         std = std.to(device)
@@ -557,7 +558,9 @@ def observer_another_new(model, epochs, optimizer, loss_fn, train_loader, valid_
 
         for inputs, labels in train_loader:
             if mean is not None and std is not None:
+                print("inputs", inputs)
                 inputs = _apply_normalize(inputs, mean, std)
+                print("inputs", inputs)
 
             inputs = inputs.to(device)
             labels = labels.to(device)
@@ -697,6 +700,7 @@ def _compute_mean_std(train_loader):
     else:
         std[std == 0] = 1.0
 
+    print("mean std", mean, std)
     return mean, std
 
 
