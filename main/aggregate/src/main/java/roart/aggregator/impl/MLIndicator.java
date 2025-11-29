@@ -191,7 +191,8 @@ public class MLIndicator extends Aggregator {
                 }
                 double change = list[0][newlistidx]/list[0][curlistidx];
 
-                // cat 1.0 is for >= threshold, 2.0 is for belov
+                // cat 1.0 is for >= threshold, 2.0 is for below
+                // cat 1.0 is for above, 0.0 for below
                 cat = getCat(change, threshold);
             }
             mapGetter4(mergedCatMap, id).add(new ImmutablePair(merged, cat));
@@ -857,8 +858,14 @@ public class MLIndicator extends Aggregator {
         eventTableRows.add(event);
     }
 
-    public static Map<Double, String> createLabelMapShort() {
-	if (cats == 2) {
+    public Map<Double, String> createLabelMapShort() {
+        if (conf.wantUseBinary()) {
+            Map<Double, String> labelMap1 = new HashMap<>();
+            labelMap1.put(1.0, Constants.ABOVE);
+            labelMap1.put(0.0, Constants.BELOW);
+            return labelMap1;            
+        }
+        if (cats == 2) {
 	    Map<Double, String> labelMap1 = new HashMap<>();
 	    labelMap1.put(1.0, Constants.ABOVE);
 	    labelMap1.put(2.0, Constants.BELOW);
@@ -1079,6 +1086,13 @@ public class MLIndicator extends Aggregator {
     }
     
     private double getCat(double change, double threshold) {
+        if (conf.wantUseBinary()) {
+            if (change > threshold) {
+                return 1.0;
+            } else {
+                return 0.0;
+            }            
+        }
         int halfcat = cats / 2;
         for (double cat = cats; cat > 1; cat--) {
             if (change > threshold + interval * (cat - 1 - halfcat)) {
