@@ -74,6 +74,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
 
         Map<Double, String> labelMap = createLabelMapShort();
         for (SerialResultMeta meta : param.getResultMeta()) {
+            labelMap = meta.getLabelMap();
             boolean emptyMeta = meta.getMlName() == null;
             
             if (emptyMeta) {
@@ -127,7 +128,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     
                     boolean increase = false;
                     if (above == null || above == true) {
-                        if (tfpn.equals(Constants.TP) || tfpn.equals(Constants.FN)) {
+                        if (tfpn.equals(Constants.TP) || tfpn.equals(Constants.FN) || tfpn.equals(Constants.ABOVE)) {
                             increase = true;
                             //IncDecDTO incdec = mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
                             IncDecDTO incdec = mapAdder2(profitdata.getBuys(), key, score, profitdata.getInputdata().getNameMap(), date, mltest.getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
@@ -135,7 +136,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                         }
                     }
                     if (above == null || above == false) {
-                        if (tfpn.equals(Constants.TN) || tfpn.equals(Constants.FP)) {
+                        if (tfpn.equals(Constants.TN) || tfpn.equals(Constants.FP) || tfpn.equals(Constants.BELOW)) {
                             increase = false;
                             //IncDecDTO incdec = mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
                             IncDecDTO incdec = mapAdder2(profitdata.getSells(), key, score, profitdata.getInputdata().getNameMap(), date, mltest.getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
@@ -441,6 +442,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
         return keys;
     }
     
+    // TODO
     // TODO duplicated
     public static Map<Double, String> createLabelMapShort() {
         Map<Double, String> labelMap1 = new HashMap<>();

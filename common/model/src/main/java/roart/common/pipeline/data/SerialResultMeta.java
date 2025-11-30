@@ -23,6 +23,8 @@ public class SerialResultMeta extends SerialObject {
     
     private Map<String, Double[]> classifyMap;
     
+    private Map<Double, String> labelMap;
+    
     @Deprecated
     private Map countMap;
     
@@ -158,6 +160,14 @@ public class SerialResultMeta extends SerialObject {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Map<Double, String> getLabelMap() {
+        return labelMap;
+    }
+
+    public void setLabelMap(Map<Double, String> labelMap) {
+        this.labelMap = labelMap;
     }
     
 }

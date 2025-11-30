@@ -133,6 +133,7 @@ public class ComponentMLIndicator extends ComponentML {
                 continue;
             }
             Map<Double, String> labelMap = createLabelMapShort();
+            labelMap = meta.getLabelMap();
 
             MLMetricsDTO mltest = search(mlTests, meta);
             if (mlTests == null || mltest != null) {
@@ -494,6 +495,7 @@ public class ComponentMLIndicator extends ComponentML {
         return ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS;
     }
     
+    // TODO
     public static Map<Double, String> createLabelMapShort() {
         Map<Double, String> labelMap1 = new HashMap<>();
         labelMap1.put(1.0, Constants.ABOVE);

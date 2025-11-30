@@ -468,6 +468,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             }
                             int size = getValidateSize(learnMLMap, mlmeta);
                             List<AbstractIndicator> indicators = new ArrayList<>();
+                            // todo binary?
                             String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getConfigData().getMarket(), indicators, subType.getType(), mapType, mlmeta, threshold, conf.wantAggregatorsUseConfusion(), conf.wantAggregatorsUsecurve());
                             String path = model.getPath();
                             boolean mldynamic = conf.wantMLDynamic();
@@ -496,7 +497,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             Collections.shuffle(learnMLMap);
                             log.info("mldoa" + mldao.getName() + mldao.getModels().size() + " model " + model.getName() + " learnmap size " + learnMLMap.size() + " classifymap size " + classifyMLMap.size());
                             if (outcomes == 2) {
-                                outcomes = 1;
+                                //outcomes = 1;
                             }
                             LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, this, learnMLMap, model, size, outcomes, mapTime, classifyMLMap, labelMapShort, path, filename, neuralnetcommand, mlmeta, true);  
                             if (result == null) {
@@ -507,6 +508,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             resultMeta.setSubType(subType.getType() + mergeTxt(subType));
                             resultMeta.setSubSubType(mapType);
                             resultMeta.setLearnMap(countMap);
+                            resultMeta.setLabelMap(labelMapShort);
                             log.info("countmap {}", countMap);
                             resultMeta.setThreshold(threshold);
                             if (neuralnetcommand.isMlcross() && result.getCatMap() != null && classifyMLMap.size() > 0) {
@@ -693,7 +695,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                                 }
                             }
                             if (outcomes == 2) {
-                                outcomes = 1;
+                                //outcomes = 1;
                             }
                             Callable callable = new MLClassifyLearnTestPredictCallable(nnConfigs, mldao, this, learnMLMap, model, size, outcomes, mapTime, classifyMLMap, labelMapShort, path, filename, neuralnetcommand, mlmeta);  
                             Future<LearnTestClassifyResult> future = MyExecutors.run(callable, 1);
@@ -722,6 +724,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 		resultMeta.setSubSubType(mapType);
 		resultMeta.setLearnMap(countMap);
 		resultMeta.setThreshold(threshold);
+		resultMeta.setLabelMap(labelMapShort);
 		getResultMetas().add(resultMeta);
                             
                 Map<String, Double[]> classifyResult = result.getCatMap();

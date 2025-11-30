@@ -526,6 +526,7 @@ public class MLIndicator extends Aggregator {
                     SerialResultMeta resultMeta = (SerialResultMeta) getResultMetas().get(testCount);
                     resultMeta.setClassifyMap(classifyResult);
                     resultMeta.setLearnMap(countMap);
+                    resultMeta.setLabelMap(labelMapShort);
                     testCount++;
                 }
             }
