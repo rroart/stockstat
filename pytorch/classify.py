@@ -183,6 +183,8 @@ class Classify:
           else:
             print("Classify", array.shape, array)
             intlist, problist = self.get_binary_cat_and_probability(model, array)
+            intlist = intlist.tolist()
+            problist = problist.tolist()
         if classify and not self.zero(myobj):
             intlist = np.array(intlist)
             intlist = intlist + 1
@@ -864,11 +866,12 @@ class Classify:
         if not train_accuracy_score is None:
             train_accuracy_score = float(train_accuracy_score)
         if not loss is None:
-            loss = float(loss) # todo detach?
+            loss = float(loss) # todo item detach?
         if not loss is None and np.isnan(loss):
             loss = None
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
+        print({"classifycatarray": type(intlist), "classifyprobarray": type(problist), "accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "valaccuracy": val_accuracy_score, "gpu" : self.hasgpu()})
         print({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "valaccuracy": val_accuracy_score, "gpu" : self.hasgpu()})
         queue.put({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "valaccuracy": val_accuracy_score, "gpu" : self.hasgpu()})
 
