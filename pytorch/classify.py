@@ -683,6 +683,7 @@ class Classify:
         probabilitylist = np.where(np.isnan(probabilitylist), None, probabilitylist).tolist()
         predicted = probability.argmax(1)
         predictedcat = np.round(probabilitylist, 0)
+        predictedcat = np.int_(predictedcat)
 
         print("p1", probability.shape, probabilityflat.shape)
         print("p2", probabilitylist)
