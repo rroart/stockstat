@@ -16,15 +16,16 @@ public class PytorchRNNConfig extends PytorchRecurrentConfig {
             @JsonProperty("normalize") boolean normalize, 
             @JsonProperty("batchnormalize") boolean batchnormalize, 
             @JsonProperty("regularize") boolean regularize,           
-             @JsonProperty("batchsize") int batchsize,
+            @JsonProperty("batchsize") int batchsize,
             @JsonProperty("loss") String loss,
             @JsonProperty("optimizer") String optimizer,
             @JsonProperty("activation") String activation,
             @JsonProperty("lastactivation") String lastactivation,
             @JsonProperty("layers") int layers, 
             @JsonProperty("hidden") int hidden, 
-            @JsonProperty("slide") int slide) {
-        super(MLConstants.RNN, new PytorchConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation), layers, hidden, slide);
+            @JsonProperty("slide") int slide,
+            @JsonProperty("binary") boolean binary) {
+        super(MLConstants.RNN, new PytorchConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation, binary), layers, hidden, slide);
     }
 
     public PytorchRNNConfig(PytorchRNNConfig config) {

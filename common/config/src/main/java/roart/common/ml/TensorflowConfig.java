@@ -114,6 +114,14 @@ public abstract class TensorflowConfig extends NeuralNetConfig {
         this.tensorflowConfigCommon.lastactivation = lastactivation;
     }
 
+    public boolean isBinary() {
+        return tensorflowConfigCommon.binary;
+    }
+
+    public void setBinary(boolean binary) {
+        this.tensorflowConfigCommon.binary = binary;
+    }
+
     public TensorflowConfig(String name, TensorflowConfigCommon tensorflowConfigCommon) {
         super(name);
         this.tensorflowConfigCommon = tensorflowConfigCommon;

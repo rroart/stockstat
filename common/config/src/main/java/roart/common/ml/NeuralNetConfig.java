@@ -17,8 +17,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 public abstract class NeuralNetConfig {
     private String name;
 
-    private boolean binary;
-    
     public NeuralNetConfig(String name) {
         super();
         this.name = name;
@@ -44,14 +42,6 @@ public abstract class NeuralNetConfig {
     public abstract NeuralNetConfig crossover(NeuralNetConfig other);
     */
     
-    public boolean isBinary() {
-        return binary;
-    }
-
-    public void setBinary(boolean binary) {
-        this.binary = binary;
-    }
-
     public abstract NeuralNetConfig copy();
     
     public abstract boolean empty();

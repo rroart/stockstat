@@ -137,6 +137,14 @@ public abstract class PytorchConfig extends NeuralNetConfig {
         this.pytorchConfigCommon.lastactivation = lastactivation;
     }
 
+    public boolean isBinary() {
+        return pytorchConfigCommon.binary;
+    }
+
+    public void setBinary(boolean binary) {
+        this.pytorchConfigCommon.binary = binary;
+    }
+
     @Override
     public boolean empty() {
         return false;

@@ -20,8 +20,9 @@ public class TensorflowLICConfig extends TensorflowFeedConfig {
             @JsonProperty("loss") String loss,
             @JsonProperty("optimizer") String optimizer,
             @JsonProperty("activation") String activation,
-            @JsonProperty("lastactivation") String lastactivation) {
-        super(MLConstants.LIC, new TensorflowConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation), 0, 0);
+            @JsonProperty("lastactivation") String lastactivation,
+            @JsonProperty("binary") boolean binary) {
+        super(MLConstants.LIC, new TensorflowConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation, binary), 0, 0);
     }
 
     public TensorflowLICConfig(String name) {

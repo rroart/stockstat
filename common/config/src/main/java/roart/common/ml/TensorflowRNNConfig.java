@@ -23,8 +23,9 @@ public class TensorflowRNNConfig extends TensorflowRecurrentConfig {
             @JsonProperty("lastactivation") String lastactivation,
             @JsonProperty("layers") int layers, 
             @JsonProperty("hidden") int hidden, 
-            @JsonProperty("slide") int slide) {
-        super(MLConstants.RNN, new TensorflowConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation), layers, hidden, slide);
+            @JsonProperty("slide") int slide,
+            @JsonProperty("binary") boolean binary) {
+        super(MLConstants.RNN, new TensorflowConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation, binary), layers, hidden, slide);
     }
 
     public TensorflowRNNConfig(String name) {

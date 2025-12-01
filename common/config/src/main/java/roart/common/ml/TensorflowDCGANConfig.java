@@ -20,8 +20,9 @@ public class TensorflowDCGANConfig extends TensorflowGANConfig {
             @JsonProperty("loss") String loss,
             @JsonProperty("optimizer") String optimizer,
             @JsonProperty("activation") String activation,
-            @JsonProperty("lastactivation") String lastactivation) {
-        super(MLConstants.DCGAN, new TensorflowConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation));
+            @JsonProperty("lastactivation") String lastactivation,
+            @JsonProperty("binary") boolean binary) {
+        super(MLConstants.DCGAN, new TensorflowConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation, binary));
     }
 
     public TensorflowDCGANConfig(String name) {

@@ -22,8 +22,9 @@ public class TensorflowMLPConfig extends TensorflowFeedConfig {
             @JsonProperty("activation") String activation,
             @JsonProperty("lastactivation") String lastactivation,
             @JsonProperty("layers") int layers, 
-            @JsonProperty("hidden") int hidden) { 
-        super(MLConstants.MLP, new TensorflowConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation), layers, hidden);
+            @JsonProperty("hidden") int hidden,
+            @JsonProperty("binary") boolean binary) { 
+        super(MLConstants.MLP, new TensorflowConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation, binary), layers, hidden);
     }
 
     public TensorflowMLPConfig(String name) {

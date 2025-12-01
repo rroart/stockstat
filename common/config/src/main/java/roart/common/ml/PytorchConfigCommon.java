@@ -25,10 +25,12 @@ public class PytorchConfigCommon {
     protected String activation;
     
     protected String lastactivation;
+    
+    protected boolean binary;
 
     public PytorchConfigCommon(int steps, Double lr, double inputdropout, double dropout, boolean normalize,
             boolean batchnormalize, boolean regularize, int batchsize, String loss, String optimizer, String activation,
-            String lastactivation) {
+            String lastactivation, boolean binary) {
         super();
         this.steps = steps;
         this.lr = lr;
@@ -42,6 +44,7 @@ public class PytorchConfigCommon {
         this.optimizer = optimizer;
         this.activation = activation;
         this.lastactivation = lastactivation;
+        this.binary = binary;
     }
 
     public int getSteps() {
@@ -140,6 +143,14 @@ public class PytorchConfigCommon {
         this.lastactivation = lastactivation;
     }
     
+    public boolean isBinary() {
+        return binary;
+    }
+
+    public void setBinary(boolean binary) {
+        this.binary = binary;
+    }
+
     @Override
     public String toString() {
         return steps + " " + lr + " " + inputdropout + " " + dropout + " " + normalize + " " + batchnormalize + " " + regularize + " " + batchsize + " " + loss + " " + optimizer + " " + activation + " " + lastactivation;

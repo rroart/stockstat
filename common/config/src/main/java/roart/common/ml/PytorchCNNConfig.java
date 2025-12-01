@@ -32,8 +32,9 @@ public class PytorchCNNConfig extends PytorchPreFeedConfig {
             @JsonProperty("hidden") int hidden, 
             @JsonProperty("kernelsize") int kernelsize, 
             @JsonProperty("maxpool") int maxpool,
-            @JsonProperty("stride") int stride) {
-        super(MLConstants.CNN, new PytorchConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation), convlayers, layers, hidden);
+            @JsonProperty("stride") int stride,
+            @JsonProperty("binary") boolean binary) {
+        super(MLConstants.CNN, new PytorchConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation, binary), convlayers, layers, hidden);
         this.kernelsize = kernelsize;
         this.maxpool = maxpool;
         this.stride = stride;

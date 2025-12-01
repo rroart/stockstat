@@ -149,7 +149,7 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
         // unknown "marginrank", , "multimargin", "tripletmargin",  "tripletmarginwithdistance" "multilabelmargin", "multilabelsoftmargin", 
         //String[] losses = { "mse", "nllloss", "crossentropyloss", "l1loss", "smoothl1loss", "poissonloss" };
         String[] losses = { "cross_entropy", /* "ctc", */ "nl" /*, "hingeembedding", "gaussiannl", "cosineembedding"*/ };
-        if (getConfig().isBinary()) {
+        if (((PytorchConfig)getConfig()).isBinary()) {
             losses = ArrayUtils.addAll(binarylosses, losses);                       
         }
         if (predictor) {
@@ -175,7 +175,7 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
     protected String generateLastactivation() {
         //String[] activations = { null, "relu", "leakyrelu", "tanh", "sigmoid", "softmax", "softplus", "softsign", "elu", "selu", "gelu", "none" };
         String[] activations = { null, "elu", "hard_shrink", "hard_sigmoid", "hard_tanh", "hard_swish", "leakyrelu", "log_sigmoid", /*"multihead_attention",*/ "prelu", "relu", "relu6", "rrelu", "selu", "celu", "gelu", "sigmoid", "silu", "mish", "soft_plus", "soft_shrink", "soft_sign", "tanh", "tanh_shrink", /*"threshold", "glu",*/ "soft_min", "softmax", /*"soft_max_2d",*/ "log_soft_max" /*, "adaptive_log_soft_max_with_loss"*/ };
-        if (getConfig().isBinary()) {
+        if (((PytorchConfig)getConfig()).isBinary()) {
             activations = new String[] { "sigmoid", "hard_sigmoid" };
         }
         if (predictor) {

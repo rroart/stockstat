@@ -614,7 +614,11 @@ public class NeuralNetConfigs {
         }
         Pair<Class<NeuralNetConfig>, String> nnstring = map.get(key);
         nnconfig = JsonUtil.convert(config, nnstring.getLeft(), mapper);
-        nnconfig.setBinary(binary);
+        if (nnconfig instanceof TensorflowConfig tensorflowConfig) {
+            tensorflowConfig.setBinary(binary);
+        } else if (nnconfig instanceof PytorchConfig pytorchConfig) {
+            pytorchConfig.setBinary(binary);
+        }
         return nnconfig;
     }
 
@@ -629,6 +633,7 @@ public class NeuralNetConfigs {
         for (Pair<Class<NeuralNetConfig>, String> nnstring : values) {
             if (aclass.equals(nnstring.getLeft().getSimpleName())) {
                 nnconfig = JsonUtil.convert(nnstring.getRight(), nnstring.getLeft(), mapper);
+                // do not need to set binary?
                 return nnconfig;                
             }
         }

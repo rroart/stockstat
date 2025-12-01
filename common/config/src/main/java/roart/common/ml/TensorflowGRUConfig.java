@@ -23,8 +23,9 @@ public class TensorflowGRUConfig extends TensorflowRecurrentConfig {
             @JsonProperty("lastactivation") String lastactivation,
             @JsonProperty("layers") int layers, 
             @JsonProperty("hidden") int hidden, 
-            @JsonProperty("slide") int slide) {
-        super(MLConstants.GRU, new TensorflowConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation), layers, hidden, slide);
+            @JsonProperty("slide") int slide,
+            @JsonProperty("binary") boolean binary) {
+        super(MLConstants.GRU, new TensorflowConfigCommon(steps, lr, inputdropout, dropout, normalize, batchnormalize, regularize, batchsize, loss, optimizer, activation, lastactivation, binary), layers, hidden, slide);
     }
 
     public TensorflowGRUConfig(String name) {
