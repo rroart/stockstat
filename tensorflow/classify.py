@@ -40,6 +40,20 @@ except:
     
 class Classify:
     def do_eval(self, request):
+        """Handle an evaluation request.
+
+        Expects a Flask/Werkzeug request whose body is a JSON representation
+        that can be deserialized into a LearnTest object. Reads the model
+        evaluation score from the global `dicteval` map and returns a JSON
+        response with the accuracy.
+
+        Args:
+            request: Werkzeug/Flask request with JSON body representing
+                     LearnTest fields (including modelInt, period, modelname).
+
+        Returns:
+            Response: a Werkzeug Response with JSON {"accuracy": <float>}.
+        """
         global dicteval
         #print(request.get_data(as_text=True))
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
@@ -48,6 +62,22 @@ class Classify:
         return Response(json.dumps({"accuracy": accuracy_score}), mimetype='application/json')
 
     def do_classify(self, request):
+        """Handle an online classification request.
+
+        Deserializes the incoming JSON into a LearnTest object, retrieves a
+        classifier instance from the shared `dictclass` mapping, runs
+        classification and probability prediction via `do_classifyinner`,
+        and returns the results as JSON.
+
+        Args:
+            request: Werkzeug/Flask request with JSON body including fields
+                     required for classification (modelname, classifyarray, etc.).
+
+        Returns:
+            Response: JSON response with keys `classifycatarray` and
+                      `classifyprobarray` containing predicted classes and
+                      probabilities respectively.
+        """
         dt = datetime.now()
         timestamp = dt.timestamp()
         #print(request.get_data(as_text=True))
@@ -66,6 +96,27 @@ class Classify:
         return Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist }), mimetype='application/json')
         
     def do_classifyinner(self, myobj, classifier, config, classify):
+        """Core classification logic used by higher level handlers.
+
+        This function converts the provided classifyarray to a numpy array and
+        uses `classifier.predict` to obtain class indices and probability
+        estimates. It handles both sequential multi-step classification when
+        `classify` is False (prediction of a sequence of rolling predictions),
+        and single-shot classification when `classify` is True.
+
+        Args:
+            myobj: LearnTest-like object containing `classifyarray`, `classes`,
+                   `modelInt` and other attributes used to reshape data.
+            classifier: model wrapper that implements `predict(array)`.
+            config: configuration object with flags (e.g. `binary`).
+            classify: bool, when True run single-step classification, when
+                      False run iterative rolling classification.
+
+        Returns:
+            tuple: (intlist, problist) where intlist is a list (or nested
+                   list) of predicted class indices and problist is the
+                   corresponding probability list/array.
+        """
         array = np.array(myobj.classifyarray, dtype='f')
         dataset = tf.data.Dataset.from_tensor_slices((array))
         intlist = []
@@ -122,6 +173,16 @@ class Classify:
         return intlist, problist
 
     def do_learntest(self, queue, request):
+        """Run a learn/test job based on an incoming request.
+
+        This reads a LearnTest JSON from the request, constructs the model,
+        prepares datasets, runs training/evaluation (via `do_learntestinner`)
+        and places the result into the provided multiprocessing `queue`.
+
+        Args:
+            queue: multiprocessing.Queue to put result dict into.
+            request: Werkzeug/Flask request containing LearnTest JSON in body.
+        """
         dt = datetime.now()
         timestamp = dt.timestamp()
         #print(request.get_data(as_text=True))
@@ -148,6 +209,23 @@ class Classify:
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def getSlide(self, inputs, labels, myobj, config):
+        """Create sliding-window samples for 2D input arrays.
+
+        Converts a 2-dimensional time-series array into multiple sliding-window
+        input/output pairs according to `myobj.size`, `config.slide_stride` and
+        `myobj.classes`.
+
+        Args:
+            inputs: numpy array shaped (batch, sequence_length) or convertible to it.
+            labels: ignored/currently unused; kept for API compatibility.
+            myobj: object containing `size` (window width) and `classes`.
+            config: configuration that may include `slide_stride`.
+
+        Returns:
+            tuple: (inputs, labels) where inputs is the transformed input array
+                   (may be reshaped for CNN/MLP models) and labels are the
+                   targets corresponding to each sliding window.
+        """
         if not len(inputs.shape) == 2:
             print("getSlide expects 2D array")
         #input = torch.from_numpy(np.array([[[0,1,2,3,4,5,6,7,8,9,10],[10,11,12,13,14,15,16,17,18,19,20]]]))
@@ -195,6 +273,21 @@ class Classify:
         return inputs, labels
 
     def getSlide2(self, inputs, labels, myobj, config):
+        """Create sliding-window samples for 3D arrays (batch, minibatch, seq_len).
+
+        This is similar to `getSlide` but operates on inputs shaped
+        (mysize, minibatch, sequence_length) producing a 3D splitInput and
+        corresponding splitTarget shaped to match model expectations.
+
+        Args:
+            inputs: numpy array convertible to float of shape (mysize, minibatch, seq_len).
+            labels: unused placeholder kept for interface compatibility.
+            myobj: object with `size` and `classes` attributes.
+            config: configuration containing `slide_stride`.
+
+        Returns:
+            tuple: (inputs, labels) transformed for model consumption.
+        """
         #input = torch.from_numpy(np.array([[[0,1,2,3,4,5,6,7,8,9,10],[10,11,12,13,14,15,16,17,18,19,20]]]))
         #inputs = torch.from_numpy(inputs)
         inputs = np.array(inputs, dtype='f')
@@ -241,6 +334,22 @@ class Classify:
 
     # not used
     def getSlideT(self, inputs, labels, myobj, config):
+        """TensorFlow variant of sliding-window generation (kept for reference).
+
+        Works like `getSlide2` but uses TensorFlow tensors and Variable/assign.
+        This function is not currently used by the codebase but kept for
+        completeness.
+
+        Args:
+            inputs: array-like convertible to tf.Tensor with shape
+                    (mysize, minibatch, seq_len).
+            labels: unused placeholder.
+            myobj: object with `size` and `classes`.
+            config: configuration with `slide_stride`.
+
+        Returns:
+            tuple: (inputs, labels) as TensorFlow tensors.
+        """
         #input = torch.from_numpy(np.array([[[0,1,2,3,4,5,6,7,8,9,10],[10,11,12,13,14,15,16,17,18,19,20]]]))
         #inputs = torch.from_numpy(inputs)
         inputs = tf.convert_to_tensor(inputs, dtype=tf.float32)
@@ -286,9 +395,40 @@ class Classify:
 
     # non-zero is default
     def zero(self, myobj):
+        """Check whether classes should be treated as zero-based.
+
+        Returns True only if `myobj` has attribute `zero` set to True. The
+        project convention uses 1-based classes by default and sets `zero` to
+        True to request zero-based handling.
+
+        Args:
+            myobj: object that may contain attribute `zero`.
+
+        Returns:
+            bool: True if zero-based behavior requested, False otherwise.
+        """
         return hasattr(myobj, 'zero') and myobj.zero == True
 
     def gettraintest(self, myobj, config, classify, size = 0.2, size2 = 0.25):
+        """Prepare train/validation/test arrays from provided training data.
+
+        This reads `myobj.trainingarray` (and optional training categories),
+        applies any necessary transpositions for CNN models, optionally
+        generates sliding-window inputs for non-classification tasks and
+        splits data into train/val/test sets according to `size` and `size2`.
+
+        Args:
+            myobj: LearnTest-like object containing `trainingarray` and
+                   optional `trainingcatarray`, `testarray` and `testcatarray`.
+            config: model configuration object used for reshape rules.
+            classify: boolean flag indicating whether the target is a
+                      classification task.
+            size: float fraction of data reserved for testing (default 0.2).
+            size2: float fraction for validation split inside training (default 0.25).
+
+        Returns:
+            tuple: (train, traincat, test, testcat, shape, val, valcat)
+        """
         #mydim = myobj.size
         array = np.array(myobj.trainingarray, dtype='f')
         shape = array.shape
@@ -364,6 +504,20 @@ class Classify:
         return train, traincat, test, testcat, train.shape, val, valcat
 
     def transpose_cnn(self, myobj, config, array):
+        """Transpose input arrays into TensorFlow channel-last format when needed.
+
+        Handles conversion from (N, C, L) or (N, C, H, W) Java-style ordering to
+        TensorFlow's (N, L, C) or (N, H, W, C) channel-last format for cnn/cnn2.
+        If no transposition is required, the input is returned unchanged.
+
+        Args:
+            myobj: object possibly containing `dataset` attribute used to skip transposition.
+            config: model configuration with `name` property (e.g. 'cnn', 'cnn2').
+            array: numpy array to be transposed if necessary.
+
+        Returns:
+            numpy.array: transposed array appropriate for TensorFlow models.
+        """
         # input from java is (N, C, L) and (N, C, H, W)
         # input from dataset is already the default
         # tensorflow default (and working) format is (N, L, C) and (N, H, W, C)
@@ -402,6 +556,21 @@ class Classify:
             print(array.shape)
 
     def splitarray(self, half, size, train, traincat):
+        """Split a training array into new training and validation sets.
+
+        The function computes a new 'half' index according to the provided
+        fraction `size` and then splits `train` and `traincat` into a
+        new training portion and a validation portion.
+
+        Args:
+            half: integer or float representing the current length to split from.
+            size: float fraction used to compute validation portion.
+            train: numpy array of training examples.
+            traincat: numpy array of training categories.
+
+        Returns:
+            tuple: (newtrain, newtraincat, val, valcat)
+        """
         half = round(half * (1 - size))
         newtrain = train[:half, :]
         val = train[half:, :]
@@ -410,6 +579,23 @@ class Classify:
         return newtrain, newtraincat, val, valcat
 
     def do_learntestinner(self, myobj, config, classifier, train, traincat, test, testcat, classify, val = None, valcat = None):
+        """Inner training/evaluation routine used by learn/test flows.
+
+        Calls `classifier.train` to perform training, extracts metrics from
+        the returned history, runs prediction on the test set and evaluates
+        metrics (accuracy, loss) via `classifier.evaluate`.
+
+        Args:
+            myobj: LearnTest-like object (used for logging and class handling).
+            config: model configuration (used for normalization decisions).
+            classifier: model wrapper implementing `train`, `predict`, and `evaluate`.
+            train, traincat, test, testcat: numpy arrays for data and labels.
+            classify: bool whether classification outputs are desired.
+            val, valcat: optional validation arrays.
+
+        Returns:
+            tuple: (accuracy_score, test_loss, train_accuracy_score, train_loss, val_accuracy, val_loss)
+        """
         #print("ttt", train)
         #print("ttt2", traincat)
         #print("ttt3", test)
@@ -479,6 +665,18 @@ class Classify:
         return accuracy_score, test_loss, train_accuracy_score, train_loss, val_accuracy, val_loss
 
     def getModel(self, myobj):
+      """Resolve a model configuration and name from a LearnTest-like object.
+
+      The function inspects either `modelInt` or `modelName` on `myobj` and
+      returns the appropriate configuration object stored on `myobj` along
+      with the canonical model module name.
+
+      Args:
+          myobj: object containing model identifiers such as `modelInt` or `modelName`.
+
+      Returns:
+          tuple: (config, modelname)
+      """
       print(tf.__version__)
       if hasattr(myobj, 'modelInt'):
         if myobj.modelInt == 1:
@@ -561,24 +759,44 @@ class Classify:
         return config, myobj.modelName
 
     def wantDynamic(self, myobj):
+        """Return True when the job requests dynamic (non-saved) models.
+
+        Checks `myobj.neuralnetcommand.mldynamic` if present; defaults to True
+        (allow dynamic) when the attribute is absent.
+        """
         hasit = hasattr(myobj, 'neuralnetcommand')
         if not hasit or (hasit and myobj.neuralnetcommand.mldynamic):
             return True
         return False
 
     def wantLearn(self, myobj):
+        """Return True when the job requests training (mllearn enabled).
+
+        Checks `myobj.neuralnetcommand.mllearn` if present; defaults to True when
+        the attribute is absent.
+        """
         hasit = hasattr(myobj, 'neuralnetcommand')
         if not hasit or (hasit and myobj.neuralnetcommand.mllearn):
             return True
         return False
 
     def wantClassify(self, myobj):
+        """Return True when the job requests classification (mlclassify enabled).
+
+        Checks `myobj.neuralnetcommand.mlclassify` if present; defaults to True
+        when the attribute is absent.
+        """
         hasit = hasattr(myobj, 'neuralnetcommand')
         if not hasit or (hasit and myobj.neuralnetcommand.mlclassify):
             return True
         return False
 
     def exists(self, myobj):
+        """Check whether a saved model file exists for `myobj`.
+
+        Uses `myobj.filename` and `myobj.path` (if present) to determine the
+        expected file location. Returns False when `filename` is missing.
+        """
         if not hasattr(myobj, 'filename'):
             return False
         if os.path.exists(self.getpath(myobj) + myobj.filename):
@@ -587,12 +805,29 @@ class Classify:
 
     #deprecated
     def existsds(self, myobj, modelname):
+        """Deprecated: check dataset-specific saved model presence.
+
+        Returns True if `myobj.dataset` is present and the constructed dataset
+        path exists on disk.
+        """
         if not hasattr(myobj, 'dataset'):
             return False
         return os.path.isfile(self.getdspath(myobj, modelname))
         return os.path.isfile(self.getdspath(myobj, modelname))
 
     def getdspath(self, myobj, modelname):
+        """Construct dataset model file path from `myobj` and `modelname`.
+
+        If `myobj.dataset` is a list, elements are concatenated to form the
+        dataset identifier; otherwise the string value is used directly.
+
+        Args:
+            myobj: object with `dataset` and optional `path` attributes.
+            modelname: string name of the model.
+
+        Returns:
+            str: filesystem path to the dataset-specific model file.
+        """
         if isinstance(myobj.dataset, list):
             dataset = str(myobj.dataset[0]) + str(myobj.dataset[1])
         else:
@@ -600,6 +835,17 @@ class Classify:
         return self.getpath(myobj) + modelname + dataset + ".keras"
 
     def do_learntestclassify(self, queue, myjson):
+        """Combined learn/test/classify handler for JSON payloads.
+
+        This function accepts a JSON string (myjson), prepares model and data,
+        optionally restores saved models, runs learning and/or classification
+        according to flags on the payload, and returns results via the
+        provided multiprocessing queue.
+
+        Args:
+            queue: multiprocessing.Queue to receive the result dict.
+            myjson: JSON string representing LearnTest object.
+        """
         print("eager", tf.executing_eagerly())
         #tf.logging.set_verbosity(tf.logging.FATAL)
         dt = datetime.now()
@@ -677,6 +923,16 @@ class Classify:
         queue.put({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, 'train_loss' : train_loss, 'valaccuracy' : val_accuracy, 'val_loss' : val_loss, "gpu" : self.hasgpu() })
 
     def do_dataset(self, queue, myjson):
+        """Handle dataset-based training and optional classification.
+
+        Loads datasets via `mydatasets.getdataset` (or `mydatasetsq`) and then
+        constructs, trains, and optionally classifies with the appropriate
+        model. Results are placed on the provided multiprocessing queue.
+
+        Args:
+            queue: multiprocessing.Queue to receive results.
+            myjson: JSON string representing LearnTest-like object.
+        """
         dt = datetime.now()
         timestamp = dt.timestamp()
         print(myjson)
@@ -748,11 +1004,26 @@ class Classify:
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def get_file(self, request):
+        """Extract uploaded file paths from a Flask/Werkzeug request.
+
+        Looks for files under keys 'file' and 'file2' and saves them to /tmp
+        using a secure filename. Returns a tuple (filename, filename2) where
+        values may be None if the corresponding file key is missing.
+        """
         filename = self.getFilename(request, 'file')
         filename2 = self.getFilename(request, 'file2')
         return (filename, filename2)
 
     def getFilename(self, request, key):
+        """Save an uploaded file from a request to /tmp and return the path.
+
+        Args:
+            request: Werkzeug/Flask request containing `files` mapping.
+            key: the key in request.files to extract.
+
+        Returns:
+            str or None: the saved filepath in /tmp or None when missing.
+        """
         if key not in request.files:
             print('No file part')
             # print(request.files)
@@ -768,6 +1039,18 @@ class Classify:
         return filename
 
     def do_dataset_gen(self, queue, myjson, filenames):
+        """Handle dataset generation and training for generative models.
+
+        Supports VAE, conditional GAN, DCGAN and neural style transfer model
+        flows. Loads datasets (using `mydatasets.getdatasetgen`), compiles and
+        trains the generative model, optionally generates output files, and
+        returns metrics via the provided queue.
+
+        Args:
+            queue: multiprocessing.Queue for results.
+            myjson: JSON string representing LearnTest-like configuration.
+            filenames: list/tuple of uploaded filenames (used by style transfer).
+        """
         dt = datetime.now()
         timestamp = dt.timestamp()
         #print("1111")
@@ -872,6 +1155,17 @@ class Classify:
         # return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def do_imgclassify(self, queue, myjson, filenames):
+        """Classify an uploaded image using an image model.
+
+        Loads dataset metadata to determine expected input size, preprocesses
+        the uploaded image, builds/loads the model, and runs classification
+        returning results via `queue`.
+
+        Args:
+            queue: multiprocessing.Queue for result dict.
+            myjson: JSON string describing the model/dataset.
+            filenames: list/tuple where the first element is the image path.
+        """
         print("eager", tf.executing_eagerly())
         #tf.logging.set_verbosity(tf.logging.FATAL)
         dt = datetime.now()
@@ -933,6 +1227,20 @@ class Classify:
         queue.put({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": None, "trainaccuracy": None, "loss": None, "classify" : meta.classify, "gpu" : self.hasgpu() })
 
     def do_gpt(self, queue, myjson, cachedata):
+        """Run/generate text from a GPT-style model.
+
+        Loads or reuses an existing model (from cachedata), prepares datasets as
+        needed, optionally trains and/or generates text, and returns the
+        generated text and metrics via the given queue.
+
+        Args:
+            queue: multiprocessing.Queue for returning results.
+            myjson: JSON string describing the GPT job.
+            cachedata: optional cached model/data to reuse.
+
+        Returns:
+            model: the instantiated model object (useful when caller caches it).
+        """
         dt = datetime.now()
         timestamp = dt.timestamp()
         print("my", myjson)
@@ -1005,6 +1313,19 @@ class Classify:
         return model
 
     def preprocess_image(self, image_path, size):
+        """Load and preprocess an image file for image-based models.
+
+        Loads the image from `image_path`, resizes it to the expected `size`,
+        converts it to a grayscale tensor and returns a TensorFlow tensor
+        suitable for model input.
+
+        Args:
+            image_path: filesystem path to the image file.
+            size: tuple/list describing expected image dimensions (width,height) or shape used by the model.
+
+        Returns:
+            tf.Tensor: preprocessed image tensor.
+        """
         import keras
         #import cv2
         from keras.applications import vgg19
@@ -1030,19 +1351,39 @@ class Classify:
         return tf.convert_to_tensor(img)
 
     def getpath(self, myobj):
+        """Return filesystem path for saving/loading model files.
+
+        Uses `myobj.path` when present, otherwise defaults to '/tmp/'. Ensures
+        the returned string ends with a trailing slash.
+        """
         if hasattr(myobj, 'path') and not myobj.path is None:
             return myobj.path + '/'
         return '/tmp/'
 
     def getfullpath(self, myobj):
+        """Return full filesystem path for a saved model including filename.
+
+        Appends the `.keras` extension to `myobj.filename` and prefixes with the
+        path returned by `getpath`.
+        """
         return self.getpath(myobj) + myobj.filename + ".keras"
 
     def do_filename(self, queue, request):
+        """Extract filename info and return existence boolean via queue.
+
+        Reads a LearnTest object from the request body, checks whether the
+        corresponding saved model exists, and places a Response with a JSON
+        boolean `exists` into the provided queue.
+        """
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         exists = self.exists(myobj)
         queue.put(Response(json.dumps({"exists": exists}), mimetype='application/json'))
 
     def printgpus(self):
+        """Print available GPUs detected by TensorFlow.
+
+        Useful for debugging and logging environment information.
+        """
         #from tensorflow.python.client import device_lib
         #print(device_lib.list_local_devices())
         from keras import backend as K
@@ -1051,5 +1392,6 @@ class Classify:
         print("GPUs", gpus)
 
     def hasgpu(self):
+        """Return True when at least one GPU device is available to TensorFlow."""
         physical_devices = tf.config.list_physical_devices('GPU')
         return len(physical_devices) > 0

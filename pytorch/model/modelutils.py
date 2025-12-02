@@ -2,6 +2,22 @@ import torch
 import numpy as np
 
 def observe(model, epochs, optimizer, loss_fn, train_loader, valid_loader, batch_size, early_stopping, config):
+    """Train the model and observe validation performance.
+
+    Args:
+        model: The model to train.
+        epochs: Number of epochs to train for.
+        optimizer: The optimizer to use for training.
+        loss_fn: The loss function to use.
+        train_loader: DataLoader for the training data.
+        valid_loader: DataLoader for the validation data.
+        batch_size: The batch size used in the DataLoaders.
+        early_stopping: EarlyStopping object to monitor for early stopping.
+        config: Configuration object containing various settings.
+
+    Returns:
+        None
+    """
     mean_train_losses = []
     mean_valid_losses = []
     valid_acc_list = []
@@ -104,6 +120,16 @@ def observe(model, epochs, optimizer, loss_fn, train_loader, valid_loader, batch
 
 
 def get_loss_inputs(config, outputs, labels):
+    """Prepare the outputs and labels for the loss function.
+
+    Args:
+        config: The configuration object.
+        outputs: The model outputs.
+        labels: The ground truth labels.
+
+    Returns:
+        Tuple of (outputs, labels) prepared for loss computation.
+    """
     if config.binary:
         outputs = outputs.reshape(outputs.shape[0])
         # labels = labels.to(dtype=torch.float32).reshape(-1, 1).reshape(outputs.shape[0])
@@ -113,6 +139,16 @@ def get_loss_inputs(config, outputs, labels):
 
 
 def regularize(config, loss, model):
+    """Apply regularization to the loss if configured.
+
+    Args:
+        config: The configuration object.
+        loss: The loss value.
+        model: The model being trained.
+
+    Returns:
+        The (potentially) regularized loss value.
+    """
     if config.regularize:
         regularization_type = 'L2'
         lambda_reg = 0.01
@@ -289,6 +325,16 @@ def get_loss_inputs_new(config, outputs, labels):
 
 
 def regularize_new(config, loss, model):
+    """Apply regularization to the loss if configured (new version).
+
+    Args:
+        config: The configuration object.
+        loss: The loss value.
+        model: The model being trained.
+
+    Returns:
+        The (potentially) regularized loss value.
+    """
     if getattr(config, 'regularize', False):
         regularization_type = 'L2'
         lambda_reg = 0.01
@@ -307,6 +353,14 @@ def regularize_new(config, loss, model):
 
 
 def _get_device(model):
+    """Get the device for the model's parameters.
+
+    Args:
+        model: The model from which to extract the device.
+
+    Returns:
+        A torch.device object representing the device of the model's parameters.
+    """
     try:
         return next(model.parameters()).device
     except StopIteration:
@@ -728,6 +782,15 @@ def _apply_normalize(x, mean, std):
 
 
 def print_state_dict(model, optimizer):
+    """Print the state_dict of the model and optimizer.
+
+    Args:
+        model: The model whose state_dict to print.
+        optimizer: The optimizer whose state_dict to print.
+
+    Returns:
+        None
+    """
     # Print model's state_dict
     print("Model's state_dict:")
     for param_tensor in model.state_dict():
@@ -740,6 +803,15 @@ def print_state_dict(model, optimizer):
 
 
 def print_state_dict_alt(model, optimizer):
+    """Alternative print function for state_dicts, kept for compatibility.
+
+    Args:
+        model: The model whose state_dict to print.
+        optimizer: The optimizer whose state_dict to print.
+
+    Returns:
+        None
+    """
     print("Model's state_dict:")
     for param_tensor in model.state_dict():
         print(param_tensor, "\t", model.state_dict()[param_tensor].size())
@@ -750,7 +822,14 @@ def print_state_dict_alt(model, optimizer):
 
 
 def print_model_parameters(model):
+    """Print the parameters of the model.
+
+    Args:
+        model: The model whose parameters to print.
+
+    Returns:
+        None
+    """
     print("Model parameters")
     for name, param in model.named_parameters():
         print(name, param.shape)
-

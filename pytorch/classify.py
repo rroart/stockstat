@@ -31,6 +31,22 @@ try:
 except ImportError:
     pass
 
+# Ensure multiprocessing uses spawn (safe for multi-platform use)
+try:
+    import torch.multiprocessing as _mp
+    try:
+        _mp.set_start_method('spawn')
+    except RuntimeError:
+        # already set
+        pass
+except Exception:
+    pass
+
+# Simple runtime type assertion helper
+def _assert_hasattr(obj, name):
+    if not hasattr(obj, name):
+        raise TypeError(f"Expected object with attribute '{name}', got {type(obj)}")
+
 # NONO from datasetcli import dataset
 
 global dicteval
@@ -47,6 +63,18 @@ print("Using gpu: ", torch.cuda.is_available())
 
 class Classify:
     def do_eval(self, request):
+        """Evaluate a saved model result.
+
+        Args:
+            request: request-like object with get_data() returning JSON that decodes to a LearnTest instance.
+
+        Returns:
+            A werkzeug Response containing the accuracy in JSON.
+        """
+        # Basic type check
+        if not hasattr(request, 'get_data'):
+            raise TypeError('do_eval expects request with get_data()')
+
         global dicteval
         #print(request.get_data(as_text=True))
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
@@ -55,6 +83,17 @@ class Classify:
         return Response(json.dumps({"accuracy": accuracy_score}), mimetype='application/json')
 
     def do_classify(self, request):
+        """Run classification on input array contained in request JSON.
+
+        Args:
+            request: request-like with get_data() returning JSON for a LearnTest object.
+
+        Returns:
+            A werkzeug Response containing predicted categories and probabilities.
+        """
+        if not hasattr(request, 'get_data'):
+            raise TypeError('do_classify expects request with get_data()')
+
         dt = datetime.now()
         timestamp = dt.timestamp()
         #print(request.get_data(as_text=True))
@@ -73,9 +112,25 @@ class Classify:
         return Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist }), mimetype='application/json')
         
     def do_classifyinner(self, myobj, model, config, classify):
+        """Core classification routine used by both API and tests.
+
+        Args:
+            myobj: LearnTest-like object with classification arrays and metadata.
+            model: a callable PyTorch model (nn.Module).
+            config: configuration object with attributes like normalize and binary.
+            classify: bool whether to perform classification or sequence prediction.
+
+        Returns:
+            (intlist, problist): predicted class indices/list and probability list.
+        """
+        # Basic type checks
+        if not hasattr(model, '__call__'):
+            raise TypeError('model must be callable (nn.Module)')
+        if not hasattr(myobj, 'classifyarray'):
+            raise TypeError('myobj missing classifyarray')
+
         dev = self.getdev()
         array = np.array(myobj.classifyarray, dtype='f')
-        #array = myobj.classifyarray
         intlist = []
         problist = []
         array = torch.FloatTensor(array).to(dev)
@@ -132,9 +187,10 @@ class Classify:
             predicted = predicted.tolist()
             return predicted, problist
         else:
-          if classify and config.normalize:
+          # classify path
+          if classify and getattr(config, 'normalize', False):
             array = layerutils.normalize(array)
-          if not config.binary:
+          if not getattr(config, 'binary', False):
            if True:
             intlist, problist = self.get_multi_cat_and_probability(model, array)
            else:
@@ -192,6 +248,17 @@ class Classify:
         return intlist, problist
 
     def do_learntest(self, queue, myjson):
+        """Wrapper that deserializes JSON, builds model and runs training in a process-safe way.
+
+        Args:
+            queue: a multiprocessing.Queue-like object with put().
+            myjson: JSON string representing LearnTest settings.
+        """
+        if not hasattr(queue, 'put'):
+            raise TypeError('do_learntest expects queue with put()')
+        if not isinstance(myjson, str):
+            raise TypeError('do_learntest expects myjson as str')
+
         dt = datetime.now()
         timestamp = dt.timestamp()
         print("myjson", myjson)
@@ -215,17 +282,39 @@ class Classify:
         global dicteval
         #dicteval[myobj.modelname] = float(accuracy_score)
         #print("seteval" + myobj.modelname)
-        
+
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         queue.put({"accuracy": float(accuracy_score), "trainaccuracy": float(train_accuracy_score)})
 
     def mytrain(self, model, inputs, labels, myobj, config, classify, val=None, valcat=None):
+        """Train a model using the project's observer: uses normalization and early stopping.
+
+        Args:
+            model: nn.Module instance to train.
+            inputs: torch.Tensor of training inputs.
+            labels: torch.Tensor of training labels.
+            myobj: LearnTest-like object with metadata.
+            config: configuration object with training settings.
+            classify: bool whether this is a classification task.
+            val,valcat: optional validation inputs/labels.
+
+        Returns:
+            The return value of the observer (if any).
+        """
+        # Basic type checks
+        if not hasattr(model, 'parameters'):
+            raise TypeError('model must be nn.Module-like')
+        if not isinstance(inputs, torch.Tensor):
+            raise TypeError('inputs must be torch.Tensor')
+        if not isinstance(labels, torch.Tensor):
+            raise TypeError('labels must be torch.Tensor')
+
         early_stopping = EarlyStopping(patience=5, delta=0.01, verbose=True)
         if classify:
             labels = labels.long()
         v_x = inputs
-        if classify and config.normalize:
+        if classify and getattr(config, 'normalize', False):
             v_x = layerutils.normalize(v_x)
             if not val is None:
                 val = layerutils.normalize(val)
@@ -271,6 +360,7 @@ class Classify:
             torch.cuda.empty_cache()
 
     def getSlideOld(self, inputs, labels, myobj):
+            """Legacy sliding window helper (kept for reference)."""
             #input = torch.from_numpy(np.array([[[0,1,2,3,4,5,6,7,8,9,10],[10,11,12,13,14,15,16,17,18,19,20]]]))
             #inputs = torch.from_numpy(inputs)
             size = inputs.size()
@@ -304,8 +394,9 @@ class Classify:
 
     # not used
     def getSlide2(self, inputs, labels, myobj, config):
-        #input = torch.from_numpy(np.array([[[0,1,2,3,4,5,6,7,8,9,10],[10,11,12,13,14,15,16,17,18,19,20]]]))
-        #inputs = torch.from_numpy(inputs)
+        """Sliding window for sequence data returning inputs/labels in tensor form."""
+        if not isinstance(inputs, (list, np.ndarray, torch.Tensor)):
+            raise TypeError('getSlide2 expects inputs as array-like')
         inputs = torch.FloatTensor(inputs)
         size = inputs.size()
         sliding_window_stride = config.slide_stride
@@ -351,6 +442,7 @@ class Classify:
         return inputs, labels
 
     def getSlide(self, inputs, labels, myobj, config):
+        """Create sliding windows for non-batched 2D input arrays used for forecasting tasks."""
         if not len(inputs.shape) == 2:
             print("getSlide expects 2D array")
         dev = self.getdev()
@@ -400,6 +492,7 @@ class Classify:
 
     # not used
     def mytrain2(self, model, inputs, labels, myobj, config):
+        """Older training routine (kept for reference)."""
         if myobj.modelInt == 2 and not hasattr(myobj, 'trainingcatarray'):
             (inputs, labels) = self.getSlide(inputs, labels, myobj, config)
         criterion = nn.BCELoss()
@@ -408,7 +501,7 @@ class Classify:
         optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
         #, momentum=0.9)
         #labels = torch.autograd.Variable(labels.float())
-        
+
         for i in range(model.config.steps):
             running_loss = 0.0
             # get the inputs; data is a list of [inputs, labels]
@@ -439,10 +532,15 @@ class Classify:
 
     # non-zero is default
     def zero(self, myobj):
+        """Return whether class labels should be zero-based (default True unless myobj.zero==True)."""
         return hasattr(myobj, 'zero') and myobj.zero == True
-            
+
     def gettraintest(self, myobj, config, classify, size = 0.2, size2 = 0.25):
-        #mydim = myobj.size
+        """Split or reshape provided arrays into train/test/val sets according to parameters.
+
+        Returns:
+            train, traincat, test, testcat, shape, val, valcat
+        """
         array = np.array(myobj.trainingarray, dtype='f')
         shape = array.shape
         # TODO check if right reshape
@@ -555,6 +653,7 @@ class Classify:
             myobj.classifyarray = array
 
     def splitarray(self, half, size, train, traincat):
+        """Split a training array into newtrain and validation using the provided ratio."""
         half = round(half * (1 - size))
         newtrain = train[:half, :]
         val = train[half:, :]
@@ -563,6 +662,11 @@ class Classify:
         return newtrain, newtraincat, val, valcat
 
     def do_learntestinner(self, myobj, model, config, train, traincat, test, testcat, classify, val=None, valcat=None):
+        """Perform training and evaluation returning accuracy and loss metrics.
+
+        Returns:
+            accuracy_score, test_loss, train_accuracy_score, val_accuracy_score
+        """
         print(model)
         print("shapes", train.shape, traincat.shape, test.shape, testcat.shape, val.shape, valcat.shape)
         dev = self.getdev()
@@ -645,6 +749,11 @@ class Classify:
         return accuracy_score, test_loss, train_accuracy_score, val_accuracy_score
 
     def get_multi_accuracy_loss(self, config, model, x, cat) -> float:
+        """Compute accuracy and loss for multiclass tasks.
+
+        Returns:
+            (accuracy, loss)
+        """
         y_hat = model(x)
         loss_outputs, loss_target = get_loss_inputs(config, y_hat, cat)
         loss = model.bce(loss_outputs, loss_target)
@@ -654,6 +763,11 @@ class Classify:
         return accuracy, loss
 
     def get_binary_accuracy_loss(self, config, model, dev, x, cat) -> float:
+        """Compute accuracy and loss for binary classification tasks.
+
+        Returns:
+            (accuracy, loss)
+        """
         predictedcat, probability = self.get_binary_cat_and_probability(model, x)
 
         # v_y = v_y.to(dtype=torch.float32).reshape(-1, 1)
@@ -677,6 +791,11 @@ class Classify:
         return accuracy, loss
 
     def get_binary_cat_and_probability(self, model, x):
+        """Return predicted binary class (0/1) and a per-sample probability for class 1.
+
+        Returns:
+            (predictedcat_array, probability_array)
+        """
         probability = model(x)
         probabilityflat = probability.reshape(probability.shape[0])
         probabilitylist = probabilityflat.detach().to(torch.device("cpu")).numpy().tolist()
@@ -701,6 +820,7 @@ class Classify:
         return predictedcat, catprobabilitylist
 
     def get_multi_cat_and_probability(self, model, x):
+        """Return predicted class indices and max-probabilities for multiclass models."""
         predictions = model(x)
         _, predicted = torch.max(predictions, 1)
         # TODO torch.round
@@ -714,7 +834,8 @@ class Classify:
 
 
     def getModel(self, myobj):
-      if hasattr(myobj, 'modelInt'):  
+      """Return (config, modelname) from a LearnTest-like object by mapping modelInt or modelName."""
+      if hasattr(myobj, 'modelInt'):
         if myobj.modelInt == 1:
             modelname = 'mlp'
             config = myobj.pytorchMLPConfig
@@ -762,24 +883,28 @@ class Classify:
         return config, myobj.modelName
 
     def wantDynamic(self, myobj):
+        """Return whether model should be dynamically loaded (based on neuralnetcommand)."""
         hasit = hasattr(myobj, 'neuralnetcommand')
         if not hasit or (hasit and myobj.neuralnetcommand.mldynamic):
             return True
         return False
     
     def wantLearn(self, myobj):
+        """Return whether the run should include learning/training."""
         hasit = hasattr(myobj, 'neuralnetcommand')
         if not hasit or (hasit and myobj.neuralnetcommand.mllearn):
             return True
         return False
     
     def wantClassify(self, myobj):
+        """Return whether the run should include classification."""
         hasit = hasattr(myobj, 'neuralnetcommand')
         if not hasit or (hasit and myobj.neuralnetcommand.mlclassify):
             return True
         return False
 
     def exists(self, myobj):
+        """Return whether a saved model file exists for myobj.filename."""
         if not hasattr(myobj, 'filename'):
             return False
         return os.path.isfile(self.getfullpath(myobj))
@@ -798,6 +923,15 @@ class Classify:
         return self.getpath(myobj) + modelname + dataset + ".pt"
 
     def do_learntestclassify(self, queue, myjson):
+        """Combined training + classification runner used by the API.
+
+        Puts a result dict into the provided queue.
+        """
+        if not hasattr(queue, 'put'):
+            raise TypeError('do_learntestclassify expects queue with put()')
+        if not isinstance(myjson, str):
+            raise TypeError('do_learntestclassify expects myjson as str')
+
         dt = datetime.now()
         timestamp = dt.timestamp()
         #print(request.get_data(as_text=True))
@@ -809,7 +943,6 @@ class Classify:
         print("mo", modelname, config.name, config.loss)
         Model = importlib.import_module('model.' + modelname)
         (train, traincat, test, testcat, shape, val, valcat) = self.gettraintest(myobj, config, classify)
-        #myobj.size = size
         if not classify:
             if config.name == 'mlp':
                 ii = 1
@@ -877,6 +1010,15 @@ class Classify:
         queue.put({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "valaccuracy": val_accuracy_score, "gpu" : self.hasgpu()})
 
     def do_dataset(self, queue, myjson):
+        """Train and evaluate using a dataset provider (mydatasets).
+
+        Args:
+            queue: queue-like to put results into.
+            myjson: JSON string of LearnTest settings.
+        """
+        if not hasattr(queue, 'put'):
+            raise TypeError('do_dataset expects queue with put()')
+
         torch.cuda.empty_cache()
         dt = datetime.now()
         timestamp = dt.timestamp()
@@ -885,7 +1027,6 @@ class Classify:
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
         (train, traincat, test, testcat, shape, classes, classify) = mydatasets.getdataset(myobj, config, self)
-        #myobj.size = size
         myobj.classes = classes
         myobj.trainingarray = train
         myobj.trainingcatarray = traincat
@@ -918,6 +1059,7 @@ class Classify:
         queue.put({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify" : classify, "valaccuracy": val_accuracy_score, "gpu" : self.hasgpu() })
 
     def do_dataset_gen(self, queue, request):
+        """Generate dataset using GANs (helper for dataset generation endpoints)."""
         import discriminator
         import generator
         import model.gan
@@ -946,13 +1088,12 @@ class Classify:
 
         device = self.getdev()
 
-        #n_epochs = 10
         discriminator_losses, generator_losses = model.gan.train_mnist_gan(adiscriminator, agenerator, discriminator_optim, generator_optim,
                                                                            loss_fn, dl, config.epochs, device,
                                                                            verbose=False)
 
         print("Losses", discriminator_losses, generator_losses)
-        
+
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
 
@@ -960,6 +1101,10 @@ class Classify:
                  "gpu": self.hasgpu()})
 
     def do_gpt(self, queue, myjson, cachedata):
+        """Run or restore a GPT-like model and optionally generate text/files.
+
+        Puts a result dict into the queue.
+        """
         dt = datetime.now()
         timestamp = dt.timestamp()
         myobj = json.loads(myjson, object_hook=lt.LearnTest)
@@ -1018,7 +1163,6 @@ class Classify:
                 else:
                     torch.save(model.model, self.getfullpath(myobj))
 
-        #classifier.tidy()
         del classifier
         accuracy_score = 0
         train_accuracy_score = 0
@@ -1037,6 +1181,7 @@ class Classify:
         return model
 
     def do_gptmidi(self, queue, myjson, filenames, cachedata):
+        """Specialized handler for MIDI GPT-like models; may load VAE submodels for figaro variants."""
         dt = datetime.now()
         timestamp = dt.timestamp()
         filename = filenames[0]
@@ -1154,7 +1299,6 @@ class Classify:
                     if modelname == 'gptmidimmt':
                         model.save()
 
-        #classifier.tidy()
         del classifier
         accuracy_score = 0
         train_accuracy_score = 0
@@ -1173,11 +1317,13 @@ class Classify:
         return model
 
     def get_file(self, request):
+        """Extract uploaded filenames from a Flask-like request.files object."""
         filename = self.getFilename(request, 'file')
         filename2 = self.getFilename(request, 'file2')
         return (filename, filename2)
 
     def getFilename(self, request, key):
+        """Save an uploaded file from request.files under /tmp/ and return its path."""
         if key not in request.files:
             print('No file part')
             # print(request.files)
@@ -1193,29 +1339,41 @@ class Classify:
         return filename
 
     def getpath(self, myobj):
+        """Return base path for storing model files, default /tmp/."""
         if hasattr(myobj, 'path') and not myobj.path is None:
             return myobj.path + '/'
         return '/tmp/'
 
     def getfullpath(self, myobj):
+        """Full filesystem path to a saved model file for myobj."""
         return self.getpath(myobj) + myobj.filename + ".pt"
 
     def do_filename(self, queue, request):
+        """Return whether a filename exists.
+
+        Args:
+            queue: unused but kept for API compatibility.
+            request: request with JSON describing the LearnTest object.
+        """
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         exists = self.exists(myobj)
         return(Response(json.dumps({"exists": exists}), mimetype='application/json'))
 
     def hasgpu(self):
+        """Return True if CUDA is available."""
         return torch.cuda.is_available()
     
     def getpu(self):
-        if torch.cuda.is_available():  
+        """Return device string to use for torch.device."""
+        if torch.cuda.is_available():
             return "cuda:0" 
         else:  
             return "cpu"  
 
     def getdev(self):
+        """Return a torch.device instance for the current environment."""
         return torch.device(self.getpu())
 
     def hasgpu(self):
+        """Duplicate hasgpu kept for backward compatibility."""
         return torch.cuda.is_available()
