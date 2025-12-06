@@ -324,7 +324,7 @@ class Classify:
         ds = CustomDataset(v_x, v_y)
 
         # Dataloaders
-        loader = DataLoader(TensorDataset(v_x, v_y), batch_size=16, shuffle=True)
+        loader = DataLoader(TensorDataset(v_x, v_y), batch_size=16, shuffle=True, drop_last=True)
 
         #loader = torch.utils.data.DataLoader(ds, batch_size=config.batchsize, shuffle=True)
         if not val is None:
