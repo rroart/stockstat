@@ -147,6 +147,12 @@
       <groupId>roart</groupId>
       <artifactId>stockstat-common-config</artifactId>
       <version>${stockstat.version}</version>
+      <exclusions>
+	<exclusion>
+	  <groupId>com.google.guava</groupId>
+	  <artifactId>guava</artifactId>
+	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
@@ -157,6 +163,12 @@
       <groupId>roart</groupId>
       <artifactId>stockstat-common-controller</artifactId>
       <version>${stockstat.version}</version>
+      <exclusions>
+	<exclusion>
+	  <groupId>com.google.guava</groupId>
+	  <artifactId>guava</artifactId>
+	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
@@ -177,6 +189,12 @@
       <groupId>roart</groupId>
       <artifactId>stockstat-iclij-common-service</artifactId>
       <version>${stockstat.version}</version>
+      <exclusions>
+	<exclusion>
+	  <groupId>com.google.guava</groupId>
+	  <artifactId>guava</artifactId>
+	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>roart</groupId>

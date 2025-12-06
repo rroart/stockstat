@@ -25,7 +25,7 @@ public class SparkIT {
             String sparkmaster = iclijConfig.getMLSparkMaster();
             Integer timeout = iclijConfig.getMLSparkTimeout();
             SparkSession spark = SparkUtil.createSparkSession(sparkmaster, "Stockstat ML", timeout);
-            System.out.println(spark.logName());
+            //System.out.println(spark.logName());
         } catch (Exception e) {
             e.printStackTrace();
             }

@@ -116,7 +116,7 @@
     <junit.version>5.7.2</junit.version>
     <log4j.version>1.2.17</log4j.version>
     <commons.version>2.1.1</commons.version>
-    <commons.math3.version>3.4.1</commons.math3.version>
+    <commons.math3.version>3.6.1</commons.math3.version>
     <commons.lang3.version>3.8.1</commons.lang3.version>
     <commons.codec.version>1.15</commons.codec.version>
     <commons.beanutils.version>1.9.4</commons.beanutils.version>
@@ -134,7 +134,7 @@
     <!-- migrate to Jakarta Servlet API 6 (Jakarta EE 10) -->
     <servlet.version>6.0.0</servlet.version>
     <xmlapis.version>1.4.01</xmlapis.version>
-    <spark.version>3.5.1</spark.version>
+    <spark.version>4.0.1</spark.version>
     <talib.version>0.4.0</talib.version>
     <ta4j.version>0.17</ta4j.version>
     <jenetics.version>5.2.0</jenetics.version>

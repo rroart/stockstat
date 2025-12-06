@@ -15,7 +15,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-logging</artifactId>
-      <version>${springboot.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
@@ -26,6 +25,12 @@
       <groupId>roart</groupId>
       <artifactId>stockstat-common-config</artifactId>
       <version>${stockstat.version}</version>
+      <exclusions>
+	<exclusion>
+	  <groupId>com.google.guava</groupId>
+	  <artifactId>guava</artifactId>
+	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
@@ -35,11 +40,6 @@
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-model</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-common-util</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
