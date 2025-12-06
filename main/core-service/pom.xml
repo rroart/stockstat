@@ -262,7 +262,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
-      <version>${springboot.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -301,4 +300,3 @@
       </dependency-->
   </dependencies>
 </project>
-

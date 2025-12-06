@@ -42,7 +42,6 @@
       <plugin>
 	<groupId>org.springframework.boot</groupId>
 	<artifactId>spring-boot-maven-plugin</artifactId>
-	<version>${springboot.version}</version>
 	<executions>
 	  <execution>
 	    <goals>
@@ -84,7 +83,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
-      <version>${springboot.version}</version>
     </dependency>
     <!--dependency>
       <groupId>org.springframework.cloud</groupId>
@@ -133,7 +131,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-webflux</artifactId>
-      <version>${springboot.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -347,7 +344,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
-      <version>${springboot.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -386,4 +382,3 @@
 </dependency>
   </dependencies>
 </project>
-

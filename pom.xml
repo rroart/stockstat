@@ -94,14 +94,15 @@
     <stockstat.version>0.6-SNAPSHOT</stockstat.version>
     <jdk.version>21</jdk.version>
     <jdk.spark.version>17</jdk.spark.version>
-    <mavencompiler.version>3.8.1</mavencompiler.version>
+    <mavencompiler.version>3.11.0</mavencompiler.version>
     <maveninstall.version>2.5.2</maveninstall.version>
-    <mavenshade.version>3.4.1</mavenshade.version>
+    <mavenshade.version>3.6.1</mavenshade.version>
     <jetty.version>9.4.12.v20180830</jetty.version>
-    <springboot.version>3.1.0</springboot.version>
-    <springcloud.version>4.0.2</springcloud.version>
-    <springcloudstarter.version>2022.0.3</springcloudstarter.version>
-    <springcore.version>6.0.9</springcore.version>
+    <!-- Upgraded to Spring Boot 4 / Spring Framework 6.2.x -->
+    <springboot.version>4.0.0</springboot.version>
+    <springcloud.version>5.0.0</springcloud.version>
+    <springcloudstarter.version>2025.1.0-RC1</springcloudstarter.version>
+    <springcore.version>7.0.1</springcore.version>
     <reactor.version>3.6.8</reactor.version>
     <reactornetty.version>1.1.22</reactornetty.version>
     <eurekaclient.version>2.0.0</eurekaclient.version>
@@ -115,7 +116,7 @@
     <junit.version>5.7.2</junit.version>
     <log4j.version>1.2.17</log4j.version>
     <commons.version>2.1.1</commons.version>
-    <commons.math3.version>3.6.1</commons.math3.version>
+    <commons.math3.version>3.4.1</commons.math3.version>
     <commons.lang3.version>3.8.1</commons.lang3.version>
     <commons.codec.version>1.15</commons.codec.version>
     <commons.beanutils.version>1.9.4</commons.beanutils.version>
@@ -130,6 +131,8 @@
     <vaadin.version>7.6.0</vaadin.version>
     <vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
     <servlet.version>3.1.0</servlet.version>
+    <!-- migrate to Jakarta Servlet API 6 (Jakarta EE 10) -->
+    <servlet.version>6.0.0</servlet.version>
     <xmlapis.version>1.4.01</xmlapis.version>
     <spark.version>3.5.1</spark.version>
     <talib.version>0.4.0</talib.version>
@@ -156,9 +159,21 @@
     <janino.version>3.1.9</janino.version>
     <jakartaservlet.version>4.0.3</jakartaservlet.version>
     <jersey.version>2.36</jersey.version>
-    <antlr4.version>4.8</antlr4.version>
+    <jakartaservlet.version>6.0.0</jakartaservlet.version>
     <cyclonedx.version>2.9.0</cyclonedx.version>
   </properties>
+  <dependencyManagement>
+    <dependencies>
+      <!-- Import Spring Boot dependency management so child modules inherit consistent versions -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${springboot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <repositories>
     <repository> 
         <id>repository.spring.milestone</id> 

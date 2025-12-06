@@ -17,5 +17,6 @@ module db {
     requires org.slf4j;
     requires java.naming;
     requires jakarta.transaction;
+    requires jakarta.cdi;
 	requires org.apache.commons.lang3;
 }

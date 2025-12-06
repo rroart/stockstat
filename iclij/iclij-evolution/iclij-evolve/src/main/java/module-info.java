@@ -31,4 +31,5 @@ module iclij.evolutionevolve {
     requires evolution.model;
     requires evolution.gene;
     requires common.filesystem.client;
+    requires org.apache.commons.lang3;
 }

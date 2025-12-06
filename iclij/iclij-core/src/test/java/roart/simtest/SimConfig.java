@@ -5,7 +5,8 @@ import static org.mockito.Mockito.mock;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.jdbc.JdbcRepositoriesAutoConfiguration;
+//import org.springframework.boot.autoconfigure.data.jdbc.DataJdbcRepositoriesAutoConfiguration;
+import org.springframework.boot.data.jdbc.autoconfigure.DataJdbcRepositoriesAutoConfiguration;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,7 +56,7 @@ import org.springframework.data.jdbc.core.dialect.JdbcPostgresDialect;
 //import org.springframework.data.relational.core.conversion.MappingRelationalConverter;
 //import org.springframework.data.jdbc.core.convert.MappingJdbcConverter;
 import org.springframework.data.jdbc.core.convert.RelationResolver;
-import org.springframework.data.jdbc.core.convert.BasicJdbcConverter;
+import org.springframework.data.jdbc.core.convert.MappingJdbcConverter;
 import org.springframework.data.jdbc.core.convert.DefaultDataAccessStrategy;
 import org.springframework.data.jdbc.core.convert.DelegatingDataAccessStrategy;
 
@@ -63,9 +64,9 @@ import org.springframework.data.jdbc.core.convert.DelegatingDataAccessStrategy;
 public class SimConfig {
 
     @Bean
-    public JdbcRepositoriesAutoConfiguration getJdbcRepositoriesAutoConfiguration() {
+    public DataJdbcRepositoriesAutoConfiguration getJdbcRepositoriesAutoConfiguration() {
         //return new SpringBootJdbcConfiguration();
-        return new JdbcRepositoriesAutoConfiguration();
+        return new DataJdbcRepositoriesAutoConfiguration();
     }
     
     @Bean
@@ -79,8 +80,8 @@ public class SimConfig {
     }
     
     @Bean
-    public BasicJdbcConverter getBasicJdbcConverter(RelationalMappingContext context, RelationResolver relationResolver) {
-        return new BasicJdbcConverter(context, relationResolver);
+    public MappingJdbcConverter getBasicJdbcConverter(RelationalMappingContext context, RelationResolver relationResolver) {
+        return new MappingJdbcConverter(context, relationResolver);
     }
     
     @Bean

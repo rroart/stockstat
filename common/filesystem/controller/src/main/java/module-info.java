@@ -24,5 +24,6 @@ module filesystem {
     //requires stockstat.shadow.zookeeper;
     requires common.model;
     requires common.util;
+    requires spring.boot.web.server;
     //requires common.zookeeper;
 }

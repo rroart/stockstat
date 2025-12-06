@@ -25,4 +25,5 @@ open module springdata {
     requires spring.boot;
     requires spring.tx;
     requires spring.data.relational;
+    requires spring.boot.jdbc;
 }
