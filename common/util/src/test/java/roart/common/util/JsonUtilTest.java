@@ -9,12 +9,12 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
-import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import tools.jackson.databind.ObjectMapper;
+//import tools.jackson.databind.ObjectMapper.DefaultTyping;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import tools.jackson.databind.jsontype.PolymorphicTypeValidator;
+//import tools.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 
 import roart.common.constants.Constants;
 import roart.common.util.ArraysUtil;
@@ -27,9 +27,9 @@ public class JsonUtilTest {
                 .builder()
                 //.allowIfBaseType(MyObject.class)
                 .build();
-        ptv = new LaissezFaireSubTypeValidator();
+        ptv = null; //new LaissezFaireSubTypeValidator();
         ObjectMapper mapper = JsonMapper.builder()
-                .activateDefaultTyping(ptv, DefaultTyping.NON_FINAL, As.PROPERTY)
+                .activateDefaultTyping(ptv, null /*DefaultTyping.NON_FINAL*/, As.PROPERTY)
                 .build();
         Arr arr = new Arr();
         arr.arra = new double[][] { { 2.0 } };

@@ -27,9 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.action.ActionThread;
 import roart.common.cache.MyCache;
@@ -177,8 +177,8 @@ public class SimIT {
         log.info("Wants it {}", iconf.wantsInmemoryPipeline());
         String market = System.getenv("MARKET");
         log.info("Market {}", market);
-        simConfig.setStartdate("2024-11-01");
-        simConfig.setEnddate("2024-12-01");
+        //simConfig.setStartdate("2024-11-01");
+        //simConfig.setEnddate("2024-12-01");
         IclijServiceResult result = null;
         try {
             result = testutils.getSimulateInvestMarket(simConfig, market);

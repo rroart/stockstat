@@ -281,9 +281,17 @@ public class MLClassifyPytorchDS extends MLClassifyDS {
         Object[] trainingArray = new Object[learnMap.size()];
         Object[] trainingCatArray = new Object[learnMap.size()];
         getTrainingSet(learnMap, trainingArray, trainingCatArray);
+        log.info("Use curve {}", indicator.getConf().wantAggregatorsUsecurve());
+        log.info("Use confusion {}", indicator.getConf().wantAggregatorsUseConfusion());
+        log.info("Use binary {}", indicator.getConf().wantUseBinary());
+        log.info("Use curve {}", conf.wantAggregatorsUsecurve());
+        log.info("Use confusion {}", conf.wantAggregatorsUseConfusion());
+        log.info("Use binary {}", conf.wantUseBinary());
+        log.info("Also" + classify + " " + classes);
         boolean binary = indicator.getConf().wantUseBinary() && classify && classes == 2; // TODO
         Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev(binary);
         String config = configMap.get(model.getKey(binary));
+        log.info("Config key {} {}", model.getKey(binary), config);
         if (nnconfigs == null) {
             nnconfigs = new NeuralNetConfigs();
         }

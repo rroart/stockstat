@@ -14,7 +14,7 @@ open module iclij.evolve.service {
     requires iclij.evolutionchromosome;
     requires iclij.common.constants;
     requires common.constants;
-    requires com.fasterxml.jackson.databind;
+    requires tools.jackson.databind;
     requires common.communication.factory;
     requires org.apache.commons.lang3;
     requires common.util;
@@ -28,8 +28,8 @@ open module iclij.evolve.service {
     requires common.controller;
     requires spring.context;
     requires com.fasterxml.jackson.annotation;
-    requires com.fasterxml.jackson.datatype.jsr310;
-    requires com.fasterxml.jackson.core;
+    requires tools.jackson.datatype.javatime;
+    requires tools.jackson.core;
     requires java.base;
     requires evolution.model;
     requires evolution.chromosome;

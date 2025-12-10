@@ -18,8 +18,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
 
 import roart.aggregatorindicator.impl.AggregatorMLIndicator;
 import roart.common.config.ConfigConstants;
@@ -163,7 +163,7 @@ public class MLIndicator extends Aggregator {
 
     private Map<Integer, String> mapTypes = new HashMap<>();
 
-    public void getEvaluations(IclijConfig conf, int j, Object[] retObj, List<String> dateList, Map<String, List<Pair<Object, Double>>> mergedCatMap, Double threshold) throws JsonParseException, JsonMappingException, IOException {
+    public void getEvaluations(IclijConfig conf, int j, Object[] retObj, List<String> dateList, Map<String, List<Pair<Object, Double>>> mergedCatMap, Double threshold) throws StreamReadException, DatabindException, IOException {
         int listlen = conf.getTableDays();
         if (listlen == 0) {
             listlen = dateList.size();
@@ -204,7 +204,7 @@ public class MLIndicator extends Aggregator {
         return mapMap.computeIfAbsent(key, k -> new ArrayList<>());
     }
 
-    public void getEvaluations(IclijConfig conf, int start, Object[] retObj, List<String> dateList, Map<String, List<Pair<Object, Double>>> mergedCatArrayMap, Set<String> ids, Double threshold) throws JsonParseException, JsonMappingException, IOException {
+    public void getEvaluations(IclijConfig conf, int start, Object[] retObj, List<String> dateList, Map<String, List<Pair<Object, Double>>> mergedCatArrayMap, Set<String> ids, Double threshold) throws StreamReadException, DatabindException, IOException {
         int days = conf.getAggregatorsIndicatorDays();
         if (days == 0) {
             days = dateList.size();

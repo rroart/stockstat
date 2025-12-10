@@ -12,7 +12,7 @@ module common.communication.integration.camel {
     requires common.communication.integration.model;
     requires common.util;
     requires camel.amqp;
-    requires com.fasterxml.jackson.databind;
+    requires tools.jackson.databind;
     requires org.apache.commons.lang3;
     requires spring.beans;
     requires spring.context;

@@ -16,6 +16,10 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jdbc.core.JdbcAggregateOperations;
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
+import org.springframework.data.jdbc.core.convert.DataAccessStrategy;
+import org.springframework.data.jdbc.core.convert.JdbcConverter;
 
 @Configuration
 public class IoBean {
@@ -55,4 +59,8 @@ public class IoBean {
         return curatorClient;
     }
 
+    //@Bean
+    public JdbcAggregateOperations JdbcAggregateTemplate(JdbcConverter converter, DataAccessStrategy dataAccessStrategy) {
+        return new JdbcAggregateTemplate(converter, dataAccessStrategy);
+    }
 }

@@ -2,7 +2,7 @@ package roart.common.communication.factory;
 
 import java.util.function.Function;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import roart.common.communication.model.Communication;
 import roart.common.communication.integration.camel.Camel;
 import roart.common.communication.integration.spring.Spring;

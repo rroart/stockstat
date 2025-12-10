@@ -2,8 +2,8 @@ package roart.evolution.species;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
 
 import roart.evolution.chromosome.AbstractChromosome;
 
@@ -38,7 +38,7 @@ public class Individual  implements Comparable<Individual>{
         return calculatetime;
     }
     
-    public Individual getNewWithValueCopyFactory() throws JsonParseException, JsonMappingException, IOException {
+    public Individual getNewWithValueCopyFactory() throws StreamReadException, DatabindException, IOException {
         if (chromosome == null) {
             int j = 0;
         }
@@ -47,14 +47,14 @@ public class Individual  implements Comparable<Individual>{
         return new Individual(newChromosome);
     }
 
-    public Individual getNewWithValueCopyAndRandomFactory() throws JsonParseException, JsonMappingException, IOException {
+    public Individual getNewWithValueCopyAndRandomFactory() throws StreamReadException, DatabindException, IOException {
         AbstractChromosome newChromosome = chromosome.copy();
         newChromosome.transformToNode();
         newChromosome.getRandom();
         return new Individual(newChromosome);
     }
 
-    public Individual crossover(Individual pop) throws JsonParseException, JsonMappingException, IOException {
+    public Individual crossover(Individual pop) throws StreamReadException, DatabindException, IOException {
         return chromosome.crossover(pop.chromosome);
     }
 
@@ -63,13 +63,13 @@ public class Individual  implements Comparable<Individual>{
         return Double.compare(arg0.fitness, fitness);
     }
 
-    public void mutate() throws JsonParseException, JsonMappingException, IOException {
+    public void mutate() throws StreamReadException, DatabindException, IOException {
         chromosome.mutate();
         chromosome.normalize();
         fitness = null;
         //fitness = evaluation.getFitness();
     }
-    public void recalculateScore() throws JsonParseException, JsonMappingException, IOException {
+    public void recalculateScore() throws StreamReadException, DatabindException, IOException {
         fitness = chromosome.getFitness();
 
     }

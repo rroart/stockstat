@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
 
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
@@ -36,14 +36,14 @@ public class ConfTest {
     }
     
     //@Test
-    public void t() throws JsonParseException, JsonMappingException, IOException {
+    public void t() throws StreamReadException, DatabindException, IOException {
         System.setProperty("config", "stockstat.xml");
         //System.setProperty("config", "iclij.xml");
         extracted();
         }
 
     //@Test
-    public void t2() throws JsonParseException, JsonMappingException, IOException {
+    public void t2() throws StreamReadException, DatabindException, IOException {
         //System.setProperty("config", "stockstat.xml");
         System.setProperty("config", "iclij.xml");
         extracted();

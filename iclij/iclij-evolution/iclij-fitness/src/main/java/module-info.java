@@ -22,8 +22,8 @@ module iclij.evolutionfitness {
 	requires org.slf4j;
 	requires evolution.model;
 	requires evolution.gene;
-	requires com.fasterxml.jackson.core;
-	requires com.fasterxml.jackson.databind;
+	requires tools.jackson.core;
+	requires tools.jackson.databind;
 	requires commons.math3;
 	requires org.apache.commons.lang3;
 	requires common.util;

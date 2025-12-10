@@ -17,9 +17,10 @@ module common.controller {
     requires iclij.common.config;
     requires org.slf4j;
     requires guava;
-    requires com.fasterxml.jackson.databind;
+    requires tools.jackson.databind;
     requires dbdao;
     requires curator.client;
     requires common.queueutil;
     requires curator.framework;
+    requires org.apache.commons.lang3;
 }

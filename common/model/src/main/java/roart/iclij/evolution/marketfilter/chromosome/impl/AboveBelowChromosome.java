@@ -6,8 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
 
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
@@ -39,7 +39,7 @@ public class AboveBelowChromosome extends AbstractChromosome {
     }
 
     @Override
-    public double getEvaluations(int j) throws JsonParseException, JsonMappingException, IOException {
+    public double getEvaluations(int j) throws StreamReadException, DatabindException, IOException {
         return 0;
     }
 
@@ -50,14 +50,14 @@ public class AboveBelowChromosome extends AbstractChromosome {
     }
 
     @Override
-    public void getRandom() throws JsonParseException, JsonMappingException, IOException {
+    public void getRandom() throws StreamReadException, DatabindException, IOException {
         for (int i = 0; i < genes.size(); i++) {
             genes.set(i, random.nextBoolean());
         }
     }
 
     @Override
-    public void transformToNode() throws JsonParseException, JsonMappingException, IOException {
+    public void transformToNode() throws StreamReadException, DatabindException, IOException {
     }
 
     @Override
@@ -65,12 +65,12 @@ public class AboveBelowChromosome extends AbstractChromosome {
     }
 
     @Override
-    public void transformFromNode() throws JsonParseException, JsonMappingException, IOException {
+    public void transformFromNode() throws StreamReadException, DatabindException, IOException {
     }
 
     @JsonIgnore
     @Override
-    public double getFitness() throws JsonParseException, JsonMappingException, IOException {
+    public double getFitness() throws StreamReadException, DatabindException, IOException {
         // TODO Auto-generated method stub
         return 0;
     }

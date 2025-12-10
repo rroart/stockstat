@@ -12,8 +12,8 @@ open module core {
     requires batik.svggen;
     requires batik.util;
     requires com.fasterxml.jackson.annotation;
-    requires com.fasterxml.jackson.core;
-    requires com.fasterxml.jackson.databind;
+    requires tools.jackson.core;
+    requires tools.jackson.databind;
     requires common.config;
     requires common.controller;
     //requires common.constants;
@@ -87,6 +87,6 @@ open module core {
     requires ml.spark;
     requires common.inmemory.factory;
     requires common.inmemory.model;
-    requires com.fasterxml.jackson.datatype.jsr310;
+    requires tools.jackson.datatype.javatime;
     requires common.webflux;
 }

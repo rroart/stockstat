@@ -21,9 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.action.ActionThread;
 import roart.aggregator.impl.MLMulti;
@@ -112,6 +112,13 @@ public class EvolveIT {
         log.info("Wants {}", iconf.wantsInmemoryPipeline());
         iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
         log.info("Wants {}", iconf.wantsInmemoryPipeline());
+        log.info("keys" + conf.getConfigData().getConfigValueMap().get(ConfigConstants.AGGREGATORSUSECURVE));
+        log.info("keys" + conf.getConfigData().getConfigValueMap().get(ConfigConstants.AGGREGATORSUSECONFUSION));
+        log.info("keys" + conf.getConfigData().getConfigValueMap().get(ConfigConstants.MACHINELEARNINGUSEBINARY));
+        log.info("Use curve {}", conf.wantAggregatorsUsecurve());
+        log.info("Use confusion {}", conf.wantAggregatorsUseConfusion());
+        log.info("Use binary {}", conf.wantUseBinary());
+        //log.info("Use binary {}", iconf.wantUseBinary());
 
         MyCache.setCache(iconf.wantCache());
         MyCache.setCacheTTL(iconf.getCacheTTL());

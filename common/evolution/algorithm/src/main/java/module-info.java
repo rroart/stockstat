@@ -11,8 +11,8 @@ module evolution.algorithm {
 
     requires common.constants;
     requires common.util;
-    requires com.fasterxml.jackson.core;
-    requires com.fasterxml.jackson.databind;
+    requires tools.jackson.core;
+    requires tools.jackson.databind;
     requires evolution.config;
     requires evolution.model;
     requires myexecutor;

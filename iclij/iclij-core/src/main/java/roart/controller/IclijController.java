@@ -6,11 +6,12 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.action.Action;
 import roart.action.ActionThread;
@@ -73,7 +74,7 @@ public class IclijController implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws InterruptedException, JsonParseException, JsonMappingException, IOException {	    
+    public void run(String... args) throws InterruptedException, StreamReadException, DatabindException, IOException {	    
         if (System.getenv("test") != null) return;
         log.info("Using profile {}", activeProfile);
         log.info("Using profile {}", iclijConfig);
@@ -110,14 +111,16 @@ public class IclijController implements CommandLineRunner {
         }
     }
 
+    /*
     @Bean(name = "OBJECT_MAPPER_BEAN")
     public ObjectMapper jsonObjectMapper() {
         return Jackson2ObjectMapperBuilder.json()
                 .serializationInclusion(JsonInclude.Include.NON_NULL)
-                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .modules(new JavaTimeModule())
+                .featuresToDisable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+                //.modules(new JavaTimeModule())
                 .build();
     }
+    */
 
     class MemRunner extends Thread {
 

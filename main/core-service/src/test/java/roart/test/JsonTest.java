@@ -5,9 +5,9 @@ import java.io.IOException;
 import org.apache.commons.lang3.tuple.Triple;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+//import tools.jackson.core.JsonGenerator;
+//import tools.jackson.databind.JsonSerializer;
+//import tools.jackson.databind.SerializerProvider;
 import roart.ml.spark.MLClassifySparkDS;
 import roart.ml.spark.MLClassifySparkMLPCModel;
 import roart.ml.common.MLClassifyModel;
@@ -45,7 +45,7 @@ public class JsonTest {
         LearnTestClassifyDS param2 = JsonUtil.convert(j, LearnTestClassifyDS.class);
         System.out.println(param2);
     }
-    
+    /*
     private static final class TripleSerializer extends JsonSerializer<Triple> {
 
         @Override
@@ -58,4 +58,5 @@ public class JsonTest {
         }
 
     }
+    */
 }

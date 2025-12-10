@@ -1,7 +1,5 @@
 package roart.ml.model;
 
-import com.fasterxml.jackson.databind.ser.std.StdArraySerializers.DoubleArraySerializer;
-
 public class LearnClassify {
     private String id;
     

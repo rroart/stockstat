@@ -24,6 +24,6 @@ open module pipeline.predictor {
     requires common.model;
     requires pipeline.indicator;
     requires pipeline.util;
-    requires com.fasterxml.jackson.databind;
+    requires tools.jackson.databind;
     requires common.inmemory.model;
 }

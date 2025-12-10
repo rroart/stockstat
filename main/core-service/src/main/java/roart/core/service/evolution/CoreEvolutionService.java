@@ -11,8 +11,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
 
 import roart.aggregatorindicator.impl.Recommend;
 import roart.common.constants.Constants;
@@ -69,7 +69,7 @@ public class CoreEvolutionService {
         this.io = io;
     }
 
-    public IclijServiceResult getEvolveRecommender(IclijConfig conf, List<String> disableList, IclijServiceParam origparam) throws JsonParseException, JsonMappingException, IOException {
+    public IclijServiceResult getEvolveRecommender(IclijConfig conf, List<String> disableList, IclijServiceParam origparam) throws StreamReadException, DatabindException, IOException {
         Inmemory inmemory = io.getInmemoryFactory().get(conf);
         IclijServiceResult result = new IclijServiceResult();
         Map<String, Object> updateMap = new HashMap<>();

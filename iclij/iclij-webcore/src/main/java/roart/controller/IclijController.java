@@ -3,11 +3,11 @@ package roart.controller;
 import java.io.IOException;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.common.constants.Constants;
 import roart.eureka.util.EurekaUtil;
@@ -53,7 +53,7 @@ public class IclijController implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws InterruptedException, JsonParseException, JsonMappingException, IOException {	    
+    public void run(String... args) throws InterruptedException, StreamReadException, DatabindException, IOException {	    
         log.info("Using profile {}", activeProfile);
         IclijConfig instance = iclijConfig;
         try {
@@ -64,6 +64,7 @@ public class IclijController implements CommandLineRunner {
         }
     }
 
+    /*
     @Bean(name = "OBJECT_MAPPER_BEAN")
     public ObjectMapper jsonObjectMapper() {
         return Jackson2ObjectMapperBuilder.json()
@@ -72,5 +73,6 @@ public class IclijController implements CommandLineRunner {
                 .modules(new JavaTimeModule())
                 .build();
     }
+    */
 
 }

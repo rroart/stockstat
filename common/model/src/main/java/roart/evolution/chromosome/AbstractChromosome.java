@@ -8,8 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
@@ -57,20 +57,20 @@ public abstract class AbstractChromosome {
         this.ascending = ascending;
     }
 
-    public abstract double getEvaluations(int j) throws JsonParseException, JsonMappingException, IOException;
+    public abstract double getEvaluations(int j) throws StreamReadException, DatabindException, IOException;
     
     public abstract void mutate();
     
-    public abstract void getRandom() throws JsonParseException, JsonMappingException, IOException;
+    public abstract void getRandom() throws StreamReadException, DatabindException, IOException;
     
-    public abstract void transformToNode() throws JsonParseException, JsonMappingException, IOException;
+    public abstract void transformToNode() throws StreamReadException, DatabindException, IOException;
     
     public abstract void normalize();
     
-    public abstract void transformFromNode() throws JsonParseException, JsonMappingException, IOException;
+    public abstract void transformFromNode() throws StreamReadException, DatabindException, IOException;
 
     public abstract double getFitness()
-            throws JsonParseException, JsonMappingException, IOException;
+            throws StreamReadException, DatabindException, IOException;
 
     public abstract Individual crossover(AbstractChromosome chromosome);
 

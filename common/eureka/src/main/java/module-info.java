@@ -8,8 +8,8 @@
 module common.eureka {
     exports roart.eureka.util;
 
-    requires com.fasterxml.jackson.core;
-    requires com.fasterxml.jackson.databind;
+    requires tools.jackson.core;
+    requires tools.jackson.databind;
     requires org.slf4j;
     requires spring.core;
     requires spring.web;

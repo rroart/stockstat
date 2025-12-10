@@ -106,7 +106,9 @@
     <reactor.version>3.6.8</reactor.version>
     <reactornetty.version>1.1.22</reactornetty.version>
     <eurekaclient.version>2.0.0</eurekaclient.version>
-    <jackson.version>2.15.4</jackson.version>
+    <jackson.version>3.0.2</jackson.version>
+    <jackson.annotations.version>2.20</jackson.annotations.version>
+    <jackson.jsr.version>3.0.0-rc2</jackson.jsr.version>
     <hibernate.version>6.1.5.Final</hibernate.version>
     <hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
     <hibernate.hbm2ddl.auto>create</hibernate.hbm2ddl.auto>

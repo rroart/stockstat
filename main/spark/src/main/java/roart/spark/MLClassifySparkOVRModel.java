@@ -14,9 +14,9 @@ import org.apache.spark.ml.PipelineModel;
 import org.apache.spark.ml.Pipeline;
 import org.apache.spark.ml.PipelineStage;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.ObjectMapper;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;

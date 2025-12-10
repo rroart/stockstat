@@ -8,9 +8,9 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.ObjectMapper;
 
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
@@ -26,7 +26,7 @@ public void setup() {
 }
 
 @Test
-public void test() throws JsonParseException, JsonMappingException, IOException {
+public void test() throws StreamReadException, DatabindException, IOException {
     MarketConfig m = new MarketConfig();
     m.setFindtime((short) 5);
     m.setMarket("cb");

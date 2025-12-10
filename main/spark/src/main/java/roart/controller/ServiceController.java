@@ -36,14 +36,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.DatabindException;
+//import tools.jackson.databind.JsonSerializer;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+//import tools.jackson.databind.SerializerProvider;
 
 import roart.common.cache.MyCache;
 import roart.common.config.ConfigConstantMaps;
@@ -154,7 +154,7 @@ public class ServiceController implements CommandLineRunner {
     private static ApplicationContext applicationContext;
 
     @Override
-    public void run(String... args) throws InterruptedException, JsonParseException, JsonMappingException, IOException {        
+    public void run(String... args) throws InterruptedException, StreamReadException, DatabindException, IOException {        
         log.info("Using profile {}", activeProfile);
         IclijConfig instance = iclijConfig;
         String myservices = instance.getMyservices();
@@ -217,13 +217,14 @@ public class ServiceController implements CommandLineRunner {
         ObjectMapper objectMapper = new ObjectMapper();
         //objectMapper.findAndRegisterModules();
         //objectMapper.configure(
-        //        com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        //        tools.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         //objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        // TODO objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         
         return objectMapper;
     }
     
+    /*
     private static final class TripleSerializer extends JsonSerializer<Triple> {
 
         @Override
@@ -236,4 +237,5 @@ public class ServiceController implements CommandLineRunner {
         }
 
     }
+    */
 }

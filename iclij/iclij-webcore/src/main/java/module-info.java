@@ -9,9 +9,9 @@ open module iclij.webcore {
     exports roart.webcore.util;
     
     requires com.fasterxml.jackson.annotation;
-    requires com.fasterxml.jackson.core;
-    requires com.fasterxml.jackson.databind;
-    requires com.fasterxml.jackson.datatype.jsr310;
+    requires tools.jackson.core;
+    requires tools.jackson.databind;
+    requires tools.jackson.datatype.javatime;
     requires common.config;
     requires common.constants;
     requires common.eureka;

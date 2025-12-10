@@ -12,7 +12,7 @@ open module iclij.sim {
     requires iclij.common.config;
     requires iclij.common.simulate;
     requires common.constants;
-    requires com.fasterxml.jackson.databind;
+    requires tools.jackson.databind;
     requires common.communication.factory;
     requires org.apache.commons.lang3;
     requires common.util;
@@ -28,8 +28,8 @@ open module iclij.sim {
     requires common.queue;
     requires spring.context;
     requires com.fasterxml.jackson.annotation;
-    requires com.fasterxml.jackson.datatype.jsr310;
-    requires com.fasterxml.jackson.core;
+    requires tools.jackson.datatype.javatime;
+    requires tools.jackson.core;
     requires evolution.model;
     requires iclij.evolutioniclijconfigmap;
     requires iclij.common.util;

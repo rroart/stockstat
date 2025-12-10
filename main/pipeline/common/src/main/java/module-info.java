@@ -8,8 +8,8 @@
 module pipeline.common {
     exports roart.aggregatorindicator;
 
-    requires com.fasterxml.jackson.core;
-    requires com.fasterxml.jackson.databind;
+    requires tools.jackson.core;
+    requires tools.jackson.databind;
     requires iclij.common.config;
     requires common.config;
     requires common.constants;

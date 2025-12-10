@@ -12,8 +12,8 @@ module evolution.gene {
     exports roart.evolution.marketfilter.genetics.gene.impl;
     exports roart.evolution.marketfilter.common.gene.impl;
     
-    requires com.fasterxml.jackson.core;
-    requires com.fasterxml.jackson.databind;
+    requires tools.jackson.core;
+    requires tools.jackson.databind;
     requires iclij.common.config;
     requires common.config;
     requires common.util;

@@ -12,8 +12,8 @@ open module common.config {
     requires common.util;
     requires com.fasterxml.jackson.annotation;
     requires org.slf4j;
-    requires com.fasterxml.jackson.core;
-    requires com.fasterxml.jackson.databind;
+    requires tools.jackson.core;
+    requires tools.jackson.databind;
     requires commons.configuration2;
     requires common.constants;
     requires spring.context;

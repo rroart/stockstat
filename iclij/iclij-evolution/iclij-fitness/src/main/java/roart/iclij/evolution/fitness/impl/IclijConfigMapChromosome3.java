@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import org.apache.commons.math3.genetics.Chromosome;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
 
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapGene;
 
@@ -32,7 +32,7 @@ public class IclijConfigMapChromosome3 extends Chromosome {
         this.gene = gene;
     }
 
-    public void getRandom() throws JsonParseException, JsonMappingException, IOException {
+    public void getRandom() throws StreamReadException, DatabindException, IOException {
         gene.randomize();
     }
     

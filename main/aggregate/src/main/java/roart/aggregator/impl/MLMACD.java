@@ -19,7 +19,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import roart.aggregator.impl.IndicatorAggregator.MergeSubType;
 import roart.aggregator.impl.IndicatorAggregator.MySubType;

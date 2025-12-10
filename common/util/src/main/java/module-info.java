@@ -12,8 +12,8 @@ module common.util {
     requires commons.math3;
     requires org.apache.commons.lang3;
     requires common.constants;
-    requires com.fasterxml.jackson.databind;
-    requires com.fasterxml.jackson.core;
+    requires tools.jackson.databind;
+    requires tools.jackson.core;
     requires guava;
     requires java.sql;
     requires com.fasterxml.jackson.annotation;

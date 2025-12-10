@@ -12,9 +12,9 @@ import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.ObjectMapper;
 
 import roart.aggregatorindicator.impl.Recommend;
 import roart.category.AbstractCategory;

@@ -15,9 +15,9 @@ module iclij.web {
     requires iclij.common.config;
     requires iclij.common.model;
     requires iclij.common.service;
-    requires com.fasterxml.jackson.core;
-    requires com.fasterxml.jackson.databind;
-    requires com.fasterxml.jackson.datatype.jsr310;
+    requires tools.jackson.core;
+    requires tools.jackson.databind;
+    requires tools.jackson.datatype.javatime;
     requires jsoup;
     requires org.slf4j;
     requires spring.beans;

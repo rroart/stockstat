@@ -2,8 +2,8 @@ package roart.iclij.evolution.chromosome.impl;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
 
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
@@ -21,7 +21,7 @@ public class PredictorChromosome extends ConfigMapChromosome2 {
 
     @Override
     public double getFitness()
-            throws JsonParseException, JsonMappingException, IOException {
+            throws StreamReadException, DatabindException, IOException {
         //((TensorflowPredictorLSTMConfig) config.getConfig()).full = true;
         //Map<String, Object> map = new HashMap<>();
         //String string = JsonUtil.convert(config);
@@ -49,12 +49,12 @@ public class PredictorChromosome extends ConfigMapChromosome2 {
     }
     
     @Override
-    public double getEvaluations(int j) throws JsonParseException, JsonMappingException, IOException {
+    public double getEvaluations(int j) throws StreamReadException, DatabindException, IOException {
         return 0;
     }
 
     @Override
-    public void transformToNode() throws JsonParseException, JsonMappingException, IOException {
+    public void transformToNode() throws StreamReadException, DatabindException, IOException {
     }
 
     @Override
@@ -62,7 +62,7 @@ public class PredictorChromosome extends ConfigMapChromosome2 {
     }
 
     @Override
-    public void transformFromNode() throws JsonParseException, JsonMappingException, IOException {
+    public void transformFromNode() throws StreamReadException, DatabindException, IOException {
     }
 
     @Override

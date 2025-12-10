@@ -19,7 +19,7 @@ import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
@@ -262,6 +262,7 @@ public abstract class Predictor extends AbstractPredictor {
                     resultMeta.setThreshold(threshold);
                     if (!neuralnetcommand.isMldynamic() && neuralnetcommand.isMllearn()) {
                         neuralnetcommand.setMllearn(false);
+                        // TODO
                         neuralnetcommand.setMlclassify(true);
                         result = mldao.learntestclassify(nnConfigs, null, map, model, conf.getPredictorsDays(), conf.getPredictorsFuturedays(), mapTime, classifylist, null, path, filename, neuralnetcommand, mlmeta, false);  
                     } else {

@@ -6,8 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
 
 import roart.evolution.algorithm.EvolutionAlgorithm;
 import roart.evolution.chromosome.AbstractChromosome;
@@ -40,7 +40,7 @@ public class OneFourEvolution extends EvolutionAlgorithm {
     }
 
     private Individual getBest(int four, int five, List<Individual> population,
-            boolean doBuy, AbstractChromosome chromosome) throws JsonParseException, JsonMappingException, IOException, InterruptedException, ExecutionException {
+            boolean doBuy, AbstractChromosome chromosome) throws StreamReadException, DatabindException, IOException, InterruptedException, ExecutionException {
         for (int i = 0; i < five; i ++) {
             Individual buy = new Individual(chromosome).getNewWithValueCopyAndRandomFactory();
             population.add(buy);

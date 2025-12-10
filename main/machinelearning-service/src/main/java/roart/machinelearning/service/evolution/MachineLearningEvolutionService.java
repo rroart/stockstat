@@ -15,9 +15,9 @@ import org.apache.curator.framework.CuratorFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.ObjectMapper;
 
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
@@ -84,7 +84,7 @@ public class MachineLearningEvolutionService {
         return JsonUtil.convert(thresholdString, Double[].class);
     }
 
-    public IclijServiceResult getEvolveML(List<String> disableList, String ml, IclijServiceParam origparam) throws JsonParseException, JsonMappingException, IOException {
+    public IclijServiceResult getEvolveML(List<String> disableList, String ml, IclijServiceParam origparam) throws StreamReadException, DatabindException, IOException {
         Map<String, Object> updateMap = new HashMap<>();
         Map<String, Object> scoreMap = new HashMap<>();
         Map<String, Object> resultMap = new HashMap<>();
@@ -192,13 +192,20 @@ public class MachineLearningEvolutionService {
             nnConfigs = new NeuralNetConfigs();            
         }
 
-        boolean binary = conf.wantUseBinary(); // TODO binary
+        log.info("keys" + conf.getConfigData().getConfigValueMap().get(ConfigConstants.AGGREGATORSUSECURVE));
+        log.info("keys" + conf.getConfigData().getConfigValueMap().get(ConfigConstants.AGGREGATORSUSECONFUSION));
+        log.info("keys" + conf.getConfigData().getConfigValueMap().get(ConfigConstants.MACHINELEARNINGUSEBINARY));
+        log.info("Use curve {}", conf.wantAggregatorsUsecurve());
+        log.info("Use confusion {}", conf.wantAggregatorsUseConfusion());
+        log.info("Use binary {}", conf.wantUseBinary());
+        boolean binary = conf.wantUseBinary(); //  TODO binary
         
         List<String> foundkeys = getFoundKeys(conf, nnConfigs);
 
         for (String key : foundkeys) {
             String configKey = nnConfigs.getConfigMap(binary).get(key);
             String configValue = (String) conf.getValueOrDefault(configKey);
+            log.info("Evolving key {} {} {}", key, configKey, configValue);
             
             NeuralNetConfig nnconfig = nnConfigs.getAndSetConfig(key, configValue, binary);
             NeuralNetConfigGene nnconfigGene = new NeuralNetConfigGeneFactory(ml.equals(PipelineConstants.PREDICTOR)).get(nnconfig, key);

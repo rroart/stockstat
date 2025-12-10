@@ -3,8 +3,8 @@ package roart.gene.impl;
 import java.io.IOException;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
 
 import roart.common.config.MLConstants;
 import roart.common.ml.NeuralNetConfig;
@@ -18,7 +18,9 @@ import roart.gene.CalcGene;
 import roart.iclij.config.IclijConfig;
 
 public class CalcGeneUtils {
-    public static void transformToNode(IclijConfig conf, List<String> keys, boolean useMax, List<Double>[] minMax, List<String> disableList) throws JsonParseException, JsonMappingException, IOException {
+    public static void transformToNode(IclijConfig conf, List<String> keys, boolean useMax, List<Double>[] minMax, List<String> disableList) throws StreamReadException
+, DatabindException
+, IOException {
         for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
             if (disableList.contains(key)) {
@@ -57,7 +59,9 @@ public class CalcGeneUtils {
         }
     }
 
-    public static void transformToNode(IclijConfig conf, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
+    public static void transformToNode(IclijConfig conf, List<String> keys) throws StreamReadException
+, DatabindException
+, IOException {
         for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
             Object value = conf.getConfigData().getConfigValueMap().get(key);
@@ -93,7 +97,9 @@ public class CalcGeneUtils {
         }
     }
 
-    public static void transformFromNode(IclijConfig conf, List<String> keys, List<String> disableList) throws JsonParseException, JsonMappingException, IOException {
+    public static void transformFromNode(IclijConfig conf, List<String> keys, List<String> disableList) throws StreamReadException
+, DatabindException
+, IOException {
         for (String key : keys) {
             if (disableList.contains(key)) {
                 continue;
@@ -109,7 +115,9 @@ public class CalcGeneUtils {
         }
     }
 
-    public static void transformFromNode(IclijConfig conf, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
+    public static void transformFromNode(IclijConfig conf, List<String> keys) throws StreamReadException
+, DatabindException
+, IOException {
         for (String key : keys) {
             NeuralNetConfig node = (NeuralNetConfig) conf.getConfigData().getConfigValueMap().get(key);
             String string = JsonUtil.convert(node);

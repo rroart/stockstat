@@ -32,10 +32,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.ObjectMapper;
 
 import org.springframework.context.annotation.Configuration;
 
@@ -674,12 +674,16 @@ public class IclijXMLConfig {
         return configxml;
     }
 
-    public List<MarketConfig> getMarkets() throws JsonParseException, JsonMappingException, IOException {
+    public List<MarketConfig> getMarkets() throws StreamReadException
+, DatabindException
+, IOException {
         String markets = IclijXMLConfig.getConfigXML().getString("markets.marketlist");
         return JsonUtil.convertnostrip(markets, new TypeReference<List<MarketConfig>>(){});
     }
 
-    public static List<Market> getMarkets(IclijConfig config) throws JsonParseException, JsonMappingException, IOException {
+    public static List<Market> getMarkets(IclijConfig config) throws StreamReadException
+, DatabindException
+, IOException {
         List<Market> retList = new ArrayList<>();
         ConfigTreeMap map = config.getConfigData().getConfigTreeMap().search("markets.marketlist");
         if (map == null) {
@@ -716,7 +720,9 @@ public class IclijXMLConfig {
         return retList;
     }
 
-    public static List<Extra> getMarketImportants(IclijConfig config) throws JsonParseException, JsonMappingException, IOException {
+    public static List<Extra> getMarketImportants(IclijConfig config) throws StreamReadException
+, DatabindException
+, IOException {
         List<Extra> retList = new ArrayList<>();
         ConfigTreeMap map = config.getConfigData().getConfigTreeMap().search("markets.importants");
         if (map == null) {
@@ -740,7 +746,9 @@ public class IclijXMLConfig {
         return retList;
     }
 
-    public static List<SimulateFilter[]> getSimulate(IclijConfig config) throws JsonParseException, JsonMappingException, IOException {
+    public static List<SimulateFilter[]> getSimulate(IclijConfig config) throws StreamReadException
+, DatabindException
+, IOException {
         List<SimulateFilter[]> retList = new ArrayList<>();
         ConfigTreeMap map = config.getConfigData().getConfigTreeMap().search("markets.simulate");
         if (map == null) {
@@ -803,12 +811,16 @@ public class IclijXMLConfig {
     }
     //?
     @Deprecated
-    public List<MarketFilter> getFilterMarkets() throws JsonParseException, JsonMappingException, IOException {
+    public List<MarketFilter> getFilterMarkets() throws StreamReadException
+, DatabindException
+, IOException {
         String markets = IclijXMLConfig.getConfigXML().getString("filtermarkets.filtermarket");
         return JsonUtil.convertnostrip(markets, new TypeReference<List<MarketFilter>>(){});
     }    
 
-    public static List<MarketFilter> getFilterMarkets(IclijConfig config) throws JsonParseException, JsonMappingException, IOException {
+    public static List<MarketFilter> getFilterMarkets(IclijConfig config) throws StreamReadException
+, DatabindException
+, IOException {
         List<MarketFilter> retList = new ArrayList<>();
         ConfigTreeMap map = config.getConfigData().getConfigTreeMap().search("markets.filtermarkets");
         log.debug("Keyset {}", config.getConfigData().getConfigValueMap().keySet());

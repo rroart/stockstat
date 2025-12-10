@@ -30,8 +30,8 @@ module common.model {
     requires evolution.config;
     requires evolution.gene;
     requires com.fasterxml.jackson.annotation;
-    requires com.fasterxml.jackson.core;
-    requires com.fasterxml.jackson.databind;
+    requires tools.jackson.core;
+    requires tools.jackson.databind;
     requires org.slf4j;
     requires org.apache.commons.lang3;
 }

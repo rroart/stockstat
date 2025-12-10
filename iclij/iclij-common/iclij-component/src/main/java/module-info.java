@@ -35,9 +35,9 @@ module iclij.common.component {
 	requires common.config;
 	requires guava;
     requires com.fasterxml.jackson.annotation;
-    requires com.fasterxml.jackson.core;
-    requires com.fasterxml.jackson.databind;
-    requires com.fasterxml.jackson.datatype.jsr310;
+    requires tools.jackson.core;
+    requires tools.jackson.databind;
+    requires tools.jackson.datatype.javatime;
 	requires evolution.fitness;
     requires curator.client;
     requires curator.framework;

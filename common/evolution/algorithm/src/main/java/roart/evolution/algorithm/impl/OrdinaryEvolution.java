@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
 
 import roart.evolution.algorithm.EvolutionAlgorithm;
 import roart.evolution.chromosome.AbstractChromosome;
@@ -53,7 +53,7 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
     }
 
     private Individual getBest(int selectionSize, Population population,
-            boolean useMax, AbstractChromosome chromosome, List<String> individuals, AbstractChromosome defaultChromosome) throws JsonParseException, JsonMappingException, IOException, InterruptedException, ExecutionException {
+            boolean useMax, AbstractChromosome chromosome, List<String> individuals, AbstractChromosome defaultChromosome) throws StreamReadException, DatabindException, IOException, InterruptedException, ExecutionException {
         //printmap(population.getFittest().getConf().getConfigValueMap());
         //printmap(population.getIndividuals().get(population.size() - 1).getConf().getConfigValueMap());
         

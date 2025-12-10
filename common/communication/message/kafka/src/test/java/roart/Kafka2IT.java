@@ -13,7 +13,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import roart.common.communication.message.kafka.Kafka;
 

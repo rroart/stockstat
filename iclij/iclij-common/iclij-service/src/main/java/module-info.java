@@ -21,9 +21,9 @@ module iclij.common.service {
     requires org.apache.commons.lang3;
     requires iclij.common.model;
     requires spring.web;
-    requires com.fasterxml.jackson.core;
-    requires com.fasterxml.jackson.databind;
-    requires com.fasterxml.jackson.datatype.jsr310;
+    requires tools.jackson.core;
+    requires tools.jackson.databind;
+    requires tools.jackson.datatype.javatime;
     requires common.communication.model;
     requires common.cache;
     requires common.inmemory.factory;

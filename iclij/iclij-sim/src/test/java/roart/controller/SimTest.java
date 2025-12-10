@@ -1,7 +1,7 @@
 package roart.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,7 +63,7 @@ public class SimTest {
     public void t() {
         ObjectMapper mapper = new ObjectMapper();
         ObjectMapper mapper2 = new ObjectMapper();
-        mapper2.registerModule(new JavaTimeModule());
+        // TODO mapper2.registerModule(new JavaTimeModule());
         SimulateStock s = new SimulateStock();
         s.setBuydate(LocalDate.now());
         String str = null;

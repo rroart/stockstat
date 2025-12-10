@@ -18,12 +18,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+//import org.springframework.http.converter.json.JsonMapper;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import roart.common.cache.MyCache;
 import roart.common.communication.factory.CommunicationFactory;
@@ -529,6 +532,7 @@ public class ControlService {
         param.setConfList(disableList);
         NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
         neuralnetcommand.setMllearn(true);
+        // TODO?
         neuralnetcommand.setMlclassify(true);
         // where is this reset?
         neuralnetcommand.setMldynamic(true);
@@ -634,10 +638,11 @@ public class ControlService {
     }
     
     private ObjectMapper jsonObjectMapper() {
-        return Jackson2ObjectMapperBuilder.json()
-                .serializationInclusion(JsonInclude.Include.NON_NULL)
-                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .modules(new JavaTimeModule())
+        return JsonMapper.builder()
+                // TODO .serializationInclusion(JsonInclude.Include.NON_NULL)
+                // TODO .featuresToDisable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+                //.moduleInstantiator(() -> new JavaTimeModule())
+                // TODO .modules(new JavaTimeModule())
                 .build();
     }
     

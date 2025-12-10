@@ -21,12 +21,12 @@ open module aggregate {
     requires pipeline.model;
     requires common.util;
     requires ta.lib;
-    requires com.fasterxml.jackson.databind;
+    requires tools.jackson.databind;
     requires org.slf4j;
     requires myexecutor;
     requires mldao;
     requires dbdao;
-    requires com.fasterxml.jackson.core;
+    requires tools.jackson.core;
     requires talib;
     requires evolution.gene;
     requires pipeline.indicator;

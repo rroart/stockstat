@@ -3,14 +3,15 @@ package roart.gene.impl;
 import java.io.IOException;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
 
 import roart.common.util.JsonUtil;
 import roart.gene.CalcGene;
 
 public class CalcGeneFactory {
-    public static CalcGene get(String name, String jsonValue, List<Double>[] macdrsiMinMax, int index, boolean useMax) throws JsonParseException, JsonMappingException, IOException {
+    public static CalcGene get(String name, String jsonValue, List<Double>[] macdrsiMinMax, int index, boolean useMax) throws StreamReadException, DatabindException
+, IOException {
         CalcComplexGene anode;
         if (name != null && name.equals("Double")) {
             return new CalcDoubleGene();

@@ -6,8 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
 
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.config.EvolutionConfig;
@@ -24,7 +24,7 @@ public class Population {
         this.population = new ArrayList<>();
     }
     
-    public Population(int populationSize, EvolutionConfig evolutionConfig, AbstractChromosome evaluation, boolean doClone, AbstractChromosome defaultChromosome) throws JsonParseException, JsonMappingException, IOException {
+    public Population(int populationSize, EvolutionConfig evolutionConfig, AbstractChromosome evaluation, boolean doClone, AbstractChromosome defaultChromosome) throws StreamReadException, DatabindException, IOException {
         this.evolutionConfig = evolutionConfig;
         this.population = new ArrayList<>();
 

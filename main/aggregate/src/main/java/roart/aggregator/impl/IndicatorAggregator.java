@@ -25,8 +25,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import roart.aggregator.impl.IndicatorAggregator.AfterBeforeLimit;
 import roart.aggregator.impl.IndicatorAggregator.SubType;
@@ -137,6 +137,12 @@ public abstract class IndicatorAggregator extends Aggregator {
         this.idNameMap = idNameMap;
         this.datareaders = datareaders;
         this.stockDates = stockDates;
+        log.info("keys" + conf.getConfigData().getConfigValueMap().get(ConfigConstants.AGGREGATORSUSECURVE));
+        log.info("keys" + conf.getConfigData().getConfigValueMap().get(ConfigConstants.AGGREGATORSUSECONFUSION));
+        log.info("keys" + conf.getConfigData().getConfigValueMap().get(ConfigConstants.MACHINELEARNINGUSEBINARY));
+        log.info("Use curve {}", conf.wantAggregatorsUsecurve());
+        log.info("Use confusion {}", conf.wantAggregatorsUseConfusion());
+        log.info("Use binary {}", conf.wantUseBinary());
 
         makeMapTypes();
         if (conf.wantML()) {

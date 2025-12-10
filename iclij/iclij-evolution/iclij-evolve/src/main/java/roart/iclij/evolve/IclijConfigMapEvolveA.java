@@ -23,8 +23,8 @@ import org.apache.commons.math3.genetics.StoppingCondition;
 import org.apache.commons.math3.genetics.TournamentSelection;
 import org.apache.commons.math3.util.Precision;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
 
 import roart.common.constants.Constants;
 import roart.common.model.MLMetricsDTO;

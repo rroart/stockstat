@@ -5,12 +5,12 @@ import roart.common.constants.Constants;
 import roart.eureka.util.EurekaUtil;
 import roart.service.ControlService;
 
-import javax.servlet.*;
+import jakarta.servlet.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StartupListener implements javax.servlet.ServletContextListener {
+public class StartupListener implements ServletContextListener {
 
     private static final Logger log = LoggerFactory.getLogger(StartupListener.class);
 
@@ -40,4 +40,3 @@ public class StartupListener implements javax.servlet.ServletContextListener {
     }
 
 }
-

@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
 
 import roart.common.config.ConfigConstants;
 import roart.evolution.chromosome.AbstractChromosome;
@@ -124,12 +124,12 @@ public class RecommenderChromosome2 extends ConfigMapChromosome2 {
     
     @Override
     public double getFitness()
-            throws JsonParseException, JsonMappingException, IOException {
+            throws StreamReadException, DatabindException, IOException {
         return 0;
     }
 
     @Override
-    public void getRandom() throws JsonParseException, JsonMappingException, IOException {
+    public void getRandom() throws StreamReadException, DatabindException, IOException {
         List<List<String>> listPerm = getBuy() ? listPermBuy : listPermSell;
         listIdx = random.nextInt(listPerm.size());
     }
@@ -154,12 +154,12 @@ public class RecommenderChromosome2 extends ConfigMapChromosome2 {
     }
     
     @Override
-    public double getEvaluations(int j) throws JsonParseException, JsonMappingException, IOException {
+    public double getEvaluations(int j) throws StreamReadException, DatabindException, IOException {
         return 0;
     }
 
     @Override
-    public void transformToNode() throws JsonParseException, JsonMappingException, IOException {
+    public void transformToNode() throws StreamReadException, DatabindException, IOException {
     }
 
     @Override
@@ -167,7 +167,7 @@ public class RecommenderChromosome2 extends ConfigMapChromosome2 {
     }
 
     @Override
-    public void transformFromNode() throws JsonParseException, JsonMappingException, IOException {
+    public void transformFromNode() throws StreamReadException, DatabindException, IOException {
     }
 
     @Override

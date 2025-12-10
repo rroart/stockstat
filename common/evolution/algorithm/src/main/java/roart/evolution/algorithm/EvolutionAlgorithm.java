@@ -18,10 +18,10 @@ import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.ObjectMapper;
 
 import roart.executor.MyExecutors;
 import roart.common.constants.Constants;
@@ -72,7 +72,7 @@ public abstract class EvolutionAlgorithm {
 
     public abstract Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome recommender, List<String> individuals, List<SerialScoreChromosome> results, AbstractChromosome defaultChromosome) throws Exception;
 
-    protected void printmap(Map<String, Object> map) throws JsonProcessingException {
+    protected void printmap(Map<String, Object> map) throws JacksonException {
         for (String key : new ArrayList<String>()) {
             Object obj = map.get(key);
             if (obj.getClass().getName().contains("Integer")) {
@@ -87,7 +87,7 @@ public abstract class EvolutionAlgorithm {
     }   
 
     protected void mutateList(List<Individual> population, int start, int size,
-            int testRecommendMutate, boolean scoreAll, boolean doBuy) throws JsonParseException, JsonMappingException, IOException {
+            int testRecommendMutate, boolean scoreAll, boolean doBuy) throws StreamReadException, DatabindException, IOException {
         List<Individual> populationCopies = new ArrayList<>(population);
         int populationSize = Math.min(size, population.size());
         int randMax = populationSize;
@@ -99,7 +99,7 @@ public abstract class EvolutionAlgorithm {
         }
     }
 
-    protected List<Individual> crossover(int childrenNum, List<Individual> population, boolean doBuy2, AbstractChromosome recommend) throws JsonParseException, JsonMappingException, IOException {
+    protected List<Individual> crossover(int childrenNum, List<Individual> population, boolean doBuy2, AbstractChromosome recommend) throws StreamReadException, DatabindException, IOException {
         List<Individual> children = new ArrayList<>();
         List<Individual> populationCopies = new ArrayList<>(population);
         int populationSize = populationCopies.size();
@@ -117,12 +117,12 @@ public abstract class EvolutionAlgorithm {
         return children;
     }
 
-    protected List<Individual> created(Integer evolutionGenerationCreate, AbstractChromosome evaluation, AbstractChromosome defaultChromosome) throws JsonParseException, JsonMappingException, IOException {
+    protected List<Individual> created(Integer evolutionGenerationCreate, AbstractChromosome evaluation, AbstractChromosome defaultChromosome) throws StreamReadException, DatabindException, IOException {
         Population population = new Population(evolutionGenerationCreate, evolutionConfig, evaluation, false, defaultChromosome);
         return population.getIndividuals();
     }
 
-    protected List<Individual> clonedmutated(Integer evolutionEliteCloneAndMutate, AbstractChromosome evaluation, AbstractChromosome defaultChromosome) throws JsonParseException, JsonMappingException, IOException {
+    protected List<Individual> clonedmutated(Integer evolutionEliteCloneAndMutate, AbstractChromosome evaluation, AbstractChromosome defaultChromosome) throws StreamReadException, DatabindException, IOException {
         Population population = new Population(evolutionEliteCloneAndMutate, evolutionConfig, evaluation, true, defaultChromosome);
         List<Individual> list = population.getIndividuals();
         for (Individual individual : list) {
@@ -131,7 +131,7 @@ public abstract class EvolutionAlgorithm {
         return list;
     }
 
-    protected boolean calculate(List<Individual> pop) throws InterruptedException, ExecutionException, JsonParseException, JsonMappingException, IOException {
+    protected boolean calculate(List<Individual> pop) throws InterruptedException, ExecutionException, StreamReadException, DatabindException, IOException {
         if (doParallel) {
             calculateParallel(pop);
             return false;
@@ -140,7 +140,7 @@ public abstract class EvolutionAlgorithm {
         }
     }
     
-    private boolean calculateSeq(List<Individual> pop) throws InterruptedException, ExecutionException, JsonParseException, JsonMappingException, IOException {
+    private boolean calculateSeq(List<Individual> pop) throws InterruptedException, ExecutionException, StreamReadException, DatabindException, IOException {
         boolean interrupted = false;
     	for (Individual individual : pop) {
             Integer shutdownhour = evolutionConfig.getShutdownhour();

@@ -12,6 +12,6 @@ module input {
     requires jakarta.persistence;
     requires java.xml;
     requires org.hibernate.orm.core;
-    requires com.fasterxml.jackson.databind;
-    requires com.fasterxml.jackson.dataformat.xml;
+    requires tools.jackson.databind;
+    requires tools.jackson.dataformat.xml;
 }

@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import roart.common.config.MLConstants;
 import roart.common.util.JsonUtil;
 
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class SerializerTest {
 

@@ -8,15 +8,15 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import roart.gene.impl.CalcComplexGene;
 
 public class CalcMACDNodeTest {
 
     @Test
-    public void aTest() throws JsonProcessingException {
+    public void aTest() throws JacksonException {
         CalcComplexGene i = new CalcComplexGene();
         i.randomize();
         ObjectMapper mapper = new ObjectMapper();

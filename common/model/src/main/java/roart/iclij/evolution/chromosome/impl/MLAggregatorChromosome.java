@@ -7,8 +7,8 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
 
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
@@ -62,7 +62,7 @@ public abstract class MLAggregatorChromosome extends ConfigMapChromosome2 {
 
     @Override
     public double getFitness()
-            throws JsonParseException, JsonMappingException, IOException {
+            throws StreamReadException, DatabindException, IOException {
         return super.getFitness();
     }
 

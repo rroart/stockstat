@@ -15,8 +15,8 @@ module iclij.evolutionchromosome {
     requires common.model;
     requires common.util;
     requires io.jenetics.base;
-    requires com.fasterxml.jackson.core;
-    requires com.fasterxml.jackson.databind;
+    requires tools.jackson.core;
+    requires tools.jackson.databind;
     requires org.slf4j;
     requires common.constants;
     requires iclij.common.model;

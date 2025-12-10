@@ -22,7 +22,7 @@ open module pipeline.indicator {
     requires stockutil;
     requires stocketl;
     requires ml.common;
-    requires com.fasterxml.jackson.databind;
+    requires tools.jackson.databind;
     requires common.util;
     requires common.model;
     requires dbdao;

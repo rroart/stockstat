@@ -16,8 +16,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Random;
 import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
 
 import roart.iclij.config.IclijConfig;
 //import roart.common.pipeline.PipelineConstants;
@@ -119,7 +119,7 @@ public class IndicatorChromosome extends AbstractChromosome {
     }
 
     @Override
-    public double getEvaluations(int j) throws JsonParseException, JsonMappingException, IOException {
+    public double getEvaluations(int j) throws StreamReadException, DatabindException, IOException {
         int count = 0;
         List<Map<String, Double[][]>> listList = (List<Map<String, Double[][]>>) retObj[2];
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
@@ -199,7 +199,7 @@ public class IndicatorChromosome extends AbstractChromosome {
     }
 
     @Override
-    public void getRandom() throws JsonParseException, JsonMappingException, IOException {
+    public void getRandom() throws StreamReadException, DatabindException, IOException {
         List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
         for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
@@ -218,13 +218,13 @@ public class IndicatorChromosome extends AbstractChromosome {
     }
 
     @Override
-    public void transformToNode() throws JsonParseException, JsonMappingException, IOException {
+    public void transformToNode() throws StreamReadException, DatabindException, IOException {
         List<Double>[] minMax = (List<Double>[]) retObj[1];
         CalcGeneUtils.transformToNode(conf, keys, useMax, minMax, disableList);
     }
 
     @Override
-    public void transformFromNode() throws JsonParseException, JsonMappingException, IOException {
+    public void transformFromNode() throws StreamReadException, DatabindException, IOException {
         CalcGeneUtils.transformFromNode(conf, keys, disableList);
     }
 
@@ -266,7 +266,7 @@ public class IndicatorChromosome extends AbstractChromosome {
     }
 
     @Override
-    public double getFitness() throws JsonParseException, JsonMappingException, IOException {
+    public double getFitness() throws StreamReadException, DatabindException, IOException {
         double testRecommendQualBuySell = 0;
         for (int j = conf.getTestIndicatorRecommenderComplexFutureDays(); j < listlen; j += conf.getTestIndicatorRecommenderComplexIntervalDays()) {
             // scale down wrt max?

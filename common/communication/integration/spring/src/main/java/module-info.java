@@ -12,7 +12,7 @@ module common.communication.integration.spring {
     requires spring.context;
     requires spring.amqp;
     requires org.apache.commons.lang3;
-    requires com.fasterxml.jackson.databind;
+    requires tools.jackson.databind;
     requires com.rabbitmq.client;
     requires common.util;
     requires common.constants;

@@ -14,7 +14,7 @@ import org.apache.pulsar.client.api.SubscriptionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import roart.common.communication.message.pulsar.Pulsar;
 import roart.testdata.TestConfiguration;
