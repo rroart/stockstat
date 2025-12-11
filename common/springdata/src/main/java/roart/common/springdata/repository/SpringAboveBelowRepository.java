@@ -14,5 +14,5 @@ import org.springframework.stereotype.Component;
 public interface SpringAboveBelowRepository extends CrudRepository<AboveBelow, String>{
     //@Query("SELECT m FROM Movie m WHERE m.title LIKE %:title%")
     //List<StockDTO> searchByTitleLike(@Param("title") String title);
-    List<Stock> findByMarketid(String marketid);
+    List<Stock> findByMarket(String market);
 }

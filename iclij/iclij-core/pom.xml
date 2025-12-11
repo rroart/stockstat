@@ -411,7 +411,6 @@
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-data-jdbc</artifactId>
           <version>${springboot.version}</version>
-          <scope>test</scope>
       </dependency>
     <dependency>
       <groupId>org.springframework.data</groupId>
