@@ -94,21 +94,25 @@ def get(cf, predictor = False, binary = False):
         TENSORFLOWRNNCONFIG.update(TENSORFLOWCOMMONCLASSIFY)
         if binary and not predictor:
             TENSORFLOWRNNCONFIG['loss'] = 'binary_crossentropy'
+            TENSORFLOWRNNCONFIG['lastactivation'] = 'sigmoid'
         return cf, 4, TENSORFLOWRNNCONFIG
     elif cf == TENSORFLOWCNN:
         TENSORFLOWCNNCONFIG.update(TENSORFLOWCOMMONCLASSIFYCNN)
         if binary and not predictor:
             TENSORFLOWCNNCONFIG['loss'] = 'binary_crossentropy'
+            TENSORFLOWCNNCONFIG['lastactivation'] = 'sigmoid'
         return cf, 5, TENSORFLOWCNNCONFIG
     elif cf == TENSORFLOWLSTM:
         TENSORFLOWLSTMCONFIG.update(TENSORFLOWCOMMONCLASSIFY)
         if binary and not predictor:
             TENSORFLOWLSTMCONFIG['loss'] = 'binary_crossentropy'
+            TENSORFLOWLSTMCONFIG['lastactivation'] = 'sigmoid'
         return cf, 6, TENSORFLOWLSTMCONFIG
     elif cf == TENSORFLOWGRU:
         TENSORFLOWGRUCONFIG.update(TENSORFLOWCOMMONCLASSIFY)
         if binary and not predictor:
             TENSORFLOWGRUCONFIG['loss'] = 'binary_crossentropy'
+            TENSORFLOWGRUCONFIG['lastactivation'] = 'sigmoid'
         return cf, 7, TENSORFLOWGRUCONFIG
     elif cf == TENSORFLOWLIR:
         return cf, 8, TENSORFLOWLIRCONFIG
@@ -116,6 +120,7 @@ def get(cf, predictor = False, binary = False):
         TENSORFLOWCNN2CONFIG.update(TENSORFLOWCOMMONCLASSIFYCNN2)
         if binary and not predictor:
             TENSORFLOWCNN2CONFIG['loss'] = 'binary_crossentropy'
+            TENSORFLOWCNN2CONFIG['lastactivation'] = 'sigmoid'
         return cf, 9, TENSORFLOWCNN2CONFIG
     elif cf == TENSORFLOWQNN:
         return cf, 10, TENSORFLOWQNNCONFIG
@@ -153,6 +158,7 @@ def get(cf, predictor = False, binary = False):
             PYTORCHRNNCONFIG.update(PYTORCHCOMMONCLASSIFY)
         if binary and not predictor:
             PYTORCHRNNCONFIG['loss'] = 'bce'
+            PYTORCHRNNCONFIG['lastactivation'] = 'sigmoid'
         return cf, 2, PYTORCHRNNCONFIG
     elif cf == PYTORCHLSTM:
         if predictor:
@@ -161,6 +167,7 @@ def get(cf, predictor = False, binary = False):
             PYTORCHLSTMCONFIG.update(PYTORCHCOMMONCLASSIFY)
         if binary and not predictor:
             PYTORCHLSTMCONFIG['loss'] = 'bce'
+            PYTORCHLSTMCONFIG['lastactivation'] = 'sigmoid'
         return cf, 3, PYTORCHLSTMCONFIG
     elif cf == PYTORCHGRU:
         if predictor:
@@ -169,16 +176,19 @@ def get(cf, predictor = False, binary = False):
             PYTORCHGRUCONFIG.update(PYTORCHCOMMONCLASSIFY)
         if binary and not predictor:
             PYTORCHGRUCONFIG['loss'] = 'bce'
+            PYTORCHGRUCONFIG['lastactivation'] = 'sigmoid'
         return cf, 4, PYTORCHGRUCONFIG
     elif cf == PYTORCHCNN:
         PYTORCHCNNCONFIG.update(PYTORCHCOMMONCLASSIFYCNN)
         if binary and not predictor:
             PYTORCHCNNCONFIG['loss'] = 'bce'
+            PYTORCHCNNCONFIG['lastactivation'] = 'sigmoid'
         return cf, 5, PYTORCHCNNCONFIG
     elif cf == PYTORCHCNN2:
         PYTORCHCNN2CONFIG.update(PYTORCHCOMMONCLASSIFYCNN2)
         if binary and not predictor:
             PYTORCHCNN2CONFIG['loss'] = 'bce'
+            PYTORCHCNN2CONFIG['lastactivation'] = 'sigmoid'
         return cf, 6, PYTORCHCNN2CONFIG
     elif cf == PYTORCHGPTMIDI:
         return cf, 7, PYTORCHGPTMIDICONFIG
