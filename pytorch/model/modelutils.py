@@ -189,6 +189,7 @@ def observe_new(model, epochs, optimizer, loss_fn, train_loader, valid_loader, b
     mean_train_losses = []
     mean_valid_losses = []
     valid_acc_list = []
+    printepoch = config.steps - 1
 
     for epoch in range(epochs):
         model.train()
@@ -201,6 +202,7 @@ def observe_new(model, epochs, optimizer, loss_fn, train_loader, valid_loader, b
         for i, (inputs, labels) in enumerate(train_loader):
             #if i == 0 and epoch == 0:
             #    print("i", inputs, labels)
+            # print("i", i, inputs.shape)
             inputs = inputs.to(device)
             labels = labels.to(device)
 
@@ -256,15 +258,15 @@ def observe_new(model, epochs, optimizer, loss_fn, train_loader, valid_loader, b
                 # Compute predictions according to binary/multiclass
                 if getattr(config, 'binary', False):
                     # For binary, accept outputs that may have shape (N,1) or (N,)
-                    if i == 0 and epoch == 0:
+                    if i == 0 and epoch == printepoch:
                         print("outputs", outputs)
                     probs = outputs #torch.sigmoid(outputs)
-                    if i == 0 and epoch == 0:
+                    if i == 0 and epoch == printepoch:
                         print("probs", probs)
                     if probs.dim() > 1 and probs.size(1) == 1:
                         probs = probs.view(-1)
                     preds = (probs > 0.5).long()
-                    if i == 0 and epoch == 0:
+                    if i == 0 and epoch == printepoch:
                         print("preds", preds)
                 else:
                     # multiclass logits: take argmax along class dim
