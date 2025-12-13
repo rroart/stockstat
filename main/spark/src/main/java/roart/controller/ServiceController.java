@@ -45,7 +45,7 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 //import tools.jackson.databind.SerializerProvider;
 
-import roart.common.cache.MyCache;
+//import roart.common.cache.MyCache;
 import roart.common.config.ConfigConstantMaps;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
@@ -160,8 +160,9 @@ public class ServiceController implements CommandLineRunner {
         String myservices = instance.getMyservices();
         String services = instance.getServices();
         String communications = instance.getCommunications();
-        MyCache.setCache(instance.wantCache());
-        MyCache.setCacheTTL(instance.getCacheTTL());
+        // TODO not yet collision with other services
+        // MyCache.setCache(instance.wantCache());
+        // MyCache.setCacheTTL(instance.getCacheTTL());
         //new MemRunner().run();
     }
 
@@ -176,7 +177,7 @@ public class ServiceController implements CommandLineRunner {
             method = RequestMethod.POST)
     public void cacheinvalidate()
             throws Exception {
-        MyCache.getInstance().invalidate();
+        //MyCache.getInstance().invalidate();
     }
 
     class MemRunner implements Runnable {

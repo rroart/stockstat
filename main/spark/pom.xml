@@ -267,7 +267,7 @@
     <dependency>
       <groupId>com.github.luben</groupId>
       <artifactId>zstd-jni</artifactId>
-      <version>1.5.2-5</version>
+      <version>1.5.7-6</version>
     </dependency>
     <!-- end -->
     <dependency>
@@ -399,8 +399,8 @@
     </dependency-->
   </dependencies>
   <properties>
-    <slf4j.version>2.0.6</slf4j.version>
-    <log4j.version>2.19.0</log4j.version>
+    <slf4j.version>2.0.17</slf4j.version>
+    <log4j.version>2.24.3</log4j.version>
     <hadoop.deps.scope>compile</hadoop.deps.scope>
   </properties>
 </project>

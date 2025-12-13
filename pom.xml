@@ -158,10 +158,12 @@
     <tweety.version>1.27</tweety.version>
     <!-- Spark needs old version -->
     <scala.binary.version>2.13</scala.binary.version>
+    <!-- spark 4.0.1 -->
     <janino.version>3.1.9</janino.version>
-    <jakartaservlet.version>4.0.3</jakartaservlet.version>
-    <jersey.version>2.36</jersey.version>
-    <jakartaservlet.version>6.0.0</jakartaservlet.version>
+    <!-- spark 4.0.1 -->
+    <jersey.version>3.0.16</jersey.version>
+    <!-- spark 4.0.1 -->
+    <jakartaservlet.version>5.0.0</jakartaservlet.version>
     <cyclonedx.version>2.9.0</cyclonedx.version>
   </properties>
   <dependencyManagement>
