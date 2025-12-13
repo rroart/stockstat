@@ -14,7 +14,7 @@ module common.util {
     requires common.constants;
     requires tools.jackson.databind;
     requires tools.jackson.core;
-    requires guava;
+    requires com.google.common;
     requires java.sql;
     requires com.fasterxml.jackson.annotation;
     //requires org.slf4j;

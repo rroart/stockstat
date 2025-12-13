@@ -16,7 +16,7 @@ module common.controller {
     requires common.filesystem.client;
     requires iclij.common.config;
     requires org.slf4j;
-    requires guava;
+    requires com.google.common;
     requires tools.jackson.databind;
     requires dbdao;
     requires curator.client;

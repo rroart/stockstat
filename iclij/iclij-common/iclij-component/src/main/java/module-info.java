@@ -33,7 +33,7 @@ module iclij.common.component {
     requires iclij.common.simulate;
     requires iclij.common.filter;
 	requires common.config;
-	requires guava;
+	requires com.google.common;
     requires com.fasterxml.jackson.annotation;
     requires tools.jackson.core;
     requires tools.jackson.databind;

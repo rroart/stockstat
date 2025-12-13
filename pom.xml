@@ -93,7 +93,7 @@
   <properties>
     <stockstat.version>0.6-SNAPSHOT</stockstat.version>
     <jdk.version>21</jdk.version>
-    <jdk.spark.version>17</jdk.spark.version>
+    <jdk.spark.version>21</jdk.spark.version>
     <mavencompiler.version>3.11.0</mavencompiler.version>
     <maveninstall.version>2.5.2</maveninstall.version>
     <mavenshade.version>3.6.1</mavenshade.version>
@@ -140,7 +140,7 @@
     <talib.version>0.4.0</talib.version>
     <ta4j.version>0.17</ta4j.version>
     <jenetics.version>5.2.0</jenetics.version>
-    <guava.version>16.0.1</guava.version>
+    <guava.version>33.4.0-jre</guava.version>
     <camel.version>4.0.0-RC1</camel.version>
     <camelactivemq.version>5.16.6</camelactivemq.version>
     <springintegration.version>6.0.0</springintegration.version>

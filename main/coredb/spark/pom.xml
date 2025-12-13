@@ -46,6 +46,12 @@
       <groupId>roart</groupId>
       <artifactId>stockstat-shadow-spark</artifactId>
       <version>${stockstat.version}</version>
+      <exclusions>
+	<exclusion>
+	  <groupId>com.google.guava</groupId>
+	  <artifactId>guava</artifactId>
+	</exclusion>
+      </exclusions>
     </dependency>
     <!-- Need older versions -->
     <dependency>

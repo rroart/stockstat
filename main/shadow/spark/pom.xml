@@ -13,6 +13,20 @@
   <version>0.6-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Stock Statistics Main Shadow Spark</name>
+  
+  <!-- Import Spark's parent POM dependencyManagement so this module uses the same versions Spark 4.0.1 expects -->
+  <!--dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.spark</groupId>
+        <artifactId>spark-parent_${scala.binary.version}</artifactId>
+        <version>${spark.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement-->
+
   <build>
     <plugins>
       <plugin>
@@ -121,6 +135,12 @@
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-sql_2.13</artifactId>
       <version>${spark.version}</version>
+      <exclusions>
+	<exclusion>
+	  <groupId>com.google.guava</groupId>
+	  <artifactId>guava</artifactId>
+	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.spark</groupId>
