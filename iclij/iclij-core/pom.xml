@@ -417,12 +417,6 @@
       <artifactId>spring-data-jdbc</artifactId>
       <version>${springboot.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
   <dependency>
     <groupId>jakarta.interceptor</groupId>
     <artifactId>jakarta.interceptor-api</artifactId>
