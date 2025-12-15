@@ -83,7 +83,7 @@ public class ControlService {
     
     private IO io;
     
-    private static final ObjectMapper mapper = new JsonMapper().builder().addModule(new JavaTimeModule()).build();
+    private static final ObjectMapper mapper = new JsonMapper().builder().build();
 
     public ControlService(IclijConfig iclijConfig, IO io) {
         this.iclijConfig = iclijConfig;
@@ -637,12 +637,9 @@ public class ControlService {
         return data;
     }
     
-    private ObjectMapper jsonObjectMapper() {
+    public ObjectMapper jsonObjectMapper() {
         return JsonMapper.builder()
-                // TODO .serializationInclusion(JsonInclude.Include.NON_NULL)
-                // TODO .featuresToDisable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
-                //.moduleInstantiator(() -> new JavaTimeModule())
-                // TODO .modules(new JavaTimeModule())
+                .changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(JsonInclude.Include.NON_NULL))
                 .build();
     }
     

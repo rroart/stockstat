@@ -17,6 +17,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.http.HttpStatus;
@@ -28,11 +29,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import tools.jackson.core.exc.StreamReadException;
 import tools.jackson.databind.DatabindException;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
-
+import tools.jackson.databind.json.JsonMapper;
 import roart.common.cache.MyCache;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
@@ -254,14 +257,10 @@ public class ServiceController implements CommandLineRunner {
     }
     
     //@Bean
-    public ObjectMapper getJacksonObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        //objectMapper.findAndRegisterModules();
-        //objectMapper.configure(
-        //        tools.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        //objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        // TODO objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        
-        return objectMapper;
+    public ObjectMapper jsonObjectMapper() {
+        return JsonMapper.builder()
+                .changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(JsonInclude.Include.NON_NULL))
+                .build();
     }
+
 }

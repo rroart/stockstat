@@ -76,7 +76,7 @@ public class MachineLearningControlService {
 
     private Function<String, Boolean> zkRegister;
 
-    private static final ObjectMapper mapper = new JsonMapper().builder().addModule(new JavaTimeModule()).build();
+    private static final ObjectMapper mapper = new JsonMapper().builder().build();
 
     private IO io;
     

@@ -35,7 +35,7 @@ public class TestWebFluxUtil extends WebFluxUtil {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+    private static final ObjectMapper mapper = JsonMapper.builder().build(); //addModule(new JavaTimeModule()).build();
 
     private IclijConfig conf = null;
     

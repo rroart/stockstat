@@ -11,6 +11,7 @@ import tools.jackson.databind.DatabindException;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.action.Action;
@@ -111,16 +112,12 @@ public class IclijController implements CommandLineRunner {
         }
     }
 
-    /*
     @Bean(name = "OBJECT_MAPPER_BEAN")
     public ObjectMapper jsonObjectMapper() {
-        return Jackson2ObjectMapperBuilder.json()
-                .serializationInclusion(JsonInclude.Include.NON_NULL)
-                .featuresToDisable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
-                //.modules(new JavaTimeModule())
+        return JsonMapper.builder()
+                .changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(JsonInclude.Include.NON_NULL))
                 .build();
     }
-    */
 
     class MemRunner extends Thread {
 

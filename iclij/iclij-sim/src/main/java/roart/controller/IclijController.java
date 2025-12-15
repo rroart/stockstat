@@ -86,7 +86,6 @@ public class IclijController implements CommandLineRunner {
         }
     }
 
-    /*
     @Bean(name = "OBJECT_MAPPER_BEAN")
     public ObjectMapper jsonObjectMapper() {
         return Jackson2ObjectMapperBuilder.json()
@@ -95,5 +94,4 @@ public class IclijController implements CommandLineRunner {
                 .modules(new JavaTimeModule())
                 .build();
     }
-    */
 }

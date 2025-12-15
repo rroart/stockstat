@@ -56,7 +56,7 @@ import roart.common.inmemory.model.InmemoryMessage;
 public class PipelineUtils {
     private static Logger log = LoggerFactory.getLogger(PipelineUtils.class);
     
-    private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+    private static final ObjectMapper mapper = JsonMapper.builder().build();
 
     public static Map<String, PipelineData> getPipelineMap(PipelineData[] datareaders) {
         Map<String, PipelineData> pipelineMap = new HashMap<>();

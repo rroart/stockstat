@@ -102,7 +102,7 @@ import roart.model.io.IO;
 public class CoreControlService {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private static final ObjectMapper mapper = new JsonMapper().builder().addModule(new JavaTimeModule()).build();
+    private static final ObjectMapper mapper = new JsonMapper().builder().build();
 
     public List<String> getMarkets() {
         try {

@@ -17,7 +17,7 @@ public abstract class Inmemory {
     
     protected abstract String getServer();
 
-    private static final ObjectMapper mapper = new JsonMapper().builder().addModule(new JavaTimeModule()).build();
+    private static final ObjectMapper mapper = new JsonMapper().builder().build();
  
     public Inmemory(String server) {
             

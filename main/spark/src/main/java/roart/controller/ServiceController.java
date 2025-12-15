@@ -36,6 +36,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.core.exc.StreamReadException;
 import tools.jackson.databind.DeserializationFeature;
@@ -44,7 +46,7 @@ import tools.jackson.databind.DatabindException;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 //import tools.jackson.databind.SerializerProvider;
-
+import tools.jackson.databind.json.JsonMapper;
 //import roart.common.cache.MyCache;
 import roart.common.config.ConfigConstantMaps;
 import roart.common.config.ConfigConstants;
@@ -213,17 +215,13 @@ public class ServiceController implements CommandLineRunner {
         return new ArrayList<>();
     }
     
-    //@Bean
-    public ObjectMapper getJacksonObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        //objectMapper.findAndRegisterModules();
-        //objectMapper.configure(
-        //        tools.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        //objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        // TODO objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        
-        return objectMapper;
+    @Bean(name = "OBJECT_MAPPER_BEAN")
+    public ObjectMapper jsonObjectMapper() {
+        return JsonMapper.builder()
+                .changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(JsonInclude.Include.NON_NULL))
+                .build();
     }
+
     
     /*
     private static final class TripleSerializer extends JsonSerializer<Triple> {

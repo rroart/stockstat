@@ -81,7 +81,7 @@ public class Sim {
 
     private IO io;
 
-    private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+    private static final ObjectMapper mapper = JsonMapper.builder().build();
 
     public Sim(IclijConfig iclijConfig, IO io) {
         this.iclijConfig = iclijConfig;
