@@ -12,7 +12,6 @@ open module iclij.core {
     requires com.fasterxml.jackson.annotation;
     requires tools.jackson.core;
     requires tools.jackson.databind;
-    requires tools.jackson.datatype.javatime;
     requires common.config;
     requires common.constants;
     requires common.controller;

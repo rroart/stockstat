@@ -24,7 +24,6 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.action.ActionThread;
 import roart.action.LeaderRunner;
@@ -99,7 +98,7 @@ public class InmemoryPipelineTest {
    
     MyDataSource dataSource;
     
-    private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+    private static final ObjectMapper mapper = JsonMapper.builder().build();
 
     DbDao dbDao;
     

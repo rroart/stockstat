@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
@@ -29,7 +30,10 @@ public abstract class MLClassifyModel {
 
     private IclijConfig conf;
 
-    private static final ObjectMapper mapper = JsonMapper.builder().configure(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL, true).build();
+    private static final ObjectMapper mapper = JsonMapper.builder()
+            .configure(MapperFeature.REQUIRE_TYPE_ID_FOR_SUBTYPES, false)
+            .configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false)
+            .build();
 
     public IclijConfig getConf() {
         return conf;

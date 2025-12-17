@@ -28,7 +28,6 @@ open module iclij.evolve.service {
     requires common.controller;
     requires spring.context;
     requires com.fasterxml.jackson.annotation;
-    requires tools.jackson.datatype.javatime;
     requires tools.jackson.core;
     requires java.base;
     requires evolution.model;

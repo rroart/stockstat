@@ -28,7 +28,6 @@ open module iclij.evolve {
     requires spring.context;
     requires com.fasterxml.jackson.annotation;
     requires common.io;
-    requires tools.jackson.datatype.javatime;
     requires tools.jackson.core;
     requires java.base;
     requires evolution.model;

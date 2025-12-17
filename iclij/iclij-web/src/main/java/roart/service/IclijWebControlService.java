@@ -32,7 +32,6 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
-import tools.jackson.datatype.jsr310.JavaTimeModule;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 

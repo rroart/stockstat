@@ -28,7 +28,6 @@ open module iclij.sim {
     requires common.queue;
     requires spring.context;
     requires com.fasterxml.jackson.annotation;
-    requires tools.jackson.datatype.javatime;
     requires tools.jackson.core;
     requires evolution.model;
     requires iclij.evolutioniclijconfigmap;

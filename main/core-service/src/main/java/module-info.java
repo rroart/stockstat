@@ -84,6 +84,5 @@ open module coreservice {
     requires ml.spark;
     requires common.inmemory.factory;
     requires common.inmemory.model;
-    requires tools.jackson.datatype.javatime;
     requires pipeline.util;
 }

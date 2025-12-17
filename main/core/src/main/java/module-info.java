@@ -87,6 +87,5 @@ open module core {
     requires ml.spark;
     requires common.inmemory.factory;
     requires common.inmemory.model;
-    requires tools.jackson.datatype.javatime;
     requires common.webflux;
 }

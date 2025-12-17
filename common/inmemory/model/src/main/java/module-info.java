@@ -13,5 +13,4 @@ module common.inmemory.model {
     requires org.apache.commons.codec;
     requires common.constants;
     requires org.slf4j;
-    requires tools.jackson.datatype.javatime;
 }

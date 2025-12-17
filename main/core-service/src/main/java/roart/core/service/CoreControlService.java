@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.aggregator.impl.AggregatorRecommenderIndicator;
 import roart.aggregator.impl.MACDBase;

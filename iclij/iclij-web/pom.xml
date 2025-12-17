@@ -195,11 +195,6 @@
       <version>${httpclient.version}</version>
     </dependency>
     <dependency>
-      <groupId>tools.jackson.datatype</groupId>
-      <artifactId>jackson-datatype-jsr310</artifactId>
-      <version>${jackson.jsr.version}</version>
-    </dependency>
-    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
       <version>${jackson.annotations.version}</version>

@@ -17,5 +17,4 @@ module common.communication.factory {
     requires common.communications.message.kafka;
     requires common.constants;
     requires common.webflux;
-    //requires tools.jackson.datatype.javatime;
 }

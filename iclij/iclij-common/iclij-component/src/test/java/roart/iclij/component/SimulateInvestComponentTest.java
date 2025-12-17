@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Test;
 
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialList;
@@ -50,7 +49,7 @@ import roart.simulate.model.StockHistory;
 import roart.testdata.TestData;
 
 public class SimulateInvestComponentTest {
-    private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+    private static final ObjectMapper mapper = JsonMapper.builder().build();
 
     @Test
     public void test() {

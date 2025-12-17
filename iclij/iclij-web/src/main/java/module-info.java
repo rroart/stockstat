@@ -17,7 +17,6 @@ module iclij.web {
     requires iclij.common.service;
     requires tools.jackson.core;
     requires tools.jackson.databind;
-    requires tools.jackson.datatype.javatime;
     requires jsoup;
     requires org.slf4j;
     requires spring.beans;

@@ -29,7 +29,6 @@ import roart.pipeline.common.aggregate.Aggregator;
 
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
@@ -132,7 +131,7 @@ public class AllIT {
    
     TestDataSource dataSource;
     
-    private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+    private static final ObjectMapper mapper = JsonMapper.builder().build();
 
     @Autowired
     DbDao dbDao;

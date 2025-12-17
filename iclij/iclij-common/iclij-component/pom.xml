@@ -153,11 +153,6 @@
       <version>${jackson.version}</version>
     </dependency>
     <dependency>
-      <groupId>tools.jackson.datatype</groupId>
-      <artifactId>jackson-datatype-jsr310</artifactId>
-      <version>${jackson.jsr.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.version}</version>

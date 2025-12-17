@@ -48,11 +48,6 @@
       <version>${guava.version}</version>
     </dependency>
     <dependency>
-      <groupId>tools.jackson.datatype</groupId>
-      <artifactId>jackson-datatype-jsr310</artifactId>
-      <version>${jackson.jsr.version}</version>
-    </dependency>
-    <dependency>
       <groupId>tools.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
       <version>${jackson.version}</version>

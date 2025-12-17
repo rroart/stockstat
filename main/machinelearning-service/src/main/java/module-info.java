@@ -79,7 +79,6 @@ module machinelearningservice {
     requires common.webflux;
     requires common.inmemory.factory;
     requires common.inmemory.model;
-    requires tools.jackson.datatype.javatime;
     requires common.queue;
     requires pipeline.util;
 }

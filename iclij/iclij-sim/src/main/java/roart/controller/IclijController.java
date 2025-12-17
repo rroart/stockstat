@@ -8,7 +8,6 @@ import tools.jackson.databind.DatabindException;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.common.cache.MyCache;
 import roart.common.config.ConfigConstantMaps;

@@ -23,7 +23,6 @@ module iclij.common.service {
     requires spring.web;
     requires tools.jackson.core;
     requires tools.jackson.databind;
-    requires tools.jackson.datatype.javatime;
     requires common.communication.model;
     requires common.cache;
     requires common.inmemory.factory;

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;

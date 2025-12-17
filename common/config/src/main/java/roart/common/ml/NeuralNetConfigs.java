@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
@@ -25,7 +26,11 @@ public class NeuralNetConfigs {
     
     private NeuralNetGemConfig gemConfig = new NeuralNetGemConfig();
     
-    private static final ObjectMapper mapper = JsonMapper.builder().configure(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL, true).build();
+    private static final ObjectMapper mapper = JsonMapper.builder()
+            .configure(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL, true)
+            // handles tensorflow batchsize not present
+            .configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false)
+            .build();
     
     public NeuralNetConfigs(NeuralNetSparkConfig sparkConfig, NeuralNetTensorflowConfig tensorflowConfig,
             NeuralNetPytorchConfig pytorchConfig, NeuralNetGemConfig gemConfig) {

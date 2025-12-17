@@ -23,7 +23,6 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.action.ActionThread;
 import roart.aggregator.impl.MLMulti;
@@ -84,7 +83,7 @@ public class EvolveIT {
     // no autowiring
     IclijConfig conf = null;
    
-    private static final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+    private static final ObjectMapper mapper = JsonMapper.builder().build();
 
     @Autowired
     private MyDataSource dataSource;

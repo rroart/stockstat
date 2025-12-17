@@ -19,7 +19,6 @@ module pipeline.util {
     requires model;
     requires org.slf4j;
     requires tools.jackson.databind;
-    requires tools.jackson.datatype.javatime;
     requires stockstat.shadow.zookeeper;
     // for test
     //requires evolution.model;

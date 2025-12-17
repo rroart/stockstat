@@ -3,11 +3,9 @@ package roart.common.inmemory.model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.util.JsonUtil;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.datatype.jsr310.JavaTimeModule;
-
-import roart.common.util.JsonUtil;
 
 public abstract class Inmemory {
     
