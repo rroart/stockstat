@@ -104,9 +104,11 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     if (mainList == null) {
                         continue;
                     }
+                    /*
                     if (componentparam.getConfig().wantAggregatorsUseConfusion() ) {
                         // TODO use confusion other way
                     }
+                    */
                     String tfpn = labelMap.get(classification[0]);
                     if (tfpn == null) {
                         continue;
