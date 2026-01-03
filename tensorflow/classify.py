@@ -159,6 +159,7 @@ class Classify:
             if config.binary:
                 print("problist", problist)
                 intlist = np.round(problist, 0)
+                intlist = np.int_(intlist)
                 problist = np.array(problist)
                 # make new probabilities based on the rounded values, 0 with 1 - val, 1 with val
                 print(type(problist), type(intlist))
