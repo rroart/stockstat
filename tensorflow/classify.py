@@ -165,6 +165,8 @@ class Classify:
                 print("problist", problist)
                 problist =  (1 - problist) * (1 - intlist) + problist * intlist # todo
                 print("problist", problist)
+                problist = problist.tolist()
+                intlist = intlist.tolist()
 
         if classify and not self.zero(myobj):
             intlist = np.array(intlist)

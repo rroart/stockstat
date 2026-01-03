@@ -959,9 +959,9 @@ class Classify:
             dev = self.getdev()
             model = Model.Net(myobj, config, classify, shape)
             if best_practise_load_save:
-                model.load_state_dict(torch.load(self.getfullpath(myobj)))
+                model.load_state_dict(torch.load(self.getfullpath(myobj), map_location=self.getdev()))
             else:
-                model = torch.load(self.getfullpath(myobj), weights_only=False)
+                model = torch.load(self.getfullpath(myobj), map_location=self.getdev(), weights_only=False)
             model.eval()
         else:
             model = Model.Net(myobj, config, classify, shape)
@@ -1130,9 +1130,9 @@ class Classify:
                     print("Restoring")
                     dev = self.getdev()
                     if best_practise_load_save:
-                        model.model.load_state_dict(torch.load(self.getfullpath(myobj)))
+                        model.model.load_state_dict(torch.load(self.getfullpath(myobj), map_location=self.getdev()))
                     else:
-                        model.model = torch.load(self.getfullpath(myobj), weights_only=False)
+                        model.model = torch.load(self.getfullpath(myobj), map_location=self.getdev(), weights_only=False)
                     model.model.eval()
 
                     print("Restoring done")
@@ -1235,7 +1235,7 @@ class Classify:
                         # not figaro
                         print("not figaro")
                         #model.model.load_state_dict(torch.load("/tmp/data/exp/test_sod/checkpoints/best_model.pt"))
-                        model.model.load_state_dict(torch.load(self.getfullpath(myobj)))
+                        model.model.load_state_dict(torch.load(self.getfullpath(myobj), map_location=self.getdev()))
                         model.model.eval()
                     else:
                         # figaro
