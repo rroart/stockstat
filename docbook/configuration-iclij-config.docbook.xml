@@ -1,0 +1,863 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book xmlns="http://docbook.org/ns/docbook" version="5.0">
+  <info>
+    <title>Iclij / Common configuration reference</title>
+    <author>
+      <personname>
+        <firstname>Auto-generated</firstname>
+        <surname>Doc</surname>
+      </personname>
+    </author>
+    <date>2026-01-03</date>
+    <revhistory>
+      <revision>
+        <revnumber>1.0</revnumber>
+        <revremark>Generated from source: IclijConfig, MyMyConfig, ConfigConstants, IclijConfigConstants, ConfigConstantMaps</revremark>
+      </revision>
+    </revhistory>
+  </info>
+
+  <chapter>
+    <title>Configuration keys used by IclijConfig and parent classes</title>
+    <para>Each entry lists: key (string), Java constant, type, default value, allowed range (if present), and short description.</para>
+
+    <!-- The document is organized by logical groups taken from ConfigConstants and IclijConfigConstants. -->
+
+    <section>
+      <title>Common configuration (selected keys referenced by MyConfig / MyMyConfig)</title>
+
+      <!-- Example entry format repeated for many keys -->
+
+      <section>
+        <title>Database</title>
+        <variablelist>
+          <varlistentry>
+            <term>database.maxholes (ConfigConstants.DATABASEMAXHOLES)</term>
+            <listitem>
+              <para>Type: Integer</para>
+              <para>Default: 5</para>
+              <para>Description: Max number of holes/NaN to be filled</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>database.spark (ConfigConstants.DATABASESPARK)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: true</para>
+              <para>Description: Enable Spark Database backend</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>database.spark.sparkmaster (ConfigConstants.DATABASESPARKSPARKMASTER)</term>
+            <listitem>
+              <para>Type: String</para>
+              <para>Default: spark://127.0.0.1:7077</para>
+              <para>Description: Database Spark Master</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>database.hibernate (ConfigConstants.DATABASEHIBERNATE)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: false</para>
+              <para>Description: Enable Hibernate Database backend</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>database.spring (ConfigConstants.DATABASESPRING)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: true</para>
+              <para>Description: Enable Spring Database backend</para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+      </section>
+
+      <section>
+        <title>Machine learning</title>
+        <variablelist>
+          <varlistentry>
+            <term>machinelearning (ConfigConstants.MACHINELEARNING)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: true</para>
+              <para>Description: Enable machine learning</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>machinelearning.mp (ConfigConstants.MACHINELEARNINGMP)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: false</para>
+              <para>Description: Enable machine learning multiprocessing</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>machinelearning.mp.cpu (ConfigConstants.MACHINELEARNINGMPCPU)</term>
+            <listitem>
+              <para>Type: Double</para>
+              <para>Default: 0.5</para>
+              <para>Description: Machine learning multiprocessing total cpu</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>machinelearning.sparkml (ConfigConstants.MACHINELEARNINGSPARKML)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: true</para>
+              <para>Description: Enable Spark ML</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>machinelearning.sparkml.path (ConfigConstants.MACHINELEARNINGSPARKMLPATH)</term>
+            <listitem>
+              <para>Type: String</para>
+              <para>Default: /tmp/</para>
+              <para>Description: Machine Learning Spark path</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>machinelearning.sparkml.sparkmaster (ConfigConstants.MACHINELEARNINGSPARKMLSPARKMASTER)</term>
+            <listitem>
+              <para>Type: String</para>
+              <para>Default: spark://127.0.0.1:7077</para>
+              <para>Description: Machine Learning Spark Master</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>machinelearning.sparkml.sparknetworktimeout (ConfigConstants.MACHINELEARNINGSPARKMLSPARKNETWORKTIMEOUT)</term>
+            <listitem>
+              <para>Type: Integer</para>
+              <para>Default: 300</para>
+              <para>Description: Machine Learning Spark Network Timeout (seconds)</para>
+              <para>Range: [300] (see code for broader ranges)</para>
+            </listitem>
+          </varlistentry>
+
+        </variablelist>
+      </section>
+
+      <section>
+        <title>Indicators / Aggregators</title>
+        <variablelist>
+          <varlistentry>
+            <term>indicators (ConfigConstants.INDICATORS)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: true</para>
+              <para>Description: Enable indicators</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>indicators.macd (ConfigConstants.INDICATORSMACD)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: true</para>
+              <para>Description: Enable MACD indicator</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>aggregators (ConfigConstants.AGGREGATORS)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: true</para>
+              <para>Description: Enable aggregators</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>aggregators.indicator (ConfigConstants.AGGREGATORSINDICATOR)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: false</para>
+              <para>Description: ML indicator enable (default false in map)</para>
+            </listitem>
+          </varlistentry>
+
+        </variablelist>
+      </section>
+
+      <section>
+        <title>Misc</title>
+        <variablelist>
+          <varlistentry>
+            <term>misc.mydays (ConfigConstants.MISCMYDAYS)</term>
+            <listitem>
+              <para>Type: Integer</para>
+              <para>Default: 180</para>
+              <para>Description: Number of days to display</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>misc.cache (ConfigConstants.MISCCACHE)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: true</para>
+              <para>Description: Cache enable</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>misc.inmemory.server (ConfigConstants.MISCINMEMORYSERVER)</term>
+            <listitem>
+              <para>Type: String</para>
+              <para>Default: redis</para>
+              <para>Description: In memory server (e.g. redis, hazelcast)</para>
+            </listitem>
+          </varlistentry>
+
+        </variablelist>
+      </section>
+
+    </section>
+
+    <section>
+      <title>Iclij-specific configuration</title>
+      <para>Keys defined in <filename>IclijConfigConstants</filename> and used by <filename>IclijConfig</filename>. This section documents all keys exposed by <filename>IclijConfig</filename> (types, defaults, ranges and short descriptions are taken from <filename>IclijConfigConstantMaps.java</filename>).</para>
+
+      <!-- Grouped variable lists: FindProfit, ImproveProfit, ImproveFilter, MachineLearning, SimulateInvest, AutoSimulateInvest, ImproveSimulateInvest, Evolve, Dataset, Crosstest, Markets, Misc, MP, SingleMarket, Verification, Schedule -->
+
+      <section>
+        <title>MP / Misc</title>
+        <variablelist>
+          <varlistentry>
+            <term>mp.server.cpu (IclijConfigConstants.MPSERVERCPU)</term>
+            <listitem>
+              <para>Type: Double</para>
+              <para>Default: 0.5</para>
+              <para>Description: Server CPU usage fraction allotted for multiprocessing</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>mp.client.cpu (IclijConfigConstants.MPCLIENTCPU)</term>
+            <listitem>
+              <para>Type: Double</para>
+              <para>Default: 0.5</para>
+              <para>Description: Client CPU usage fraction allotted for multiprocessing</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>misc.shutdownhour (IclijConfigConstants.MISCSHUTDOWNHOUR)</term>
+            <listitem>
+              <para>Type: Integer</para>
+              <para>Default: none</para>
+              <para>Description: Server shutdown hour (if set)</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>misc.populate (IclijConfigConstants.MISCPOPULATE)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: false</para>
+              <para>Description: Populate history flag</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>misc.inmemory.pipeline (IclijConfigConstants.MISCINMEMORYPIPELINE)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: false</para>
+              <para>Description: Enable in-memory pipeline</para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+      </section>
+
+      <section>
+        <title>FindProfit</title>
+        <variablelist>
+          <varlistentry>
+            <term>findprofit.autorun (IclijConfigConstants.FINDPROFITAUTORUN)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: false</para>
+              <para>Description: Run findprofit automatically</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>findprofit.mldynamic (IclijConfigConstants.FINDPROFITMLDYNAMIC)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: false</para>
+              <para>Description: Use dynamic ML when no persistent ML config exists</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>findprofit.mlmacd (IclijConfigConstants.FINDPROFITMLMACD)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: true</para>
+              <para>Description: Enable MACD ML for findprofit</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>findprofit.mlrsi (IclijConfigConstants.FINDPROFITMLRSI)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: true</para>
+              <para>Description: Enable RSI ML for findprofit</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>findprofit.mlatr (IclijConfigConstants.FINDPROFITMLATR)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: true</para>
+              <para>Description: Enable ATR ML for findprofit</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>findprofit.mlcci (IclijConfigConstants.FINDPROFITMLCCI)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: true</para>
+              <para>Description: Enable CCI ML for findprofit</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>findprofit.mlstoch (IclijConfigConstants.FINDPROFITMLSTOCH)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: true</para>
+              <para>Description: Enable STOCH ML for findprofit</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>findprofit.mlmulti (IclijConfigConstants.FINDPROFITMLMULTI)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: true</para>
+              <para>Description: Enable multi-indicator ML for findprofit</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>findprofit.mlindicator (IclijConfigConstants.FINDPROFITMLINDICATOR)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: true</para>
+              <para>Description: Enable ML indicator group for findprofit</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>findprofit.mlmacd.mlconfig (IclijConfigConstants.FINDPROFITMLMACDMLCONFIG)</term>
+            <listitem>
+              <para>Type: String</para>
+              <para>Default: complex default ML config (see source: IclijConfigConstantMaps.MLCONFIG)</para>
+              <para>Description: ML config for MACD used by findprofit</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>findprofit.futuredays (IclijConfigConstants.FINDPROFITFUTUREDAYS)</term>
+            <listitem>
+              <para>Type: String</para>
+              <para>Default: [ 10 ]</para>
+              <para>Description: Futuredays used by findprofit (string representation)</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>findprofit.threshold (IclijConfigConstants.FINDPROFITTHRESHOLD)</term>
+            <listitem>
+              <para>Type: String</para>
+              <para>Default: [ 1.0 ]</para>
+              <para>Description: Threshold specification (string or JSON array) for findprofit classifiers</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>findprofit.manualthreshold (IclijConfigConstants.FINDPROFITMANUALTHRESHOLD)</term>
+            <listitem>
+              <para>Type: Double</para>
+              <para>Default: 1.0</para>
+              <para>Description: Manual numeric threshold used by findprofit</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>findprofit.memoryfilter (IclijConfigConstants.FINDPROFITMEMORYFILTER)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: true</para>
+              <para>Description: Use memory filter in findprofit</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>findprofit.rerunsave (IclijConfigConstants.FINDPROFITRERUNSAVE)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: false</para>
+              <para>Description: Save rerun results for findprofit</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>findprofit.update (IclijConfigConstants.FINDPROFITUPDATE)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: false</para>
+              <para>Description: Enable findprofit update behavior</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>findprofit.recommender (IclijConfigConstants.FINDPROFITRECOMMENDER)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: true</para>
+              <para>Description: Enable evolution-based recommender for findprofit</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>findprofit.predictor (IclijConfigConstants.FINDPROFITPREDICTOR)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: false</para>
+              <para>Description: Enable predictor for findprofit</para>
+            </listitem>
+          </varlistentry>
+
+        </variablelist>
+      </section>
+
+      <section>
+        <title>ImproveProfit</title>
+        <variablelist>
+          <varlistentry>
+            <term>improveprofit.autorun (IclijConfigConstants.IMPROVEPROFITAUTORUN)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: false</para>
+              <para>Description: Run improveprofit automatically</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>improveprofit.update (IclijConfigConstants.IMPROVEPROFITUPDATE)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: false</para>
+              <para>Description: Enable improveprofit update behavior</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>improveprofit.mlconfig (IclijConfigConstants.IMPROVEPROFITMLCONFIG)</term>
+            <listitem>
+              <para>Type: String</para>
+              <para>Default: complex ML config (see source)</para>
+              <para>Description: Default ML config used by improveprofit</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>improveprofit.evolutionconfig (IclijConfigConstants.IMPROVEPROFITEVOLUTIONCONFIG)</term>
+            <listitem>
+              <para>Type: String</para>
+              <para>Default: evolution config JSON (see source)</para>
+              <para>Description: Evolution (GP) config for improveprofit</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>improveprofit.fitnessminimum (IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM)</term>
+            <listitem>
+              <para>Type: Integer</para>
+              <para>Default: 10</para>
+              <para>Description: Minimum fitness required for improveprofit results</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>improveprofit.mlmacd / mlrsi / mlatr / mlcci / mlstoch / mlmulti / mlindicator (IMPROVEPROFITML...)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Defaults: typically true (see source maps) for ML enable flags</para>
+              <para>Description: Per-indicator ML enable flags for improveprofit</para>
+            </listitem>
+          </varlistentry>
+
+        </variablelist>
+      </section>
+
+      <section>
+        <title>ImproveFilter</title>
+        <variablelist>
+          <varlistentry>
+            <term>improvefilter.autorun (IclijConfigConstants.IMPROVEFILTERAUTORUN)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: false</para>
+              <para>Description: Run improvefilter automatically</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>improvefilter.fitnessminimum (IclijConfigConstants.IMPROVEFILTERFITNESSMINIMUM)</term>
+            <listitem>
+              <para>Type: Integer</para>
+              <para>Default: 10</para>
+              <para>Description: Minimum fitness required for improvefilter results</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>improvefilter.ml... (IMPROVEFILTERML...)</term>
+            <listitem>
+              <para>Type: Boolean / String (per-key)</para>
+              <para>Default: per-key defaults in source (many default to true for indicator ML flags)</para>
+              <para>Description: Per-indicator ML flags and config/evolution entries for improvefilter</para>
+            </listitem>
+          </varlistentry>
+
+        </variablelist>
+      </section>
+
+      <section>
+        <title>MachineLearning (global)</title>
+        <variablelist>
+          <varlistentry>
+            <term>machinelearning.autorun (IclijConfigConstants.MACHINELEARNINGAUTORUN)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: false</para>
+              <para>Description: Run global machine learning autorun</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>machinelearning.mlconfig / evolutionconfig (IclijConfigConstants.MACHINELEARNINGMLCONFIG / MACHINELEARNINGEVOLUTIONCONFIG)</term>
+            <listitem>
+              <para>Type: String</para>
+              <para>Default: complex JSON defaults (see source MLCONFIG / MLEVOLUTIONCONFIG)</para>
+              <para>Description: Global ML and evolution configs</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>machinelearning.futuredays / threshold (IclijConfigConstants.MACHINELEARNINGFUTUREDAYS / MACHINELEARNINGTHRESHOLD)</term>
+            <listitem>
+              <para>Type: String</para>
+              <para>Default: [ 10 ] / [ 1.0 ]</para>
+              <para>Description: Futuredays and threshold used by machine learning flows</para>
+            </listitem>
+          </varlistentry>
+
+        </variablelist>
+      </section>
+
+      <section>
+        <title>SimulateInvest</title>
+        <variablelist>
+          <varlistentry>
+            <term>simulateinvest.autorun (IclijConfigConstants.SIMULATEINVESTAUTORUN)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: false</para>
+              <para>Description: Run simulate invest flows automatically</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>simulateinvest.confidence (IclijConfigConstants.SIMULATEINVESTCONFIDENCE)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: false</para>
+              <para>Description: Use confidence filtering in simulateinvest</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>simulateinvest.confidence.value (IclijConfigConstants.SIMULATEINVESTCONFIDENCEVALUE)</term>
+            <listitem>
+              <para>Type: Double</para>
+              <para>Default: 0.75</para>
+              <para>Description: Confidence numeric cutoff used by simulateinvest</para>
+              <para>Range: [0.5, 1.0, 2.0]</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>simulateinvest.stoploss / stoploss.value (IclijConfigConstants.SIMULATEINVESTSTOPLOSS / SIMULATEINVESTSTOPLOSSVALUE)</term>
+            <listitem>
+              <para>Types: Boolean / Double</para>
+              <para>Defaults: false / 0.95</para>
+              <para>Description: Enable stoploss and set stoploss value</para>
+              <para>Range (value): [0.5, 1.0, 2.0]</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>simulateinvest.indicator.* (various keys)</term>
+            <listitem>
+              <para>Type: Boolean/String</para>
+              <para>Defaults and descriptions: See source; includes indicator.pure, indicator.rebase, indicator.reverse, indicator.direction, indicator.direction.up</para>
+              <para>Description: Controls behavior of indicator-based simulation</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>simulateinvest.stocks / interval / day / futurecount / futuretime (IclijConfigConstants.SIMULATEINVESTSTOCKS / SIMULATEINVESTINTERVAL / SIMULATEINVESTDAY / SIMULATEINVESTFUTURECOUNT / SIMULATEINVESTFUTURETIME)</term>
+            <listitem>
+              <para>Types: Integer</para>
+              <para>Defaults: stocks=5, interval=7, day=1, futurecount=0, futuretime=0</para>
+              <para>Description: Various numeric parameters controlling the simulateinvest run</para>
+              <para>Ranges defined for some keys in source (e.g. stocks, interval, adviser, period)</para>
+            </listitem>
+          </varlistentry>
+
+        </variablelist>
+      </section>
+
+      <section>
+        <title>AutoSimulateInvest</title>
+        <variablelist>
+          <varlistentry>
+            <term>autosimulateinvest.interval (IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL)</term>
+            <listitem>
+              <para>Type: Integer</para>
+              <para>Default: 0</para>
+              <para>Description: Interval used by auto simulate invest</para>
+              <para>Range: [1,21] (see source ranges)</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>autosimulateinvest.lastcount / dellimit / scorelimit / autoscorelimit / keepadviser / keepadviserlimit (IclijConfigConstants.AUTOSIMULATEINVEST...)</term>
+            <listitem>
+              <para>Types: Integer / Double / Boolean</para>
+              <para>Defaults: lastcount=5, dellimit=0.5, scorelimit=1.0, autoscorelimit=0.0, keepadviser=false, keepadviserlimit=0.0</para>
+              <para>Description: Controls auto-simulate record retention and thresholds</para>
+              <para>Ranges: several keys have ranges configured (see source)</para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+      </section>
+
+      <section>
+        <title>ImproveSimulateInvest / ImproveAutoSimulateInvest</title>
+        <variablelist>
+          <varlistentry>
+            <term>improvesimulateinvest.autorun (IclijConfigConstants.IMPROVESIMULATEINVESTAUTORUN)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: false</para>
+              <para>Description: Run improve simulateinvest automatically</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>improvesimulateinvest.evolutionconfig / improveautosimulateinvest.evolutionconfig</term>
+            <listitem>
+              <para>Type: String</para>
+              <para>Default: evolution config JSON (see source)</para>
+              <para>Description: Evolution configs for improve simulateinvest flows</para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+      </section>
+
+      <section>
+        <title>SingleMarket</title>
+        <variablelist>
+          <varlistentry>
+            <term>singlemarket.evolvefirstonly (IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: true</para>
+              <para>Description: For single market loops, evolve first only</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>singlemarket.loops (IclijConfigConstants.SINGLEMARKETLOOPS)</term>
+            <listitem>
+              <para>Type: Integer</para>
+              <para>Default: 5</para>
+              <para>Description: Number of loops for singlemarket runs</para>
+            </listitem>
+          </varlistentry>
+
+        </variablelist>
+      </section>
+
+      <section>
+        <title>Verification</title>
+        <variablelist>
+          <varlistentry>
+            <term>verification (IclijConfigConstants.VERIFICATION)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: true</para>
+              <para>Description: Enable verification runs</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>verification.days (IclijConfigConstants.VERIFICATIONDAYS)</term>
+            <listitem>
+              <para>Type: Integer</para>
+              <para>Default: 20</para>
+              <para>Description: Number of days used by verification runs</para>
+            </listitem>
+          </varlistentry>
+
+        </variablelist>
+      </section>
+
+      <section>
+        <title>Evolve</title>
+        <variablelist>
+          <varlistentry>
+            <term>evolve.ga (IclijConfigConstants.EVOLVEGA)</term>
+            <listitem>
+              <para>Type: Integer</para>
+              <para>Default: 0</para>
+              <para>Description: Genetic algorithm parameter for evolve</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>evolve.autorun (IclijConfigConstants.EVOLVEAUTORUN)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: false</para>
+              <para>Description: Run evolve flows automatically</para>
+            </listitem>
+          </varlistentry>
+
+        </variablelist>
+      </section>
+
+      <section>
+        <title>Dataset</title>
+        <variablelist>
+          <varlistentry>
+            <term>dataset.autorun (IclijConfigConstants.DATASETAUTORUN)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: false</para>
+              <para>Description: Run dataset processing autorun</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>dataset.fitnessminimum (IclijConfigConstants.DATASETFITNESSMINIMUM)</term>
+            <listitem>
+              <para>Type: Integer</para>
+              <para>Default: 10</para>
+              <para>Description: Minimum fitness for dataset evolutions</para>
+            </listitem>
+          </varlistentry>
+
+        </variablelist>
+      </section>
+
+      <section>
+        <title>Crosstest</title>
+        <variablelist>
+          <varlistentry>
+            <term>crosstest.autorun (IclijConfigConstants.CROSSTESTAUTORUN)</term>
+            <listitem>
+              <para>Type: Boolean</para>
+              <para>Default: false</para>
+              <para>Description: Run crosstest autorun</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>crosstest.futuredays / threshold (IclijConfigConstants.CROSSTESTFUTUREDAYS / CROSSTESTTHRESHOLD)</term>
+            <listitem>
+              <para>Type: String</para>
+              <para>Default: [10] / [1.0]</para>
+              <para>Description: Futuredays and threshold for crosstest</para>
+            </listitem>
+          </varlistentry>
+
+        </variablelist>
+      </section>
+
+      <section>
+        <title>Markets / ML per-market</title>
+        <variablelist>
+          <varlistentry>
+            <term>markets.marketlist.market[@id].mlconfig (IclijConfigConstants.MARKETSMARKETLISTMARKETMLCONFIG)</term>
+            <listitem>
+              <para>Type: String</para>
+              <para>Default: none</para>
+              <para>Description: Per-market ML configuration (market list entry)</para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+      </section>
+
+      <section>
+        <title>Schedule</title>
+        <variablelist>
+          <varlistentry>
+            <term>iclij.schedule (IclijConfigConstants.ICLIJSCHEDULE)</term>
+            <listitem>
+              <para>Type: Boolean or Object</para>
+              <para>Default: true</para>
+              <para>Description: Schedule flag or schedule object used by Iclij scheduling; treated specially by getNotEmptyValueOrDefault so an empty string is considered unset</para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+      </section>
+
+    </section>
+
+    <section>
+      <title>How values are resolved at runtime</title>
+      <para>The configuration resolution flow used by <filename>IclijConfig.java</filename> and parents:</para>
+      <itemizedlist>
+        <listitem><para>Config maps (types/defaults/text/range) are defined in <filename>ConfigConstantMaps</filename>.</para></listitem>
+        <listitem><para>At startup the application creates a <filename>ConfigMaps</filename> instance (copy of constants) merged with any Iclij-specific maps.</para></listitem>
+        <listitem><para>Runtime config values are stored in <filename>ConfigData.configValueMap</filename> and accessed via getValueOrDefault(key) which returns the runtime value if present otherwise the default from the maps.</para></listitem>
+        <listitem><para>getNotEmptyValueOrDefault treats empty strings as unset (so the default will be used).</para></listitem>
+        <listitem><para>Values typed as Double may be stored as Integer by Jackson; helper methods convert Integer to Double when the declared type is Double.</para></listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
+      <title>Notes & pointers</title>
+      <para>This document is a concise reference. For authoritative defaults, types and description, inspect the source files:</para>
+      <itemizedlist>
+        <listitem><para><filename>roart/common/config/ConfigConstants.java</filename></para></listitem>
+        <listitem><para><filename>roart/common/config/ConfigConstantMaps.java</filename></para></listitem>
+        <listitem><para><filename>roart/iclij/config/IclijConfigConstants.java</filename></para></listitem>
+        <listitem><para><filename>roart/iclij/config/IclijConfig.java</filename></para></listitem>
+      </itemizedlist>
+    </section>
+
+  </chapter>
+</book>
