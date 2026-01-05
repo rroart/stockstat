@@ -907,7 +907,9 @@ class Classify:
         (intlist, problist) = (None, None)
         if self.wantClassify(myobj):
             #print("here0");
-            myobj.classifyarray = self.transpose_cnn(myobj, config, myobj.classifyarray)
+            array = np.array(myobj.classifyarray, dtype='f')
+            array = self.transpose_cnn(myobj, config, array)
+            myobj.classifyarray = array.tolist()
             (intlist, problist) = self.do_classifyinner(myobj, classifier, config, classify)
         #print("here00");
         #print(len(intlist))
