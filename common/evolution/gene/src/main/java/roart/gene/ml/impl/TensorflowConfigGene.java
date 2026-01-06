@@ -1,6 +1,5 @@
 package roart.gene.ml.impl;
 
-import roart.common.ml.PytorchConfig;
 import roart.common.ml.TensorflowConfig;
 import roart.common.ml.TensorflowFeedConfig;
 import roart.gene.NeuralNetConfigGene;
@@ -168,7 +167,7 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
         //String[] activations = { /*"celu", */ "elu", "exponential", "gelu", /* "glu", */ /*"hard_shrink",*/ "hard_sigmoid", "hard_silu", /* "hard_tanh", */ "leaky_relu", "linear", /* "log_sigmoid", */ "log_softmax", "mish", "relu", "relu6", "selu", "sigmoid", "silu", "softmax", /* "soft_shrink", */ "softplus", "softsign", /* "sparse_plus", */ /* "sparsemax", */ /*squareplus", */ "tanh" /*, "tanh_shrink", "threshold"*/ };
         String[] activations = { null, "celu", "elu", "exponential", "gelu", /*"glu",*/ "hard_shrink", "hard_sigmoid", "hard_silu", "hard_tanh", "leaky_relu", "linear", "log_sigmoid", "log_softmax", "mish", "relu", "relu6", "selu", "sigmoid", "silu", "softmax", "soft_shrink", "softplus", "softsign", "sparse_plus", "squareplus", "tanh", "tanh_shrink"/*, "threshold"*/ };
         //String[] activations = { "celu", "elu", "exponential", "gelu", "glu", "hard_shrink", "hard_sigmoid", "hard_silu", "hard_tanh", "leaky_relu", "linear", "log_sigmoid", "log_softmax", "mish", "relu", "relu6", "selu", "sigmoid", "silu", "softmax", "soft_shrink", "softplus", "softsign", "sparse_plus", "sparsemax", "squareplus", "tanh", "tanh_shrink", "threshold" };
-        if (((PytorchConfig)getConfig()).isBinary()) {
+        if (((TensorflowConfig)getConfig()).isBinary()) {
             activations = new String[] { "sigmoid", "hard_sigmoid" };
         }
         if (predictor) {
