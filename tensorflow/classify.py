@@ -20,6 +20,9 @@ from multiprocessing import Queue
 import mydatasets
 from mydatasets import DictToObject
 
+# had problems deserializing save with gpu and load on cpu
+weights_only_load_save = True
+
 global dicteval
 dicteval = {}
 global dictclass
@@ -794,7 +797,7 @@ class Classify:
             return True
         return False
 
-    def exists(self, myobj):
+    def exists(self, myobj, weights_only = False):
         """Check whether a saved model file exists for `myobj`.
 
         Uses `myobj.filename` and `myobj.path` (if present) to determine the
@@ -804,7 +807,7 @@ class Classify:
             return False
         if os.path.exists(self.getpath(myobj) + myobj.filename):
             return True
-        return os.path.isfile(self.getfullpath(myobj))
+        return os.path.isfile(self.getfullpath(myobj, weights_only))
 
     #deprecated
     def existsds(self, myobj, modelname):
@@ -867,7 +870,7 @@ class Classify:
             else:
                 anarray = np.array(myobj.classifyarray, dtype='f')
                 myobj.classifyarray = anarray.reshape(anarray.shape[0], 1, anarray.shape[1])
-        exists = self.exists(myobj)
+        exists = self.exists(myobj, weights_only_load_save)
         # load model if:
         # exists and not dynamic and wantclassify
         if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
@@ -875,7 +878,10 @@ class Classify:
                 # dummy variable to allow saver
                 model = Model.Model(myobj, config, classify, shape)
                 print("Restoring")
-                model.model = tf.keras.models.load_model( self.getfullpath(myobj))
+                if weights_only_load_save:
+                    model.model.load_weights( self.getfullpath(myobj, weights_only_load_save))
+                else:
+                    model.model = tf.keras.models.load_model( self.getfullpath(myobj, weights_only_load_save))
                 print("Restoring done")
             else:
                 model = Model.Model(myobj, config, classify, shape)
@@ -902,7 +908,10 @@ class Classify:
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
             if model.localsave():
                 print("Saving")
-                model.save(self.getfullpath(myobj))
+                if weights_only_load_save:
+                    model.model.save_weights(self.getfullpath(myobj, weights_only_load_save), overwrite=True, max_shard_size=None)
+                else:
+                    model.save(self.getfullpath(myobj, weights_only_load_save))
 
         (intlist, problist) = (None, None)
         if self.wantClassify(myobj):
@@ -1365,13 +1374,20 @@ class Classify:
             return myobj.path + '/'
         return '/tmp/'
 
-    def getfullpath(self, myobj):
+    def getfullpath(self, myobj, weights_only = False):
         """Return full filesystem path for a saved model including filename.
 
         Appends the `.keras` extension to `myobj.filename` and prefixes with the
         path returned by `getpath`.
         """
-        return self.getpath(myobj) + myobj.filename + ".keras"
+        suffix = self.get_suffix(weights_only)
+        return self.getpath(myobj) + myobj.filename + suffix
+
+    def get_suffix(self, weights_only: bool) -> str:
+        suffix = '.keras'
+        if weights_only:
+            suffix = '.weights.h5'
+        return suffix
 
     def do_filename(self, queue, request):
         """Extract filename info and return existence boolean via queue.
