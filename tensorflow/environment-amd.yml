@@ -1,0 +1,23 @@
+name: tf220rocm
+dependencies:
+  - python=3.12
+  - pip:
+    - -f https://repo.radeon.com/rocm/manylinux/rocm-rel-7.1
+    - Flask
+    - gdown
+    - imageio
+    - keras
+    - keras_nlp
+    - matplotlib
+    - numpy
+    - pandas
+    #- scikit_learn
+    - tensorflow-rocm==2.19.1
+    - tensorflow_datasets
+    - Werkzeug
+    - cyclonedx-bom
+    - pretty_midi
+    #- cirq
+    #- seaborn
+    #- sympy
+    #- tensorflow_quantum
