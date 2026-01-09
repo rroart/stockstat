@@ -817,6 +817,9 @@ class Classify:
         catprobabilitylist = (1 - probabilitylist) * (1 - predictedcat) + probabilitylist * predictedcat  # todo
         print("problist", catprobabilitylist)
         # TODO INT
+        intlist = predictedcat.tolist()
+        if self.onlyOneResult(intlist):
+            print("WARNING: only one result", intlist)
         return predictedcat, catprobabilitylist
 
     def get_multi_cat_and_probability(self, model, x):
@@ -830,7 +833,13 @@ class Classify:
         probability, _ = torch.max(probabilities, 1)
         problist = probability.detach().to(torch.device("cpu")).numpy().tolist()
         problist = np.where(np.isnan(problist), None, problist).tolist()
+        if self.onlyOneResult(intlist):
+            print("WARNING: only one result", intlist)
         return intlist, problist
+
+
+    def onlyOneResult(self, list) -> bool:
+        return len(set(list)) == 1
 
 
     def getModel(self, myobj):

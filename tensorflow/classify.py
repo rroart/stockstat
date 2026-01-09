@@ -138,6 +138,8 @@ class Classify:
                 #print("ashape", array.shape)
                 #print("ar", array)
                 (intlist, problist) = classifier.predict(array)
+                if self.onlyOneResult(intlist):
+                    print("WARNING: only one result", intlist)
                 intlist = np.array(intlist)
                 #print("pr", intlist)
                 if myobj.modelInt == 3 or myobj.modelInt == 8:
@@ -176,6 +178,8 @@ class Classify:
             intlist = np.array(intlist)
             intlist = intlist + 1
             intlist = intlist.tolist()
+        if self.onlyOneResult(intlist):
+            print("WARNING: only one result", intlist)
         return intlist, problist
 
     def do_learntest(self, queue, request):
@@ -624,7 +628,9 @@ class Classify:
         print(history.history.get('val_loss'))
         #print(train)
         #print(traincat)
-        (intlist, problist) = classifier.predict(test)
+        #(intlist, problist) = classifier.predict(test)
+        #if self.onlyOneResult(intlist):
+        #    print("WARNING: only one result", intlist)
         #print("tests", myobj.modelInt)
         #print(testcat)
         #print(intlist)
@@ -1416,3 +1422,9 @@ class Classify:
         """Return True when at least one GPU device is available to TensorFlow."""
         physical_devices = tf.config.list_physical_devices('GPU')
         return len(physical_devices) > 0
+
+
+    def onlyOneResult(self, list) -> bool:
+        return len(set(list)) == 1
+
+
