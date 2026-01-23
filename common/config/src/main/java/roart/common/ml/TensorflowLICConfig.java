@@ -30,7 +30,7 @@ public class TensorflowLICConfig extends TensorflowFeedConfig {
     }
 
     public TensorflowLICConfig(TensorflowLICConfig config) {
-        this(config.tensorflowConfigCommon);
+        this(new TensorflowConfigCommon(config.tensorflowConfigCommon));
     }
 
 

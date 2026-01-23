@@ -44,7 +44,7 @@ public class TensorflowCNN2Config extends TensorflowPreFeedConfig {
     }
 
     public TensorflowCNN2Config(TensorflowCNN2Config config) {
-        super(MLConstants.CNN2, config.tensorflowConfigCommon, config.convlayers, config.layers, config.hidden);
+        super(MLConstants.CNN2, new TensorflowConfigCommon(config.tensorflowConfigCommon), config.convlayers, config.layers, config.hidden);
         this.kernelsize = config.kernelsize;
         this.maxpool = config.maxpool;
         this.stride = config.stride;

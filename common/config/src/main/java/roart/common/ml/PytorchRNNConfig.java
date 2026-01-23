@@ -29,7 +29,7 @@ public class PytorchRNNConfig extends PytorchRecurrentConfig {
     }
 
     public PytorchRNNConfig(PytorchRNNConfig config) {
-        super(MLConstants.RNN, config.pytorchConfigCommon, config.layers, config.hidden, config.slide);
+        super(MLConstants.RNN, new PytorchConfigCommon(config.pytorchConfigCommon), config.layers, config.hidden, config.slide);
     }
 
     public PytorchRNNConfig(String name) {

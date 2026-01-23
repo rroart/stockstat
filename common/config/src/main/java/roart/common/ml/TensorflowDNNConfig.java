@@ -54,7 +54,7 @@ public class TensorflowDNNConfig extends TensorflowFeedConfig {
     }
 
     public TensorflowDNNConfig(TensorflowDNNConfig config) {
-        super(MLConstants.DNN, config.tensorflowConfigCommon, 0, 0);
+        super(MLConstants.DNN, new TensorflowConfigCommon(config.tensorflowConfigCommon), 0, 0);
     }
     
     @Override

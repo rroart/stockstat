@@ -30,7 +30,7 @@ public class TensorflowLIRConfig extends TensorflowFeedConfig {
     }
 
     public TensorflowLIRConfig(TensorflowLIRConfig config) {
-        this(config.tensorflowConfigCommon);
+        this(new TensorflowConfigCommon(config.tensorflowConfigCommon));
     }
 
     public TensorflowLIRConfig() {

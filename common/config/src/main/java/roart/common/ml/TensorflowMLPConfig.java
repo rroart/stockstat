@@ -32,7 +32,7 @@ public class TensorflowMLPConfig extends TensorflowFeedConfig {
     }
 
     public TensorflowMLPConfig(TensorflowMLPConfig config) {
-        this(config.tensorflowConfigCommon, config.layers, config.hidden );
+        this(new TensorflowConfigCommon(config.tensorflowConfigCommon), config.layers, config.hidden );
     }
 
     public TensorflowMLPConfig() {

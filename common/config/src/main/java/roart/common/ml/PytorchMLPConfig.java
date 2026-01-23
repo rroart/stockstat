@@ -27,7 +27,7 @@ public class PytorchMLPConfig extends PytorchFeedConfig {
     }
 
     public PytorchMLPConfig(PytorchMLPConfig config) {
-        this(config.pytorchConfigCommon, config.layers, config.hidden);
+        this(new PytorchConfigCommon(config.pytorchConfigCommon), config.layers, config.hidden);
     }
 
     public PytorchMLPConfig(String name) {

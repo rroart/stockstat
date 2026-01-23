@@ -29,7 +29,7 @@ public class PytorchGRUConfig extends PytorchRecurrentConfig {
     }
 
     public PytorchGRUConfig(PytorchGRUConfig config) {
-        this(config.pytorchConfigCommon, config.layers, config.hidden, config.slide);
+        this(new PytorchConfigCommon(config.pytorchConfigCommon), config.layers, config.hidden, config.slide);
     }
 
     public PytorchGRUConfig(String name) {

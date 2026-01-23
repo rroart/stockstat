@@ -33,7 +33,7 @@ public class TensorflowLSTMConfig extends TensorflowRecurrentConfig {
     }
 
     public TensorflowLSTMConfig(TensorflowLSTMConfig config) {
-        this(config.tensorflowConfigCommon, config.layers, config.hidden, config.slide);
+        this(new TensorflowConfigCommon(config.tensorflowConfigCommon), config.layers, config.hidden, config.slide);
     }
 
     public TensorflowLSTMConfig() {

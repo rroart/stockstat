@@ -29,7 +29,7 @@ public class PytorchLSTMConfig extends PytorchRecurrentConfig {
     }
 
     public PytorchLSTMConfig(PytorchLSTMConfig config) {
-        this(MLConstants.LSTM, config.pytorchConfigCommon, config.layers, config.hidden, config.slide);
+        this(MLConstants.LSTM, new PytorchConfigCommon(config.pytorchConfigCommon), config.layers, config.hidden, config.slide);
     }
 
     public PytorchLSTMConfig(String name) {

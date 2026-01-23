@@ -46,7 +46,25 @@ public class PytorchConfigCommon {
         this.lastactivation = lastactivation;
         this.binary = binary;
     }
-
+    
+    // for copy
+    public PytorchConfigCommon(PytorchConfigCommon config) {
+        super();
+        this.steps = config.steps;
+        this.lr = config.lr;
+        this.inputdropout = config.inputdropout;
+        this.dropout = config.dropout;
+        this.normalize = config.normalize;
+        this.batchnormalize = config.batchnormalize;
+        this.regularize = config.regularize;
+        this.batchsize = config.batchsize;
+        this.loss = config.loss;
+        this.optimizer = config.optimizer;
+        this.activation = config.activation;
+        this.lastactivation = config.lastactivation;
+        this.binary = config.binary;
+    }
+    
     public int getSteps() {
         return steps;
     }

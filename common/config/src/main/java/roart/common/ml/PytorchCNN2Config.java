@@ -40,7 +40,7 @@ public class PytorchCNN2Config extends PytorchPreFeedConfig {
     }
     
     public PytorchCNN2Config(PytorchCNN2Config config) {
-        super(MLConstants.CNN, config.pytorchConfigCommon, config.convlayers, config.layers, config.hidden);
+        super(MLConstants.CNN, new PytorchConfigCommon(config.pytorchConfigCommon), config.convlayers, config.layers, config.hidden);
         this.kernelsize = config.kernelsize;
         this.maxpool = config.maxpool;
         this.stride = config.stride;

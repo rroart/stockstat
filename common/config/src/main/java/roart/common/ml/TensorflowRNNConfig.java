@@ -33,7 +33,7 @@ public class TensorflowRNNConfig extends TensorflowRecurrentConfig {
     }
 
     public TensorflowRNNConfig(TensorflowRNNConfig config) {
-        super(MLConstants.RNN, config.tensorflowConfigCommon, config.layers, config.hidden, config.slide);
+        super(MLConstants.RNN, new TensorflowConfigCommon(config.tensorflowConfigCommon), config.layers, config.hidden, config.slide);
     }
 
     public TensorflowRNNConfig() {
