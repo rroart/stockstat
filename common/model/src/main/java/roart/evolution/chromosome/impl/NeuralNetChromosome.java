@@ -70,7 +70,8 @@ public class NeuralNetChromosome extends AbstractChromosome {
 
     @Override
     public Individual crossover(AbstractChromosome evaluation) {
-        NeuralNetConfigGene newNNConfig =  (NeuralNetConfigGene) nnConfigGene.crossover(((NeuralNetChromosome) evaluation).nnConfigGene);
+        // for copy
+        NeuralNetConfigGene newNNConfig =  (NeuralNetConfigGene) nnConfigGene.copy().crossover(((NeuralNetChromosome) evaluation).nnConfigGene);
         NeuralNetChromosome eval = new NeuralNetChromosome(newNNConfig);
         return new Individual(eval);
     }
