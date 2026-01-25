@@ -1,14 +1,15 @@
 all: xhtml pdf
 
-xhtml: DOCUMENTATION.xml docbook/figures/architecture.svg
-	xmlto xhtml DOCUMENTATION.xml
+xhtml: docbook/DOCUMENTATION.xml docbookhtml/figures/architecture.svg
+	xmlto -o docbookhtml xhtml docbook/DOCUMENTATION.xml
 
 pdf: DOCUMENTATION.pdf
 
 %.fo: %
 	xsltproc -xinclude -o $@ /usr/share/xml/docbook/stylesheet/docbook-xsl-ns/fo/docbook.xsl $<
 
-docbook/figures/%.svg: docbook/figures/%.fig
+docbookhtml/figures/%.svg: docbook/figures/%.fig
+	mkdir -p docbookhtml/figures
 	fig2dev $< $@
 
 %.pdf: %.fo
