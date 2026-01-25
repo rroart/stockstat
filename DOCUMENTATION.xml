@@ -14,6 +14,7 @@ Stock statistics
     <abstract>
       <para>
 	Stock statistics is an app for making simple stats and graphs.
+	It has also grown to be something data platform-ish.
       </para>
     </abstract>
   </bookinfo>
@@ -23,6 +24,44 @@ Stock statistics
   </title>
 <para>
 For making simple stats and graphs.
+</para>
+</chapter>
+<chapter>
+  <title>
+    Architecture
+  </title>
+<para>
+  Data sources, from xml (scraped and external fred).
+</para>
+<para>
+  Ingestion Layer
+  Data extraction, from SQL database
+  Data connectors, from SQL database and external (fred).
+  Data quality, using interpolation and removing extreme data.
+  Data capture, scraping
+</para>
+<para>
+  Processing Layer
+</para>
+<para>
+  Storage Layer
+  SQL database
+  Text file output
+  XML file input
+  In Memory while running
+</para>
+<para>
+  Analytics Layer
+</para>
+<para>
+  Visualization Layer
+  Tables
+  Graphs
+  Mattermost
+</para>
+<para>
+</para>
+<para>
 </para>
 </chapter>
 <chapter>
