@@ -144,10 +144,10 @@
     <ta4j.version>0.17</ta4j.version>
     <jenetics.version>5.2.0</jenetics.version>
     <guava.version>33.4.0-jre</guava.version>
-    <camel.version>4.0.0-RC1</camel.version>
-    <camelactivemq.version>5.16.6</camelactivemq.version>
-    <springintegration.version>6.0.0</springintegration.version>
-    <springrabbit.version>3.0.0</springrabbit.version>
+    <camel.version>4.17.0</camel.version>
+    <camelactivemq.version>4.17.0</camelactivemq.version>
+    <springintegration.version>7.0.1</springintegration.version>
+    <springrabbit.version>4.0.2</springrabbit.version>
     <kafka.version>3.5.0</kafka.version> 
     <pulsar.version>3.0.0</pulsar.version>
     <hazelcast.version>3.12.12</hazelcast.version>
