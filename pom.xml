@@ -150,8 +150,8 @@
     <springrabbit.version>4.0.2</springrabbit.version>
     <kafka.version>3.5.0</kafka.version> 
     <pulsar.version>3.0.0</pulsar.version>
-    <hazelcast.version>3.12.12</hazelcast.version>
-    <hazelcastclient.version>3.2.12</hazelcastclient.version>
+    <hazelcast.version>5.6.0</hazelcast.version>
+    <hazelcastclient.version>3.2.13</hazelcastclient.version>
     <redisclient.version>7.2.1</redisclient.version>
     <zookeeper.version>3.8.5</zookeeper.version>
     <!-- 5.9.0 did not work, got strange ClassNotFoundException -->
