@@ -152,7 +152,7 @@
     <pulsar.version>3.0.0</pulsar.version>
     <hazelcast.version>3.12.12</hazelcast.version>
     <hazelcastclient.version>3.2.12</hazelcastclient.version>
-    <redisclient.version>4.4.3</redisclient.version>
+    <redisclient.version>7.2.1</redisclient.version>
     <zookeeper.version>3.8.2</zookeeper.version>
     <curator.version>5.5.0</curator.version>
     <hadoop.version>3.4.0</hadoop.version>
