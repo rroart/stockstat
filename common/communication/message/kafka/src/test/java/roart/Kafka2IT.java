@@ -100,7 +100,7 @@ public class Kafka2IT {
         int i = 0;
         
         while (true) {
-           ConsumerRecords<String, String> records = consumer.poll(100);
+           ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
            for (ConsumerRecord<String, String> record : records)
            
            // print the offset,key and value for the consumer records.
