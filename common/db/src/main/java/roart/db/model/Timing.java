@@ -27,7 +27,6 @@ import roart.db.thread.Queues;
 
 @Entity
 @Table(name = "Timing")
-@org.hibernate.annotations.Table(appliesTo = "Timing")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Timing implements Serializable {
 

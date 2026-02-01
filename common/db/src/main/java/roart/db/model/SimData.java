@@ -27,7 +27,6 @@ import roart.db.thread.Queues;
 
 @Entity
 @Table(name = "Sim")
-@org.hibernate.annotations.Table(appliesTo = "Sim")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class SimData implements Serializable {
 

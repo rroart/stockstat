@@ -27,7 +27,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "IncDec")
-@org.hibernate.annotations.Table(appliesTo = "IncDec")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class IncDec implements Serializable /*,Comparable<Meta>*/ {
 

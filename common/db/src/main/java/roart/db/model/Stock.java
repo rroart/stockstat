@@ -19,7 +19,6 @@ import org.hibernate.query.SelectionQuery;
 
 @Entity
 @Table(name = "Stock")
-@org.hibernate.annotations.Table(appliesTo = "Stock")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Stock implements Serializable /*,Comparable<Stock>*/ {
 

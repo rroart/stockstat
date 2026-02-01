@@ -25,7 +25,6 @@ import roart.db.thread.Queues;
 
 @Entity
 @Table(name = "Config")
-@org.hibernate.annotations.Table(appliesTo = "Config")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Config implements Serializable {
 

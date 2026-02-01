@@ -22,7 +22,6 @@ import roart.db.thread.Queues;
 
 @Entity
 @Table(name = "SimRun")
-@org.hibernate.annotations.Table(appliesTo = "SimRun")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class SimRunData {
 

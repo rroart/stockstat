@@ -24,7 +24,6 @@ import roart.db.thread.Queues;
 
 @Entity
 @Table(name = "Cont")
-@org.hibernate.annotations.Table(appliesTo = "Cont")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Cont {
 

@@ -177,7 +177,7 @@ public class HibernateUtil {
     }
 
     public void saveOrUpdate(Object object) {
-        sessionWrite.saveOrUpdate(object);
+        sessionWrite.merge(object);
     }
 
     // only for Main

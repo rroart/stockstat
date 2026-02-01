@@ -23,7 +23,6 @@ import org.hibernate.query.SelectionQuery;
 
 @Entity
 @Table(name = "Relation")
-@org.hibernate.annotations.Table(appliesTo = "Relation")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Relation implements Serializable {
 

@@ -17,7 +17,6 @@ import org.hibernate.query.SelectionQuery;
 
 @Entity
 @Table(name = "Meta")
-@org.hibernate.annotations.Table(appliesTo = "Meta")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Meta implements Serializable /*,Comparable<Meta>*/ {
 

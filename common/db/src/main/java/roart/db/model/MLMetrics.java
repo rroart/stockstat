@@ -25,7 +25,6 @@ import roart.db.thread.Queues;
 
 @Entity
 @Table(name = "MLMetrics")
-@org.hibernate.annotations.Table(appliesTo = "MLMetrics")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class MLMetrics implements Serializable {
 

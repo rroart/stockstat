@@ -27,7 +27,6 @@ import roart.db.thread.Queues;
 
 @Entity
 @Table(name = "AboveBelow")
-@org.hibernate.annotations.Table(appliesTo = "AboveBelow")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class AboveBelow implements Serializable {
 

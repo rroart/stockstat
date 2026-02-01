@@ -29,7 +29,6 @@ import roart.db.thread.Queues;
 
 @Entity
 @Table(name = "Memory")
-@org.hibernate.annotations.Table(appliesTo = "Memory")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Memory implements Serializable {
     @GeneratedValue(strategy=GenerationType.IDENTITY)

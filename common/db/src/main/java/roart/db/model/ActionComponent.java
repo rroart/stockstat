@@ -24,7 +24,6 @@ import roart.db.thread.Queues;
 
 @Entity
 @Table(name = "ActionComponent")
-@org.hibernate.annotations.Table(appliesTo = "ActionComponent")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ActionComponent implements Serializable {
 
