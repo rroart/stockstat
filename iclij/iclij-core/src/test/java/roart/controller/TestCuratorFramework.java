@@ -14,6 +14,7 @@ import org.apache.curator.framework.api.GetACLBuilder;
 import org.apache.curator.framework.api.GetChildrenBuilder;
 import org.apache.curator.framework.api.GetConfigBuilder;
 import org.apache.curator.framework.api.GetDataBuilder;
+import org.apache.curator.framework.api.GetDataWatchBackgroundStatable;
 import org.apache.curator.framework.api.ReconfigBuilder;
 import org.apache.curator.framework.api.RemoveWatchesBuilder;
 import org.apache.curator.framework.api.SetACLBuilder;
@@ -32,6 +33,7 @@ import org.apache.curator.framework.state.ConnectionStateListener;
 import org.apache.curator.utils.EnsurePath;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.server.quorum.flexible.QuorumVerifier;
+import org.apache.curator.utils.ZookeeperCompatibility;
 
 public class TestCuratorFramework implements CuratorFramework {
 
@@ -223,4 +225,14 @@ public class TestCuratorFramework implements CuratorFramework {
         return null;
     }
 
+    @Override
+    public boolean compressionEnabled() {
+        return false;
+    }
+    
+    @Override
+    public ZookeeperCompatibility getZookeeperCompatibility() {
+        return null;
+    }
+    
 }

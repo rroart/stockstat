@@ -15,6 +15,7 @@ import org.apache.curator.framework.api.CreateBuilderMain;
 import org.apache.curator.framework.api.CreateProtectACLCreateModePathAndBytesable;
 import org.apache.curator.framework.api.ErrorListenerPathAndBytesable;
 import org.apache.curator.framework.api.ProtectACLCreateModeStatPathAndBytesable;
+import org.apache.curator.framework.api.GetDataWatchBackgroundStatable;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.ACL;
 import org.apache.zookeeper.data.Stat;
@@ -127,4 +128,8 @@ public class TestCreateBuilder implements CreateBuilder {
         return null;
     }
 
+    @Override
+    public CreateBackgroundModeStatACLable uncompressed() {
+        return null;
+    }
 }

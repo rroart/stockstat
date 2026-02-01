@@ -76,4 +76,8 @@ public class TestGetDataBuilder implements GetDataBuilder {
         return null;
     }
 
+    @Override
+    public GetDataWatchBackgroundStatable undecompressed() {
+        return null;
+    }
 }

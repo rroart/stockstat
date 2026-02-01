@@ -8,8 +8,11 @@ import java.util.concurrent.Executor;
 import org.apache.curator.framework.api.BackgroundCallback;
 import org.apache.curator.framework.api.BackgroundPathAndBytesable;
 import org.apache.curator.framework.api.ErrorListenerPathAndBytesable;
+import org.apache.curator.framework.api.GetDataWatchBackgroundStatable;
+import org.apache.curator.framework.api.PathAndBytesable;
 import org.apache.curator.framework.api.SetDataBackgroundVersionable;
 import org.apache.curator.framework.api.SetDataBuilder;
+import org.apache.curator.framework.api.UnhandledErrorListener;
 import org.apache.zookeeper.data.Stat;
 
 public class TestSetDataBuilder implements SetDataBuilder {
@@ -51,7 +54,7 @@ public class TestSetDataBuilder implements SetDataBuilder {
         try {
             Files.write(Paths.get("/tmp" + path), data);
         } catch (Exception e) {
-            
+
         }
         return null;
     }
@@ -62,7 +65,7 @@ public class TestSetDataBuilder implements SetDataBuilder {
         try {
             Files.createFile(Paths.get("/tmp" + path));
         } catch (Exception e) {
-            
+
         }
         return null;
     }
@@ -74,6 +77,11 @@ public class TestSetDataBuilder implements SetDataBuilder {
 
     @Override
     public SetDataBackgroundVersionable compressed() {
+        return null;
+    }
+
+    @Override
+    public SetDataBackgroundVersionable uncompressed() {
         return null;
     }
 
