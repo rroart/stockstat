@@ -119,10 +119,10 @@
     <junit.version>5.7.2</junit.version>
     <log4j.version>1.2.17</log4j.version>
     <commons.version>2.1.1</commons.version>
-    <!-- spark 4.0.1 -->
+    <!-- spark 4.1.1 -->
     <commons.math3.version>3.6.1</commons.math3.version>
-    <!-- spark 4.0.1 -->
-    <commons.lang3.version>3.20.0</commons.lang3.version>
+    <!-- spark 4.1.1 -->
+    <commons.lang3.version>3.19.0</commons.lang3.version>
     <commons.codec.version>1.15</commons.codec.version>
     <commons.beanutils.version>1.9.4</commons.beanutils.version>
     <commons.io.version>2.18.0</commons.io.version>
@@ -139,7 +139,7 @@
     <!-- migrate to Jakarta Servlet API 6 (Jakarta EE 10) -->
     <servlet.version>6.0.0</servlet.version>
     <xmlapis.version>1.4.01</xmlapis.version>
-    <spark.version>4.0.1</spark.version>
+    <spark.version>4.1.1</spark.version>
     <talib.version>0.4.0</talib.version>
     <ta4j.version>0.17</ta4j.version>
     <jenetics.version>5.2.0</jenetics.version>
@@ -156,19 +156,23 @@
     <zookeeper.version>3.8.5</zookeeper.version>
     <!-- 5.9.0 did not work, got strange ClassNotFoundException -->
     <curator.version>5.8.0</curator.version>
-    <hadoop.version>3.4.0</hadoop.version>
+    <hadoop.version>3.4.2</hadoop.version>
     <joss.version>0.10.4</joss.version>
     <awssdk.version>2.41.19</awssdk.version>
     <tweety.version>1.27</tweety.version>
     <!-- Spark needs old version -->
     <scala.binary.version>2.13</scala.binary.version>
-    <spark.scala.version>2.13.16</spark.scala.version>
-    <!-- spark 4.0.1 -->
+    <spark.scala.version>2.13.17</spark.scala.version>
+    <!-- spark 4.1.1 -->
     <janino.version>3.1.9</janino.version>
-    <!-- spark 4.0.1 -->
-    <jersey.version>3.0.16</jersey.version>
-    <!-- spark 4.0.1 -->
+    <!-- spark 4.1.1 -->
+    <chill.version>0.10.0</chill.version>
+    <!-- spark 4.1.1 -->
+    <jersey.version>3.0.18</jersey.version>
+    <!-- spark 4.1.1 -->
     <jakartaservlet.version>5.0.0</jakartaservlet.version>
+    <!-- spark 4.1.1 -->
+    <json4s.version>4.0.7</json4s.version>
     <cyclonedx.version>2.9.0</cyclonedx.version>
   </properties>
   <dependencyManagement>

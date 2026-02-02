@@ -46,6 +46,7 @@
 		  <include>org.apache.spark:spark-sql-api_2.13</include>
 		  <include>org.apache.spark:spark-core_2.13</include>
 		  <include>org.apache.spark:spark-common-utils_2.13</include>
+		  <include>org.apache.spark:spark-common-utils-java_2.13</include>
 		  <include>org.apache.spark:spark-mllib_2.13</include>
 		  <include>org.apache.spark:spark-mllib-local_2.13</include>
 		  <include>org.apache.spark:spark-sql_2.13</include>
@@ -150,12 +151,12 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-http</artifactId>
-      <version>11.0.24</version>
+      <version>${jetty.version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-plus</artifactId>
-      <version>11.0.24</version>
+      <version>${jetty.version}</version>
     </dependency>
     <dependency>
       <groupId>jakarta.servlet</groupId>
@@ -215,7 +216,7 @@
     <dependency>
       <groupId>com.twitter</groupId>
       <artifactId>chill_2.13</artifactId>
-      <version>0.10.0</version>
+      <version>${chill.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.xbean</groupId>
@@ -226,7 +227,7 @@
     <dependency>
       <groupId>org.json4s</groupId>
       <artifactId>json4s-core_2.13</artifactId>
-      <version>4.0.7</version>
+      <version>${json4s.version}</version>
       <exclusions>
         <exclusion>
           <groupId>com.fasterxml.jackson.core</groupId>
@@ -237,7 +238,7 @@
     <dependency>
       <groupId>org.json4s</groupId>
       <artifactId>json4s-ast_2.13</artifactId>
-      <version>4.0.7</version>
+      <version>${json4s.version}</version>
       <exclusions>
         <exclusion>
           <groupId>com.fasterxml.jackson.core</groupId>
@@ -248,7 +249,7 @@
     <dependency>
       <groupId>org.json4s</groupId>
       <artifactId>json4s-jackson_${scala.binary.version}</artifactId>
-      <version>4.0.7</version>
+      <version>${json4s.version}</version>
       <exclusions>
         <exclusion>
           <groupId>com.fasterxml.jackson.core</groupId>
