@@ -428,5 +428,12 @@
     <artifactId>jakarta.inject-api</artifactId>
     <version>2.0.1</version>
 </dependency>
+    <!-- Enforce a ZooKeeper version that provides the ConnectRequest constructor
+         with the boolean readOnly parameter to avoid NoSuchMethodError at runtime. -->
+    <dependency>
+      <groupId>org.apache.zookeeper</groupId>
+      <artifactId>zookeeper</artifactId>
+      <version>${zookeeper.version}</version>
+    </dependency>
   </dependencies>
 </project>

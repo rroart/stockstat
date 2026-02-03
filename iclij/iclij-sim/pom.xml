@@ -301,6 +301,13 @@
       <artifactId>jedis</artifactId>
       <version>${redisclient.version}</version>
     </dependency>
+    <!-- Enforce a ZooKeeper version that provides the ConnectRequest constructor
+         with the boolean readOnly parameter to avoid NoSuchMethodError at runtime. -->
+    <dependency>
+      <groupId>org.apache.zookeeper</groupId>
+      <artifactId>zookeeper</artifactId>
+      <version>${zookeeper.version}</version>
+    </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
