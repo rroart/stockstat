@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import roart.common.model.AboveBelowDTO;
@@ -23,6 +24,7 @@ import roart.common.model.TimingDTO;
 import roart.db.common.DbDS;
 import roart.iclij.config.IclijConfig;
 
+@ConditionalOnProperty(name = "iclij.testdb", havingValue = "true")
 @Component
 public class TestDbDS extends DbDS {
 
