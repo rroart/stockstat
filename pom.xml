@@ -32,24 +32,25 @@
 	</plugin>
 	 <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
-		<configuration>
-		  <argLine>
-		    --add-opens java.base/java.lang=spring.core
-		    --add-opens java.base/sun.nio.ch=stockstat.shadow.spark
-		    --add-opens java.base/sun.net=ALL-UNNAMED
-		    --add-reads springdata=ALL-UNNAMED
-		    --add-reads iclij.common.config=ALL-UNNAMED
-		    --add-reads pipeline.category=spring.context
-		    --add-reads pipeline.category=spring.core
-		    --add-reads pipeline.category=spring.beans
-		    --add-reads iclij.core=model
-		    --add-reads iclij.core=pipeline.model
-		    --add-reads iclij.core=stockutil
-		    --add-reads iclij.core=common.filesystem.client
-		    --add-reads iclij.core=java.sql
-		  </argLine>
-		</configuration>
+                <version>3.5.4</version>
+                <configuration>
+                  <argLine>
+                    --add-opens java.base/java.lang=spring.core
+                    --add-opens java.base/sun.nio.ch=stockstat.shadow.spark
+                    --add-opens java.base/sun.net=ALL-UNNAMED
+                    --add-reads springdata=ALL-UNNAMED
+                    --add-reads iclij.common.config=ALL-UNNAMED
+                    --add-reads pipeline.category=spring.context
+                    --add-reads pipeline.category=spring.core
+                    --add-reads pipeline.category=spring.beans
+                    --add-reads iclij.core=model
+                    --add-reads iclij.core=pipeline.model
+                    --add-reads iclij.core=stockutil
+                    --add-reads iclij.core=common.filesystem.client
+                    --add-reads iclij.core=java.sql
+                  </argLine>
+                  <useModulePath>false</useModulePath>
+                </configuration>
          </plugin>
 
       </plugins>
@@ -70,7 +71,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>3.0.0-M5</version>
+        <version>3.5.4</version>
         <executions>
           <execution>
             <goals>
@@ -79,12 +80,13 @@
             </goals>
           </execution>
         </executions>
-	<configuration>
-	  <argLine>
-	    --add-opens java.base/sun.nio.ch=stockstat.shadow.spark
-	  </argLine>
-	  <classesDirectory>${project.build.outputDirectory}</classesDirectory>
-	</configuration>
+        <configuration>
+          <argLine>
+            --add-opens java.base/sun.nio.ch=stockstat.shadow.spark
+          </argLine>
+          <useModulePath>false</useModulePath>
+          <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+        </configuration>
       </plugin>
     </plugins>
   </build>
