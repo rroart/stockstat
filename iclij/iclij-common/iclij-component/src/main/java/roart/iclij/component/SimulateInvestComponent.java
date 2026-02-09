@@ -201,7 +201,7 @@ public class SimulateInvestComponent extends ComponentML {
             extradelay = simConfig.getExtradelay();
         }
         log.debug("Extradelay {}", extradelay);
-        doprev = simConfig.getBuyweight();
+        doprev = !simConfig.getBuyweight();
         // todo hack overloaded unused eventUnique = simConfig.getBuyweight();
         // coming from improvesim
         //List<SimulateFilter> filter = simConfig.getFilters();
