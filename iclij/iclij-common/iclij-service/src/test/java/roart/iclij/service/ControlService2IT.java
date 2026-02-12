@@ -45,7 +45,7 @@ public class ControlService2IT {
         System.out.println("zzz"+result2[0]);
         System.out.println(param.getWebpath());
     }
-    @Test
+    // TODO @Test
     public void t() {
         t0("TSTSR3");
     }

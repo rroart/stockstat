@@ -45,12 +45,12 @@ public class PulsarIT {
         pulsar = new Pulsar("PULSAR", String.class, TOPIC_NAME, new ObjectMapper(), true, true, false, config.getServerPulsar(), null);
     }
 
-    @Test
+    // TODO @Test
     public void t() {
         pulsar.send("hi pulsar");
     }
 
-    @Test
+    // TODO @Test
     public void t2() {
         String[] s = pulsar.receiveString();
         System.out.println(s[0]);

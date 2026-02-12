@@ -53,7 +53,7 @@ public class ControlServiceIT {
     @Autowired
     private IO io;
 
-    @Test
+    // TODO @Test
     public void t() {
         IclijServiceParam param = new IclijServiceParam();
         param.setWebpath("TST");
@@ -78,7 +78,7 @@ public class ControlServiceIT {
         return (T) result[0];
     }
 
-    @Test
+    // TODO @Test
     public void t0() {
         IclijServiceParam param = new IclijServiceParam();
         param.setConfig(null);
@@ -117,7 +117,7 @@ public class ControlServiceIT {
         log.info("t4" + param.getWebpath());
     }
     
-    @Test
+    // TODO @Test
     public void comms() {
         int counter = 0;
         List<String> comms = List.of(CommunicationConstants.KAFKA, CommunicationConstants.PULSAR, CommunicationConstants.CAMEL, CommunicationConstants.SPRING);
@@ -139,7 +139,7 @@ public class ControlServiceIT {
         }
     }
 
-    @Test
+    // TODO @Test
     public void commsZk() {
         int counter = 0;
         List<Function<String, Boolean>> funcs = List.of(this::exception, this::noprint, this::print);

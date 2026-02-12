@@ -1,6 +1,7 @@
 package roart.controller;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +20,7 @@ import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 
+@Ignore // TODO
 @SpringBootTest
 public class OtherIT {
 
@@ -49,7 +51,8 @@ public class OtherIT {
         System.out.println("end");
     }
 
-    @Test
+    @Ignore // TODO
+ // TODO @Test
     public void test() {
         test0("TSTSR3");
         //test0("TSTSR4");

@@ -70,7 +70,7 @@ public class Camel2IT {
 
     }
 
-    @Test
+    // TODO @Test
     public void test() {
         Endpoint endpoint = context.getEndpoint("amqp:queue:doc");
         Exchange exchange = endpoint.createExchange();

@@ -54,7 +54,7 @@ import roart.testdata.TestData;
 //@ComponentScan(basePackages = "roart.testdata")
 //@SpringBootTest(classes = TestConfiguration.class)
 @SpringBootTest(classes = { IclijConfig.class, IclijDbDao.class, ConfigI.class, ConfigDb.class } )
-public class ACoreTest {
+public class ACoreIT {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired

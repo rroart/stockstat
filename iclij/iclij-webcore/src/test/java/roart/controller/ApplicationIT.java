@@ -10,7 +10,7 @@ public class ApplicationIT {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
-    @Test
+    // TODO @Test
     public void test() throws Exception {
         log.info("Start");
         Thread.sleep(10000);

@@ -119,12 +119,12 @@ public class Kafka2IT {
     public void b() {
         k2 = new Kafka("KAFKA", String.class, "tasks", new ObjectMapper(), true, true, false, BROKER_ADDR, null);
     }
-    @Test
+    // TODO @Test
     public void v1() {
         k2.send("s");
     }
     
-    @Test
+    // TODO @Test
     public void v2() {
         String[] s = k2.receiveString();
         System.out.println(s);

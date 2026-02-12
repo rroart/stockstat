@@ -72,7 +72,7 @@ import roart.testdata.TestConstants;
 //@ComponentScan(basePackages = "roart.testdata")
 //@SpringBootTest(classes = TestConfiguration.class)
 @SpringBootTest(classes = IclijController.class ) //(classes = { IclijConfig.class, IclijDbDao.class, ConfigI.class, ConfigDb.class } )
-public class EvolveIT {
+public class EvolveE2E {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired

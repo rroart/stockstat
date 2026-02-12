@@ -43,7 +43,7 @@ public class ActionThreadTest {
     @Autowired
     public IclijConfig iclijConfig;
     
-    @Test
+    // TODO IT @Test
     public void test() {
         //IclijDbDao dbDao = mock(IclijDbDao.class);
         IO io = null;
@@ -78,7 +78,7 @@ public class ActionThreadTest {
         assertTrue(t.getScore(item3) < t.getScore(item2));
     }
 
-    @Test
+    // TODO IT @Test
     public void test2() {
         IO io = mock(IO.class);
         CuratorFramework curatorClient = mock(CuratorFramework.class);

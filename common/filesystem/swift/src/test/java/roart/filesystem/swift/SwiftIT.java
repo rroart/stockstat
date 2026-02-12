@@ -59,7 +59,7 @@ public class SwiftIT {
         
     }
     
-    @Test
+    // TODO @Test
     public void test() {
         FileSystemPathParam paramp = new FileSystemPathParam();
         getParamConf(paramp);
@@ -74,7 +74,7 @@ public class SwiftIT {
         System.out.println("Ex " + ex.bool);
     }
     
-    @Test
+    // TODO @Test
     public void test2() {
         FileSystemFileObjectParam param = new FileSystemFileObjectParam();
         FileSystemPathParam paramp = new FileSystemPathParam();

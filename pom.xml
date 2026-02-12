@@ -16,6 +16,7 @@
     <module>weba</module>
     <module>webr</module>
     <module>distribution</module>
+    <module>jacoco</module>
   </modules>
   <build>
     <pluginManagement>
@@ -81,12 +82,57 @@
           </execution>
         </executions>
         <configuration>
-          <argLine>
+          <argLine>${jacocoArgLine}
+	  -Dconfig=${maven.multiModuleProjectDirectory}/config/test/iclijit.xml
+	  -Dcoreconfig=stockstatit.xml
             --add-opens java.base/sun.nio.ch=stockstat.shadow.spark
           </argLine>
           <useModulePath>false</useModulePath>
           <classesDirectory>${project.build.outputDirectory}</classesDirectory>
         </configuration>
+      </plugin>
+      <!-- JaCoCo plugin to prepare agent in modules and create an aggregate report at the root -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <executions>
+          <!-- Prepare agent in each module so unit tests are recorded -->
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <configuration>
+              <!-- property name injected and referenced by Surefire's argLine -->
+              <propertyName>jacocoArgLine</propertyName>
+              <destFile>${project.build.directory}/jacoco.exec</destFile>
+              <append>true</append>
+            </configuration>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+
+          <!-- Generate an aggregated report at the reactor root during verify -->
+          <!--execution>
+            <id>report-aggregate</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>report-aggregate</goal>
+            </goals>
+            <configuration>
+                <dataFileIncludes>
+                    <dataFileInclude>**/jacoco.exec</dataFileInclude>
+                </dataFileIncludes>
+              <outputDirectory>${project.reporting.outputDirectory}/jacoco-aggregate</outputDirectory>
+            </configuration>
+          </execution-->
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -176,6 +222,7 @@
     <!-- spark 4.1.1 -->
     <json4s.version>4.0.7</json4s.version>
     <cyclonedx.version>2.9.0</cyclonedx.version>
+    <jacoco.version>0.8.14</jacoco.version>
   </properties>
   <dependencyManagement>
     <dependencies>

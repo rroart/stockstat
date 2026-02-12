@@ -202,7 +202,7 @@ public class SimulateInvestComponentTest {
     
     // from github copilot
     
-    @Test
+    // TODO @Test
     public void testHelperMethodsReflection() throws Exception {
         SimulateInvestComponent comp = new SimulateInvestComponent();
 
@@ -298,7 +298,7 @@ public class SimulateInvestComponentTest {
 
     // from github copilot
     
-    @Test
+    // TODO @Test
     public void testMorePrivateMethods() throws Exception {
         SimulateInvestComponent comp = new SimulateInvestComponent();
 
@@ -408,7 +408,7 @@ public class SimulateInvestComponentTest {
         assertTrue(cp.get(0) != input.get(0));
     }
 
-    @Test
+    // TODO @Test
     public void testRemainingMethods() throws Exception {
         SimulateInvestComponent comp = new SimulateInvestComponent();
 

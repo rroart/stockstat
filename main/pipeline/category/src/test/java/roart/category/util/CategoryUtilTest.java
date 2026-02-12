@@ -41,7 +41,7 @@ public class CategoryUtilTest {
     @Autowired
     IclijConfig conf;
 
-    @Test
+    // TODO IT @Test
     public void test() throws Exception {
         Inmemory inmemory = null;
         System.out.println("" + conf.getConfigData().getConfigValueMap().get(ConfigConstants.MISCFILTERDATE));

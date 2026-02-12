@@ -38,6 +38,7 @@ import roart.common.config.ConfigMaps;
 import roart.common.constants.Constants;
 import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.model.MyDataSource;
+import roart.common.util.JsonUtil;
 import roart.common.webflux.WebFluxUtil;
 import roart.controller.IclijController;
 import roart.controller.TestCommunicationFactory;
@@ -69,7 +70,7 @@ import roart.model.io.IO;
 //@ExtendWith(SpringExtension.class)
 //@SpringBootTest(classes = SimIT.SimConfiguration.class)//{ IclijConfig.class, /*IclijDbDao.class,*/ DbDao.class, CoreDataSource.class, DbSpringDS.class, DbSpring.class, ConfigI.class, ConfigDb.class, SimConfig.class, SpringAboveBelowRepository.class, NamedParameterJdbcTemplate.class } )
 @SpringBootTest(classes = IclijController.class ) //(classes = { IclijConfig.class, IclijDbDao.class, ConfigI.class, DbSpring.class, ConfigDb.class, SimConfig.class } )
-public class SimIT {
+public class SimE2E {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 /*
     @Configuration
@@ -216,6 +217,9 @@ public class SimIT {
         // Plotting can be done using JFreeChart or similar if needed
         // Print other info as needed
         for (Object x : (List<?>) updatemap.get("stockhistory")) {
+            sb.append(JsonUtil.convert(x).replace("\"", "'") + "\n");
+        }
+        for (Object x : (List<?>) updatemap.get("sumhistorynew")) {
             sb.append(x + "\n");
         }
         for (Object x : (List<?>) updatemap.get("sumhistory")) {

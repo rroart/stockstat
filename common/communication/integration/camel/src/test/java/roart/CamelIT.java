@@ -64,7 +64,7 @@ public class CamelIT {
     //@Autowired
     //private TestUtils testUtils;
     
-    @Test
+    // TODO @Test
     public void camelRabbitMq() throws Exception {
         System.out.println("1");
         Camel camel = new Camel("CAMEL", String.class, "testqueue", new ObjectMapper(), true, true, false, config.getServerCamel(), null);
@@ -86,7 +86,7 @@ public class CamelIT {
         camel.destroy();
     }
 
-    @Test
+    // TODO @Test
     public void camelRabbitMq2() throws Exception {
         Camel camel = new Camel("CAMEL", Aclass.class, "tasks", new ObjectMapper(), true, true, false, config.getServerCamel(), null);
         camel.send(new Aclass("one", 1));

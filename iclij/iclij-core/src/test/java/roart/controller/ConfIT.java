@@ -25,7 +25,7 @@ import roart.iclij.config.SimulateFilter;
 
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
 @SpringBootTest
-public class ConfTest {
+public class ConfIT {
 
     @Autowired
     public IclijConfig iclijConfig;
