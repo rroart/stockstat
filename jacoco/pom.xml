@@ -519,11 +519,11 @@
       <artifactId>stockstat-pipeline-util</artifactId>
       <version>0.6-SNAPSHOT</version>
     </dependency>
-    <dependency>
+    <!--dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat.shadow.s3</artifactId>
       <version>0.6-SNAPSHOT</version>
-    </dependency>
+    </dependency-->
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-shadow-spark</artifactId>
@@ -574,11 +574,11 @@
       <artifactId>stockstat-shadow-spark</artifactId>
       <version>0.6-SNAPSHOT</version>
     </dependency>
-    <dependency>
+    <!--dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-web</artifactId>
       <version>0.6-SNAPSHOT</version>
-    </dependency>
+    </dependency-->
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-input</artifactId>
