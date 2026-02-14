@@ -4,5 +4,6 @@
       env.PATH = "${scannerHome}/bin:${env.PATH}"
       env.GIT_DEPTH = 0
       sh 'ls -R ${scannerHome}'
+      sh 'mvn clean verify -pl !webr -pl !weba -Dcyclonedx.skip'
       sh 'sonar-scanner'
   }
