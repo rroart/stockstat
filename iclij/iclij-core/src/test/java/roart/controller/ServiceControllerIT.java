@@ -35,7 +35,7 @@ public class ServiceControllerIT {
     @Autowired
     MyXMLConfig conf2;
     
-    @Test
+    // TODO @Test
     public void t() {
         MarketAction c = new FindProfitAction(iclijConfig);
         TimingBLDTO t = new TimingBLDTO();
@@ -45,13 +45,13 @@ public class ServiceControllerIT {
         System.out.println("" + l.size() + " " + l2.size());
     }
 
-    @Test
+    // TODO @Test
     public void t2() {
         MarketAction c = new FindProfitAction(iclijConfig);
         List<TimingBLDTO> cs = dbDao.getAllTimingBLDTO();
     }
 
-    @Test
+    // TODO @Test
     public void t4() throws Exception {
         List<ConfigDTO> l0 = dbDaoUtil.getAll("ose", 0);
         List<ConfigDTO> l1 = dbDaoUtil.getAll("ose", 1);

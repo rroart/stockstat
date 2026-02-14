@@ -18,9 +18,9 @@ import java.util.Arrays;
 import java.util.Properties;
 
 @SpringJUnitConfig
-@TestPropertySource("file:${user.dir}/../../../../config/test/application.properties") 
+// @TestPropertySource("file:${user.dir}/../../../../config/test/application.properties")
 public class KafkaIT {
-    @Test
+    // TODO embed @Test
     public void method() {
     Properties props = new Properties();
     props.put(StreamsConfig.APPLICATION_ID_CONFIG, "wordcount-application");

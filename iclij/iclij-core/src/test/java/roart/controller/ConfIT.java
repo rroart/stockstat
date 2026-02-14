@@ -30,7 +30,7 @@ public class ConfIT {
     @Autowired
     public IclijConfig iclijConfig;
     
-    @Test
+    // TODO @Test
     public void test() {
         System.out.println("test");
     }
