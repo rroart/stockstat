@@ -1,0 +1,365 @@
+<config>
+  <database>
+    <spark enable='false'>
+      <sparkmaster>spark://127.0.0.1:17077</sparkmaster>
+    </spark>
+    <hibernate enable=''/>
+    <spring enable=''/>
+    <maxholes>0</maxholes>
+  </database>
+  <machinelearning enable='true'>
+    <mp enable='true'>
+      <cpu>0.5</cpu>
+    </mp>
+    <sparkml enable='false'>
+      <sparkmaster>spark://127.0.0.1:17077</sparkmaster>
+      <sparknetworktimeout>600</sparknetworktimeout>
+      <mlpc enable='true'/>
+      <lor enable='true'/>
+      <ovr enable='true'/>
+      <lsvc enable='true'/>
+      <path>/home/roart/usr/data/stockstat/dev/spark</path>
+    </sparkml>
+    <tensorflow enable='true'>
+      <dnn enable='true'/>
+      <lic enable='true'/>
+      <mlp enable='true'/>
+      <cnn enable='true'/>
+      <cnn2 enable='true'/>
+      <rnn enable='true'/>
+      <gru enable='true'/>
+      <lstm enable='true'/>
+      <!--server>http://prevfree:8008</server-->
+      <path>/home/roart/usr/data/stockstat/dev/tensorflow</path>
+      <server>http://localhost:8008</server>
+    </tensorflow>
+    <pytorch enable='true'>
+      <mlp enable='true'/>
+      <cnn enable='true'/>
+      <cnn2 enable='true'/>
+      <rnn enable='true'/>
+      <gru enable='true'/>
+      <lstm enable='true'/>
+      <path>/home/roart/usr/data/stockstat/dev/pytorch</path>
+      <server>http://localhost:8018</server>
+    </pytorch>
+    <gem enable='false'>
+      <ewc enable='true'/>
+      <gem enable='true'/>
+      <icarl enable='false'/>
+      <independent enable='true'/>
+      <multimodal enable='true'/>
+      <single enable='true'/>
+      <path>/home/roart/usr/data/stockstat/dev/gem</path>
+      <server>http://localhost:8058</server>
+    </gem>
+    <predictors enable='true'>
+      <tensorflow enable='true'>
+	<lir enable='true'/>
+	<mlp enable='true'/>
+	<rnn enable='true'/>
+	<lstm enable='true'/>
+	<gru enable='true'/>
+      </tensorflow>
+      <pytorch enable='true'>
+	<mlp enable='true'/>
+	<rnn enable='true'/>
+	<lstm enable='true'/>
+	<gru enable='true'/>
+      </pytorch>
+    </predictors>
+    <mldynamic enable='false'/>
+  </machinelearning>
+  <indicators enable='true'>
+    <move enable='true'/>
+    <macd enable='true'>
+      <macdhistogramdelta enable='true'/>
+      <macdhistogramdeltadays>3</macdhistogramdeltadays>
+      <macdmacddelta enable='true'/>
+      <macdmacddeltadays>3</macdmacddeltadays>
+      <macdsignaldelta enable='true'/>
+      <macdsignaldeltadays>3</macdsignaldeltadays>
+      <recommend enable='true'>
+	<buy>
+	<weighthistogram>55</weighthistogram>
+	<weighthistogramdelta>15</weighthistogramdelta>
+	<weightmacd>15</weightmacd>
+	<weightmacddelta>15</weightmacddelta>
+	</buy>
+	<sell>
+	<weighthistogram>15</weighthistogram>
+	<weighthistogramdelta>25</weighthistogramdelta>
+	<weightmacd>15</weightmacd>
+	<weightmacddelta>45</weightmacddelta>
+	</sell>
+      </recommend>
+    </macd>
+    <rsi enable='true'>
+      <rsidelta enable='true'/>
+      <rsideltadays>3</rsideltadays>
+      <recommend enable='true'>
+	<buy>
+	<weight>55</weight>
+	<weightdelta>55</weightdelta>
+	</buy>
+	<sell>
+	<weight>55</weight>
+	<weightdelta>55</weightdelta>
+	</sell>
+      </recommend>
+    </rsi>
+    <stochrsi enable='true'>
+      <stochrsidelta enable='true'/>
+      <stochrsideltadays>3</stochrsideltadays>
+    </stochrsi>
+    <cci enable='true'>
+      <ccidelta enable='true'/>
+      <ccideltadays>3</ccideltadays>
+    </cci>
+    <atr enable='true'>
+      <atrdelta enable='true'/>
+      <atrdeltadays>3</atrdeltadays>
+    </atr>
+    <stoch enable='true'>
+      <stochdelta enable='true'/>
+      <stochdeltadays>3</stochdeltadays>
+    </stoch>
+  </indicators>
+  <misc>
+    <percentizepriceindex enable='true'/>
+    <mlstats enable='true'/>
+    <otherstats enable='true'/>
+    <mydays>180</mydays>
+    <mytopbottom>10</mytopbottom>
+    <mytabledays>180</mytabledays>
+    <mytablemoveintervaldays>5</mytablemoveintervaldays>
+    <mytableintervaldays>1</mytableintervaldays>
+    <myequalize enable='true'/>
+    <mygraphequalize enable='true'/>
+    <mygraphequalizeunify enable='true'/>
+    <threshold>[ 1.0 ]</threshold>
+    <!--threshold>[ 0.90, 0.95, 1.0, 1.05, 1.10 ]</threshold-->
+    <cache enable='true'>
+      <ttl>600</ttl>
+    </cache>
+    <zookeeper>127.0.0.1:2181</zookeeper>
+    <inmemory><server>redis</server></inmemory>
+    <inmemory><redis>http://localhost:6379</redis></inmemory>
+    <myservices></myservices>
+    <services>{ "simfilter" : "kafka", "simauto" : "kafka", "evolvefilterevolve" : "kafka", "evolvefilterprofit" : "kafka", "evolvefilterfilter" : "kafka", "evolvefilterabovebelow" : "kafka" }</services>
+    <communications>{ "kafka" : "127.0.0.1:9092" }</communications>
+  </misc>
+  <evolve>
+    <indicatorrecommender>
+      <evolutionconfig>{ "generations" : 100, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
+      <simple>
+	<futuredays>10</futuredays>
+	<intervaldays>5</intervaldays>
+      </simple>
+      <complex>
+	<futuredays>10</futuredays>
+	<intervaldays>5</intervaldays>
+      </complex>
+      <!--intervaltimes>10</intervaltimes>
+      <iterations>100</iterations>
+      <period>Price</period-->
+    </indicatorrecommender>
+    <ml>
+      <evolutionconfig>{ "generations" : 10, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
+      <!--evolutionconfig>{ "generations" : 0, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 4, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig-->
+    </ml>
+    <save>
+	<location>::</location>
+	<path>/home/roart/usr/result/dev/new</path>
+    </save>
+  </evolve>
+  <aggregators enable='true'>
+    <indicatorrecommender enable='true'>
+      <simple enable='true'>
+	<macd enable='true'>
+	  <buy>
+	  <weighthistogram>50</weighthistogram>
+	  <weighthistogramdelta>10</weighthistogramdelta>
+	  <weightmacd>10</weightmacd>
+	  <weightmacddelta>10</weightmacddelta>
+	  <weightsignal>10</weightsignal>
+	  <weightsignaldelta>10</weightsignaldelta>
+	  </buy>
+	  <sell>
+	  <weighthistogram>50</weighthistogram>
+	  <weighthistogramdelta>10</weighthistogramdelta>
+	  <weightmacd>10</weightmacd>
+	  <weightmacddelta>10</weightmacddelta>
+	  <weightsignal>10</weightsignal>
+	  <weightsignaldelta>10</weightsignaldelta>
+	  </sell>
+	</macd>
+	<rsi enable='true'>
+	  <buy>
+	  <weightrsi>20</weightrsi>
+	  <weightrsidelta>20</weightrsidelta>
+	  </buy>
+	  <sell>
+	  <weightrsi>20</weightrsi>
+	  <weightrsidelta>20</weightrsidelta>
+	  </sell>
+	</rsi>
+      </simple>
+      <complex enable='true'>
+	<macd enable='true'>
+	  <buy>
+	  <weighthistogramnode></weighthistogramnode>
+	  <weighthistogramdeltanode></weighthistogramdeltanode>
+	  <weightmacdnode></weightmacdnode>
+	  <weightmacddeltanode></weightmacddeltanode>
+	  <weightsignalnode></weightsignalnode>
+	  <weightsignaldeltanode></weightsignaldeltanode>
+	  </buy>
+	  <sell>
+	  <weighthistogramnode></weighthistogramnode>
+	  <weighthistogramdeltanode></weighthistogramdeltanode>
+	  <weightmacdnode></weightmacdnode>
+	  <weightmacddeltanode></weightmacddeltanode>
+	  <weightsignalnode></weightsignalnode>
+	  <weightsignaldeltanode></weightsignaldeltanode>
+	  </sell>
+	</macd>
+	<rsi enable='true'>
+	  <buy>
+	  <weightrsinode></weightrsinode>
+	  <weightrsideltanode></weightrsideltanode>
+	  </buy>
+	  <sell>
+	  <weightrsinode></weightrsinode>
+	  <weightrsideltanode></weightrsideltanode>
+	  </sell>
+	</rsi>
+	<atr enable='true'>
+	  <buy>
+	  <weightatrnode></weightatrnode>
+	  <weightatrdeltanode></weightatrdeltanode>
+	  </buy>
+	  <sell>
+	  <weightatrnode></weightatrnode>
+	  <weightatrdeltanode></weightatrdeltanode>
+	  </sell>
+	</atr>
+	<cci enable='true'>
+	  <buy>
+	  <weightccinode></weightccinode>
+	  <weightccideltanode></weightccideltanode>
+	  </buy>
+	  <sell>
+	  <weightccinode></weightccinode>
+	  <weightccideltanode></weightccideltanode>
+	  </sell>
+	</cci>
+	<stoch enable='true'>
+	  <buy>
+	  <weightstochnode></weightstochnode>
+	  <weightstochdeltanode></weightstochdeltanode>
+	  </buy>
+	  <sell>
+	  <weightstochnode></weightstochnode>
+	  <weightstochdeltanode></weightstochdeltanode>
+	  </sell>
+	</stoch>
+	<stochrsi enable='true'>
+	  <buy>
+	  <weightstochrsinode></weightstochrsinode>
+	  <weightstochrsideltanode></weightstochrsideltanode>
+	  </buy>
+	  <sell>
+	  <weightstochrsinode></weightstochrsinode>
+	  <weightstochrsideltanode></weightstochrsideltanode>
+	  </sell>
+	</stochrsi>
+      </complex>
+    </indicatorrecommender>
+    <indicator enable='true'>
+      <macd enable='true'/>
+      <rsi enable='true'/>
+      <atr enable='true'/>
+      <cci enable='true'/>
+      <stoch enable='true'/>
+      <stochrsi enable='true'/>
+      <extras>{ "simple" : [ { "market" : "mark2" , "id" : "impid1" , "category" : "Price" } ], "complex" : [] }</extras>
+      <!--extras>{ "simple" : [ { "market" : "mark2" , "id" : "impid1" , "category" : "Price" }, { "market" : "tradcomm" , "id" : "CL1:COM" , "category" : "Price" }, { "market" : "tradcomm", "id" : "XAUUSD:CUR" , "category" : "Price" } ], "complex": [ { "items" : [ { "market" : "tradcomm", "id" : "XAUUSD:CUR" , "category" : "Price" }, { "market" : "tradcomm", "id" : "HG1:COM" , "category" : "Price" } ], "expression" : "1 2 /" } ] }</extras-->
+      <extrasdeltas>3</extrasdeltas>
+      <extrasmacd enable='true'/>
+      <extrasrsi enable='true'/>
+      <extrasatr enable='true'/>
+      <extrascci enable='true'/>
+      <extrasstoch enable='true'/>
+      <extrasstochrsi enable='true'/>
+      <intervaldays>20</intervaldays>
+      <futuredays>10</futuredays>
+    </indicator>
+    <mlmacd enable='true'>
+      <macdml enable='true'/>
+      <histogramml enable='true'/>
+      <signalml enable='true'/>
+      <daysbeforezero>25</daysbeforezero>
+      <daysafterzero>10</daysafterzero>
+    </mlmacd>
+    <mlrsi enable='true'>
+      <buy>
+	<rsilimit>20</rsilimit>
+	<srsilimit>0.2</srsilimit>
+      </buy>
+      <sell>
+	<rsilimit>80</rsilimit>
+	<srsilimit>0.8</srsilimit>
+      </sell>
+      <daysbeforelimit>25</daysbeforelimit>
+      <daysafterlimit>10</daysafterlimit>
+    </mlrsi>
+    <mlatr enable='true'>
+      <buylimit>2</buylimit>
+      <selllimit>2</selllimit>
+      <daysbeforelimit>25</daysbeforelimit>
+      <daysafterlimit>10</daysafterlimit>
+    </mlatr>
+    <mlcci enable='true'>
+      <buylimit>-80</buylimit>
+      <selllimit>80</selllimit>
+      <daysbeforelimit>25</daysbeforelimit>
+      <daysafterlimit>10</daysafterlimit>
+    </mlcci>
+    <mlstoch enable='true'>
+      <buylimit>20</buylimit>
+      <selllimit>80</selllimit>
+      <daysbeforelimit>25</daysbeforelimit>
+      <daysafterlimit>10</daysafterlimit>
+    </mlstoch>
+    <mlmulti enable='true'>
+      <macd enable='true'/>
+      <rsi enable='true'/>
+      <atr enable='true'/>
+      <cci enable='true'/>
+      <stoch enable='true'/>
+      <stochrsi enable='true'/>
+      <daysbeforelimit>25</daysbeforelimit>
+      <daysafterlimit>10</daysafterlimit>
+    </mlmulti>
+    <usecurve enable='true'/>
+  </aggregators>
+  <filesystem>
+    <hdfs enable="true">
+      <hdfsconffs>hdfs://localhost/</hdfsconffs>
+    </hdfs>
+    <swift enable="true">
+      <swiftconfurl>http://172.17.0.4:8080/auth/v1.0</swiftconfurl>
+      <swiftconfuser>test:tester</swiftconfuser>
+      <swiftconfkey>pewairooviap</swiftconfkey>
+      <swiftconfcontainer>chess</swiftconfcontainer>
+    </swift>
+    <s3 enable="true">
+	<host>localhost</host>
+	<port>8999</port>
+	<region>us-east-1</region>
+	<accesskey>minioadmin</accesskey>
+	<secretkey>minioadmin</secretkey>
+    </s3>
+  </filesystem>
+</config>

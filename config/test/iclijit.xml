@@ -1,0 +1,409 @@
+<config>
+  <database>
+    <hibernate enable='false'/>
+    <spring enable=''/>
+  </database>
+  <misc>
+    <shutdownhour>23</shutdownhour>
+    <populate enable="false"/>
+    <cache enable='true'>
+      <ttl>600</ttl>
+    </cache>
+    <abnormalchange>3.0</abnormalchange>
+    <myservices></myservices>
+    <services>{ "simfilter" : "kafka", "simauto" : "kafka", "simrun" : "kafka", "evolvefilterevolve" : "kafka", "evolvefilterprofit" : "kafka", "evolvefilterfilter" : "kafka", "evolvefilterabovebelow" : "kafka" }</services>
+    <communications>{ "kafka" : "127.0.0.1:9092" }</communications>
+    <inmemory><server>redis</server></inmemory>
+    <inmemory><redis>http://localhost:6379</redis></inmemory>
+  </misc>
+  <mp>
+    <server>
+      <cpu>0.5</cpu>
+    </server>
+    <client>
+      <cpu>0.5</cpu>
+    </client>
+  </mp>
+  <iclij>
+  <schedule enable='true'/>
+  </iclij>
+  <evolve priority="50">
+    <indicatorrecommender enable='true'>
+      <evolutionconfig>{ "generations" : 100, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 0, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true, "shutdownhour" : 23 }</evolutionconfig>
+    </indicatorrecommender>
+    <ml enable='true'>
+      <evolutionconfig>{ "generations" : 1, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 0, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true, "shutdownhour" : 23 }</evolutionconfig>
+      <mlconfig>{ "spark" : { "mlpc" : { "load" : true, "save" : true, "enable" : false, "evolve" : true }, "lor" : { "load" : true, "save" : true, "enable" : false, "evolve" : true }, "ovr" : { "load" : true, "save" : true, "enable" : false, "evolve" : true }, "lsvc" : { "load" : true, "save" : true, "enable" : false, "evolve" : true } }, "tensorflow" : { "dnn" : { "load" : true, "save" : true, "enable" : true, "evolve" : true },  "lic" : { "load" : true, "save" : true, "enable" : true, "evolve" : true }, "lir" : { "load" : true, "save" : true, "enable" : true, "evolve" : true }, "mlp" : { "load" : true, "save" : true, "enable" : true, "evolve" : true }, "cnn" : { "load" : true, "save" : true, "enable" : true, "evolve" : true }, "cnn2" : { "load" : true, "save" : true, "enable" : true, "evolve" : true }, "rnn" : { "load" : true, "save" : true, "enable" : true, "evolve" : true }, "lstm" : { "load" : true, "save" : true, "enable" : true, "evolve" : true }, "gru" : { "load" : true, "save" : true, "enable" : true, "evolve" : true } }, "pytorch" : { "mlp" : { "load" : true, "save" : true, "enable" : true, "evolve" : true }, "cnn" : { "load" : true, "save" : true, "enable" : true, "evolve" : true }, "cnn2" : { "load" : true, "save" : true, "enable" : true, "evolve" : true }, "rnn" : { "load" : true, "save" : true, "enable" : true, "evolve" : true }, "lstm" : { "load" : true, "save" : true, "enable" : true, "evolve" : true }, "gru" : { "load" : true, "save" : true, "enable" : true, "evolve" : true } }, "gem" : { "ewc" : { "load" : true, "save" : true, "enable" : false, "evolve" : true }, "gem" : { "load" : true, "save" : true, "enable" : false, "evolve" : true }, "i" : { "load" : true, "save" : true, "enable" : false, "evolve" : true }, "icarl" : { "load" : true, "save" : true, "enable" : false, "evolve" : true }, "mm" : { "load" : true, "save" : true, "enable" : false, "evolve" : true }, "s" : { "load" : true, "save" : true, "enable" : false, "evolve" : true } } }</mlconfig>
+    </ml>
+    <predictor enable='false'>
+    </predictor>
+    <autorun enable="true"/>
+    <update enable='false'/>
+  </evolve>
+  <findprofit priority="10">
+    <threshold>[ 1.0 ]</threshold>
+    <futuredays>[10]</futuredays>
+    <autorun enable="true"/>
+    <update enable='false'/>
+    <mldynamic enable='false'/>
+    <recommender enable='false'/>
+    <mlmacd enable='true'>
+    </mlmacd>
+    <mlrsi enable='true'>
+    </mlrsi>
+    <mlatr enable='true'>
+    </mlatr>
+    <mlcci enable='true'>
+    </mlcci>
+    <mlstoch enable='true'>
+    </mlstoch>
+    <mlmulti enable='true'>
+    </mlmulti>
+    <mlindicator enable='true'>
+    </mlindicator>
+    <predictor enable='true'>
+      <evolutionconfig>{ "generations" : 1, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 0, "select" : 4, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
+    </predictor>
+  </findprofit>
+  <improveprofit priority="60">
+    <autorun enable="false"/>
+    <update enable='false'/>
+    <recommender enable='true'/>
+    <mlmacd enable='true'>
+    </mlmacd>
+    <mlrsi enable='true'>
+    </mlrsi>
+    <mlatr enable='true'>
+    </mlatr>
+    <mlcci enable='true'>
+    </mlcci>
+    <mlstoch enable='true'>
+    </mlstoch>
+    <mlmulti enable='true'>
+    </mlmulti>
+    <mlindicator enable='true'>
+    </mlindicator>
+    <predictor enable='false'>
+    </predictor>
+  </improveprofit>
+  <improvefilter priority="30">
+    <autorun enable="false"/>
+    <recommender enable='true'/>
+    <mlmacd enable='true'>
+    </mlmacd>
+    <mlrsi enable='true'>
+    </mlrsi>
+    <mlatr enable='true'>
+    </mlatr>
+    <mlcci enable='true'>
+    </mlcci>
+    <mlstoch enable='true'>
+    </mlstoch>
+    <mlmulti enable='true'>
+    </mlmulti>
+    <mlindicator enable='true'>
+    </mlindicator>
+    <predictor enable='false'>
+    </predictor>
+  </improvefilter>
+  <improveabovebelow priority="20">
+    <autorun enable="true"/>
+    <evolutionconfig>{ "generations" : 100, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 0, "select" : 32, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
+    <fitnessminimum>5</fitnessminimum>
+  </improveabovebelow>
+  <machinelearning priority="0">
+    <autorun enable="true"/>
+    <update enable='false'/>
+    <threshold>[ 1.0 ]</threshold>
+    <futuredays>[10]</futuredays>
+    <mlmacd enable='true'>
+    </mlmacd>
+    <mlrsi enable='true'>
+    </mlrsi>
+    <mlatr enable='true'>
+    </mlatr>
+    <mlcci enable='true'>
+    </mlcci>
+    <mlstoch enable='true'>
+    </mlstoch>
+    <mlmulti enable='true'>
+    </mlmulti>
+    <mlindicator enable='true'>
+    </mlindicator>
+    <predictor enable='true' priority="80">
+    </predictor>
+  </machinelearning>
+  <dataset priority="70">
+    <autorun enable="false"/>
+    <update enable='false'/>
+    <predictor enable='false'>
+    </predictor>
+  </dataset>
+  <crosstest priority="40">
+    <autorun enable="false"/>
+    <predictor enable='true' priority="50">
+    </predictor>
+    <market id="nordfund">
+      <config>{ "market" : "nordfund", "persisttime" : 30, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150, "startoffset" : 1 }</config>
+    </market>
+  </crosstest>
+  <simulateinvest priority="0">
+    <autorun enable="false"/>
+  </simulateinvest>
+  <improvesimulateinvest priority="0">
+    <autorun enable="false"/>
+    <evolutionconfig>{ "generations" : 100, "shutdownhour" : 24 }</evolutionconfig>
+  </improvesimulateinvest>
+  <improveautosimulateinvest priority="0">
+    <autorun enable="false"/>
+    <evolutionconfig>{ "generations" : 100, "shutdownhour" : 24 }</evolutionconfig>
+  </improveautosimulateinvest>
+  <filter priority="90">
+    <autorun enable="true"/>
+    <recommender enable='true'/>
+    <mlmacd enable='true'>
+    </mlmacd>
+    <mlrsi enable='true'>
+    </mlrsi>
+    <mlatr enable='true'>
+    </mlatr>
+    <mlcci enable='true'>
+    </mlcci>
+    <mlstoch enable='true'>
+    </mlstoch>
+    <mlmulti enable='true'>
+    </mlmulti>
+    <mlindicator enable='true'>
+    </mlindicator>
+    <predictor enable='false'>
+    </predictor>
+  </filter>
+  <singlemarket>
+    <loops>5</loops>
+  </singlemarket>
+  <verification>
+    <loops>5</loops>
+    <days>10</days>
+    <improveprofit enable='false'/>
+    <!--recommender>
+      <topbottom>10</topbottom>
+    </recommender-->
+  </verification>
+  <markets>
+    <marketlist>
+      <market id="slowmarket">
+        <config>{ "market" : "slowmarket", "persisttime" : 120, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150, "startoffset" : 1, "crosstime" : 90, "mlmarkets" : [ "ose", "omxs", "omxc", "omxh", "dax", "djia", "sp100", "nasdaq100", "morncat", "mornind", "nordfund", "nordetf", "tradstoc", "tradcomm", "tradcurr" ], "populate" : 60, "mldate": "2018-01-01" }</config>
+        <!--filter>
+            { "inccategory" : "1m", "incthreshold" : 1.05, "confidence" : 0.75, "recordage" : 7 }
+            </filter-->
+        <filter>
+          { "confidence" : 0.75, "recordage" : 7 }
+        </filter>
+	<simulate>
+	  { "extradelay" : 2 }
+	</simulate>
+      </market>
+      <market id="nordfund">
+        <config>{ "market" : "nordfund", "persisttime" : 120, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150, "startoffset" : 1, "crosstime" : 90, "mlmarkets" : [ "ose", "omxs", "omxc", "omxh", "dax", "djia", "sp100", "nasdaq100", "morncat", "mornind", "nordfund", "nordetf", "tradstoc", "tradcomm", "tradcurr" ], "populate" : 60, "mldate": "2018-01-01" }</config>
+        <!--filter>
+            { "inccategory" : "1m", "incthreshold" : 1.05, "confidence" : 0.75, "recordage" : 7 }
+            </filter-->
+        <filter>
+          { "confidence" : 0.75, "recordage" : 7 }
+        </filter>
+	<simulate>
+	  { "extradelay" : 2 }
+	</simulate>
+      </market>
+      <market id="cboevol">
+        <config>{ "market" : "cboevol", "enable" : false, "persisttime" : 120, "findtime" : 14, "evolvetime" : 60, "improvetime" : 210, "crosstime" : 90, "mlmarkets" : [ "ose", "omxs", "omxc", "omxh", "dax", "djia", "sp100", "nasdaq100", "morncat", "mornind", "nordfund", "nordetf", "tradstoc", "tradcomm", "tradcurr" ], "populate" : 60, "mldate": "2018-01-01" }</config>
+        <filter>
+          { "confidence" : 0.66, "recordage" : 14 }
+        </filter>
+      </market>
+      <market id="tradcomm">
+        <config>{ "market" : "tradcomm", "persisttime" : 120, "findtime" : 14, "evolvetime" : 60, "improvetime" : 210, "crosstime" : 90, "mlmarkets" : [ "ose", "omxs", "omxc", "omxh", "dax", "djia", "sp100", "nasdaq100", "morncat", "mornind", "nordfund", "nordetf", "tradstoc", "tradcomm", "tradcurr" ], "populate" : 60, "mldate": "2018-01-01" }</config>
+        <!--filter>
+            { "inccategory" : "Price", "incdays": 20, "incthreshold" : 1.20, "confidence" : 0.66, "recordage" : 14 }
+            </filter-->
+        <filter>
+          { "confidence" : 0.66, "recordage" : 14 }
+        </filter>
+      </market>
+      <market id="tradcurr">
+        <config>{ "market" : "tradcurr", "persisttime" : 120, "findtime" : 14, "evolvetime" : 60, "improvetime" : 210, "crosstime" : 90, "mlmarkets" : [ "ose", "omxs", "omxc", "omxh", "dax", "djia", "sp100", "nasdaq100", "morncat", "mornind", "nordfund", "nordetf", "tradstoc", "tradcomm", "tradcurr" ], "populate" : 60, "mldate": "2018-01-01" }</config>
+        <!--filter>
+            { "inccategory" : "Price", "incdays": 20, "incthreshold" : 1.20, "confidence" : 0.66, "recordage" : 14 }
+            </filter-->
+        <filter>
+          { "confidence" : 0.66, "recordage" : 14 }
+        </filter>
+      </market>
+      <market id="tradstoc">
+        <config>{ "market" : "tradstoc", "persisttime" : 120, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150, "crosstime" : 90, "mlmarkets" : [ "ose", "omxs", "omxc", "omxh", "dax", "djia", "sp100", "nasdaq100", "morncat", "mornind", "nordfund", "nordetf", "tradstoc", "tradcomm", "tradcurr" ], "populate" : 60, "mldate": "2018-01-01" }</config>
+        <!--filter>
+            { "inccategory" : "Index", "incdays": 20, "incthreshold" : 1.0, "confidence" : 0.75, "recordage" : 14 }
+            </filter-->
+        <filter>
+          { "confidence" : 0.75, "recordage" : 14 }
+        </filter>
+      </market>
+      <market id="morncat">
+        <config>{ "market" : "morncat", "persisttime" : 120, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150, "crosstime" : 90, "mlmarkets" : [ "ose", "omxs", "omxc", "omxh", "dax", "djia", "sp100", "nasdaq100", "morncat", "mornind", "nordfund", "nordetf", "tradstoc", "tradcomm", "tradcurr" ], "populate" : 60, "mldate": "2018-01-01" }</config>
+        <!--filter>
+            { "inccategory" : "1m", "incthreshold" : 1.05, "confidence" : 0.75, "recordage" : 7 }
+            </filter-->
+        <filter>
+          { "confidence" : 0.75, "recordage" : 7 }
+        </filter>
+      </market>
+      <market id="mornind">
+        <config>{ "market" : "mornind", "persisttime" : 120, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150, "crosstime" : 90, "mlmarkets" : [ "ose", "omxs", "omxc", "omxh", "dax", "djia", "sp100", "nasdaq100", "morncat", "mornind", "nordfund", "nordetf", "tradstoc", "tradcomm", "tradcurr" ], "populate" : 60, "mldate": "2018-01-01" }</config>
+        <!--filter>
+            { "inccategory" : "1y", "incthreshold" : 1.20, "confidence" : 0.75, "recordage" : 7 }
+            </filter-->
+        <filter>
+          { "confidence" : 0.75, "recordage" : 7 }
+        </filter>
+      </market>
+      <market id="ose">
+        <config>{ "market" : "ose", "persisttime" : 120, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150, "crosstime" : 90, "mlmarkets" : [ "ose", "omxs", "omxc", "omxh", "dax", "djia", "sp100", "nasdaq100", "morncat", "mornind", "nordfund", "nordetf", "tradstoc", "tradcomm", "tradcurr" ], "populate" : 60, "mldate": "2019-01-01", "interpolate" : "ffill" }</config>
+        <!--filter>
+            { "inccategory" : "Price", "incdays": 20, "incthreshold" : 1.05, "confidence" : 0.75, "recordage" : 7 }
+            </filter-->
+        <filter>
+          { "confidence" : 0.75, "recordage" : 7 }
+        </filter>
+	<simulate>
+          { "volumelimits" : { "NOK" : 1000000 } }
+        </simulate>
+      </market>
+      <market id="nordetf">
+        <config>{ "market" : "nordetf", "persisttime" : 120, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150, "startoffset" : 1, "crosstime" : 90, "mlmarkets" : [ "ose", "omxs", "omxc", "omxh", "dax", "djia", "sp100", "nasdaq100", "morncat", "mornind", "nordfund", "nordetf", "tradstoc", "tradcomm", "tradcurr" ], "populate" : 60, "mldate": "2020-01-01" }</config>
+        <!--filter>
+            { "inccategory" : "1m", "incthreshold" : 1.05, "confidence" : 0.75, "recordage" : 7 }
+            </filter-->
+        <filter>
+          { "confidence" : 0.75, "recordage" : 7 }
+        </filter>
+	<simulate>
+          { "volumelimits" : { "NOK" : 1000000, "SEK" : 1000000, "DKK" : 800000, "EUR" : 100000, "USD" : 120000, "GBP" : 80000, "CNY" : 800000 } }
+        </simulate>
+      </market>
+      <market id="dax">
+        <config>{ "market" : "dax", "persisttime" : 30, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150, "startoffset" : 1, "crosstime" : 90, "mlmarkets" : [ "ose", "omxs", "omxc", "omxh", "dax", "djia", "sp100", "nasdaq100", "morncat", "mornind", "nordfund", "nordetf", "tradstoc", "tradcomm", "tradcurr" ], "interpolate" : "ffill", "populate" : 60, "mldate": "2021-07-01" }</config>
+        <filter>
+          { "confidence" : 0.75, "recordage" : 7 }
+        </filter>
+      </market>
+      <market id="djia">
+        <config>{ "market" : "djia", "persisttime" : 30, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150, "startoffset" : 1, "crosstime" : 90, "mlmarkets" : [ "ose", "omxs", "omxc", "omxh", "dax", "djia", "sp100", "nasdaq100", "morncat", "mornind", "nordfund", "nordetf", "tradstoc", "tradcomm", "tradcurr" ], "interpolate" : "ffill", "populate" : 60, "mldate": "2021-07-01" }</config>
+        <filter>
+          { "confidence" : 0.75, "recordage" : 7 }
+        </filter>
+      </market>
+      <market id="sp100">
+        <config>{ "market" : "sp100", "persisttime" : 30, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150, "startoffset" : 1, "crosstime" : 90, "mlmarkets" : [ "ose", "omxs", "omxc", "omxh", "dax", "djia", "sp100", "nasdaq100", "morncat", "mornind", "nordfund", "nordetf", "tradstoc", "tradcomm", "tradcurr" ], "interpolate" : "ffill", "populate" : 60, "mldate": "2021-07-01" }</config>
+        <filter>
+          { "confidence" : 0.75, "recordage" : 7 }
+        </filter>
+      </market>
+      <market id="nasdaq100">
+        <config>{ "market" : "nasdaq100", "persisttime" : 30, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150, "startoffset" : 1, "crosstime" : 90, "mlmarkets" : [ "ose", "omxs", "omxc", "omxh", "dax", "djia", "sp100", "nasdaq100", "morncat", "mornind", "nordfund", "nordetf", "tradstoc", "tradcomm", "tradcurr" ], "interpolate" : "ffill", "populate" : 60, "mldate": "2021-07-01" }</config>
+        <filter>
+          { "confidence" : 0.75, "recordage" : 7 }
+        </filter>
+      </market>
+      <market id="omxc">
+        <config>{ "market" : "omxc", "persisttime" : 30, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150, "startoffset" : 1, "crosstime" : 90, "mlmarkets" : [ "ose", "omxs", "omxc", "omxh", "dax", "djia", "sp100", "nasdaq100", "morncat", "mornind", "nordfund", "nordetf", "tradstoc", "tradcomm", "tradcurr" ], "interpolate" : "ffill", "populate" : 60, "mldate": "2021-07-01" }</config>
+        <filter>
+          { "confidence" : 0.75, "recordage" : 7 }
+        </filter>
+	<simulate>
+          { "volumelimits" : { "DKK" : 800000, "EUR" : 100000 } }
+        </simulate>
+      </market>
+      <market id="omxh">
+        <config>{ "market" : "omxh", "persisttime" : 30, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150, "startoffset" : 1, "crosstime" : 90, "mlmarkets" : [ "ose", "omxs", "omxc", "omxh", "dax", "djia", "sp100", "nasdaq100", "morncat", "mornind", "nordfund", "nordetf", "tradstoc", "tradcomm", "tradcurr" ], "interpolate" : "ffill", "populate" : 60, "mldate": "2021-07-01" }</config>
+        <filter>
+          { "confidence" : 0.75, "recordage" : 7 }
+        </filter>
+	<simulate>
+          { "volumelimits" : { "EUR" : 100000 } }
+        </simulate>
+      </market>
+      <market id="omxs">
+        <config>{ "market" : "omxs", "persisttime" : 30, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150, "startoffset" : 1, "crosstime" : 90, "mlmarkets" : [ "ose", "omxs", "omxc", "omxh", "dax", "djia", "sp100", "nasdaq100", "morncat", "mornind", "nordfund", "nordetf", "tradstoc", "tradcomm", "tradcurr" ], "interpolate" : "ffill", "populate" : 60, "mldate": "2021-07-01" }</config>
+        <filter>
+          { "confidence" : 0.75, "recordage" : 7 }
+        </filter>
+	<simulate>
+          { "volumelimits" : { "EUR" : 100000, "SEK" : 1000000 } }
+        </simulate>
+      </market>
+      <!--market id="nasdaq">
+        <config>{ "market" : "nasdaq", "persisttime" : 120, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150 }</config>
+        <filter>
+          { "inccategory" : "Price", "incdays": 20, "incthreshold" : 1.05, "confidence" : 0.75, "recordage" : 7 }
+        </filter>
+      </market-->
+      <market id="mnist">
+        <config>{"market" : "mnist", "datasettime" : 90, "dataset" : true }</config>
+      </market>
+      <market id="mark1">
+        <config>{ "market" : "mark1", "persisttime" : 30, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150, "startoffset" : 1, "crosstime" : 90, "mlmarkets" : [ "mark1", "mark2" ], "interpolate" : "ffill", "populate" : 60, "mldate": "2024-07-01" }</config>
+        <filter>
+          { "confidence" : 0.75, "recordage" : 7 }
+        </filter>
+	<simulaterun>
+	  { "startdate": "2024-01-01", "enddate": "2025-01-01", "crosstest": true
+	</simulaterun>
+      </market>
+      <market id="mark2">
+        <config>{ "market" : "mark2", "persisttime" : 30, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150, "startoffset" : 1, "crosstime" : 90, "mlmarkets" : [ "ose", "omxs", "omxc", "omxh", "dax", "djia", "sp100", "nasdaq100", "morncat", "mornind", "nordfund", "nordetf", "tradstoc", "tradcomm", "tradcurr" ], "interpolate" : "ffill", "populate" : 60, "mldate": "2024-07-01" }</config>
+        <filter>
+          { "confidence" : 0.75, "recordage" : 7 }
+        </filter>
+      </market>
+      <market id="mark3">
+        <config>{ "market" : "mark3", "persisttime" : 30, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150, "startoffset" : 1, "crosstime" : 90, "mlmarkets" : [ "ose", "omxs", "omxc", "omxh", "dax", "djia", "sp100", "nasdaq100", "morncat", "mornind", "nordfund", "nordetf", "tradstoc", "tradcomm", "tradcurr" ], "interpolate" : "ffill", "populate" : 60, "mldate": "2024-07-01" }</config>
+        <filter>
+          { "confidence" : 0.75, "recordage" : 7 }
+        </filter>
+      </market>
+      <!--market id="number">
+          <config>{"market" : "number", "datasettime" : 90, "dataset" : true }</config>
+          </market-->
+    </marketlist>
+    <importants>
+      <important id="myimp">
+        <config>{ "simple" : [ { "market" : "mark2" , "id" : "impid1" } ] }</config>
+      </important>
+      <!--important id="oil">
+        <config>{ "simple" : [ { "market" : "tradcomm" , "id" : "CL1:COM" } ] }</config>
+      </important>
+      <important id="gold">
+        <config>{ "simple" : [ { "market" : "tradcomm", "id" : "XAUUSD:CUR" } ] }</config>
+      </important>
+      <important id="ratio">
+	<config>{ "complex": [ { "items" : [ { "market" : "tradcomm", "id" : "XAUUSD:CUR" , "category" : "Price" }, { "market" : "tradcomm", "id" : "HG1:COM" , "category" : "Price" } ], "expression" : "1 2 /" } ] }</config>
+      </important-->
+    </importants>
+    <simulate>
+      <config>
+      [
+      { "shortrun" : 5, "correlation" : 0.9, "lucky" : 0.5, "stable" : 0.8, "allabove" : true, "populationabove" : 16, "useclusters" : true, "printconfig" : [ "simulateinvest.interval", "simulateinvest.indicator.reverse" ] },
+      { "shortrun" : 5, "correlation" : 0.9, "lucky" : 0.5, "stable" : 0.8, "allabove" : true, "populationabove" : 16, "useclusters" : true, "printconfig" : [ "simulateinvest.interval", "simulateinvest.indicator.reverse", "simulateinvest.period" ] },
+      { "shortrun" : 5, "correlation" : 0.9, "lucky" : 0.5, "stable" : 0.8, "allabove" : true, "populationabove" : 16, "useclusters" : true, "printconfig" : [ "simulateinvest.interval", "simulateinvest.indicator.reverse" ] },
+      { "shortrun" : 5, "correlation" : 0.9, "lucky" : 0.5, "stable" : 0.8, "allabove" : true, "populationabove" : 16, "useclusters" : true, "printconfig" : [ "simulateinvest.interval", "simulateinvest.indicator.reverse" ] },
+      { "shortrun" : 5, "correlation" : 0.9, "lucky" : 0.5, "stable" : 0.8, "allabove" : true, "populationabove" : 16, "useclusters" : true, "printconfig" : [ "simulateinvest.interval", "simulateinvest.indicator.reverse" ] },
+      { "shortrun" : 5, "correlation" : 0.9, "lucky" : 0.5, "stable" : 0.8, "allabove" : true, "populationabove" : 16, "useclusters" : true, "printconfig" : [ "simulateinvest.interval", "simulateinvest.indicator.reverse" ] },
+      { "shortrun" : 5, "correlation" : 0.9, "lucky" : 0.5, "stable" : 0.8, "allabove" : true, "populationabove" : 16, "useclusters" : true, "printconfig" : [ "simulateinvest.interval", "simulateinvest.indicator.reverse", "simulateinvest.day" ] },
+      { "shortrun" : 5, "correlation" : 0.9, "lucky" : 0.5, "stable" : 0.8, "allabove" : true, "populationabove" : 16, "useclusters" : true, "printconfig" : [ "simulateinvest.interval", "simulateinvest.indicator.reverse" ] },
+      { "shortrun" : 5, "correlation" : 0.9, "lucky" : 0.5, "stable" : 0.8, "allabove" : true, "populationabove" : 16, "useclusters" : true, "printconfig" : [ "simulateinvest.interval", "simulateinvest.indicator.reverse" ] },
+      { "shortrun" : 5, "correlation" : 0.9, "lucky" : 0.5, "stable" : 0.8, "allabove" : true, "populationabove" : 16, "useclusters" : true, "printconfig" : [ "simulateinvest.interval", "simulateinvest.indicator.reverse" ] }
+      ]
+      </config>
+    </simulate>
+  </markets>
+</config>
