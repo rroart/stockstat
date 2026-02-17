@@ -70,7 +70,7 @@ import roart.model.io.IO;
 //@ExtendWith(SpringExtension.class)
 //@SpringBootTest(classes = SimIT.SimConfiguration.class)//{ IclijConfig.class, /*IclijDbDao.class,*/ DbDao.class, CoreDataSource.class, DbSpringDS.class, DbSpring.class, ConfigI.class, ConfigDb.class, SimConfig.class, SpringAboveBelowRepository.class, NamedParameterJdbcTemplate.class } )
 @SpringBootTest(classes = IclijController.class ) //(classes = { IclijConfig.class, IclijDbDao.class, ConfigI.class, DbSpring.class, ConfigDb.class, SimConfig.class } )
-public class SimE2E {
+public class SimET {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 /*
     @Configuration

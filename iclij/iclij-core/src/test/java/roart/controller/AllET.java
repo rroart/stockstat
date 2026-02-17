@@ -60,6 +60,7 @@ import roart.common.util.TimeUtil;
 import roart.db.common.DbDS;
 import roart.db.dao.DbDao;
 import roart.db.dao.IclijDbDao;
+import roart.db.spring.DbSpringDS;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
@@ -106,7 +107,6 @@ import roart.util.ServiceUtil;
 import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 
-@Ignore // TODO
 @TestInstance(Lifecycle.PER_CLASS)
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
 @SpringJUnitConfig
@@ -114,23 +114,27 @@ import roart.common.inmemory.model.Inmemory;
 //@ComponentScan(basePackages = "roart.testdata")
 //@SpringBootTest(classes = TestConfiguration.class)
 @SpringBootTest(classes = { IclijConfig.class, IclijDbDao.class, ConfigI.class, ConfigDb.class } )
-public class All2IT {
+public class AllET {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     IclijConfig iconf = null;
     
-    IclijDbDao iclijDbDao = mock(IclijDbDao.class);
+    IclijDbDao iclijDbDao;
     
     // no autowiring
     IclijConfig conf = null;
    
-    MyDataSource dataSource;
-    
     private static final ObjectMapper mapper = JsonMapper.builder().build();
 
-    IclijDbDao dbDao = mock(IclijDbDao.class);
+    @Autowired
+    private MyDataSource dataSource;
+
+    @Autowired
+    private DbSpringDS dbSpringDS;
+    
+    DbDao dbDao;
 
     WebFluxUtil webFluxUtil;
     
@@ -305,10 +309,14 @@ public class All2IT {
         iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.FALSE);
         ConfigMaps configMaps = IclijConfig.instanceC();
         conf = new IclijConfig(configMaps, "coreconfig", null);
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.TRUE);
-        conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.FALSE);
+        conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.FALSE);
+        //conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.FALSE);
         String market = TestConstants.MARKET;
         dataSource = new TestDataSource(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), market, 26, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null);
+
+        dbDao = new DbDao(conf, dataSource);
+        iclijDbDao = new IclijDbDao(iconf, dbSpringDS);
+
         webFluxUtil = new TestWebFluxUtil(conf, dataSource);
         parameters = new Parameters();
         parameters.setThreshold(1.0);
@@ -334,11 +342,10 @@ public class All2IT {
         //new Sim(iconf, dbDao, fileSystemDao).method((String) content, "sim", true);
         MyCache.setCache(iconf.wantCache());
         MyCache.setCacheTTL(iconf.getCacheTTL());
-
+        
     }
 
-    @Ignore // TODO
- // TODO @Test
+    @Test
     public void testMachineLearning() throws Exception {
         ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.MACHINELEARNING, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         //aci.setBuy(null);
@@ -350,8 +357,7 @@ public class All2IT {
         }
     }
 
-    @Ignore // TODO
- // TODO @Test
+    @Test
     public void testFindProfit() throws Exception {
         ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         //aci.setBuy(null);
@@ -363,8 +369,7 @@ public class All2IT {
         }
     }
 
-    @Ignore // TODO
- // TODO @Test
+    @Test
     public void testFindProfitPredictor() throws Exception {
         ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.PREDICTOR, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         //aci.setBuy(null);
@@ -376,8 +381,7 @@ public class All2IT {
         }
     }
 
-    @Ignore // TODO
- // TODO @Test
+    @Test
     public void testEvolve() throws Exception {
         ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.EVOLVE, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
@@ -387,8 +391,7 @@ public class All2IT {
         }
     }
 
-    @Ignore // TODO
- // TODO @Test
+    @Test
     public void testEvolveARI() throws Exception {
         ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.EVOLVE, PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null, 0, JsonUtil.convert(parameters));
         try {
@@ -398,8 +401,7 @@ public class All2IT {
         }
     }
 
-    @Ignore // TODO
- // TODO @Test
+    @Test
     public void testImproveProfit() throws Exception {
         ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.IMPROVEPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
@@ -409,8 +411,7 @@ public class All2IT {
         }
     }
 
-    @Ignore // TODO
- // TODO @Test
+    @Test
     public void testImproveProfit2() throws Exception {
         ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.IMPROVEPROFIT, PipelineConstants.MLINDICATOR, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
@@ -420,8 +421,7 @@ public class All2IT {
         }
     }
 
-    @Ignore // TODO
-    // TODO @Test
+    @Test
     public void testCrosstest() throws Exception {
         ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.CROSSTEST, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
@@ -431,8 +431,7 @@ public class All2IT {
         }
     }
 
-    @Ignore // TODO
- // TODO @Test
+    @Test
     public void testFilter() throws Exception {
         ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.IMPROVEFILTER, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
@@ -442,8 +441,7 @@ public class All2IT {
         }
     }
 
-    @Ignore // TODO
- // TODO @Test
+    @Test
     public void testAboveBelow() throws Exception {
         ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.IMPROVEABOVEBELOW, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
@@ -453,8 +451,7 @@ public class All2IT {
         }
     }
 
-    @Ignore // TODO
- // TODO @Test
+    @Test
     public void testSim() throws Exception {
         SimulateInvestConfig simConfig = testutils.getSimConfigDefault();
         String market = TestConstants.MARKET;
@@ -470,8 +467,7 @@ public class All2IT {
         System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
     }
 
-    @Ignore // TODO
- // TODO @Test
+    @Test
     public void testAutoSim() throws Exception {
         AutoSimulateInvestConfig simConfig = testutils.getAutoSimConfigDefault();
         String market = TestConstants.MARKET;
@@ -487,8 +483,7 @@ public class All2IT {
         System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
     }
 
-    @Ignore // TODO
- // TODO @Test
+    @Test
     public void testImproveSim() throws Exception {
         SimulateInvestConfig simConfig = testutils.getImproveSimConfigDefault();
         String market = TestConstants.MARKET;
@@ -504,8 +499,7 @@ public class All2IT {
         //System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
     }
 
-    @Ignore // TODO
- // TODO @Test
+    @Test
     public void testImproveAutoSim() throws Exception {
         AutoSimulateInvestConfig simConfig = testutils.getImproveAutoSimConfigDefault();
         String market = TestConstants.MARKET;
