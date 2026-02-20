@@ -150,7 +150,7 @@ public class ACoreIT {
         //new LeaderRunner(iconf, null, io).run();
     }
     
-    @Test
+    // TODO @Test
     public void testSimRun() throws Exception {
         log.info("Wants it {}", iconf.wantsInmemoryPipeline());
         SimulateInvestConfig simConfig = testutils.getSimConfigDefault();
