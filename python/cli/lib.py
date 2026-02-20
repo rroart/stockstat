@@ -2461,6 +2461,10 @@ def simulateinvest(market, startdate = None, enddate = None, confidence = False,
         print(x)
     for x in updatemap['sumhistory']:
         print(x)
+    for x in updatemap['sumhistorynew']:
+        print(x)
+    for x in updatemap['sumhistorynew2']:
+        print(x)
     for x in updatemap['tradestocks'][:10]:
         print(x)
     #print(webdata.keys())
@@ -2711,6 +2715,10 @@ def autosimulateinvest(market, startdate = None, enddate = None, interval = 1, p
     for x in updatemap['stockhistory']:
         print(x)
     for x in updatemap['sumhistory']:
+        print(x)
+    for x in updatemap['sumhistorynew']:
+        print(x)
+    for x in updatemap['sumhistorynew2']:
         print(x)
     for x in updatemap['tradestocks'][:10]:
         print(x)

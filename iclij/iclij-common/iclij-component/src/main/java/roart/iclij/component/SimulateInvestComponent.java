@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -202,6 +203,7 @@ public class SimulateInvestComponent extends ComponentML {
         }
         log.debug("Extradelay {}", extradelay);
         doprev = !simConfig.getBuyweight();
+        log.info("doprev {}", doprev);
         // todo hack overloaded unused eventUnique = simConfig.getBuyweight();
         // coming from improvesim
         //List<SimulateFilter> filter = simConfig.getFilters();
@@ -661,6 +663,8 @@ public class SimulateInvestComponent extends ComponentML {
                             aResult.stockhistory.addAll(aOneRun.mystocks);
 
                             map.put(SimConstants.SUMHISTORY, aResult.sumHistory);
+                            map.put(SimConstants.SUMHISTORYNEW, aResult.sumHistoryNew);
+                            map.put(SimConstants.SUMHISTORYNEW2, aResult.sumHistoryNew2);
                             map.put(SimConstants.STOCKHISTORY, aResult.stockhistory);
                             map.put(SimConstants.PLOTDEFAULT, aResult.plotDefault);
                             map.put(SimConstants.PLOTDATES, aResult.plotDates);
@@ -1327,7 +1331,18 @@ public class SimulateInvestComponent extends ComponentML {
                         List<String> b = buys.stream().map(SimulateStock::getId).toList();
                         List<String> s = sells.stream().map(SimulateStock::getId).toList();
                         String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() + " " + onerun.dbid : "";
-                        results.sumHistory.add(historydatestring + " " + onerun.capital.toString() + " " + sum.toString() + " " + new MathUtil().round(onerun.resultavg, 2) + " " + hasNoConf + " " + ids + " " + b + " " + s + " " + trend + adv);
+                        results.sumHistory.add(historydatestring + " " + onerun.capital.toString() + " " + sum.toString() + " " + new MathUtil().round(onerun.resultavg, 2) + " " + hasNoConf + " " + ids + " " + trend + adv);
+                        results.sumHistoryNew.add(historydatestring + " " + onerun.capital.toString() + " " + sum.toString() + " " + new MathUtil().round(onerun.resultavg, 2) + " " + hasNoConf + " " + ids + " " + b + " " + s + " " + trend + adv);
+                        // calculate future portofolio extradelay days ahead
+                        NewBS newBS = new NewBS(onerun.mystocks);
+                        log.info("mydate {}", mydate.indexOffset);
+                        getNewBS(simConfig, extradelay, onerun, mydate, newBS);
+                        //futureStockIds = new ArrayList<>();
+                        //new2buys = new ArrayList<>(b);
+                        //new2buys.removeAll(onerun.pendingBuyIds);
+                        //new2sells = new ArrayList<>(s);
+                        //new2sells.removeAll(onerun.pendingSellIds);
+                        results.sumHistoryNew2.add(historydatestring + " " + onerun.capital.toString() + " " + sum.toString() + " " + new MathUtil().round(onerun.resultavg, 2) + " " + hasNoConf + " " + ids + " -> " + newBS.futureStockIds + " bs " + b + " " + s + " nbs " + newBS.new2buys + " " + newBS.new2sells + " np " + newBS.new2pendingBuys + " " + newBS.new2pendingSells + " p " + onerun.pendingBuyIds + " " + onerun.pendingSellIds + " " + trend + adv);
                         results.plotDates.add(historydatestring);
                         results.plotDefault.add(onerun.resultavg);
                         results.plotCapital.add(sum.amount + onerun.capital.amount);
@@ -1336,7 +1351,6 @@ public class SimulateInvestComponent extends ComponentML {
                         results.plotCapital.add(sum.amount + onerun.capital.amount);
                     }
                     }
-                    log.info("B S2");
                 } else {
                     results.plotDates.add(historydatestring);
                     results.plotCapital.add(sum.amount + onerun.capital.amount);
@@ -1411,11 +1425,17 @@ public class SimulateInvestComponent extends ComponentML {
             }
         } else {
             if (!evolving && offset == 0) {
+                NewBS newBS = new NewBS(onerun.mystocks);
+                log.info("mydate {}", mydate.indexOffset);
+                getNewBS(simConfig, extradelay, onerun, mydate, newBS);
                 List<String> ids = onerun.mystocks.stream().map(SimulateStock::getId).collect(Collectors.toList());
                 List<String> buyids = buys.stream().map(SimulateStock::getId).collect(Collectors.toList());
                 List<String> sellids = sells.stream().map(SimulateStock::getId).collect(Collectors.toList());
+                buyids = newBS.new2buys;
+                sellids = newBS.new2sells;
 
-                if (true) { // not with events used
+                // ...
+                if (!doprev) { // not with events used
                 if (!noconfidence) {
                     int buyCnt = simConfig.getStocks() - nextstocks.size();
                     buyCnt = Math.min(buyCnt, buys.size());
@@ -1461,17 +1481,83 @@ public class SimulateInvestComponent extends ComponentML {
                     String newids = "";
                     String adv = auto ? " Adv" + simConfig.getAdviser() + " " + simConfig.getIndicatorReverse() + " " + onerun.dbid : "";
                     String idsnewtxt = "";
-                    if (extradelay == 0) {
+                    if (true || extradelay == 0) {
                         List<String> idsnew = new ArrayList<>(ids);
                         idsnew.addAll(buyids);
                         idsnew.removeAll(sellids);
                         newids = " -> " + idsnew;
                         idsnewtxt = getText(data.stocks, idsnew);
                     }
+                    log.info("Extradelay {}", extradelay);
+                    if (true && extradelay > 0) {
+                        // remove recents from eventhistorymap
+                        log.info("num {} {} {}", getBSIndexOffset(mydate, simConfig), extradelay, endIndexOffset);
+                        log.info("Event history map {}", onerun.eventHistoryMap.keySet());
+                        List<String> recentSells = onerun.eventHistoryMap.entrySet().stream()
+                                .filter(e -> e.getKey() > getBSIndexOffset(mydate, simConfig) - extradelay && e.getKey() <= getBSIndexOffset(mydate, simConfig))
+                                .flatMap(m -> m.getValue() .getOrDefault("SELL", new ArrayList<>())
+                                        .stream()
+                                        .map(SimulateStock::getId)).toList();
+                        List<String> recentBuys = onerun.eventHistoryMap.entrySet().stream()
+                                .filter(e -> e.getKey() > getBSIndexOffset(mydate, simConfig) - extradelay && e.getKey() <= getBSIndexOffset(mydate, simConfig))
+                                .flatMap(m -> m.getValue() .getOrDefault("BUY", new ArrayList<>())
+                                        .stream()
+                                        .map(SimulateStock::getId)).toList();
+                        log.info("Recent sells {}", recentSells);
+                        log.info("Recent buys {}", recentBuys);
+                        log.info("Buyids before {}", buyids);
+                        List<String> idsnew = new ArrayList<>();
+                        idsnew.addAll(buyids);
+                        idsnew.removeAll(ids);
+                        idsnew.removeAll(recentSells);
+                        idsnew.removeAll(recentBuys);
+                        //newids = " -> " + idsnew;
+                       //idsnewtxt = getText(data.stocks, idsnew);
+                        log.info("Buyids after {}", idsnew);
+                        idsnew = new ArrayList<>();
+                        idsnew.addAll(sellids);
+                        //idsnew.removeAll(ids);
+                        idsnew.removeAll(recentSells);
+                        idsnew.removeAll(recentBuys);
+                        //newids = " -> " + idsnew;
+                       //idsnewtxt = getText(data.stocks, idsnew);
+                        log.info("Sellids after {}", idsnew);
+                    }
+                    if (true) {
+                        int jj = 0;
+                        // remove from buy sell if in event map
+                        List<String> recentBuys = onerun.eventMap.values().stream().flatMap(m -> m.getOrDefault("BUY", new ArrayList<>()).stream().map(SimulateStock::getId)).collect(Collectors.toList());
+                        List<String> recentSells = onerun.eventMap.values().stream().flatMap(m -> m.getOrDefault("SELL", new ArrayList<>()).stream().map(SimulateStock::getId)).collect(Collectors.toList());
+                        log.info("Recent sells {}", recentSells);
+                        log.info("Recent buys {}", recentBuys);
+                        log.info("Buyids before {}", buyids);
+                        List<String> idsnew = new ArrayList<>();
+                        idsnew.addAll(buyids);
+                        idsnew.removeAll(ids);
+                        idsnew.removeAll(recentSells);
+                        idsnew.removeAll(recentBuys);
+                        //newids = " -> " + idsnew;
+                       //idsnewtxt = getText(data.stocks, idsnew);
+                        log.info("Buyids after {}", idsnew);
+                        idsnew = new ArrayList<>();
+                        idsnew.addAll(sellids);
+                        //idsnew.removeAll(ids);
+                        idsnew.removeAll(recentSells);
+                        idsnew.removeAll(recentBuys);
+                        //newids = " -> " + idsnew;
+                       //idsnewtxt = getText(data.stocks, idsnew);
+                        log.info("Sellids after {}", idsnew);
+                    }
+                    /*
                     String buytxt = getText(data.stocks, buyids);
                     String selltxt = getText(data.stocks, sellids);
                     String pendingbuytxt = getText(data.stocks, new ArrayList<>(onerun.pendingBuyIds));
                     String pendingselltxt = getText(data.stocks, new ArrayList<>(onerun.pendingSellIds));
+                    */
+                    String buytxt = getText(data.stocks, newBS.new2buys);
+                    String selltxt = getText(data.stocks, newBS.new2sells);
+                    String pendingbuytxt = getText(data.stocks, new ArrayList<>(newBS.new2pendingBuys));
+                    String pendingselltxt = getText(data.stocks, new ArrayList<>(newBS.new2pendingSells));
                     String idstxt = getText(data.stocks, ids);
                     String incdec = "";
                     if (results.plotCapital != null) {
@@ -1490,6 +1576,48 @@ public class SimulateInvestComponent extends ComponentML {
                     onerun.lastbuysell = "Buy: " + buyids + " Sell: " + sellids + " Stocks: " + ids + newids + " ( " + buytxt + " , " + selltxt + " , " + idstxt + " , " + idsnewtxt + " ) " + "( Pending " + pendingbuytxt + ", " + pendingselltxt + " ) " + incdec + " " + adv + lastDate;
                }
             }
+        }
+    }
+
+    private void getNewBS(SimulateInvestConfig simConfig, int extradelay, OneRun onerun, Mydate mydate, NewBS newBS) {
+        for (int x = 0; x <= extradelay; x++) {
+            log.info("offsets {} {}", mydate.indexOffset - x - 1, onerun.eventMap.keySet());
+            boolean last = x == extradelay;
+            Map<String, List<SimulateStock>> myMaps = onerun.eventMap.get(mydate.indexOffset - x - 1);
+            if (myMaps == null) {
+                continue;
+            }
+            List<SimulateStock> mySells = myMaps.get("SELL");
+            if (mySells != null) {
+                newBS.new2sells = mySells.stream().map(SimulateStock::getId).toList();
+                newBS.new2sells = getFilterStockIds(newBS.new2sells, newBS.futureStockIds, false);
+            } else {
+                newBS.new2sells = new ArrayList<>();
+            }
+            newBS.futureStockIds.removeAll(newBS.new2sells);
+            List<SimulateStock> myBuys = myMaps.get("BUY");
+            if (myBuys != null) {
+                newBS.new2buys = myBuys.stream().map(SimulateStock::getId).toList();
+                newBS.new2buys = getFilterStockIds(newBS.new2buys, newBS.futureStockIds, true);
+                int buytop = simConfig.getStocks();
+                int buys2 = buytop - newBS.futureStockIds.size();
+                buys2 = Math.min(buys2, newBS.new2buys.size());
+                newBS.new2buys = newBS.new2buys.subList(0, buys2);
+            } else {
+                newBS.new2buys = new ArrayList<>();
+            }
+            if (last) {
+                //new2pendingBuys = new2buys;
+                //new2pendingSells = new2sells;
+            } else {
+                newBS.new2pendingBuys.addAll(newBS.new2buys);
+                newBS.new2pendingSells.addAll(newBS.new2sells);
+            }
+            newBS.futureStockIds.addAll(newBS.new2buys);
+            if (mydate.indexOffset < 0) {
+                newBS.futureStockIds = List.of("0");
+            }
+            log.info("future day {} {} futureStockIds {} buys {} sells {} pendingbuys {} pendingsells {}", last, mydate.indexOffset - x - 1, newBS.futureStockIds, newBS.new2buys, newBS.new2sells, newBS.new2pendingBuys, newBS.new2pendingSells);
         }
     }
 
@@ -1653,6 +1781,20 @@ public class SimulateInvestComponent extends ComponentML {
             } else {
                 if (debugFuture) {
                     log.info("Filtered out already {} {}", buy ? "bought" : "sold", stock.getId());
+                }
+            }
+        }
+        return filterStocks;
+    }
+
+    private List<String> getFilterStockIds(List<String> stocks, List<String> buys, boolean buy) {
+        List<String> filterStocks = new ArrayList<>();
+        for (String stock : stocks) {
+            if (buy != buys.contains(stock)) {
+                filterStocks.add(stock);
+            } else {
+                if (debugFuture) {
+                    log.info("Filtered out already {} {}", buy ? "bought" : "sold", stock);
                 }
             }
         }
@@ -2607,6 +2749,8 @@ public class SimulateInvestComponent extends ComponentML {
         List<SimulateStock> stockhistory = new ArrayList<>();
         List<StockHistory> history = new ArrayList<>();
         List<String> sumHistory = new ArrayList<>();
+        List<String> sumHistoryNew = new ArrayList<>();
+        List<String> sumHistoryNew2 = new ArrayList<>();
         List<String> plotDates = new ArrayList<>();
         List<Double> plotCapital = new ArrayList<>();
         List<Double> plotDefault = new ArrayList<>();        
@@ -2674,6 +2818,25 @@ public class SimulateInvestComponent extends ComponentML {
         int prevIndexOffset;
         
     }
+    
+    class NewBS {
+        List<String> new2buys = new ArrayList<>();
+        List<String> new2sells = new ArrayList<>();
+        List<String> new2pendingBuys = new ArrayList<>();
+        List<String> new2pendingSells = new ArrayList<>();
+        List<SimulateStock> futureStocks;
+        List<String> futureStockIds;
+
+        public NewBS(List<SimulateStock> mystocks) {
+            this.new2buys = new ArrayList<>();
+            this.new2sells = new ArrayList<>();
+            this.new2pendingBuys = new ArrayList<>();
+            this.new2pendingSells = new ArrayList<>();
+            this.futureStocks = new ArrayList<>(mystocks);
+            this.futureStockIds = new ArrayList<>(futureStocks.stream().map(SimulateStock::getId).toList());
+        }
+    }
+    
     // loop
     // get u/n/d trend
     // get exclusions, defaults + current low volume traded

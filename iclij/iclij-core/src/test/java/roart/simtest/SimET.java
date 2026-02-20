@@ -222,6 +222,9 @@ public class SimET {
         for (Object x : (List<?>) updatemap.get("sumhistorynew")) {
             sb.append(x + "\n");
         }
+        for (Object x : (List<?>) updatemap.get("sumhistorynew2")) {
+            sb.append(x + "\n");
+        }
         for (Object x : (List<?>) updatemap.get("sumhistory")) {
             sb.append(x + "\n");
         }

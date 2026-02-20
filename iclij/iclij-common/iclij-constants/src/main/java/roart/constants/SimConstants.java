@@ -9,6 +9,8 @@ public class SimConstants {
     public static final String LASTSTOCKS = "laststocks";
     public static final String HISTORY = "history";
     public static final String SUMHISTORY = "sumhistory";
+    public static final String SUMHISTORYNEW = "sumhistorynew";
+    public static final String SUMHISTORYNEW2 = "sumhistorynew2";
     public static final String STOCKHISTORY = "stockhistory";
     public static final String STARTDATE = "startdate";
     public static final String ENDDATE = "enddate";
