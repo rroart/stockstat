@@ -2892,6 +2892,10 @@ def simulateinvestid(market, dbid, startdate = None, enddate = None, c = None, c
         print(x)
     for x in updatemap['sumhistory']:
         print(x)
+    for x in updatemap['sumhistorynew']:
+        print(x)
+    for x in updatemap['sumhistorynew2']:
+        print(x)
     for x in updatemap['tradestocks'][:10]:
         print(x)
     print('config', updatemap['config'])
