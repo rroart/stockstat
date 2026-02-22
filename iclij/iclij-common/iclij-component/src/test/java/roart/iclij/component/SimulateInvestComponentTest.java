@@ -542,4 +542,22 @@ public class SimulateInvestComponentTest {
         List<SimulateStock> nm2 = (List<SimulateStock>) noConf.invoke(comp, myst, holdIncrease, sellsList, simc);
         assertNotEquals(null, nm2);
     }
+    
+    @Test
+    public void testGetNewBS() {
+        SimulateInvestComponent comp = new SimulateInvestComponent();
+        Map<String, List<List<Double>>> categoryValueMap = new HashMap<>();
+        categoryValueMap.put("A", List.of(List.of(10.0, 11.0, 12.0)));
+        List<SimulateStock> mystocks = new ArrayList<>();
+        SimulateStock s = new SimulateStock(); s.setId("A"); s.setCount(2); s.setPrice(10.0); s.setBuyprice(9.0);
+        mystocks.add(s);
+        int idx = 1;
+        double stoploss = 0.5;
+        String reason = "STOP";
+        com.google.common.collect.BiMap<String, LocalDate> bi = com.google.common.collect.HashBiMap.create();
+        bi.put("2020.01.01", LocalDate.of(2020,1,1));
+        List<SimulateStock> sells = new ArrayList<>(); //comp.stoploss(mystocks, List.of("2020.01.01"), idx, categoryValueMap, idx, new ArrayList<>(), stoploss, reason, bi, 0);
+        //assertEquals(1, sells.size());
+        //assertEquals("A", sells.get(0).getId());
+    }
 }

@@ -1335,6 +1335,7 @@ public class SimulateInvestComponent extends ComponentML {
                         results.sumHistoryNew.add(historydatestring + " " + onerun.capital.toString() + " " + sum.toString() + " " + new MathUtil().round(onerun.resultavg, 2) + " " + hasNoConf + " " + ids + " " + b + " " + s + " " + trend + adv);
                         // calculate future portofolio extradelay days ahead
                         NewBS newBS = new NewBS(onerun.mystocks);
+                        // mydate is 2 here (with extradelay 2)
                         log.info("mydate {}", mydate.indexOffset);
                         getNewBS(simConfig, extradelay, onerun, mydate, newBS);
                         //futureStockIds = new ArrayList<>();
@@ -1426,6 +1427,7 @@ public class SimulateInvestComponent extends ComponentML {
         } else {
             if (!evolving && offset == 0) {
                 NewBS newBS = new NewBS(onerun.mystocks);
+                // mydate is 0 here (with extradelay 2)
                 log.info("mydate {}", mydate.indexOffset);
                 getNewBS(simConfig, extradelay, onerun, mydate, newBS);
                 List<String> ids = onerun.mystocks.stream().map(SimulateStock::getId).collect(Collectors.toList());
@@ -1579,6 +1581,14 @@ public class SimulateInvestComponent extends ComponentML {
         }
     }
 
+    // calculate future portofolio extradelay days ahead
+    
+    /**
+     * Get future buy sell ids extradelay days ahead based on events in event map. 
+     * If extradelay is 0, only get current day events. If extradelay is 1, also get previous day events, etc.
+     * If extradelay is greater than 0, also add pending from previous days to future buy sell ids.
+     */
+    
     private void getNewBS(SimulateInvestConfig simConfig, int extradelay, OneRun onerun, Mydate mydate, NewBS newBS) {
         for (int x = 0; x <= extradelay; x++) {
             log.info("offsets {} {}", mydate.indexOffset - x - 1, onerun.eventMap.keySet());
@@ -1622,11 +1632,11 @@ public class SimulateInvestComponent extends ComponentML {
     }
 
     private String getText(Map<String, String> stocks, List<String> ids) {
-        String txt = "";
+        String txt = "[";
         for (String id : ids) {
             txt = txt + (stocks != null && stocks.containsKey(id) ? stocks.get(id) : id) + " ";
         }
-        return txt;
+        return txt + "]";
     }
 
     private List<SimulateStock> addEventPrev(OneRun onerun, List<SimulateStock> stocks, String bs, int myIndexoffset, SimulateInvestConfig simConfig) {
