@@ -1335,8 +1335,19 @@ public class SimulateInvestComponent extends ComponentML {
                         results.sumHistoryNew.add(historydatestring + " " + onerun.capital.toString() + " " + sum.toString() + " " + new MathUtil().round(onerun.resultavg, 2) + " " + hasNoConf + " " + ids + " " + b + " " + s + " " + trend + adv);
                         // calculate future portofolio extradelay days ahead
                         NewBS newBS = new NewBS(onerun.mystocks);
-                        // mydate is 2 here (with extradelay 2)
-                        log.info("mydate {}", mydate.indexOffset);
+			// extradelay 2
+			//
+			// mydate 1431 2020-07-01
+			// uses data from 1433
+			// event buy 1428 x,y
+			// future day true 1428
+			//
+			// mydate 2 2026-02-18
+			// event buy none
+			// future day true -1
+                        if (debugFuture) {
+                            log.info("mydate {} {}", mydate.indexOffset, mydate.date);
+                        }
                         getNewBS(simConfig, extradelay, onerun, mydate, newBS);
                         //futureStockIds = new ArrayList<>();
                         //new2buys = new ArrayList<>(b);
@@ -1428,7 +1439,13 @@ public class SimulateInvestComponent extends ComponentML {
             if (!evolving && offset == 0) {
                 NewBS newBS = new NewBS(onerun.mystocks);
                 // mydate is 0 here (with extradelay 2)
-                log.info("mydate {}", mydate.indexOffset);
+		// mydate 0 2026-02-20
+		// uses data from 2
+		// event buy none
+		// future day true -3
+                if (debugFuture) {
+                    log.info("mydate {} {}", mydate.indexOffset, mydate.date);
+                }
                 getNewBS(simConfig, extradelay, onerun, mydate, newBS);
                 List<String> ids = onerun.mystocks.stream().map(SimulateStock::getId).collect(Collectors.toList());
                 List<String> buyids = buys.stream().map(SimulateStock::getId).collect(Collectors.toList());
@@ -1627,7 +1644,9 @@ public class SimulateInvestComponent extends ComponentML {
             if (mydate.indexOffset < 0) {
                 newBS.futureStockIds = List.of("0");
             }
-            log.info("future day {} {} futureStockIds {} buys {} sells {} pendingbuys {} pendingsells {}", last, mydate.indexOffset - x - 1, newBS.futureStockIds, newBS.new2buys, newBS.new2sells, newBS.new2pendingBuys, newBS.new2pendingSells);
+            if (debugFuture) {
+                log.info("future day {} {} futureStockIds {} buys {} sells {} pendingbuys {} pendingsells {}", last, mydate.indexOffset - x - 1, newBS.futureStockIds, newBS.new2buys, newBS.new2sells, newBS.new2pendingBuys, newBS.new2pendingSells);
+            }
         }
     }
 
