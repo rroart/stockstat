@@ -21,7 +21,6 @@ import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.constants.SimConstants;
-import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.Fitness;
 import roart.iclij.config.ComponentConstants;
 import roart.iclij.config.IclijConfig;
@@ -45,12 +44,12 @@ public class ImproveSimulateInvestComponent extends ComponentML {
 
     @Override
     public ComponentData handle(MarketActionData action, Market market, ComponentData param, ProfitData profitdata,
-            Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket,
-            Parameters parameters, boolean hasParent) {
+                                Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket,
+                                Parameters parameters, boolean hasParent, Inmemory inmemory) {
         if (true) {
             SimulateInvestComponent component = new SimulateInvestComponent();
             component.setConfig(getConfig());
-            ComponentData ret = component.handle(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent);
+            ComponentData ret = component.handle(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent, inmemory);
             Map<String, Double> scoreMap = ret.getScoreMap();
             List<Double> scores = new ArrayList<>();
             scores.add(scoreMap.get(SimConstants.SCORE));
@@ -76,7 +75,7 @@ public class ImproveSimulateInvestComponent extends ComponentML {
                     endDate = TimeUtil.convertDate2(end);
                     config.getConfigData().getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTSTARTDATE, startDate);
                     config.getConfigData().getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTENDDATE, endDate);
-                    ComponentData ret2 = component.handle(action, market, newComponentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent);
+                    ComponentData ret2 = component.handle(action, market, newComponentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent, inmemory);
                     Map<String, Double> scoreMap2 = ret2.getScoreMap();
                     scores.add(scoreMap2.get(SimConstants.SCORE));
                     startDate = endDate;
@@ -92,7 +91,7 @@ public class ImproveSimulateInvestComponent extends ComponentML {
 
         componentData.setFuturedays(0);
 
-        handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent);
+        handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent, inmemory);
         return componentData;
     }
 
@@ -177,8 +176,8 @@ public class ImproveSimulateInvestComponent extends ComponentML {
         //SerialMeta meta = PipelineUtils.getMeta(metaData);
         //String catName = new MetaUtil().getCategory(meta,  cat);
         PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
-        Integer cat = PipelineUtils.getWantedcat(pipelineDatum);
-        String catName = PipelineUtils.getMetaCat(pipelineDatum);
+        Integer cat = PipelineUtils.getWantedcat(param.getResultMaps(), PipelineConstants.META, inmemory);
+        String catName = PipelineUtils.getMetaCat(param.getResultMaps(), inmemory);
         log.info("cats {} {}", cat, catName);
         param.setCategory(cat);
         param.setCategoryTitle(catName);

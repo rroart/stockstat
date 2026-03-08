@@ -1,7 +1,6 @@
 package roart.iclij.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -10,21 +9,12 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.curator.RetryPolicy;
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 //import org.springframework.http.converter.json.JsonMapper;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.SerializationFeature;
-import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.databind.cfg.DateTimeFeature;
 import tools.jackson.databind.json.JsonMapper;
 
 import roart.common.cache.MyCache;
@@ -36,7 +26,6 @@ import roart.common.config.ConfigTreeMap;
 import roart.common.config.MarketStock;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
-import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.ml.NeuralNetCommand;
@@ -46,20 +35,13 @@ import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.queue.QueueElement;
-import roart.common.util.ImmutabilityUtil;
 import roart.common.util.MemUtil;
 import roart.common.util.ServiceConnectionUtil;
-import roart.common.webflux.WebFluxUtil;
-import roart.db.dao.IclijDbDao;
-import roart.db.spring.DbSpringDS;
-import roart.filesystem.FileSystemDao;
-import roart.iclij.config.ConfigUtils;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.model.WebData;
 import roart.iclij.model.WebDataJson;
 import roart.iclij.model.component.ComponentInput;
-import roart.model.data.MarketData;
 import roart.model.data.StockData;
 import roart.result.model.ResultItem;
 import roart.common.queueutil.QueueUtils;
@@ -310,7 +292,7 @@ public class ControlService {
             param.setId(id + "/" + uuid);
         }
         IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETDATES);
-        list = PipelineUtils.getDatelist(PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.DATELIST, inmemory));      
+        list = PipelineUtils.getDatelist(result.getPipelineData(), PipelineConstants.DATELIST, inmemory);
         new PipelineThreadUtils(getIclijConfig(), inmemory, getIo().getCuratorClient()).cleanPipeline(id, uuid);
         MyCache.getInstance().put(key, list);
         return list;

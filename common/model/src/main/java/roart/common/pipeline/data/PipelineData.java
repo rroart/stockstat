@@ -5,7 +5,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,9 +16,9 @@ public class PipelineData extends SerialObject {
     
     private String name;
 
-    private boolean loaded;
+    private boolean loaded = true;
     
-    private boolean old;
+    private boolean old = false;
     
     private String message;
     
@@ -28,11 +27,27 @@ public class PipelineData extends SerialObject {
     private SerialMap smap = new SerialMap();
 
     private Set<String> usedKeys = new HashSet<>();
-    
+
+    private String key;
+
+    private String secondKey;
+
+    private SerialObject value;
+
     public PipelineData() {
         super();
         this.loaded = true;
         this.old = false;
+    }
+
+    public PipelineData(String name, String key, String secondKey, SerialObject value) {
+        super();
+        this.loaded = true;
+        this.old = false;
+        this.name = name;
+        this.key = key;
+        this.secondKey = this.secondKey;
+        this.value = value;
     }
 
     public String getId() {
@@ -135,6 +150,18 @@ public class PipelineData extends SerialObject {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getSecondKey() {
+        return secondKey;
+    }
+
+    public SerialObject getValue() {
+        return value;
     }
 
     @Deprecated

@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.IncDecDTO;
 import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
@@ -37,14 +38,14 @@ import roart.service.model.ProfitData;
 public abstract class ComponentMLAggregator extends ComponentML {
 
     @Override
-    public ComponentData handle(MarketActionData action, Market market, ComponentData componentparam, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters, boolean hasParent) {
+    public ComponentData handle(MarketActionData action, Market market, ComponentData componentparam, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters, boolean hasParent, Inmemory inmemory) {
         MLAggregatorData param = new MLAggregatorData(componentparam);
 
         int daysafterzero = getDaysAfterLimit(componentparam);
         daysafterzero = 0;
         param.setFuturedays(daysafterzero);
 
-        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent);
+        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent, inmemory);
         //Map resultMaps = param.getResultMap();
         //handleMLMeta(param, resultMaps);
         return param;

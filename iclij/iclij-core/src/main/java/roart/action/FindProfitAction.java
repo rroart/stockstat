@@ -1,19 +1,15 @@
 package roart.action;
 
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +30,6 @@ import roart.component.model.ComponentData;
 import roart.component.model.ComponentTimeUtil;
 import roart.component.util.IncDecUtil;
 import roart.iclij.config.IclijConfig;
-import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.Parameters;
@@ -42,7 +37,6 @@ import roart.iclij.model.WebData;
 import roart.iclij.model.action.FindProfitActionData;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.util.MarketUtil;
-import roart.iclij.service.util.MiscUtil;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 
@@ -104,10 +98,10 @@ public class FindProfitAction extends MarketAction {
             
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
             
-            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters, getParent() != null);
+            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters, getParent() != null, inmemory);
             
             Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config);
-            Map<String, String> nameMap = PipelineUtils.getNamemap(PipelineUtils.getPipeline(componentData.getResultMaps(), componentData.getCategoryTitle(), inmemory));
+            Map<String, String> nameMap = PipelineUtils.getNamemap(PipelineUtils.getPipeline(componentData.getResultMaps(), componentData.getCategoryTitle(), inmemory), name, inmemory);
             log.info("TODO names {}", nameMap.size());
             profitdata.getInputdata().setNameMap(nameMap);
             
@@ -166,7 +160,7 @@ public class FindProfitAction extends MarketAction {
                         
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
             
-            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, new Memories(market), evolve, aMap, marketTime.getSubcomponent(), null, parameters, getParent() != null);
+            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, new Memories(market), evolve, aMap, marketTime.getSubcomponent(), null, parameters, getParent() != null, inmemory);
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
             myData.getUpdateMap().putAll(componentData.getUpdateMap());

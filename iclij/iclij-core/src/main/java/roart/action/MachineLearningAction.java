@@ -7,11 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +30,6 @@ import roart.iclij.model.WebData;
 import roart.iclij.model.action.MachineLearningActionData;
 import roart.iclij.service.util.MiscUtil;
 import roart.service.model.ProfitData;
-import roart.service.model.ProfitInputData;
 
 public class MachineLearningAction extends MarketAction {
 
@@ -81,7 +76,7 @@ public class MachineLearningAction extends MarketAction {
             
             boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
             //component.set(market, param, profitdata, positions, evolve);
-            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters, getParent() != null);
+            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters, getParent() != null, inmemory);
         }
     }
 

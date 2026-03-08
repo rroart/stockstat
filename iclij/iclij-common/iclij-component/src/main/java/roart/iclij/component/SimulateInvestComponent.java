@@ -17,7 +17,6 @@ import java.util.Objects;
 import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -35,6 +34,7 @@ import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.model.MetaDTO;
@@ -58,7 +58,6 @@ import roart.iclij.component.adviser.AdviserFactory;
 import roart.iclij.config.AutoSimulateInvestConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
-import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.config.SimulateFilter;
@@ -102,8 +101,8 @@ public class SimulateInvestComponent extends ComponentML {
 
     @Override
     public ComponentData handle(MarketActionData action, Market market, ComponentData param, ProfitData profitdata,
-            Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket,
-            Parameters parameters, boolean hasParent) {
+                                Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket,
+                                Parameters parameters, boolean hasParent, Inmemory inmemory) {
         log.debug("Param id {}", param.getId());
         ComponentData componentData = new ComponentData(param);
         SimulateInvestData simulateParam;

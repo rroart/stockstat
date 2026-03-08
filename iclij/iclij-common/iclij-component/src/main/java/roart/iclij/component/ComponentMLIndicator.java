@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.config.Extra;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.IncDecDTO;
 import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
@@ -89,7 +90,7 @@ public class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public ComponentData handle(MarketActionData action, Market market, ComponentData componentparam, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters, boolean hasParent) { //, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve) {
+    public ComponentData handle(MarketActionData action, Market market, ComponentData componentparam, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters, boolean hasParent, Inmemory inmemory) { //, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve) {
 
         MLIndicatorData param = new MLIndicatorData(componentparam);
 
@@ -99,7 +100,7 @@ public class ComponentMLIndicator extends ComponentML {
         //double threshold = param.getService().conf.getAggregatorsIndicatorThreshold();
         //param.setThreshold(threshold);
 
-        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent);
+        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent, inmemory);
         //Map resultMaps = param.getResultMap();
         //handleMLMeta(param, resultMaps);
         //Map<String, Object> resultMap = param.getResultMap();

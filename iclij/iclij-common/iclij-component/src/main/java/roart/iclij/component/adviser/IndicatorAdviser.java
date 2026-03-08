@@ -78,13 +78,13 @@ public abstract class IndicatorAdviser extends Adviser {
             if (resultMaps == null || resultMaps.length == 0) {
                 int  jj = 0;
             }
-            Integer cat = PipelineUtils.getWantedcat(PipelineUtils.getPipeline(resultMaps, PipelineConstants.META, inmemory));
+            Integer cat = PipelineUtils.getWantedcat(resultMaps, PipelineConstants.META, inmemory);
             String catName = new MetaUtil().getCategory(meta, cat);
             PipelineData objectMaps = PipelineUtils.getPipeline(resultMaps, getPipeline(), inmemory);
             if (objectMaps != null) {
                 Map<String, Object> indicatorMaps = (Map<String, Object>) objectMaps.get(getPipeline());
                 //System.out.println("macd"+ macdMaps.keySet());
-                objectMap = PipelineUtils.getObjectMap(objectMaps);
+                objectMap = PipelineUtils.getObjectMap(resultMaps, getPipeline(), inmemory);
             }
             return;
         }
@@ -128,13 +128,14 @@ public abstract class IndicatorAdviser extends Adviser {
             System.out.println("keys " + entry.getValue().keySet());
         }
         */
-        Integer cat = PipelineUtils.getWantedcat(PipelineUtils.getPipeline(maps, PipelineConstants.META, inmemory));
+        Integer cat = PipelineUtils.getWantedcat(maps, PipelineConstants.META, inmemory);
         String catName = new MetaUtil().getCategory(meta, cat);
         PipelineData resultMaps = PipelineUtils.getPipeline(maps, getPipeline(), inmemory);
         if (resultMaps != null) {
             //Map<String, Object> indicatorMaps = (Map<String, Object>) resultMaps.get(getPipeline());
             //System.out.println("macd"+ macdMaps.keySet());
-            objectMap = PipelineUtils.getObjectMap(resultMaps);
+            //objectMap = PipelineUtils.getObjectMap(resultMaps);
+            objectMap = PipelineUtils.getObjectMap(maps, getPipeline(), inmemory);
         }
     }
 

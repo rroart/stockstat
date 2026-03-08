@@ -3,15 +3,11 @@ package roart.action;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.OptionalDouble;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,24 +20,15 @@ import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.pipeline.util.PipelineUtils;
-import roart.common.util.JsonUtil;
-import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
-import roart.constants.IclijConstants;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.Parameters;
-import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.SimulateInvestActionData;
-import roart.iclij.service.util.MarketUtil;
-import roart.iclij.service.util.MiscUtil;
-import roart.iclij.verifyprofit.TrendUtil;
-import roart.iclij.verifyprofit.VerifyProfitUtil;
 import roart.service.model.ProfitData;
 
 public class SimulateInvestAction extends MarketAction {
@@ -138,15 +125,15 @@ public class SimulateInvestAction extends MarketAction {
             //SerialMeta meta = PipelineUtils.getMeta(metaData);
             //String catName = new MetaUtil().getCategory(meta,  cat);
             PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
-            Integer cat = PipelineUtils.getWantedcat(pipelineDatum);
-            String catName = PipelineUtils.getMetaCat(pipelineDatum);
+            Integer cat = PipelineUtils.getWantedcat(pipelineDatum, name, inmemory);
+            String catName = PipelineUtils.getMetaCat(pipelineDatum, inmemory);
             log.info("cats {} {}", cat, catName);
             param.setCategory(cat);
             param.setCategoryTitle(catName);
             param.getAndSetCategoryValueMapAlt();
 
             
-            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null, getParent() != null);
+            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null, getParent() != null, inmemory);
             
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {

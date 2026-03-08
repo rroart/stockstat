@@ -1,25 +1,18 @@
 package roart.action;
 
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
-import roart.common.constants.Constants;
 import roart.common.constants.ServiceConstants;
-import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.ActionComponentDTO;
@@ -29,13 +22,10 @@ import roart.common.model.MemoryDTO;
 import roart.common.model.TimingDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.util.PipelineUtils;
 import roart.common.queue.QueueElement;
 import roart.common.util.JsonUtil;
-import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
-import roart.evolution.chromosome.AbstractChromosome;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
@@ -43,10 +33,8 @@ import roart.iclij.filter.Memories;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.EvolveActionData;
-import roart.iclij.model.action.MachineLearningActionData;
 import roart.iclij.service.util.MiscUtil;
 import roart.service.model.ProfitData;
-import roart.service.model.ProfitInputData;
 
 public class EvolveAction extends MarketAction {
 
@@ -93,7 +81,7 @@ public class EvolveAction extends MarketAction {
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
             
             Memories positions = null;
-            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters, getParent() != null);
+            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters, getParent() != null, inmemory);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);

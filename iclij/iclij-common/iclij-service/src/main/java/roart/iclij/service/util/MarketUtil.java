@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,7 +156,7 @@ public class MarketUtil {
         Map<String, List<List<Double>>> listMap3 = null;
         for (String entry : PipelineUtils.getPipelineMapKeys(maps)) {
             PipelineData map = PipelineUtils.getPipeline(maps, entry, inmemory);
-            if (category.equals(PipelineUtils.getCatTitle(map))) {
+            if (category.equals(PipelineUtils.getCatTitle(maps, entry, inmemory))) {
                 listMap3 = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(map.get(PipelineConstants.LIST)));
             }
         }

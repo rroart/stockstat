@@ -15,7 +15,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
-import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.model.IncDecDTO;
@@ -26,7 +25,6 @@ import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.MapUtil;
 import roart.component.model.ComponentData;
-import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
 import roart.iclij.config.SimulateInvestConfig;
 
@@ -51,8 +49,8 @@ public class PeriodAdviser extends Adviser {
                 int jj = 0;
             }
             Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
-            PipelineData metaData = PipelineUtils.getPipeline(resultMaps, PipelineConstants.META, inmemory);
-            SerialMeta meta = PipelineUtils.getMeta(metaData);
+            SerialMeta meta = PipelineUtils.getMeta(resultMaps, PipelineConstants.META, inmemory);
+            //SerialMeta meta = PipelineUtils.getMeta(metaData, name, inmemory);
             if (cat >= Constants.PERIODS) {
                 // from old stored data
                 log.error("Category too big {}", cat);

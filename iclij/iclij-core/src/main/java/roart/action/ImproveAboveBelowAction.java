@@ -23,7 +23,6 @@ import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.constants.ServiceConstants;
-import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.ActionComponentDTO;
@@ -32,7 +31,6 @@ import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.queue.QueueElement;
 import roart.common.util.JsonUtil;
@@ -169,8 +167,8 @@ public class ImproveAboveBelowAction extends MarketAction {
                 param.getAndSetCategoryValueMap(false);
                 Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
-                Integer cat = PipelineUtils.getWantedcat(pipelineDatum);
-                String catName = PipelineUtils.getMetaCat(pipelineDatum);
+                Integer cat = PipelineUtils.getWantedcat(pipelineDatum, name, inmemory);
+                String catName = PipelineUtils.getMetaCat(pipelineDatum, inmemory);
                 log.info("cats {} {}", cat, catName);
                 param.setCategory(cat);
                 param.setCategoryTitle(catName);
@@ -364,7 +362,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                         
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
             
-            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, new Memories(market), evolve, aMap, subcomponent, null, parameters, getParent() != null);
+            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, new Memories(market), evolve, aMap, subcomponent, null, parameters, getParent() != null, inmemory);
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
             myData.getUpdateMap().putAll(componentData.getUpdateMap());
@@ -405,7 +403,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                         
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
             
-            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, new Memories(market), evolve, aMap, subcomponent, null, parameters, getParent() != null);
+            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, new Memories(market), evolve, aMap, subcomponent, null, parameters, getParent() != null, inmemory);
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
             myData.getUpdateMap().putAll(componentData.getUpdateMap());

@@ -7,17 +7,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.OptionalDouble;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -26,10 +23,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import roart.common.cache.MyCache;
-import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.model.ActionComponentDTO;
@@ -41,32 +36,19 @@ import roart.common.model.TimingDTO;
 import roart.common.model.util.MetaUtil;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
-import roart.common.util.TimeUtil;
-import roart.common.webflux.WebFluxUtil;
 import roart.iclij.component.Component;
 import roart.iclij.component.factory.ComponentFactory;
 import roart.component.model.ComponentData;
-import roart.component.util.IncDecUtil;
 import roart.constants.IclijConstants;
 import roart.controller.IclijController;
-import roart.db.dao.IclijDbDao;
-import roart.filesystem.FileSystemDao;
 import roart.iclij.config.IclijConfig;
-import roart.iclij.config.IclijConfigConstants;
-import roart.iclij.config.IclijXMLConfig;
-import roart.iclij.config.MLConfig;
-import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
-import roart.iclij.evolution.fitness.impl.FitnessAboveBelow;
 import roart.iclij.factory.actioncomponentconfig.ActionComponentConfigFactory;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.MapList;
 import roart.iclij.model.Parameters;
-import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.model.component.ComponentInput;
@@ -76,10 +58,7 @@ import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 import roart.iclij.service.util.MarketUtil;
 import roart.iclij.service.util.MiscUtil;
-import roart.iclij.verifyprofit.VerifyProfitUtil;
-import roart.util.ServiceUtil;
 import roart.model.io.IO;
-import roart.queue.PipelineThread;
 
 public abstract class MarketAction extends Action {
 
@@ -601,9 +580,9 @@ public abstract class MarketAction extends Action {
         // TODO bad
         Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config);
         PipelineData metadata = PipelineUtils.getPipeline(maps, PipelineConstants.META, inmemory);
-        PipelineData pipeline = PipelineUtils.getPipeline(maps, PipelineUtils.getMetaCat(metadata), inmemory);
-        String catName = PipelineUtils.getMetaCat(metadata);
-        Map<String, String> nameMap = PipelineUtils.getNamemap(PipelineUtils.getPipeline(maps, catName, inmemory));
+        PipelineData pipeline = PipelineUtils.getPipeline(maps, PipelineUtils.getMetaCat(metadata, inmemory), inmemory);
+        String catName = PipelineUtils.getMetaCat(metadata, inmemory);
+        Map<String, String> nameMap = PipelineUtils.getNamemap(PipelineUtils.getPipeline(maps, catName, inmemory), name, inmemory);
         log.info("TODO names {}", nameMap.size());
         inputdata.setNameMap(nameMap);
         }
@@ -838,7 +817,7 @@ public abstract class MarketAction extends Action {
         Map<String, String> nameMap = null;
         for (Entry<String, PipelineData> entry : PipelineUtils.getPipelineMap(maps).entrySet()) {
             PipelineData map = entry.getValue();
-            nameMap = PipelineUtils.getNamemap(map);
+            nameMap = PipelineUtils.getNamemap(map, name, inmemory);
             if (nameMap != null) {
                 break;
             }

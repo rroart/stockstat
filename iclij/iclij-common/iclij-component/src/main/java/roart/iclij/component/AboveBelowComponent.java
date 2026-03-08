@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.IncDecDTO;
 import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
@@ -34,8 +35,8 @@ public class AboveBelowComponent extends ComponentML {
 
     @Override
     public ComponentData handle(MarketActionData action, Market market, ComponentData param, ProfitData profitdata,
-            Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket,
-            Parameters parameters, boolean hasParent) {
+                                Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket,
+                                Parameters parameters, boolean hasParent, Inmemory inmemory) {
         long time0 = System.currentTimeMillis();
         ComponentData componentData = new ComponentData(param);
         

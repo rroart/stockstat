@@ -3,13 +3,12 @@ package roart.iclij.component;
 import java.util.List;
 import java.util.Map;
 
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.component.model.ComponentData;
-import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.Fitness;
-import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
@@ -29,14 +28,14 @@ public class FilterComponent extends ComponentML {
 
     @Override
     public ComponentData handle(MarketActionData action, Market market, ComponentData param, ProfitData profitdata,
-            Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket,
-            Parameters parameters, boolean hasParent) {
+                                Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket,
+                                Parameters parameters, boolean hasParent, Inmemory inmemory) {
         ComponentData componentData = new ComponentData(param);
 
         //int futuredays = (int) param.getService().conf.getAggregatorsIndicatorFuturedays();
         componentData.setFuturedays(0);
 
-        handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent);
+        handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent, inmemory);
         //Map resultMaps = param.getResultMap();
         //handleMLMeta(param, resultMaps);
         //Map<String, Object> resultMap = param.getResultMap();

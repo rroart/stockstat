@@ -7,11 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +33,6 @@ import roart.iclij.model.WebData;
 import roart.iclij.model.action.CrossTestActionData;
 import roart.iclij.service.util.MiscUtil;
 import roart.service.model.ProfitData;
-import roart.service.model.ProfitInputData;
 
 public class CrossTestAction extends MarketAction {
 
@@ -90,7 +85,7 @@ public class CrossTestAction extends MarketAction {
                 aMap.put(ConfigConstants.MISCMYDAYS, 0);
                 Memories positions = null;
                 param.getService().coremlconf.getConfigData().setDate(param.getFutureDate());
-                ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, getParent() != null);
+                ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, getParent() != null, inmemory);
                 Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 new PipelineThreadUtils(config, inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
                 MyCache.getInstance().invalidate(param.getId());

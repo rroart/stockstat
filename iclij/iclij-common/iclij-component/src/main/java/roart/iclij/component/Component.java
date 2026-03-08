@@ -16,6 +16,7 @@ import roart.common.config.ConfigConstants;
 import roart.common.config.Extra;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.ConfigDTO;
 import roart.common.model.IncDecDTO;
 import roart.common.model.MLMetricsDTO;
@@ -31,7 +32,6 @@ import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
 import roart.constants.IclijConstants;
-import roart.db.dao.IclijDbDao;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
@@ -47,7 +47,6 @@ import roart.iclij.filter.Memories;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.model.config.ActionComponentConfig;
-import roart.iclij.service.ControlService;
 import roart.iclij.service.util.MiscUtil;
 import roart.iclij.util.MLUtil;
 import roart.service.model.ProfitData;
@@ -85,11 +84,11 @@ public abstract class Component {
     
     public abstract void disable(Map<String, Object> valueMap);
     
-    public abstract ComponentData handle(MarketActionData action, Market market, ComponentData param, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters, boolean hasParent);
+    public abstract ComponentData handle(MarketActionData action, Market market, ComponentData param, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters, boolean hasParent, Inmemory inmemory);
     
     public abstract ComponentData improve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsDTO> mlTests, Fitness fitness, boolean save);
 
-    public abstract void handleMLMeta(ComponentData param, PipelineData mlMaps);
+    public abstract void handleMLMeta(ComponentData param, PipelineData mlMaps, Inmemory inmemory, PipelineData[] resultMaps);
 
     /*
      * We need to handle 11 actions
@@ -110,7 +109,7 @@ public abstract class Component {
      * SimulateInvest (manual)
      */
     
-    public void handle2(MarketActionData action, Market market, ComponentData param, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters, boolean hasParent) {
+    public void handle2(MarketActionData action, Market market, ComponentData param, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters, boolean hasParent, Inmemory inmemory) {
         /*
         try {
             param.setDates(null, null, action, market);
@@ -174,7 +173,7 @@ public abstract class Component {
         	// true for improveprofit impfilter findprofit crosstest machinelearn
                 // false fpt dataset evolve impabove impautosim impsim siminv
         	// TODO second getcontent call, special
-        	handleMLMetaCommon(param, valueMap);
+        	handleMLMetaCommon(param, valueMap, inmemory);
         }
         try {
         	if (IclijConstants.MACHINELEARNING.equals(action.getName())) {
@@ -644,14 +643,14 @@ public abstract class Component {
         return val;
     }
 
-    protected void handleMLMetaCommon(ComponentData param, Map<String, Object> valueMap) {
+    protected void handleMLMetaCommon(ComponentData param, Map<String, Object> valueMap, Inmemory inmemory) {
         // TODO second getcontent call, special
         PipelineData resultMaps = param.getResultMap(getPipeline(), valueMap, true, param.isKeepPipeline());
-        param.setCategory(resultMaps);
+        param.setCategory(resultMaps, inmemory);
         // TODO 3rd call, ordinary again
         param.getAndSetCategoryValueMapAlt();
         PipelineData resultMaps2 = param.getResultMap();
-        handleMLMeta(param, resultMaps2);        
+        handleMLMeta(param, resultMaps2, inmemory, param.getResultMaps());
     }
     
     public void saveTiming(Component component, ComponentData param, String subcomponent, String mlmarket,

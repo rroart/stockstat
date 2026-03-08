@@ -6,17 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 
 import roart.common.config.ConfigConstants;
-import roart.common.constants.Constants;
 import roart.common.constants.ServiceConstants;
-import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.ActionComponentDTO;
@@ -35,7 +28,6 @@ import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.DatasetActionData;
 import roart.service.model.ProfitData;
-import roart.service.model.ProfitInputData;
 
 public class DatasetAction extends MarketAction {
 
@@ -72,7 +64,7 @@ public class DatasetAction extends MarketAction {
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
             Memories positions = null;
             param.getService().coremlconf.getConfigData().setDataset(true);
-            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, null, null, getParent() != null);
+            ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, null, null, getParent() != null, inmemory);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);

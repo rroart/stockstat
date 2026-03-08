@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.RecommendConstants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.IncDecDTO;
 import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
@@ -98,7 +99,7 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public ComponentData handle(MarketActionData action, Market market, ComponentData componentparam, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters, boolean hasParent) {
+    public ComponentData handle(MarketActionData action, Market market, ComponentData componentparam, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters, boolean hasParent, Inmemory inmemory) {
     
         RecommenderData param = new RecommenderData(componentparam);        
         
@@ -106,7 +107,7 @@ public class ComponentRecommender extends ComponentNoML {
         futuredays = 0;
         param.setFuturedays(futuredays);
 
-        handle2(action, market, param, profitdata, positions, evolve && param.getConfig().wantEvolveRecommender(), aMap, subcomponent, mlmarket, parameters, hasParent);
+        handle2(action, market, param, profitdata, positions, evolve && param.getConfig().wantEvolveRecommender(), aMap, subcomponent, mlmarket, parameters, hasParent, inmemory);
 
         if (!evolve) {
         PipelineData resultMap = param.getResultMap();

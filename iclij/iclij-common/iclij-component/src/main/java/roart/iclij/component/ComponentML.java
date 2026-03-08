@@ -13,6 +13,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.model.ConfigDTO;
 import roart.common.model.MLMetricsDTO;
@@ -185,7 +186,7 @@ public abstract class ComponentML extends Component {
     }
 
     @Override
-    public void handleMLMeta(ComponentData componentparam, PipelineData mlMaps) {
+    public void handleMLMeta(ComponentData componentparam, PipelineData mlMaps, Inmemory inmemory, PipelineData[] resultMaps) {
         if (mlMaps == null) {
             return;
         }
@@ -195,7 +196,7 @@ public abstract class ComponentML extends Component {
         //List<ResultMeta> resultMeta = (List<ResultMeta>) mlMACDMaps.get(PipelineConstants.RESULTMETA);
         //List<Object> objectList = (List<Object>) mlMaps.get(PipelineConstants.RESULTMETA);
         //SerialMap smap = (SerialMap) mlMaps.smap().get(PipelineConstants.RESULT);
-        List<SerialResultMeta> resultMeta = PipelineUtils.getResultMeta(mlMaps);
+        List<SerialResultMeta> resultMeta = PipelineUtils.getResultMeta(resultMaps, getPipeline(), inmemory);
         //List<ResultMeta> resultMeta = JsonUtil.convertnostrip(objectList, new TypeReference<List<ResultMeta>>() { });
         param.setResultMeta(resultMeta);
     }

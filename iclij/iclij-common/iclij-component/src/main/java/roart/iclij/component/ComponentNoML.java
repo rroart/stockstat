@@ -15,10 +15,7 @@ import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.constants.IclijConstants;
 import roart.evolution.config.EvolutionConfig;
-import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
-import roart.iclij.config.IclijXMLConfig;
-import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.Parameters;
@@ -118,7 +115,7 @@ public abstract class ComponentNoML extends Component {
     }
 
     @Override
-    public void handleMLMeta(ComponentData param, PipelineData mlMaps) {        
+    public void handleMLMeta(ComponentData param, PipelineData mlMaps, Inmemory inmemory, PipelineData[] resultMaps) {
     }
 
 }
