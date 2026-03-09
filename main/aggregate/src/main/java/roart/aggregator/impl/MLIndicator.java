@@ -18,6 +18,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+import roart.common.pipeline.data.SerialObject;
 import tools.jackson.core.exc.StreamReadException;
 import tools.jackson.databind.DatabindException;
 
@@ -25,7 +26,6 @@ import roart.aggregatorindicator.impl.AggregatorMLIndicator;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.common.constants.Constants;
-import roart.common.constants.ResultMetaConstants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfig;
@@ -34,7 +34,6 @@ import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialResultMeta;
-import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
@@ -51,7 +50,6 @@ import roart.ml.model.LearnTestClassifyResult;
 import roart.pipeline.common.aggregate.Aggregator;
 import roart.pipeline.data.ExtraData;
 import roart.result.model.ResultItemTableRow;
-import roart.result.model.ResultMeta;
 import roart.talib.Ta;
 import roart.talib.impl.TalibMACD;
 
@@ -266,10 +264,10 @@ public class MLIndicator extends Aggregator {
         Map<Pair<String, String>, String> pairCatMap = null; // (Map<Pair<String, String>, String>) localResults.get(PipelineConstants.PAIRCAT);
         */
         log.info("KEY" + this.key + " " + PipelineUtils.getPipelineMapKeys(datareaders) + " " + title + " ");
-        List<String> dateList = PipelineUtils.getDatelist(datareader);
+        List<String> dateList = PipelineUtils.getDatelist(datareaders, key, inmemory);
 	List<String> dateList2 = new ArrayList<>(dateList); // StockDao.getDateList(conf.getConfigData().getMarket(), marketdatamap);
         if (extrareader.get(PipelineConstants.MARKETSTOCKS) != null) {
-            dateList = PipelineUtils.getDatelist(extrareader);
+            dateList = PipelineUtils.getDatelist(datareaders, PipelineConstants.EXTRAREADER, inmemory); // key
             Collections.sort(dateList);
         }
         Map<String, PipelineData> usedIndicatorMap = PipelineUtils.getPipelineMapStartsWith(datareaders, PipelineConstants.INDICATOR);
@@ -671,9 +669,9 @@ public class MLIndicator extends Aggregator {
             Object[] arrayResult = new Object[0];
             for (String indicator : indicators) {
                 String indicatorName = indicator;
-                PipelineData indicatorResult = PipelineUtils.getPipeline(datareaders, indicatorName, inmemory);
+                SerialObject indicatorResult = PipelineUtils.getPipelineValue(datareaders, indicatorName, PipelineConstants.LIST, inmemory);
                 if (indicatorResult != null) {
-                    Map<String, Double[][]> aListMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
+                    Map<String, Double[][]> aListMap = PipelineUtils.sconvertMapDD(indicatorResult);
                     Double[][] aResult = aListMap.get(id);
                     arrayResult = ArrayUtils.addAll(arrayResult, aResult[0]);
                 }
@@ -776,7 +774,7 @@ public class MLIndicator extends Aggregator {
                 }
                 PipelineData indicatorResult = PipelineUtils.getPipeline(datareaders, indicator);
                 if (indicatorResult != null) {
-                    PipelineData datareader = pipelineMap.get(this.key);
+                    PipelineData datareader = null; //PipelineUtils.getPipeline(this.key);
                     Map<String, Double[][]> aResult = (Map<String, Double[][]>) datareader.get(PipelineConstants.LIST);
                     //Map<String, Object[]> aResult = (Map<String, Object[]>) indicatorResult.get(PipelineConstants. LIST);
                     ids.retainAll(aResult.keySet());

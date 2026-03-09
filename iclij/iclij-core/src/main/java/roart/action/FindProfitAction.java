@@ -97,11 +97,11 @@ public class FindProfitAction extends MarketAction {
             aMap.put(key2, parameters.getFuturedays());
             
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
-            
+
+            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config);
             ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters, getParent() != null, inmemory);
             
-            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config);
-            Map<String, String> nameMap = PipelineUtils.getNamemap(PipelineUtils.getPipeline(componentData.getResultMaps(), componentData.getCategoryTitle(), inmemory), name, inmemory);
+            Map<String, String> nameMap = PipelineUtils.getNamemap(componentData.getResultMaps(), componentData.getCategoryTitle(), inmemory);
             log.info("TODO names {}", nameMap.size());
             profitdata.getInputdata().setNameMap(nameMap);
             
@@ -159,7 +159,8 @@ public class FindProfitAction extends MarketAction {
             aMap.put(key2, parameters.getFuturedays());
                         
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
-            
+
+            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
             ComponentData componentData = component.handle(getActionData(), market, param, profitdata, new Memories(market), evolve, aMap, marketTime.getSubcomponent(), null, parameters, getParent() != null, inmemory);
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);

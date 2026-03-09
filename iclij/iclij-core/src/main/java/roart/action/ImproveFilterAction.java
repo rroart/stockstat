@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.ServiceConstants;
-import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.ActionComponentDTO;
@@ -102,18 +101,18 @@ public class ImproveFilterAction extends MarketAction {
             
             //component.set(market, param, profitdata, positions, evolve);
             //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
-            // 0 ok?
-            param.getConfigValueMap().put(ConfigConstants.MISCMYTABLEDAYS, 0);
-            param.getConfigValueMap().put(ConfigConstants.MISCMYDAYS, 0);
+            // TODO 0 ok?
+            //param.getConfigValueMap().put(ConfigConstants.MISCMYTABLEDAYS, 0);
+            //param.getConfigValueMap().put(ConfigConstants.MISCMYDAYS, 0);
             param.getConfigValueMap().put(IclijConfigConstants.FINDPROFITMLDYNAMIC, Boolean.TRUE);
 
             // todo
             // done clean
             // todo ok?
-            param.getAndSetCategoryValueMap(false);
+            param. getAndSetCategoryValueMap(false);
             PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
-            Integer cat = PipelineUtils.getWantedcat(pipelineDatum);
-            String catName = PipelineUtils.getMetaCat(pipelineDatum);
+            Integer cat = PipelineUtils.getWantedcat(param.getResultMaps(), PipelineConstants.META, inmemory);
+            String catName = PipelineUtils.getMetaCat(param.getResultMaps(), inmemory);
             log.info("cats {} {}", cat, catName);
             param.setCategory(cat);
             param.setCategoryTitle(catName);

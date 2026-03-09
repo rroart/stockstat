@@ -1,6 +1,5 @@
 package roart.aggregator.impl;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,14 +11,9 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.SerialMapPlain;
-import roart.common.pipeline.data.TwoDimD;
-import roart.common.pipeline.data.TwoDimd;
 import roart.common.pipeline.util.PipelineUtils;
-import roart.indicator.util.IndicatorUtils;
-import roart.pipeline.Pipeline;
 import roart.pipeline.common.aggregate.Aggregator;
 import roart.result.model.ResultItemTableRow;
-import roart.stockutil.StockUtil;
 
 public class MACDBase extends Aggregator {
 
@@ -35,7 +29,7 @@ public class MACDBase extends Aggregator {
         if (macdmap == null) {
             return;
         }
-        SerialMapD resultObject2 = PipelineUtils.getResultMap(macdmap);
+        SerialMapD resultObject2 = PipelineUtils.getResultMap(datareaders, PipelineConstants.INDICATORMACD, inmemory);
 
         this.resultObject = resultObject2.getMap();
         
@@ -44,9 +38,9 @@ public class MACDBase extends Aggregator {
             log.info("empty {}", category);
             return;
         }
-        Map<String, Double[][]> aListMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
-        Map<String, double[][]> fillListMap = PipelineUtils.sconvertMapdd(datareader.get(PipelineConstants.TRUNCFILLLIST));
-        Map<String, double[][]>  base100FillListMap = PipelineUtils.sconvertMapdd(datareader.get(PipelineConstants.TRUNCBASE100FILLLIST));
+        Map<String, Double[][]> aListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, catName, PipelineConstants.LIST, inmemory));
+        Map<String, double[][]> fillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, catName, PipelineConstants.TRUNCFILLLIST, inmemory));
+        Map<String, double[][]>  base100FillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, catName, PipelineConstants.TRUNCBASE100FILLLIST, inmemory));
         this.listMap = fillListMap;
     }
 

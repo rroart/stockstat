@@ -1,32 +1,23 @@
 package roart.category.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
-import roart.common.model.MetaDTO;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.util.PipelineUtils;
-import roart.common.util.MathUtil;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.impl.Indicator;
 import roart.indicator.impl.IndicatorATR;
 import roart.indicator.impl.IndicatorCCI;
 import roart.indicator.impl.IndicatorMACD;
-import roart.indicator.impl.IndicatorMove;
 import roart.indicator.impl.IndicatorRSI;
 import roart.indicator.impl.IndicatorSTOCH;
 import roart.indicator.impl.IndicatorSTOCHRSI;
-import roart.indicator.util.IndicatorUtils;
-import roart.model.data.MarketData;
-import roart.model.data.PeriodData;
-import roart.pipeline.Pipeline;
-import roart.pipeline.impl.DataReader;
 import roart.result.model.ResultItemTableRow;
 import roart.stockutil.MetaUtil;
 import roart.stockutil.StockUtil;
@@ -49,7 +40,7 @@ public class CategoryPeriod extends Category {
         //List<StockDTO>[] datedstocklists = marketData.datedstocklists;
         //indicators.add(new IndicatorMove(conf, "Δ" + getTitle(), datedstocklists, period));
         PipelineData metadata = PipelineUtils.getPipeline(datareaders, PipelineConstants.META, inmemory);
-        SerialMeta meta = PipelineUtils.getMeta(metadata);
+        SerialMeta meta = PipelineUtils.getMeta(datareaders, PipelineConstants.META, inmemory);
         if (MetaUtil.currentYear(meta, periodText)) {
             indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", getTitle(), i, datareaders, false, inmemory));
             indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", getTitle(), i, datareaders, false, inmemory));

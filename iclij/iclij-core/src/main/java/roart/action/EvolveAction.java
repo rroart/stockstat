@@ -81,6 +81,7 @@ public class EvolveAction extends MarketAction {
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
             
             Memories positions = null;
+            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
             ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters, getParent() != null, inmemory);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
@@ -91,7 +92,7 @@ public class EvolveAction extends MarketAction {
                 return;
             }
             if (results != null) {
-                Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
+                //Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 QueueElement element = new QueueElement();
                 System.out.println("mmm"+results.toString());
                 System.out.println("mmm"+results.getMap().keySet());

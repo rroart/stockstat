@@ -9,7 +9,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.aggregator.impl.IndicatorAggregator.Filter;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
@@ -85,8 +84,8 @@ public class MLCCI extends IndicatorAggregator {
         List<SubType> wantedSubTypesList = new ArrayList<>();
         PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORCCI, inmemory);
         Object list = null;
-        SerialMapTA taObject = PipelineUtils.getMapTA(pipelineData);
-        SerialMapD resultObject = PipelineUtils.getResultMap(pipelineData);
+        SerialMapTA taObject = PipelineUtils.getMapTA(datareaders, PipelineConstants.INDICATORCCI, inmemory);
+        SerialMapD resultObject = PipelineUtils.getResultMap(datareaders, PipelineConstants.INDICATORCCI, inmemory);
         wantedSubTypesList.add(new CCISubTypeCCI(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE));
         return wantedSubTypesList;
     }

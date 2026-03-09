@@ -1,7 +1,5 @@
 package roart.common.pipeline.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +35,6 @@ import roart.common.pipeline.data.SerialMapDD;
 import roart.common.pipeline.data.SerialMapL;
 import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialMapTA;
-import roart.common.pipeline.data.SerialMapVolume;
 import roart.common.pipeline.data.SerialMapdd;
 import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.data.SerialObject;
@@ -44,7 +42,6 @@ import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.pipeline.data.SerialDouble;
 import roart.common.pipeline.data.SerialString;
 import roart.common.pipeline.data.SerialTA;
-import roart.common.pipeline.data.SerialVolume;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.data.TwoDimd;
 import roart.common.util.ArraysUtil;
@@ -117,6 +114,36 @@ public class PipelineUtils {
                     datareaders[i].setLoaded(true);
                     log.info("Pipeline read {} {}", datareaders[i].getId(), datareaders[i].getName());
                     return datareaders[i];
+                }
+            }
+        }
+        return null;
+    }
+
+    public static PipelineData getPipeline(PipelineData[] pipelines, String name, String key, Inmemory inmemory) {
+        return getPipeline(pipelines, name, key, null, inmemory);
+    }
+
+    public static PipelineData getPipeline(PipelineData[] pipelines, String name, String key, String secondKey, Inmemory inmemory) {
+        for (PipelineData pipeline : pipelines) {
+            if (pipeline.getName().equals(name) && pipeline.get(key).equals(key)) {
+                if (secondKey == null || secondKey.equals(pipeline.getSecondKey())) {
+                    return pipeline;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static SerialObject getPipelineValue(PipelineData[] pipelines, String name, String key, Inmemory inmemory) {
+        return getPipelineValue(pipelines, name, key, null, inmemory);
+    }
+
+    public static SerialObject getPipelineValue(PipelineData[] pipelines, String name, String key, String secondKey, Inmemory inmemory) {
+        for (PipelineData pipeline : pipelines) {
+            if (pipeline.getName().equals(name) && pipeline.get(key).equals(key)) {
+                if (secondKey == null || secondKey.equals(pipeline.getSecondKey())) {
+                    return pipeline.getValue();
                 }
             }
         }
@@ -490,86 +517,102 @@ public class PipelineUtils {
         return null;
     }
     
-    public static List<String> getDatelist(PipelineData data) {
-        SerialListPlain list = (SerialListPlain) data.get(PipelineConstants.DATELIST);
+    public static List<String> getDatelist(PipelineData @MonotonicNonNull [] data, String name, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, name, PipelineConstants.DATELIST, inmemory);
+        SerialListPlain list = (SerialListPlain) object;
         if (list != null) {
             return list.getList();
         }
         return null;
     }
     
-    public static Map getNamemap(PipelineData data) {
-        SerialMapPlain list = (SerialMapPlain) data.get(PipelineConstants.NAME);
+    public static Map getNamemap(PipelineData @MonotonicNonNull [] data, String name, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, name, PipelineConstants.NAME, inmemory);
+        SerialMapPlain list = (SerialMapPlain) object;
         if (list != null) {
             return list.getMap();
         }
         return null;
     }
 
-    public static Integer getWantedcat(PipelineData data) {
-        SerialInteger list = (SerialInteger) data.get(PipelineConstants.WANTEDCAT);
+    public static Integer getWantedcat(PipelineData @MonotonicNonNull [] data, String name, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, name, PipelineConstants.WANTEDCAT, inmemory);
+        SerialInteger list = (SerialInteger) object;
         if (list != null) {
             return list.getInteger();
         }
         return null;
     }
 
-    public static String getMetaCat(PipelineData data) {
-        SerialString list = (SerialString) data.get(PipelineConstants.CATEGORY);
+    public static String getMetaCat(PipelineData @MonotonicNonNull [] data, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, PipelineConstants.META, PipelineConstants.CATEGORY, inmemory);
+        SerialString list = (SerialString) object;
         if (list != null) {
             return list.getString();
         }
         return null;
     }
 
-    public static SerialMeta getMeta(PipelineData data) {
-        return (SerialMeta) data.get(PipelineConstants.META);
+    public static SerialMeta getMeta(PipelineData @MonotonicNonNull [] data, String name, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, name, PipelineConstants.META, inmemory);
+        return (SerialMeta) object;
     }
 
-    public static Integer getCat(PipelineData data) {
-        SerialInteger list = (SerialInteger) data.get(PipelineConstants.CATEGORY);
+    public static Integer getCat(PipelineData @MonotonicNonNull [] data, String name, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, name, PipelineConstants.CATEGORY, inmemory);
+        SerialInteger list = (SerialInteger) object;
         if (list != null) {
             return list.getInteger();
         }
         return null;
     }
 
-    public static Map<String, Long[]> getVolume(PipelineData data) {
-        SerialMapL list = (SerialMapL) data.get(PipelineConstants.VOLUME);
+    public static Map<String, Long[]> getVolume(PipelineData @MonotonicNonNull [] data, String name, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, name, PipelineConstants.VOLUME, inmemory);
+        SerialMapL list = (SerialMapL) object;
         if (list != null) {
             return list.getMap();
         }
         return null;
     }
 
-    public static Map getCurrency(PipelineData data) {
-        SerialMapPlain list = (SerialMapPlain) data.get(PipelineConstants.CURRENCY);
+    public static Map getCurrency(PipelineData @MonotonicNonNull [] data, String name, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, name, PipelineConstants.CURRENCY, inmemory);
+        SerialMapPlain list = (SerialMapPlain) object;
         if (list != null) {
             return list.getMap();
         }
         return null;
     }
 
-    public static String getCatTitle(PipelineData data) {
-        SerialString string = (SerialString) data.get(PipelineConstants.CATEGORYTITLE);
+    public static String getCatTitle(PipelineData @MonotonicNonNull [] data, String name, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, name, PipelineConstants.CATEGORYTITLE, inmemory);
+        SerialString string = (SerialString) object;
         if (string != null) {
             return string.getString();
         }
         return null;
     }
 
-    public static List<SerialResultMeta> getResultMeta(PipelineData data) {
-        SerialList<SerialResultMeta> list = (SerialList<SerialResultMeta>) data.get(PipelineConstants.RESULTMETA);
+    public static List<SerialResultMeta> getResultMeta(PipelineData[] data, String name, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, name, PipelineConstants.RESULTMETA, inmemory);
+        SerialList<SerialResultMeta> list = (SerialList<SerialResultMeta>) object;
         if (list != null) {
             return list.getList();
         }
         return null;
     }
 
-    public static SerialMapTA getMapTA(PipelineData data) {
-        return (SerialMapTA) data.get(PipelineConstants.OBJECT);
+    public static SerialMapTA getMapTA(PipelineData @MonotonicNonNull [] data, String name, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, name, PipelineConstants.OBJECT, inmemory);
+        SerialMapTA objectMap = (SerialMapTA) object;
+        if (objectMap != null) {
+            return objectMap;
+        }
+        return null;
     }
 
+    // TODO not quite working?
     public static Map<String, SerialTA> getObjectMap(PipelineData data) {
         SerialMapTA objectMap = (SerialMapTA) data.get(PipelineConstants.OBJECT);
         if (objectMap != null) {
@@ -577,7 +620,16 @@ public class PipelineUtils {
         }
         return null;
     }
-    
+
+    public static Map<String, SerialTA> getObjectMap(PipelineData[] data, String name, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, name, PipelineConstants.OBJECT, inmemory);
+        SerialMapTA objectMap = (SerialMapTA) object;
+        if (objectMap != null) {
+            return objectMap.getMap();
+        }
+        return null;
+    }
+
     public static Map getMarketObjectMap(PipelineData data) {
         // TODO if this is serialized
         SerialMap map = (SerialMap) data.get(PipelineConstants.MARKETOBJECT);
@@ -587,8 +639,9 @@ public class PipelineUtils {
         return null;
     }
     
-    public static SerialMapD getResultMap(PipelineData data) {
-        return (SerialMapD) data.get(PipelineConstants.RESULT);
+    public static SerialMapD getResultMap(PipelineData @MonotonicNonNull [] data, String name, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, name, PipelineConstants.RESULT, inmemory);
+        return (SerialMapD) object;
     }
 
     public static Map getDatareader(PipelineData data) {
@@ -596,13 +649,15 @@ public class PipelineUtils {
         return map.getMap();
     }
 
-    public static List getMarketstocks(PipelineData data) {
-        SerialList map = (SerialList) data.get(PipelineConstants.MARKETSTOCKS);
+    public static List getMarketstocks(PipelineData @MonotonicNonNull [] data, String name, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, name, PipelineConstants.MARKETSTOCKS, inmemory);
+        SerialList map = (SerialList) object;
         return map.getList();
     }
 
-    public static Map getAccuracyMap(PipelineData data) {
-        SerialMapPlain map = (SerialMapPlain) data.get(PipelineConstants.ACCURACY);
+    public static Map getAccuracyMap(PipelineData[] data, String name, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, name, PipelineConstants.ACCURACY, inmemory);
+        SerialMapPlain map = (SerialMapPlain) object;
         return map.getMap();
     }
 
@@ -696,6 +751,8 @@ public class PipelineUtils {
                     String[] split = serviceIdUuid.split("/");
                     String serviceId = split[0];
                     String id = split[1];
+                    log.info("Pipe " + data.getName() + " " + serviceId + " " + id + " " + data.getUsedKeys() + " " + data.getSmap().keySet() + " " + data.getMap().keySet());
+                    //   todo
                     msg = inmemory.send(id + "-" + data.getName(), data, md5);
                     log.info("Sent size {} {} {}", msg.getId(), msg.getCount(), JsonUtil.convert(data, mapper).length());
                     //result.message = msg;

@@ -1,8 +1,5 @@
 package roart.aggregator.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,37 +9,26 @@ import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import tools.jackson.core.exc.StreamReadException;
-import tools.jackson.databind.DatabindException;
-import tools.jackson.databind.ObjectMapper;
-
 import roart.aggregatorindicator.impl.Recommend;
 import roart.category.AbstractCategory;
-import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.SerialMapPlain;
-import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.gene.CalcGene;
-import roart.gene.impl.CalcComplexGene;
-import roart.gene.impl.CalcDoubleGene;
 import roart.gene.impl.CalcGeneUtils;
-import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockDTO;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
-import roart.pipeline.Pipeline;
 import roart.result.model.ResultItemTableRow;
 import roart.stockutil.StockUtil;
 import roart.model.data.MarketData;
 import roart.talib.util.TaUtil;
 import roart.pipeline.common.aggregate.Aggregator;
-import roart.pipeline.impl.DataReader;
 
 public class AggregatorRecommenderIndicator extends Aggregator {
 
@@ -90,11 +76,11 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                     }
                 }
                 // fix
-                PipelineData indicatorResultMap = cat.putData().get(indicator);
+                PipelineData[] indicatorResultMap = new PipelineData[] { cat.putData().get(indicator) };
                 if (indicatorResultMap != null) {
-                    log.info("III" + indicator + " " + indicatorResultMap.getAllKeys());
+                    log.info("III" + indicator + " " + indicatorResultMap[0].getAllKeys());
                     //Map<String, Object[]> aResult = (Map<String, Object[]>) indicatorResultMap.get(PipelineConstants.LIST);
-                    SerialMapD aResult = PipelineUtils.getResultMap(indicatorResultMap);
+                    SerialMapD aResult = PipelineUtils.getResultMap(indicatorResultMap, indicator, inmemory);
                     if (aResult != null && aResult.getMap() != null && aResult.keySet() != null) {
                         log.info("AAA"+ids + " " + aResult.keySet());
                     ids.retainAll(aResult.keySet());

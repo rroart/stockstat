@@ -10,14 +10,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.curator.framework.CuratorFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.jackson.core.exc.StreamReadException;
 import tools.jackson.databind.DatabindException;
-import tools.jackson.databind.ObjectMapper;
 
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
@@ -30,19 +27,15 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialList;
 import roart.common.pipeline.data.SerialListMap;
-import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialNeuralNetConfig;
 import roart.common.pipeline.data.SerialScoreChromosome;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
-import roart.common.webflux.WebFluxUtil;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
-import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.NeuralNetChromosome;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.species.Individual;
-import roart.filesystem.FileSystemDao;
 import roart.gene.NeuralNetConfigGene;
 import roart.gene.NeuralNetConfigGeneFactory;
 import roart.iclij.config.IclijConfig;
@@ -413,8 +406,8 @@ public class MachineLearningEvolutionService {
     public StockData getStockData(PipelineData[] pipelineData, Inmemory inmemory) {
         StockData stockData = new StockData();
         PipelineData pipelineDatum = PipelineUtils.getPipeline(pipelineData, PipelineConstants.META, inmemory);
-        stockData.cat = PipelineUtils.getWantedcat(pipelineDatum);
-        stockData.catName = PipelineUtils.getMetaCat(pipelineDatum);
+        stockData.cat = PipelineUtils.getWantedcat(pipelineData, PipelineConstants.META, inmemory);
+        stockData.catName = PipelineUtils.getMetaCat(pipelineData, inmemory);
         return stockData;
     }
 

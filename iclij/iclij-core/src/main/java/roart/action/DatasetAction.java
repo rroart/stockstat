@@ -64,6 +64,7 @@ public class DatasetAction extends MarketAction {
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
             Memories positions = null;
             param.getService().coremlconf.getConfigData().setDataset(true);
+            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config);
             ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, null, null, getParent() != null, inmemory);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
@@ -71,7 +72,7 @@ public class DatasetAction extends MarketAction {
             }
             PipelineData results = componentData.getResultMap();
             if (results != null) {
-                Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
+                //Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 QueueElement element = new QueueElement();
                 InmemoryMessage msg = inmemory.send(ServiceConstants.EVOLVEFILTEREVOLVE + UUID.randomUUID(), results, null);
                 element.setOpid(ServiceConstants.EVOLVE);

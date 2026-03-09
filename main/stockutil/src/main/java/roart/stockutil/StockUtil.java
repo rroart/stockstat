@@ -1,9 +1,7 @@
 package roart.stockutil;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -1282,10 +1280,10 @@ public class StockUtil {
     public StockData getStockData(IclijConfig conf, PipelineData[] pipelineData, Inmemory inmemory) {
         StockData stockData = new StockData();
         PipelineData pipelineDatum = PipelineUtils.getPipeline(pipelineData, PipelineConstants.META, inmemory);
-        stockData.cat = PipelineUtils.getWantedcat(pipelineDatum);
-        stockData.catName = PipelineUtils.getMetaCat(pipelineDatum);
-        stockData.idNameMap = PipelineUtils.getNamemap(pipelineDatum);
-        stockData.stockdates = PipelineUtils.getDatelist(pipelineDatum);
+        stockData.cat = PipelineUtils.getWantedcat(pipelineData, PipelineConstants.META, inmemory);
+        stockData.catName = PipelineUtils.getMetaCat(pipelineData, inmemory);
+        stockData.idNameMap = PipelineUtils.getNamemap(pipelineData, PipelineConstants.META, inmemory);
+        stockData.stockdates = PipelineUtils.getDatelist(pipelineData, PipelineConstants.META, inmemory);
         return stockData;
     }
 

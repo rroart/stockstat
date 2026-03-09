@@ -57,7 +57,7 @@ public class PredictorIT {
             System.out.println(conf.getConfigData().getConfigValueMap().keySet());
             StockData stockdata = new TestData().getStockdata(conf);
             System.out.println("mark" + conf.getConfigData().getMarket());
-            datareaders[0] = new DataReader(conf, stockdata.marketdatamap, Constants.INDEXVALUECOLUMN, TestConstants.MARKET).putData();
+            datareaders = new DataReader(conf, stockdata.marketdatamap, Constants.INDEXVALUECOLUMN, TestConstants.MARKET).putData();
 
             Inmemory inmemory = null;
             List<Predictor> predictors = List.of( 

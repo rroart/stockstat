@@ -1,6 +1,5 @@
 package roart.category.util;
 
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
@@ -11,8 +10,6 @@ import java.util.Map;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
 import roart.category.AbstractCategory;
@@ -64,7 +61,7 @@ public class CategoryUtilTest {
 
           ExtraReader extraReader = new ExtraReader(conf, stockData.marketdatamap, 0, stockData);
           Pipeline[] datareaders = iu.getDataReaders(conf, stockData.periodText,
-                  stockData.marketdatamap, stockData, extraStockDataMap, extraReader);
+                  stockData.marketdatamap, stockData, extraStockDataMap, extraReader, inmemory);
 
           pipelinedata = iu.createDatareaderPipelineData(conf, pipelinedata, stockData, datareaders);
 

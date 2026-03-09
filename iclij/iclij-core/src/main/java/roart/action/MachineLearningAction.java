@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.ActionComponentDTO;
 import roart.common.model.IncDecDTO;
 import roart.common.model.MLMetricsDTO;
@@ -76,6 +77,7 @@ public class MachineLearningAction extends MarketAction {
             
             boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
             //component.set(market, param, profitdata, positions, evolve);
+            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config);
             ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters, getParent() != null, inmemory);
         }
     }

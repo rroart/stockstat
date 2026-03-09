@@ -85,8 +85,8 @@ public class CrossTestAction extends MarketAction {
                 aMap.put(ConfigConstants.MISCMYDAYS, 0);
                 Memories positions = null;
                 param.getService().coremlconf.getConfigData().setDate(param.getFutureDate());
+                Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config);
                 ComponentData componentData = component.handle(getActionData(), market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, getParent() != null, inmemory);
-                Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 new PipelineThreadUtils(config, inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
                 MyCache.getInstance().invalidate(param.getId());
                 Map<String, Object> updateMap = componentData.getUpdateMap();

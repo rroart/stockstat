@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.util.JsonUtil;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.MetaDTO;
@@ -52,16 +53,6 @@ public class Extract {
     */
     
     public StockData getStockData(IclijConfig conf, String market, boolean disableCache) {
-        List<StockDTO> stocks = null;
-        try {
-            stocks = dbDao.getAll(market, conf, disableCache);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        if (stocks == null) {
-            return null;
-        }
-        log.info("stocks {}", stocks.size());
         String[] periodText;
         periodText = DbDaoUtil.getPeriodText(market, conf, dbDao);
         MetaDTO meta = null;
@@ -70,6 +61,21 @@ public class Extract {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+
+        int batchSize = conf.getDbBatchsize();
+        List<StockDTO> stocks = null;
+        try {
+            stocks = dbDao.getAll(market, conf, disableCache);
+            int batch = 0;
+            //stocks = dbDao.getAll(market, conf, disableCache, batch, batchSize);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        if (stocks == null) {
+            return null;
+        }
+        log.info("stocks {}", stocks.size());
+        //log.info("stocks {}", JsonUtil.convert(stocks));
         return getStockData(conf, market, stocks, meta, periodText);
     }
 

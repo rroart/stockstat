@@ -1,26 +1,10 @@
 package roart.pipeline.impl;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import org.apache.commons.lang3.ArrayUtils;
-
+import roart.common.pipeline.data.*;
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialList;
-import roart.common.pipeline.data.SerialListPlain;
-import roart.common.pipeline.data.SerialMapD;
-import roart.common.pipeline.data.SerialMapDD;
-import roart.common.pipeline.data.SerialMapL;
-import roart.common.pipeline.data.SerialMapPlain;
-import roart.common.pipeline.data.SerialMapVolume;
-import roart.common.pipeline.data.SerialMapdd;
-import roart.common.pipeline.data.SerialVolume;
-import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.ArraysUtil;
 import roart.common.util.TimeUtil;
 import roart.common.constants.CategoryConstants;
@@ -60,25 +44,25 @@ public class DataReader extends Pipeline {
     private Map<String, String> currencyMap;
     
     @Override
-    public PipelineData putData() {
-        PipelineData map = getData();
+    public PipelineData[] putData() {
+        PipelineData[] map = getData();
         if (categoryTitle == null) {
             int jj = 0;
         }
-        map.setName(categoryTitle);
-        map.put(PipelineConstants.LIST, new SerialMapDD(listMap));
-        map.put(PipelineConstants.VOLUME, new SerialMapL(volumeMap));
-        map.put(PipelineConstants.CURRENCY, new SerialMapPlain(currencyMap));
-        map.put(PipelineConstants.FILLLIST, new SerialMapDD(fillListMap));
-        map.put(PipelineConstants.BASE100LIST, new SerialMapDD(base100ListMap));
-        map.put(PipelineConstants.BASE100FILLLIST, new SerialMapDD(base100FillListMap));
-        map.put(PipelineConstants.TRUNCLIST, new SerialMapdd(truncListMap));
-        map.put(PipelineConstants.TRUNCFILLLIST, new SerialMapdd(truncFillListMap));
-        map.put(PipelineConstants.TRUNCBASE100LIST, new SerialMapdd(truncBase100ListMap));
-        map.put(PipelineConstants.TRUNCBASE100FILLLIST, new SerialMapdd(truncBase100FillListMap));
-        map.put(PipelineConstants.NAME, new SerialMapPlain(nameMap));
-        map.put(PipelineConstants.DATELIST, new SerialListPlain(dateList));
-        map.put(PipelineConstants.CATEGORYTITLE, categoryTitle);
+        //map.setName(categoryTitle);
+        List<PipelineData> list = new ArrayList<>();
+        list.add(new PipelineData(categoryTitle, PipelineConstants.LIST, null, new SerialMapDD(listMap)));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.VOLUME, null, new SerialMapL(volumeMap)));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.CURRENCY, null, new SerialMapPlain(currencyMap)));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.FILLLIST, null, new SerialMapDD(fillListMap)));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.BASE100LIST, null, new SerialMapDD(base100ListMap)));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.TRUNCFILLLIST, null, new SerialMapdd(truncFillListMap)));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.TRUNCBASE100LIST, null, new SerialMapdd(truncBase100ListMap)));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.TRUNCBASE100FILLLIST, null, new SerialMapdd(truncBase100FillListMap)));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.NAME, null, new SerialMapPlain(nameMap)));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.DATELIST, null, new SerialListPlain(dateList)));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.CATEGORYTITLE, null, new SerialString(categoryTitle))); // TODO
+        map = (PipelineData[]) list.toArray();
         return map;
     }
     

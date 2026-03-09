@@ -8,6 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.inmemory.model.Inmemory;
 import roart.iclij.model.action.MarketActionData;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
@@ -64,8 +65,9 @@ public class FitnessIclijConfigMapCommon {
             // TODO disable caching
             
             param.getInput().getConfigData().getConfigValueMap().putAll(map);
-            
-            ComponentData componentData2 = component.handle(action, market, param, profitdata, listMap, evolve, map, subcomponent, null, parameters, false);
+
+            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getConfig());
+            ComponentData componentData2 = component.handle(action, market, param, profitdata, listMap, evolve, map, subcomponent, null, parameters, false, inmemory); // TODO
             String titletext = (String) componentData2.getUpdateMap().get(EvolveConstants.TITLETEXT);
             titletexts.add(titletext);
             Object[] result = component.calculateAccuracy(componentData2);

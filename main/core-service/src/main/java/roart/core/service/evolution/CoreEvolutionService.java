@@ -112,7 +112,7 @@ public class CoreEvolutionService {
             pipelineData = ArrayUtils.add(pipelineData, singlePipelineData);
    
             for (Pipeline datareader : datareaders) {
-                pipelineData = ArrayUtils.add(pipelineData, datareader.putData());
+                pipelineData = (PipelineData[]) ArrayUtils.add(pipelineData, datareader.putData());
             }
 
             // no...get this from the category

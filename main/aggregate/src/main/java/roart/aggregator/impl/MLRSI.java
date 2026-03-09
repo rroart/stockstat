@@ -16,7 +16,6 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.SerialMapTA;
-import roart.common.pipeline.data.SerialTA;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.ml.dao.MLClassifyDao;
 import roart.talib.util.TaConstants;
@@ -135,15 +134,15 @@ public class MLRSI extends IndicatorAggregator {
             if (conf.isRSIEnabled()) {
                 PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORRSI, inmemory);
                 Object list = null;
-                SerialMapTA taObject = PipelineUtils.getMapTA(pipelineData);
-                SerialMapD resultObject = PipelineUtils.getResultMap(pipelineData);
+                SerialMapTA taObject = PipelineUtils.getMapTA(datareaders, PipelineConstants.INDICATORRSI, inmemory);
+                SerialMapD resultObject = PipelineUtils.getResultMap(datareaders, PipelineConstants.INDICATORRSI, inmemory);
                 wantedSubTypesList.add(new SubTypeRSI(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf));
             }
             if (conf.isSTOCHRSIEnabled()) {
                 PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCHRSI, inmemory);
                 Object list = null;
-                SerialMapTA taObject = PipelineUtils.getMapTA(pipelineData);
-                SerialMapD resultObject = PipelineUtils.getResultMap(pipelineData);
+                SerialMapTA taObject = PipelineUtils.getMapTA(datareaders, PipelineConstants.INDICATORSTOCHRSI, inmemory);
+                SerialMapD resultObject = PipelineUtils.getResultMap(datareaders, PipelineConstants.INDICATORSTOCHRSI, inmemory);
                 wantedSubTypesList.add(new SubTypeSRSI(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf));
             }
         }

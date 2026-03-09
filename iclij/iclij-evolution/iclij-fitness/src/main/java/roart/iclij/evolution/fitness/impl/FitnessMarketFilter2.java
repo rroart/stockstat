@@ -11,10 +11,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -230,7 +226,8 @@ public class FitnessMarketFilter2 {
             // plus borrow from verifyprofit
             //myaction.filterIncDecs(param, market, profitdata, maps, true);
             */
-            ComponentData componentData = component.handle(action, market, param, profitdata, new Memories(market), myevolve /*evolve && evolvefirst*/, map, subcomponent, null, parameters, false);
+            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getConfig());
+            ComponentData componentData = component.handle(action, market, param, profitdata, new Memories(market), myevolve /*evolve && evolvefirst*/, map, subcomponent, null, parameters, false, inmemory);
             //componentData.setUsedsec(time0);
             myData.getUpdateMap().putAll(componentData.getUpdateMap());
             List<MemoryDTO> memories;
@@ -254,7 +251,7 @@ public class FitnessMarketFilter2 {
 
             //component.enableDisable(componentData, positions, param.getConfigValueMap(), buy);
 
-            ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map, subcomponent, null, parameters, false);
+            ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map, subcomponent, null, parameters, false, null /*inmemory*/); // TODO
             component.calculateIncDec(componentData2, profitdata, positions, buy, mlTests, parameters);
 
             short startoffset = new MarketUtil().getStartoffset(market);
@@ -278,7 +275,7 @@ public class FitnessMarketFilter2 {
                 // TODO fixed getcontent number two
                 new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, listInc, listDec, new ArrayList<>(), startoffset, parameters.getThreshold(), param, null, market);
             }
-            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getConfig().getInmemoryServer(), param.getConfig().getInmemoryHazelcast(), param.getConfig().getInmemoryRedis());
+            //Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getConfig().getInmemoryServer(), param.getConfig().getInmemoryHazelcast(), param.getConfig().getInmemoryRedis());
             new PipelineThreadUtils(param.getConfig(), inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

@@ -15,17 +15,17 @@ public abstract class Pipeline {
     protected IclijConfig conf;
     protected int category;
 
-    private PipelineData data = new PipelineData();
+    private PipelineData[] data = new PipelineData[0];
         
     public Pipeline(IclijConfig conf, int category) {
         this.conf = conf;
         this.category = category;
     }
 
-    public abstract PipelineData putData();
+    public abstract PipelineData[] putData();
     public abstract String pipelineName();
     
-    public PipelineData getData() {
+    public PipelineData[] getData() {
         return data;
     }
 }

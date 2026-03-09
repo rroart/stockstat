@@ -40,7 +40,6 @@ import roart.common.pipeline.data.SerialList;
 import roart.common.pipeline.data.SerialListMap;
 import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialListSimulateStock;
-import roart.common.pipeline.data.SerialListStockHistory;
 import roart.common.pipeline.data.SerialScoreChromosome;
 import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.pipeline.util.PipelineUtils;
@@ -67,11 +66,9 @@ import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.util.MarketUtil;
 import roart.service.model.ProfitData;
 import roart.simulate.model.SimulateStock;
-import roart.simulate.model.StockHistory;
 import roart.simulate.util.SimUtil;
 
 import java.util.function.Function;
-import roart.common.pipeline.data.SerialObject;
 
 public class SimulateInvestRunAction extends MarketAction {
 
@@ -213,7 +210,7 @@ public class SimulateInvestRunAction extends MarketAction {
                 boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
                 int i = 0;
                 for (Entry<Long, SimDataDTO> entry2 : restmap.entrySet()) {
-                    //if (i++ > 3) break;
+                    if (i++ > 3) break;
                     SimulateInvestConfig aConf; // = simsConfigs.get(i).getRight();
                     SimDataDTO simData = entry2.getValue();
                     SimulateInvestConfig simConf = new SimUtil().getSimulateInvestConfig(config, simData);
@@ -233,14 +230,14 @@ public class SimulateInvestRunAction extends MarketAction {
                     //SerialMeta meta = PipelineUtils.getMeta(metaData);
                     //String catName = new MetaUtil().getCategory(meta,  cat);
                     PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
-                    Integer cat = PipelineUtils.getWantedcat(pipelineDatum);
-                    String catName = PipelineUtils.getMetaCat(pipelineDatum);
+                    Integer cat = PipelineUtils.getWantedcat(param.getResultMaps(), PipelineConstants.META, inmemory);
+                    String catName = PipelineUtils.getMetaCat(param.getResultMaps(), inmemory);
                     log.info("cats {} {}", cat, catName);
                     param.setCategory(cat);
                     param.setCategoryTitle(catName);
                     param.getAndSetCategoryValueMapAlt();
 
-                    ComponentData componentData = component.handle(getActionData(), myMarket, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null, getParent() != null);
+                    ComponentData componentData = component.handle(getActionData(), myMarket, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null, getParent() != null, inmemory);
 
                     Map<String, Object> updateMap = componentData.getUpdateMap();
                     if (updateMap != null) {

@@ -9,7 +9,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.aggregator.impl.IndicatorAggregator.Filter;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
@@ -18,7 +17,6 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.SerialMapTA;
-import roart.common.pipeline.data.SerialTA;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.ml.dao.MLClassifyDao;
 import roart.talib.util.TaConstants;
@@ -86,8 +84,8 @@ public class MLATR extends IndicatorAggregator {
         List<SubType> wantedSubTypesList = new ArrayList<>();
         PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORATR, inmemory);
         Object list = null;
-        SerialMapTA taObject = PipelineUtils.getMapTA(pipelineData);
-        SerialMapD resultObject = PipelineUtils.getResultMap(pipelineData);
+        SerialMapTA taObject = PipelineUtils.getMapTA(datareaders, PipelineConstants.INDICATORATR, inmemory);
+        SerialMapD resultObject = PipelineUtils.getResultMap(datareaders, PipelineConstants.INDICATORATR, inmemory);
         wantedSubTypesList.add(new ATRSubTypeATR(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE));
         return wantedSubTypesList;
     }

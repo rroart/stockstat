@@ -167,8 +167,8 @@ public class ImproveAboveBelowAction extends MarketAction {
                 param.getAndSetCategoryValueMap(false);
                 Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
-                Integer cat = PipelineUtils.getWantedcat(pipelineDatum, name, inmemory);
-                String catName = PipelineUtils.getMetaCat(pipelineDatum, inmemory);
+                Integer cat = PipelineUtils.getWantedcat(param.getResultMaps(), PipelineConstants.META, inmemory);
+                String catName = PipelineUtils.getMetaCat(param.getResultMaps(), inmemory);
                 log.info("cats {} {}", cat, catName);
                 param.setCategory(cat);
                 param.setCategoryTitle(catName);
@@ -361,7 +361,8 @@ public class ImproveAboveBelowAction extends MarketAction {
             aMap.put(key2, parameters.getFuturedays());
                         
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
-            
+
+            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
             ComponentData componentData = component.handle(getActionData(), market, param, profitdata, new Memories(market), evolve, aMap, subcomponent, null, parameters, getParent() != null, inmemory);
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
@@ -402,7 +403,8 @@ public class ImproveAboveBelowAction extends MarketAction {
             aMap.put(key2, parameters.getFuturedays());
                         
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
-            
+
+            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
             ComponentData componentData = component.handle(getActionData(), market, param, profitdata, new Memories(market), evolve, aMap, subcomponent, null, parameters, getParent() != null, inmemory);
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);

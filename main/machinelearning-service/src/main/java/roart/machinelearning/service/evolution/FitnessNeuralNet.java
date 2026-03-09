@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
-import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.model.PipelineResultData;
 import roart.common.pipeline.util.PipelineUtils;
@@ -71,7 +70,7 @@ public class FitnessNeuralNet extends Fitness {
             return 0;
         }
         // nothing is written to inmemory, so will not need to clean
-        Map<String, Object> accuracyMap = PipelineUtils.getAccuracyMap(pipelineData.putData());
+        Map<String, Object> accuracyMap = PipelineUtils.getAccuracyMap(new PipelineData[] {pipelineData.putData() }, "", inmemory);
         if (accuracyMap == null) {
             return 0;
         }

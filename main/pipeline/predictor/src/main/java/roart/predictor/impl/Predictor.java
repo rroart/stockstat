@@ -1,9 +1,7 @@
 package roart.predictor.impl;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,41 +13,28 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
-
-import tools.jackson.databind.ObjectMapper;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
-import roart.common.constants.ResultMetaConstants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
-import roart.common.ml.NeuralNetTensorflowConfig;
-import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.util.MathUtil;
 import roart.common.util.JsonUtil;
-import roart.indicator.util.IndicatorUtils;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
 import roart.ml.dao.MLClassifyDao;
 import roart.ml.model.LearnTestClassifyResult;
-import roart.pipeline.Pipeline;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.result.model.ResultItemTableRow;
-import roart.result.model.ResultMeta;
-import roart.stockutil.StockUtil;
 import roart.ml.model.LearnClassify;
-import roart.common.pipeline.data.TwoDimD;
-import roart.common.pipeline.data.TwoDimd;
 import roart.common.pipeline.util.PipelineUtils;
 
 public abstract class Predictor extends AbstractPredictor {
@@ -182,7 +167,7 @@ public abstract class Predictor extends AbstractPredictor {
         accuracyMap = new HashMap<>();
         lossMap = new HashMap<>();
 
-        List<String> dateList = PipelineUtils.getDatelist(PipelineUtils.getPipeline(datareaders, key, inmemory));
+        List<String> dateList = PipelineUtils.getDatelist(datareaders, key, inmemory);
         Integer days = conf.getDays();
         if (days == 0) {
             days = dateList.size();

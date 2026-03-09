@@ -3,7 +3,6 @@ package roart.iclij.evolution.fitness.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,12 +119,13 @@ public class FitnessConfigMap extends Fitness {
             // TODO put higher up, maybe in action?
             param.setDisableCache(true); // for improveprofit
             // NOT param.setId(UUID.randomUUID().toString());
-            
-            ComponentData componentData2 = component.handle(action, market, param, profitdata, listMap, evolve, gene.getMap(), subcomponent, null, parameters, false);
+
+            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getConfig());
+            ComponentData componentData2 = component.handle(action, market, param, profitdata, listMap, evolve, gene.getMap(), subcomponent, null, parameters, false, inmemory);
             Object[] result = component.calculateAccuracy(componentData2);
             score = (Double) result[0];
             titletext = (String) componentData2.getUpdateMap().get(EvolveConstants.TITLETEXT);
-            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getConfig().getInmemoryServer(), param.getConfig().getInmemoryHazelcast(), param.getConfig().getInmemoryRedis());
+            //Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getConfig().getInmemoryServer(), param.getConfig().getInmemoryHazelcast(), param.getConfig().getInmemoryRedis());
             // TODO check
             new PipelineThreadUtils(param.getConfig(), inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
         } catch (Exception e) {

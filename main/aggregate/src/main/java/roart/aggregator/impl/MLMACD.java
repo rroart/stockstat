@@ -1,51 +1,24 @@
 package roart.aggregator.impl;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tools.jackson.databind.ObjectMapper;
-
-import roart.aggregator.impl.IndicatorAggregator.MergeSubType;
-import roart.aggregator.impl.IndicatorAggregator.MySubType;
-import roart.aggregator.impl.IndicatorAggregator.SubType;
 import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetCommand;
-import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.SerialMapTA;
 import roart.common.pipeline.util.PipelineUtils;
-import roart.common.util.ArraysUtil;
-import roart.db.dao.DbDao;
-import roart.executor.MyExecutors;
-import roart.indicator.util.IndicatorUtils;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.ml.dao.MLClassifyDao;
-import roart.ml.dao.MLClassifyLearnTestPredictCallable;
-import roart.ml.model.LearnTestClassifyResult;
-import roart.ml.common.MLClassifyModel;
-import roart.result.model.ResultItemTable;
-import roart.result.model.ResultItemTableRow;
-import roart.result.model.ResultMeta;
-import roart.talib.Ta;
 import roart.talib.impl.TalibMACD;
 import roart.talib.util.TaConstants;
 
@@ -173,8 +146,8 @@ public class MLMACD extends IndicatorAggregator {
         List<SubType> wantedSubTypesList = new ArrayList<>();
         PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORMACD, inmemory);
         Object list = null;
-        SerialMapTA taObject = PipelineUtils.getMapTA(pipelineData);
-        SerialMapD resultObject = PipelineUtils.getResultMap(pipelineData);
+        SerialMapTA taObject = PipelineUtils.getMapTA(datareaders, PipelineConstants.INDICATORMACD, inmemory);
+        SerialMapD resultObject = PipelineUtils.getResultMap(datareaders, PipelineConstants.INDICATORMACD, inmemory);
         if (conf.wantMLHist()) {
             wantedSubTypesList.add(new MacdSubTypeHist(list, taObject, resultObject, afterbefore, TaConstants.THREERANGE));
         }

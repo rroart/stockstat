@@ -14,6 +14,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import roart.common.config.MarketStock;
 import roart.common.config.MarketStockExpression;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.util.PipelineUtils;
@@ -23,7 +24,7 @@ import roart.pipeline.Pipeline;
 public class ComplexETL {
 
     public void method(MarketStockExpression mse, Set<String> commonDates, Map<String, StockData> stockDataMap,
-            Map<String, Pipeline[]> dataReaderMap, Map<String, List<Double>> newMap) {
+                       Map<String, Pipeline[]> dataReaderMap, Map<String, List<Double>> newMap, Inmemory inmemory) {
         List<MarketStock> marketStockList = mse.getItems();
         String expression = mse.getExpression();
         List<String> dates = new ArrayList<>(commonDates);
@@ -44,10 +45,10 @@ public class ComplexETL {
                 Map<String, Pipeline> pipelineMap = getPipelineMap(datareaders);
                 Pipeline datareader = pipelineMap.get("" + cat); // used id 0-9
                 // interpolation does not work yet
-                PipelineData data = datareader.putData();
-                List<String> datelist = PipelineUtils.getDatelist(data);
-                Map<String, Double[][]> listMap = PipelineUtils.sconvertMapDD(data.get(PipelineConstants.LIST));
-                Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(data.get(PipelineConstants.FILLLIST));
+                PipelineData[] data = datareader.putData();
+                List<String> datelist = PipelineUtils.getDatelist(data, "" + cat, inmemory);
+                Map<String, Double[][]> listMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(data, "" + cat, PipelineConstants.LIST, inmemory));
+                Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(data, "" + cat, PipelineConstants.FILLLIST, inmemory));
                 Double[][] fillList = fillListMap.get(id);
                 try {
                     int dateIndex = datelist.size() - datelist.indexOf(date);

@@ -125,8 +125,8 @@ public class SimulateInvestAction extends MarketAction {
             //SerialMeta meta = PipelineUtils.getMeta(metaData);
             //String catName = new MetaUtil().getCategory(meta,  cat);
             PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
-            Integer cat = PipelineUtils.getWantedcat(pipelineDatum, name, inmemory);
-            String catName = PipelineUtils.getMetaCat(pipelineDatum, inmemory);
+            Integer cat = PipelineUtils.getWantedcat(param.getResultMaps(), PipelineConstants.META, inmemory);
+            String catName = PipelineUtils.getMetaCat(param.getResultMaps(), inmemory);
             log.info("cats {} {}", cat, catName);
             param.setCategory(cat);
             param.setCategoryTitle(catName);

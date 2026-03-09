@@ -1,7 +1,6 @@
 package roart.pipeline.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,15 +18,13 @@ import roart.common.config.Extra;
 import roart.common.config.MarketStock;
 import roart.common.config.MarketStockExpression;
 import roart.common.constants.Constants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialList;
 import roart.common.pipeline.data.SerialListPlain;
-import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialMarketStock;
-import roart.common.pipeline.data.SerialObject;
-import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
@@ -153,7 +150,7 @@ public class ExtraReader extends Pipeline {
         }
     }
 
-    public void readData(IclijConfig conf, Map<String, MarketData> marketdatamap, int category, StockData stockData2, Map<String, StockData> stockDataMap, Map<String, Pipeline[]> dataReaderMap) throws Exception {
+    public void readData(IclijConfig conf, Map<String, MarketData> marketdatamap, int category, StockData stockData2, Map<String, StockData> stockDataMap, Map<String, Pipeline[]> dataReaderMap, Inmemory inmemory) throws Exception {
         this.dataReaderMap = dataReaderMap;
         this.stockDataMap = stockDataMap;
         
@@ -189,7 +186,7 @@ public class ExtraReader extends Pipeline {
         if (extra != null && !extra.getComplex().isEmpty()) {
             Map<String, List<Double>> newMap = new HashMap<>();
             for (MarketStockExpression mse : extra.getComplex()) {
-                new ComplexETL().method(mse, commonDates, stockDataMap, dataReaderMap, newMap);
+                new ComplexETL().method(mse, commonDates, stockDataMap, dataReaderMap, newMap, inmemory);
             }
             for (Entry<String, List<Double>> entry : newMap.entrySet()) {
                 String id = entry.getKey();
@@ -224,27 +221,28 @@ public class ExtraReader extends Pipeline {
     }
 
     @Override
-    public PipelineData putData() {
-        PipelineData map = getData();
+    public PipelineData[] putData() {
+        PipelineData[] map = getData();
         //map.put(PipelineConstants.PAIRLIST, new HashMap() /*pairListMap*/);
         //map.put(PipelineConstants.PAIRDATE, new HashMap() /*pairDateMap*/);
         //map.put(PipelineConstants.PAIRCAT, new HashMap() /*pairCatMap*/);
         //map.put(PipelineConstants.PAIRSTOCK, new HashMap() /*pairStockMap*/);
         //map.put(PipelineConstants.PAIRDATELIST, pairDateListMap);
         //map.put(PipelineConstants.PAIRTRUNCLIST, pairTruncListMap);
-        map.setName(PipelineConstants.EXTRAREADER);
-        map.put(PipelineConstants.DATELIST, new SerialListPlain(new ArrayList<>(commonDates)));
-        SerialMap dataReaderMap2 = new SerialMap();
+        List<PipelineData> list = new ArrayList<>();
+        //map.setName(PipelineConstants.EXTRAREADER);
+        list.add(new PipelineData(PipelineConstants.EXTRAREADER, PipelineConstants.DATELIST, null, new SerialListPlain(new ArrayList<>(commonDates))));
         for (Entry<String, Pipeline[]> entry : dataReaderMap.entrySet()) {
             Pipeline[] pipeline = entry.getValue();
-            SerialList pipelinedata = new SerialList();
             for (int i = 0; i < pipeline.length; i++) {
-                pipelinedata.add(pipeline[i].putData());
+                PipelineData[] secondPipeline = pipeline[i].putData();
+                for (PipelineData secondPipelineData : secondPipeline) {
+                    list.add(new PipelineData(PipelineConstants.EXTRAREADER, secondPipelineData.getName(), secondPipelineData.getKey(), secondPipelineData.getValue()));
+                }
             }
-            dataReaderMap2.put(entry.getKey(), pipelinedata );
         }
-        map.put(PipelineConstants.DATAREADER, dataReaderMap2);
-        map.put(PipelineConstants.MARKETSTOCKS, new SerialList(new ArrayList<>(allMarketStocks)));
+        list.add(new PipelineData(PipelineConstants.EXTRAREADER, PipelineConstants.MARKETSTOCKS, null, new SerialList(new ArrayList<>(allMarketStocks))));
+        map = (PipelineData[]) list.toArray();
         return map;
     }
     
@@ -319,8 +317,8 @@ public class ExtraReader extends Pipeline {
     // for ARI
     
     public static Double[] getExtraData(IclijConfig conf, ExtraData extraData,
-            int j, String id,
-            Double[] result) throws Exception {
+                                        int j, String id,
+                                        Double[] result, PipelineData[] datareaders, Inmemory inmemory) throws Exception {
         int deltas = conf.getAggregatorsIndicatorExtrasDeltas();
         int size = extraData.dateList.size() - 1;
         if (size - j < 0) {
@@ -332,26 +330,29 @@ public class ExtraReader extends Pipeline {
         String date = extraData.dateList.get(size - j);
         String prevDate = extraData.dateList.get(size - (j + (deltas - 1)));
         // this has not been sent in inmemory, it is in same process
-        Map<String, SerialList<PipelineData>> dataReaderMap = PipelineUtils.getDatareader(extraData.extrareader);
-        List<SerialMarketStock> allMarketStocks = PipelineUtils.getMarketstocks(extraData.extrareader);
+        //Map<String, SerialList<PipelineData>> dataReaderMap = PipelineUtils.getDatareader(extraData.extrareader);
+        List<SerialMarketStock> allMarketStocks = PipelineUtils.getMarketstocks(datareaders, PipelineConstants.EXTRAREADER, inmemory);
         for (SerialMarketStock entry : allMarketStocks) {
             String market = entry.getMarket();
-            SerialList datareaders = dataReaderMap.get(market);
+            //SerialList datareaders = dataReaderMap.get(market);
             // this is ok
-            Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
+            //Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
             String cat = entry.getCategory();
             if (cat == null) {
                 cat = Constants.EXTRA;
             }
+            /*
             PipelineData datareader = pipelineMap.get(cat);
             if (datareader == null) {
                 datareader = pipelineMap.get(Constants.PRICE);
                 log.debug("TODO temp workaround");
             }
-            List<String> dateList = PipelineUtils.getDatelist(datareader);
+
+             */
+            List<String> dateList = PipelineUtils.getDatelist(datareaders, PipelineConstants.EXTRAREADER, inmemory);
             int dateIndex = dateList.indexOf(date);
             int prevDateIndex = dateList.indexOf(prevDate);
-            Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.FILLLIST));
+            Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, PipelineConstants.EXTRAREADER, PipelineConstants.FILLLIST, inmemory));
             Object[] arr = null;
             Double[][] fillList = fillListMap.get(entry.getId());
             Double value = fillList[0][dateIndex];
@@ -371,8 +372,8 @@ public class ExtraReader extends Pipeline {
     // for MLI
     
     public static Double[] getExtraData(IclijConfig conf, ExtraData extraData,
-            int j, String id,
-            Double[] result, String commonDate) throws Exception {
+                                        int j, String id,
+                                        Double[] result, String commonDate, PipelineData[] datareaders, Inmemory inmemory) throws Exception {
         int deltas = conf.getAggregatorsIndicatorExtrasDeltas();
         int size = extraData.dateList.size() - 1;
         if (size - j < 0) {
@@ -384,23 +385,25 @@ public class ExtraReader extends Pipeline {
         String date = extraData.dateList.get(size - j);
         String prevDate = extraData.dateList.get(size - (j + (deltas - 1)));
         // all from here is already read from eventual inmemory
-        Map<String, SerialList<PipelineData>> dataReaderMap = PipelineUtils.getDatareader(extraData.extrareader);
-        List<SerialMarketStock> allMarketStocks = PipelineUtils.getMarketstocks(extraData.extrareader);
+        //Map<String, SerialList<PipelineData>> dataReaderMap = PipelineUtils.getDatareader(extraData.extrareader);
+        List<SerialMarketStock> allMarketStocks = PipelineUtils.getMarketstocks(datareaders, PipelineConstants.EXTRAREADER, inmemory);
         for (SerialMarketStock entry : allMarketStocks) {
             String market = entry.getMarket();
-            SerialList datareaders = dataReaderMap.get(market);
+            //SerialList datareaders = dataReaderMap.get(market);
             // this is ok map
-            Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
+            //Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
             String cat = entry.getCategory();
             if (cat == null) {
                 cat = Constants.EXTRA;
             }
+            Map<String, PipelineData> pipelineMap = null ; // TODO
             PipelineData datareader = pipelineMap.get(cat);
             if (datareader == null) {
                 datareader = pipelineMap.get(Constants.PRICE);
                 log.debug("TODO temp workaround");
             }
-            List<String> dateList = PipelineUtils.getDatelist(datareader);
+            //String name = null; // TODO
+            List<String> dateList = PipelineUtils.getDatelist(datareaders, PipelineConstants.EXTRAREADER, inmemory); // TODO
             int dateIndex = dateList.size() - dateList.indexOf(commonDate);
             int prevDateIndex = dateList.indexOf(prevDate);
             Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.FILLLIST));

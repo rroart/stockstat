@@ -25,4 +25,5 @@ module stocketl {
     requires pipeline.model;
     requires spring.beans;
     requires pipeline.util;
+    requires common.inmemory.model;
 }
