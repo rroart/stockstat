@@ -50,7 +50,7 @@ public class ComponentData {
     
     protected PipelineData[] resultMaps;
 
-    protected PipelineData resultMap;
+    protected PipelineData[] resultMap;
 
     private List<String> stockDates;
     
@@ -273,11 +273,11 @@ public class ComponentData {
         this.resultMaps = resultMaps;
     }
 
-    public PipelineData getResultMap() {
+    public PipelineData[] getResultMap() {
         return resultMap;
     }
 
-    public void setResultMap(PipelineData resultMap) {
+    public void setResultMap(PipelineData[] resultMap) {
         this.resultMap = resultMap;
     }
 

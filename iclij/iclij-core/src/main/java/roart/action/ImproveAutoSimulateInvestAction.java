@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,11 +130,11 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
             EvolutionConfig evolutionConfig = JsonUtil.convert(evolutionConfigString, EvolutionConfig.class);
             Map<String, Object> confMap = new HashMap<>();
             ComponentData e = evolve.evolve(action.getActionData(), param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap , evolutionConfig, component.getPipeline(), component, confList);
-            PipelineData results = e.getResultMap();
+            PipelineData[] results = e.getResultMap();
             Object filters = param.getConfigValueMap().remove(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
             // filters is already a serialized string
             filters = param.getInput().getValuemap().get(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
-            results.put(SimConstants.FILTER, filters);
+            results = ArrayUtils.add(results, new PipelineData("name", SimConstants.FILTER, null, filters);
             QueueElement element = new QueueElement();
             InmemoryMessage msg = inmemory.send(ServiceConstants.SIMAUTO + UUID.randomUUID(), results, null);
             element.setOpid(ServiceConstants.SIM);

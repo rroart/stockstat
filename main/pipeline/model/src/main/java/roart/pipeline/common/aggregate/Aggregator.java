@@ -8,14 +8,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.pipeline.data.*;
 import roart.iclij.config.IclijConfig;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialList;
-import roart.common.pipeline.data.SerialMap;
-import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.model.PipelineResultData;
 import roart.common.util.MathUtil;
 import roart.pipeline.Pipeline;
@@ -104,26 +101,29 @@ public abstract class Aggregator extends PipelineResultData {
 
     public abstract String getName();
 
-    public PipelineData putData() {
-        PipelineData map = getData();
-        map.setName(getName());
-        map.put(PipelineConstants.CATEGORY, category);
-        map.put(PipelineConstants.CATEGORYTITLE, title);
+    @Override
+    public PipelineData[] putData() {
+        PipelineData[] map = getData();
+        List<PipelineData> list = new ArrayList<>();
+        //map.setName(getName());
+        list.add(new PipelineData(getName(), PipelineConstants.CATEGORY, null, new SerialInteger(category)));
+        list.add(new PipelineData(getName(), PipelineConstants.CATEGORYTITLE, null, new SerialString(title)));
         // mix of number and string
-        map.put(PipelineConstants.RESULT, new SerialMapPlain(resultMap));
+        list.add(new PipelineData(getName(), PipelineConstants.RESULT, null, new SerialMapPlain(resultMap)));
         // TODO unused
-        //map.put(PipelineConstants.OTHERRESULT, otherResultMap);
-        map.put(PipelineConstants.RESULTMETA, resultMetas);
+        //list.add(new PipelineData(getName(), PipelineConstants.OTHERRESULT, otherResultMap);
+        list.add(new PipelineData(getName(), PipelineConstants.RESULTMETA, null, resultMetas));
         // TODO remove
-        //map.put(PipelineConstants.RESULTMETAARRAY, resultMetaArray);
-        map.put(PipelineConstants.ACCURACY, new SerialMapPlain(accuracyMap));
+        //list.add(new PipelineData(getName(), PipelineConstants.RESULTMETAARRAY, resultMetaArray);
+        list.add(new PipelineData(getName(), PipelineConstants.ACCURACY, null, new SerialMapPlain(accuracyMap)));
         // TODO unused
-        //map.put(PipelineConstants.LOSS, lossMap);
+        //list.add(new PipelineData(getName(), PipelineConstants.LOSS, lossMap);
         // TODO unused?
-        //map.put(PipelineConstants.OBJECT, objectMap);
+        //list.add(new PipelineData(getName(), PipelineConstants.OBJECT, objectMap);
         // TODO unused
-        //map.put(PipelineConstants.OBJECTFIXED, objectFixedMap);
+        //list.add(new PipelineData(getName(), PipelineConstants.OBJECTFIXED, objectFixedMap);
         //map.smap().put(PipelineConstants.RESULT, resultSMap);
+        map = (PipelineData[]) list.toArray();
         return map;
     }
     

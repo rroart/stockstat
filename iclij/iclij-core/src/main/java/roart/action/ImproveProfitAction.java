@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
@@ -114,11 +115,11 @@ public class ImproveProfitAction extends MarketAction {
                 Object value = myConfig.get(key);
                 defaults.put(key, value);
             }
-            PipelineData results = componentData.getResultMap();
+            PipelineData[] results = componentData.getResultMap();
             // if not interrupted
             if (results != null) {
                 // TODO TODO
-            	results.put(EvolveConstants.DEFAULT, new SerialListMap(defaults));
+                componentData.setResultMap(ArrayUtils.add(componentData.getResultMap(), new PipelineData(action.getName(), EvolveConstants.DEFAULT, null, new SerialListMap(defaults))));
             	// TODO?
                 Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 QueueElement element = new QueueElement();

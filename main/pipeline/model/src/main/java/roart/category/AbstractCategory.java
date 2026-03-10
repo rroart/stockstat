@@ -100,11 +100,11 @@ public abstract class AbstractCategory {
         return map;
     }
     
-    public Map<String, PipelineData> putData() {
-        Map<String, PipelineData> map = new HashMap<>();
+    public Map<String, PipelineData[]> putData() {
+        Map<String, PipelineData[]> map = new HashMap<>();
         for (AbstractIndicator indicator : indicators) {
             if (indicator.isEnabled()) {
-                PipelineData tmpMap = indicator.putData();
+                PipelineData[] tmpMap = indicator.putData();
                 if (tmpMap != null) {
                     log.debug("Adding indicator {}", indicator.indicatorName());
                     log.debug("exist {}", map.containsKey(indicator.indicatorName()));

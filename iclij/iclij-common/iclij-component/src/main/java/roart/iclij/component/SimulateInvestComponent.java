@@ -18,6 +18,7 @@ import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -762,7 +763,7 @@ public class SimulateInvestComponent extends ComponentML {
                         map.put(SimConstants.FILTER, JsonUtil.convert(filter));
                         //map.put("market", market.getConfig().getMarket());
                         // fix
-                        resultMap.put("" + offset, new SerialListMap(map));
+                        componentData.setResultMap(ArrayUtils.add(componentData.getResultMap(), new PipelineData(action.getName(), "" + offset, null, new SerialListMap(map))));
                     }
                     scores.add(score);
                     if (aOneRun.lastbuysell != null) {
@@ -772,7 +773,7 @@ public class SimulateInvestComponent extends ComponentML {
             }
             if (evolving) {
                 // TODO
-                componentData.setResultMap(resultMap);
+                //componentData.setResultMap(resultMap);
             }
             log.debug("time0 {}", System.currentTimeMillis() - time0);
         }

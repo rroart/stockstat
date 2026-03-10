@@ -62,4 +62,14 @@ public class DbDataSource extends MyDataSource {
             return new ArrayList<>();
         }        
     }
+
+    @Override
+    public List<StockDTO> getAll(String market, IclijConfig conf, boolean disableCache, int batch, int batchSize) throws Exception {
+        try {
+            return dbDao.getAll(market, conf, disableCache, batch, batchSize);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return new ArrayList<>();
+        }
+    }
 }

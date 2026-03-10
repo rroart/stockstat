@@ -1,16 +1,15 @@
 package roart.aggregator.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import roart.common.pipeline.data.*;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialMapD;
-import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.pipeline.common.aggregate.Aggregator;
 import roart.result.model.ResultItemTableRow;
@@ -98,12 +97,14 @@ public class MACDBase extends Aggregator {
     }
 
     @Override
-    public PipelineData putData() {
-        PipelineData map = new PipelineData();
-        map.setName(getName());
-        map.put(PipelineConstants.CATEGORY, category);
-        map.put(PipelineConstants.CATEGORYTITLE, title);
-        map.put(PipelineConstants.RESULT, new SerialMapPlain(resultMap));
+    public PipelineData[] putData() {
+        PipelineData[] map;
+        List<PipelineData> list = new ArrayList<>();
+        //map.setName(getName());
+        list.add(new PipelineData(getName(), PipelineConstants.CATEGORY, null, new SerialInteger(category)));
+        list.add(new PipelineData(getName(), PipelineConstants.CATEGORYTITLE, null, new SerialString(title)));
+        list.add(new PipelineData(getName(), PipelineConstants.RESULT, null, new SerialMapPlain(resultMap)));
+        map = (PipelineData[]) list.toArray();
         return map;
     }
     

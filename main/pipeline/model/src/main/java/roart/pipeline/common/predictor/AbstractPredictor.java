@@ -96,19 +96,21 @@ public abstract class AbstractPredictor extends PipelineResultData {
     }
 
     @Override
-    public PipelineData putData() {
-        PipelineData map = getData();
-        map.setName(getName());
-        map.put(PipelineConstants.CATEGORY, category);
-        map.put(PipelineConstants.CATEGORYTITLE, title);
-        map.put(PipelineConstants.RESULT, new SerialMapPlain(resultMap));
-        map.put(PipelineConstants.RESULTMETA, resultMetas);
+    public PipelineData[] putData() {
+        PipelineData[] map;
+        List<PipelineData> list = new ArrayList<>();
+        //map.setName(getName());
+        list.add(new PipelineData(getName(), PipelineConstants.CATEGORY, null, new SerialInteger(category)));
+        list.add(new PipelineData(getName(), PipelineConstants.CATEGORYTITLE, null, new SerialString(title)));
+        list.add(new PipelineData(getName(), PipelineConstants.RESULT, null, new SerialMapPlain(resultMap)));
+        list.add(new PipelineData(getName(), PipelineConstants.RESULTMETA, null, resultMetas));
         // TODO remove
-        //map.put(PipelineConstants.RESULTMETAARRAY, resultMetaArray);
-        map.put(PipelineConstants.ACCURACY, new SerialMapPlain(accuracyMap));
+        //list.add(new PipelineData(getName(), PipelineConstants.RESULTMETAARRAY, resultMetaArray);
+        list.add(new PipelineData(getName(), PipelineConstants.ACCURACY, null, new SerialMapPlain(accuracyMap)));
         // TODO unused
-        //map.put(PipelineConstants.LOSS, lossMap);
+        //list.add(new PipelineData(getName(), PipelineConstants.LOSS, lossMap);
         //map.smap().put(PipelineConstants.RESULT, resultSMap);
+        map = (PipelineData[]) list.toArray();
         return map;
     }
 

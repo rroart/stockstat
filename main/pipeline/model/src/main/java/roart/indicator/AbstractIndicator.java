@@ -140,30 +140,33 @@ public abstract class AbstractIndicator extends Calculatable {
         return null;
     }
 
-    public PipelineData putData() {
-        PipelineData map = getData();
-        map.setName(indicatorName());
+    @Override
+    public PipelineData[] putData() {
+        PipelineData[] map = getData();
+        List<PipelineData> list = new ArrayList<>();
+        //map.setName(indicatorName());
         // the mixed and complex results of indicator
         // an array with numbers or arrays
-        map.put(PipelineConstants.OBJECT, new SerialMapTA(objectMap != null ? objectMap : new HashMap<>()));
+        list.add(new PipelineData(indicatorName(), PipelineConstants.OBJECT, null, new SerialMapTA(objectMap != null ? objectMap : new HashMap<>())));
         // TODO unused
-        map.put(PipelineConstants.OBJECTFIXED, objectFixedMap);
-        //map.put(PipelineConstants.LIST, listMap);
-        //map.put(PipelineConstants.TRUNCLIST, truncListMap);
+        //list.add(new PipelineData(indicatorName(), PipelineConstants.OBJECTFIXED, null, objectFixedMap));
+        //list.add(new PipelineData()(PipelineConstants.LIST, listMap);
+        //list.add(new PipelineData()(PipelineConstants.TRUNCLIST, truncListMap);
         
         // for web
-        map.put(PipelineConstants.RESULT, new SerialMapD(calculatedMap));
+        list.add(new PipelineData(indicatorName(), PipelineConstants.RESULT, null, new SerialMapD(calculatedMap)));
         
         // market as key, for extras
         // raw calculations
-        map.put(PipelineConstants.MARKETOBJECT, new SerialMap(marketObjectMap));
+        list.add(new PipelineData(indicatorName(), PipelineConstants.MARKETOBJECT, null, new SerialMap(marketObjectMap)));
         // prep for web?
         // TODO unused?
-        //map.put(PipelineConstants.MARKETCALCULATED, marketCalculatedMap);
+        //list.add(new PipelineData()(PipelineConstants.MARKETCALCULATED, marketCalculatedMap);
         // result for web table
         // TODO unused?
         //map.put(PipelineConstants.MARKETRESULT, marketResultMap);
         //map.smap().put(PipelineConstants.RESULT, resultSMap);
+        map = (PipelineData[]) list.toArray();
         return map;
     }
 

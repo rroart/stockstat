@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
@@ -31,6 +32,8 @@ import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialDouble;
+import roart.common.pipeline.data.SerialString;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.queue.QueueElement;
 import roart.common.util.JsonUtil;
@@ -273,7 +276,7 @@ public class ImproveAboveBelowAction extends MarketAction {
 
                     //component.handle(this, market, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null);
                     //ComponentData componentData = component.handle(getActionData(), market, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null, getParent() != null);
-                    componentData.getResultMap().put(EvolveConstants.DEFAULT, score);
+                    componentData.setResultMap(ArrayUtils.add(componentData.getResultMap(), new PipelineData(action.getName(), EvolveConstants.DEFAULT, null, new SerialDouble(score))));
                     Map<String, Object> updateMap = componentData.getUpdateMap();
                     if (updateMap != null) {
                         param.getUpdateMap().putAll(updateMap);
@@ -281,8 +284,8 @@ public class ImproveAboveBelowAction extends MarketAction {
                     memory.setDescription((String) updateMap.get(aParameter));
                     List<Double> list = new ArrayList<>(param.getScoreMap().values());
                     memory.setLearnConfidence(list.get(0));
-                    componentData.getResultMap().put("learned", list.get(0));
-                    componentData.getResultMap().put(EvolveConstants.DATE, TimeUtil.convertDate2(param.getFutureDate()));
+                    componentData.setResultMap(ArrayUtils.add(componentData.getResultMap(), new PipelineData(action.getName(),"learned", null, new SerialDouble(list.get(0)))));
+                    componentData.setResultMap(ArrayUtils.add(componentData.getResultMap(), new PipelineData(action.getName(),EvolveConstants.DATE, null, new SerialString(TimeUtil.convertDate2(param.getFutureDate()))));
                 }
                 memory.setAction(action.getName());
                 memory.setMarket(market.getConfig().getMarket());

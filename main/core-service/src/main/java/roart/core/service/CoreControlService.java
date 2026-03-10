@@ -2,11 +2,8 @@ package roart.core.service;
 
 import java.util.Arrays;
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,10 +18,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.curator.RetryPolicy;
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,41 +26,23 @@ import tools.jackson.databind.json.JsonMapper;
 
 import roart.aggregator.impl.AggregatorRecommenderIndicator;
 import roart.aggregator.impl.MACDBase;
-import roart.aggregator.impl.MLATR;
-import roart.aggregator.impl.MLCCI;
-import roart.aggregator.impl.MLIndicator;
-import roart.aggregator.impl.MLMACD;
-import roart.aggregator.impl.MLMulti;
-import roart.aggregator.impl.MLRSI;
-import roart.aggregator.impl.MLSTOCH;
 import roart.aggregator.impl.RecommenderRSI;
 import roart.category.AbstractCategory;
-import roart.category.impl.CategoryIndex;
-import roart.category.impl.CategoryPeriod;
-import roart.category.impl.CategoryPrice;
 import roart.category.util.CategoryUtil;
-import roart.common.communication.factory.CommunicationFactory;
 import roart.common.communication.model.Communication;
 import roart.common.config.ConfigConstants;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 import roart.indicator.util.IndicatorUtils;
-import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
-import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.MetaDTO;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialInteger;
 import roart.common.pipeline.data.SerialListPlain;
-import roart.common.pipeline.data.SerialMapPlain;
-import roart.common.pipeline.data.SerialMeta;
-import roart.common.pipeline.data.SerialPlain;
-import roart.common.pipeline.data.SerialString;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
@@ -77,7 +52,6 @@ import roart.core.graphcategory.GraphCategoryIndex;
 import roart.core.graphcategory.GraphCategoryPeriod;
 import roart.core.graphcategory.GraphCategoryPeriodTopBottom;
 import roart.core.graphcategory.GraphCategoryPrice;
-import roart.core.model.impl.DbDataSource;
 import roart.core.service.util.ServiceUtil;
 import roart.etl.CleanETL;
 import roart.etl.PeriodDataETL;
@@ -88,7 +62,6 @@ import roart.model.data.StockData;
 import roart.pipeline.Pipeline;
 import roart.pipeline.common.aggregate.Aggregator;
 import roart.pipeline.common.predictor.AbstractPredictor;
-import roart.pipeline.impl.DataReader;
 import roart.pipeline.impl.ExtraReader;
 import roart.result.model.GUISize;
 import roart.result.model.ResultItem;
@@ -179,7 +152,8 @@ public class CoreControlService {
         List<AbstractCategory> categories = new ArrayList<>();
         List<Aggregator> aggregates = new ArrayList<>();
         try {
-            StockData stockData = new Extract(io.getDbDao()).getStockData(conf, true);
+            Extract extract = new Extract(io.getDbDao());
+            StockData stockData = extract.getStockData(conf, true);
             if (stockData == null) {
                 return new ArrayList<>();
             }
@@ -189,7 +163,7 @@ public class CoreControlService {
             Map<String, StockData> extraStockDataMap = new IndicatorUtils().getExtraStockDataMap(conf, io.getDbDao(), extraReader, true);
 
             Pipeline[] datareaders = iu.getDataReaders(conf, stockData.periodText,
-                    stockData.marketdatamap, stockData, extraStockDataMap, extraReader);
+                    stockData.marketdatamap, stockData, extraStockDataMap, extraReader, inmemory);
 
             /*
             pipelinedata = iu.createPipeline(conf, disableList, pipelinedata, categories, aggregates, stockData,
@@ -645,9 +619,9 @@ public class CoreControlService {
         StockData stockData = new Extract(io.getDbDao()).getStockData(conf, true); // TODO false
         if (stockData != null) {
             log.info("Stockdates {} {} {}", conf.getConfigData().getMarket(), conf.getConfigData().getDate(), stockData.stockdates.size());
-            PipelineData map = new PipelineData();
-            map.setName(PipelineConstants.DATELIST);
-            map.put(PipelineConstants.DATELIST, new SerialListPlain(stockData.stockdates));
+            PipelineData map = new PipelineData(PipelineConstants.DATELIST, PipelineConstants.DATELIST, null, new SerialListPlain(stockData.stockdates));
+            //map.setName(PipelineConstants.DATELIST);
+            //map.put(PipelineConstants.DATELIST, new SerialListPlain(stockData.stockdates));
             pipelineData = ArrayUtils.add(pipelineData, map);
             PipelineUtils.setPipelineMap(pipelineData, origparam.getId());
             if (origparam.getId() != null) {
@@ -678,9 +652,9 @@ public class CoreControlService {
 
         try {
             Collections.sort(dates);
-            PipelineData map = new PipelineData();
-            map.setName(PipelineConstants.DATELIST);
-            map.put(PipelineConstants.DATELIST, new SerialListPlain(dates));
+            PipelineData map = new PipelineData(PipelineConstants.DATELIST, PipelineConstants.DATELIST, null, new SerialListPlain(dates));
+            //map.setName(PipelineConstants.DATELIST);
+            //map.put(PipelineConstants.DATELIST, new SerialListPlain(dates));
             pipelineData = ArrayUtils.add(pipelineData, map);
             result.setPipelineData(pipelineData);
         } catch (Exception e) {

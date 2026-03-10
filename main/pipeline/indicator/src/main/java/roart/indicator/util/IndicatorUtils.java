@@ -926,15 +926,17 @@ public class IndicatorUtils {
     }
    */
     
-    public PipelineData getMetadata(IclijConfig conf, StockData stockData) {
-        PipelineData singlePipelineData = new PipelineData();
-        singlePipelineData.setName(PipelineConstants.META);
+    public PipelineData[] getMetadata(IclijConfig conf, StockData stockData) {
+        PipelineData[] singlePipelineData;
+        //singlePipelineData.setName(PipelineConstants.META);
         MetaDTO meta = stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta;
-        singlePipelineData.put(PipelineConstants.META, new SerialMeta(meta.getMarketid(), meta.getPeriod(), meta.getPriority(), meta.getReset(), meta.isLhc()));
-        singlePipelineData.put(PipelineConstants.CATEGORY, stockData.catName);
-        singlePipelineData.put(PipelineConstants.WANTEDCAT, stockData.cat);
-        singlePipelineData.put(PipelineConstants.NAME, new SerialMapPlain(stockData.idNameMap));
-        singlePipelineData.put(PipelineConstants.DATELIST, new SerialListPlain(stockData.stockdates));
+        List<PipelineData> list = new ArrayList<>();
+        list.add(new PipelineData(PipelineConstants.META, PipelineConstants.META, null, new SerialMeta(meta.getMarketid(), meta.getPeriod(), meta.getPriority(), meta.getReset(), meta.isLhc()));
+        list.add(new PipelineData(PipelineConstants.META, PipelineConstants.CATEGORY, null, stockData.catName);
+        list.add(new PipelineData(PipelineConstants.META, PipelineConstants.WANTEDCAT, null, stockData.cat);
+        list.add(new PipelineData(PipelineConstants.META, PipelineConstants.NAME, null, new SerialMapPlain(stockData.idNameMap));
+        list.add(new PipelineData(PipelineConstants.META, PipelineConstants.DATELIST, null, new SerialListPlain(stockData.stockdates));
+        singlePipelineData = (PipelineData[]) list.toArray();
         return singlePipelineData;
     }
 

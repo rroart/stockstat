@@ -100,16 +100,18 @@ public class CoreEvolutionService {
             DataReader dataReader = new DataReader(conf, stockData.marketdatamap, stockData.cat, conf.getConfigData().getMarket());
             Pipeline[] datareaders = new Pipeline[1];
             datareaders[0] = dataReader;
-            PipelineData singlePipelineData = new PipelineData();
-            singlePipelineData.setName(PipelineConstants.META);
+            PipelineData[] singlePipelineData;
+            //singlePipelineData.setName(PipelineConstants.META);
             MetaDTO meta = stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta;
-            singlePipelineData.put(PipelineConstants.META, new SerialMeta(meta.getMarketid(), meta.getPeriod(), meta.getPriority(), meta.getReset(), meta.isLhc()));
-            singlePipelineData.put(PipelineConstants.CATEGORY, stockData.catName);
-            singlePipelineData.put(PipelineConstants.WANTEDCAT, stockData.cat);
-            singlePipelineData.put(PipelineConstants.NAME, new SerialMapPlain(stockData.idNameMap));
-            singlePipelineData.put(PipelineConstants.DATELIST, new SerialListPlain(stockData.stockdates));
+            List<PipelineData> list = new ArrayList<>();
+            list.add(new PipelineData(PipelineConstants.META, PipelineConstants.META, null, new SerialMeta(meta.getMarketid(), meta.getPeriod(), meta.getPriority(), meta.getReset(), meta.isLhc())));
+            list.add(new PipelineData(PipelineConstants.META, PipelineConstants.CATEGORY, null, new SerialString(stockData.catName)));
+            list.add(new PipelineData(PipelineConstants.META, PipelineConstants.WANTEDCAT, null, new SerialInteger(stockData.cat)));
+            list.add(new PipelineData(PipelineConstants.META, PipelineConstants.NAME, null, new SerialMapPlain(stockData.idNameMap)));
+            list.add(new PipelineData(PipelineConstants.META, PipelineConstants.DATELIST, null, new SerialListPlain(stockData.stockdates)));
+            singlePipelineData = (PipelineData[]) list.toArray();
             PipelineData[] pipelineData = new PipelineData[0];
-            pipelineData = ArrayUtils.add(pipelineData, singlePipelineData);
+            pipelineData = (PipelineData[]) ArrayUtils.add(pipelineData, singlePipelineData);
    
             for (Pipeline datareader : datareaders) {
                 pipelineData = (PipelineData[]) ArrayUtils.add(pipelineData, datareader.putData());
@@ -157,14 +159,16 @@ public class CoreEvolutionService {
         }
     }
     
-    private PipelineData getEvolveData(Map<String, Object> updateMap, Map<String, Object> scoreMap,
+    private PipelineData[] getEvolveData(Map<String, Object> updateMap, Map<String, Object> scoreMap,
             Map<String, Object> resultMap) {
-        PipelineData maps = new PipelineData();
-        maps.setName(PipelineConstants.EVOLVE);
-        maps.put(PipelineConstants.UPDATE, new SerialMapPlain(updateMap));
-        maps.put(PipelineConstants.SCORE, new SerialMapPlain(scoreMap));
+        PipelineData[] maps;
+        List<PipelineData> list = new ArrayList<>();
+        //maps.setName(PipelineConstants.EVOLVE);
+        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.UPDATE, null, new SerialMapPlain(updateMap));
+        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.SCORE, null, new SerialMapPlain(scoreMap));
         // rec with own result
-        maps.put(PipelineConstants.RESULT, new SerialListMap(resultMap));
+        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, new SerialListMap(resultMap));
+        maps = (PipelineData[]) list.toArray();
         return maps;
     }
 

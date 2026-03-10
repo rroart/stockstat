@@ -150,6 +150,7 @@ public class PipelineUtilsTest {
         array.array = new Integer[] { 1, 2, 3 };
         PipelineData map = data;
         //map.list = List.of(List.of(11, "blbl"));
+        /*
         SerialMap map2 = new SerialMap();
         map2.put("a", array);
         map.put("m", map2);
@@ -208,6 +209,8 @@ public class PipelineUtilsTest {
         System.out.println(((SerialMapDD)data2.get("dim3")).get("k1").getClass().getCanonicalName());
         System.out.println(((SerialMapdd)data.get("dim4")).get("k1").getClass().getCanonicalName());
         System.out.println(((SerialMapdd)data2.get("dim4")).get("k1").getClass().getCanonicalName());
+
+         */
     }
     
     
@@ -235,11 +238,11 @@ public class PipelineUtilsTest {
         //SerialMap serialMap = new SerialMap(resultMap);
         //testsub(serialMap);
         
-        PipelineData data = new PipelineData();
-        data.setName(PipelineConstants.EVOLVE);
+        PipelineData data = new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, serialMapPlain);
+        //data.setName(PipelineConstants.EVOLVE);
         //maps.put(PipelineConstants.UPDATE, new SerialMapPlain(updateMap));
         //maps.put(PipelineConstants.SCORE, new SerialMapPlain(scoreMap));
-        data.put(PipelineConstants.RESULT, serialMapPlain);
+        //data.put(PipelineConstants.RESULT, serialMapPlain);
         
         PipelineData newData = testsub(data);
         
@@ -305,11 +308,11 @@ public class PipelineUtilsTest {
         
         SerialMapPlain serialMap = new SerialMapPlain(resultMap);
         
-        PipelineData data = new PipelineData();
-        data.setName(PipelineConstants.EVOLVE);
+        PipelineData data = new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, serialMap);
+        //data.setName(PipelineConstants.EVOLVE);
         //maps.put(PipelineConstants.UPDATE, new SerialMapPlain(updateMap));
         //maps.put(PipelineConstants.SCORE, new SerialMapPlain(scoreMap));
-        data.put(PipelineConstants.RESULT, serialMap);
+        //data.put(PipelineConstants.RESULT, serialMap);
         
         PipelineData newData = testsub(data);
         

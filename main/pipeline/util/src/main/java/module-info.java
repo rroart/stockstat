@@ -20,6 +20,7 @@ module pipeline.util {
     requires org.slf4j;
     requires tools.jackson.databind;
     requires stockstat.shadow.zookeeper;
+    requires org.checkerframework.checker.qual;
     // for test
     //requires evolution.model;
 }

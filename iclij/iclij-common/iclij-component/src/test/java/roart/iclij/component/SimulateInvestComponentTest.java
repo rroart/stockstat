@@ -92,8 +92,8 @@ public class SimulateInvestComponentTest {
         Map<String, Object> mapx = new HashMap<>();
         mapx.put(SimConstants.HISTORY, aResult.history);
 
-        PipelineData resultMapx = new PipelineData();
-        resultMapx.put("" + offset, new SerialMapPlain(mapx));
+        PipelineData resultMapx = new PipelineData("name", "" + offset, null, new SerialMapPlain(mapx));
+        //resultMapx.put("" + offset, new SerialMapPlain(mapx));
         
         PipelineData resultMapy = testsub(resultMapx);
         

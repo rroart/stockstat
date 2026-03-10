@@ -58,8 +58,8 @@ public abstract class ComponentML extends Component {
             //param.getService().conf.getConfigValueMap().putAll(evolveMap);
             Map<String, Object> anUpdateMap = new HashMap<>();
             Map<String, Object> aScoreMap = new HashMap<>();
-            PipelineData resultMap = new PipelineData();
-            resultMap.setName(getPipeline());
+            PipelineData[] resultMap = new PipelineData[0];
+            //resultMap.setName(getPipeline());
             param.getService().coremlconf.getConfigData().setDate(param.getFutureDate());
             // TODO calling ml
             List<ResultItem> retlist = param.getService().getEvolveML(param.getId(), true, param.getDisableList(), pipeline, param.getService().coremlconf, anUpdateMap, aScoreMap, resultMap);

@@ -475,7 +475,7 @@ public class ControlService {
         getAndSetCoreConfig();
     }
 
-    public List<ResultItem> getEvolveRecommender(String uuid, boolean doSet, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, PipelineData resultMap, Inmemory inmemory) {
+    public List<ResultItem> getEvolveRecommender(String uuid, boolean doSet, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, PipelineData[] resultMap, Inmemory inmemory) {
         IclijServiceParam param = new IclijServiceParam();
         log.info("Wants {}", iclijConfig.wantsInmemoryPipeline());
         if (iclijConfig.wantsInmemoryPipeline()) {
@@ -499,7 +499,7 @@ public class ControlService {
         //return result.getMaps().get("update");
     }
 
-    public List<ResultItem> getEvolveML(String uuid, boolean doSet, List<String> disableList,  String ml, IclijConfig conf, Map<String, Object> updateMap, Map<String, Object> scoreMap, PipelineData resultMap) {
+    public List<ResultItem> getEvolveML(String uuid, boolean doSet, List<String> disableList,  String ml, IclijConfig conf, Map<String, Object> updateMap, Map<String, Object> scoreMap, PipelineData[] resultMap) {
         IclijServiceParam param = new IclijServiceParam();
         log.info("Wants {}", iclijConfig.wantsInmemoryPipeline());
         if (iclijConfig.wantsInmemoryPipeline()) {

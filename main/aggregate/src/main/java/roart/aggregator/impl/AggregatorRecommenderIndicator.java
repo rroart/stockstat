@@ -1,11 +1,7 @@
 package roart.aggregator.impl;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -227,13 +223,15 @@ public class AggregatorRecommenderIndicator extends Aggregator {
     }
 
     @Override
-    public PipelineData putData() {
-        PipelineData map = new PipelineData();
-        map.setName(getName());
-        map.put(PipelineConstants.CATEGORY, category);
-        map.put(PipelineConstants.CATEGORYTITLE, title);
+    public PipelineData[] putData() {
+        PipelineData[] map;
+        List<PipelineData> list = new ArrayList<>();
+        //map.setName(getName());
+        list.add(new PipelineData(getName(), (PipelineConstants.CATEGORY, category);
+        list.add(new PipelineData(getName(), (PipelineConstants.CATEGORYTITLE, title);
         // rec with own result
-        map.put(PipelineConstants.RESULT, new SerialMapPlain(resultMap));
+        list.add(new PipelineData(getName(), (PipelineConstants.RESULT, new SerialMapPlain(resultMap));
+        map = (PipelineData[]) list.toArray();
         return map;
     }
     
