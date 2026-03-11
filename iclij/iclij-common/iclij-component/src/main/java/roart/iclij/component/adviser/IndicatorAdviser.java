@@ -22,6 +22,7 @@ import roart.common.model.MetaDTO;
 import roart.common.model.util.MetaUtil;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialTA;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.component.model.ComponentData;
@@ -69,20 +70,20 @@ public abstract class IndicatorAdviser extends Adviser {
         
         if (param instanceof SimulateInvestData) {            
             MetaDTO meta = new MetaUtil().findMeta(allMetas, market.getConfig().getMarket());
-            PipelineData[] resultMaps;
+            SerialPipeline resultMaps;
             if (simulateConfig.getIndicatorRebase()) {
                 resultMaps = simulateParam.getResultRebaseMaps();
             } else {
                 resultMaps = simulateParam.getResultMaps();
             }
-            if (resultMaps == null || resultMaps.length == 0) {
+            if (resultMaps == null) { // || resultMaps.length == 0) {
                 int  jj = 0;
             }
             Integer cat = PipelineUtils.getWantedcat(resultMaps, PipelineConstants.META, inmemory);
             String catName = new MetaUtil().getCategory(meta, cat);
-            PipelineData objectMaps = PipelineUtils.getPipeline(resultMaps, getPipeline(), inmemory);
+            PipelineData objectMaps = null; //PipelineUtils.getPipeline(resultMaps, getPipeline(), inmemory);
             if (objectMaps != null) {
-                Map<String, Object> indicatorMaps = (Map<String, Object>) objectMaps.get(getPipeline());
+                //Map<String, Object> indicatorMaps = (Map<String, Object>) objectMaps.get(getPipeline());
                 //System.out.println("macd"+ macdMaps.keySet());
                 objectMap = PipelineUtils.getObjectMap(resultMaps, getPipeline(), inmemory);
             }
@@ -120,7 +121,7 @@ public abstract class IndicatorAdviser extends Adviser {
 	
 	// TODO not calling when cached
         //param.getResultMap(null, aMap, false);
-        PipelineData[] maps = param.getResultMaps();
+        SerialPipeline maps = param.getResultMaps();
         /*
         for (Entry<String, Map<String, Object>> entry : maps.entrySet()) {
             String key = entry.getKey();
@@ -130,7 +131,7 @@ public abstract class IndicatorAdviser extends Adviser {
         */
         Integer cat = PipelineUtils.getWantedcat(maps, PipelineConstants.META, inmemory);
         String catName = new MetaUtil().getCategory(meta, cat);
-        PipelineData resultMaps = PipelineUtils.getPipeline(maps, getPipeline(), inmemory);
+        PipelineData resultMaps = null; //PipelineUtils.getPipeline(maps, getPipeline(), inmemory);
         if (resultMaps != null) {
             //Map<String, Object> indicatorMaps = (Map<String, Object>) resultMaps.get(getPipeline());
             //System.out.println("macd"+ macdMaps.keySet());

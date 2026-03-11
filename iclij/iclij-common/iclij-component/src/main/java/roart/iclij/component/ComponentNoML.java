@@ -10,7 +10,7 @@ import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.model.ConfigDTO;
-import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.constants.IclijConstants;
@@ -37,7 +37,7 @@ public abstract class ComponentNoML extends Component {
 
             Map<String, Object> anUpdateMap = new HashMap<>();
             Map<String, Object> aScoreMap = new HashMap<>();
-            PipelineData[] resultMap = new PipelineData[0];
+            SerialPipeline resultMap = new SerialPipeline();
             //resultMap.setName(getPipeline());
             Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
             List<ResultItem> retlist = param.getService().getEvolveRecommender(param.getId(), true, param.getDisableList(), anUpdateMap, scoreMap, resultMap, inmemory);
@@ -115,7 +115,7 @@ public abstract class ComponentNoML extends Component {
     }
 
     @Override
-    public void handleMLMeta(ComponentData param, PipelineData mlMaps, Inmemory inmemory, PipelineData[] resultMaps) {
+    public void handleMLMeta(ComponentData param, SerialPipeline mlMaps, Inmemory inmemory, SerialPipeline resultMaps) {
     }
 
 }

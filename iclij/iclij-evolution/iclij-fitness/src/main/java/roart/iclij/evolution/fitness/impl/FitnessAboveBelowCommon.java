@@ -20,6 +20,7 @@ import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.model.IncDecDTO;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.component.model.ComponentData;
 import roart.component.util.IncDecUtil;
 import roart.iclij.config.Market;
@@ -203,7 +204,7 @@ public class FitnessAboveBelowCommon {
             log.error(Constants.EXCEPTION, e3);
         }
         Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
-        PipelineData[] maps = param.getResultMaps();
+        SerialPipeline maps = param.getResultMaps();
         new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, stockDates, inmemory);
         new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, stockDates, inmemory);
 

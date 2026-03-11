@@ -34,6 +34,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @Type(value = SerialMarketStock.class, name = "SerialMarketStock"),
     @Type(value = SerialMeta.class, name = "SerialMeta"),
     @Type(value = SerialOneDim.class, name = "SerialOneDim"),
+    @Type(value = SerialPipeline.class, name = "SerialPipeline"),
     @Type(value = SerialPlain.class, name = "SerialPlain"),
     @Type(value = SerialResultMeta.class, name = "SerialResultMeta"),
     @Type(value = SerialString.class, name = "SerialString"),

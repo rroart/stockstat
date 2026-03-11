@@ -56,11 +56,11 @@ public class FilterComponent extends ComponentML {
 
     @Override
     public void calculateIncDec(ComponentData param, ProfitData profitdata, Memories positions, Boolean above,
-                                List<MLMetricsDTO> mlTests, Parameters parameters) {
+                                List<MLMetricsDTO> mlTests, Parameters parameters, Inmemory inmemory) {
     }
 
     @Override
-    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception {
+    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters, Inmemory inmemory) throws Exception {
         return null;
     }
 

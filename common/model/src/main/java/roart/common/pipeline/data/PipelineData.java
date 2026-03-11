@@ -22,11 +22,11 @@ public class PipelineData extends SerialObject {
     
     private String message;
     
-    private Map<String, Object> map = new HashMap<>();
+    //private Map<String, Object> map = new HashMap<>();
 
-    private SerialMap smap = new SerialMap();
+    //private SerialMap smap = new SerialMap();
 
-    private Set<String> usedKeys = new HashSet<>();
+    //private Set<String> usedKeys = new HashSet<>();
 
     private String key;
 
@@ -66,6 +66,7 @@ public class PipelineData extends SerialObject {
         this.name = name;
     }
 
+    /*
     public Map<String, Object> getMap() {
         return map;
     }
@@ -128,6 +129,8 @@ public class PipelineData extends SerialObject {
         this.smap = smap;
     }
 
+     */
+
     public boolean isLoaded() {
         return loaded;
     }
@@ -164,11 +167,13 @@ public class PipelineData extends SerialObject {
         return value;
     }
 
+    /*
     @Deprecated
     public SerialMap smap() {
         return smap;
     }
 
+    @Deprecated
     public void putAll(Map<String, Object> amap) {
         for (Entry<String, Object> entry : amap.entrySet()) {
             put(entry.getKey(), entry.getValue());
@@ -207,7 +212,9 @@ public class PipelineData extends SerialObject {
         return unusedKeys;
     }
 
+     */
+
     public String toString() {
-        return "PipelineData " + name + " " + map + " " + smap();
+        return "PipelineData " + name + " " + key + " " + secondKey;
     }
 }

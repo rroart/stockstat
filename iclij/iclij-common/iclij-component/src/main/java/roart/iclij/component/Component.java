@@ -22,6 +22,7 @@ import roart.common.model.IncDecDTO;
 import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.model.TimingDTO;
+import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.*;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
@@ -84,7 +85,7 @@ public abstract class Component {
     
     public abstract ComponentData improve(MarketActionData action, ComponentData param, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsDTO> mlTests, Fitness fitness, boolean save);
 
-    public abstract void handleMLMeta(ComponentData param, PipelineData mlMaps, Inmemory inmemory, PipelineData[] resultMaps);
+    public abstract void handleMLMeta(ComponentData param, SerialPipeline mlMaps, Inmemory inmemory, SerialPipeline resultMaps);
 
     /*
      * We need to handle 11 actions
@@ -159,7 +160,7 @@ public abstract class Component {
             //if (IclijConstants.EVOLVE.equals(param.getAction())) {
             //    action.saveTimingCommon(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, evolve);
            //}
-            interrupted = "interrupted".equals(param.getResultMap().get(EvolveConstants.ID));
+            interrupted = "interrupted".equals(PipelineUtils.getInteger(param.getResultMap(), PipelineConstants.EVOLVE, EvolveConstants.ID, null, null));
         }
         valueMap.putAll(evolveMap);
         valueMap.putAll(aMap);
@@ -282,9 +283,9 @@ public abstract class Component {
         */
     }
 
-    public abstract void calculateIncDec(ComponentData param, ProfitData profitdata, Memories positions, Boolean above, List<MLMetricsDTO> mlTests, Parameters parameters);
+    public abstract void calculateIncDec(ComponentData param, ProfitData profitdata, Memories positions, Boolean above, List<MLMetricsDTO> mlTests, Parameters parameters, Inmemory inmemory);
 
-    public abstract List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception;
+    public abstract List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters, Inmemory inmemory) throws Exception;
 
     public abstract String getPipeline();
     
@@ -336,16 +337,16 @@ public abstract class Component {
             scoreMap2.put("score", score);
             scoreMap2.put("scores", results.stream().map(SerialScoreChromosome::getLeft).collect(Collectors.toList()));            
             param.setScoreMap(scoreMap);
-            PipelineData[] resultMap;
-            List<PipelineData> list = new ArrayList<>();
+            SerialPipeline list = new SerialPipeline();
+            //List<PipelineData> list = new ArrayList<>();
             //resultMap.setName(getPipeline());
             list.add(new PipelineData(getPipeline(), filename, null, new SerialList(results)));
             list.add(new PipelineData(getPipeline(), EvolveConstants.TITLETEXT, null, new SerialString(title + nullString(fitness.titleText()))));
             list.add(new PipelineData(getPipeline(), EvolveConstants.SUBTITLETEXT, null, new SerialString(subtitle)));
             list.add(new PipelineData(getPipeline(), EvolveConstants.ID, null, new SerialString(filename)));
             //resultMap.put("id", filename);
-            resultMap = (PipelineData[]) list.toArray();
-            param.setResultMap(resultMap);
+            //resultMap = (SerialPipeline) list.toArray();
+            param.setResultMap(list);
             //param.setFutureDate(Lo1610910447946.txtcalDate.now());
             // fix mlmarket;
             saveTimingCommon(this, param, subcomponent, null, null, scoreMap2, time0, true, save, action);
@@ -565,10 +566,11 @@ public abstract class Component {
         if (param.getResultMap() == null) {
             return;
         }
-        PipelineData results = param.getResultMap();
-        String id = PipelineUtils.getString(results, EvolveConstants.ID);
+        SerialPipeline results = param.getResultMap();
+        String id = PipelineUtils.getString(results, EvolveConstants.ID, null, null, null);
         // TODO
-        List<SerialScoreChromosome> myList = PipelineUtils.getList(results, id);
+        List myList0 = PipelineUtils.getList(results, PipelineConstants.EVOLVE, EvolveConstants.ID, id, null);
+        List<SerialScoreChromosome> myList = (List<SerialScoreChromosome>) myList0;
         double score = myList.get(0).getLeft();
         
         MLMetricsDTO item = new MLMetricsDTO();
@@ -643,11 +645,11 @@ public abstract class Component {
 
     protected void handleMLMetaCommon(ComponentData param, Map<String, Object> valueMap, Inmemory inmemory) {
         // TODO second getcontent call, special
-        PipelineData resultMaps = param.getResultMap(getPipeline(), valueMap, true, param.isKeepPipeline());
+        SerialPipeline resultMaps = param.getResultMap(getPipeline(), valueMap, true, param.isKeepPipeline());
         param.setCategory(resultMaps, inmemory);
         // TODO 3rd call, ordinary again
         param.getAndSetCategoryValueMapAlt();
-        PipelineData resultMaps2 = param.getResultMap();
+        SerialPipeline resultMaps2 = param.getResultMap();
         handleMLMeta(param, resultMaps2, inmemory, param.getResultMaps());
     }
     

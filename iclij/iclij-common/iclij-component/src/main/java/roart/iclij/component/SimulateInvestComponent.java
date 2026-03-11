@@ -18,7 +18,6 @@ import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -219,10 +218,10 @@ public class SimulateInvestComponent extends ComponentML {
             map.put(SimConstants.EMPTY, true);
             map.put(EvolveConstants.TITLETEXT, emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + ("any"));
                      componentData.getUpdateMap().putAll(map);
-            if (evolving) {
-                PipelineData result = new PipelineData();
-                result.setName(getPipeline());
-                componentData.setResultMap(result);
+            if (evolving) { // TODO
+                //PipelineData result = new PipelineData();
+                //result.setName(getPipeline());
+               // componentData.setResultMap(result);
             }
             Double score = 0.0;
             Map<String, Double> scoreMap = new HashMap<>();
@@ -763,7 +762,7 @@ public class SimulateInvestComponent extends ComponentML {
                         map.put(SimConstants.FILTER, JsonUtil.convert(filter));
                         //map.put("market", market.getConfig().getMarket());
                         // fix
-                        componentData.setResultMap(ArrayUtils.add(componentData.getResultMap(), new PipelineData(action.getName(), "" + offset, null, new SerialListMap(map))));
+                        componentData.getResultMap().add(new PipelineData(action.getName(), "" + offset, null, new SerialListMap(map)));
                     }
                     scores.add(score);
                     if (aOneRun.lastbuysell != null) {
@@ -2420,11 +2419,11 @@ public class SimulateInvestComponent extends ComponentML {
 
     @Override
     public void calculateIncDec(ComponentData param, ProfitData profitdata, Memories positions, Boolean above,
-                                List<MLMetricsDTO> mlTests, Parameters parameters) {
+                                List<MLMetricsDTO> mlTests, Parameters parameters, Inmemory inmemory) {
     }
 
     @Override
-    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception {
+    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters, Inmemory inmemory) throws Exception {
         return null;
     }
 

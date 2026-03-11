@@ -1,14 +1,15 @@
 package roart.common.pipeline.model;
 
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 
 public abstract class PipelineResultData {
 
-    private PipelineData[] data = new PipelineData[0];
+    private SerialPipeline data = new SerialPipeline();
     
-    public abstract PipelineData[] putData();
+    public abstract SerialPipeline putData();
 
-    public PipelineData[] getData() {
+    public SerialPipeline getData() {
         return data;
     }
 }

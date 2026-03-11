@@ -14,10 +14,7 @@ import roart.common.model.IncDecDTO;
 import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.MapOneDim;
-import roart.common.pipeline.data.OneDim;
-import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialResultMeta;
+import roart.common.pipeline.data.*;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -62,14 +59,14 @@ public abstract class ComponentMLAggregator extends ComponentML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories memories, Boolean above, List<MLMetricsDTO> mlTests, Parameters parameters) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories memories, Boolean above, List<MLMetricsDTO> mlTests, Parameters parameters, Inmemory inmemory) {
         ComponentMLData param = (ComponentMLData) componentparam;
         if (memories == null) {
             //return;
         }
-        PipelineData resultMap = param.getResultMap();
+        SerialPipeline resultMap = param.getResultMap();
 
-        log.info("Keys {}", resultMap.keySet());
+        //log.info("Keys {}", resultMap.keySet());
         log.info("Keys {}", param.getCategoryValueMap().keySet());
         List<String> stockDates = param.getService().getDates(param.getInput().getMarket(), param.getId());
 
@@ -152,11 +149,11 @@ public abstract class ComponentMLAggregator extends ComponentML {
     }
 
     @Override
-    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters) throws Exception {
+    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters, Inmemory inmemory) throws Exception {
         ComponentMLData param = (ComponentMLData) componentparam;
-        PipelineData resultMap = param.getResultMap();
+        SerialPipeline resultMap = param.getResultMap();
         // mix text num
-        MapOneDim aResultMap = PipelineUtils.getMapOneDim(resultMap.get(PipelineConstants.RESULT));
+        MapOneDim aResultMap = PipelineUtils.getMapOneDim(PipelineUtils.getPipeline(resultMap, getPipeline(), PipelineConstants.RESULT, inmemory));
         List<MemoryDTO> memoryList = new ArrayList<>();
         int resultIndex = 0;
         int newResultIndex = 0;

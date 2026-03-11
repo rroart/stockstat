@@ -25,7 +25,7 @@ import roart.common.model.IncDecDTO;
 import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
@@ -110,10 +110,10 @@ public class ComponentRecommender extends ComponentNoML {
         handle2(action, market, param, profitdata, positions, evolve && param.getConfig().wantEvolveRecommender(), aMap, subcomponent, mlmarket, parameters, hasParent, inmemory);
 
         if (!evolve) {
-        PipelineData resultMap = param.getResultMap();
+        SerialPipeline resultMap = param.getResultMap();
         if (resultMap != null) {
             // rec with own result
-        Map<String, Object> resultMap2 = PipelineUtils.getMapPlain(resultMap, PipelineConstants.RESULT);
+        Map<String, Object> resultMap2 = PipelineUtils.getSerialMapPlain(resultMap, PipelineConstants.RESULT, null, null, null);
         Map<String, List<Double>> recommendBuySell = (Map<String, List<Double>>) resultMap2.get(RecommendConstants.COMPLEX);
         param.setRecommendBuySell(recommendBuySell);
         }
@@ -130,10 +130,10 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories position, Boolean above, List<MLMetricsDTO> mlTests, Parameters parameters) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories position, Boolean above, List<MLMetricsDTO> mlTests, Parameters parameters, Inmemory inmemory) {
         RecommenderData param = (RecommenderData) componentparam;
         //Map resultMaps = (Map) param.getResultMap(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, new HashMap<>());
-        PipelineData resultMaps = param.getResultMap();
+        SerialPipeline resultMaps = param.getResultMap();
         for (int i = 0; i < 2; i++) {
         Pair<String, Integer> keyPair = new ImmutablePair(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, i);
         //keyPair = ComponentMLAggregator.getRealKeys(keyPair, profitdata.getInputdata().getConfMap().keySet());
@@ -141,10 +141,10 @@ public class ComponentRecommender extends ComponentNoML {
         Double confidenceFactor = 1.0; // reimplement? profitdata.getInputdata().getConfMap().get(keyPair);
         //System.out.println(okConfMap.keySet());
         //System.out.println(okListMap.keySet());
-        log.info("mapname" + resultMaps.getName() + " " + resultMaps.getAllKeys());
+        //log.info("mapname" + resultMaps.getName() + " " + resultMaps.getAllKeys());
         //Map maps = (Map) resultMaps; //.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
         // rec with own result
-        Map<String, Map> resultMap0 = PipelineUtils.getMapPlain(resultMaps, PipelineConstants.RESULT);
+        Map resultMap0 = PipelineUtils.getSerialMapPlain(resultMaps, getPipeline(), PipelineConstants.RESULT, null, inmemory);
         Map<String, List<Double>> resultMap = (Map<String, List<Double>>) resultMap0.get(RecommendConstants.COMPLEX);
         if (resultMap == null) {
             return;
@@ -400,7 +400,7 @@ public class ComponentRecommender extends ComponentNoML {
     }
     
     @Override
-    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters) throws Exception {
+    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters, Inmemory inmemory) throws Exception {
         RecommenderData param = (RecommenderData) componentparam;
         List<MemoryDTO> memoryList = new ArrayList<>();
         for (int i = 0; i < 2; i++) {

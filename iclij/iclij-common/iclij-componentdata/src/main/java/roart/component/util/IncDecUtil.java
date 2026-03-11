@@ -8,6 +8,7 @@ import java.util.Map;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.model.IncDecDTO;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.component.model.ComponentData;
 import roart.iclij.config.Market;
@@ -17,7 +18,7 @@ import roart.service.model.ProfitData;
 public class IncDecUtil {
 
     public void filterIncDecs(ComponentData param, Market market, ProfitData profitdata,
-            PipelineData[] maps, boolean inc, List<String> mydates, Inmemory inmemory) {
+            SerialPipeline maps, boolean inc, List<String> mydates, Inmemory inmemory) {
         List<String> dates;
         if (mydates == null) {
             dates = param.getService().getDates(param.getService().coremlconf.getConfigData().getMarket(), param.getId());        
@@ -31,7 +32,7 @@ public class IncDecUtil {
             category = market.getFilter().getDeccategory();
         }
         if (category != null) {
-            PipelineData categoryMap = PipelineUtils.getPipeline(maps, category, inmemory);
+            PipelineData categoryMap = PipelineUtils.getPipeline(maps, category, null, inmemory);
             if (categoryMap != null) {
                 Integer offsetDays = null;
                 Integer days;

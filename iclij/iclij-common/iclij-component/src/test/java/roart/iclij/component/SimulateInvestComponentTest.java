@@ -24,7 +24,9 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialList;
+import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialListMap;
 import roart.common.pipeline.data.SerialListMapPlain;
 import roart.common.pipeline.data.SerialListPlain;
@@ -80,43 +82,7 @@ public class SimulateInvestComponentTest {
         aResult.plotCapital = new ArrayList(List.of(1.0));
         aResult.stockhistory = new ArrayList(List.of(new SimulateStock("1", 100.1, 3, 99.1, 101.1, LocalDate.now(), LocalDate.now(), 0, "ok")));
         aResult.history = new ArrayList(List.of(new StockHistory("2022.02.02", capital, capital, 0.2, "0.3", List.of("EQ"), null, null, "trend", 0)));
-        //Map<String, Object> map = new HashMap<>();
-        //map.put(SimConstants.STOCKHISTORY, aResult.stockhistory);
-        //map.put(SimConstants.HISTORY, new SerialListStockHistory(aResult.history));
-        //map.put(SimConstants.PLOTCAPITAL, aResult.plotCapital);
-        //map.put(SimConstants.SCORE, score);
         int offset = 0;
-        
-        // old, cur
-        
-        Map<String, Object> mapx = new HashMap<>();
-        mapx.put(SimConstants.HISTORY, aResult.history);
-
-        PipelineData resultMapx = new PipelineData("name", "" + offset, null, new SerialMapPlain(mapx));
-        //resultMapx.put("" + offset, new SerialMapPlain(mapx));
-        
-        PipelineData resultMapy = testsub(resultMapx);
-        
-        System.out.println("Class" + ((SerialMapPlain)resultMapx.get("0")).get(SimConstants.HISTORY).getClass().getName());
-        System.out.println("Class" + ((SerialMapPlain)resultMapy.get("0")).get(SimConstants.HISTORY).getClass().getName());
-        // equals, but arraylist, and no serialize
-        assertEquals(((SerialMapPlain)resultMapx.get("0")).get(SimConstants.HISTORY).getClass().getName(), ((SerialMapPlain)resultMapy.get("0")).get(SimConstants.HISTORY).getClass().getName());
-
-        // SerialListMapPlain SerialListStockHistory
-        
-        Map<String, Object> map = new HashMap<>();
-        map.put(SimConstants.HISTORY, new SerialListStockHistory(aResult.history));
-
-        PipelineData resultMap = new PipelineData();
-        resultMap.put("" + offset, new SerialListMapPlain(map));
-        
-        PipelineData resultMap2 = testsub(resultMap);
-        
-        System.out.println("Class" + ((SerialListMapPlain)resultMap.get("0")).get(SimConstants.HISTORY).getClass().getName());
-        System.out.println("Class" + ((SerialListMapPlain)resultMap2.get("0")).get(SimConstants.HISTORY).getClass().getName());
-        assertNotEquals(((SerialListMapPlain)resultMap.get("0")).get(SimConstants.HISTORY).getClass().getName(), ((SerialListMapPlain)resultMap2.get("0")).get(SimConstants.HISTORY).getClass().getName());
-
-        // SerialListMap SerialListStockHistory        
         
         Map<String, Object> map3 = new HashMap<>();
         map3.put(SimConstants.HISTORY, new SerialListStockHistory(aResult.history));
@@ -124,58 +90,14 @@ public class SimulateInvestComponentTest {
         map3.put(SimConstants.PLOTCAPITAL, new SerialListPlain(aResult.plotCapital));
         map3.put(SimConstants.SCORE, score);
 
-        PipelineData resultMap3 = new PipelineData();
-        resultMap3.put("" + offset, new SerialListMap(map3));
+        var slm = new SerialListMap(map3);
+
+        PipelineData resultMap3 = new PipelineData("name", "" + offset, null, slm);
 
         PipelineData resultMap4 = testsub(resultMap3);
 
-        System.out.println("Class" + ((SerialListStockHistory)(((SerialListMap)resultMap3.get("0")).get(SimConstants.HISTORY))).get(0).getClass().getName());
-        System.out.println("Class" + ((SerialListStockHistory)(((SerialListMap)resultMap4.get("0")).get(SimConstants.HISTORY))).get(0).getClass().getName());
-        // TODO ok
-        assertEquals(((SerialListStockHistory)(((SerialListMap)resultMap3.get("0")).get(SimConstants.HISTORY))).get(0).getClass().getName(), ((SerialListStockHistory)(((SerialListMap)resultMap4.get("0")).get(SimConstants.HISTORY))).get(0).getClass().getName());
-
-        // plain SerialListStockHistory
-        
-        Map<String, Object> map5 = new HashMap<>();
-        map5.put(SimConstants.HISTORY, new SerialListStockHistory(aResult.history));
-
-        PipelineData resultMap5 = new PipelineData();
-        resultMap5.put("" + offset, map5);
-
-        PipelineData resultMap6 = testsub(resultMap5);
-
-        System.out.println("Class" + ((SerialListStockHistory)(((Map)resultMap5.get("0")).get(SimConstants.HISTORY))).get(0).getClass().getName());
-        System.out.println("Class" + ((LinkedHashMap)(((Map)resultMap6.get("0")).get(SimConstants.HISTORY))).get("list").getClass().getName());
-        assertNotEquals(((SerialListStockHistory)(((Map)resultMap5.get("0")).get(SimConstants.HISTORY))).get(0).getClass().getName(), ((LinkedHashMap)(((Map)resultMap6.get("0")).get(SimConstants.HISTORY))).get("list").getClass().getName());
-
-        // SerialList SerialStockHistory
-        
-        List<SerialStockHistory> list8 = new ArrayList<>();
-        for (StockHistory entry : aResult.history) {
-            list8.add(new SerialStockHistory(entry));
-        }
-
-        List<SerialSimulateStock> list82 = new ArrayList<>();
-        for (SimulateStock entry : aResult.stockhistory) {
-            list82.add(new SerialSimulateStock(entry));
-        }
-
-        Map<String, Object> map7 = new HashMap<>();
-        map7.put(SimConstants.HISTORY, new SerialList(list8));
-        map7.put(SimConstants.STOCKHISTORY, new SerialList(list82));
-        map7.put(SimConstants.PLOTCAPITAL, new SerialListPlain(aResult.plotCapital));
-        map7.put(SimConstants.SCORE, score);
-
-        PipelineData resultMap7 = new PipelineData();
-        resultMap7.put("" + offset, new SerialListMap(map7));
-
-        PipelineData resultMap8= testsub(resultMap7);
-
-        System.out.println("Class" + ((SerialList)(((SerialListMap)resultMap7.get("0")).get(SimConstants.HISTORY))).get(0).getClass().getName());
-        System.out.println("Class" + ((SerialList)(((SerialListMap)resultMap8.get("0")).get(SimConstants.HISTORY))).get(0).getClass().getName());
-        // TODO ok?
-        assertEquals(((SerialList)(((SerialListMap)resultMap7.get("0")).get(SimConstants.HISTORY))).get(0).getClass().getName(), ((SerialList)(((SerialListMap)resultMap8.get("0")).get(SimConstants.HISTORY))).get(0).getClass().getName());
-}
+        assertEquals(((SerialListStockHistory)((SerialListMap)resultMap3.getValue()).get(SimConstants.HISTORY)).get(0).getClass().getName(), ((SerialListStockHistory)((SerialListMap)resultMap4.getValue()).get(SimConstants.HISTORY)).get(0).getClass().getName());
+    }
     
     // TODO duplicated
     public <C> C testsub(C object) {

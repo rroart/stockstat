@@ -76,7 +76,7 @@ public class FitnessIclijConfigMapCommon {
                 // TODO TODOE
                 //log.info("TODO" + componentData2.getResultMap().getSmap().getMap());
                 //resultMap.putAll(componentData2.getResultMap().getSmap().getMap());
-                resultMap.putAll(componentData2.getResultMap().getSmap().getMap());
+                // TODO resultMap.putAll(componentData2.getResultMap().getSmap().getMap());
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

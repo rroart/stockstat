@@ -21,6 +21,7 @@ import roart.common.model.IncDecDTO;
 import roart.common.model.util.MetaUtil;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.MapUtil;
@@ -44,7 +45,7 @@ public class PeriodAdviser extends Adviser {
             int period = simulateConfig.getPeriod();
             Integer cat = period;
 
-            PipelineData[] resultMaps = param.getResultMaps();
+            SerialPipeline resultMaps = param.getResultMaps();
             if (resultMaps == null) {
                 int jj = 0;
             }
@@ -63,8 +64,8 @@ public class PeriodAdviser extends Adviser {
                 return;
             }
 
-            PipelineData datareader = PipelineUtils.getPipeline(resultMaps, catName, inmemory);
-            if (datareader == null) {
+            PipelineData datareader = null; // PipelineUtils.getPipeline(resultMaps, catName, inmemory);
+            if (false && datareader == null) {
                 // TODO not needed, done above?
                 log.info("Not used?");
                 categoryValueMap = new HashMap<>();
@@ -72,9 +73,9 @@ public class PeriodAdviser extends Adviser {
             }
             Map<String, List<List<Double>>> aCategoryValueMap;
             if (getInterpolate(simulateConfig.getInterpolate())) {
-                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.FILLLIST)));
+                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(resultMaps, catName, PipelineConstants.FILLLIST, inmemory)));
             } else {
-                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST)));
+                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(resultMaps, catName, PipelineConstants.LIST, inmemory)));
             }
             categoryValueMap = aCategoryValueMap;
         } else {

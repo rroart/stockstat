@@ -21,6 +21,7 @@ import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.model.IncDecDTO;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.component.model.ComponentData;
 import roart.component.util.IncDecUtil;
 import roart.iclij.config.Market;
@@ -48,7 +49,7 @@ public class FitnessMarketFilterCommon {
         myData.setTimingMap(new HashMap<>());
         Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
         List<IncDecDTO> myincdecs = new ArrayList<>(incdecs);
-        PipelineData[] maps = param.getResultMaps();
+        SerialPipeline maps = param.getResultMaps();
         new MarketUtil().fillProfitdata(profitdata, myincdecs);
         new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, stockDates, inmemory);
         new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, stockDates, inmemory);

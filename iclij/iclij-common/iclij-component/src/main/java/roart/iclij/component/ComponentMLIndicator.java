@@ -20,7 +20,7 @@ import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.MapOneDim;
 import roart.common.pipeline.data.OneDim;
-import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
@@ -109,12 +109,12 @@ public class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories positions, Boolean above, List<MLMetricsDTO> mlTests, Parameters parameters) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories positions, Boolean above, List<MLMetricsDTO> mlTests, Parameters parameters, Inmemory inmemory) {
         MLIndicatorData param = (MLIndicatorData) componentparam;
         if (positions == null) {
             //return;
         }
-        PipelineData resultMap = param.getResultMap();
+        SerialPipeline resultMap = param.getResultMap();
         if (resultMap == null) {
             return;
         }
@@ -218,12 +218,12 @@ public class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters) throws Exception {
+    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters, Inmemory inmemory) throws Exception {
         MLIndicatorData param = (MLIndicatorData) componentparam;
         List<MemoryDTO> memoryList = new ArrayList<>();
-        PipelineData resultMap = param.getResultMap();
+        SerialPipeline resultMap = param.getResultMap();
         // mix text num
-        MapOneDim aResultMap = PipelineUtils.getMapOneDim(resultMap.get(PipelineConstants.RESULT));
+        MapOneDim aResultMap = PipelineUtils.getMapOneDim(PipelineUtils.getPipeline(resultMap, getPipeline(), PipelineConstants.RESULT, inmemory));
         int resultIndex = 0;
         int newResultIndex = 0;
         for (int count = 0; count < param.getResultMeta().size(); count++) {

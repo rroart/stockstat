@@ -20,7 +20,7 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.model.IncDecDTO;
 import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
-import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.iclij.component.Component;
 import roart.iclij.component.factory.ComponentFactory;
@@ -145,7 +145,7 @@ public class FitnessMarketFilter extends Fitness {
             //component.enableDisable(componentData, positions, param.getConfigValueMap(), buy);
         
             ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map, subcomponent, null, parameters, false, null /*inmemory*/);
-            component.calculateIncDec(componentData2, profitdata, positions, buy, mlTests, parameters);
+            component.calculateIncDec(componentData2, profitdata, positions, buy, mlTests, parameters, inmemory);
         
             short startoffset = new MarketUtil().getStartoffset(market);
             //action.setValMap(param);
@@ -175,7 +175,7 @@ public class FitnessMarketFilter extends Fitness {
         }
         incProp = incProp1;
         Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
-        PipelineData[] maps = param.getResultMaps();
+        SerialPipeline maps = param.getResultMaps();
         new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, null, inmemory);
         new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, null, inmemory);
 

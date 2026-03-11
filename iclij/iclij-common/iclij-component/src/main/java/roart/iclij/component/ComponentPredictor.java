@@ -22,6 +22,7 @@ import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
@@ -127,7 +128,7 @@ public class ComponentPredictor extends ComponentML {
 
         handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters, hasParent, inmemory);
         
-        PipelineData maps = param.getResultMap();
+        //PipelineData maps = param.getResultMap();
         
         return param;
     }
@@ -138,7 +139,7 @@ public class ComponentPredictor extends ComponentML {
         Pair<String, Integer> keyPair = new ImmutablePair(PipelineConstants.PREDICTOR, null);
         //keyPair = ComponentMLAggregator.getRealKeys(keyPair, profitdata.getInputdata().getConfMap().keySet());
         Double confidenceFactor = 1.0; // never mind, will reimplement. profitdata.getInputdata().getConfMap().get(keyPair);
-        Map<String, Object> resultMap = (Map<String, Object>) param.getResultMap().get("result");
+        Map<String, Object> resultMap = null; // TODO (Map<String, Object>) param.getResultMap().get("result");
         List<MyElement> list0 = new ArrayList<>();
         //List<MyElement> list1 = new ArrayList<>();
         SerialResultMeta meta =  param.getResultMeta().get(0);
@@ -185,12 +186,12 @@ public class ComponentPredictor extends ComponentML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories positions, Boolean above, List<MLMetricsDTO> mlTests, Parameters parameters) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories positions, Boolean above, List<MLMetricsDTO> mlTests, Parameters parameters, Inmemory inmemory) {
         PredictorData param = (PredictorData) componentparam;
         if (positions == null) {
             //return;
         }
-        PipelineData resultMap = param.getResultMap();
+        SerialPipeline resultMap = param.getResultMap();
         // mix text num
         // java.lang.ClassCastException: class roart.common.pipeline.data.SerialMapPlain ca
         // nnot be cast to class java.util.Map (roart.common.pipeline.data.SerialMapPlain i
@@ -276,9 +277,9 @@ public class ComponentPredictor extends ComponentML {
         }
     }
 
-    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters) throws Exception {
+    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters, Inmemory inmemory) throws Exception {
         PredictorData param = (PredictorData) componentparam;
-        Map<String, List<Double>> resultMap = (Map<String, List<Double>>) param.getResultMap().get("result");
+        Map<String, List<Double>> resultMap = null; // TODO (Map<String, List<Double>>) param.getResultMap().get("result");
         List<MemoryDTO> memoryList = new ArrayList<>();
         long total = 0;
         long goodInc = 0;

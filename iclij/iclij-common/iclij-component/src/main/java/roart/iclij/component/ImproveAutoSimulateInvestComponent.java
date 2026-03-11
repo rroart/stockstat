@@ -16,6 +16,7 @@ import roart.common.model.MemoryDTO;
 import roart.common.model.MetaDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
@@ -108,11 +109,11 @@ public class ImproveAutoSimulateInvestComponent extends ComponentML {
 
     @Override
     public void calculateIncDec(ComponentData param, ProfitData profitdata, Memories positions, Boolean above,
-                                List<MLMetricsDTO> mlTests, Parameters parameters) {
+                                List<MLMetricsDTO> mlTests, Parameters parameters, Inmemory inmemory) {
     }
 
     @Override
-    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters) throws Exception {
+    public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData param, Parameters parameters, Inmemory inmemory) throws Exception {
         return null;
     }
 
@@ -175,7 +176,7 @@ public class ImproveAutoSimulateInvestComponent extends ComponentML {
         //PipelineData metaData = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
         //SerialMeta meta = PipelineUtils.getMeta(metaData);
         //String catName = new MetaUtil().getCategory(meta,  cat);
-        PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
+        PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, null, null, inmemory);
         Integer cat = PipelineUtils.getWantedcat(param.getResultMaps(), PipelineConstants.META, inmemory);
         String catName = PipelineUtils.getMetaCat(param.getResultMaps(), inmemory);
         log.info("cats {} {}", cat, catName);
@@ -184,7 +185,7 @@ public class ImproveAutoSimulateInvestComponent extends ComponentML {
         param.getAndSetCategoryValueMapAlt();
 
         
-        PipelineData[] mapsRebase = param.getResultMaps();
+        SerialPipeline mapsRebase = param.getResultMaps();
         param.setResultRebaseMaps(mapsRebase);
 
         aMap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, false);

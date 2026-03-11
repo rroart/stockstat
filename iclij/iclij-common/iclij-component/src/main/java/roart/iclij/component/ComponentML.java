@@ -17,7 +17,7 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.model.ConfigDTO;
 import roart.common.model.MLMetricsDTO;
-import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialIncDec;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.pipeline.util.PipelineUtils;
@@ -58,7 +58,7 @@ public abstract class ComponentML extends Component {
             //param.getService().conf.getConfigValueMap().putAll(evolveMap);
             Map<String, Object> anUpdateMap = new HashMap<>();
             Map<String, Object> aScoreMap = new HashMap<>();
-            PipelineData[] resultMap = new PipelineData[0];
+            SerialPipeline resultMap = new SerialPipeline();
             //resultMap.setName(getPipeline());
             param.getService().coremlconf.getConfigData().setDate(param.getFutureDate());
             // TODO calling ml
@@ -186,7 +186,7 @@ public abstract class ComponentML extends Component {
     }
 
     @Override
-    public void handleMLMeta(ComponentData componentparam, PipelineData mlMaps, Inmemory inmemory, PipelineData[] resultMaps) {
+    public void handleMLMeta(ComponentData componentparam, SerialPipeline mlMaps, Inmemory inmemory, SerialPipeline resultMaps) {
         if (mlMaps == null) {
             return;
         }
