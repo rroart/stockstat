@@ -32,6 +32,7 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.model.MetaDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.queue.QueueElement;
@@ -294,6 +295,7 @@ public class ControlService {
         IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETDATES);
         list = PipelineUtils.getDatelist(result.getPipelineData(), PipelineConstants.DATELIST, inmemory);
         new PipelineThreadUtils(getIclijConfig(), inmemory, getIo().getCuratorClient()).cleanPipeline(id, uuid);
+        log.info("kv" + key + " " + list);
         MyCache.getInstance().put(key, list);
         return list;
     }
@@ -306,11 +308,11 @@ public class ControlService {
  * @return the tabular result lists
      */
 
-    public PipelineData[] getContent(String uuid, boolean useMl, boolean disableCache, boolean keepPipeline) {
+    public SerialPipeline getContent(String uuid, boolean useMl, boolean disableCache, boolean keepPipeline) {
         return getContent(uuid, useMl, new ArrayList<>(), disableCache, keepPipeline);
     }
     
-    public PipelineData[] getContent(String uuid, boolean useMl, List<String> disableList, boolean disableCache, boolean keepPipeline) {
+    public SerialPipeline getContent(String uuid, boolean useMl, List<String> disableList, boolean disableCache, boolean keepPipeline) {
         if (false) {
             try {
                 String s = null;
@@ -329,7 +331,7 @@ public class ControlService {
         
         String key = common + CacheConstants.CONTENT + coremlconf.getConfigData().getMarket() + coremlconf.getConfigData().getMlmarket() + coremlconf.getConfigData().getDate() + coremlconf.getConfigData().getConfigValueMap();
         log.info("Content key {}", key.hashCode());
-        PipelineData[] list = (PipelineData[]) MyCache.getInstance().get(key);
+        SerialPipeline list = (SerialPipeline) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
         }
@@ -369,7 +371,7 @@ public class ControlService {
         // todo icore queue listen
         //log.info("blblbl" + JsonUtil.convert(result).length());
         list = result.getPipelineData();
-        PipelineData[] list2 = list;
+        SerialPipeline list2 = list;
         // TODO list = ImmutabilityUtil.immute(list2);
         if (!disableCache) {
             MyCache.getInstance().put(key, list);
@@ -384,7 +386,7 @@ public class ControlService {
         long[] memdiff = MemUtil.diff(mem1, mem0);
         log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
         log.info("Cache {}", MyCache.getInstance().toString());
-        PipelineUtils.fixPipeline(result.getPipelineData(), MarketStock.class, StockData.class);
+        //PipelineUtils.fixPipeline(result.getPipelineData(), MarketStock.class, StockData.class);
         return list;
         //return result.getMaps();
         //ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONTENT);
@@ -436,7 +438,7 @@ public class ControlService {
     }
 
     @Deprecated
-    public PipelineData[] getRerun(List<String> disableList) {
+    public SerialPipeline getRerun(List<String> disableList) {
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(coremlconf.getConfigData());
         param.setWantMaps(true);
@@ -475,7 +477,7 @@ public class ControlService {
         getAndSetCoreConfig();
     }
 
-    public List<ResultItem> getEvolveRecommender(String uuid, boolean doSet, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, PipelineData[] resultMap, Inmemory inmemory) {
+    public List<ResultItem> getEvolveRecommender(String uuid, boolean doSet, List<String> disableList, Map<String, Object> updateMap, Map<String, Object> scoreMap, SerialPipeline resultMap, Inmemory inmemory) {
         IclijServiceParam param = new IclijServiceParam();
         log.info("Wants {}", iclijConfig.wantsInmemoryPipeline());
         if (iclijConfig.wantsInmemoryPipeline()) {
@@ -488,18 +490,18 @@ public class ControlService {
         IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVERECOMMENDER);
         if (doSet) {
             //conf = new MyMyConfig(result.getConfig());
-            PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE, inmemory);  
-            updateMap.putAll(datum.getMap(PipelineConstants.UPDATE));
-            scoreMap.putAll(datum.getMap(PipelineConstants.SCORE));
+            //PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE, inmemory);
+            updateMap.putAll(PipelineUtils.getSerialMapPlain(result.getPipelineData(), PipelineConstants.EVOLVE, PipelineConstants.UPDATE, null, null));
+            scoreMap.putAll(PipelineUtils.getSerialMapPlain(result.getPipelineData(), PipelineConstants.EVOLVE, PipelineConstants.SCORE, null, null));
             // rec with own result
             // TODO  cast seriallistmap
-            resultMap.putAll(datum.getListMap(PipelineConstants.RESULT));
+            resultMap.add(PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE, PipelineConstants.RESULT, inmemory)); // TODO overwrite
         }
         return result.getList();
         //return result.getMaps().get("update");
     }
 
-    public List<ResultItem> getEvolveML(String uuid, boolean doSet, List<String> disableList,  String ml, IclijConfig conf, Map<String, Object> updateMap, Map<String, Object> scoreMap, PipelineData[] resultMap) {
+    public List<ResultItem> getEvolveML(String uuid, boolean doSet, List<String> disableList,  String ml, IclijConfig conf, Map<String, Object> updateMap, Map<String, Object> scoreMap, SerialPipeline resultMap) {
         IclijServiceParam param = new IclijServiceParam();
         log.info("Wants {}", iclijConfig.wantsInmemoryPipeline());
         if (iclijConfig.wantsInmemoryPipeline()) {
@@ -524,11 +526,12 @@ public class ControlService {
         
         if (doSet) {
             Inmemory inmemory = io.getInmemoryFactory().get(conf);
-            PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE, inmemory);  
-            updateMap.putAll(datum.getMap(PipelineConstants.UPDATE));
-            scoreMap.putAll(datum.getMap(PipelineConstants.SCORE));
-            // TODO?
-            resultMap.putAll(datum.getListMap(PipelineConstants.RESULT));
+            PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE, null, inmemory);
+            updateMap.putAll(PipelineUtils.getSerialMapPlain(result.getPipelineData(), PipelineConstants.EVOLVE, PipelineConstants.UPDATE, null, null));
+            scoreMap.putAll(PipelineUtils.getSerialMapPlain(result.getPipelineData(), PipelineConstants.EVOLVE, PipelineConstants.SCORE, null, null));
+            // rec with own result
+            // TODO  cast seriallistmap
+            resultMap.add(PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE, PipelineConstants.RESULT, inmemory)); // TODO overwrite
             //Map<String, Object> updateMap = result.getMaps().get("update");
             //conf.getConfigValueMap().putAll(updateMap);
             //return updateMap;
@@ -559,10 +562,12 @@ public class ControlService {
         IclijServiceResult result = null;
         
         if (doSet) {
-            PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE);  
-            updateMap.putAll(datum.getMap(PipelineConstants.UPDATE));
-            scoreMap.putAll(datum.getMap(PipelineConstants.SCORE));
-            resultMap.getMap().putAll(datum.getMap(PipelineConstants.RESULT));
+            //PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE);
+            //updateMap.putAll(PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE, PipelineConstants.UPDATE, inmemory).getMap());
+            //scoreMap.putAll(PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE, PipelineConstants.SCORE, inmemory).getMap());
+            // rec with own result
+            // TODO  cast seriallistmap
+            //resultMap.add(PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE, PipelineConstants.RESULT, inmemory).getListMap());
             //Map<String, Object> updateMap = result.getMaps().get("update");
             //conf.getConfigValueMap().putAll(updateMap);
             //return updateMap;

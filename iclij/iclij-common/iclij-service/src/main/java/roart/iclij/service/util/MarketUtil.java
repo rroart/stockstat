@@ -15,6 +15,7 @@ import roart.common.model.IncDecDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.MapUtil;
 import roart.db.dao.IclijDbDao;
@@ -104,7 +105,7 @@ public class MarketUtil {
             String key = item.getId();
             if (listMap3 == null) {
                 if (categoryMap != null) {
-                    log.debug("" + categoryMap.keySet());
+                    //log.debug("" + categoryMap.keySet());
                 }
                 log.debug("market null map {}", market.getConfig().getMarket());
                 continue;
@@ -141,7 +142,7 @@ public class MarketUtil {
         return incdecsFilter;
     }
 
-    public Map<String, List<List<Double>>> getCategoryList(PipelineData[] maps, String category, Inmemory inmemory) {
+    public Map<String, List<List<Double>>> getCategoryList(SerialPipeline maps, String category, Inmemory inmemory) {
         String newCategory = null;
         if (Constants.PRICE.equals(category)) {
             newCategory = "" + Constants.PRICECOLUMN;
@@ -150,14 +151,14 @@ public class MarketUtil {
             newCategory = "" + Constants.INDEXVALUECOLUMN;
         }
         if (newCategory != null) {
-            PipelineData map = PipelineUtils.getPipeline(maps, newCategory, inmemory);
-            return MapUtil.convertA2L(PipelineUtils.sconvertMapDD(map.get(PipelineConstants.LIST)));
+            PipelineData map = PipelineUtils.getPipeline(maps, newCategory, PipelineConstants.LIST, inmemory);
+            return MapUtil.convertA2L(PipelineUtils.sconvertMapDD(map));
         }
         Map<String, List<List<Double>>> listMap3 = null;
         for (String entry : PipelineUtils.getPipelineMapKeys(maps)) {
-            PipelineData map = PipelineUtils.getPipeline(maps, entry, inmemory);
+            PipelineData map = PipelineUtils.getPipeline(maps, entry, PipelineConstants.LIST, inmemory);
             if (category.equals(PipelineUtils.getCatTitle(maps, entry, inmemory))) {
-                listMap3 = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(map.get(PipelineConstants.LIST)));
+                listMap3 = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(map));
             }
         }
         return listMap3;

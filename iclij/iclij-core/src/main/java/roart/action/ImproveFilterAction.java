@@ -24,6 +24,7 @@ import roart.common.model.MemoryDTO;
 import roart.common.model.TimingDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.queue.QueueElement;
 import roart.common.util.JsonUtil;
@@ -102,15 +103,15 @@ public class ImproveFilterAction extends MarketAction {
             //component.set(market, param, profitdata, positions, evolve);
             //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
             // TODO 0 ok?
-            //param.getConfigValueMap().put(ConfigConstants.MISCMYTABLEDAYS, 0);
-            //param.getConfigValueMap().put(ConfigConstants.MISCMYDAYS, 0);
+            param.getConfigValueMap().put(ConfigConstants.MISCMYTABLEDAYS, 0);
+            param.getConfigValueMap().put(ConfigConstants.MISCMYDAYS, 0);
             param.getConfigValueMap().put(IclijConfigConstants.FINDPROFITMLDYNAMIC, Boolean.TRUE);
 
             // todo
             // done clean
             // todo ok?
             param. getAndSetCategoryValueMap(false);
-            PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
+            //PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
             Integer cat = PipelineUtils.getWantedcat(param.getResultMaps(), PipelineConstants.META, inmemory);
             String catName = PipelineUtils.getMetaCat(param.getResultMaps(), inmemory);
             log.info("cats {} {}", cat, catName);
@@ -139,7 +140,7 @@ public class ImproveFilterAction extends MarketAction {
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
             }
-            PipelineData results = componentData.getResultMap();
+            SerialPipeline results = componentData.getResultMap();
             log.info("Content {}", JsonUtil.convert(results));
             QueueElement element = new QueueElement();
             InmemoryMessage msg = inmemory.send(ServiceConstants.EVOLVEFILTERFILTER + UUID.randomUUID(), results, null);

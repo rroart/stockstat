@@ -30,6 +30,7 @@ import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.model.TimingDTO;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialListMap;
 import roart.common.pipeline.data.SerialMap;
 import roart.common.queue.QueueElement;
@@ -115,11 +116,11 @@ public class ImproveProfitAction extends MarketAction {
                 Object value = myConfig.get(key);
                 defaults.put(key, value);
             }
-            PipelineData[] results = componentData.getResultMap();
+            SerialPipeline results = componentData.getResultMap();
             // if not interrupted
             if (results != null) {
                 // TODO TODO
-                componentData.setResultMap(ArrayUtils.add(componentData.getResultMap(), new PipelineData(action.getName(), EvolveConstants.DEFAULT, null, new SerialListMap(defaults))));
+                componentData.getResultMap().add(new PipelineData(action.getName(), EvolveConstants.DEFAULT, null, new SerialListMap(defaults)));
             	// TODO?
                 Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 QueueElement element = new QueueElement();

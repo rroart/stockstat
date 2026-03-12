@@ -17,6 +17,7 @@ import roart.common.model.IncDecDTO;
 import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.queue.QueueElement;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
@@ -70,8 +71,8 @@ public class DatasetAction extends MarketAction {
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
             }
-            PipelineData results = componentData.getResultMap();
-            if (results != null) {
+            SerialPipeline results = componentData.getResultMap();
+            if (!results.isEmpty()) {
                 //Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 QueueElement element = new QueueElement();
                 InmemoryMessage msg = inmemory.send(ServiceConstants.EVOLVEFILTEREVOLVE + UUID.randomUUID(), results, null);
@@ -123,7 +124,7 @@ public class DatasetAction extends MarketAction {
     }
 
     @Override
-    protected Map<String, String> getNameMap(PipelineData[] maps) {
+    protected Map<String, String> getNameMap(SerialPipeline maps) {
         return null;
     }
 

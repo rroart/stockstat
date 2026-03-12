@@ -36,6 +36,7 @@ import roart.common.model.TimingDTO;
 import roart.common.model.util.MetaUtil;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
@@ -576,13 +577,13 @@ public abstract class MarketAction extends Action {
         // todo start
         if (false) {
         setValMap(param);
-        PipelineData[] maps = param.getResultMaps();
+        SerialPipeline maps = param.getResultMaps();
         // TODO bad
         Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config);
-        PipelineData metadata = PipelineUtils.getPipeline(maps, PipelineConstants.META, inmemory);
-        PipelineData pipeline = PipelineUtils.getPipeline(maps, PipelineUtils.getMetaCat(metadata, inmemory), inmemory);
-        String catName = PipelineUtils.getMetaCat(metadata, inmemory);
-        Map<String, String> nameMap = PipelineUtils.getNamemap(PipelineUtils.getPipeline(maps, catName, inmemory), name, inmemory);
+        //PipelineData metadata = PipelineUtils.getPipeline(maps, PipelineConstants.META, inmemory);
+        //PipelineData pipeline = PipelineUtils.getPipeline(maps, PipelineConstants.META, inmemory);
+        String catName = PipelineUtils.getMetaCat(maps, inmemory);
+        Map<String, String> nameMap = PipelineUtils.getNamemap(maps, catName, inmemory);
         log.info("TODO names {}", nameMap.size());
         inputdata.setNameMap(nameMap);
         }
@@ -621,7 +622,7 @@ public abstract class MarketAction extends Action {
         
         if (!getActionData().isDataset()) {
             Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config);
-            PipelineData[] maps = param.getResultMaps();
+            SerialPipeline maps = param.getResultMaps();
             // TODO not yet?
             //new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, null, inmemory);
             //new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, null, inmemory);
@@ -813,18 +814,17 @@ public abstract class MarketAction extends Action {
         return s != null ? "" + s : "";
     }
 
-    protected Map<String, String> getNameMap(PipelineData[] maps) {
+    protected Map<String, String> getNameMap(SerialPipeline maps) {
         Map<String, String> nameMap = null;
-        for (Entry<String, PipelineData> entry : PipelineUtils.getPipelineMap(maps).entrySet()) {
-            PipelineData map = entry.getValue();
-            nameMap = PipelineUtils.getNamemap(map, name, inmemory);
+        for (PipelineData map : maps) {
+            nameMap = PipelineUtils.getNamemap(maps, map.getName(), null);
             if (nameMap != null) {
                 break;
             }
         }
         return nameMap;
     }
-    
+
     protected abstract void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Memories listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree, List<MLMetricsDTO> mlTests);
  
     public Map<String, Component> getComponentMap(Collection<String> listComponent, Market market) {

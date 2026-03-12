@@ -33,6 +33,7 @@ import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialDouble;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialString;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.queue.QueueElement;
@@ -169,7 +170,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                 // todo ok?
                 param.getAndSetCategoryValueMap(false);
                 Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
-                PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
+                PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, null, null, inmemory);
                 Integer cat = PipelineUtils.getWantedcat(param.getResultMaps(), PipelineConstants.META, inmemory);
                 String catName = PipelineUtils.getMetaCat(param.getResultMaps(), inmemory);
                 log.info("cats {} {}", cat, catName);
@@ -276,7 +277,7 @@ public class ImproveAboveBelowAction extends MarketAction {
 
                     //component.handle(this, market, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null);
                     //ComponentData componentData = component.handle(getActionData(), market, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null, getParent() != null);
-                    componentData.setResultMap(ArrayUtils.add(componentData.getResultMap(), new PipelineData(action.getName(), EvolveConstants.DEFAULT, null, new SerialDouble(score))));
+                    componentData.getResultMap().add( new PipelineData(action.getName(), EvolveConstants.DEFAULT, null, new SerialDouble(score)));
                     Map<String, Object> updateMap = componentData.getUpdateMap();
                     if (updateMap != null) {
                         param.getUpdateMap().putAll(updateMap);
@@ -284,8 +285,8 @@ public class ImproveAboveBelowAction extends MarketAction {
                     memory.setDescription((String) updateMap.get(aParameter));
                     List<Double> list = new ArrayList<>(param.getScoreMap().values());
                     memory.setLearnConfidence(list.get(0));
-                    componentData.setResultMap(ArrayUtils.add(componentData.getResultMap(), new PipelineData(action.getName(),"learned", null, new SerialDouble(list.get(0)))));
-                    componentData.setResultMap(ArrayUtils.add(componentData.getResultMap(), new PipelineData(action.getName(),EvolveConstants.DATE, null, new SerialString(TimeUtil.convertDate2(param.getFutureDate()))));
+                    componentData.getResultMap().add(new PipelineData(action.getName(),"learned", null, new SerialDouble(list.get(0))));
+                    componentData.getResultMap().add(new PipelineData(action.getName(),EvolveConstants.DATE, null, new SerialString(TimeUtil.convertDate2(param.getFutureDate()))));
                 }
                 memory.setAction(action.getName());
                 memory.setMarket(market.getConfig().getMarket());
@@ -318,8 +319,8 @@ public class ImproveAboveBelowAction extends MarketAction {
                 }
             }
 
-            PipelineData results = param.getResultMap();
-            if (results != null) {
+            SerialPipeline results = param.getResultMap();
+            if (!results.isEmpty()) {
                 log.info("Content {}", JsonUtil.convert(results));
                 Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 QueueElement element = new QueueElement();
@@ -372,7 +373,7 @@ public class ImproveAboveBelowAction extends MarketAction {
             myData.getUpdateMap().putAll(componentData.getUpdateMap());
             List<MemoryDTO> memories;
             try {
-                memories = component.calculateMemory(getActionData(), componentData, parameters);
+                memories = component.calculateMemory(getActionData(), componentData, parameters, inmemory);
                 allMemories.addAll(memories);
            } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
@@ -414,7 +415,7 @@ public class ImproveAboveBelowAction extends MarketAction {
             myData.getUpdateMap().putAll(componentData.getUpdateMap());
             List<MemoryDTO> memories;
             try {
-                memories = component.calculateMemory(getActionData(), componentData, parameters);
+                memories = component.calculateMemory(getActionData(), componentData, parameters, inmemory);
                 allMemories.addAll(memories);
            } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);

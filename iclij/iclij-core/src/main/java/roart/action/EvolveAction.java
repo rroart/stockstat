@@ -22,6 +22,7 @@ import roart.common.model.MemoryDTO;
 import roart.common.model.TimingDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.queue.QueueElement;
 import roart.common.util.JsonUtil;
 import roart.iclij.component.Component;
@@ -87,7 +88,7 @@ public class EvolveAction extends MarketAction {
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
             }
-            PipelineData results = componentData.getResultMap();
+            SerialPipeline results = componentData.getResultMap();
             if (PipelineConstants.AGGREGATORRECOMMENDERINDICATOR.equals(component.getPipeline()) ) {
                 return;
             }
@@ -95,8 +96,8 @@ public class EvolveAction extends MarketAction {
                 //Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 QueueElement element = new QueueElement();
                 System.out.println("mmm"+results.toString());
-                System.out.println("mmm"+results.getMap().keySet());
-                System.out.println("mmm"+results.getSmap().keySet());
+                //System.out.println("mmm"+results.getMap().keySet());
+                //System.out.println("mmm"+results.getSmap().keySet());
                 log.info("Content {}", JsonUtil.convert(results));
                 InmemoryMessage msg = inmemory.send(ServiceConstants.EVOLVEFILTEREVOLVE + UUID.randomUUID(), results, null);
                 element.setOpid(ServiceConstants.EVOLVE);

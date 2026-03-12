@@ -23,6 +23,8 @@ import roart.common.model.IncDecDTO;
 import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
+import roart.common.pipeline.data.SerialString;
 import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.queue.QueueElement;
 import roart.common.util.JsonUtil;
@@ -130,11 +132,11 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
             EvolutionConfig evolutionConfig = JsonUtil.convert(evolutionConfigString, EvolutionConfig.class);
             Map<String, Object> confMap = new HashMap<>();
             ComponentData e = evolve.evolve(action.getActionData(), param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap , evolutionConfig, component.getPipeline(), component, confList);
-            PipelineData[] results = e.getResultMap();
+            SerialPipeline results = e.getResultMap();
             Object filters = param.getConfigValueMap().remove(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
             // filters is already a serialized string
             filters = param.getInput().getValuemap().get(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
-            results = ArrayUtils.add(results, new PipelineData("name", SimConstants.FILTER, null, filters);
+            results.add(new PipelineData("name", SimConstants.FILTER, null, new SerialString((String) filters)));
             QueueElement element = new QueueElement();
             InmemoryMessage msg = inmemory.send(ServiceConstants.SIMAUTO + UUID.randomUUID(), results, null);
             element.setOpid(ServiceConstants.SIM);

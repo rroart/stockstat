@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,8 @@ import roart.common.model.IncDecDTO;
 import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
+import roart.common.pipeline.data.SerialString;
 import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -132,7 +135,7 @@ public class ImproveSimulateInvestAction extends MarketAction {
             param.setAllIncDecs(getAllIncDecs(market, null, null, param));
             param.setAllMetas(((ImproveSimulateInvestComponent)component).getAllMetas(componentparam));
             // TODO getcontent
-            ((ImproveSimulateInvestComponent)component).getResultMaps(param, market);
+            ((ImproveSimulateInvestComponent)component). getResultMaps(param, market);
             List<String> confList = component.getConflist();
 
             int ga = param.getConfig().getEvolveGA();
@@ -141,11 +144,12 @@ public class ImproveSimulateInvestAction extends MarketAction {
             EvolutionConfig evolutionConfig = JsonUtil.convert(evolutionConfigString, EvolutionConfig.class);
             Map<String, Object> confMap = new HashMap<>();
             ComponentData e = evolve.evolve(action.getActionData(), param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap , evolutionConfig, component.getPipeline(), component, confList);
-            PipelineData results = e.getResultMap();
+            SerialPipeline results = e.getResultMap();
             Object filters = param.getConfigValueMap().remove(IclijConfigConstants.SIMULATEINVESTFILTERS);
             // filters is already a serialized string
             filters = param.getInput().getValuemap().get(IclijConfigConstants.SIMULATEINVESTFILTERS);
-            results.put(SimConstants.FILTER, filters);
+            results.add(new PipelineData(action.getName(), SimConstants.FILTER, null, new SerialString((String) filters)));
+            //results.put(SimConstants.FILTER, filters);
             QueueElement element = new QueueElement();
             InmemoryMessage msg = inmemory.send(ServiceConstants.SIMFILTER + UUID.randomUUID(), results, null);
             element.setOpid(ServiceConstants.SIM);

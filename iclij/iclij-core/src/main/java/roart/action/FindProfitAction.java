@@ -20,7 +20,7 @@ import roart.common.model.ActionComponentDTO;
 import roart.common.model.IncDecDTO;
 import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
-import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
@@ -105,7 +105,7 @@ public class FindProfitAction extends MarketAction {
             log.info("TODO names {}", nameMap.size());
             profitdata.getInputdata().setNameMap(nameMap);
             
-            component.calculateIncDec(componentData, profitdata, positions, buy, mlTests, parameters);
+            component.calculateIncDec(componentData, profitdata, positions, buy, mlTests, parameters, inmemory);
             if (param.getInput().isDoSave()) {
                 IncDecDTO myitem = null;
                 try {
@@ -167,7 +167,7 @@ public class FindProfitAction extends MarketAction {
             myData.getUpdateMap().putAll(componentData.getUpdateMap());
             List<MemoryDTO> memories;
             try {
-                memories = component.calculateMemory(getActionData(), componentData, parameters);
+                memories = component.calculateMemory(getActionData(), componentData, parameters, inmemory);
                 allMemories.addAll(memories);
            } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
@@ -280,7 +280,7 @@ public class FindProfitAction extends MarketAction {
         // todo
         setValMap(param);
         Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
-        PipelineData[] maps = param.getResultMaps();
+        SerialPipeline maps = param.getResultMaps();
         new IncDecUtil().filterIncDecs(param, market, profitdata, maps, true, null, inmemory);
         new IncDecUtil().filterIncDecs(param, market, profitdata, maps, false, null, inmemory);
         new PipelineThreadUtils(param.getConfig(), inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
