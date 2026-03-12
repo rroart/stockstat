@@ -1,15 +1,5 @@
 package roart.common.pipeline.data;
 
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
 public class PipelineData extends SerialObject {
 
     private String id;
@@ -34,20 +24,23 @@ public class PipelineData extends SerialObject {
 
     private SerialObject value;
 
+    private boolean useInmemory;
+
     public PipelineData() {
         super();
         this.loaded = true;
         this.old = false;
     }
 
-    public PipelineData(String name, String key, String secondKey, SerialObject value) {
+    public PipelineData(String name, String key, String secondKey, SerialObject value, boolean useInmemory) {
         super();
         this.loaded = true;
         this.old = false;
         this.name = name;
         this.key = key;
-        this.secondKey = this.secondKey;
+        this.secondKey = secondKey;
         this.value = value;
+        this.useInmemory = useInmemory;
     }
 
     public String getId() {
@@ -167,7 +160,14 @@ public class PipelineData extends SerialObject {
         return value;
     }
 
-    /*
+    public void setValue(SerialObject value) {
+        this.value = value;
+    }
+
+    public boolean isUseInmemory() {
+        return useInmemory;
+    }
+/*
     @Deprecated
     public SerialMap smap() {
         return smap;

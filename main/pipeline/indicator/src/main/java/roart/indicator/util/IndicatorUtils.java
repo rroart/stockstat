@@ -921,11 +921,11 @@ public class IndicatorUtils {
         SerialPipeline list = new SerialPipeline();
         //singlePipelineData.setName(PipelineConstants.META);
         MetaDTO meta = stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta;
-        list.add(new PipelineData(PipelineConstants.META, PipelineConstants.META, null, new SerialMeta(meta.getMarketid(), meta.getPeriod(), meta.getPriority(), meta.getReset(), meta.isLhc())));
-        list.add(new PipelineData(PipelineConstants.META, PipelineConstants.CATEGORY, null, new SerialString(stockData.catName)));
-        list.add(new PipelineData(PipelineConstants.META, PipelineConstants.WANTEDCAT, null, new SerialInteger(stockData.cat)));
-        list.add(new PipelineData(PipelineConstants.META, PipelineConstants.NAME, null, new SerialMapPlain(stockData.idNameMap)));
-        list.add(new PipelineData(PipelineConstants.META, PipelineConstants.DATELIST, null, new SerialListPlain(stockData.stockdates)));
+        list.add(new PipelineData(PipelineConstants.META, PipelineConstants.META, null, new SerialMeta(meta.getMarketid(), meta.getPeriod(), meta.getPriority(), meta.getReset(), meta.isLhc()), false));
+        list.add(new PipelineData(PipelineConstants.META, PipelineConstants.CATEGORY, null, new SerialString(stockData.catName), false));
+        list.add(new PipelineData(PipelineConstants.META, PipelineConstants.WANTEDCAT, null, new SerialInteger(stockData.cat), false));
+        list.add(new PipelineData(PipelineConstants.META, PipelineConstants.NAME, null, new SerialMapPlain(stockData.idNameMap), false));
+        list.add(new PipelineData(PipelineConstants.META, PipelineConstants.DATELIST, null, new SerialListPlain(stockData.stockdates), false));
         return list;
     }
 

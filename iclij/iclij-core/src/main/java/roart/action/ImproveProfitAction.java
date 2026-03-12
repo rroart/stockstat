@@ -1,19 +1,13 @@
 package roart.action;
 
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +15,6 @@ import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.constants.ServiceConstants;
-import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.ActionComponentDTO;
@@ -32,29 +25,22 @@ import roart.common.model.TimingDTO;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialListMap;
-import roart.common.pipeline.data.SerialMap;
 import roart.common.queue.QueueElement;
 import roart.common.util.JsonUtil;
-import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
-import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.fitness.Fitness;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.Market;
-import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
-import roart.iclij.evolution.chromosome.winner.ConfigMapChromosomeWinner;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
-import roart.iclij.model.action.EvolveActionData;
 import roart.iclij.model.action.ImproveProfitActionData;
 import roart.iclij.service.util.MiscUtil;
 import roart.service.model.ProfitData;
-import roart.service.model.ProfitInputData;
 import roart.iclij.evolution.fitness.impl.FitnessConfigMap;
 
 public class ImproveProfitAction extends MarketAction {
@@ -120,7 +106,7 @@ public class ImproveProfitAction extends MarketAction {
             // if not interrupted
             if (results != null) {
                 // TODO TODO
-                componentData.getResultMap().add(new PipelineData(action.getName(), EvolveConstants.DEFAULT, null, new SerialListMap(defaults)));
+                componentData.getResultMap().add(new PipelineData(action.getName(), EvolveConstants.DEFAULT, null, new SerialListMap(defaults), false));
             	// TODO?
                 Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 QueueElement element = new QueueElement();

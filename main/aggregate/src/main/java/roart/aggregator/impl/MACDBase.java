@@ -1,6 +1,5 @@
 package roart.aggregator.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -100,9 +99,9 @@ public class MACDBase extends Aggregator {
     public SerialPipeline putData() {
         SerialPipeline list = new SerialPipeline();
         //map.setName(getName());
-        list.add(new PipelineData(getName(), PipelineConstants.CATEGORY, null, new SerialInteger(category)));
-        list.add(new PipelineData(getName(), PipelineConstants.CATEGORYTITLE, null, new SerialString(title)));
-        list.add(new PipelineData(getName(), PipelineConstants.RESULT, null, new SerialMapPlain(resultMap)));
+        list.add(new PipelineData(getName(), PipelineConstants.CATEGORY, null, new SerialInteger(category), false));
+        list.add(new PipelineData(getName(), PipelineConstants.CATEGORYTITLE, null, new SerialString(title), false));
+        list.add(new PipelineData(getName(), PipelineConstants.RESULT, null, new SerialMapPlain(resultMap), true));
         return list;
     }
     

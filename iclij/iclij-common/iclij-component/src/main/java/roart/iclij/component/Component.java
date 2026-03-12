@@ -340,10 +340,10 @@ public abstract class Component {
             SerialPipeline list = new SerialPipeline();
             //List<PipelineData> list = new ArrayList<>();
             //resultMap.setName(getPipeline());
-            list.add(new PipelineData(getPipeline(), filename, null, new SerialList(results)));
-            list.add(new PipelineData(getPipeline(), EvolveConstants.TITLETEXT, null, new SerialString(title + nullString(fitness.titleText()))));
-            list.add(new PipelineData(getPipeline(), EvolveConstants.SUBTITLETEXT, null, new SerialString(subtitle)));
-            list.add(new PipelineData(getPipeline(), EvolveConstants.ID, null, new SerialString(filename)));
+            list.add(new PipelineData(getPipeline(), filename, null, new SerialList(results), true));
+            list.add(new PipelineData(getPipeline(), EvolveConstants.TITLETEXT, null, new SerialString(title + nullString(fitness.titleText())), false));
+            list.add(new PipelineData(getPipeline(), EvolveConstants.SUBTITLETEXT, null, new SerialString(subtitle), false));
+            list.add(new PipelineData(getPipeline(), EvolveConstants.ID, null, new SerialString(filename), false));
             //resultMap.put("id", filename);
             //resultMap = (SerialPipeline) list.toArray();
             param.setResultMap(list);

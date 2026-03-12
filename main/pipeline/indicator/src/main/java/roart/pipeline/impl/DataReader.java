@@ -50,17 +50,17 @@ public class DataReader extends Pipeline {
             int jj = 0;
         }
         //map.setName(categoryTitle);
-        list.add(new PipelineData(categoryTitle, PipelineConstants.LIST, null, new SerialMapDD(listMap)));
-        list.add(new PipelineData(categoryTitle, PipelineConstants.VOLUME, null, new SerialMapL(volumeMap)));
-        list.add(new PipelineData(categoryTitle, PipelineConstants.CURRENCY, null, new SerialMapPlain(currencyMap)));
-        list.add(new PipelineData(categoryTitle, PipelineConstants.FILLLIST, null, new SerialMapDD(fillListMap)));
-        list.add(new PipelineData(categoryTitle, PipelineConstants.BASE100LIST, null, new SerialMapDD(base100ListMap)));
-        list.add(new PipelineData(categoryTitle, PipelineConstants.TRUNCFILLLIST, null, new SerialMapdd(truncFillListMap)));
-        list.add(new PipelineData(categoryTitle, PipelineConstants.TRUNCBASE100LIST, null, new SerialMapdd(truncBase100ListMap)));
-        list.add(new PipelineData(categoryTitle, PipelineConstants.TRUNCBASE100FILLLIST, null, new SerialMapdd(truncBase100FillListMap)));
-        list.add(new PipelineData(categoryTitle, PipelineConstants.NAME, null, new SerialMapPlain(nameMap)));
-        list.add(new PipelineData(categoryTitle, PipelineConstants.DATELIST, null, new SerialListPlain(dateList)));
-        list.add(new PipelineData(categoryTitle, PipelineConstants.CATEGORYTITLE, null, new SerialString(categoryTitle))); // TODO
+        list.add(new PipelineData(categoryTitle, PipelineConstants.LIST, null, new SerialMapDD(listMap), true));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.VOLUME, null, new SerialMapL(volumeMap), true));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.CURRENCY, null, new SerialMapPlain(currencyMap), true));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.FILLLIST, null, new SerialMapDD(fillListMap), true));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.BASE100LIST, null, new SerialMapDD(base100ListMap), true));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.TRUNCFILLLIST, null, new SerialMapdd(truncFillListMap), true));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.TRUNCBASE100LIST, null, new SerialMapdd(truncBase100ListMap), true));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.TRUNCBASE100FILLLIST, null, new SerialMapdd(truncBase100FillListMap), true));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.NAME, null, new SerialMapPlain(nameMap), true));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.DATELIST, null, new SerialListPlain(dateList), true));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.CATEGORYTITLE, null, new SerialString(categoryTitle), false)); // TODO
         return list;
     }
     

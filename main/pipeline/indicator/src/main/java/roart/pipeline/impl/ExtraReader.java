@@ -231,17 +231,17 @@ public class ExtraReader extends Pipeline {
         //map.put(PipelineConstants.PAIRDATELIST, pairDateListMap);
         //map.put(PipelineConstants.PAIRTRUNCLIST, pairTruncListMap);
         //map.setName(PipelineConstants.EXTRAREADER);
-        list.add(new PipelineData(PipelineConstants.EXTRAREADER, PipelineConstants.DATELIST, null, new SerialListPlain(new ArrayList<>(commonDates))));
+        list.add(new PipelineData(PipelineConstants.EXTRAREADER, PipelineConstants.DATELIST, null, new SerialListPlain(new ArrayList<>(commonDates)), true));
         for (Entry<String, Pipeline[]> entry : dataReaderMap.entrySet()) {
             Pipeline[] pipeline = entry.getValue();
             for (int i = 0; i < pipeline.length; i++) {
                 SerialPipeline secondPipeline = pipeline[i].putData();
                 for (PipelineData secondPipelineData : secondPipeline) {
-                    list.add(new PipelineData(PipelineConstants.EXTRAREADER, secondPipelineData.getName(), secondPipelineData.getKey(), secondPipelineData.getValue()));
+                    list.add(new PipelineData(PipelineConstants.EXTRAREADER, secondPipelineData.getName(), secondPipelineData.getKey(), secondPipelineData.getValue(), true));
                 }
             }
         }
-        list.add(new PipelineData(PipelineConstants.EXTRAREADER, PipelineConstants.MARKETSTOCKS, null, new SerialList(new ArrayList<>(allMarketStocks))));
+        list.add(new PipelineData(PipelineConstants.EXTRAREADER, PipelineConstants.MARKETSTOCKS, null, new SerialList(new ArrayList<>(allMarketStocks)), false));
         return list;
     }
     

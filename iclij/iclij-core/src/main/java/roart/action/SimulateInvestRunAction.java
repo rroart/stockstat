@@ -247,16 +247,16 @@ public class SimulateInvestRunAction extends MarketAction {
                     SerialPipeline results;
                     List<PipelineData> list = new ArrayList<>();
                     //results.setName("name");
-                    list.add(new PipelineData("name", filename, null, new SerialList(result)));
-                    list.add(new PipelineData("name", EvolveConstants.TITLETEXT, null, new SerialString("simrun " + amarket + " " + simData.getDbid() + " " +  startDate + "-" + endDate)));
-                    list.add(new PipelineData("name", EvolveConstants.SUBTITLETEXT, null, new SerialString("subtitle")));
-                    list.add(new PipelineData("name", EvolveConstants.ID, null, new SerialString(filename)));
-                    list.add(new PipelineData("name", EvolveConstants.DEFAULT, null, new SerialString(JsonUtil.convert(aConf.asValuedMap()))));
+                    list.add(new PipelineData("name", filename, null, new SerialList(result), false));
+                    list.add(new PipelineData("name", EvolveConstants.TITLETEXT, null, new SerialString("simrun " + amarket + " " + simData.getDbid() + " " +  startDate + "-" + endDate), false));
+                    list.add(new PipelineData("name", EvolveConstants.SUBTITLETEXT, null, new SerialString("subtitle"), false));
+                    list.add(new PipelineData("name", EvolveConstants.ID, null, new SerialString(filename), false));
+                    list.add(new PipelineData("name", EvolveConstants.DEFAULT, null, new SerialString(JsonUtil.convert(aConf.asValuedMap())), false));
                     //componentData.getUpdateMap().keySet()
                     Object filters2 = param.getConfigValueMap().remove(IclijConfigConstants.SIMULATEINVESTFILTERS);
                     // filters is already a serialized string
                     filters2 = param.getInput().getValuemap().get(IclijConfigConstants.SIMULATEINVESTFILTERS);
-                    list.add(new PipelineData("name", SimConstants.FILTER, null, new SerialString((String) filters2)));
+                    list.add(new PipelineData("name", SimConstants.FILTER, null, new SerialString((String) filters2), false));
                     log.info("Misc {} {}", simData.getDbid(), simData.getScore());
                     log.info("TODO {}", updateMap.keySet());
                     Map<String, Object> resultMap = new HashMap<>();
@@ -276,7 +276,7 @@ public class SimulateInvestRunAction extends MarketAction {
                     //resultMap.put(SimConstants.STARTDATE, TimeUtil.convertDate2((LocalDate)updateMap.get(SimConstants.STARTDATE)));
                     //resultMap.put(SimConstants.ENDDATE, TimeUtil.convertDate2((LocalDate)updateMap.get(SimConstants.ENDDATE)));
                     Map<String, Object> anotherResultMap =  Map.of("0", new SerialListMap(resultMap));
-                    list.add(new PipelineData("name", PipelineConstants.RESULT, null, new SerialListMap(anotherResultMap)));
+                    list.add(new PipelineData("name", PipelineConstants.RESULT, null, new SerialListMap(anotherResultMap), false));
                     results = (SerialPipeline) list;
                     QueueElement element = new QueueElement();
                     //log.info("Content {}", JsonUtil.convert(results));

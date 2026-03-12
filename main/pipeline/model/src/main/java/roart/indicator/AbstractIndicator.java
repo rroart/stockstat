@@ -1,12 +1,9 @@
 package roart.indicator;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -24,15 +21,10 @@ import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialMapD;
-import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialMapTA;
 import roart.common.pipeline.data.SerialTA;
-import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.MathUtil;
-import roart.model.data.MarketData;
-import roart.model.data.PeriodData;
-import roart.pipeline.Pipeline;
 import roart.pipeline.common.Calculatable;
 import roart.result.model.ResultItemTableRow;
 
@@ -147,18 +139,18 @@ public abstract class AbstractIndicator extends Calculatable {
         //map.setName(indicatorName());
         // the mixed and complex results of indicator
         // an array with numbers or arrays
-        list.add(new PipelineData(indicatorName(), PipelineConstants.OBJECT, null, new SerialMapTA(objectMap != null ? objectMap : new HashMap<>())));
+        list.add(new PipelineData(indicatorName(), PipelineConstants.OBJECT, null, new SerialMapTA(objectMap != null ? objectMap : new HashMap<>()), true));
         // TODO unused
         //list.add(new PipelineData(indicatorName(), PipelineConstants.OBJECTFIXED, null, objectFixedMap));
         //list.add(new PipelineData()(PipelineConstants.LIST, listMap);
         //list.add(new PipelineData()(PipelineConstants.TRUNCLIST, truncListMap);
         
         // for web
-        list.add(new PipelineData(indicatorName(), PipelineConstants.RESULT, null, new SerialMapD(calculatedMap)));
+        list.add(new PipelineData(indicatorName(), PipelineConstants.RESULT, null, new SerialMapD(calculatedMap), true));
         
         // market as key, for extras
         // raw calculations
-        list.add(new PipelineData(indicatorName(), PipelineConstants.MARKETOBJECT, null, new SerialMap(marketObjectMap)));
+        list.add(new PipelineData(indicatorName(), PipelineConstants.MARKETOBJECT, null, new SerialMap(marketObjectMap), true));
         // prep for web?
         // TODO unused?
         //list.add(new PipelineData()(PipelineConstants.MARKETCALCULATED, marketCalculatedMap);
@@ -285,7 +277,7 @@ public abstract class AbstractIndicator extends Calculatable {
 
     // TODO?
     protected Map<String, Double[][]> getListMap() {
-        return PipelineUtils.sconvertMapDD(PipelineUtils.getPipelines(datareader, key, PipelineConstants.LIST, inmemory));
+        return PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareader, key, PipelineConstants.LIST, inmemory));
     }
 
     public String getKey() {

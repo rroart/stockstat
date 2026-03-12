@@ -762,7 +762,7 @@ public class SimulateInvestComponent extends ComponentML {
                         map.put(SimConstants.FILTER, JsonUtil.convert(filter));
                         //map.put("market", market.getConfig().getMarket());
                         // fix
-                        componentData.getResultMap().add(new PipelineData(action.getName(), "" + offset, null, new SerialListMap(map)));
+                        componentData.getResultMap().add(new PipelineData(action.getName(), "" + offset, null, new SerialListMap(map), true));
                     }
                     scores.add(score);
                     if (aOneRun.lastbuysell != null) {

@@ -16,7 +16,6 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +42,6 @@ import roart.common.model.MetaDTO;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
@@ -55,7 +53,6 @@ import roart.core.graphcategory.GraphCategoryPeriod;
 import roart.core.graphcategory.GraphCategoryPeriodTopBottom;
 import roart.core.graphcategory.GraphCategoryPrice;
 import roart.core.service.util.ServiceUtil;
-import roart.etl.CleanETL;
 import roart.etl.PeriodDataETL;
 import roart.etl.db.Extract;
 import roart.model.data.MarketData;
@@ -621,7 +618,7 @@ public class CoreControlService {
         StockData stockData = new Extract(io.getDbDao()).getStockData(conf, true); // TODO false
         if (stockData != null) {
             log.info("Stockdates {} {} {}", conf.getConfigData().getMarket(), conf.getConfigData().getDate(), stockData.stockdates.size());
-            PipelineData map = new PipelineData(PipelineConstants.DATELIST, PipelineConstants.DATELIST, null, new SerialListPlain(stockData.stockdates));
+            PipelineData map = new PipelineData(PipelineConstants.DATELIST, PipelineConstants.DATELIST, null, new SerialListPlain(stockData.stockdates), false);
             //map.setName(PipelineConstants.DATELIST);
             //map.put(PipelineConstants.DATELIST, new SerialListPlain(stockData.stockdates));
             pipelineData.add(map);
@@ -654,7 +651,7 @@ public class CoreControlService {
 
         try {
             Collections.sort(dates);
-            PipelineData map = new PipelineData(PipelineConstants.DATELIST, PipelineConstants.DATELIST, null, new SerialListPlain(dates));
+            PipelineData map = new PipelineData(PipelineConstants.DATELIST, PipelineConstants.DATELIST, null, new SerialListPlain(dates), false);
             //map.setName(PipelineConstants.DATELIST);
             //map.put(PipelineConstants.DATELIST, new SerialListPlain(dates));
             pipelineData.add(map);

@@ -1,6 +1,5 @@
 package roart.action;
 
-import java.io.InputStream;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -10,17 +9,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
 import roart.common.constants.ServiceConstants;
-import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
-import roart.common.inmemory.model.InmemoryUtil;
 import roart.common.model.ActionComponentDTO;
 import roart.common.model.IncDecDTO;
 import roart.common.model.MLMetricsDTO;
@@ -28,33 +23,22 @@ import roart.common.model.MemoryDTO;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialString;
-import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.util.JsonUtil;
-import roart.common.util.TimeUtil;
 import roart.iclij.component.Component;
 import roart.iclij.component.ImproveSimulateInvestComponent;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.constants.SimConstants;
 import roart.evolution.config.EvolutionConfig;
-import roart.evolution.fitness.Fitness;
-import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapChromosome;
-import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapGene;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
-import roart.iclij.evolution.fitness.impl.FitnessIclijConfigMap;
 import roart.iclij.evolve.Evolve;
 import roart.iclij.evolve.SimulateInvestEvolveFactory;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.Parameters;
-import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.ImproveSimulateInvestActionData;
-import roart.iclij.model.action.SimulateInvestActionData;
-import roart.iclij.service.util.MarketUtil;
-import roart.iclij.service.util.MiscUtil;
-import roart.iclij.verifyprofit.TrendUtil;
 import roart.service.model.ProfitData;
 import roart.common.queue.QueueElement;
 
@@ -148,7 +132,7 @@ public class ImproveSimulateInvestAction extends MarketAction {
             Object filters = param.getConfigValueMap().remove(IclijConfigConstants.SIMULATEINVESTFILTERS);
             // filters is already a serialized string
             filters = param.getInput().getValuemap().get(IclijConfigConstants.SIMULATEINVESTFILTERS);
-            results.add(new PipelineData(action.getName(), SimConstants.FILTER, null, new SerialString((String) filters)));
+            results.add(new PipelineData(action.getName(), SimConstants.FILTER, null, new SerialString((String) filters), false));
             //results.put(SimConstants.FILTER, filters);
             QueueElement element = new QueueElement();
             InmemoryMessage msg = inmemory.send(ServiceConstants.SIMFILTER + UUID.randomUUID(), results, null);

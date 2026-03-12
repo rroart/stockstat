@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,13 +24,11 @@ import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialInteger;
 import roart.common.pipeline.data.SerialListMap;
 import roart.common.pipeline.data.SerialListPlain;
-import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.data.SerialString;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
-import roart.core.service.CoreControlService;
 import roart.core.service.util.ServiceUtil;
 import roart.etl.db.Extract;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
@@ -40,7 +37,6 @@ import roart.evolution.chromosome.impl.IndicatorChromosome3;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.impl.ProportionScore;
 import roart.evolution.species.Individual;
-import roart.filesystem.FileSystemDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
@@ -104,11 +100,11 @@ public class CoreEvolutionService {
             SerialPipeline list = new SerialPipeline();
             //singlePipelineData.setName(PipelineConstants.META);
             MetaDTO meta = stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta;
-            list.add(new PipelineData(PipelineConstants.META, PipelineConstants.META, null, new SerialMeta(meta.getMarketid(), meta.getPeriod(), meta.getPriority(), meta.getReset(), meta.isLhc())));
-            list.add(new PipelineData(PipelineConstants.META, PipelineConstants.CATEGORY, null, new SerialString(stockData.catName)));
-            list.add(new PipelineData(PipelineConstants.META, PipelineConstants.WANTEDCAT, null, new SerialInteger(stockData.cat)));
-            list.add(new PipelineData(PipelineConstants.META, PipelineConstants.NAME, null, new SerialMapPlain(stockData.idNameMap)));
-            list.add(new PipelineData(PipelineConstants.META, PipelineConstants.DATELIST, null, new SerialListPlain(stockData.stockdates)));
+            list.add(new PipelineData(PipelineConstants.META, PipelineConstants.META, null, new SerialMeta(meta.getMarketid(), meta.getPeriod(), meta.getPriority(), meta.getReset(), meta.isLhc()), false));
+            list.add(new PipelineData(PipelineConstants.META, PipelineConstants.CATEGORY, null, new SerialString(stockData.catName), false));
+            list.add(new PipelineData(PipelineConstants.META, PipelineConstants.WANTEDCAT, null, new SerialInteger(stockData.cat), false));
+            list.add(new PipelineData(PipelineConstants.META, PipelineConstants.NAME, null, new SerialMapPlain(stockData.idNameMap), true));
+            list.add(new PipelineData(PipelineConstants.META, PipelineConstants.DATELIST, null, new SerialListPlain(stockData.stockdates), true));
             SerialPipeline pipelineData = new SerialPipeline();
             pipelineData.add(list);
    
@@ -162,10 +158,10 @@ public class CoreEvolutionService {
             Map<String, Object> resultMap) {
         SerialPipeline list = new SerialPipeline();
         //maps.setName(PipelineConstants.EVOLVE);
-        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.UPDATE, null, new SerialMapPlain(updateMap)));
-        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.SCORE, null, new SerialMapPlain(scoreMap)));
+        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.UPDATE, null, new SerialMapPlain(updateMap), false));
+        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.SCORE, null, new SerialMapPlain(scoreMap), false));
         // rec with own result
-        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, new SerialListMap(resultMap)));
+        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, new SerialListMap(resultMap), false));
         return list;
     }
 

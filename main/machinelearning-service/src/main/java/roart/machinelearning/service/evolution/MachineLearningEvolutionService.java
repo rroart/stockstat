@@ -9,12 +9,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.pipeline.data.*;
-import roart.constants.SimConstants;
 import tools.jackson.core.exc.StreamReadException;
 import tools.jackson.databind.DatabindException;
 
@@ -166,9 +164,9 @@ public class MachineLearningEvolutionService {
             Map<String, Object> resultMap) {
         SerialPipeline list = new SerialPipeline();
         //maps.setName(PipelineConstants.EVOLVE);
-        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.UPDATE, null, new SerialMapPlain(updateMap)));
-        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.SCORE, null, new SerialMapPlain(scoreMap)));
-        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, new SerialListMap(resultMap)));
+        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.UPDATE, null, new SerialMapPlain(updateMap), false));
+        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.SCORE, null, new SerialMapPlain(scoreMap), false));
+        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, new SerialListMap(resultMap), false));
         return list;
     }
 

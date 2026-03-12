@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
@@ -277,7 +276,7 @@ public class ImproveAboveBelowAction extends MarketAction {
 
                     //component.handle(this, market, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null);
                     //ComponentData componentData = component.handle(getActionData(), market, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null, getParent() != null);
-                    componentData.getResultMap().add( new PipelineData(action.getName(), EvolveConstants.DEFAULT, null, new SerialDouble(score)));
+                    componentData.getResultMap().add( new PipelineData(action.getName(), EvolveConstants.DEFAULT, null, new SerialDouble(score), false));
                     Map<String, Object> updateMap = componentData.getUpdateMap();
                     if (updateMap != null) {
                         param.getUpdateMap().putAll(updateMap);
@@ -285,8 +284,8 @@ public class ImproveAboveBelowAction extends MarketAction {
                     memory.setDescription((String) updateMap.get(aParameter));
                     List<Double> list = new ArrayList<>(param.getScoreMap().values());
                     memory.setLearnConfidence(list.get(0));
-                    componentData.getResultMap().add(new PipelineData(action.getName(),"learned", null, new SerialDouble(list.get(0))));
-                    componentData.getResultMap().add(new PipelineData(action.getName(),EvolveConstants.DATE, null, new SerialString(TimeUtil.convertDate2(param.getFutureDate()))));
+                    componentData.getResultMap().add(new PipelineData(action.getName(),"learned", null, new SerialDouble(list.get(0)), false));
+                    componentData.getResultMap().add(new PipelineData(action.getName(),EvolveConstants.DATE, null, new SerialString(TimeUtil.convertDate2(param.getFutureDate())), false));
                 }
                 memory.setAction(action.getName());
                 memory.setMarket(market.getConfig().getMarket());

@@ -24,17 +24,10 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
 import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialPipeline;
-import roart.common.pipeline.data.SerialList;
-import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialListMap;
-import roart.common.pipeline.data.SerialListMapPlain;
 import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialListSimulateStock;
 import roart.common.pipeline.data.SerialListStockHistory;
-import roart.common.pipeline.data.SerialMapPlain;
-import roart.common.pipeline.data.SerialSimulateStock;
-import roart.common.pipeline.data.SerialStockHistory;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.constants.SimConstants;
@@ -92,7 +85,7 @@ public class SimulateInvestComponentTest {
 
         var slm = new SerialListMap(map3);
 
-        PipelineData resultMap3 = new PipelineData("name", "" + offset, null, slm);
+        PipelineData resultMap3 = new PipelineData("name", "" + offset, null, slm, false);
 
         PipelineData resultMap4 = testsub(resultMap3);
 

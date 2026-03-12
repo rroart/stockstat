@@ -9,13 +9,11 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
 import roart.common.constants.ServiceConstants;
-import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.ActionComponentDTO;
@@ -25,7 +23,6 @@ import roart.common.model.MemoryDTO;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialString;
-import roart.common.pipeline.util.PipelineThreadUtils;
 import roart.common.queue.QueueElement;
 import roart.common.util.JsonUtil;
 import roart.iclij.component.Component;
@@ -34,7 +31,6 @@ import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.constants.SimConstants;
 import roart.evolution.config.EvolutionConfig;
-import roart.evolution.fitness.Fitness;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
@@ -44,7 +40,6 @@ import roart.iclij.filter.Memories;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.ImproveAutoSimulateInvestActionData;
-import roart.iclij.model.action.ImproveSimulateInvestActionData;
 import roart.service.model.ProfitData;
 
 public class ImproveAutoSimulateInvestAction extends MarketAction {
@@ -136,7 +131,7 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
             Object filters = param.getConfigValueMap().remove(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
             // filters is already a serialized string
             filters = param.getInput().getValuemap().get(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
-            results.add(new PipelineData("name", SimConstants.FILTER, null, new SerialString((String) filters)));
+            results.add(new PipelineData("name", SimConstants.FILTER, null, new SerialString((String) filters), false));
             QueueElement element = new QueueElement();
             InmemoryMessage msg = inmemory.send(ServiceConstants.SIMAUTO + UUID.randomUUID(), results, null);
             element.setOpid(ServiceConstants.SIM);

@@ -1,39 +1,27 @@
 package roart.common.pipeline.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.MapOneDim;
 import roart.common.pipeline.data.OneDim;
 import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialDouble;
 import roart.common.pipeline.data.SerialInteger;
-import roart.common.pipeline.data.SerialKeyValue;
 import roart.common.pipeline.data.SerialList;
 import roart.common.pipeline.data.SerialListMap;
 import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialOneDim;
 import roart.common.pipeline.data.SerialPair;
-import roart.common.pipeline.data.SerialPairPlain;
 import roart.common.pipeline.data.SerialScoreChromosome;
 import roart.common.pipeline.data.SerialString;
-import roart.common.pipeline.data.SerialMapDD;
-import roart.common.pipeline.data.SerialMapdd;
 import roart.common.pipeline.data.SerialNeuralNetConfig;
-import roart.common.pipeline.data.TwoDimD;
-import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
 import roart.iclij.evolution.marketfilter.chromosome.impl.AboveBelowChromosome;
 
@@ -41,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.config.ConfigConstants;
-import roart.common.config.MLConstants;
 
 public class PipelineUtilsTest {
     private static Double[] array = { 1.0,-1.0 };
@@ -239,7 +226,7 @@ public class PipelineUtilsTest {
         //SerialMap serialMap = new SerialMap(resultMap);
         //testsub(serialMap);
         
-        PipelineData data = new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, serialMapPlain);
+        PipelineData data = new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, serialMapPlain, false);
         //data.setName(PipelineConstants.EVOLVE);
         //maps.put(PipelineConstants.UPDATE, new SerialMapPlain(updateMap));
         //maps.put(PipelineConstants.SCORE, new SerialMapPlain(scoreMap));
@@ -309,7 +296,7 @@ public class PipelineUtilsTest {
         
         SerialMapPlain serialMap = new SerialMapPlain(resultMap);
         
-        PipelineData data = new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, serialMap);
+        PipelineData data = new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, serialMap, false);
         //data.setName(PipelineConstants.EVOLVE);
         //maps.put(PipelineConstants.UPDATE, new SerialMapPlain(updateMap));
         //maps.put(PipelineConstants.SCORE, new SerialMapPlain(scoreMap));

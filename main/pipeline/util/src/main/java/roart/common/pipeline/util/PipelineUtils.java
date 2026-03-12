@@ -154,6 +154,7 @@ public class PipelineUtils {
             if (Objects.equals(name, pipeline.getName())) {
                 if (Objects.equals(key, pipeline.getKey())) {
                     if (Objects.equals(secondKey, pipeline.getSecondKey())) {
+                        getPipelineValue(pipeline, inmemory);
                         return pipeline.getValue();
                     }
                 }
@@ -162,10 +163,8 @@ public class PipelineUtils {
         return null;
     }
 
-    public static SerialObject getPipelineValue(PipelineData datareader, Inmemory inmemory) {
-        if (datareader.isLoaded()) {
-            return datareader;
-        } else {
+    public static void getPipelineValue(PipelineData datareader, Inmemory inmemory) {
+        if (!datareader.isLoaded()) {
             InmemoryMessage msg = JsonUtil.convertnostrip(datareader.getMessage(), InmemoryMessage.class);
             String str = inmemory.read(msg);
             if (str != null) {
@@ -173,12 +172,10 @@ public class PipelineUtils {
             } else {
                 log.error("No pipeline reading {}", msg.getId());
             }
-            datareaders[i] = JsonUtil.convertnostrip(str, PipelineData.class, mapper);
-            datareaders[i].setLoaded(true);
-            log.info("Pipeline read {} {}", datareaders[i].getId(), datareaders[i].getName());
-            return datareaders[i];
+            datareader.setValue(JsonUtil.convertnostrip(str, SerialObject.class, mapper));
+            datareader.setLoaded(true);
+            log.info("Pipeline read {} {} {} {} {}", datareader.getId(), datareader.getName(), datareader.getKey(), datareader.getSecondKey(), str.length());
         }
-
     }
 
     public static Map<String, OneDimd> convertd(Map<String, double[]> map) {
@@ -890,6 +887,10 @@ public class PipelineUtils {
                 InmemoryMessage msg = null;
                 try {
                     data.setOld(true);
+                    if (!data.isUseInmemory()) {
+                        log.info("Pipe not " + data.getName() + " " + data.getKey() + " " + data.getSecondKey() + " " + JsonUtil.convert(data.getValue()).length());
+                        continue;
+                    }
                     //PipelineData d = JsonUtil.convertAndBack(data, null);
                     //String s = JsonUtil.convert(data);
                     String md5 = null;
@@ -897,16 +898,20 @@ public class PipelineUtils {
                     String[] split = serviceIdUuid.split("/");
                     String serviceId = split[0];
                     String id = split[1];
-                    log.info("Pipe " + data.getName() + " " + serviceId + " " + id);
+                    log.info("Pipe " + data.getName() + " " + data.getKey() + " " + data.getSecondKey() + " " + serviceId + " " + id);
                     //   todo
-                    msg = inmemory.send(id + "-" + data.getName(), data, md5);
-                    log.info("Sent size {} {} {}", msg.getId(), msg.getCount(), JsonUtil.convert(data, mapper).length());
+                    msg = inmemory.send(id + "-" + data.getName(), data.getValue(), md5);
+                    log.info("Sent size {} {} {}", msg.getId(), msg.getCount(), JsonUtil.convert(data.getValue(), mapper).length());
                     //result.message = msg;
                     curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
                     log.info("Path write {}", "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id + "/" + msg.getId());
+                    data.setValue(null);
+                    data.setMessage(JsonUtil.convert(msg));
+                    data.setLoaded(false);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
+                /*
                 PipelineData newDatum = new PipelineData();
                 newDatum.setId(data.getId());
                 newDatum.setName(data.getName());
@@ -915,10 +920,13 @@ public class PipelineUtils {
                 newDatum.setMessage(JsonUtil.convert(msg));
                 newPipelineData.add(newDatum);
                 log.info("Pipeline write {} {}", newDatum.getId(), newDatum.getName());
+
+                 */
             } else {
-                newPipelineData.add(data);
+                //newPipelineData.add(data);
             }
+            //newPipelineData.add(data);
         }
-        return newPipelineData;
+        return pipelineData;
     }
 }

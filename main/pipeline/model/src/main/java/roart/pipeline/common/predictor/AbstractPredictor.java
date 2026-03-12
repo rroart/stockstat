@@ -1,7 +1,5 @@
 package roart.pipeline.common.predictor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +20,6 @@ import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.data.SerialString;
 import roart.common.pipeline.model.PipelineResultData;
 import roart.result.model.ResultItemTableRow;
-import roart.result.model.ResultMeta;
 
 public abstract class AbstractPredictor extends PipelineResultData {
 
@@ -100,13 +97,13 @@ public abstract class AbstractPredictor extends PipelineResultData {
     public SerialPipeline putData() {
         SerialPipeline list = new SerialPipeline();
         //map.setName(getName());
-        list.add(new PipelineData(getName(), PipelineConstants.CATEGORY, null, new SerialInteger(category)));
-        list.add(new PipelineData(getName(), PipelineConstants.CATEGORYTITLE, null, new SerialString(title)));
-        list.add(new PipelineData(getName(), PipelineConstants.RESULT, null, new SerialMapPlain(resultMap)));
-        list.add(new PipelineData(getName(), PipelineConstants.RESULTMETA, null, resultMetas));
+        list.add(new PipelineData(getName(), PipelineConstants.CATEGORY, null, new SerialInteger(category), false));
+        list.add(new PipelineData(getName(), PipelineConstants.CATEGORYTITLE, null, new SerialString(title), false));
+        list.add(new PipelineData(getName(), PipelineConstants.RESULT, null, new SerialMapPlain(resultMap), true));
+        list.add(new PipelineData(getName(), PipelineConstants.RESULTMETA, null, resultMetas, false));
         // TODO remove
         //list.add(new PipelineData(getName(), PipelineConstants.RESULTMETAARRAY, resultMetaArray);
-        list.add(new PipelineData(getName(), PipelineConstants.ACCURACY, null, new SerialMapPlain(accuracyMap)));
+        list.add(new PipelineData(getName(), PipelineConstants.ACCURACY, null, new SerialMapPlain(accuracyMap), false));
         // TODO unused
         //list.add(new PipelineData(getName(), PipelineConstants.LOSS, lossMap);
         //map.smap().put(PipelineConstants.RESULT, resultSMap);
