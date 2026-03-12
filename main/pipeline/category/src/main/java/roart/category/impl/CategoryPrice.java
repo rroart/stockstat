@@ -9,6 +9,7 @@ import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.util.MathUtil;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.impl.Indicator;
@@ -27,7 +28,7 @@ import roart.stockutil.StockUtil;
 public class CategoryPrice extends Category {
 
     public CategoryPrice(IclijConfig conf, String string, List<StockDTO> stocks,
-            PipelineData[] datareaders, Inmemory inmemory) throws Exception {
+            SerialPipeline datareaders, Inmemory inmemory) throws Exception {
         super(conf, string, stocks, datareaders, inmemory);
         period = Constants.PRICECOLUMN;
         createResultMap(conf, stocks);

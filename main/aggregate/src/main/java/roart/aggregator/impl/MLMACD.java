@@ -13,6 +13,7 @@ import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.SerialMapTA;
 import roart.common.pipeline.util.PipelineUtils;
@@ -36,7 +37,7 @@ public class MLMACD extends IndicatorAggregator {
     }
 
     public MLMACD(IclijConfig conf, String string, String title, int category, 
-            Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates, Inmemory inmemory) throws Exception {
+            Map<String, String> idNameMap, SerialPipeline datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates, Inmemory inmemory) throws Exception {
         super(conf, string, category, title, idNameMap, datareaders, neuralnetcommand, stockDates, inmemory);
     }
 
@@ -144,7 +145,7 @@ public class MLMACD extends IndicatorAggregator {
     @Override
     protected List<SubType> getWantedSubTypes(AfterBeforeLimit afterbefore) {
         List<SubType> wantedSubTypesList = new ArrayList<>();
-        PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORMACD, inmemory);
+        //PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORMACD, inmemory);
         Object list = null;
         SerialMapTA taObject = PipelineUtils.getMapTA(datareaders, PipelineConstants.INDICATORMACD, inmemory);
         SerialMapD resultObject = PipelineUtils.getResultMap(datareaders, PipelineConstants.INDICATORMACD, inmemory);

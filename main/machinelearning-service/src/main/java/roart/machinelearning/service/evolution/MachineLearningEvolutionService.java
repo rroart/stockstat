@@ -76,7 +76,7 @@ public class MachineLearningEvolutionService {
     public IclijServiceResult getEvolveML(List<String> disableList, String ml, IclijServiceParam origparam) throws StreamReadException, DatabindException, IOException {
         Map<String, Object> updateMap = new HashMap<>();
         Map<String, Object> scoreMap = new HashMap<>();
-        PipelineData[] resultMap = new PipelineData[0];
+        Map<String, Object> resultMap = new HashMap<>();
         IclijConfig conf = new IclijConfig(origparam.getConfigData());
         Inmemory inmemory = io.getInmemoryFactory().get(conf);
         NeuralNetCommand neuralnetcommand = origparam.getNeuralnetcommand();
@@ -128,11 +128,11 @@ public class MachineLearningEvolutionService {
         IclijServiceResult result = new MachineLearningControlService(io).getContent(conf, origparam, disableList);
         
         List<ResultItem> retlist = result.getList();
-        PipelineData[] pipelineData = result.getPipelineData();
+        SerialPipeline pipelineData = result.getPipelineData();
 
         try {
 
-            PipelineData[] datareaders = pipelineData;
+            SerialPipeline datareaders = pipelineData;
     
             StockData stockData = getStockData(pipelineData, inmemory);
             
@@ -145,8 +145,8 @@ public class MachineLearningEvolutionService {
     
             retlist.add(table);
             result.setList(retlist);
-            PipelineData datum = getEvolveData(updateMap, scoreMap, resultMap);
-            pipelineData = ArrayUtils.add(pipelineData, datum);
+            SerialPipeline datum = getEvolveData(updateMap, scoreMap, resultMap);
+            pipelineData.add(datum);
             if (origparam.getId() != null) {
                 log.info("Before setPipelineMap");
                 PipelineUtils.setPipelineMap(pipelineData, origparam.getId());
@@ -162,20 +162,18 @@ public class MachineLearningEvolutionService {
         }
     }
 
-    private PipelineData[] getEvolveData(Map<String, Object> updateMap, Map<String, Object> scoreMap,
+    private SerialPipeline getEvolveData(Map<String, Object> updateMap, Map<String, Object> scoreMap,
             Map<String, Object> resultMap) {
-        PipelineData[] maps;
-        List<PipelineData> list = new ArrayList<>();
+        SerialPipeline list = new SerialPipeline();
         //maps.setName(PipelineConstants.EVOLVE);
         list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.UPDATE, null, new SerialMapPlain(updateMap)));
         list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.SCORE, null, new SerialMapPlain(scoreMap)));
         list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, new SerialListMap(resultMap)));
-        maps = (PipelineData[]) list.toArray();
-        return maps;
+        return list;
     }
 
     private void findMLSettings(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
-            Map<String, Object> updateMap, String ml, PipelineData[] dataReaders, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, PipelineData[] resultMap, Inmemory inmemory) throws Exception {
+            Map<String, Object> updateMap, String ml, SerialPipeline dataReaders, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap, Inmemory inmemory) throws Exception {
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
         NeuralNetConfigs nnConfigs = null;
         String nnconfigString = null;
@@ -218,8 +216,8 @@ public class MachineLearningEvolutionService {
             try {
             	best = evolution.getFittest(evolutionConfig, chromosome, individuals, results, null);
             } catch (InterruptedException e) {
-                //resultMap.put(EvolveConstants.ID, "interrupted");
-                resultMap = ArrayUtils.add(resultMap, new PipelineData("name", EvolveConstants.ID, null, new SerialString("interrupted")));
+                resultMap.put(EvolveConstants.ID, "interrupted");
+                //resultMap.add(new PipelineData("name", EvolveConstants.ID, null, new SerialString("interrupted")));
                 return;
             }
             String title = EvolveConstants.EVOLVE + " " + conf.getConfigData().getMarket() + " " + ml + " " + nnconfig.getClass().getSimpleName();
@@ -264,12 +262,19 @@ public class MachineLearningEvolutionService {
             scoreMap.put(configKey, best.getFitness());
             scoreMap.put("scores", results.stream().map(SerialScoreChromosome::getLeft).collect(Collectors.toList()));            
             // TODO_
-            List<PipelineData> list = new ArrayList<>();
+            resultMap.put(filename, new SerialList(results));
+            resultMap.put(EvolveConstants.ID, filename);
+            resultMap.put(EvolveConstants.TITLETEXT, title);
+            resultMap.put(EvolveConstants.DEFAULT, new SerialNeuralNetConfig(nnconfig));
+            /*
+            SerialPipeline list = new SerialPipeline();
             list.add(new PipelineData(PipelineConstants.EVOLVE, filename, null, new SerialList(results)));
             list.add(new PipelineData(PipelineConstants.EVOLVE, EvolveConstants.ID, null, new SerialString(filename)));
             list.add(new PipelineData(PipelineConstants.EVOLVE, EvolveConstants.TITLETEXT, null, new SerialString(title)));
             list.add(new PipelineData(PipelineConstants.EVOLVE, EvolveConstants.DEFAULT, null, new SerialNeuralNetConfig(nnconfig)));
-            resultMap = (PipelineData[]) ArrayUtils.add(resultMap, list.toArray());
+            resultMap.add(list);
+
+             */
 
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(myKey);
@@ -280,7 +285,7 @@ public class MachineLearningEvolutionService {
     }
 
     private void findMLSettings(IclijConfig conf, EvolutionConfig evolutionConfig, ResultItemTable table, Map<String, Object> updateMap,
-            String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, PipelineData[] resultMap, Inmemory inmemory) throws Exception {
+            String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap, Inmemory inmemory) throws Exception {
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
         NeuralNetConfigs nnConfigs = null;
         String nnconfigString = null;
@@ -312,8 +317,8 @@ public class MachineLearningEvolutionService {
             try {
             	best = evolution.getFittest(evolutionConfig, chromosome, individuals, results, null);
             } catch (InterruptedException e) {
-                //resultMap.put(EvolveConstants.ID, "interrupted");
-                resultMap = ArrayUtils.add(resultMap, new PipelineData("name", EvolveConstants.ID, null, new SerialString("interrupted")));
+                resultMap.put(EvolveConstants.ID, "interrupted");
+                //resultMap.add(new PipelineData("name", EvolveConstants.ID, null, new SerialString("interrupted")));
             	return;
             }
             String title = EvolveConstants.EVOLVE + " " + conf.getConfigData().getMarket() + " " + ml + " " + nnconfig.getClass().getSimpleName();
@@ -333,12 +338,20 @@ public class MachineLearningEvolutionService {
             updateMap.put(configKey, newNNConfigstring);
             scoreMap.put(configKey, best.getFitness());
             // TODO
-            List<PipelineData> list = new ArrayList<>();
+            resultMap.put(filename, new SerialList(results));
+            resultMap.put(EvolveConstants.TITLETEXT, title);
+            resultMap.put(EvolveConstants.ID, filename);
+            resultMap.put(EvolveConstants.DEFAULT, new SerialNeuralNetConfig(nnconfig));
+
+            /*
+            SerialPipeline list = new SerialPipeline();
             list.add(new PipelineData(PipelineConstants.EVOLVE, filename, null, new SerialList(results)));
             list.add(new PipelineData(PipelineConstants.EVOLVE, null, EvolveConstants.TITLETEXT, new SerialString(title)));
             list.add(new PipelineData(PipelineConstants.EVOLVE, null, EvolveConstants.ID, new SerialString(filename)));
             list.add(new PipelineData(PipelineConstants.EVOLVE, null, EvolveConstants.DEFAULT, new SerialNeuralNetConfig(nnconfig)));
-            resultMap = (PipelineData[]) ArrayUtils.add(resultMap, list.toArray());
+            resultMap.add(list);
+
+             */
 
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(myKey);
@@ -407,9 +420,9 @@ public class MachineLearningEvolutionService {
         return keys;
     }
 
-    public StockData getStockData(PipelineData[] pipelineData, Inmemory inmemory) {
+    public StockData getStockData(SerialPipeline pipelineData, Inmemory inmemory) {
         StockData stockData = new StockData();
-        PipelineData pipelineDatum = PipelineUtils.getPipeline(pipelineData, PipelineConstants.META, inmemory);
+        //PipelineData pipelineDatum = PipelineUtils.getPipeline(pipelineData, PipelineConstants.META, inmemory);
         stockData.cat = PipelineUtils.getWantedcat(pipelineData, PipelineConstants.META, inmemory);
         stockData.catName = PipelineUtils.getMetaCat(pipelineData, inmemory);
         return stockData;

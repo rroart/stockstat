@@ -17,6 +17,7 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.model.PipelineResultData;
 import roart.common.util.JsonUtil;
 import roart.evolution.chromosome.impl.NeuralNetChromosome;
@@ -34,7 +35,7 @@ import roart.predictor.impl.PredictorTensorflowMLP;
 import roart.predictor.impl.PredictorTensorflowRNN;
 
 public class PipelineFactory {
-    public PipelineResultData myfactory(IclijConfig conf, String ml, PipelineData[] dataReaders, String catName, Integer cat, NeuralNetCommand neuralnetcommand, NeuralNetChromosome chromosome, String key, Inmemory inmemory) throws Exception {
+    public PipelineResultData myfactory(IclijConfig conf, String ml, SerialPipeline dataReaders, String catName, Integer cat, NeuralNetCommand neuralnetcommand, NeuralNetChromosome chromosome, String key, Inmemory inmemory) throws Exception {
         NeuralNetConfigGene nnConfigGene = ((NeuralNetChromosome) chromosome).getNnConfig();
         NeuralNetConfigs nnConfigs = new NeuralNetConfigs();
         nnConfigs.set(key, nnConfigGene.getConfig());

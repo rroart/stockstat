@@ -14,6 +14,7 @@ import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.model.PipelineResultData;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.evolution.chromosome.AbstractChromosome;
@@ -29,7 +30,7 @@ public class FitnessNeuralNet extends Fitness {
     
     private String ml;
 
-    private PipelineData[] dataReaders;
+    private SerialPipeline dataReaders;
 
     private String key;
     
@@ -43,7 +44,7 @@ public class FitnessNeuralNet extends Fitness {
 
     private Inmemory inmemory;
     
-    public FitnessNeuralNet(IclijConfig conf, String ml, PipelineData[] dataReaders, String key, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Inmemory inmemory) {
+    public FitnessNeuralNet(IclijConfig conf, String ml, SerialPipeline dataReaders, String key, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Inmemory inmemory) {
         this.conf = conf.copy();
         this.ml = ml;
         this.dataReaders = dataReaders;
@@ -70,7 +71,7 @@ public class FitnessNeuralNet extends Fitness {
             return 0;
         }
         // nothing is written to inmemory, so will not need to clean
-        Map<String, Object> accuracyMap = PipelineUtils.getAccuracyMap(new PipelineData[] {pipelineData.putData() }, "", inmemory);
+        Map<String, Object> accuracyMap = PipelineUtils.getAccuracyMap(pipelineData.putData(), "", inmemory);
         if (accuracyMap == null) {
             return 0;
         }
@@ -95,13 +96,13 @@ public class FitnessNeuralNet extends Fitness {
     class MyCallable implements Callable {
         private IclijConfig conf;
         private String ml;
-        private PipelineData[] dataReaders;
+        private SerialPipeline dataReaders;
         private String catName;
         private Integer cat;
         private NeuralNetCommand neuralnetcommand;
         private NeuralNetChromosome chromosome;
         
-        public MyCallable(IclijConfig conf, String ml, PipelineData[] dataReaders, String catName, Integer cat, NeuralNetCommand neuralnetcommand, NeuralNetChromosome chromosome) {
+        public MyCallable(IclijConfig conf, String ml, SerialPipeline dataReaders, String catName, Integer cat, NeuralNetCommand neuralnetcommand, NeuralNetChromosome chromosome) {
             this.conf = conf;
             this.ml = ml;
             this.dataReaders = dataReaders;

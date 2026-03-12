@@ -7,6 +7,7 @@ import roart.iclij.config.IclijConfig;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.pipeline.Pipeline;
 import roart.result.model.ResultItemTableRow;
 import roart.stockutil.StockDao;
@@ -14,7 +15,7 @@ import roart.stockutil.StockUtil;
 
 public class Category extends AbstractCategory {
 
-    public Category(IclijConfig conf, String periodText, List<StockDTO> stocks, PipelineData[] datareaders, Inmemory inmemory) {
+    public Category(IclijConfig conf, String periodText, List<StockDTO> stocks, SerialPipeline datareaders, Inmemory inmemory) {
         super(conf, periodText, stocks, datareaders, inmemory);
     }
 

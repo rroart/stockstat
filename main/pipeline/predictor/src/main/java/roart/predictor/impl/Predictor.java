@@ -25,6 +25,7 @@ import roart.common.ml.NeuralNetConfigs;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.util.MathUtil;
 import roart.common.util.JsonUtil;
@@ -39,7 +40,7 @@ import roart.common.pipeline.util.PipelineUtils;
 
 public abstract class Predictor extends AbstractPredictor {
 
-    public Predictor(IclijConfig conf, String string, String title, int category, NeuralNetCommand neuralnetcommand, PipelineData[] datareaders, Inmemory inmemory) {
+    public Predictor(IclijConfig conf, String string, String title, int category, NeuralNetCommand neuralnetcommand, SerialPipeline datareaders, Inmemory inmemory) {
         super(conf, string, category, neuralnetcommand, inmemory);
         if (!isEnabled()) {
             return;
@@ -107,7 +108,7 @@ public abstract class Predictor extends AbstractPredictor {
 
     List<MLClassifyDao> mldaos = new ArrayList<>();
 
-    private PipelineData[] datareaders;
+    private SerialPipeline datareaders;
 
     @Override
     public Map<Integer, String> getMapTypes() {
@@ -139,15 +140,15 @@ public abstract class Predictor extends AbstractPredictor {
         }
 
         log.info("checkthis {}", key.equals(title));
-        PipelineData datareader = PipelineUtils.getPipeline(datareaders, key, inmemory);
-        if (datareader == null) {
+        SerialPipeline datareader = PipelineUtils.getPipelines(datareaders, key, null, null, inmemory);
+        if (datareader.isEmpty()) {
             log.info("empty {}", category);
             return;
         }
-        this.listMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
-        this.fillListMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.FILLLIST));
+        this.listMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.LIST, null, null));
+        this.fillListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.FILLLIST, null, null));
         //this.truncListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCLIST));       
-        this.truncFillListMap = PipelineUtils.sconvertMapdd(datareader.get(PipelineConstants.TRUNCFILLLIST));       
+        this.truncFillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.TRUNCFILLLIST, null, null));
         //this.base100ListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.BASE100LIST));
         //this.base100FillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.BASE100FILLLIST));
         //this.truncBase100ListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCBASE100LIST));       
@@ -548,8 +549,8 @@ public abstract class Predictor extends AbstractPredictor {
 
     @Override
     public boolean hasValue() {
-        PipelineData datareader = PipelineUtils.getPipeline(datareaders, key, inmemory);
-        return anythingHereA(PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST)));
+        SerialPipeline datareader = PipelineUtils.getPipelines(datareaders, key, inmemory);
+        return anythingHereA(PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareader, key, PipelineConstants.LIST, null, null)));
     }
     
     @Override

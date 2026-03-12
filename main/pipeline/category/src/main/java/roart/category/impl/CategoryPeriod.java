@@ -8,6 +8,7 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialMeta;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.indicator.AbstractIndicator;
@@ -24,11 +25,11 @@ import roart.stockutil.StockUtil;
 
 public class CategoryPeriod extends Category {
 
-    public CategoryPeriod(IclijConfig conf, int i, String periodText, List<StockDTO> stocks,PipelineData[] datareaders, Inmemory inmemory) throws Exception {
+    public CategoryPeriod(IclijConfig conf, int i, String periodText, List<StockDTO> stocks,SerialPipeline datareaders, Inmemory inmemory) throws Exception {
         super(conf, periodText, stocks, datareaders, inmemory);
         period = i;
         createResultMap(conf, stocks);
-        PipelineData datareader = PipelineUtils.getPipeline(datareaders, periodText, inmemory);
+        PipelineData datareader = PipelineUtils.getPipeline(datareaders, periodText, null, null, inmemory);
         if (datareader == null) {
             log.info("empty {}", i);
             createIndicatorMap(periodText);
@@ -39,7 +40,7 @@ public class CategoryPeriod extends Category {
         //MarketData marketData = marketdatamap.get(market);
         //List<StockDTO>[] datedstocklists = marketData.datedstocklists;
         //indicators.add(new IndicatorMove(conf, "Δ" + getTitle(), datedstocklists, period));
-        PipelineData metadata = PipelineUtils.getPipeline(datareaders, PipelineConstants.META, inmemory);
+        //PipelineData metadata = PipelineUtils.getPipeline(datareaders, PipelineConstants.META, null, null, inmemory);
         SerialMeta meta = PipelineUtils.getMeta(datareaders, PipelineConstants.META, inmemory);
         if (MetaUtil.currentYear(meta, periodText)) {
             indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", getTitle(), i, datareaders, false, inmemory));

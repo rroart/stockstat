@@ -21,6 +21,7 @@ import roart.common.constants.Constants;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialMapTA;
 import roart.iclij.config.IclijConfig;
 import roart.model.data.StockData;

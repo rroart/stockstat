@@ -17,6 +17,7 @@ import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.model.data.StockData;
 import roart.pipeline.Pipeline;
@@ -45,7 +46,7 @@ public class ComplexETL {
                 Map<String, Pipeline> pipelineMap = getPipelineMap(datareaders);
                 Pipeline datareader = pipelineMap.get("" + cat); // used id 0-9
                 // interpolation does not work yet
-                PipelineData[] data = datareader.putData();
+                SerialPipeline data = datareader.putData();
                 List<String> datelist = PipelineUtils.getDatelist(data, "" + cat, inmemory);
                 Map<String, Double[][]> listMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(data, "" + cat, PipelineConstants.LIST, inmemory));
                 Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(data, "" + cat, PipelineConstants.FILLLIST, inmemory));

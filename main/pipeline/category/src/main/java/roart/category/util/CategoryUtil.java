@@ -10,13 +10,15 @@ import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.iclij.config.IclijConfig;
 
 public class CategoryUtil {
 
     public AbstractCategory[] getCategories(IclijConfig conf, List<StockDTO> stocks,
             String[] periodText,
-            PipelineData[] datareaders, Inmemory inmemory) throws Exception {
+            SerialPipeline datareaders, Inmemory inmemory) throws Exception {
         AbstractCategory[] categories = new AbstractCategory[Constants.PERIODS + 2];
         categories[0] = new CategoryIndex(conf, Constants.INDEX, stocks, datareaders, inmemory);
         categories[1] = new CategoryPrice(conf, Constants.PRICE, stocks, datareaders, inmemory);

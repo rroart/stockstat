@@ -22,6 +22,7 @@ import static org.mockito.Mockito.*;
 
 import roart.common.constants.Constants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialScoreChromosome;
 import roart.common.util.JsonUtil;
 import roart.db.dao.IclijDbDao;

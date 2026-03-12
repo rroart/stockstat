@@ -6,6 +6,7 @@ import java.util.List;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.iclij.config.IclijConfig;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.predictor.impl.PredictorPytorchGRU;
@@ -20,7 +21,7 @@ import roart.predictor.impl.PredictorTensorflowRNN;
 
 public class PredictorUtils {
 
-    public AbstractPredictor[] getPredictors(IclijConfig conf, PipelineData[] datareaders,
+    public AbstractPredictor[] getPredictors(IclijConfig conf, SerialPipeline datareaders,
             String catName,
             Integer cat, NeuralNetCommand neuralnetcommand, Inmemory inmemory) throws Exception {
         AbstractPredictor[] predictors = new AbstractPredictor[9];

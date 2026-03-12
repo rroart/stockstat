@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import roart.category.AbstractCategory;
+import roart.common.pipeline.data.SerialPipeline;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
@@ -48,12 +50,13 @@ public class RecommenderRSI extends Aggregator {
         for (int i = 0; i < 2; i ++) {
             rsiLists[i] = new ArrayList<>();
         }
-        Object rsi = cat.putData().get(PipelineConstants.INDICATORRSI).get(PipelineConstants.RESULT);
+        SerialPipeline rsi0 = cat.putData().get(PipelineConstants.INDICATORRSI);
+        SerialPipeline rsi = PipelineUtils.getPipelines(rsi0, PipelineConstants.RESULT, null, null, null);
         if (rsi == null) {
             return;
         }
         // TODO SerialMapD
-        rsiMap = (SerialMapD) rsi;
+        rsiMap = null; // TODO (SerialMapD) rsi;
         List<String> buyList = null;///new RSIRecommend().getBuyList();
         List<String> sellList = null;//new RSIRecommend().getSellList();
         for (String id : listMap.keySet()) {

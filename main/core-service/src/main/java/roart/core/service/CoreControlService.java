@@ -21,6 +21,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.pipeline.data.SerialPipeline;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -42,6 +43,7 @@ import roart.common.model.MetaDTO;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
@@ -148,7 +150,7 @@ public class CoreControlService {
         List<ResultItemTable> otherTables = new ArrayList<>();
         otherTables.add(mlTimesTable);
         otherTables.add(eventTable);
-        PipelineData[] pipelinedata = new PipelineData[0];
+        SerialPipeline pipelinedata = new SerialPipeline();
         List<AbstractCategory> categories = new ArrayList<>();
         List<Aggregator> aggregates = new ArrayList<>();
         try {
@@ -209,7 +211,7 @@ public class CoreControlService {
         }
 
         PipelineUtils.printmap(pipelinedata);
-        new CleanETL().fixmap(pipelinedata);
+        //new CleanETL().fixmap(pipelinedata);
         PipelineUtils.printmap(pipelinedata);
 
         result.setList(retlist);
@@ -413,7 +415,7 @@ public class CoreControlService {
     private Aggregator[] getAggregates(IclijConfig conf, String[] periodText,
             Map<String, MarketData> marketdatamap,
             AbstractCategory[] categories,
-            PipelineData[] datareaders, List<String> disableList, String catName, Integer cat, List<String> stockDates, Inmemory inmemory) throws Exception {
+            SerialPipeline datareaders, List<String> disableList, String catName, Integer cat, List<String> stockDates, Inmemory inmemory) throws Exception {
         Aggregator[] aggregates = new Aggregator[3];
         aggregates[0] = new MACDBase(conf, catName, catName, cat, datareaders, stockDates, inmemory);
         aggregates[1] = new AggregatorRecommenderIndicator(conf, catName, marketdatamap, categories, datareaders, disableList, inmemory);
@@ -598,7 +600,7 @@ public class CoreControlService {
     /// TODO too big
     public void getDates(IclijConfig conf, IclijServiceResult result, IclijServiceParam origparam) {
         Inmemory inmemory = io.getInmemoryFactory().get(conf);
-        PipelineData[] pipelineData = new PipelineData[0];
+        SerialPipeline pipelineData = new SerialPipeline();
         Map<String, Object> aMap = new HashMap<>();
         /*
         aMap.put(ConfigConstants.MACHINELEARNING, false);
@@ -622,7 +624,7 @@ public class CoreControlService {
             PipelineData map = new PipelineData(PipelineConstants.DATELIST, PipelineConstants.DATELIST, null, new SerialListPlain(stockData.stockdates));
             //map.setName(PipelineConstants.DATELIST);
             //map.put(PipelineConstants.DATELIST, new SerialListPlain(stockData.stockdates));
-            pipelineData = ArrayUtils.add(pipelineData, map);
+            pipelineData.add(map);
             PipelineUtils.setPipelineMap(pipelineData, origparam.getId());
             if (origparam.getId() != null) {
                 log.info("Before setPipelineMap");
@@ -655,7 +657,7 @@ public class CoreControlService {
             PipelineData map = new PipelineData(PipelineConstants.DATELIST, PipelineConstants.DATELIST, null, new SerialListPlain(dates));
             //map.setName(PipelineConstants.DATELIST);
             //map.put(PipelineConstants.DATELIST, new SerialListPlain(dates));
-            pipelineData = ArrayUtils.add(pipelineData, map);
+            pipelineData.add(map);
             result.setPipelineData(pipelineData);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

@@ -6,6 +6,7 @@ import java.util.Map;
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialTA;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
@@ -16,7 +17,7 @@ import roart.talib.util.TaUtil;
 
 public class IndicatorCCI extends Indicator {
 
-    public IndicatorCCI(IclijConfig conf, String string, String title, int category, PipelineData[] datareaders, boolean onlyExtra, Inmemory inmemory) {
+    public IndicatorCCI(IclijConfig conf, String string, String title, int category, SerialPipeline datareaders, boolean onlyExtra, Inmemory inmemory) {
         super(conf, string, category, datareaders, onlyExtra, inmemory);
         this.key = title;
     }

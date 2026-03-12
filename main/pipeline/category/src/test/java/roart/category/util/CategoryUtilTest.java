@@ -18,6 +18,7 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialMapTA;
 import roart.iclij.config.IclijConfig;
 import roart.indicator.util.IndicatorUtils;
@@ -57,7 +58,7 @@ public class CategoryUtilTest {
           Map<String, StockData> extraStockDataMap = new TestData().getExtraStockdataMap(conf);
           System.out.println("mark" + conf.getConfigData().getMarket());
           
-          PipelineData[] pipelinedata = new PipelineData[0];
+          SerialPipeline pipelinedata = new SerialPipeline();
 
           ExtraReader extraReader = new ExtraReader(conf, stockData.marketdatamap, 0, stockData);
           Pipeline[] datareaders = iu.getDataReaders(conf, stockData.periodText,

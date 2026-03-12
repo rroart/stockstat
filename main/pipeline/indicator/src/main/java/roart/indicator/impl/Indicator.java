@@ -10,7 +10,7 @@ import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialList;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialMarketStock;
 import roart.common.pipeline.data.SerialTA;
@@ -22,21 +22,21 @@ import roart.indicator.util.IndicatorUtils;
 
 public abstract class Indicator extends AbstractIndicator {
 
-    private PipelineData[] datareaders;
+    private SerialPipeline datareaders;
     private boolean onlyExtra;
 
-    public Indicator(IclijConfig conf, String string, int category, PipelineData[] datareaders, boolean onlyExtra, Inmemory inmemory) {
+    public Indicator(IclijConfig conf, String string, int category, SerialPipeline datareaders, boolean onlyExtra, Inmemory inmemory) {
         super(conf, string, category, inmemory);
         this.datareaders = datareaders;
         this.onlyExtra = onlyExtra;
     }
 
-    protected void calculateForExtras(PipelineData[] datareaders) {
+    protected void calculateForExtras(SerialPipeline datareaders) {
         if (category != Constants.NOCOLUMN && fieldSize == 0) {
             return;
         }
-        PipelineData extrareader = PipelineUtils.getPipeline(datareaders, PipelineConstants.EXTRAREADER, inmemory);
-        if (extrareader == null) {
+        SerialPipeline extrareader = PipelineUtils.getPipelines(datareaders, PipelineConstants.EXTRAREADER, inmemory);
+        if (extrareader.isEmpty()) {
             return;
         }
         Map<String, Map<String, double[][]>> marketListMap = getMarketListMap(extrareader, datareaders);
@@ -64,9 +64,9 @@ public abstract class Indicator extends AbstractIndicator {
         }
     }
 
-    public Map<String, Map<String, double[][]>> getMarketListMap(PipelineData extrareader, PipelineData[] datareaders) {
+    public Map<String, Map<String, double[][]>> getMarketListMap(SerialPipeline extrareader, SerialPipeline datareaders) {
         Map<String, Map<String, double[][]>> marketListMap = new HashMap<>();
-        PipelineData localResults =  extrareader;
+        //PipelineData localResults =  extrareader;
         /*
         Map<Pair<String, String>, List<StockDTO>> pairStockMap = null; // (Map<Pair<String, String>, List<StockDTO>>) localResults.get(PipelineConstants.PAIRSTOCK);
         //Map<Pair<String, String>, Map<Date, StockDTO>> pairDateMap = (Map<Pair<String, String>, Map<Date, StockDTO>>) localResults.get(PipelineConstants.PAIRDATE);
@@ -80,7 +80,7 @@ public abstract class Indicator extends AbstractIndicator {
         List<SerialMarketStock> marketStocks = PipelineUtils.getMarketstocks(datareaders, PipelineConstants.EXTRAREADER, inmemory);
         // all from here is already read from eventual inmemory
         //Map<String, SerialList<PipelineData>> dataReaderMap = PipelineUtils.getDatareader(localResults);
-        log.debug("lockeys {}", localResults.keySet());
+        //log.debug("lockeys {}", localResults.keySet());
         //Map<Pair<String, String>, List<StockDTO>> pairMap = pairStockMap;
         for(SerialMarketStock ms : marketStocks) {
             String market = ms.getMarket();
@@ -149,10 +149,10 @@ public abstract class Indicator extends AbstractIndicator {
         }
     }
     
-    protected void calculateAll(int category, PipelineData[] datareaders) throws Exception {
-        PipelineData datareader = PipelineUtils.getPipeline(datareaders, key, inmemory);
+    protected void calculateAll(int category, SerialPipeline datareaders) throws Exception {
+        SerialPipeline datareader = PipelineUtils.getPipelines(datareaders, key, inmemory);
         log.info("preempty {}", category);
-        if (datareader == null) {
+        if (datareader.isEmpty()) {
             log.info("empty {}", category);
             return;
         }
@@ -166,7 +166,7 @@ public abstract class Indicator extends AbstractIndicator {
         this.truncBase100ListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100LIST);       
         this.truncBase100FillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100FILLLIST);
         */
-        this.datareader = datareader;
+        this.datareader = datareaders;
         if (!anythingHere(getListMap())) {
             log.info("empty {}", key);
             return;

@@ -21,6 +21,7 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.model.MetaDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialInteger;
 import roart.common.pipeline.data.SerialListMap;
 import roart.common.pipeline.data.SerialListPlain;
@@ -100,21 +101,19 @@ public class CoreEvolutionService {
             DataReader dataReader = new DataReader(conf, stockData.marketdatamap, stockData.cat, conf.getConfigData().getMarket());
             Pipeline[] datareaders = new Pipeline[1];
             datareaders[0] = dataReader;
-            PipelineData[] singlePipelineData;
+            SerialPipeline list = new SerialPipeline();
             //singlePipelineData.setName(PipelineConstants.META);
             MetaDTO meta = stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta;
-            List<PipelineData> list = new ArrayList<>();
             list.add(new PipelineData(PipelineConstants.META, PipelineConstants.META, null, new SerialMeta(meta.getMarketid(), meta.getPeriod(), meta.getPriority(), meta.getReset(), meta.isLhc())));
             list.add(new PipelineData(PipelineConstants.META, PipelineConstants.CATEGORY, null, new SerialString(stockData.catName)));
             list.add(new PipelineData(PipelineConstants.META, PipelineConstants.WANTEDCAT, null, new SerialInteger(stockData.cat)));
             list.add(new PipelineData(PipelineConstants.META, PipelineConstants.NAME, null, new SerialMapPlain(stockData.idNameMap)));
             list.add(new PipelineData(PipelineConstants.META, PipelineConstants.DATELIST, null, new SerialListPlain(stockData.stockdates)));
-            singlePipelineData = (PipelineData[]) list.toArray();
-            PipelineData[] pipelineData = new PipelineData[0];
-            pipelineData = (PipelineData[]) ArrayUtils.add(pipelineData, singlePipelineData);
+            SerialPipeline pipelineData = new SerialPipeline();
+            pipelineData.add(list);
    
             for (Pipeline datareader : datareaders) {
-                pipelineData = (PipelineData[]) ArrayUtils.add(pipelineData, datareader.putData());
+                pipelineData.add(datareader.putData());
             }
 
             // no...get this from the category
@@ -129,8 +128,8 @@ public class CoreEvolutionService {
                     newIndicatorMap, stockData.catName, inmemory);
             for (AbstractIndicator indicator : indicatorMap.values()) {
                 ((Indicator) indicator).calculate();
-                PipelineData datum = ((Indicator) indicator).putData();
-                pipelineData = ArrayUtils.add(pipelineData, datum);
+                SerialPipeline datum = ((Indicator) indicator).putData();
+                pipelineData.add(datum);
             }
             Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders, indicatorMap, conf, Boolean.TRUE.equals(meta.isLhc()));
             
@@ -139,8 +138,8 @@ public class CoreEvolutionService {
             retlist.add(table);
 
             result.setList(retlist);
-            PipelineData datum = getEvolveData(updateMap, scoreMap, resultMap);
-            pipelineData = ArrayUtils.add(pipelineData, datum);
+            SerialPipeline datum = getEvolveData(updateMap, scoreMap, resultMap);
+            pipelineData.add(datum);
             if (origparam.getId() != null) {
                 log.info("Before setPipelineMap");
                 PipelineUtils.setPipelineMap(pipelineData, origparam.getId());
@@ -159,17 +158,15 @@ public class CoreEvolutionService {
         }
     }
     
-    private PipelineData[] getEvolveData(Map<String, Object> updateMap, Map<String, Object> scoreMap,
+    private SerialPipeline getEvolveData(Map<String, Object> updateMap, Map<String, Object> scoreMap,
             Map<String, Object> resultMap) {
-        PipelineData[] maps;
-        List<PipelineData> list = new ArrayList<>();
+        SerialPipeline list = new SerialPipeline();
         //maps.setName(PipelineConstants.EVOLVE);
-        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.UPDATE, null, new SerialMapPlain(updateMap));
-        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.SCORE, null, new SerialMapPlain(scoreMap));
+        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.UPDATE, null, new SerialMapPlain(updateMap)));
+        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.SCORE, null, new SerialMapPlain(scoreMap)));
         // rec with own result
-        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, new SerialListMap(resultMap));
-        maps = (PipelineData[]) list.toArray();
-        return maps;
+        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, new SerialListMap(resultMap)));
+        return list;
     }
 
     private Double[] getThresholds(IclijConfig conf, String thresholdString) {
@@ -184,7 +181,7 @@ public class CoreEvolutionService {
 
     private void findRecommendSettings(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
             Map<String, List<Recommend>> usedRecommenders, Map<String, List<String>[]> recommendKeyMap,
-            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, int days, PipelineData[] datareaders, Map<String, Object> scoreMap, Map<String, Object> resultMap, Inmemory inmemory) throws Exception {
+            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, int days, SerialPipeline datareaders, Map<String, Object> scoreMap, Map<String, Object> resultMap, Inmemory inmemory) throws Exception {
         String thresholdString = conf.getTestIndicatorRecommenderComplexThreshold();
         Double[] thresholds = getThresholds(conf, thresholdString);
         double threshold = thresholds[0];
@@ -248,7 +245,7 @@ public class CoreEvolutionService {
         }
     }
 
-    private void createRecommendIndicatorMap(Map<String, MarketData> marketdatamap, PipelineData[] datareaders,
+    private void createRecommendIndicatorMap(Map<String, MarketData> marketdatamap, SerialPipeline datareaders,
             Map<String, List<Recommend>> usedRecommenders, Map<String, AbstractIndicator> indicatorMap, int category,
             Map<String, AbstractIndicator> newIndicatorMap, String catName, Inmemory inmemory) throws Exception {
         for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {

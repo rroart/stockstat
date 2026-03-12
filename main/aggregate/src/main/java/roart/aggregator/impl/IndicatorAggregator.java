@@ -42,6 +42,7 @@ import roart.common.ml.NeuralNetConfigs;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialIncDec;
 import roart.common.pipeline.data.SerialList;
 import roart.common.pipeline.data.SerialMapTA;
@@ -116,7 +117,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     private Map<String, String> idNameMap;
 
-    protected PipelineData[] datareaders;
+    protected SerialPipeline datareaders;
 
     private Map<MLClassifyModel, Long> mapTime = new HashMap<>();
 
@@ -131,7 +132,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     protected List<String> stockDates;
     
-    public IndicatorAggregator(IclijConfig conf, String string, int category, String title, Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates, Inmemory inmemory) throws Exception {
+    public IndicatorAggregator(IclijConfig conf, String string, int category, String title, Map<String, String> idNameMap, SerialPipeline datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates, Inmemory inmemory) throws Exception {
         super(conf, string, category, inmemory);
         this.key = title;
         this.idNameMap = idNameMap;
@@ -180,16 +181,16 @@ public abstract class IndicatorAggregator extends Aggregator {
     protected abstract AfterBeforeLimit getAfterBefore();
 
     private void calculateMe(IclijConfig conf,
-            PipelineData[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+            SerialPipeline datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         log.info("checkthis {}", key.equals(title));
-        PipelineData datareader  = PipelineUtils.getPipeline(datareaders, key, inmemory);
-        if (datareader == null) {
+        SerialPipeline datareader  = PipelineUtils.getPipelines(datareaders, key, inmemory);
+        if (datareader.isEmpty()) {
             log.info("empty {}", category);
             return;
         }
-        Map<String, Double[][]> aListMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
-        Map<String, double[][]> fillListMap = PipelineUtils.sconvertMapdd(datareader.get(PipelineConstants.TRUNCFILLLIST));
-        Map<String, double[][]>  base100FillListMap = PipelineUtils.sconvertMapdd(datareader.get(PipelineConstants.TRUNCBASE100FILLLIST)) ;
+        Map<String, Double[][]> aListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.LIST, null));
+        Map<String, double[][]> fillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.TRUNCFILLLIST, null));
+        Map<String, double[][]>  base100FillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.TRUNCBASE100FILLLIST, null)) ;
         // TODO
         this.listMap = /*conf.wantPercentizedPriceIndex() ? base100FillListMap :*/ fillListMap;
 

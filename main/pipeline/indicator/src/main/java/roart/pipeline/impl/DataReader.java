@@ -44,13 +44,12 @@ public class DataReader extends Pipeline {
     private Map<String, String> currencyMap;
     
     @Override
-    public PipelineData[] putData() {
-        PipelineData[] map = getData();
+    public SerialPipeline putData() {
+        SerialPipeline list = getData();
         if (categoryTitle == null) {
             int jj = 0;
         }
         //map.setName(categoryTitle);
-        List<PipelineData> list = new ArrayList<>();
         list.add(new PipelineData(categoryTitle, PipelineConstants.LIST, null, new SerialMapDD(listMap)));
         list.add(new PipelineData(categoryTitle, PipelineConstants.VOLUME, null, new SerialMapL(volumeMap)));
         list.add(new PipelineData(categoryTitle, PipelineConstants.CURRENCY, null, new SerialMapPlain(currencyMap)));
@@ -62,8 +61,7 @@ public class DataReader extends Pipeline {
         list.add(new PipelineData(categoryTitle, PipelineConstants.NAME, null, new SerialMapPlain(nameMap)));
         list.add(new PipelineData(categoryTitle, PipelineConstants.DATELIST, null, new SerialListPlain(dateList)));
         list.add(new PipelineData(categoryTitle, PipelineConstants.CATEGORYTITLE, null, new SerialString(categoryTitle))); // TODO
-        map = (PipelineData[]) list.toArray();
-        return map;
+        return list;
     }
     
     public DataReader(IclijConfig conf, int category) {

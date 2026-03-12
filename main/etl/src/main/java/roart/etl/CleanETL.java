@@ -9,16 +9,18 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 
 public class CleanETL {
 
     protected static Logger log = LoggerFactory.getLogger(CleanETL.class);
 
+    /*
     public void fixmap(Object o) {
         if (o == null) {
             return;
         }
-        PipelineData[] data = (PipelineData[]) o;
+        SerialPipeline data = (SerialPipeline) o;
         for (PipelineData datum : data) {
         //System.out.println("" + i + " " + o.hashCode());
         Map<String, Object> m = datum.getMap();
@@ -35,7 +37,7 @@ public class CleanETL {
         m.remove(PipelineConstants.BASE100FILLLIST);
         m.remove(PipelineConstants.TRUNCBASE100LIST);
         m.remove(PipelineConstants.TRUNCBASE100FILLLIST);
-        /*
+
         for (Entry<String, Object> e : m.entrySet()) {
             Object value = e.getValue();
             if (value instanceof Map && !value.getClass().getSimpleName().equals("UnmodifiableMap")) {
@@ -48,9 +50,12 @@ public class CleanETL {
                 }
             }
         }
-        */
+
         log.debug("Removed");
         }
     }
+
+
+     */
 
 }

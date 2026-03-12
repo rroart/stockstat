@@ -15,6 +15,7 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.SerialMapTA;
 import roart.common.pipeline.util.PipelineUtils;
@@ -35,7 +36,7 @@ public class MLATR extends IndicatorAggregator {
     }
 
     public MLATR(IclijConfig conf, String string, String title, int category, 
-            Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates, Inmemory inmemory) throws Exception {
+            Map<String, String> idNameMap, SerialPipeline datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates, Inmemory inmemory) throws Exception {
         super(conf, string, category, title, idNameMap, datareaders, neuralnetcommand, stockDates, inmemory);
     }
 
@@ -82,7 +83,7 @@ public class MLATR extends IndicatorAggregator {
     @Override
     protected List<SubType> getWantedSubTypes(AfterBeforeLimit afterbefore) {
         List<SubType> wantedSubTypesList = new ArrayList<>();
-        PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORATR, inmemory);
+        //PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORATR, inmemory);
         Object list = null;
         SerialMapTA taObject = PipelineUtils.getMapTA(datareaders, PipelineConstants.INDICATORATR, inmemory);
         SerialMapD resultObject = PipelineUtils.getResultMap(datareaders, PipelineConstants.INDICATORATR, inmemory);

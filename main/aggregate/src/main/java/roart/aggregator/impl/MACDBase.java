@@ -22,18 +22,18 @@ public class MACDBase extends Aggregator {
 
     private Map<String, Double[]> resultObject;
 
-    public MACDBase(IclijConfig conf, String catName, String catName2, Integer cat, PipelineData[] datareaders, List<String> stockDates, Inmemory inmemory) {
+    public MACDBase(IclijConfig conf, String catName, String catName2, Integer cat, SerialPipeline datareaders, List<String> stockDates, Inmemory inmemory) {
         super(conf, "macdb", cat, inmemory);
-        PipelineData macdmap = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORMACD, inmemory);
-        if (macdmap == null) {
+        SerialPipeline macdmap = PipelineUtils.getPipelines(datareaders, PipelineConstants.INDICATORMACD, inmemory);
+        if (macdmap.isEmpty()) {
             return;
         }
         SerialMapD resultObject2 = PipelineUtils.getResultMap(datareaders, PipelineConstants.INDICATORMACD, inmemory);
 
         this.resultObject = resultObject2.getMap();
         
-        PipelineData datareader = PipelineUtils.getPipeline(datareaders, catName, inmemory);
-        if (datareader == null) {
+        SerialPipeline datareader = PipelineUtils.getPipelines(datareaders, catName, inmemory);
+        if (datareader.isEmpty()) {
             log.info("empty {}", category);
             return;
         }
@@ -97,15 +97,13 @@ public class MACDBase extends Aggregator {
     }
 
     @Override
-    public PipelineData[] putData() {
-        PipelineData[] map;
-        List<PipelineData> list = new ArrayList<>();
+    public SerialPipeline putData() {
+        SerialPipeline list = new SerialPipeline();
         //map.setName(getName());
         list.add(new PipelineData(getName(), PipelineConstants.CATEGORY, null, new SerialInteger(category)));
         list.add(new PipelineData(getName(), PipelineConstants.CATEGORYTITLE, null, new SerialString(title)));
         list.add(new PipelineData(getName(), PipelineConstants.RESULT, null, new SerialMapPlain(resultMap)));
-        map = (PipelineData[]) list.toArray();
-        return map;
+        return list;
     }
     
 }

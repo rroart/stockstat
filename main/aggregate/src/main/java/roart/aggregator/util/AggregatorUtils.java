@@ -18,6 +18,7 @@ import roart.common.config.ConfigConstants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.iclij.config.IclijConfig;
 import roart.pipeline.common.aggregate.Aggregator;
 
@@ -25,7 +26,7 @@ public class AggregatorUtils {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public Aggregator[] getAggregates(IclijConfig conf, PipelineData[] pipelineData,
+    public Aggregator[] getAggregates(IclijConfig conf, SerialPipeline pipelineData,
             List<String> disableList,
             Map<String, String> idNameMap,
             String catName, Integer cat, NeuralNetCommand neuralnetcommand, List<String> stockDates, Inmemory inmemory) throws Exception {

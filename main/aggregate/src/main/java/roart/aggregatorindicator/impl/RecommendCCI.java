@@ -8,6 +8,7 @@ import roart.iclij.config.IclijConfig;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.impl.IndicatorCCI;
 import roart.indicator.impl.IndicatorRSI;
@@ -21,7 +22,7 @@ public abstract class RecommendCCI extends Recommend {
     }
 
     @Override
-    public AbstractIndicator getIndicator(int category, Map<String, AbstractIndicator> newIndicatorMap, Map<String, AbstractIndicator> usedIndicatorMap, PipelineData[] datareaders, String catName, Inmemory inmemory) throws Exception {
+    public AbstractIndicator getIndicator(int category, Map<String, AbstractIndicator> newIndicatorMap, Map<String, AbstractIndicator> usedIndicatorMap, SerialPipeline datareaders, String catName, Inmemory inmemory) throws Exception {
         if (usedIndicatorMap != null && usedIndicatorMap.containsKey(indicator())) {
             return usedIndicatorMap.get(indicator());
         }

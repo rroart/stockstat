@@ -22,6 +22,7 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialList;
 import roart.common.pipeline.data.SerialListPlain;
 import roart.common.pipeline.data.SerialMarketStock;
@@ -221,29 +222,27 @@ public class ExtraReader extends Pipeline {
     }
 
     @Override
-    public PipelineData[] putData() {
-        PipelineData[] map = getData();
+    public SerialPipeline putData() {
+        SerialPipeline list = getData();
         //map.put(PipelineConstants.PAIRLIST, new HashMap() /*pairListMap*/);
         //map.put(PipelineConstants.PAIRDATE, new HashMap() /*pairDateMap*/);
         //map.put(PipelineConstants.PAIRCAT, new HashMap() /*pairCatMap*/);
         //map.put(PipelineConstants.PAIRSTOCK, new HashMap() /*pairStockMap*/);
         //map.put(PipelineConstants.PAIRDATELIST, pairDateListMap);
         //map.put(PipelineConstants.PAIRTRUNCLIST, pairTruncListMap);
-        List<PipelineData> list = new ArrayList<>();
         //map.setName(PipelineConstants.EXTRAREADER);
         list.add(new PipelineData(PipelineConstants.EXTRAREADER, PipelineConstants.DATELIST, null, new SerialListPlain(new ArrayList<>(commonDates))));
         for (Entry<String, Pipeline[]> entry : dataReaderMap.entrySet()) {
             Pipeline[] pipeline = entry.getValue();
             for (int i = 0; i < pipeline.length; i++) {
-                PipelineData[] secondPipeline = pipeline[i].putData();
+                SerialPipeline secondPipeline = pipeline[i].putData();
                 for (PipelineData secondPipelineData : secondPipeline) {
                     list.add(new PipelineData(PipelineConstants.EXTRAREADER, secondPipelineData.getName(), secondPipelineData.getKey(), secondPipelineData.getValue()));
                 }
             }
         }
         list.add(new PipelineData(PipelineConstants.EXTRAREADER, PipelineConstants.MARKETSTOCKS, null, new SerialList(new ArrayList<>(allMarketStocks))));
-        map = (PipelineData[]) list.toArray();
-        return map;
+        return list;
     }
     
     @Override
@@ -318,7 +317,7 @@ public class ExtraReader extends Pipeline {
     
     public static Double[] getExtraData(IclijConfig conf, ExtraData extraData,
                                         int j, String id,
-                                        Double[] result, PipelineData[] datareaders, Inmemory inmemory) throws Exception {
+                                        Double[] result, SerialPipeline datareaders, Inmemory inmemory) throws Exception {
         int deltas = conf.getAggregatorsIndicatorExtrasDeltas();
         int size = extraData.dateList.size() - 1;
         if (size - j < 0) {
@@ -373,7 +372,7 @@ public class ExtraReader extends Pipeline {
     
     public static Double[] getExtraData(IclijConfig conf, ExtraData extraData,
                                         int j, String id,
-                                        Double[] result, String commonDate, PipelineData[] datareaders, Inmemory inmemory) throws Exception {
+                                        Double[] result, String commonDate, SerialPipeline datareaders, Inmemory inmemory) throws Exception {
         int deltas = conf.getAggregatorsIndicatorExtrasDeltas();
         int size = extraData.dateList.size() - 1;
         if (size - j < 0) {
@@ -406,7 +405,7 @@ public class ExtraReader extends Pipeline {
             List<String> dateList = PipelineUtils.getDatelist(datareaders, PipelineConstants.EXTRAREADER, inmemory); // TODO
             int dateIndex = dateList.size() - dateList.indexOf(commonDate);
             int prevDateIndex = dateList.indexOf(prevDate);
-            Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.FILLLIST));
+            Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, PipelineConstants.EXTRAREADER, PipelineConstants.FILLLIST, inmemory));
             Object[] arr = null;
             Double[][] fillList = fillListMap.get(entry.getId());
             dateIndex = fillList[0].length - dateIndex;

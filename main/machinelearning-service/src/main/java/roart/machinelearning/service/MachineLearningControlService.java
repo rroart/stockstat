@@ -44,6 +44,7 @@ import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.TwoDimD;
 import roart.common.pipeline.data.TwoDimd;
 import roart.common.pipeline.util.PipelineUtils;
@@ -109,7 +110,7 @@ public class MachineLearningControlService {
         IclijServiceResult result = getContent(conf, origparam, disableList);
         
         List<ResultItem> retlist = result.getList();
-        PipelineData[] pipelineData = result.getPipelineData();
+        SerialPipeline pipelineData = result.getPipelineData();
         
         StockData stockData = new StockUtil().getStockData(conf, pipelineData, inmemory);
 
@@ -150,10 +151,10 @@ public class MachineLearningControlService {
                 if (predictors[i] == null) {
                     continue;
                 }
-                Map map = predictors[i].putData().getMap();
+                //Map map = predictors[i].putData().getMap();
                 log.debug("ca {}", predictors[i].getName());
-                PipelineData singlePipelinedata = predictors[i].putData();
-                pipelineData = ArrayUtils.add(pipelineData, singlePipelinedata);
+                SerialPipeline singlePipelinedata = predictors[i].putData();
+                pipelineData.add(singlePipelinedata);
             }
             for (int i = 0; i < aggregates.length; i++) {
                 if (aggregates[i] == null) {
@@ -163,9 +164,9 @@ public class MachineLearningControlService {
                     continue;
                 }
                 log.debug("ag {}", aggregates[i].getName());
-                Map map = aggregates[i].putData().getMap();
-                PipelineData singlePipelinedata = aggregates[i].putData();
-                pipelineData = ArrayUtils.add(pipelineData, singlePipelinedata);
+                //Map map = aggregates[i].putData().getMap();
+                SerialPipeline singlePipelinedata = aggregates[i].putData();
+                pipelineData.add(singlePipelinedata);
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -228,7 +229,7 @@ public class MachineLearningControlService {
         long[] mem0 = MemUtil.mem();
         log.info("MEM {}", MemUtil.print(mem0));
         }
-        PipelineUtils.fixPipeline(result.getPipelineData(), MarketStock.class, StockData.class);
+        //PipelineUtils.fixPipeline(result.getPipelineData(), MarketStock.class, StockData.class);
         {
         long[] mem0 = MemUtil.mem();
         log.info("MEM {}", MemUtil.print(mem0));

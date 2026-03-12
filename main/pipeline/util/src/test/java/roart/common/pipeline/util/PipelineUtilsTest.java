@@ -16,6 +16,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.MapOneDim;
 import roart.common.pipeline.data.OneDim;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialDouble;
 import roart.common.pipeline.data.SerialInteger;
 import roart.common.pipeline.data.SerialKeyValue;
@@ -145,7 +146,7 @@ public class PipelineUtilsTest {
     @Test
     public void test4() {
         PipelineData data = new PipelineData();
-        data.getMap().put("key", "value");
+        //data.getMap().put("key", "value");
         SerialOneDim array = new SerialOneDim();
         array.array = new Integer[] { 1, 2, 3 };
         PipelineData map = data;
@@ -316,9 +317,9 @@ public class PipelineUtilsTest {
         
         PipelineData newData = testsub(data);
         
-        SerialNeuralNetConfig newNN3 = (SerialNeuralNetConfig) data.get(EvolveConstants.DEFAULT);
+        //SerialNeuralNetConfig newNN3 = (SerialNeuralNetConfig) data.get(EvolveConstants.DEFAULT);
         //System.out.println("NN" + newNN3.getClass().getName());
-        SerialNeuralNetConfig newNN4 = (SerialNeuralNetConfig) newData.get(EvolveConstants.DEFAULT);
+        //SerialNeuralNetConfig newNN4 = (SerialNeuralNetConfig) newData.get(EvolveConstants.DEFAULT);
         //System.out.println("NN" + newNN4.getClass().getName());
         //assertEquals(newNN3.getClass().getName(), newNN4.getClass().getName());
     }

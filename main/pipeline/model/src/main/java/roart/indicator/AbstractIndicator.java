@@ -21,6 +21,7 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialMap;
 import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.SerialMapPlain;
@@ -45,7 +46,7 @@ public abstract class AbstractIndicator extends Calculatable {
     public int fieldSize = 0;
     protected Object[] emptyField;
 
-    protected PipelineData datareader = new PipelineData();
+    protected SerialPipeline datareader;
     /*
     protected Map<String, Double[][]> listMap;
     protected Map<String, Double[][]> fillListMap;
@@ -141,9 +142,8 @@ public abstract class AbstractIndicator extends Calculatable {
     }
 
     @Override
-    public PipelineData[] putData() {
-        PipelineData[] map = getData();
-        List<PipelineData> list = new ArrayList<>();
+    public SerialPipeline putData() {
+        SerialPipeline list = getData();
         //map.setName(indicatorName());
         // the mixed and complex results of indicator
         // an array with numbers or arrays
@@ -166,8 +166,7 @@ public abstract class AbstractIndicator extends Calculatable {
         // TODO unused?
         //map.put(PipelineConstants.MARKETRESULT, marketResultMap);
         //map.smap().put(PipelineConstants.RESULT, resultSMap);
-        map = (PipelineData[]) list.toArray();
-        return map;
+        return list;
     }
 
     public int getResultSize() {
@@ -286,7 +285,7 @@ public abstract class AbstractIndicator extends Calculatable {
 
     // TODO?
     protected Map<String, Double[][]> getListMap() {
-        return PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
+        return PipelineUtils.sconvertMapDD(PipelineUtils.getPipelines(datareader, key, PipelineConstants.LIST, inmemory));
     }
 
     public String getKey() {

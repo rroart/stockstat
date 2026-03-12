@@ -13,6 +13,7 @@ import roart.aggregatorindicator.AggregatorIndicator;
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialTA;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.indicator.AbstractIndicator;
@@ -65,8 +66,8 @@ public abstract class Recommend extends AggregatorIndicator {
                     log.error("Indicator null for {} {}", recommend.indicator(), complexity);
                     continue;
                 }
-                PipelineData resultMap = indicator.putData();
-                Map<String, SerialTA> objMap = PipelineUtils.getObjectMap(resultMap);
+                SerialPipeline resultMap = indicator.putData();
+                Map<String, SerialTA> objMap = PipelineUtils.getObjectMap(resultMap, indicator.indicatorName(), null);
                 if (objMap != null) { 
                     if (ohlc == false && indicator.getInputArrays() == 3) {
                         continue;

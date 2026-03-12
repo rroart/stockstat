@@ -14,6 +14,7 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialMapD;
 import roart.common.pipeline.data.SerialMapTA;
 import roart.common.pipeline.util.PipelineUtils;
@@ -24,7 +25,7 @@ public class MLMulti extends IndicatorAggregator {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public MLMulti(IclijConfig conf, String string, String title, int category, 
-            Map<String, String> idNameMap, PipelineData[] datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates, Inmemory inmemory) throws Exception {
+            Map<String, String> idNameMap, SerialPipeline datareaders, NeuralNetCommand neuralnetcommand, List<String> stockDates, Inmemory inmemory) throws Exception {
         super(conf, string, category, title, idNameMap, datareaders, neuralnetcommand, stockDates, inmemory);
 /*
         if (isEnabled()) {
@@ -59,7 +60,7 @@ public class MLMulti extends IndicatorAggregator {
         List<SubType> wantedSubTypesList = new ArrayList<>();
         if (conf.wantAggregatorsMlmultiML()) {
             if (conf.wantAggregatorsMlmultiMACD()) {
-                PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORMACD, inmemory);
+                //PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORMACD, inmemory);
                 Object list = null;
                 SerialMapTA taObject = PipelineUtils.getMapTA(datareaders, PipelineConstants.INDICATORMACD, inmemory);
                 SerialMapD resultObject = PipelineUtils.getResultMap(datareaders, PipelineConstants.INDICATORMACD, inmemory);
@@ -69,7 +70,7 @@ public class MLMulti extends IndicatorAggregator {
                 }
             }
             if (conf.wantAggregatorsMlmultiRSI()) {
-                PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORRSI, inmemory);
+                //PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORRSI, inmemory);
                 Object list = null;
                 SerialMapTA taObject = PipelineUtils.getMapTA(datareaders, PipelineConstants.INDICATORRSI, inmemory);
                 SerialMapD resultObject = PipelineUtils.getResultMap(datareaders, PipelineConstants.INDICATORRSI, inmemory);
@@ -79,7 +80,7 @@ public class MLMulti extends IndicatorAggregator {
                 }
             }
             if (conf.wantAggregatorsMlmultiATR()) {
-                PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORATR, inmemory);
+                //PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORATR, inmemory);
                 Object list = null;
                 SerialMapTA taObject = PipelineUtils.getMapTA(datareaders, PipelineConstants.INDICATORATR, inmemory);
                 SerialMapD resultObject = PipelineUtils.getResultMap(datareaders, PipelineConstants.INDICATORATR, inmemory);
@@ -89,7 +90,7 @@ public class MLMulti extends IndicatorAggregator {
                 }
             }
             if (conf.wantAggregatorsMlmultiCCI()) {
-                PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORCCI, inmemory);
+                //PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORCCI, inmemory);
                 Object list = null;
                 SerialMapTA taObject = PipelineUtils.getMapTA(datareaders, PipelineConstants.INDICATORCCI, inmemory);
                 SerialMapD resultObject = PipelineUtils.getResultMap(datareaders, PipelineConstants.INDICATORCCI, inmemory);
@@ -99,7 +100,7 @@ public class MLMulti extends IndicatorAggregator {
                 }
             }
             if (conf.wantAggregatorsMlmultiSTOCH()) {
-                PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCH, inmemory);
+                //PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCH, inmemory);
                 Object list = null;
                 SerialMapTA taObject = PipelineUtils.getMapTA(datareaders, PipelineConstants.INDICATORSTOCH, inmemory);
                 SerialMapD resultObject = PipelineUtils.getResultMap(datareaders, PipelineConstants.INDICATORSTOCH, inmemory);
@@ -109,7 +110,7 @@ public class MLMulti extends IndicatorAggregator {
                 }
             }
             if (conf.wantAggregatorsMlmultiSTOCHRSI()) {
-                PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCHRSI, inmemory);
+                //PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.INDICATORSTOCHRSI, inmemory);
                 Object list = null;
                 SerialMapTA taObject = PipelineUtils.getMapTA(datareaders, PipelineConstants.INDICATORSTOCHRSI, inmemory);
                 SerialMapD resultObject = PipelineUtils.getResultMap(datareaders, PipelineConstants.INDICATORSTOCHRSI, inmemory);

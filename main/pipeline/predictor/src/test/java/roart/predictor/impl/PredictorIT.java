@@ -11,6 +11,7 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.util.ArraysUtil;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.bean.ConfigC;
@@ -47,7 +48,7 @@ public class PredictorIT {
         System.out.println("conf" + conf);
         Map<String, Double[][]> aListMap = new TestData().getListMap();
         Map<String, double[][]> aTruncListMap = ArraysUtil.getTruncListArr(aListMap);;
-        PipelineData[] datareaders = new PipelineData[1];
+        SerialPipeline datareaders = new SerialPipeline();
         NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
         neuralnetcommand.setMldynamic(true);
         neuralnetcommand.setMlclassify(true);
@@ -75,12 +76,12 @@ public class PredictorIT {
             System.out.println("list" + classifylist.get(0).getClassification()+ " " +  Arrays.asList(((Double[])classifylist.get(0).getArray())));
             
             predictor.calculate();
-            PipelineData pipelinedata = predictor.putData();
-            System.out.println(pipelinedata.keySet());
-            for (String key : pipelinedata.keySet()) {
-                System.out.println(key + " " + pipelinedata.get(key));
-                //System.out.println(resultmap.keySet());
-            }
+            SerialPipeline pipelinedata = predictor.putData();
+            //System.out.println(pipelinedata.keySet());
+            //for (String key : pipelinedata.keySet()) {
+            //    System.out.println(key + " " + pipelinedata.get(key));
+            //    //System.out.println(resultmap.keySet());
+            //}
             assertNotNull(pipelinedata);
             }
         } catch (Exception e) {

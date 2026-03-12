@@ -50,6 +50,7 @@ import roart.common.model.ActionComponentDTO;
 import roart.common.model.ConfigDTO;
 import roart.common.model.MLMetricsDTO;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialScoreChromosome;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
@@ -96,10 +97,12 @@ public class Evolve {
         //param = getParam(param);
         List<String> output = new ArrayList<>();
         TypeReference ref = new TypeReference<List<LinkedHashMap<Double, AbstractChromosome>>>(){};
-        PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class);
-        String id = PipelineUtils.getString(data, EvolveConstants.ID);
+        SerialPipeline data = JsonUtil.convertnostrip(param, SerialPipeline.class);
+        String id = PipelineUtils.getString(data, EvolveConstants.ID, null, null, null);
         // TODO_
-        List<SerialScoreChromosome> myList0 = PipelineUtils.getList(data, id);
+        // TODO fix npe
+        List myList00 = PipelineUtils.getList(data, id, null, null, null);
+        List<SerialScoreChromosome> myList0 = myList00;
         if (myList0 == null) {
         	return;
         }
@@ -107,7 +110,7 @@ public class Evolve {
         //Map<String, Object> aconf = PipelineUtils.getMap(data, EvolveConstants.DEFAULT);
         //System.out.println("aconf" + aconf);
         //if (true) return;
-        String title = PipelineUtils.getString(data, EvolveConstants.TITLETEXT);
+        String title = PipelineUtils.getString(data, EvolveConstants.TITLETEXT, null, null, null);
         String[] parts = title.split(" ");
         String market = parts[1];
         String component = parts[2];
@@ -258,21 +261,22 @@ public class Evolve {
     public void handleProfit(String param) {
         //param = getParam(param);
         List<String> output = new ArrayList<>();
-        PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class);
+        SerialPipeline data = JsonUtil.convertnostrip(param, SerialPipeline.class);
         // TODO
-        if (data.getMap().isEmpty()) {
+        if (data.isEmpty()) {
             
         }
-        String id = PipelineUtils.getString(data, EvolveConstants.ID);
+        String id = PipelineUtils.getString(data, EvolveConstants.ID, null, null, null);
         // TODO
-        List<SerialScoreChromosome> myList0 = PipelineUtils.getList(data, id);
+        List myList00 = PipelineUtils.getList(data, id, null, null, null);
+        List<SerialScoreChromosome> myList0 = myList00;
         for (SerialScoreChromosome my : myList0) {
             //System.out.println(my.getKey() + " " + my.getRight());
         }
         List<ImmutablePair<Double, String>> myList = myList0.stream().map(e -> new ImmutablePair<Double, String>(e.getLeft(), "" + e.getRight())).collect(Collectors.toList());
-        Map<String, Object> aconf = PipelineUtils.getListMapAsMap(data, EvolveConstants.DEFAULT);
+        Map<String, Object> aconf = PipelineUtils.getListMapAsMap(data, EvolveConstants.DEFAULT, null, null, null);
         //System.out.println("aconf" + aconf);
-        String title = PipelineUtils.getString(data, EvolveConstants.TITLETEXT);
+        String title = PipelineUtils.getString(data, EvolveConstants.TITLETEXT, null, null, null);
         //System.out.println(title);
         String[] parts = title.split(" ");
         String market = parts[1];
@@ -373,10 +377,10 @@ public class Evolve {
     public void handleFilter(String param) {
         //param = getParam(param);
         //Map<String, Object> myMap = convert(param, new TypeReference<List<LinkedHashMap<Double, MarketFilterChromosome2>>>(){});
-        PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class);
-        String id = PipelineUtils.getString(data, EvolveConstants.ID);
+        SerialPipeline data = JsonUtil.convertnostrip(param, SerialPipeline.class);
+        String id = PipelineUtils.getString(data, EvolveConstants.ID, null, null, null);
         // TODO
-        List<SerialScoreChromosome> myList = PipelineUtils.getList(data, id);
+        //List<SerialScoreChromosome> myList = PipelineUtils.getList(data, id, null, null, null);
         //List<SerialScoreChromosome> myList = (List<SerialScoreChromosome>) myMap.get(id);
         //List myList0 = PipelineUtils.getListPlain(data, id);
         //System.out.println("myl"+ myList0.size() + " " + myList0.get(0).getClass().getCanonicalName());
@@ -386,17 +390,18 @@ public class Evolve {
     public void handleAboveBelow(String param) {
         //param = getParam(param);
         List<String> output = new ArrayList<>();
-        PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class);
+        SerialPipeline data = JsonUtil.convertnostrip(param, SerialPipeline.class);
         //Map<String, Object> myMap = new HashMap<>(); //convert(param, new TypeReference<List<LinkedHashMap<Double, AboveBelowChromosome>>>(){});
-        String id = PipelineUtils.getString(data, EvolveConstants.ID);
+        String id = PipelineUtils.getString(data, EvolveConstants.ID, null, null, null);
         // TODO
-        List<SerialScoreChromosome> myList = PipelineUtils.getList(data, id);
-        List myList0 = PipelineUtils.getList(data, id);
+        List myList00 = PipelineUtils.getList(data, id, null, null, null);
+        List<SerialScoreChromosome> myList = myList00;
+        List myList0 = PipelineUtils.getList(data, id, null, null, null);
         System.out.println("myl"+ myList0.size() + " " + myList0.get(0).getClass().getCanonicalName());
-        String title = PipelineUtils.getString(data, EvolveConstants.TITLETEXT);
+        String title = PipelineUtils.getString(data, EvolveConstants.TITLETEXT, null, null, null);
         String[] parts = title.split(" ");
         String market = parts[1];
-        String subtitle = PipelineUtils.getString(data, EvolveConstants.SUBTITLETEXT);
+        String subtitle = PipelineUtils.getString(data, EvolveConstants.SUBTITLETEXT, null, null, null);
         System.out.println(subtitle);
         List<List<String>> listlist = JsonUtil.convertnostrip(subtitle, List.class /* TypeReference<List<List<String>>>(){}*/);
         List<String> components = listlist.get(0);
@@ -413,7 +418,7 @@ public class Evolve {
         String text = printtext(ServiceConstants.EVOLVEFILTERABOVEBELOW + " " + title, "File " + id, output);
         print(text);
         double newer = myList.get(0).getLeft();
-        Double dflt = PipelineUtils.getDouble(data, EvolveConstants.DEFAULT);
+        Double dflt = PipelineUtils.getDouble(data, EvolveConstants.DEFAULT, null, null, null);
         boolean better = dflt < newer;
         // for all better, find entry with minimal trues
         List<AbstractChromosome> alist = chromosomeMap.get(newer);
@@ -448,7 +453,7 @@ public class Evolve {
             }
             AboveBelowDTO abovebelow = new AboveBelowDTO();
             abovebelow.setComponents(JsonUtil.convert(mycomponents));
-            String date = PipelineUtils.getString(data, EvolveConstants.DATE);
+            String date = PipelineUtils.getString(data, EvolveConstants.DATE, null, null, null);
             Date date2 = null;;
             try {
                 date2 = TimeUtil.convertDate2(date);

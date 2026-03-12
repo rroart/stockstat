@@ -14,6 +14,7 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialInteger;
 import roart.common.pipeline.data.SerialList;
 import roart.common.pipeline.data.SerialMap;
@@ -96,9 +97,8 @@ public abstract class AbstractPredictor extends PipelineResultData {
     }
 
     @Override
-    public PipelineData[] putData() {
-        PipelineData[] map;
-        List<PipelineData> list = new ArrayList<>();
+    public SerialPipeline putData() {
+        SerialPipeline list = new SerialPipeline();
         //map.setName(getName());
         list.add(new PipelineData(getName(), PipelineConstants.CATEGORY, null, new SerialInteger(category)));
         list.add(new PipelineData(getName(), PipelineConstants.CATEGORYTITLE, null, new SerialString(title)));
@@ -110,8 +110,7 @@ public abstract class AbstractPredictor extends PipelineResultData {
         // TODO unused
         //list.add(new PipelineData(getName(), PipelineConstants.LOSS, lossMap);
         //map.smap().put(PipelineConstants.RESULT, resultSMap);
-        map = (PipelineData[]) list.toArray();
-        return map;
+        return list;
     }
 
     public abstract String predictorName();

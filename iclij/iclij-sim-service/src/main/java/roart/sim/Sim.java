@@ -55,6 +55,7 @@ import roart.common.model.SimDataDTO;
 import roart.common.model.SimRunDataDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialDouble;
 import roart.common.pipeline.data.SerialKeyValue;
 import roart.common.pipeline.data.SerialListMap;
@@ -92,15 +93,16 @@ public class Sim {
     public void method(String param, String string, boolean b) {
         //param = getParam(param);
         log.info("Content " + param);
-        PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class, mapper);
+        SerialPipeline data = JsonUtil.convertnostrip(param, SerialPipeline.class, mapper);
         // TODO
-        if (data.getSmap().getMap().isEmpty()) {
+        if (data.isEmpty()) {
             log.info("Empty map");
             return;
         }
-        String id = PipelineUtils.getString(data, EvolveConstants.ID);
+        String id = PipelineUtils.getString(data, EvolveConstants.ID, null, null, null);
         // TODO
-        List<SerialScoreChromosome> myList = PipelineUtils.getList(data, id);
+        List myList0 = PipelineUtils.getList(data, id, null, null, null);
+        List<SerialScoreChromosome> myList = myList0;
         if (myList.size() > 0) {
             //for ()
             for (SerialScoreChromosome aPair : myList) {
@@ -136,7 +138,7 @@ public class Sim {
             }
             {
                 SimulateFilter[] listoverrides = null;
-                SerialString o = (SerialString) data.get(SimConstants.FILTER);
+                SerialString o = (SerialString) PipelineUtils.getPipelineValue(data, SimConstants.FILTER, null, null, null);
                 // TODO if o null
                 // TODO if o null
                 //System.out.println("ooo" + o.getClass().getCanonicalName());
@@ -217,7 +219,7 @@ public class Sim {
             for (Pair<Double, String> aSummary : maxSummaries) {
                 output.add("Max " + MathUtil.round(aSummary.getKey(), 2) + " " + aSummary.getValue());
             }
-            String simtext = PipelineUtils.getString(data, EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
+            String simtext = PipelineUtils.getString(data, EvolveConstants.TITLETEXT, null, null, null); // getSimtext(winnerChromosome);
             String node = iclijConfig.getEvolveSaveLocation();
             String mypath = iclijConfig.getEvolveSavePath();
             // TODO_
@@ -336,14 +338,15 @@ public class Sim {
 
     public void method2(String param) {
         //param = getParam(param);
-        PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class);
+        SerialPipeline data = JsonUtil.convertnostrip(param, SerialPipeline.class);
         // TODO
-        if (data.getMap().isEmpty()) {
+        if (data.isEmpty()) {
             return;
         }
-        String id = PipelineUtils.getString(data, EvolveConstants.ID);
+        String id = PipelineUtils.getString(data, EvolveConstants.ID, null, null, null);
         // TODO
-        List<SerialScoreChromosome> myList = PipelineUtils.getListPlain(data, id);
+        List myList0 = PipelineUtils.getListPlain(data, id, null, null, null);
+        List<SerialScoreChromosome> myList = myList0;
         if (myList.size() > 0) {
             List<String> output = new ArrayList<>();
 
@@ -382,7 +385,7 @@ public class Sim {
             for (Pair<Double, String> aSummary : maxSummaries) {
                 output.add("Max " + MathUtil.round(aSummary.getKey(), 2) + " " + aSummary.getValue());
             }
-            String simtext = PipelineUtils.getString(data, EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
+            String simtext = PipelineUtils.getString(data, EvolveConstants.TITLETEXT, null, null, null); // getSimtext(winnerChromosome);
             String node = iclijConfig.getEvolveSaveLocation();
             String mypath = iclijConfig.getEvolveSavePath();
             // TODO_
@@ -394,14 +397,14 @@ public class Sim {
 
     public void method3(String param, String string, boolean b) {
         //param = getParam(param);
-        PipelineData data = JsonUtil.convertnostrip(param, PipelineData.class, mapper);
+        SerialPipeline data = JsonUtil.convertnostrip(param, SerialPipeline.class, mapper);
         // TODO
-        if (data.getSmap().getMap().isEmpty()) {
+        if (data.isEmpty()) {
             log.info("Empty map");
             return;
         }
-        String id = PipelineUtils.getString(data, EvolveConstants.ID);
-        List<SerialKeyValue> me = PipelineUtils.getListMap(data, PipelineConstants.RESULT);
+        String id = PipelineUtils.getString(data, EvolveConstants.ID, null, null, null);
+        List<SerialKeyValue> me = PipelineUtils.getListMap(data, PipelineConstants.RESULT, null, null, null);
         SerialListMap resultMap = new SerialListMap(me);
         // TODO
         {
@@ -425,7 +428,7 @@ public class Sim {
             filter.setCorrelation(0.5);
             {
                 SimulateFilter[] listoverrides = null;
-                SerialString o = (SerialString) data.get(SimConstants.FILTER);
+                SerialString o = (SerialString) PipelineUtils.getPipelineValue(data, SimConstants.FILTER, null, null, null);
                 // TODO if o null
                 // TODO if o null
                 //System.out.println("ooo" + o.getClass().getCanonicalName());
@@ -481,7 +484,7 @@ public class Sim {
             for (Pair<Double, String> aSummary : maxSummaries) {
                 output.add("Max " + MathUtil.round(aSummary.getKey(), 2) + " " + aSummary.getValue());
             }
-            String simtext = PipelineUtils.getString(data, EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
+            String simtext = PipelineUtils.getString(data, EvolveConstants.TITLETEXT, null, null, null); // getSimtext(winnerChromosome);
             String node = iclijConfig.getEvolveSaveLocation();
             String mypath = iclijConfig.getEvolveSavePath();
             // TODO_
@@ -547,7 +550,7 @@ public class Sim {
                 }
                 output.add("Score " + score);
             }
-            String aConf = PipelineUtils.getString(data, EvolveConstants.DEFAULT);
+            String aConf = PipelineUtils.getString(data, EvolveConstants.DEFAULT, null, null, null);
             output.add(aConf);
            
             String text = printtext(string + " " + simtext, "File " + id, output);

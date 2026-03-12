@@ -14,6 +14,7 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.indicator.AbstractIndicator;
 import roart.pipeline.Pipeline;
 import roart.result.model.ResultItemTableRow;
@@ -27,14 +28,14 @@ public abstract class AbstractCategory {
     protected List<StockDTO> stocks;
     protected List<AbstractIndicator> indicators = new ArrayList<>();
     private Map<String, AbstractIndicator> indicatorMap = new HashMap<>();
-    protected PipelineData[] datareaders;
+    protected SerialPipeline datareaders;
     protected int period;
     protected Map<String, Object[]> resultMap;
     protected int dataArraySize;
 
     protected Inmemory inmemory;
    
-    public AbstractCategory(IclijConfig conf, String periodText, List<StockDTO> stocks, PipelineData[] datareaders, Inmemory inmemory) {
+    public AbstractCategory(IclijConfig conf, String periodText, List<StockDTO> stocks, SerialPipeline datareaders, Inmemory inmemory) {
         this.conf = conf;
         setTitle(periodText);
         this.stocks = stocks;
@@ -100,11 +101,11 @@ public abstract class AbstractCategory {
         return map;
     }
     
-    public Map<String, PipelineData[]> putData() {
-        Map<String, PipelineData[]> map = new HashMap<>();
+    public Map<String, SerialPipeline> putData() {
+        Map<String, SerialPipeline> map = new HashMap<>();
         for (AbstractIndicator indicator : indicators) {
             if (indicator.isEnabled()) {
-                PipelineData[] tmpMap = indicator.putData();
+                SerialPipeline tmpMap = indicator.putData();
                 if (tmpMap != null) {
                     log.debug("Adding indicator {}", indicator.indicatorName());
                     log.debug("exist {}", map.containsKey(indicator.indicatorName()));

@@ -7,11 +7,9 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import roart.aggregatorindicator.impl.Recommend;
 import roart.category.AbstractCategory;
+import roart.common.pipeline.data.*;
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialMapD;
-import roart.common.pipeline.data.SerialMapPlain;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.gene.CalcGene;
 import roart.gene.impl.CalcGeneUtils;
@@ -34,7 +32,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
     public List<String> disableList;
  
     public AggregatorRecommenderIndicator(IclijConfig conf, String index, Map<String, MarketData> marketdatamap, AbstractCategory[] categories,
-            PipelineData[] datareaders, List<String> disableList, Inmemory inmemory) throws Exception {
+            SerialPipeline datareaders, List<String> disableList, Inmemory inmemory) throws Exception {
         super(conf, index, 0, inmemory);
         this.disableList = disableList;
         if (!isEnabled()) {
@@ -45,12 +43,12 @@ public class AggregatorRecommenderIndicator extends Aggregator {
             return;
         }
         log.info("CCC" + cat.getPeriod() + " " + cat.getTitle());
-        PipelineData datareader = PipelineUtils.getPipeline(datareaders, "" + cat.getTitle(), inmemory);
+        SerialPipeline datareader = PipelineUtils.getPipelines(datareaders, "" + cat.getTitle(), inmemory);
         //PipelineData datareader = PipelineUtils.getPipeline(datareaders, "" + cat.getPeriod(), inmemory);
         Map<String, AbstractIndicator> usedIndicatorMap = cat.getIndicatorMap();
-        Map<String, PipelineData> localResultMap = cat.putData();
+        //Map<String, PipelineData> localResultMap = cat.putData();
         // TODO datareader null
-        Map<String, Double[][]> list0 = PipelineUtils.sconvertMapDD(datareader.get(PipelineConstants.LIST));
+        Map<String, Double[][]> list0 = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelines(datareaders, "" + cat.getTitle(), PipelineConstants.LIST, null));
  
         usedRecommenders = Recommend.getUsedRecommenders(conf);
         Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders, usedIndicatorMap, conf, Boolean.TRUE.equals(marketdatamap.get(conf.getConfigData().getMarket()).meta.isLhc()));
@@ -72,9 +70,10 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                     }
                 }
                 // fix
-                PipelineData[] indicatorResultMap = new PipelineData[] { cat.putData().get(indicator) };
+                SerialPipeline indicatorResultMap = new SerialPipeline();
+                indicatorResultMap.add(cat.putData().get(indicator));
                 if (indicatorResultMap != null) {
-                    log.info("III" + indicator + " " + indicatorResultMap[0].getAllKeys());
+                    //log.info("III" + indicator + " " + indicatorResultMap[0].getAllKeys());
                     //Map<String, Object[]> aResult = (Map<String, Object[]>) indicatorResultMap.get(PipelineConstants.LIST);
                     SerialMapD aResult = PipelineUtils.getResultMap(indicatorResultMap, indicator, inmemory);
                     if (aResult != null && aResult.getMap() != null && aResult.keySet() != null) {
@@ -223,16 +222,14 @@ public class AggregatorRecommenderIndicator extends Aggregator {
     }
 
     @Override
-    public PipelineData[] putData() {
-        PipelineData[] map;
-        List<PipelineData> list = new ArrayList<>();
+    public SerialPipeline putData() {
+        SerialPipeline list = new SerialPipeline();
         //map.setName(getName());
-        list.add(new PipelineData(getName(), (PipelineConstants.CATEGORY, category);
-        list.add(new PipelineData(getName(), (PipelineConstants.CATEGORYTITLE, title);
+        list.add(new PipelineData(getName(), PipelineConstants.CATEGORY, null, new SerialInteger(category)));
+        list.add(new PipelineData(getName(), PipelineConstants.CATEGORYTITLE, null, new SerialString(title)));
         // rec with own result
-        list.add(new PipelineData(getName(), (PipelineConstants.RESULT, new SerialMapPlain(resultMap));
-        map = (PipelineData[]) list.toArray();
-        return map;
+        list.add(new PipelineData(getName(), PipelineConstants.RESULT, null, new SerialMapPlain(resultMap)));
+        return list;
     }
     
 }

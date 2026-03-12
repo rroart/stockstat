@@ -102,9 +102,8 @@ public abstract class Aggregator extends PipelineResultData {
     public abstract String getName();
 
     @Override
-    public PipelineData[] putData() {
-        PipelineData[] map = getData();
-        List<PipelineData> list = new ArrayList<>();
+    public SerialPipeline putData() {
+        SerialPipeline list = getData();
         //map.setName(getName());
         list.add(new PipelineData(getName(), PipelineConstants.CATEGORY, null, new SerialInteger(category)));
         list.add(new PipelineData(getName(), PipelineConstants.CATEGORYTITLE, null, new SerialString(title)));
@@ -123,8 +122,7 @@ public abstract class Aggregator extends PipelineResultData {
         // TODO unused
         //list.add(new PipelineData(getName(), PipelineConstants.OBJECTFIXED, objectFixedMap);
         //map.smap().put(PipelineConstants.RESULT, resultSMap);
-        map = (PipelineData[]) list.toArray();
-        return map;
+        return list;
     }
     
     protected Object[] round(Object[] objs, int places) {

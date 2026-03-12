@@ -23,6 +23,7 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.model.MetaDTO;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.db.dao.DbDao;
 import roart.db.dao.util.DbDaoUtil;
 import roart.etl.db.Extract;
