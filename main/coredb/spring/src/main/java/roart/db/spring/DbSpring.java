@@ -10,6 +10,9 @@ import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import roart.common.constants.Constants;
@@ -41,33 +44,7 @@ import roart.common.springdata.model.SimRunData;
 import roart.common.springdata.model.Stock;
 import roart.common.springdata.model.Timing;
 import roart.common.springdata.model.TimingBL;
-import roart.common.springdata.repository.AboveBelowRepository;
-import roart.common.springdata.repository.ActionComponentRepository;
-import roart.common.springdata.repository.ConfigRepository;
-import roart.common.springdata.repository.ContRepository;
-import roart.common.springdata.repository.IncDecRepository;
-import roart.common.springdata.repository.MLMetricsRepository;
-import roart.common.springdata.repository.MemoryRepository;
-import roart.common.springdata.repository.MetaRepository;
-import roart.common.springdata.repository.RelationRepository;
-import roart.common.springdata.repository.SimDataRepository;
-import roart.common.springdata.repository.SpringAboveBelowRepository;
-import roart.common.springdata.repository.SpringActionComponentRepository;
-import roart.common.springdata.repository.SpringConfigRepository;
-import roart.common.springdata.repository.SpringContRepository;
-import roart.common.springdata.repository.SpringIncDecRepository;
-import roart.common.springdata.repository.SpringMLMetricsRepository;
-import roart.common.springdata.repository.SpringMemoryRepository;
-import roart.common.springdata.repository.SpringMetaRepository;
-import roart.common.springdata.repository.SpringRelationRepository;
-import roart.common.springdata.repository.SpringSimDataRepository;
-import roart.common.springdata.repository.SpringSimRunDataRepository;
-import roart.common.springdata.repository.SpringStockRepository;
-import roart.common.springdata.repository.SpringTimingBLRepository;
-import roart.common.springdata.repository.SpringTimingRepository;
-import roart.common.springdata.repository.StockRepository;
-import roart.common.springdata.repository.TimingBLRepository;
-import roart.common.springdata.repository.TimingRepository;
+import roart.common.springdata.repository.*;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 
@@ -102,6 +79,9 @@ public class DbSpring {
 
     @Autowired
     SpringStockRepository springStockRepo;
+
+    @Autowired
+    SpringBatchStockRepository springBatchStockRepo;
 
     @Autowired
     StockRepository stockRepo;
@@ -844,6 +824,15 @@ public class DbSpring {
     public List<StockDTO> getStocksByMarket(String market) {
         try {
             return stockRepo.getAll(market);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+
+    public List<StockDTO> getStocksByMarket(String market, int batch, int batchSize) {
+        try {
+            return springBatchStockRepo.findAllByMarketid(market, PageRequest.of(batch, batchSize)).getContent().stream().map(e -> map(e)).toList();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return null;

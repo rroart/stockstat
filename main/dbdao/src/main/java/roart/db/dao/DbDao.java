@@ -32,6 +32,10 @@ public class DbDao {
         return dataSource.getAll(market, iclijConfig, disableCache);      
     }
 
+    public List<StockDTO> getAll(String market, IclijConfig conf, boolean disableCache, int batch, int batchSize) throws Exception {
+        return dataSource.getAll(market, iclijConfig, disableCache, batch, batchSize);
+    }
+
     public List<String> getDates(String market, IclijConfig conf) throws Exception {
         return dataSource.getDates(market, conf);
     }

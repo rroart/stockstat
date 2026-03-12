@@ -18,4 +18,5 @@ open module coredb.spring {
     requires spring.beans;
     requires spring.context;
     requires common.constants;
+    requires spring.data.commons;
 }

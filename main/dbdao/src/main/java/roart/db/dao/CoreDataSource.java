@@ -80,6 +80,11 @@ public class CoreDataSource extends MyDataSource {
         return list;
     }
 
+    @Override
+    public List<StockDTO> getAll(String market, IclijConfig conf, boolean disableCache, int batch, int batchSize) throws Exception {
+        throw new UnsupportedOperationException("Unsupported operation");
+    }
+
     public List<String> getDates(String market, IclijConfig conf) throws Exception {
         String key = CacheConstants.DATES + conf.getConfigData().getMarket() + conf.getConfigData().getDate();
         List<String> list =  (List<String>) MyCache.getInstance().get(key);

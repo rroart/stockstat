@@ -162,6 +162,7 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.MISCSHUTDOWNHOUR, Integer.class);
         map.put(IclijConfigConstants.MISCPOPULATE, Boolean.class);
         map.put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.class);
+        map.put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, Integer.class);
         //map.put(IclijConfigConstants.MISCMYSERVICES, String.class);
         //map.put(IclijConfigConstants.MISCSERVICES, String.class);
         //map.put(IclijConfigConstants.MISCCOMMUNICATIONS, String.class);
@@ -463,6 +464,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.EVOLVETHRESHOLD, "[ 1.0 ]");
         deflt.put(IclijConfigConstants.MISCPOPULATE, Boolean.FALSE);
         deflt.put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 0);
         //deflt.put(IclijConfigConstants.MISCMYSERVICES, "{}");
         //deflt.put(IclijConfigConstants.MISCSERVICES, "{}");
         //deflt.put(IclijConfigConstants.MISCCOMMUNICATIONS, "{}");
@@ -746,6 +748,7 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.MISCSHUTDOWNHOUR, "Server shutdown hour");
         text.put(IclijConfigConstants.MISCPOPULATE, "Populate history");
         text.put(IclijConfigConstants.MISCINMEMORYPIPELINE, "Inmemory pipeline");
+        text.put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, "Inmemory pipeline batchsize");
         text.put(IclijConfigConstants.MPSERVERCPU, "Server cpu usage");
         //text.put(IclijConfigConstants.MISCMYSERVICES, "Services starting");
         //text.put(IclijConfigConstants.MISCSERVICES, "Services and communications");
@@ -1099,6 +1102,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.MISCSHUTDOWNHOUR, new IclijXMLType(Integer.class, null, "Server shutdown hour"));
         mymap.put(IclijConfigConstants.MISCPOPULATE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Populate history"));
         mymap.put(IclijConfigConstants.MISCINMEMORYPIPELINE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Inmemory pipeline"));
+        mymap.put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, new IclijXMLType(Integer.class, 0, "Inmemory pipeline batchsize"));
         //mymap.put(IclijConfigConstants.MISCMYSERVICES, new IclijXMLType( String.class, "{}", "Services starting"));
         //mymap.put(IclijConfigConstants.MISCSERVICES, new IclijXMLType( String.class, "{}", "Services and communications"));
         //mymap.put(IclijConfigConstants.MISCINMEMORYSERVER, new IclijXMLType( String.class, Constants.REDIS, "In memory server"));

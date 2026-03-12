@@ -8,6 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -42,6 +43,11 @@ public class DbSpringDS extends DbDS {
     @Override
     public List<StockDTO> getStocksByMarket(String market) throws Exception {
     	return service.getStocksByMarket(market);
+    }
+
+    @Override
+    public List<StockDTO> getStocksByMarket(String market, int batch, int batchSize) throws Exception {
+    	return service.getStocksByMarket(market, batch, batchSize);
     }
 
 	@Override

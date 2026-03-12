@@ -39,6 +39,11 @@ public class TestDbDS extends DbDS {
     }
 
     @Override
+    public List<StockDTO> getStocksByMarket(String market, int batch, int batchSize) throws Exception {
+        throw new UnsupportedOperationException("Unsupported operation");
+    }
+
+    @Override
     public MetaDTO getMetaByMarket(String market) throws Exception {
         return null;
     }

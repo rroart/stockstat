@@ -16,7 +16,11 @@
     <zookeeper>$ZOOKEEPER</zookeeper>
     <inmemory><server>$INMEMORYSERVER</server></inmemory>
     <inmemory><redis>$INMEMORYREDIS</redis></inmemory>
-    <inmemory><pipeline enable="$INMEMORYPIPELINE"/></inmemory>
+    <inmemory>
+    <pipeline enable="$INMEMORYPIPELINE">
+    <batchsize>$PIPELINEBATCHSIZE</batchsize>
+    </pipeline>
+    </inmemory>
   </misc>
   <mp>
     <server>
@@ -141,7 +145,7 @@
     <predictor enable='false'>
     </predictor>
   </dataset>
-  <crosstest priority="40">
+  <crosstest  priority="40">
     <autorun enable="$CROSSTEST"/>
     <predictor enable='true' priority="50">
     </predictor>

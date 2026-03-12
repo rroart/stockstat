@@ -30,6 +30,8 @@ public abstract class DbDS {
 
     public abstract List<StockDTO> getStocksByMarket(String market) throws Exception;
 
+    public abstract List<StockDTO> getStocksByMarket(String market, int batch, int batchSize) throws Exception;
+
     public abstract MetaDTO getMetaByMarket(String market) throws Exception;
 
     public abstract List<MetaDTO> getAllMetas();

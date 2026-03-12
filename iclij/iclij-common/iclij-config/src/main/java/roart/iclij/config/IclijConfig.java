@@ -109,6 +109,10 @@ public class IclijConfig extends MyMyConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.MISCINMEMORYPIPELINE);
     }
 
+    public int wantsInmemoryPipelineBatchsize() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE);
+    }
+
     /*
     public String getMyservices() {
         return (String) getValueOrDefault(IclijConfigConstants.MISCMYSERVICES);

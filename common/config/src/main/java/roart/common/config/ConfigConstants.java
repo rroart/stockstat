@@ -10,6 +10,7 @@ public class ConfigConstants {
     public static final String DATABASESPARKSPARKMASTER = "database.spark.sparkmaster";
     public static final String DATABASEHIBERNATE = "database.hibernate";
     public static final String DATABASESPRING = "database.spring";
+    public static final String DATABASEBATCHSIZE = "database.batchsize";
     public static final String MACHINELEARNING = "machinelearning";
     public static final String MACHINELEARNINGMP = "machinelearning.mp";
     public static final String MACHINELEARNINGMPCPU = "machinelearning.mp.cpu";

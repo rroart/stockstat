@@ -19,4 +19,9 @@ public class DummyDataSource extends MyDataSource {
         return List.of();
     }
 
+    @Override
+    public List<StockDTO> getAll(String market, IclijConfig conf, boolean disableCache, int batch, int batchSize) throws Exception {
+        throw new UnsupportedOperationException("Unsupported operation");
+    }
+
 }

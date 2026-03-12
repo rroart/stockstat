@@ -905,6 +905,10 @@ public abstract class MyMyConfig extends MyConfig {
         return (Boolean) getNotEmptyValueOrDefault(ConfigConstants.DATABASESPRING);
     }
 
+    public int getDbBatchsize() {
+        return (Integer) getNotEmptyValueOrDefault(ConfigConstants.DATABASEBATCHSIZE);
+    }
+
     public boolean wantPredictors() {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORS)
                 && wantML();

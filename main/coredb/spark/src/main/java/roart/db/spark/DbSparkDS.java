@@ -36,7 +36,12 @@ public class DbSparkDS extends DbDS {
 		return DbSpark.getAll(market);
 	}
 
-	@Override
+    @Override
+    public List<StockDTO> getStocksByMarket(String market, int batch, int batchSize) throws Exception {
+        throw new UnsupportedOperationException("Unsupported operation");
+    }
+
+    @Override
 	public MetaDTO getMetaByMarket(String market) {
 		return DbSpark.getMarket(market);
 	}

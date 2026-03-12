@@ -24,6 +24,8 @@ public abstract class MyDataSource {
 
     public abstract List<StockDTO> getAll(String market, IclijConfig conf, boolean disableCache) throws Exception;
 
+    public abstract List<StockDTO> getAll(String market, IclijConfig conf, boolean disableCache, int batch, int batchSize) throws Exception;
+
     public MetaDTO getById(String market, IclijConfig conf) throws Exception {
         List<MetaDTO> metas = getMetas();
         for (MetaDTO item : metas) {
@@ -35,6 +37,11 @@ public abstract class MyDataSource {
     }
 
     public List<StockDTO> getAll(String type, String language) throws Exception {
+        //  TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<StockDTO> getAll(String type, String language, int batch, int batchSize) throws Exception {
         //  TODO Auto-generated method stub
         return null;
     }

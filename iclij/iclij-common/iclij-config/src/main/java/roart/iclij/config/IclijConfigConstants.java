@@ -118,6 +118,7 @@ public class IclijConfigConstants {
     //public static final String MISCCACHETTL = "misc.cache.ttl";
     public static final String MISCINMEMORY = "misc.inmemory";
     public static final String MISCINMEMORYPIPELINE = "misc.inmemory.pipeline";
+    public static final String MISCINMEMORYPIPELINEBATCHSIZE = "misc.inmemory.pipeline.batchsize";
     //public static final String MISCINMEMORYSERVER = "misc.inmemory.server";
     //public static final String MISCINMEMORYHAZELCAST = "misc.inmemory.hazelcast";
     //public static final String MISCINMEMORYREDIS = "misc.inmemory.redis";

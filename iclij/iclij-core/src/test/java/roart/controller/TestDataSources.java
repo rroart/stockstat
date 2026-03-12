@@ -65,6 +65,11 @@ public class TestDataSources extends MyDataSource {
     }
 
     @Override
+    public List<StockDTO> getAll(String market, IclijConfig conf, boolean disableCache, int batch, int batchSize) throws Exception {
+        throw new UnsupportedOperationException("Unsupported operation");
+    }
+
+    @Override
     public List<StockDTO> getAll(String type, String language) throws Exception {
         log.error("Should not be here");
         return null;
