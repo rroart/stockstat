@@ -160,7 +160,7 @@ public abstract class Component {
             //if (IclijConstants.EVOLVE.equals(param.getAction())) {
             //    action.saveTimingCommon(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, evolve);
            //}
-            interrupted = "interrupted".equals(PipelineUtils.getInteger(param.getResultMap(), PipelineConstants.EVOLVE, EvolveConstants.ID, null, null));
+            interrupted = "interrupted".equals(PipelineUtils.getString(param.getResultMap(), PipelineConstants.EVOLVE, EvolveConstants.ID, null, null));
         }
         valueMap.putAll(evolveMap);
         valueMap.putAll(aMap);

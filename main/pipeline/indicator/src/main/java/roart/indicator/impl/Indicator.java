@@ -110,7 +110,7 @@ public abstract class Indicator extends AbstractIndicator {
            //     log.debug("TODO temp workaround");
             //}
             Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, PipelineConstants.EXTRAREADER, market, PipelineConstants.FILLLIST, inmemory));
-            Map<String, double[][]> truncFillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, PipelineConstants.TRUNCFILLLIST, market, inmemory));
+            Map<String, double[][]> truncFillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, PipelineConstants.EXTRAREADER, market, PipelineConstants.TRUNCFILLLIST, inmemory));
             Object[] arr = null;
             //Double[][] fillList0 = fillListMap.get(ms.getId());
             double[][] fillList = truncFillListMap != null ? truncFillListMap.get(ms.getId()) : null;

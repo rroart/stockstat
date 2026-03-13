@@ -21,6 +21,7 @@ module pipeline.util {
     requires tools.jackson.databind;
     requires stockstat.shadow.zookeeper;
     requires org.checkerframework.checker.qual;
+    requires org.apache.commons.lang3;
     // for test
     //requires evolution.model;
 }

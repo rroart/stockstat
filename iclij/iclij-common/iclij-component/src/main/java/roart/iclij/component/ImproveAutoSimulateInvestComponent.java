@@ -176,7 +176,7 @@ public class ImproveAutoSimulateInvestComponent extends ComponentML {
         //PipelineData metaData = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
         //SerialMeta meta = PipelineUtils.getMeta(metaData);
         //String catName = new MetaUtil().getCategory(meta,  cat);
-        PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, null, null, inmemory);
+        PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, null, inmemory);
         Integer cat = PipelineUtils.getWantedcat(param.getResultMaps(), PipelineConstants.META, inmemory);
         String catName = PipelineUtils.getMetaCat(param.getResultMaps(), inmemory);
         log.info("cats {} {}", cat, catName);

@@ -23,11 +23,28 @@ public class SerialPipeline extends SerialObject implements Iterable<PipelineDat
     // TODO check for dups?
 
     public void add(SerialPipeline data) {
+        for (PipelineData datum : data) {
+            if (keyExists(datum.getKey())) {
+                log.error("Key exists []", ArrayUtils.toString(datum.getKey()));
+            }
+        }
         pipelineData = ArrayUtils.addAll(pipelineData, data.pipelineData);
     }
 
     public void add(PipelineData datum) {
+        if (keyExists(datum.getKey())) {
+            log.error("Key exists []", ArrayUtils.toString(datum.getKey()));
+        }
         pipelineData = ArrayUtils.add(pipelineData, datum);
+    }
+
+    public boolean keyExists(String[] key) {
+        for (PipelineData data : pipelineData) {
+            if (Arrays.equals(data.getKey(), key)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

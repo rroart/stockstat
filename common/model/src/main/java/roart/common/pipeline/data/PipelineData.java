@@ -1,11 +1,11 @@
 package roart.common.pipeline.data;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 public class PipelineData extends SerialObject {
 
     private String id;
     
-    private String name;
-
     private boolean loaded = true;
     
     private boolean old = false;
@@ -18,9 +18,7 @@ public class PipelineData extends SerialObject {
 
     //private Set<String> usedKeys = new HashSet<>();
 
-    private String key;
-
-    private String secondKey;
+    private String[] key = new String[5];
 
     private SerialObject value;
 
@@ -32,13 +30,31 @@ public class PipelineData extends SerialObject {
         this.old = false;
     }
 
-    public PipelineData(String name, String key, String secondKey, SerialObject value, boolean useInmemory) {
+    public PipelineData(String key, SerialObject value, boolean useInmemory) {
+        this(new String[] {key, null, null, null, null}, value, useInmemory);
+    }
+
+    public PipelineData(String key, String secondKey, SerialObject value, boolean useInmemory) {
+        this(new String[] { key, secondKey, null, null, null }, value, useInmemory);
+    }
+
+    public PipelineData(String key, String secondKey, String thirdKey, SerialObject value, boolean useInmemory) {
+        this(new String[] { key, secondKey, thirdKey, null, null }, value, useInmemory);
+    }
+
+    public PipelineData(String key, String secondKey, String thirdKey, String fourthKey, SerialObject value, boolean useInmemory) {
+        this(new String[] { key, secondKey, thirdKey, fourthKey, null }, value, useInmemory);
+    }
+
+    public PipelineData(String key, String secondKey, String thirdKey, String fourthKey, String fifthKey, SerialObject value, boolean useInmemory) {
+        this(new String[] { key, secondKey, thirdKey, fourthKey, fifthKey }, value, useInmemory);
+    }
+
+    public PipelineData(String[] key, SerialObject value, boolean useInmemory) {
         super();
         this.loaded = true;
         this.old = false;
-        this.name = name;
         this.key = key;
-        this.secondKey = secondKey;
         this.value = value;
         this.useInmemory = useInmemory;
     }
@@ -49,14 +65,6 @@ public class PipelineData extends SerialObject {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     /*
@@ -148,12 +156,8 @@ public class PipelineData extends SerialObject {
         this.message = message;
     }
 
-    public String getKey() {
+    public String[] getKey() {
         return key;
-    }
-
-    public String getSecondKey() {
-        return secondKey;
     }
 
     public SerialObject getValue() {
@@ -215,6 +219,6 @@ public class PipelineData extends SerialObject {
      */
 
     public String toString() {
-        return "PipelineData " + name + " " + key + " " + secondKey;
+        return "PipelineData " + ArrayUtils.toString(key);
     }
 }

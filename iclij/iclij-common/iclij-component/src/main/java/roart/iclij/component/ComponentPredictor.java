@@ -24,6 +24,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialResultMeta;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
@@ -139,7 +140,7 @@ public class ComponentPredictor extends ComponentML {
         Pair<String, Integer> keyPair = new ImmutablePair(PipelineConstants.PREDICTOR, null);
         //keyPair = ComponentMLAggregator.getRealKeys(keyPair, profitdata.getInputdata().getConfMap().keySet());
         Double confidenceFactor = 1.0; // never mind, will reimplement. profitdata.getInputdata().getConfMap().get(keyPair);
-        Map<String, Object> resultMap = null; // TODO (Map<String, Object>) param.getResultMap().get("result");
+        Map<String, Object> resultMap = null; // (Map<String, Object>) param.getResultMap().get("result");
         List<MyElement> list0 = new ArrayList<>();
         //List<MyElement> list1 = new ArrayList<>();
         SerialResultMeta meta =  param.getResultMeta().get(0);
@@ -279,7 +280,7 @@ public class ComponentPredictor extends ComponentML {
 
     public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters, Inmemory inmemory) throws Exception {
         PredictorData param = (PredictorData) componentparam;
-        Map<String, List<Double>> resultMap = null; // TODO (Map<String, List<Double>>) param.getResultMap().get("result");
+        Map<String, List<Double>> resultMap = (Map<String, List<Double>>) PipelineUtils.getPipelineValue(param.getResultMap(), PipelineConstants.RESULT, null, inmemory); // TODO (Map<String, List<Double>>) param.getResultMap().get("result");
         List<MemoryDTO> memoryList = new ArrayList<>();
         long total = 0;
         long goodInc = 0;

@@ -409,7 +409,7 @@ public class IndicatorUtils {
             String ind = indicators.get(idx++);
             SerialTA objsIndicator = objectMap.get(id);
             PipelineData pipeline = PipelineUtils.getPipeline(datareaders, ind, null, inmemory);
-            result = appendDayResult(conf, j, result  , pipeline.getName(), objsIndicator);
+            result = appendDayResult(conf, j, result  , pipeline.getKey()[0], objsIndicator);
         }
         return result;
     }
@@ -617,7 +617,7 @@ public class IndicatorUtils {
                     for (Entry<String, SerialTA> entry2 : objectMap.entrySet()) {
                         SerialTA objsIndicator = entry2.getValue();
                         PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.EXTRAREADER, market, indicator.indicatorName(), inmemory);
-                        result = appendDayResult(conf, j, result, pipelineData.getName(), objsIndicator);
+                        result = appendDayResult(conf, j, result, pipelineData.getKey()[0], objsIndicator);
                     }
                 }
             }
@@ -746,7 +746,7 @@ public class IndicatorUtils {
     public static Map<String, PipelineData> getPipelineMap(SerialPipeline datareaders) {
         Map<String, PipelineData> pipelineMap = new HashMap<>();
         for (PipelineData datareader : datareaders) {
-            pipelineMap.put(datareader.getName(), datareader);
+            pipelineMap.put(datareader.getKey()[0], datareader);
         }
         return pipelineMap;
     }
@@ -756,7 +756,7 @@ public class IndicatorUtils {
         Map<String, PipelineData> pipelineMap = new HashMap<>();
         for (SerialObject object : datareaders.getList()) {
             PipelineData datareader = (PipelineData) object;
-            pipelineMap.put(datareader.getName(), datareader);
+            pipelineMap.put(datareader.getKey()[0], datareader);
         }
         return pipelineMap;
     }

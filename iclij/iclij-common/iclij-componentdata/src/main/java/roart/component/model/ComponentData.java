@@ -445,9 +445,9 @@ public class ComponentData {
             List<String> stockdates = PipelineUtils.getDatelist(result, this.getCategoryTitle(), inmemory);
             log.info("Category title {}", this.getCategoryTitle());
             this.setStockDates(stockdates);
-            Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, this.getCategoryTitle(), PipelineConstants.LIST, inmemory)));
+            Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(result, this.getCategoryTitle(), PipelineConstants.LIST, inmemory)));
             this.setCategoryValueMap(aCategoryValueMap);
-            Map<String, List<List<Double>>> aFillCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, this.getCategoryTitle(), PipelineConstants.FILLLIST, inmemory)));
+            Map<String, List<List<Double>>> aFillCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(result, this.getCategoryTitle(), PipelineConstants.FILLLIST, inmemory)));
             this.setFillCategoryValueMap(aFillCategoryValueMap);
             Map<String, Long[]> aVolumeMap = PipelineUtils.getVolume(result, this.getCategoryTitle(), inmemory);
             this.setVolumeMap(aVolumeMap);
@@ -472,9 +472,9 @@ public class ComponentData {
             List<String> stockdates = PipelineUtils.getDatelist(result, this.getCategoryTitle(), inmemory);
             log.info("Category title {}", this.getCategoryTitle());
             this.setStockDates(stockdates);
-            Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, this.getCategoryTitle(), PipelineConstants.LIST, inmemory)));
+            Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(result, this.getCategoryTitle(), PipelineConstants.LIST, inmemory)));
             this.setCategoryValueMap(aCategoryValueMap);
-            Map<String, List<List<Double>>> aFillCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, this.getCategoryTitle(), PipelineConstants.FILLLIST, inmemory)));
+            Map<String, List<List<Double>>> aFillCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(result, this.getCategoryTitle(), PipelineConstants.FILLLIST, inmemory)));
             this.setFillCategoryValueMap(aFillCategoryValueMap);
             Map<String, Long[]> aVolumeMap = PipelineUtils.getVolume(result, this.getCategoryTitle(), inmemory);
             this.setVolumeMap(aVolumeMap);
@@ -523,9 +523,9 @@ public class ComponentData {
             log.info("Category title {} {}", this.getCategoryTitle(), cat);
             List<String> stockdates = PipelineUtils.getDatelist(result, cat, inmemory);
             this.setStockDates(stockdates);
-            Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, cat, PipelineConstants.LIST, inmemory)));
+            Map<String, List<List<Double>>> aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(result, cat, PipelineConstants.LIST, inmemory)));
             this.setCategoryValueMap(aCategoryValueMap);
-            Map<String, List<List<Double>>> aFillCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipeline(result, cat, PipelineConstants.FILLLIST, inmemory)));
+            Map<String, List<List<Double>>> aFillCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(result, cat, PipelineConstants.FILLLIST, inmemory)));
             this.setFillCategoryValueMap(aFillCategoryValueMap);
 
             Map<String, Long[]> aVolumeMap = PipelineUtils.getVolume(result, this.getCategoryTitle(), inmemory);
@@ -557,7 +557,7 @@ public class ComponentData {
             aMap = PipelineUtils.getPipelines(maps, mapName, inmemory);
         }
         log.info("mapnamer" + mapName + " " + (aMap != null));
-        this.resultMap = maps; // TODO
+        this.resultMap = maps;
         return aMap;  
     }
 

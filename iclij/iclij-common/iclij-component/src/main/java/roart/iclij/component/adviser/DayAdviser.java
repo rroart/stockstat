@@ -1,5 +1,6 @@
 package roart.iclij.component.adviser;
 
+import java.awt.font.LineMetrics;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,6 +17,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
 import roart.common.config.ConfigConstants;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.model.IncDecDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
@@ -57,10 +59,11 @@ public class DayAdviser extends Adviser {
             SerialPipeline resultMaps = param.getResultMaps();
             Map<String, Object> objectMaps = null; //PipelineUtils.getPipeline(resultMaps, cat);
             Map<String, List<List<Double>>> aCategoryValueMap;
+            Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
             if (simulateConfig.getInterpolate()) {
-                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(objectMaps.get(PipelineConstants.FILLLIST)));
+                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(resultMaps, "" + cat, PipelineConstants.FILLLIST, inmemory)));
             } else {
-                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(objectMaps.get(PipelineConstants.LIST)));
+                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(resultMaps, "" + cat, PipelineConstants.LIST, inmemory)));
             }
             categoryValueMap = aCategoryValueMap;
         } else {

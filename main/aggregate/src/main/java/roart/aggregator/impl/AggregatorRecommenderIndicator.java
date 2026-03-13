@@ -48,7 +48,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         Map<String, AbstractIndicator> usedIndicatorMap = cat.getIndicatorMap();
         //Map<String, PipelineData> localResultMap = cat.putData();
         // TODO datareader null
-        Map<String, Double[][]> list0 = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelines(datareaders, "" + cat.getTitle(), PipelineConstants.LIST, null));
+        Map<String, Double[][]> list0 = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, "" + cat.getTitle(), PipelineConstants.LIST, null));
  
         usedRecommenders = Recommend.getUsedRecommenders(conf);
         Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders, usedIndicatorMap, conf, Boolean.TRUE.equals(marketdatamap.get(conf.getConfigData().getMarket()).meta.isLhc()));

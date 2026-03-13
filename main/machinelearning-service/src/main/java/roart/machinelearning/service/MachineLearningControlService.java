@@ -2,11 +2,7 @@ package roart.machinelearning.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.Map.Entry;
 
@@ -189,7 +185,7 @@ public class MachineLearningControlService {
             //data.
             try (InputStream is = new ByteArrayInputStream(JsonUtil.convert(data).getBytes())) {
                 String md5 = null;
-                InmemoryMessage msg = inmemory.send(Constants.STOCKSTAT + data.getId() + data.getName(), is, md5);
+                InmemoryMessage msg = inmemory.send(Constants.STOCKSTAT + data.getId() + Arrays.toString(data.getKey()), is, md5);
                 //result.message = msg;
                 io.getCuratorClient().create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.DATA + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
             } catch (Exception e) {
