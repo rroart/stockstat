@@ -34,11 +34,18 @@ public class PipelineUtils {
     }
     */
 
-    public static Set<String> getPipelineMapKeys(SerialPipeline datareaders) {
-        if (true) return null;
+    public static Set<String> getPipelineMapFirstKeys(SerialPipeline datareaders) {
         Set<String> pipelineKeys = new HashSet<>();
         for (PipelineData datareader : datareaders) {
-            //pipelineKeys.add(datareader.getName());
+            pipelineKeys.add(datareader.getKey().getFirst());
+        }
+        return pipelineKeys;
+    }
+
+    public static Set<SerialPipelineKey> getPipelineMapKeys(SerialPipeline datareaders) {
+        Set<SerialPipelineKey> pipelineKeys = new HashSet<>();
+        for (PipelineData datareader : datareaders) {
+            pipelineKeys.add(datareader.getKey());
         }
         return pipelineKeys;
     }
@@ -97,69 +104,86 @@ public class PipelineUtils {
      */
 
     public static SerialPipeline getPipelines(SerialPipeline pipelines, String key, Inmemory inmemory) {
-        return getPipelines(pipelines, new String[] { key, null, null, null, null }, inmemory);
+        return getPipelines(pipelines, new SerialPipelineKey(new String[] { key, null, null, null, null }), inmemory);
     }
 
     public static SerialPipeline getPipelines(SerialPipeline pipelines, String key, String secondKey, Inmemory inmemory) {
-        return getPipelines(pipelines, new String[] { key, secondKey, null, null, null }, inmemory);
+        return getPipelines(pipelines, new SerialPipelineKey(new String[] { key, secondKey, null, null, null }), inmemory);
     }
 
     public static SerialPipeline getPipelines(SerialPipeline pipelines, String key, String secondKey, String thirdKey, Inmemory inmemory) {
-        return getPipelines(pipelines, new String[] { key, secondKey, thirdKey, null, null }, inmemory);
+        return getPipelines(pipelines, new SerialPipelineKey(new String[] { key, secondKey, thirdKey, null, null }), inmemory);
     }
 
     public static SerialPipeline getPipelines(SerialPipeline pipelines, String key, String secondKey, String thirdKey, String fourthKey, Inmemory inmemory) {
-        return getPipelines(pipelines, new String[] { key, secondKey, thirdKey, fourthKey, null }, inmemory);
+        return getPipelines(pipelines, new SerialPipelineKey(new String[] { key, secondKey, thirdKey, fourthKey, null }), inmemory);
     }
 
     public static SerialPipeline getPipelines(SerialPipeline pipelines, String key, String secondKey, String thirdKey, String fourthKey, String fifthKey, Inmemory inmemory) {
-        return getPipelines(pipelines, new String[] { key, secondKey, thirdKey, fourthKey, fifthKey }, inmemory);
+        return getPipelines(pipelines, new SerialPipelineKey(new String[] { key, secondKey, thirdKey, fourthKey, fifthKey }), inmemory);
     }
 
-    public static SerialPipeline getPipelines(SerialPipeline pipelines, String[] key, Inmemory inmemory) {
+    public static SerialPipeline getPipelines(SerialPipeline pipelines, SerialPipelineKey key, Inmemory inmemory) {
         SerialPipeline newPipelines = new SerialPipeline();
         for (PipelineData pipeline : pipelines) {
-            boolean found = true;
-            for (int i = 0; i < key.length; i++) {
-                if (key != null && !Objects.equals(key[i], pipeline.getKey()[i])) {
-                    found = false;
-                }
-            }
-            if (found) {
+            if (key.matches(pipeline.getKey())) {
                 newPipelines.add(pipeline);
             }
         }
         return newPipelines;
     }
 
+    public static SerialPipeline getPipelinesRest(SerialPipeline pipelines, String key, Inmemory inmemory) {
+        SerialPipeline newPipelines = getPipelines(pipelines, new SerialPipelineKey(new String[] { key, null, null, null, null }), inmemory);
+        SerialPipeline newNewPipelinex = new SerialPipeline();
+        for (PipelineData pipeline : newPipelines) {
+            PipelineData newPipeline = pipeline.clone();
+            newPipeline.restKey();
+            newNewPipelinex.add(newPipeline);
+        }
+        return newNewPipelinex;
+    }
+
     public static PipelineData getPipeline(SerialPipeline pipelines, String key, String secondKey, String thirdKey, Inmemory inmemory) {
-        return getPipeline(pipelines, new String[] { key, secondKey, thirdKey, null, null}, inmemory);
+        return getPipeline(pipelines, new SerialPipelineKey(new String[] { key, secondKey, thirdKey, null, null}), inmemory);
     }
 
     public static PipelineData getPipeline(SerialPipeline pipelines, String key, String secondKey, Inmemory inmemory) {
-        return getPipeline(pipelines, new String[] { key, secondKey, null, null, null}, inmemory);
+        return getPipeline(pipelines, new SerialPipelineKey(new String[] { key, secondKey, null, null, null}), inmemory);
     }
 
-    public static PipelineData getPipeline(SerialPipeline pipelines, String[] key, Inmemory inmemory) {
+    public static PipelineData getPipeline(SerialPipeline pipelines, String key, Inmemory inmemory) {
+        return getPipeline(pipelines, new SerialPipelineKey(new String[] { key, null, null, null, null}), inmemory);
+    }
+
+    public static PipelineData getPipeline(SerialPipeline pipelines, SerialPipelineKey key, Inmemory inmemory) {
         SerialPipeline list = getPipelines(pipelines, key, inmemory);
         if (list.length() == 1) {
             return list.iterator().next();
         } else {
             if (list.isEmpty()) {
-                log.error("No key {}", Arrays.toString(key));
+                log.error("No key {}", key.toString());
             } else {
-                log.error("Duplicate key {}", Arrays.toString(key));
+                log.error("Duplicate key {}", key.toString());
             }
         }
         return null;
     }
 
+    public static SerialObject getPipelineValue(SerialPipeline pipelines, String key, Inmemory inmemory) {
+        return getPipelineValue(pipelines, new SerialPipelineKey(new String[] { key, null, null, null, null}), inmemory);
+    }
+
     public static SerialObject getPipelineValue(SerialPipeline pipelines, String key, String secondKey, Inmemory inmemory) {
-        return getPipelineValue(pipelines, new String[] { key, secondKey, null, null, null}, inmemory);
+        return getPipelineValue(pipelines, new SerialPipelineKey(new String[] { key, secondKey, null, null, null}), inmemory);
     }
 
     public static SerialObject getPipelineValue(SerialPipeline pipelines, String key, String secondKey, String thirdKey, Inmemory inmemory) {
-        return getPipelineValue(pipelines, new String[] { key, secondKey, thirdKey, null, null}, inmemory);
+        return getPipelineValue(pipelines, new SerialPipelineKey(new String[] { key, secondKey, thirdKey, null, null}), inmemory);
+    }
+
+    public static SerialObject getPipelineValue(SerialPipeline pipelines, String key, String secondKey, String thirdKey, String fourthKey, Inmemory inmemory) {
+        return getPipelineValue(pipelines, new SerialPipelineKey(new String[] { key, secondKey, thirdKey, fourthKey, null}), inmemory);
     }
 
     /*
@@ -178,7 +202,7 @@ public class PipelineUtils {
 
      */
 
-    public static SerialObject getPipelineValueOld(SerialPipeline pipelines, String[] key, Inmemory inmemory) {
+    public static SerialObject getPipelineValueOld(SerialPipeline pipelines, SerialPipelineKey key, Inmemory inmemory) {
         SerialPipeline list = getPipelines(pipelines, key, inmemory);
         if (list.length() == 1) {
             PipelineData pipeline = list.iterator().next();
@@ -186,30 +210,31 @@ public class PipelineUtils {
             return pipeline.getValue();
         } else {
             if (list.isEmpty()) {
-                log.error("No key {}", Arrays.toString(key));
+                log.error("No key {}", key.toString());
             } else {
-                log.error("Duplicate key {}", Arrays.toString(key));
+                log.error("Duplicate key {}", key.toString());
             }
         }
         return null;
     }
 
-    public static SerialObject getPipelineValue(SerialPipeline pipelines, String[] key, Inmemory inmemory) {
+    public static SerialObject getPipelineValue(SerialPipeline pipelines, SerialPipelineKey key, Inmemory inmemory) {
         log.info("Pipe len" + pipelines.length());
         PipelineData pipeline = getPipeline(pipelines, key);
         if (pipeline != null) {
             getPipelineValue(pipeline, inmemory);
             return pipeline.getValue();
         } else {
-            log.error("No key {}", Arrays.toString(key));
+            log.error("No key {}", key.toString());
+            log.error("Keys {}", getPipelineMapKeys(pipelines));
             return null;
         }
     }
 
-    public static PipelineData getPipeline(SerialPipeline pipelines, String[] key) {
+    public static PipelineData getPipeline(SerialPipeline pipelines, SerialPipelineKey key) {
         SerialPipeline list = new SerialPipeline();
         for (PipelineData pipeline : pipelines) {
-            if (Arrays.equals(key, pipeline.getKey())) {
+            if (key.equals(pipeline.getKey())) {
                 list.add(pipeline);
             }
         }
@@ -218,9 +243,9 @@ public class PipelineUtils {
             return pipeline;
         } else {
             if (list.isEmpty()) {
-                log.error("No key {}", Arrays.toString(key));
+                log.error("No key {}", key.toString());
             } else {
-                log.error("Duplicate key {}", Arrays.toString(key));
+                log.error("Duplicate key {}", key.toString());
             }
         }
         return null;
@@ -645,8 +670,8 @@ public class PipelineUtils {
         return null;
     }
 
-    public static Integer getWantedcat(SerialPipeline data, String name, Inmemory inmemory) {
-        SerialObject object = getPipelineValue(data, name, PipelineConstants.WANTEDCAT, inmemory);
+    public static Integer getWantedcat(SerialPipeline data, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, PipelineConstants.META, PipelineConstants.WANTEDCAT, inmemory);
         SerialInteger list = (SerialInteger) object;
         if (list != null) {
             return list.getInteger();
@@ -704,8 +729,8 @@ public class PipelineUtils {
         return null;
     }
 
-    public static List<SerialResultMeta> getResultMeta(SerialPipeline data, String name, Inmemory inmemory) {
-        SerialObject object = getPipelineValue(data, name, PipelineConstants.RESULTMETA, inmemory);
+    public static List<SerialResultMeta> getResultMeta(SerialPipeline data, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, PipelineConstants.RESULTMETA, inmemory);
         SerialList<SerialResultMeta> list = (SerialList<SerialResultMeta>) object;
         if (list != null) {
             return list.getList();
@@ -743,9 +768,9 @@ public class PipelineUtils {
         return null;
     }
 
-    public static Map getMarketObjectMap(SerialPipeline data, String name) {
+    public static Map getMarketObjectMap(SerialPipeline data, String name, Inmemory inmemory) {
         // TODO if this is serialized
-        SerialObject object = getPipelineValue(data, name, PipelineConstants.OBJECT, null);
+        SerialObject object = getPipelineValue(data, name, PipelineConstants.OBJECT, inmemory);
         SerialMapTA map = (SerialMapTA) object;
         if (map != null) {
             return map.getMap();
@@ -778,7 +803,7 @@ public class PipelineUtils {
     }
 
     public static String getString(SerialPipeline data, String key, String secondKey, String thirdKey, Inmemory inmemory) {
-        SerialObject object = getPipelineValue(data, new String[] { key, secondKey, thirdKey, null, null }, inmemory);
+        SerialObject object = getPipelineValue(data, new SerialPipelineKey(new String[] { key, secondKey, thirdKey, null, null }), inmemory);
         SerialString map = (SerialString) object;
         if (map != null) {
             return map.getString();

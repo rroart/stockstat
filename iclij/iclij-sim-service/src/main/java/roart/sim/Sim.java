@@ -137,8 +137,9 @@ public class Sim {
                 filter = getFilter(adviser);
             }
             {
+                Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
                 SimulateFilter[] listoverrides = null;
-                SerialString o = (SerialString) PipelineUtils.getPipelineValue(data, SimConstants.FILTER, null, null, null);
+                SerialString o = (SerialString) PipelineUtils.getPipelineValue(data, SimConstants.FILTER, null, null, inmemory);
                 // TODO if o null
                 // TODO if o null
                 //System.out.println("ooo" + o.getClass().getCanonicalName());
@@ -427,8 +428,9 @@ public class Sim {
             filter.setStable(0.0);
             filter.setCorrelation(0.5);
             {
+                Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
                 SimulateFilter[] listoverrides = null;
-                SerialString o = (SerialString) PipelineUtils.getPipelineValue(data, SimConstants.FILTER, null, null, null);
+                SerialString o = (SerialString) PipelineUtils.getPipelineValue(data, SimConstants.FILTER, null, null, inmemory);
                 // TODO if o null
                 // TODO if o null
                 //System.out.println("ooo" + o.getClass().getCanonicalName());

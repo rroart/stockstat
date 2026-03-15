@@ -132,11 +132,11 @@ public class PipelineUtilsTest {
     
     @Test
     public void test4() {
-        PipelineData data = new PipelineData();
+        //PipelineData data = new PipelineData();
         //data.getMap().put("key", "value");
         SerialOneDim array = new SerialOneDim();
         array.array = new Integer[] { 1, 2, 3 };
-        PipelineData map = data;
+        //PipelineData map = data;
         //map.list = List.of(List.of(11, "blbl"));
         /*
         SerialMap map2 = new SerialMap();

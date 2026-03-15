@@ -817,7 +817,7 @@ public abstract class MarketAction extends Action {
     protected Map<String, String> getNameMap(SerialPipeline maps) {
         Map<String, String> nameMap = null;
         for (PipelineData map : maps) {
-            nameMap = PipelineUtils.getNamemap(maps, map.getKey()[0], null);
+            nameMap = PipelineUtils.getNamemap(maps, map.getKey().getFirst(), null);
             if (nameMap != null) {
                 break;
             }

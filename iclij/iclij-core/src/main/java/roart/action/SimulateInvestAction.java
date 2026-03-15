@@ -18,9 +18,6 @@ import roart.common.model.ActionComponentDTO;
 import roart.common.model.IncDecDTO;
 import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
-import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.iclij.component.Component;
 import roart.component.model.ComponentData;
@@ -126,7 +123,7 @@ public class SimulateInvestAction extends MarketAction {
             //SerialMeta meta = PipelineUtils.getMeta(metaData);
             //String catName = new MetaUtil().getCategory(meta,  cat);
             //PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
-            Integer cat = PipelineUtils.getWantedcat(param.getResultMaps(), PipelineConstants.META, inmemory);
+            Integer cat = PipelineUtils.getWantedcat(param.getResultMaps(), inmemory);
             String catName = PipelineUtils.getMetaCat(param.getResultMaps(), inmemory);
             log.info("cats {} {}", cat, catName);
             param.setCategory(cat);

@@ -188,9 +188,9 @@ public abstract class IndicatorAggregator extends Aggregator {
             log.info("empty {}", category);
             return;
         }
-        Map<String, Double[][]> aListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.LIST, null));
-        Map<String, double[][]> fillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.TRUNCFILLLIST, null));
-        Map<String, double[][]>  base100FillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.TRUNCBASE100FILLLIST, null)) ;
+        Map<String, Double[][]> aListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.LIST, inmemory));
+        Map<String, double[][]> fillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.TRUNCFILLLIST, inmemory));
+        Map<String, double[][]>  base100FillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.TRUNCBASE100FILLLIST, inmemory)) ;
         // TODO
         this.listMap = /*conf.wantPercentizedPriceIndex() ? base100FillListMap :*/ fillListMap;
 

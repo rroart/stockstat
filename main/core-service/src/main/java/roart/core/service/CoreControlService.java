@@ -226,7 +226,7 @@ public class CoreControlService {
             //data.
             try (InputStream is = new ByteArrayInputStream(JsonUtil.convert(data).getBytes())) {
                 String md5 = null;
-                InmemoryMessage msg = inmemory.send(Constants.STOCKSTAT + data.getId() + Arrays.toString(data.getKey()), is, md5);
+                InmemoryMessage msg = inmemory.send(Constants.STOCKSTAT + data.getId() + data.getKey().toString(), is, md5);
                 //result.message = msg;
                 io.getCuratorClient().create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.DATA + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
             } catch (Exception e) {

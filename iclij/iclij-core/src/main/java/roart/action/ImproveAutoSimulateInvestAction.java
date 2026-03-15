@@ -131,7 +131,7 @@ public class ImproveAutoSimulateInvestAction extends MarketAction {
             Object filters = param.getConfigValueMap().remove(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
             // filters is already a serialized string
             filters = param.getInput().getValuemap().get(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
-            results.add(new PipelineData("name", SimConstants.FILTER, null, new SerialString((String) filters), false));
+            results.add(new PipelineData(/*"name", */ SimConstants.FILTER, null, new SerialString((String) filters), false));
             QueueElement element = new QueueElement();
             InmemoryMessage msg = inmemory.send(ServiceConstants.SIMAUTO + UUID.randomUUID(), results, null);
             element.setOpid(ServiceConstants.SIM);

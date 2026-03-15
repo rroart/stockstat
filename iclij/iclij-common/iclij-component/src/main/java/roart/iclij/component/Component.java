@@ -160,7 +160,7 @@ public abstract class Component {
             //if (IclijConstants.EVOLVE.equals(param.getAction())) {
             //    action.saveTimingCommon(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, evolve);
            //}
-            interrupted = "interrupted".equals(PipelineUtils.getString(param.getResultMap(), PipelineConstants.EVOLVE, EvolveConstants.ID, null, null));
+            interrupted = "interrupted".equals(PipelineUtils.getString(param.getResultMap(), EvolveConstants.ID, null, null, inmemory));
         }
         valueMap.putAll(evolveMap);
         valueMap.putAll(aMap);
@@ -646,7 +646,7 @@ public abstract class Component {
     protected void handleMLMetaCommon(ComponentData param, Map<String, Object> valueMap, Inmemory inmemory) {
         // TODO second getcontent call, special
         SerialPipeline resultMaps = param.getResultMap(getPipeline(), valueMap, true, param.isKeepPipeline());
-        param.setCategory(resultMaps, inmemory);
+        param.setCategory(resultMaps, getPipeline(), inmemory);
         // TODO 3rd call, ordinary again
         param.getAndSetCategoryValueMapAlt();
         SerialPipeline resultMaps2 = param.getResultMap();

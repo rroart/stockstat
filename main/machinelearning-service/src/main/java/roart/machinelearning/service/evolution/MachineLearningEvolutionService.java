@@ -421,7 +421,7 @@ public class MachineLearningEvolutionService {
     public StockData getStockData(SerialPipeline pipelineData, Inmemory inmemory) {
         StockData stockData = new StockData();
         //PipelineData pipelineDatum = PipelineUtils.getPipeline(pipelineData, PipelineConstants.META, inmemory);
-        stockData.cat = PipelineUtils.getWantedcat(pipelineData, PipelineConstants.META, inmemory);
+        stockData.cat = PipelineUtils.getWantedcat(pipelineData, inmemory);
         stockData.catName = PipelineUtils.getMetaCat(pipelineData, inmemory);
         return stockData;
     }

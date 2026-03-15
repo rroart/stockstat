@@ -26,7 +26,6 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.model.MetaDTO;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.TimeUtil;
@@ -1281,7 +1280,7 @@ public class StockUtil {
     public StockData getStockData(IclijConfig conf, SerialPipeline pipelineData, Inmemory inmemory) {
         StockData stockData = new StockData();
         //PipelineData pipelineDatum = PipelineUtils.getPipeline(pipelineData, PipelineConstants.META, inmemory);
-        stockData.cat = PipelineUtils.getWantedcat(pipelineData, PipelineConstants.META, inmemory);
+        stockData.cat = PipelineUtils.getWantedcat(pipelineData, inmemory);
         stockData.catName = PipelineUtils.getMetaCat(pipelineData, inmemory);
         stockData.idNameMap = PipelineUtils.getNamemap(pipelineData, PipelineConstants.META, inmemory);
         stockData.stockdates = PipelineUtils.getDatelist(pipelineData, PipelineConstants.META, inmemory);

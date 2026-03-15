@@ -37,6 +37,7 @@ public abstract class Indicator extends AbstractIndicator {
         }
         SerialPipeline extrareader = PipelineUtils.getPipelines(datareaders, PipelineConstants.EXTRAREADER, inmemory);
         if (extrareader.isEmpty()) {
+            log.info("empty {}", key);
             return;
         }
         Map<String, Map<String, double[][]>> marketListMap = getMarketListMap(extrareader, datareaders);
@@ -109,8 +110,8 @@ public abstract class Indicator extends AbstractIndicator {
             //    datareader = null; // TODO mypipelineMap.get(Constants.PRICE);
            //     log.debug("TODO temp workaround");
             //}
-            Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, PipelineConstants.EXTRAREADER, market, PipelineConstants.FILLLIST, inmemory));
-            Map<String, double[][]> truncFillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, PipelineConstants.EXTRAREADER, market, PipelineConstants.TRUNCFILLLIST, inmemory));
+            Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, PipelineConstants.EXTRAREADER, market, cat, PipelineConstants.FILLLIST, inmemory));
+            Map<String, double[][]> truncFillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, PipelineConstants.EXTRAREADER, market, cat, PipelineConstants.TRUNCFILLLIST, inmemory));
             Object[] arr = null;
             //Double[][] fillList0 = fillListMap.get(ms.getId());
             double[][] fillList = truncFillListMap != null ? truncFillListMap.get(ms.getId()) : null;

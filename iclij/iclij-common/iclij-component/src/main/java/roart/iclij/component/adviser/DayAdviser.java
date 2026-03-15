@@ -1,6 +1,5 @@
 package roart.iclij.component.adviser;
 
-import java.awt.font.LineMetrics;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;

@@ -15,6 +15,7 @@ import roart.common.model.IncDecDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialObject;
 import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.MapUtil;
@@ -151,11 +152,11 @@ public class MarketUtil {
             newCategory = "" + Constants.INDEXVALUECOLUMN;
         }
         if (newCategory != null) {
-            PipelineData map = PipelineUtils.getPipeline(maps, newCategory, PipelineConstants.LIST, inmemory);
+            SerialObject map = PipelineUtils.getPipelineValue(maps, newCategory, PipelineConstants.LIST, inmemory);
             return MapUtil.convertA2L(PipelineUtils.sconvertMapDD(map));
         }
         Map<String, List<List<Double>>> listMap3 = null;
-        for (String entry : PipelineUtils.getPipelineMapKeys(maps)) {
+        for (String entry : PipelineUtils.getPipelineMapFirstKeys(maps)) { //  TODO
             PipelineData map = PipelineUtils.getPipeline(maps, entry, PipelineConstants.LIST, inmemory);
             if (category.equals(PipelineUtils.getCatTitle(maps, entry, inmemory))) {
                 listMap3 = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(map));

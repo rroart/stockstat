@@ -223,7 +223,9 @@ public class ComponentMLIndicator extends ComponentML {
         List<MemoryDTO> memoryList = new ArrayList<>();
         SerialPipeline resultMap = param.getResultMap();
         // mix text num
-        MapOneDim aResultMap = PipelineUtils.getMapOneDim(PipelineUtils.getPipeline(resultMap, getPipeline(), PipelineConstants.RESULT, inmemory));
+        // todo check resultmaps getPipeline
+        //MapOneDim aResultMap = PipelineUtils.getMapOneDim(PipelineUtils.getPipeline(resultMap, getPipeline(), PipelineConstants.RESULT, inmemory));
+        MapOneDim aResultMap = PipelineUtils.getMapOneDim(PipelineUtils.getPipeline(resultMap, PipelineConstants.RESULT, inmemory));
         int resultIndex = 0;
         int newResultIndex = 0;
         for (int count = 0; count < param.getResultMeta().size(); count++) {

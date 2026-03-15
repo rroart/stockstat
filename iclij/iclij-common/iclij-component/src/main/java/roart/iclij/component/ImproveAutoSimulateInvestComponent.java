@@ -171,13 +171,13 @@ public class ImproveAutoSimulateInvestComponent extends ComponentML {
         aMap.put(ConfigConstants.AGGREGATORS, false);
     // different line
         // todo
-        param.getResultMap(null, aMap, true, param.isKeepPipeline()); // TODO cache
+        param.getResultMap(null, aMap, false, param.isKeepPipeline()); // TODO cache
         Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
         //PipelineData metaData = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
         //SerialMeta meta = PipelineUtils.getMeta(metaData);
         //String catName = new MetaUtil().getCategory(meta,  cat);
         PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, null, inmemory);
-        Integer cat = PipelineUtils.getWantedcat(param.getResultMaps(), PipelineConstants.META, inmemory);
+        Integer cat = PipelineUtils.getWantedcat(param.getResultMaps(), inmemory);
         String catName = PipelineUtils.getMetaCat(param.getResultMaps(), inmemory);
         log.info("cats {} {}", cat, catName);
         param.setCategory(cat);

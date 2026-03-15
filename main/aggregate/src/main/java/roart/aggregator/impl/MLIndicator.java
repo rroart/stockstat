@@ -264,10 +264,10 @@ public class MLIndicator extends Aggregator {
         Map<Pair<String, String>, Map<Date, StockDTO>> pairDateMap = null; // (Map<Pair<String, String>, Map<Date, StockDTO>>) localResults.get(PipelineConstants.PAIRDATE);
         Map<Pair<String, String>, String> pairCatMap = null; // (Map<Pair<String, String>, String>) localResults.get(PipelineConstants.PAIRCAT);
         */
-        log.info("KEY" + this.key + " " + PipelineUtils.getPipelineMapKeys(datareaders) + " " + title + " ");
+        log.info("KEY" + this.key + " " + PipelineUtils.getPipelineMapFirstKeys(datareaders) + " " + title + " ");
         List<String> dateList = PipelineUtils.getDatelist(datareaders, key, inmemory);
 	List<String> dateList2 = new ArrayList<>(dateList); // StockDao.getDateList(conf.getConfigData().getMarket(), marketdatamap);
-        if (PipelineUtils.getPipelineValue(extrareader, PipelineConstants.MARKETSTOCKS, null, null) != null) {
+        if (PipelineUtils.getPipelineValue(extrareader, PipelineConstants.MARKETSTOCKS, null, inmemory) != null) {
             dateList = PipelineUtils.getDatelist(datareaders, PipelineConstants.EXTRAREADER, inmemory); // key
             Collections.sort(dateList);
         }
@@ -275,7 +275,7 @@ public class MLIndicator extends Aggregator {
 
         Map<String, List<AggregatorMLIndicator>> usedIndicators = AggregatorMLIndicator.getUsedAggregatorMLIndicators(conf);
         Set<String> ids = new HashSet<>();
-        Map<String, Double[][]> list0 = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.LIST, null, null));
+        Map<String, Double[][]> list0 = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.LIST, null, inmemory));
         ids.addAll(list0.keySet());
         List<String> indicators = getIndicators(datareaders, usedIndicators, ids, inmemory);
         log.info("INDIC" + usedIndicators.values().iterator().next().stream().map(AggregatorMLIndicator::indicator).toList());
@@ -797,7 +797,7 @@ public class MLIndicator extends Aggregator {
                 SerialPipeline indicatorResult = PipelineUtils.getPipelines(datareaders, indicator, inmemory);
                 if (indicatorResult != null) {
                     indicators.add(indicator);
-                    Map<String, Double[][]> aResult = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, this.key, PipelineConstants.LIST, null, null));
+                    Map<String, Double[][]> aResult = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, this.key, PipelineConstants.LIST, null, inmemory));
                     //Map<String, Object[]> aResult = (Map<String, Object[]>) indicatorResult.get(PipelineConstants. LIST);
                     ids.retainAll(aResult.keySet());
                 } else {

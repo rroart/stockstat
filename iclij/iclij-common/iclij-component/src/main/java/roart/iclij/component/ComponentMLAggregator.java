@@ -153,7 +153,9 @@ public abstract class ComponentMLAggregator extends ComponentML {
         ComponentMLData param = (ComponentMLData) componentparam;
         SerialPipeline resultMap = param.getResultMap();
         // mix text num
-        MapOneDim aResultMap = PipelineUtils.getMapOneDim(PipelineUtils.getPipeline(resultMap, getPipeline(), PipelineConstants.RESULT, inmemory));
+        // todo check resultmaps getPipeline
+        MapOneDim aResultMap = PipelineUtils.getMapOneDim(PipelineUtils.getPipeline(resultMap, PipelineConstants.RESULT, inmemory));
+        //MapOneDim aResultMap = PipelineUtils.getMapOneDim(PipelineUtils.getPipeline(resultMap, getPipeline(), PipelineConstants.RESULT, inmemory));
         List<MemoryDTO> memoryList = new ArrayList<>();
         int resultIndex = 0;
         int newResultIndex = 0;

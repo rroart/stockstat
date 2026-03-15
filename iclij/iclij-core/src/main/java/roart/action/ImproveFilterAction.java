@@ -22,8 +22,6 @@ import roart.common.model.IncDecDTO;
 import roart.common.model.MLMetricsDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.model.TimingDTO;
-import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.queue.QueueElement;
@@ -112,7 +110,7 @@ public class ImproveFilterAction extends MarketAction {
             // todo ok?
             param. getAndSetCategoryValueMap(false);
             //PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
-            Integer cat = PipelineUtils.getWantedcat(param.getResultMaps(), PipelineConstants.META, inmemory);
+            Integer cat = PipelineUtils.getWantedcat(param.getResultMaps(), inmemory);
             String catName = PipelineUtils.getMetaCat(param.getResultMaps(), inmemory);
             log.info("cats {} {}", cat, catName);
             param.setCategory(cat);

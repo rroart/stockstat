@@ -132,7 +132,7 @@ public class ImproveSimulateInvestAction extends MarketAction {
             Object filters = param.getConfigValueMap().remove(IclijConfigConstants.SIMULATEINVESTFILTERS);
             // filters is already a serialized string
             filters = param.getInput().getValuemap().get(IclijConfigConstants.SIMULATEINVESTFILTERS);
-            results.add(new PipelineData(action.getName(), SimConstants.FILTER, null, new SerialString((String) filters), false));
+            results.add(new PipelineData(/*action.getName(),*/ SimConstants.FILTER, null, new SerialString((String) filters), false));
             //results.put(SimConstants.FILTER, filters);
             QueueElement element = new QueueElement();
             InmemoryMessage msg = inmemory.send(ServiceConstants.SIMFILTER + UUID.randomUUID(), results, null);

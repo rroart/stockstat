@@ -106,7 +106,7 @@ public class ImproveProfitAction extends MarketAction {
             // if not interrupted
             if (results != null) {
                 // TODO TODO
-                componentData.getResultMap().add(new PipelineData(action.getName(), EvolveConstants.DEFAULT, null, new SerialListMap(defaults), false));
+                componentData.getResultMap().add(new PipelineData(/*action.getName(),*/ EvolveConstants.DEFAULT, null, new SerialListMap(defaults), false));
             	// TODO?
                 Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 QueueElement element = new QueueElement();

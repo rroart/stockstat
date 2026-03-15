@@ -280,6 +280,7 @@ public class ComponentPredictor extends ComponentML {
 
     public List<MemoryDTO> calculateMemory(MarketActionData actionData, ComponentData componentparam, Parameters parameters, Inmemory inmemory) throws Exception {
         PredictorData param = (PredictorData) componentparam;
+        // todo
         Map<String, List<Double>> resultMap = (Map<String, List<Double>>) PipelineUtils.getPipelineValue(param.getResultMap(), PipelineConstants.RESULT, null, inmemory); // TODO (Map<String, List<Double>>) param.getResultMap().get("result");
         List<MemoryDTO> memoryList = new ArrayList<>();
         long total = 0;

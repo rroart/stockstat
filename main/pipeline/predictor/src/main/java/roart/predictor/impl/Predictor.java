@@ -145,10 +145,10 @@ public abstract class Predictor extends AbstractPredictor {
             log.info("empty {}", category);
             return;
         }
-        this.listMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.LIST, null, null));
-        this.fillListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.FILLLIST, null, null));
+        this.listMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.LIST, null, inmemory));
+        this.fillListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.FILLLIST, null, inmemory));
         //this.truncListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCLIST));       
-        this.truncFillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.TRUNCFILLLIST, null, null));
+        this.truncFillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.TRUNCFILLLIST, null, inmemory));
         //this.base100ListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.BASE100LIST));
         //this.base100FillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.BASE100FILLLIST));
         //this.truncBase100ListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCBASE100LIST));       
@@ -550,7 +550,7 @@ public abstract class Predictor extends AbstractPredictor {
     @Override
     public boolean hasValue() {
         SerialPipeline datareader = PipelineUtils.getPipelines(datareaders, key, inmemory);
-        return anythingHereA(PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareader, key, PipelineConstants.LIST, null, null)));
+        return anythingHereA(PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareader, key, PipelineConstants.LIST, null, inmemory)));
     }
     
     @Override

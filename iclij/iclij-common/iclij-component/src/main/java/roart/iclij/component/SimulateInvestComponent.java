@@ -40,11 +40,7 @@ import roart.common.model.MemoryDTO;
 import roart.common.model.MetaDTO;
 import roart.common.model.SimDataDTO;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialListMap;
-import roart.common.pipeline.data.SerialListPlain;
-import roart.common.pipeline.data.SerialListSimulateStock;
-import roart.common.pipeline.data.SerialListStockHistory;
+import roart.common.pipeline.data.*;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
 import roart.common.util.MathUtil;
@@ -315,7 +311,7 @@ public class SimulateInvestComponent extends ComponentML {
             setDataVolumeAndTrend(market, param, simConfig, data, investStart, investEnd, lastInvestEnd, evolving);
 
             long time0 = System.currentTimeMillis();
-            PipelineData resultMap = new PipelineData();
+            SerialPipeline resultMap = new SerialPipeline();
             for (int offset = 0; offset < end; offset++) {
                 Integer origAdviserId = (Integer) param.getInput().getValuemap().get(IclijConfigConstants.SIMULATEINVESTADVISER);
                 Mydate mydate = new Mydate();
@@ -762,7 +758,7 @@ public class SimulateInvestComponent extends ComponentML {
                         map.put(SimConstants.FILTER, JsonUtil.convert(filter));
                         //map.put("market", market.getConfig().getMarket());
                         // fix
-                        componentData.getResultMap().add(new PipelineData(action.getName(), "" + offset, null, new SerialListMap(map), true));
+                        resultMap.add(new PipelineData(action.getName(), "" + offset, null, new SerialListMap(map), true));
                     }
                     scores.add(score);
                     if (aOneRun.lastbuysell != null) {
@@ -772,7 +768,7 @@ public class SimulateInvestComponent extends ComponentML {
             }
             if (evolving) {
                 // TODO
-                //componentData.setResultMap(resultMap);
+                componentData.setResultMap(resultMap);
             }
             log.debug("time0 {}", System.currentTimeMillis() - time0);
         }

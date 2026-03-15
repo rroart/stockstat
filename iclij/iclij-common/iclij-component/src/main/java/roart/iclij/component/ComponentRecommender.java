@@ -144,7 +144,8 @@ public class ComponentRecommender extends ComponentNoML {
         //log.info("mapname" + resultMaps.getName() + " " + resultMaps.getAllKeys());
         //Map maps = (Map) resultMaps; //.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
         // rec with own result
-        Map resultMap0 = PipelineUtils.getSerialMapPlain(resultMaps, getPipeline(), PipelineConstants.RESULT, null, inmemory);
+        Map resultMap0 = PipelineUtils.getSerialMapPlain(resultMaps, PipelineConstants.RESULT, null, null, inmemory);
+        //Map resultMap0 = PipelineUtils.getSerialMapPlain(resultMaps, getPipeline(), PipelineConstants.RESULT, null, inmemory);
         Map<String, List<Double>> resultMap = (Map<String, List<Double>>) resultMap0.get(RecommendConstants.COMPLEX);
         if (resultMap == null) {
             return;

@@ -20,8 +20,6 @@ import roart.common.config.ConfigConstants;
 import roart.common.model.IncDecDTO;
 import roart.common.model.MetaDTO;
 import roart.common.model.util.MetaUtil;
-import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialTA;
 import roart.common.pipeline.util.PipelineUtils;
@@ -79,10 +77,10 @@ public abstract class IndicatorAdviser extends Adviser {
             if (resultMaps == null) { // || resultMaps.length == 0) {
                 int  jj = 0;
             }
-            Integer cat = PipelineUtils.getWantedcat(resultMaps, PipelineConstants.META, inmemory);
+            Integer cat = PipelineUtils.getWantedcat(resultMaps, inmemory);
             String catName = new MetaUtil().getCategory(meta, cat);
-            PipelineData objectMaps = null; //PipelineUtils.getPipeline(resultMaps, getPipeline(), inmemory);
-            if (objectMaps != null) {
+            SerialPipeline objectMaps = PipelineUtils.getPipelines(resultMaps, getPipeline(), inmemory);
+            if (!objectMaps.isEmpty()) {
                 //Map<String, Object> indicatorMaps = (Map<String, Object>) objectMaps.get(getPipeline());
                 //System.out.println("macd"+ macdMaps.keySet());
                 objectMap = PipelineUtils.getObjectMap(resultMaps, getPipeline(), inmemory);
@@ -129,10 +127,10 @@ public abstract class IndicatorAdviser extends Adviser {
             System.out.println("keys " + entry.getValue().keySet());
         }
         */
-        Integer cat = PipelineUtils.getWantedcat(maps, PipelineConstants.META, inmemory);
+        Integer cat = PipelineUtils.getWantedcat(maps, inmemory);
         String catName = new MetaUtil().getCategory(meta, cat);
-        PipelineData resultMaps = null; //PipelineUtils.getPipeline(maps, getPipeline(), inmemory);
-        if (resultMaps != null) {
+        SerialPipeline resultMaps = PipelineUtils.getPipelines(maps, getPipeline(), inmemory);
+        if (!resultMaps.isEmpty()) {
             //Map<String, Object> indicatorMaps = (Map<String, Object>) resultMaps.get(getPipeline());
             //System.out.println("macd"+ macdMaps.keySet());
             //objectMap = PipelineUtils.getObjectMap(resultMaps);

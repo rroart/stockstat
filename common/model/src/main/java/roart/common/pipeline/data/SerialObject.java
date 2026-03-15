@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @Type(value = SerialDouble.class, name = "SerialDouble"),
     @Type(value = SerialIncDec.class, name = "SerialIncDec"),
     @Type(value = SerialInteger.class, name = "SerialInteger"),
+    @Type(value = SerialPipelineKey.class, name = "SerialKey"),
     @Type(value = SerialKeyValue.class, name = "SerialKeyValue"),
     @Type(value = SerialList.class, name = "SerialList"),
     @Type(value = SerialListMap.class, name = "SerialListMap"),

@@ -38,9 +38,9 @@ public class SerialPipeline extends SerialObject implements Iterable<PipelineDat
         pipelineData = ArrayUtils.add(pipelineData, datum);
     }
 
-    public boolean keyExists(String[] key) {
+    public boolean keyExists(SerialPipelineKey key) {
         for (PipelineData data : pipelineData) {
-            if (Arrays.equals(data.getKey(), key)) {
+            if (data.getKey().equals(key)) {
                 return true;
             }
         }
