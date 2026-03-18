@@ -16,7 +16,6 @@ import roart.common.config.ConfigConstants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.model.TimingDTO;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.MapUtil;
@@ -554,22 +553,23 @@ public class ComponentData {
         SerialPipeline aMap = null;
         if (mapName != null) {
             Inmemory inmemory = getService().getIo().getInmemoryFactory().get(config);
-            aMap = PipelineUtils.getPipelines(maps, mapName, inmemory);
+            aMap = PipelineUtils.getPipelinesRest(maps, mapName, inmemory);
         }
+        // this is like mlrsi etc getPipeline()
         log.info("mapnamer" + mapName + " " + (aMap != null));
-        this.resultMap = maps;
+        this.resultMap = aMap;
         return aMap;  
     }
 
-    public void setCategory(SerialPipeline aMap, Inmemory inmemory) {
+    public void setCategory(SerialPipeline aMap, String mapName, Inmemory inmemory) {
         if (aMap == null) {
             log.error("Map null");
             int jj = 0;
             return;
         }
-        Integer aCategory = PipelineUtils.getCat(this.resultMaps, "aMap.getName()", inmemory);
+        Integer aCategory = PipelineUtils.getCat(this.resultMaps, mapName, inmemory);
         this.setCategory(aCategory);
-        String aCategoryTitle = PipelineUtils.getCatTitle(this.resultMaps, "aMap.getName()", inmemory);
+        String aCategoryTitle = PipelineUtils.getCatTitle(this.resultMaps, mapName, inmemory);
         this.setCategoryTitle(aCategoryTitle);        
         log.info("Category title {}", this.getCategoryTitle());
 }

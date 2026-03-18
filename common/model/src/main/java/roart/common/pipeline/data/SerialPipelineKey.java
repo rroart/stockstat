@@ -10,7 +10,21 @@ public class SerialPipelineKey {
 
     private String[] key = new String[5];
 
+    public SerialPipelineKey() {
+        // for jackson
+    }
+
     public SerialPipelineKey(String[] key) {
+        this.key = key;
+    }
+
+    // for jackson
+    public String[] getKey() {
+        return key;
+    }
+
+    // for jackson
+    public void setKey(String[] key) {
         this.key = key;
     }
 
