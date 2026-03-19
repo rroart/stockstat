@@ -1,5 +1,6 @@
 package roart.common.pipeline.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
@@ -28,14 +29,17 @@ public class SerialPipelineKey {
         this.key = key;
     }
 
+    @JsonIgnore
     public String getFirst() {
         return key[0];
     }
 
+    @JsonIgnore
     private String[] getRest() {
         return Arrays.copyOfRange(key, 1, key.length);
     }
 
+    @JsonIgnore
     private String[] getAlmostLast() {
         return Arrays.copyOfRange(key, 0, key.length - 1);
     }
