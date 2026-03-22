@@ -92,8 +92,14 @@ public class Sim {
 
     public void method(String param, String string, boolean b) {
         //param = getParam(param);
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
         log.info("Content " + param);
         SerialPipeline data = JsonUtil.convertnostrip(param, SerialPipeline.class, mapper);
+        if ("sim".equals(string)) {
+            data = PipelineUtils.getPipelinesRest(data, PipelineConstants.IMPROVESIMULATEINVEST, inmemory);
+        } else {
+            data = PipelineUtils.getPipelinesRest(data, PipelineConstants.IMPROVEAUTOSIMULATEINVEST, inmemory);
+        }
         // TODO
         if (data.isEmpty()) {
             log.info("Empty map");
@@ -137,7 +143,6 @@ public class Sim {
                 filter = getFilter(adviser);
             }
             {
-                Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
                 SimulateFilter[] listoverrides = null;
                 SerialString o = (SerialString) PipelineUtils.getPipelineValue(data, SimConstants.FILTER, null, null, inmemory);
                 // TODO if o null

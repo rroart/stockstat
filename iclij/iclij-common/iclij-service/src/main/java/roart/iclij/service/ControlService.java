@@ -295,7 +295,6 @@ public class ControlService {
         IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETDATES);
         list = PipelineUtils.getDatelist(result.getPipelineData(), PipelineConstants.DATELIST, inmemory);
         new PipelineThreadUtils(getIclijConfig(), inmemory, getIo().getCuratorClient()).cleanPipeline(id, uuid);
-        log.info("kv" + key + " " + list);
         MyCache.getInstance().put(key, list);
         return list;
     }
@@ -333,6 +332,7 @@ public class ControlService {
         log.info("Content key {}", key.hashCode());
         SerialPipeline list = (SerialPipeline) MyCache.getInstance().get(key);
         if (list != null) {
+            // todo pipe?
             return list;
         }
         IclijServiceParam param = new IclijServiceParam();
@@ -387,6 +387,7 @@ public class ControlService {
         log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
         log.info("Cache {}", MyCache.getInstance().toString());
         //PipelineUtils.fixPipeline(result.getPipelineData(), MarketStock.class, StockData.class);
+        log.info("Serial pipeline size {}", list.length());
         return list;
         //return result.getMaps();
         //ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONTENT);
@@ -526,7 +527,7 @@ public class ControlService {
         
         if (doSet) {
             Inmemory inmemory = io.getInmemoryFactory().get(conf);
-            PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE, null, inmemory);
+            SerialPipeline datum = PipelineUtils.getPipelines(result.getPipelineData(), PipelineConstants.EVOLVE, null, inmemory);
             updateMap.putAll(PipelineUtils.getSerialMapPlain(result.getPipelineData(), PipelineConstants.EVOLVE, PipelineConstants.UPDATE, null, null));
             scoreMap.putAll(PipelineUtils.getSerialMapPlain(result.getPipelineData(), PipelineConstants.EVOLVE, PipelineConstants.SCORE, null, null));
             // rec with own result

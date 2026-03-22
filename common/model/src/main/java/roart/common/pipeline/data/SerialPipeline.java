@@ -9,7 +9,14 @@ import java.util.List;
 public class SerialPipeline extends SerialObject implements Iterable<PipelineData> {
     private PipelineData[] pipelineData = new PipelineData[0];
 
-    /*
+    public PipelineData[] getPipelineData() {
+        return pipelineData;
+    }
+
+    public void setPipelineData(PipelineData[] pipelineData) {
+        this.pipelineData = pipelineData;
+    }
+/*
     public void add(List<PipelineData> data) {
         add(data.toArray(new PipelineData[0]));
     }
@@ -23,9 +30,19 @@ public class SerialPipeline extends SerialObject implements Iterable<PipelineDat
     // TODO check for dups?
 
     public void add(SerialPipeline data) {
+        add(data, false);
+    }
+
+    public void add(SerialPipeline data, boolean overwrite) {
         for (PipelineData datum : data) {
-            if (keyExists(datum.getKey())) {
-                log.error("Key exists []", ArrayUtils.toString(datum.getKey()));
+            if (!overwrite && keyExists(datum.getKey())) {
+                log.error("Key exists {}", ArrayUtils.toString(datum.getKey()));
+                try {
+                    String s = null;
+                    s.length();
+                } catch (Exception e) {
+                    log.error("Exception", e);
+                }
             }
         }
         pipelineData = ArrayUtils.addAll(pipelineData, data.pipelineData);
@@ -33,7 +50,13 @@ public class SerialPipeline extends SerialObject implements Iterable<PipelineDat
 
     public void add(PipelineData datum) {
         if (keyExists(datum.getKey())) {
-            log.error("Key exists []", ArrayUtils.toString(datum.getKey()));
+            log.error("Key exists {}", ArrayUtils.toString(datum.getKey()));
+            try {
+                String s = null;
+                s.length();
+            } catch (Exception e) {
+                log.error("Exception", e);
+            }
         }
         pipelineData = ArrayUtils.add(pipelineData, datum);
     }

@@ -160,7 +160,13 @@ public abstract class Component {
             //if (IclijConstants.EVOLVE.equals(param.getAction())) {
             //    action.saveTimingCommon(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, evolve);
            //}
-            interrupted = "interrupted".equals(PipelineUtils.getString(param.getResultMap(), EvolveConstants.ID, null, null, inmemory));
+            log.info("pi {}", getPipeline());
+            PipelineData data = PipelineUtils.getPipeline(param.getResultMap(), "evolve", "result", null, inmemory);
+            Map<String, SerialObject> map = PipelineUtils.getSerialListMapAsMap(param.getResultMap(), data.getKey(), inmemory);
+            log.info("map" + map);
+            interrupted = "interrupted".equals(((SerialString) map.get(EvolveConstants.ID)).getString());
+            log.info("Interrupted {} {}", interrupted, PipelineUtils.getString(param.getResultMap(), EvolveConstants.ID, null, null, inmemory));
+            log.info("Interrupted {} {}", interrupted, ((SerialString) map.get(EvolveConstants.ID)).getString());
         }
         valueMap.putAll(evolveMap);
         valueMap.putAll(aMap);

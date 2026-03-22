@@ -25,6 +25,7 @@ import roart.common.model.TimingDTO;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialListMap;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.common.queue.QueueElement;
 import roart.common.util.JsonUtil;
 import roart.iclij.component.Component;
@@ -105,9 +106,11 @@ public class ImproveProfitAction extends MarketAction {
             SerialPipeline results = componentData.getResultMap();
             // if not interrupted
             if (results != null) {
+                results = PipelineUtils.getPipelinesRest(results, component.getPipeline(), null);
                 // TODO TODO
-                componentData.getResultMap().add(new PipelineData(/*action.getName(),*/ EvolveConstants.DEFAULT, null, new SerialListMap(defaults), false));
-            	// TODO?
+                //componentData.getResultMap().add(new PipelineData(/*action.getName(),*/ EvolveConstants.DEFAULT, null, new SerialListMap(defaults), false));
+            	results.add(new PipelineData(EvolveConstants.DEFAULT, null, new SerialListMap(defaults), false));
+                // TODO?
                 Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 QueueElement element = new QueueElement();
                 log.info("Content {}", JsonUtil.convert(results));

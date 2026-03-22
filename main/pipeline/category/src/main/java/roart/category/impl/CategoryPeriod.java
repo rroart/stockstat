@@ -29,8 +29,8 @@ public class CategoryPeriod extends Category {
         super(conf, periodText, stocks, datareaders, inmemory);
         period = i;
         createResultMap(conf, stocks);
-        PipelineData datareader = PipelineUtils.getPipeline(datareaders, periodText, null, null, inmemory);
-        if (datareader == null) {
+        SerialPipeline datareader = PipelineUtils.getPipelines(datareaders, periodText, null, null, inmemory);
+        if (datareader.isEmpty()) {
             log.info("empty {}", i);
             createIndicatorMap(periodText);
             return;

@@ -9,11 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.inmemory.model.Inmemory;
+import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialListMap;
+import roart.common.pipeline.data.SerialObject;
+import roart.common.pipeline.util.PipelineUtils;
 import roart.iclij.model.action.MarketActionData;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.model.MemoryDTO;
-import roart.common.pipeline.data.SerialListMap;
 import roart.iclij.component.Component;
 import roart.iclij.component.factory.ComponentFactory;
 import roart.component.model.ComponentData;
@@ -76,7 +79,15 @@ public class FitnessIclijConfigMapCommon {
                 // TODO TODOE
                 //log.info("TODO" + componentData2.getResultMap().getSmap().getMap());
                 //resultMap.putAll(componentData2.getResultMap().getSmap().getMap());
-                // TODO resultMap.putAll(componentData2.getResultMap().getSmap().getMap());
+                //resultMap.putAll(componentData2.getResultMap().getSmap().getMap());
+                //SerialPipeline resultMap2 = new SerialPipeline();
+                PipelineUtils.printkeys(componentData2.getResultMap());
+                for (PipelineData data : componentData2.getResultMap()) {
+                    Map<String, SerialObject> amap = PipelineUtils.getSerialListMapAsMap(componentData2.getResultMap(), data.getKey(), inmemory);
+                    log.info("dataaa" + data + " " + data.getValue() + " " + amap);
+                    resultMap.putAll(amap);
+                }
+                PipelineUtils.printkeys(componentData2.getResultMap());
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

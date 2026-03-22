@@ -201,10 +201,17 @@ public class MachineLearningControlService {
         Map<String, Object> valueMap = new HashMap<>(conf.getConfigData().getConfigValueMap());
         valueMap.keySet().removeAll(new ConfigUtils().getMLComponentConfigList());
         String key = CacheConstants.MLCONTENT + conf.getConfigData().getMarket() + conf.getConfigData().getMlmarket() + conf.getConfigData().getDate() + valueMap;
+        String pipekey = CacheConstants.MLPIPELINE + conf.getConfigData().getMarket() + conf.getConfigData().getMlmarket() + conf.getConfigData().getDate() + valueMap;
         log.info("Content key {}", key.hashCode());
         log.debug("Content kez {}", key);
         IclijServiceResult list = (IclijServiceResult) MyCache.getInstance().get(key);
-        if (list != null) {
+        SerialPipeline pipe = (SerialPipeline) MyCache.getInstance().get(pipekey);
+        if (list != null && pipe != null) {
+            log.info("key found {}", list.getPipelineData().length());
+            list.setPipelineData(pipe);
+            log.info("key found {}", list.getPipelineData().length());
+            clonePipeline(list);
+            log.info("key found {}", list.getPipelineData().length());
             return list;
         }
 
@@ -221,6 +228,9 @@ public class MachineLearningControlService {
 
         /// TODO list2 = ImmutabilityUtil.immute(list2);
         MyCache.getInstance().put(key, result);
+        MyCache.getInstance().put(pipekey, result.getPipelineData());
+        log.info("key found {}", result.getPipelineData().length());
+        clonePipeline(result);
         {
         long[] mem0 = MemUtil.mem();
         log.info("MEM {}", MemUtil.print(mem0));
@@ -234,6 +244,13 @@ public class MachineLearningControlService {
         
         return result;
         
+    }
+
+    private static void clonePipeline(IclijServiceResult list) {
+        SerialPipeline pipe = list.getPipelineData();
+        String json = JsonUtil.convert(pipe);
+        SerialPipeline pipe2 = JsonUtil.convertnostrip(json, SerialPipeline.class);
+        list.setPipelineData(pipe2);
     }
 
     public void printmap(Object o, int i) {

@@ -443,7 +443,7 @@ public class IndicatorUtils {
             //PipelineData meta = PipelineUtils.getPipeline(datareaders, PipelineConstants.META, inmemory);
             //PipelineData datareader = PipelineUtils.getPipeline(datareaders, PipelineUtils.getMetaCat(datareaders, inmemory), inmemory);
             //PipelineData resultMap = PipelineUtils.getPipeline(datareaders, indicatorName, inmemory);
-            SerialMapTA objMap = PipelineUtils.getMapTA(datareaders, PipelineUtils.getMetaCat(datareaders, inmemory), inmemory);
+            SerialMapTA objMap = PipelineUtils.getMapTA(datareaders, indicatorName, inmemory);
             // TODO meta ohlc and indicator.getInputArrays
             // ohlc is false and getinputarrays is 3
             if (objMap.getMap() != null && !objMap.getMap().isEmpty()) { 
@@ -916,11 +916,15 @@ public class IndicatorUtils {
         return stockDataMap;
     }
    */
-    
+
     public SerialPipeline getMetadata(IclijConfig conf, StockData stockData) {
+        return getMetadata(conf, stockData, conf.getConfigData().getMarket());
+    }
+
+    public SerialPipeline getMetadata(IclijConfig conf, StockData stockData, String market) {
         SerialPipeline list = new SerialPipeline();
         //singlePipelineData.setName(PipelineConstants.META);
-        MetaDTO meta = stockData.marketdatamap.get(conf.getConfigData().getMarket()).meta;
+        MetaDTO meta = stockData.marketdatamap.get(market).meta;
         list.add(new PipelineData(PipelineConstants.META, PipelineConstants.META, null, new SerialMeta(meta.getMarketid(), meta.getPeriod(), meta.getPriority(), meta.getReset(), meta.isLhc()), false));
         list.add(new PipelineData(PipelineConstants.META, PipelineConstants.CATEGORY, null, new SerialString(stockData.catName), false));
         list.add(new PipelineData(PipelineConstants.META, PipelineConstants.WANTEDCAT, null, new SerialInteger(stockData.cat), false));

@@ -127,7 +127,7 @@ public class FitnessConfigMap extends Fitness {
             titletext = (String) componentData2.getUpdateMap().get(EvolveConstants.TITLETEXT);
             //Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getConfig().getInmemoryServer(), param.getConfig().getInmemoryHazelcast(), param.getConfig().getInmemoryRedis());
             // TODO check
-            new PipelineThreadUtils(param.getConfig(), inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
+            //new PipelineThreadUtils(param.getConfig(), inmemory, param.getService().getIo().getCuratorClient()).cleanPipeline(param.getService().id, param.getId());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

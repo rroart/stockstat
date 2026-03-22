@@ -599,6 +599,7 @@ public class SimulateInvestComponent extends ComponentML {
                     endSimTriplets.add(simTriplets.get(0));                    
                     autolost = true;
                 }
+                SerialListMap offsetMap = new SerialListMap();
                 for (Triple<SimulateInvestConfig, OneRun, Results> aPair : endSimTriplets) {
                     SimulateInvestConfig aSimConfig = aPair.getLeft();
                     OneRun aOneRun = aPair.getMiddle();
@@ -758,8 +759,9 @@ public class SimulateInvestComponent extends ComponentML {
                         map.put(SimConstants.FILTER, JsonUtil.convert(filter));
                         //map.put("market", market.getConfig().getMarket());
                         // fix
-                        resultMap.add(new PipelineData(action.getName(), "" + offset, null, new SerialListMap(map), true));
+                        offsetMap.put("" + offset, new SerialListMap(map));
                     }
+                    resultMap.add(new PipelineData(action.getName(), "offset", "" + offset, offsetMap, true));
                     scores.add(score);
                     if (aOneRun.lastbuysell != null) {
                         param.getUpdateMap().put(SimConstants.LASTBUYSELL, aOneRun.lastbuysell);
