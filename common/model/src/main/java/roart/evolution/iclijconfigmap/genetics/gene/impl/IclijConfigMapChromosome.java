@@ -33,18 +33,22 @@ public class IclijConfigMapChromosome extends AbstractChromosome {
         this.gene = gene;
     }
 
+    @JsonIgnore
     public Map<String, Object> getMap() {
         return gene.getMap();
     }
 
+    @JsonIgnore
     public void setMap(Map<String, Object> map) {
         gene.setMap(map);
     }
 
+    @JsonIgnore
     public List<String> getConfList() {
         return gene.getConfList();
     }
 
+    @JsonIgnore
     public void setConfList(List<String> confList) {
         gene.setConfList(confList);
     }
