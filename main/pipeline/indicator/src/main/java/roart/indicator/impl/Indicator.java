@@ -98,6 +98,10 @@ public abstract class Indicator extends AbstractIndicator {
             String cat = ms.getCategory();
             if (cat == null) {
                 cat = Constants.EXTRA;
+                SerialPipeline pipe = PipelineUtils.getPipelinesRest(datareaders, PipelineConstants.EXTRAREADER, inmemory);
+                pipe = PipelineUtils.getPipelinesRest(pipe, market, inmemory);
+                cat = PipelineUtils.getMetaCat(pipe, inmemory);
+                log.info("cat" + cat);
             }
             //SerialList mydatareaders = (SerialList) dataReaderMap.get(market);
             //Map<String, PipelineData> mypipelineMap = IndicatorUtils.getPipelineMap(mydatareaders);

@@ -232,7 +232,16 @@ public class ExtraReader extends Pipeline {
         //map.put(PipelineConstants.PAIRTRUNCLIST, pairTruncListMap);
         //map.setName(PipelineConstants.EXTRAREADER);
         list.add(new PipelineData(PipelineConstants.EXTRAREADER, PipelineConstants.DATELIST, null, new SerialListPlain(new ArrayList<>(commonDates)), true));
+        log.info("kkey" + dataReaderMap.keySet() + " " + stockDataMap.keySet()+ " " + conf.getConfigData().getMarket());
         for (Entry<String, Pipeline[]> entry : dataReaderMap.entrySet()) {
+            StockData stockData = stockDataMap.get(entry.getKey());
+            log.info("X"+stockData);
+            log.info("X"+stockData.marketdatamap);
+            log.info("X"+stockData.marketdatamap.keySet());
+            SerialPipeline singlePipelineData = new IndicatorUtils().getMetadata(conf, stockData, entry.getKey());
+            for (PipelineData pipe : singlePipelineData) {
+                list.add(new PipelineData(pipe.getKey().rotateRight(PipelineConstants.EXTRAREADER, entry.getKey()), pipe.getValue(), true));
+            }
             Pipeline[] pipeline = entry.getValue();
             for (int i = 0; i < pipeline.length; i++) {
                 SerialPipeline secondPipeline = pipeline[i].putData();
@@ -341,6 +350,10 @@ public class ExtraReader extends Pipeline {
             String cat = entry.getCategory();
             if (cat == null) {
                 cat = Constants.EXTRA;
+                SerialPipeline pipe = PipelineUtils.getPipelinesRest(datareaders, PipelineConstants.EXTRAREADER, inmemory);
+                pipe = PipelineUtils.getPipelinesRest(pipe, market, inmemory);
+                cat = PipelineUtils.getMetaCat(pipe, inmemory);
+                log.info("cat" + cat);
             }
             /*
             PipelineData datareader = pipelineMap.get(cat);
@@ -353,7 +366,7 @@ public class ExtraReader extends Pipeline {
             List<String> dateList = PipelineUtils.getDatelist(datareaders, PipelineConstants.EXTRAREADER, inmemory);
             int dateIndex = dateList.indexOf(date);
             int prevDateIndex = dateList.indexOf(prevDate);
-            Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, PipelineConstants.EXTRAREADER, PipelineConstants.FILLLIST, inmemory));
+            Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, PipelineConstants.EXTRAREADER, market, cat, PipelineConstants.FILLLIST, inmemory));
             Object[] arr = null;
             Double[][] fillList = fillListMap.get(entry.getId());
             Double value = fillList[0][dateIndex];
@@ -396,18 +409,23 @@ public class ExtraReader extends Pipeline {
             String cat = entry.getCategory();
             if (cat == null) {
                 cat = Constants.EXTRA;
+                SerialPipeline pipe = PipelineUtils.getPipelinesRest(datareaders, PipelineConstants.EXTRAREADER, inmemory);
+                pipe = PipelineUtils.getPipelinesRest(pipe, market, inmemory);
+                cat = PipelineUtils.getMetaCat(pipe, inmemory);
+                log.info("cat" + cat);
             }
             Map<String, PipelineData> pipelineMap = null ; // TODO
-            PipelineData datareader = pipelineMap.get(cat);
-            if (datareader == null) {
-                datareader = pipelineMap.get(Constants.PRICE);
+            //PipelineData datareader = pipelineMap.get(cat);
+            SerialPipeline datareader = PipelineUtils.getPipelines(datareaders, PipelineConstants.EXTRAREADER, market, cat, inmemory);
+            if (datareader.isEmpty()) {
+                //datareader = pipelineMap.get(Constants.PRICE);
                 log.debug("TODO temp workaround");
             }
             //String name = null; // TODO
             List<String> dateList = PipelineUtils.getDatelist(datareaders, PipelineConstants.EXTRAREADER, inmemory); // TODO
             int dateIndex = dateList.size() - dateList.indexOf(commonDate);
             int prevDateIndex = dateList.indexOf(prevDate);
-            Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, PipelineConstants.EXTRAREADER, PipelineConstants.FILLLIST, inmemory));
+            Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, PipelineConstants.EXTRAREADER, market, cat, PipelineConstants.FILLLIST, inmemory));
             Object[] arr = null;
             Double[][] fillList = fillListMap.get(entry.getId());
             dateIndex = fillList[0].length - dateIndex;

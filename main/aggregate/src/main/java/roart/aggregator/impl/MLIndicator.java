@@ -266,8 +266,8 @@ public class MLIndicator extends Aggregator {
         */
         log.info("KEY" + this.key + " " + PipelineUtils.getPipelineMapFirstKeys(datareaders) + " " + title + " ");
         List<String> dateList = PipelineUtils.getDatelist(datareaders, key, inmemory);
-	List<String> dateList2 = new ArrayList<>(dateList); // StockDao.getDateList(conf.getConfigData().getMarket(), marketdatamap);
-        if (PipelineUtils.getPipelineValue(extrareader, PipelineConstants.MARKETSTOCKS, null, inmemory) != null) {
+	    List<String> dateList2 = new ArrayList<>(dateList); // StockDao.getDateList(conf.getConfigData().getMarket(), marketdatamap);
+        if (PipelineUtils.getPipelineValue(extrareader, PipelineConstants.EXTRAREADER, PipelineConstants.MARKETSTOCKS, null, inmemory) != null) {
             dateList = PipelineUtils.getDatelist(datareaders, PipelineConstants.EXTRAREADER, inmemory); // key
             Collections.sort(dateList);
         }
@@ -670,9 +670,9 @@ public class MLIndicator extends Aggregator {
             Object[] arrayResult = new Object[0];
             for (String indicator : indicators) {
                 String indicatorName = indicator;
-                SerialObject indicatorResult = PipelineUtils.getPipelineValue(datareaders, indicatorName, PipelineConstants.LIST, inmemory);
-                if (indicatorResult != null) {
-                    Map<String, Double[][]> aListMap = PipelineUtils.sconvertMapDD(indicatorResult);
+                SerialPipeline indicatorResult = PipelineUtils.getPipelines(datareaders, indicatorName, inmemory);
+                if (!indicatorResult.isEmpty()) {
+                    Map<String, Double[][]> aListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, this.key, PipelineConstants.LIST, inmemory));
                     Double[][] aResult = aListMap.get(id);
                     arrayResult = ArrayUtils.addAll(arrayResult, aResult[0]);
                 }

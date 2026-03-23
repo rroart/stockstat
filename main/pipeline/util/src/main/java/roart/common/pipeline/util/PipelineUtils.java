@@ -165,6 +165,12 @@ public class PipelineUtils {
                 log.error("No key {}", key.toString());
             } else {
                 log.error("Duplicate key {}", key.toString());
+                try {
+                    String s = null;
+                    s.length();
+                } catch (Exception e) {
+                    log.error("Exception", e);
+                }
             }
         }
         return null;
@@ -227,6 +233,12 @@ public class PipelineUtils {
         } else {
             log.error("No key {}", key.toString());
             log.error("Keys {}", getPipelineMapKeys(pipelines));
+            try {
+                String s = null;
+                s.length();
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
             return null;
         }
     }
@@ -244,6 +256,13 @@ public class PipelineUtils {
         } else {
             if (list.isEmpty()) {
                 log.error("No key {}", key.toString());
+                log.error("Keys {}", getPipelineMapKeys(pipelines));
+                try {
+                    String s = null;
+                    s.length();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
             } else {
                 log.error("Duplicate key {}", key.toString());
             }
@@ -770,8 +789,8 @@ public class PipelineUtils {
 
     public static Map getMarketObjectMap(SerialPipeline data, String name, Inmemory inmemory) {
         // TODO if this is serialized
-        SerialObject object = getPipelineValue(data, name, PipelineConstants.OBJECT, inmemory);
-        SerialMapTA map = (SerialMapTA) object;
+        SerialObject object = getPipelineValue(data, name, PipelineConstants.MARKETOBJECT, inmemory);
+        SerialMap map = (SerialMap) object;
         if (map != null) {
             return map.getMap();
         }
@@ -831,7 +850,7 @@ public class PipelineUtils {
 
     public static List<Object> getList(SerialPipeline data, String name, String key, String secondKey, Inmemory inmemory) {
         SerialObject object = getPipelineValue(data, name, key, secondKey, inmemory);
-        SerialListPlain map = (SerialListPlain) object;
+        SerialList map = (SerialList) object;
         if (map != null) {
             return map.getList();
         }
@@ -877,6 +896,17 @@ public class PipelineUtils {
         return map;
     }
 
+    public static Map<String, SerialObject> getSerialListMapAsMap(SerialPipeline data, SerialPipelineKey key, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, key, inmemory);
+        SerialListMap list = (SerialListMap) object;
+        Map<String, SerialObject> map = new HashMap<>();
+        for (SerialKeyValue entry : list.getMap()) {
+            SerialObject avalue = entry.getValue();
+            map.put(entry.getKey(), avalue);
+        }
+        return map;
+    }
+
     public static Map<String, Object> getMapPlain(SerialPipeline data, String name, String key, String secondKey, Inmemory inmemory) {
         return getSerialMapPlain(data, name, key, secondKey, inmemory);
     }
@@ -884,6 +914,24 @@ public class PipelineUtils {
     public static Map<String, Object> getSerialMapPlain(SerialPipeline data, String name, String key, String secondKey, Inmemory inmemory) {
         SerialObject object = getPipelineValue(data, name, key, secondKey, inmemory);
         SerialMapPlain map = (SerialMapPlain) object;
+        if (map != null) {
+            return map.getMap();
+        }
+        return null;
+    }
+
+    public static Map<String, Object> getSerialMapPlain(SerialPipeline data, SerialPipelineKey key, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, key, inmemory);
+        SerialMapPlain map = (SerialMapPlain) object;
+        if (map != null) {
+            return map.getMap();
+        }
+        return null;
+    }
+
+    public static List<SerialKeyValue> getSerialListMap(SerialPipeline data, String name, String key, String secondKey, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, name, key, secondKey, inmemory);
+        SerialListMap map = (SerialListMap) object;
         if (map != null) {
             return map.getMap();
         }

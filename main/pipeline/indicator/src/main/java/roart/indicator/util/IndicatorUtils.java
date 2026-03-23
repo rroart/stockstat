@@ -602,6 +602,10 @@ public class IndicatorUtils {
                     String cat = marketStock.getCategory();
                     if (cat == null) {
                         cat = Constants.EXTRA;
+                        SerialPipeline pipe = PipelineUtils.getPipelinesRest(datareaders, PipelineConstants.EXTRAREADER, inmemory);
+                        pipe = PipelineUtils.getPipelinesRest(pipe, market, inmemory);
+                        cat = PipelineUtils.getMetaCat(pipe, inmemory);
+                        log.info("cat" + cat);
                     }
 
                     PipelineData pipeline = null; // mypipelineMap.get(cat);
@@ -671,7 +675,11 @@ public class IndicatorUtils {
             String cat = pairEntry.getCategory();
             if (market.equals(conf.getConfigData().getMarket())) {
                  if (cat == null) {
-                    cat = Constants.EXTRA;
+                     cat = Constants.EXTRA;
+                     SerialPipeline pipe = PipelineUtils.getPipelinesRest(datareaders, PipelineConstants.EXTRAREADER, inmemory);
+                     pipe = PipelineUtils.getPipelinesRest(pipe, market, inmemory);
+                     cat = PipelineUtils.getMetaCat(pipe, inmemory);
+                     log.info("cat" + cat);
                 }
                 if (cat == null) {
                     int jj = 0;
