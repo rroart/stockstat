@@ -105,7 +105,7 @@ public abstract class AbstractCategory {
         Map<String, SerialPipeline> map = new HashMap<>();
         for (AbstractIndicator indicator : indicators) {
             if (indicator.isEnabled()) {
-                SerialPipeline tmpMap = indicator.putData();
+                SerialPipeline tmpMap = indicator.getData();
                 if (tmpMap != null) {
                     log.debug("Adding indicator {}", indicator.indicatorName());
                     log.debug("exist {}", map.containsKey(indicator.indicatorName()));

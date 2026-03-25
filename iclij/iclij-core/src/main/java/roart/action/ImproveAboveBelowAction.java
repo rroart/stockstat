@@ -169,7 +169,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                 // todo ok?
                 param.getAndSetCategoryValueMap(false);
                 Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
-                PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, null, null, inmemory);
+                //PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, null, null, inmemory);
                 Integer cat = PipelineUtils.getWantedcat(param.getResultMaps(), inmemory);
                 String catName = PipelineUtils.getMetaCat(param.getResultMaps(), inmemory);
                 log.info("cats {} {}", cat, catName);

@@ -408,8 +408,8 @@ public class IndicatorUtils {
             }
             String ind = indicators.get(idx++);
             SerialTA objsIndicator = objectMap.get(id);
-            PipelineData pipeline = PipelineUtils.getPipeline(datareaders, ind, null, inmemory);
-            result = appendDayResult(conf, j, result  , pipeline.getKey().getFirst(), objsIndicator);
+            //PipelineData pipeline = PipelineUtils.getPipeline(datareaders, ind, null, inmemory);
+            result = appendDayResult(conf, j, result  , ind, objsIndicator);
         }
         return result;
     }
@@ -605,23 +605,24 @@ public class IndicatorUtils {
                         SerialPipeline pipe = PipelineUtils.getPipelinesRest(datareaders, PipelineConstants.EXTRAREADER, inmemory);
                         pipe = PipelineUtils.getPipelinesRest(pipe, market, inmemory);
                         cat = PipelineUtils.getMetaCat(pipe, inmemory);
-                        log.info("cat" + cat);
+                        //log.info("cat" + cat);
                     }
 
-                    PipelineData pipeline = null; // mypipelineMap.get(cat);
+                    //PipelineData pipeline = null; // mypipelineMap.get(cat);
+                    SerialPipeline pipeline  = PipelineUtils.getPipelines(datareaders, PipelineConstants.EXTRAREADER, market, cat, inmemory);
 
-                    if (pipeline == null) {
+                    if (pipeline.isEmpty()) {
                         //pipeline = mypipelineMap.get(Constants.PRICE);
                         log.debug("TODO temp workaround");
                     }
 
-                    List<String> dateList2 = PipelineUtils.getDatelist(null /*mydatareaders*/, "TODO", inmemory);
+                    List<String> dateList2 = PipelineUtils.getDatelist(datareaders, PipelineConstants.EXTRAREADER, market, cat, inmemory);
                     j = dateList2.size() - 1 - dateList2.indexOf(commonDate);
                     SerialMap<String, SerialTA> objectMap = marketEntry.getValue();
                     for (Entry<String, SerialTA> entry2 : objectMap.entrySet()) {
                         SerialTA objsIndicator = entry2.getValue();
-                        PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.EXTRAREADER, market, indicator.indicatorName(), inmemory);
-                        result = appendDayResult(conf, j, result, pipelineData.getKey().getFirst(), objsIndicator);
+                        //PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.EXTRAREADER, market, indicator.indicatorName(), inmemory);
+                        result = appendDayResult(conf, j, result, indicator.indicatorName() /*pipelineData.getKey().getFirst()*/, objsIndicator);
                     }
                 }
             }
@@ -932,6 +933,7 @@ public class IndicatorUtils {
     public SerialPipeline getMetadata(IclijConfig conf, StockData stockData, String market) {
         SerialPipeline list = new SerialPipeline();
         //singlePipelineData.setName(PipelineConstants.META);
+        log.info("mark" + market + " " + stockData.marketdatamap.keySet());
         MetaDTO meta = stockData.marketdatamap.get(market).meta;
         list.add(new PipelineData(PipelineConstants.META, PipelineConstants.META, null, new SerialMeta(meta.getMarketid(), meta.getPeriod(), meta.getPriority(), meta.getReset(), meta.isLhc()), false));
         list.add(new PipelineData(PipelineConstants.META, PipelineConstants.CATEGORY, null, new SerialString(stockData.catName), false));

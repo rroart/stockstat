@@ -113,7 +113,7 @@ public class ComponentRecommender extends ComponentNoML {
         SerialPipeline resultMap = param.getResultMap();
         if (resultMap != null) {
             // rec with own result
-        Map<String, Object> resultMap2 = PipelineUtils.getSerialMapPlain(resultMap, PipelineConstants.RESULT, null, null, null);
+        Map<String, Object> resultMap2 = PipelineUtils.getSerialMapPlain(resultMap, PipelineConstants.RESULT, null, null, inmemory);
         Map<String, List<Double>> recommendBuySell = (Map<String, List<Double>>) resultMap2.get(RecommendConstants.COMPLEX);
         param.setRecommendBuySell(recommendBuySell);
         }

@@ -51,12 +51,13 @@ public class RecommenderRSI extends Aggregator {
             rsiLists[i] = new ArrayList<>();
         }
         SerialPipeline rsi0 = cat.putData().get(PipelineConstants.INDICATORRSI);
-        SerialPipeline rsi = PipelineUtils.getPipelines(rsi0, PipelineConstants.RESULT, null, null, null);
-        if (rsi == null) {
+        SerialPipeline rsi = PipelineUtils.getPipelines(rsi0, PipelineConstants.INDICATORRSI, PipelineConstants.RESULT, null, null, null);
+        if (rsi.isEmpty()) {
             return;
         }
         // TODO SerialMapD
-        rsiMap = null; // TODO (SerialMapD) rsi;
+        rsiMap = (SerialMapD) PipelineUtils.getPipelineValue(rsi0, PipelineConstants.INDICATORRSI, PipelineConstants.RESULT, null, null, inmemory);
+;
         List<String> buyList = null;///new RSIRecommend().getBuyList();
         List<String> sellList = null;//new RSIRecommend().getSellList();
         for (String id : listMap.keySet()) {

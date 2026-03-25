@@ -144,13 +144,13 @@ public class Sim {
             }
             {
                 SimulateFilter[] listoverrides = null;
-                SerialString o = (SerialString) PipelineUtils.getPipelineValue(data, SimConstants.FILTER, null, null, inmemory);
+                SerialPipeline pipe = PipelineUtils.getPipelines(data, SimConstants.FILTER, null, null, inmemory);
                 // TODO if o null
                 // TODO if o null
                 //System.out.println("ooo" + o.getClass().getCanonicalName());
                 SimulateFilter[] listoverrides2 = null;
-                if (o != null) {
-                    listoverrides2 = JsonUtil.convert(o.getString(), SimulateFilter[].class);
+                if (!pipe.isEmpty()) {
+                    listoverrides2 = JsonUtil.convert(PipelineUtils.getString(data, SimConstants.FILTER, null, null, inmemory), SimulateFilter[].class);
                 }
                 SimulateFilter[] listoverride = listoverrides2;
                 if (listoverride != null) {
@@ -403,12 +403,14 @@ public class Sim {
 
     public void method3(String param, String string, boolean b) {
         //param = getParam(param);
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
         SerialPipeline data = JsonUtil.convertnostrip(param, SerialPipeline.class, mapper);
         // TODO
         if (data.isEmpty()) {
             log.info("Empty map");
             return;
         }
+        data = PipelineUtils.getPipelinesRest(data, "name", inmemory);
         String id = PipelineUtils.getString(data, EvolveConstants.ID, null, null, null);
         List<SerialKeyValue> me = PipelineUtils.getListMap(data, PipelineConstants.RESULT, null, null, null);
         SerialListMap resultMap = new SerialListMap(me);
@@ -433,7 +435,6 @@ public class Sim {
             filter.setStable(0.0);
             filter.setCorrelation(0.5);
             {
-                Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
                 SimulateFilter[] listoverrides = null;
                 SerialString o = (SerialString) PipelineUtils.getPipelineValue(data, SimConstants.FILTER, null, null, inmemory);
                 // TODO if o null
