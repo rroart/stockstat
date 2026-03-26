@@ -163,14 +163,15 @@ public class PipelineUtils {
         } else {
             if (list.isEmpty()) {
                 log.error("No key {}", key.toString());
+                log.error("Keys {}", getPipelineMapKeys(pipelines));
             } else {
                 log.error("Duplicate key {}", key.toString());
-                try {
-                    String s = null;
-                    s.length();
-                } catch (Exception e) {
-                    log.error("Exception", e);
-                }
+            }
+            try {
+                String s = null;
+                s.length();
+            } catch (Exception e) {
+                log.error("Exception", e);
             }
         }
         return null;
@@ -225,7 +226,7 @@ public class PipelineUtils {
     }
 
     public static SerialObject getPipelineValue(SerialPipeline pipelines, SerialPipelineKey key, Inmemory inmemory) {
-        log.info("Pipe len" + pipelines.length());
+        //log.info("Pipe len" + pipelines.length());
         PipelineData pipeline = getPipeline(pipelines, key);
         if (pipeline != null) {
             getPipelineValue(pipeline, inmemory);
@@ -257,14 +258,14 @@ public class PipelineUtils {
             if (list.isEmpty()) {
                 log.error("No key {}", key.toString());
                 log.error("Keys {}", getPipelineMapKeys(pipelines));
-                try {
-                    String s = null;
-                    s.length();
-                } catch (Exception e) {
-                    log.error(Constants.EXCEPTION, e);
-                }
             } else {
                 log.error("Duplicate key {}", key.toString());
+            }
+            try {
+                String s = null;
+                s.length();
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
             }
         }
         return null;
@@ -275,13 +276,13 @@ public class PipelineUtils {
             InmemoryMessage msg = JsonUtil.convertnostrip(datareader.getMessage(), InmemoryMessage.class);
             String str = inmemory.read(msg);
             if (str != null) {
-                log.info("Pipeline reading {}", str.length());
+                //log.info("Pipeline reading {}", str.length());
             } else {
                 log.error("No pipeline reading {}", msg.getId());
             }
             datareader.setValue(JsonUtil.convertnostrip(str, SerialObject.class, mapper));
             datareader.setLoaded(true);
-            log.info("Pipeline read {} {} {}", datareader.getId(), datareader, str.length());
+            //log.info("Pipeline read {} {} {}", datareader.getId(), datareader, str.length());
         }
     }
 
@@ -679,7 +680,16 @@ public class PipelineUtils {
         }
         return null;
     }
-    
+
+    public static List<String> getDatelist(SerialPipeline data, String key1, String key2, String key3, Inmemory inmemory) {
+        SerialObject object = getPipelineValue(data, key1, key2, key3, PipelineConstants.DATELIST, inmemory);
+        SerialListPlain list = (SerialListPlain) object;
+        if (list != null) {
+            return list.getList();
+        }
+        return null;
+    }
+
     public static Map getNamemap(SerialPipeline data, String name, Inmemory inmemory) {
         SerialObject object = getPipelineValue(data, name, PipelineConstants.NAME, inmemory);
         SerialMapPlain list = (SerialMapPlain) object;

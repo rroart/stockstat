@@ -66,7 +66,11 @@ public abstract class Recommend extends AggregatorIndicator {
                     log.error("Indicator null for {} {}", recommend.indicator(), complexity);
                     continue;
                 }
-                SerialPipeline resultMap = indicator.putData();
+                //log.info("putdata {}", indicator.getName());
+                SerialPipeline resultMap = indicator.getData();
+                if (resultMap.isEmpty()) {
+                    log.error("no key empty");
+                }
                 Map<String, SerialTA> objMap = PipelineUtils.getObjectMap(resultMap, indicator.indicatorName(), null);
                 if (objMap != null) { 
                     if (ohlc == false && indicator.getInputArrays() == 3) {

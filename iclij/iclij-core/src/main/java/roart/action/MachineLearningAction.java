@@ -113,6 +113,7 @@ public class MachineLearningAction extends MarketAction {
         return param.getInput().getEnddate();
     }
 
+    // almost @Deprecated
     @Override
     public void setValMap(ComponentData param) {
         param.getAndSetCategoryValueMap(true);

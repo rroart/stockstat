@@ -224,7 +224,8 @@ public class FindProfitAction extends MarketAction {
     public LocalDate getPrevDate(ComponentData param, Market market) {
         return param.getInput().getEnddate();
     }
-    
+
+    // almost @Deprecated
     @Override
     public void setValMap(ComponentData param) {
         param.getAndSetCategoryValueMap(false);

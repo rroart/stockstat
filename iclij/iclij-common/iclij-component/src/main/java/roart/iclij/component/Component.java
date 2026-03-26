@@ -161,7 +161,8 @@ public abstract class Component {
             //    action.saveTimingCommon(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, evolve);
            //}
             log.info("pi {}", getPipeline());
-            PipelineData data = PipelineUtils.getPipeline(param.getResultMap(), "evolve", "result", null, inmemory);
+            PipelineData data = PipelineUtils.getPipeline(param.getResultMap(), PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, inmemory);
+            log.info("kkey {}", data.getKey());
             Map<String, SerialObject> map = PipelineUtils.getSerialListMapAsMap(param.getResultMap(), data.getKey(), inmemory);
             log.info("map" + map);
             interrupted = "interrupted".equals(((SerialString) map.get(EvolveConstants.ID)).getString());

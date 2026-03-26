@@ -167,7 +167,9 @@ public class ImproveAboveBelowAction extends MarketAction {
                 // todo
                 // done clean
                 // todo ok?
-                param.getAndSetCategoryValueMap(false);
+                // almost @Deprecated
+                //param. getAndSetCategoryValueMap(false);
+                param.getResultMap(null, aMap, false, param.isKeepPipeline()); // TODO cache
                 Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 //PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, null, null, inmemory);
                 Integer cat = PipelineUtils.getWantedcat(param.getResultMaps(), inmemory);

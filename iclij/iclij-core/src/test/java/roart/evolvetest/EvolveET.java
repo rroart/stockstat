@@ -41,6 +41,7 @@ import roart.common.model.MyDataSource;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.util.JsonUtil;
 import roart.common.webflux.WebFluxUtil;
 import roart.constants.IclijConstants;
@@ -356,7 +357,7 @@ public class EvolveET {
 
         log.info("grr" + stockData.marketdatamap.keySet() + " " + stockData.periodText + " " + extraStockDataMap.keySet());
         Pipeline[] datareaders = iu.getDataReaders(conf, stockData.periodText,
-                stockData.marketdatamap, stockData, extraStockDataMap, extraReader);
+                stockData.marketdatamap, stockData, extraStockDataMap, extraReader, inmemory);
 
         /*
         pipelinedata = iu.createPipeline(conf, disableList, pipelinedata, categories, aggregates, stockData,
@@ -365,7 +366,7 @@ public class EvolveET {
         
         // pipelinedata from datareaders and new meta
 
-        PipelineData[] pipelinedata = new PipelineData[0];
+        SerialPipeline pipelinedata = new SerialPipeline();
         pipelinedata = iu.createDatareaderPipelineData(conf, pipelinedata, stockData, datareaders);
 
         // for categories and adding to pipelinedata

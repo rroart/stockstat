@@ -26,10 +26,7 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
 import roart.action.ActionThread;
-import roart.action.LeaderRunner;
 import roart.aggregator.impl.MLMulti;
-import roart.aggregator.impl.MLIndicator;
-import roart.aggregator.util.AggregatorUtils;
 import roart.category.AbstractCategory;
 import roart.category.util.CategoryUtil;
 import roart.common.cache.MyCache;
@@ -43,12 +40,12 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.model.ActionComponentDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
 import roart.constants.IclijConstants;
 import roart.constants.SimConstants;
-import roart.db.dao.CoreDataSource;
 import roart.db.dao.DbDao;
 import roart.db.dao.IclijDbDao;
 import roart.etl.db.Extract;
@@ -61,16 +58,12 @@ import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.config.bean.ConfigI;
 import roart.iclij.model.Parameters;
 import roart.iclij.service.ControlService;
-import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 import roart.indicator.util.IndicatorUtils;
 import roart.model.data.StockData;
-import roart.category.AbstractCategory;
 import roart.model.io.IO;
 import roart.pipeline.Pipeline;
-import roart.pipeline.common.aggregate.Aggregator;
 import roart.pipeline.impl.ExtraReader;
-import roart.queue.PipelineThread;
 import roart.testdata.TestConstants;
 import roart.common.model.IncDecDTO;
 import roart.common.model.MyDataSource;
@@ -602,7 +595,7 @@ public class InmemoryPipelineIT {
 
         log.info("grr" + stockData.marketdatamap.keySet() + " " + stockData.periodText + " " + extraStockDataMap.keySet());
         Pipeline[] datareaders = iu.getDataReaders(conf, stockData.periodText,
-                stockData.marketdatamap, stockData, extraStockDataMap, extraReader);
+                stockData.marketdatamap, stockData, extraStockDataMap, extraReader, inmemory);
 
         /*
         pipelinedata = iu.createPipeline(conf, disableList, pipelinedata, categories, aggregates, stockData,
@@ -611,7 +604,7 @@ public class InmemoryPipelineIT {
         
         // pipelinedata from datareaders and new meta
 
-        PipelineData[] pipelinedata = new PipelineData[0];
+        SerialPipeline pipelinedata = new SerialPipeline();
         pipelinedata = iu.createDatareaderPipelineData(conf, pipelinedata, stockData, datareaders);
 
         // for categories and adding to pipelinedata

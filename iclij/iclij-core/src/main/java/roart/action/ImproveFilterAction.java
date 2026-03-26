@@ -108,7 +108,10 @@ public class ImproveFilterAction extends MarketAction {
             // todo
             // done clean
             // todo ok?
-            param. getAndSetCategoryValueMap(false);
+            // almost @Deprecated
+            //param.getAndSetCategoryValueMap(false);
+            Map<String, Object> aMap2 = new HashMap<>();
+            param.getResultMap(null, aMap2, false, param.isKeepPipeline()); // TODO cache
             //PipelineData pipelineDatum = PipelineUtils.getPipeline(param.getResultMaps(), PipelineConstants.META, inmemory);
             Integer cat = PipelineUtils.getWantedcat(param.getResultMaps(), inmemory);
             String catName = PipelineUtils.getMetaCat(param.getResultMaps(), inmemory);
