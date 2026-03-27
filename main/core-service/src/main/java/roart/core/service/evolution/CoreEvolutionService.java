@@ -71,7 +71,7 @@ public class CoreEvolutionService {
         IclijServiceResult result = new IclijServiceResult();
         Map<String, Object> updateMap = new HashMap<>();
         Map<String, Object> scoreMap = new HashMap<>();
-        Map<String, Object> resultMap = new HashMap<>();
+        SerialPipeline resultMap = new SerialPipeline();
         log.info("mydate {}", conf.getConfigData().getDate());
         log.info("mydate {}", conf.getDays());
         EvolutionConfig evolutionConfig = JsonUtil.convertnostrip(conf.getEvolveIndicatorrecommenderEvolutionConfig(), EvolutionConfig.class);
@@ -155,13 +155,13 @@ public class CoreEvolutionService {
     }
     
     private SerialPipeline getEvolveData(Map<String, Object> updateMap, Map<String, Object> scoreMap,
-            Map<String, Object> resultMap) {
+            SerialPipeline resultMap) {
         SerialPipeline list = new SerialPipeline();
         //maps.setName(PipelineConstants.EVOLVE);
         list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.UPDATE, null, new SerialMapPlain(updateMap), false));
         list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.SCORE, null, new SerialMapPlain(scoreMap), false));
         // rec with own result
-        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, new SerialListMap(resultMap), false));
+        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, resultMap, false));
         return list;
     }
 
@@ -177,7 +177,7 @@ public class CoreEvolutionService {
 
     private void findRecommendSettings(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
             Map<String, List<Recommend>> usedRecommenders, Map<String, List<String>[]> recommendKeyMap,
-            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, int days, SerialPipeline datareaders, Map<String, Object> scoreMap, Map<String, Object> resultMap, Inmemory inmemory) throws Exception {
+            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, int days, SerialPipeline datareaders, Map<String, Object> scoreMap, SerialPipeline resultMap, Inmemory inmemory) throws Exception {
         String thresholdString = conf.getTestIndicatorRecommenderComplexThreshold();
         Double[] thresholds = getThresholds(conf, thresholdString);
         double threshold = thresholds[0];
@@ -205,9 +205,11 @@ public class CoreEvolutionService {
                 try {
                 	fittestIndividual = evolution.getFittest(evolutionConfig, indicatorEval0, individuals, null, null);
                 } catch (InterruptedException e) {
-                    resultMap.put(EvolveConstants.ID, "interrupted");
+                    resultMap.add(new PipelineData(PipelineConstants.EVOLVE, null, EvolveConstants.ID, new SerialString("interrupted"), false));
+                    //resultMap.put(EvolveConstants.ID, "interrupted");
                     return;
                 }
+                //resultMap.put(EvolveConstants.ID, "dummy");
                 String text = evolution.printtext(conf.getConfigData().getMarket() + " " + "recommend" + " " + i, "recommend", individuals);
                 String node = conf.getEvolveSaveLocation();
                 String mypath = conf.getEvolveSavePath();

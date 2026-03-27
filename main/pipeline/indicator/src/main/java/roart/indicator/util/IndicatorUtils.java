@@ -935,7 +935,10 @@ public class IndicatorUtils {
         //singlePipelineData.setName(PipelineConstants.META);
         log.info("mark" + market + " " + stockData.marketdatamap.keySet());
         MetaDTO meta = stockData.marketdatamap.get(market).meta;
-        list.add(new PipelineData(PipelineConstants.META, PipelineConstants.META, null, new SerialMeta(meta.getMarketid(), meta.getPeriod(), meta.getPriority(), meta.getReset(), meta.isLhc()), false));
+        // todo null?
+        if (meta != null) {
+            list.add(new PipelineData(PipelineConstants.META, PipelineConstants.META, null, new SerialMeta(meta.getMarketid(), meta.getPeriod(), meta.getPriority(), meta.getReset(), meta.isLhc()), false));
+        }
         list.add(new PipelineData(PipelineConstants.META, PipelineConstants.CATEGORY, null, new SerialString(stockData.catName), false));
         list.add(new PipelineData(PipelineConstants.META, PipelineConstants.WANTEDCAT, null, new SerialInteger(stockData.cat), false));
         list.add(new PipelineData(PipelineConstants.META, PipelineConstants.NAME, null, new SerialMapPlain(stockData.idNameMap), false));

@@ -74,7 +74,7 @@ public class MachineLearningEvolutionService {
     public IclijServiceResult getEvolveML(List<String> disableList, String ml, IclijServiceParam origparam) throws StreamReadException, DatabindException, IOException {
         Map<String, Object> updateMap = new HashMap<>();
         Map<String, Object> scoreMap = new HashMap<>();
-        Map<String, Object> resultMap = new HashMap<>();
+        SerialPipeline resultMap = new SerialPipeline();
         IclijConfig conf = new IclijConfig(origparam.getConfigData());
         Inmemory inmemory = io.getInmemoryFactory().get(conf);
         NeuralNetCommand neuralnetcommand = origparam.getNeuralnetcommand();
@@ -161,17 +161,17 @@ public class MachineLearningEvolutionService {
     }
 
     private SerialPipeline getEvolveData(Map<String, Object> updateMap, Map<String, Object> scoreMap,
-            Map<String, Object> resultMap) {
+            SerialPipeline resultMap) {
         SerialPipeline list = new SerialPipeline();
         //maps.setName(PipelineConstants.EVOLVE);
         list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.UPDATE, null, new SerialMapPlain(updateMap), false));
         list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.SCORE, null, new SerialMapPlain(scoreMap), false));
-        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, new SerialListMap(resultMap), false));
+        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, resultMap, false));
         return list;
     }
 
     private void findMLSettings(IclijConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
-            Map<String, Object> updateMap, String ml, SerialPipeline dataReaders, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap, Inmemory inmemory) throws Exception {
+            Map<String, Object> updateMap, String ml, SerialPipeline dataReaders, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, SerialPipeline resultMap, Inmemory inmemory) throws Exception {
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
         NeuralNetConfigs nnConfigs = null;
         String nnconfigString = null;
@@ -214,7 +214,8 @@ public class MachineLearningEvolutionService {
             try {
             	best = evolution.getFittest(evolutionConfig, chromosome, individuals, results, null);
             } catch (InterruptedException e) {
-                resultMap.put(EvolveConstants.ID, "interrupted");
+                resultMap.add(new PipelineData(PipelineConstants.EVOLVE, null, EvolveConstants.ID, new SerialString("interrupted"), false));
+                //resultMap.put(EvolveConstants.ID, "interrupted");
                 //resultMap.add(new PipelineData("name", EvolveConstants.ID, null, new SerialString("interrupted")));
                 return;
             }
@@ -259,20 +260,18 @@ public class MachineLearningEvolutionService {
             updateMap.put(configKey, newNNConfigstring);
             scoreMap.put(configKey, best.getFitness());
             scoreMap.put("scores", results.stream().map(SerialScoreChromosome::getLeft).collect(Collectors.toList()));            
-            // TODO_
+            /*
             resultMap.put(filename, new SerialList(results));
             resultMap.put(EvolveConstants.ID, filename);
             resultMap.put(EvolveConstants.TITLETEXT, title);
             resultMap.put(EvolveConstants.DEFAULT, new SerialNeuralNetConfig(nnconfig));
-            /*
+            */
             SerialPipeline list = new SerialPipeline();
-            list.add(new PipelineData(PipelineConstants.EVOLVE, filename, null, new SerialList(results)));
-            list.add(new PipelineData(PipelineConstants.EVOLVE, EvolveConstants.ID, null, new SerialString(filename)));
-            list.add(new PipelineData(PipelineConstants.EVOLVE, EvolveConstants.TITLETEXT, null, new SerialString(title)));
-            list.add(new PipelineData(PipelineConstants.EVOLVE, EvolveConstants.DEFAULT, null, new SerialNeuralNetConfig(nnconfig)));
+            list.add(new PipelineData(PipelineConstants.EVOLVE, filename, null, new SerialList(results), false));
+            list.add(new PipelineData(PipelineConstants.EVOLVE, EvolveConstants.ID, null, new SerialString(filename), false));
+            list.add(new PipelineData(PipelineConstants.EVOLVE, EvolveConstants.TITLETEXT, null, new SerialString(title), false));
+            list.add(new PipelineData(PipelineConstants.EVOLVE, EvolveConstants.DEFAULT, null, new SerialNeuralNetConfig(nnconfig), false));
             resultMap.add(list);
-
-             */
 
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(myKey);
@@ -283,7 +282,7 @@ public class MachineLearningEvolutionService {
     }
 
     private void findMLSettings(IclijConfig conf, EvolutionConfig evolutionConfig, ResultItemTable table, Map<String, Object> updateMap,
-            String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap, Inmemory inmemory) throws Exception {
+            String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, SerialPipeline resultMap, Inmemory inmemory) throws Exception {
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
         NeuralNetConfigs nnConfigs = null;
         String nnconfigString = null;
@@ -315,7 +314,8 @@ public class MachineLearningEvolutionService {
             try {
             	best = evolution.getFittest(evolutionConfig, chromosome, individuals, results, null);
             } catch (InterruptedException e) {
-                resultMap.put(EvolveConstants.ID, "interrupted");
+                //resultMap.put(EvolveConstants.ID, "interrupted");
+                resultMap.add(new PipelineData(PipelineConstants.EVOLVE, null, EvolveConstants.ID, new SerialString("interrupted"), false));
                 //resultMap.add(new PipelineData("name", EvolveConstants.ID, null, new SerialString("interrupted")));
             	return;
             }
@@ -335,21 +335,18 @@ public class MachineLearningEvolutionService {
             }
             updateMap.put(configKey, newNNConfigstring);
             scoreMap.put(configKey, best.getFitness());
-            // TODO
+            /*
             resultMap.put(filename, new SerialList(results));
             resultMap.put(EvolveConstants.TITLETEXT, title);
             resultMap.put(EvolveConstants.ID, filename);
             resultMap.put(EvolveConstants.DEFAULT, new SerialNeuralNetConfig(nnconfig));
-
-            /*
+*/
             SerialPipeline list = new SerialPipeline();
-            list.add(new PipelineData(PipelineConstants.EVOLVE, filename, null, new SerialList(results)));
-            list.add(new PipelineData(PipelineConstants.EVOLVE, null, EvolveConstants.TITLETEXT, new SerialString(title)));
-            list.add(new PipelineData(PipelineConstants.EVOLVE, null, EvolveConstants.ID, new SerialString(filename)));
-            list.add(new PipelineData(PipelineConstants.EVOLVE, null, EvolveConstants.DEFAULT, new SerialNeuralNetConfig(nnconfig)));
+            list.add(new PipelineData(PipelineConstants.EVOLVE, filename, null, new SerialList(results), false));
+            list.add(new PipelineData(PipelineConstants.EVOLVE, null, EvolveConstants.TITLETEXT, new SerialString(title), false));
+            list.add(new PipelineData(PipelineConstants.EVOLVE, null, EvolveConstants.ID, new SerialString(filename), false));
+            list.add(new PipelineData(PipelineConstants.EVOLVE, null, EvolveConstants.DEFAULT, new SerialNeuralNetConfig(nnconfig), false));
             resultMap.add(list);
-
-             */
 
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(myKey);

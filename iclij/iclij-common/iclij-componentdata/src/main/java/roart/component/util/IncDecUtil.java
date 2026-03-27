@@ -32,8 +32,8 @@ public class IncDecUtil {
             category = market.getFilter().getDeccategory();
         }
         if (category != null) {
-            PipelineData categoryMap = PipelineUtils.getPipeline(maps, category, null, inmemory);
-            if (categoryMap != null) {
+            SerialPipeline categoryMap = PipelineUtils.getPipelines(maps, category, null, inmemory);
+            if (!categoryMap.isEmpty()) {
                 Integer offsetDays = null;
                 Integer days;
                 if (inc) {

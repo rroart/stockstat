@@ -163,11 +163,14 @@ public abstract class Component {
             log.info("pi {}", getPipeline());
             PipelineData data = PipelineUtils.getPipeline(param.getResultMap(), PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, inmemory);
             log.info("kkey {}", data.getKey());
-            Map<String, SerialObject> map = PipelineUtils.getSerialListMapAsMap(param.getResultMap(), data.getKey(), inmemory);
-            log.info("map" + map);
-            interrupted = "interrupted".equals(((SerialString) map.get(EvolveConstants.ID)).getString());
-            log.info("Interrupted {} {}", interrupted, PipelineUtils.getString(param.getResultMap(), EvolveConstants.ID, null, null, inmemory));
-            log.info("Interrupted {} {}", interrupted, ((SerialString) map.get(EvolveConstants.ID)).getString());
+            //Map<String, SerialObject> map = PipelineUtils.getSerialListMapAsMap(param.getResultMap(), data.getKey(), inmemory);
+            SerialPipeline map = (SerialPipeline) PipelineUtils.getPipelineValue(param.getResultMap(), PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, inmemory);
+            log.info("map" + PipelineUtils.getPipelineMapKeys(map));
+            if (!PipelineUtils.getPipelines(map, PipelineConstants.EVOLVE, EvolveConstants.ID, null, null).isEmpty()) {
+            interrupted = "interrupted".equals(PipelineUtils.getString(map, PipelineConstants.EVOLVE, EvolveConstants.ID, null, null));
+            }
+            log.info("Interrupted {}", interrupted); //, PipelineUtils.getString(map, PipelineConstants.EVOLVE, EvolveConstants.ID, null, inmemory));
+            //log.info("Interrupted {} {}", interrupted, ((SerialString) map.get(EvolveConstants.ID)).getString());
         }
         valueMap.putAll(evolveMap);
         valueMap.putAll(aMap);

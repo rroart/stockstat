@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.SerialList;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
@@ -95,13 +97,22 @@ public class Evolve {
     public void handleEvolve(String param) {
         
         //param = getParam(param);
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
         List<String> output = new ArrayList<>();
         TypeReference ref = new TypeReference<List<LinkedHashMap<Double, AbstractChromosome>>>(){};
         SerialPipeline data = JsonUtil.convertnostrip(param, SerialPipeline.class);
-        String id = PipelineUtils.getString(data, EvolveConstants.ID, null, null, null);
+        // TODO we got mlrsi or something
+        String name = PipelineConstants.EVOLVE;
+        log.info("name" + name);
+        SerialPipeline data0 = data;
+        //data = PipelineUtils.getPipelinesRest(data, name, inmemory);
+        SerialPipeline map = (SerialPipeline) PipelineUtils.getPipelineValue(data, name, PipelineConstants.RESULT, null, inmemory);
+        String id = PipelineUtils.getString(map, PipelineConstants.EVOLVE, EvolveConstants.ID, null, null);
+        //String id = map.get(EvolveConstants.ID).toString();
         // TODO_
         // TODO fix npe
-        List myList00 = PipelineUtils.getList(data, id, null, null, null);
+        List myList00 = PipelineUtils.getList(map, PipelineConstants.EVOLVE, id, null, null);
+        //List myList00 = ((SerialList) map.get(id)).getList();
         List<SerialScoreChromosome> myList0 = myList00;
         if (myList0 == null) {
         	return;
@@ -110,7 +121,7 @@ public class Evolve {
         //Map<String, Object> aconf = PipelineUtils.getMap(data, EvolveConstants.DEFAULT);
         //System.out.println("aconf" + aconf);
         //if (true) return;
-        String title = PipelineUtils.getString(data, EvolveConstants.TITLETEXT, null, null, null);
+        String title = PipelineUtils.getString(map, PipelineConstants.EVOLVE, EvolveConstants.TITLETEXT, null, null);
         String[] parts = title.split(" ");
         String market = parts[1];
         String component = parts[2];
@@ -261,7 +272,9 @@ public class Evolve {
     public void handleProfit(String param) {
         //param = getParam(param);
         List<String> output = new ArrayList<>();
+        log.info("conte" + param);
         SerialPipeline data = JsonUtil.convertnostrip(param, SerialPipeline.class);
+        log.info("key" + PipelineUtils.getPipelineMapKeys(data));
         // TODO
         if (data.isEmpty()) {
             
@@ -377,7 +390,14 @@ public class Evolve {
     public void handleFilter(String param) {
         //param = getParam(param);
         //Map<String, Object> myMap = convert(param, new TypeReference<List<LinkedHashMap<Double, MarketFilterChromosome2>>>(){});
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
         SerialPipeline data = JsonUtil.convertnostrip(param, SerialPipeline.class);
+        SerialPipeline pipes = PipelineUtils.getPipelines(data, null, EvolveConstants.ID, inmemory);
+        // TODO we got mlrsi or something
+        String name = pipes.iterator().next().getKey().getFirst();
+        log.info("name" + name);
+        SerialPipeline data0 = data;
+        data = PipelineUtils.getPipelinesRest(data, name, inmemory);
         String id = PipelineUtils.getString(data, EvolveConstants.ID, null, null, null);
         // TODO
         //List<SerialScoreChromosome> myList = PipelineUtils.getList(data, id, null, null, null);
@@ -392,6 +412,13 @@ public class Evolve {
         List<String> output = new ArrayList<>();
         SerialPipeline data = JsonUtil.convertnostrip(param, SerialPipeline.class);
         //Map<String, Object> myMap = new HashMap<>(); //convert(param, new TypeReference<List<LinkedHashMap<Double, AboveBelowChromosome>>>(){});
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        SerialPipeline pipes = PipelineUtils.getPipelines(data, null, EvolveConstants.ID, inmemory);
+        // TODO we got mlrsi or something
+        String name = pipes.iterator().next().getKey().getFirst();
+        log.info("name" + name);
+        SerialPipeline data0 = data;
+        data = PipelineUtils.getPipelinesRest(data, name, inmemory);
         String id = PipelineUtils.getString(data, EvolveConstants.ID, null, null, null);
         // TODO
         List myList00 = PipelineUtils.getList(data, id, null, null, null);
@@ -418,7 +445,7 @@ public class Evolve {
         String text = printtext(ServiceConstants.EVOLVEFILTERABOVEBELOW + " " + title, "File " + id, output);
         print(text);
         double newer = myList.get(0).getLeft();
-        Double dflt = PipelineUtils.getDouble(data, EvolveConstants.DEFAULT, null, null, null);
+        Double dflt = PipelineUtils.getDouble(data0, EvolveConstants.DEFAULT, null, null, null);
         boolean better = dflt < newer;
         // for all better, find entry with minimal trues
         List<AbstractChromosome> alist = chromosomeMap.get(newer);

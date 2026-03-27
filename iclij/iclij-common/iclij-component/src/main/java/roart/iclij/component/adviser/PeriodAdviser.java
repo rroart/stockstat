@@ -64,8 +64,8 @@ public class PeriodAdviser extends Adviser {
                 return;
             }
 
-            PipelineData datareader = null; // PipelineUtils.getPipeline(resultMaps, catName, inmemory);
-            if (false && datareader == null) {
+            SerialPipeline datareader = PipelineUtils.getPipelines(resultMaps, catName, inmemory);
+            if (datareader.isEmpty()) {
                 // TODO not needed, done above?
                 log.info("Not used?");
                 categoryValueMap = new HashMap<>();

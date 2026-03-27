@@ -338,6 +338,7 @@ public class InmemoryPipelineIT {
         assertEquals(true, inmemory.isEmpty());
     }
 
+    // for testing markets with delayed value and buy/sell
     @Test
     public void testSimEvent() throws Exception {
         log.info("Wants it {}", iconf.wantsInmemoryPipeline());

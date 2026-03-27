@@ -71,7 +71,7 @@ public class FitnessNeuralNet extends Fitness {
             return 0;
         }
         // nothing is written to inmemory, so will not need to clean
-        Map<String, Object> accuracyMap = PipelineUtils.getAccuracyMap(pipelineData.putData(), "", inmemory);
+        Map<String, Object> accuracyMap = PipelineUtils.getAccuracyMap(pipelineData.putData(), ml, inmemory);
         if (accuracyMap == null) {
             return 0;
         }

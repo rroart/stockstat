@@ -412,7 +412,7 @@ public class ExtraReader extends Pipeline {
                 SerialPipeline pipe = PipelineUtils.getPipelinesRest(datareaders, PipelineConstants.EXTRAREADER, inmemory);
                 pipe = PipelineUtils.getPipelinesRest(pipe, market, inmemory);
                 cat = PipelineUtils.getMetaCat(pipe, inmemory);
-                log.info("cat" + cat);
+                //log.info("cat" + cat);
             }
             Map<String, PipelineData> pipelineMap = null ; // TODO
             //PipelineData datareader = pipelineMap.get(cat);

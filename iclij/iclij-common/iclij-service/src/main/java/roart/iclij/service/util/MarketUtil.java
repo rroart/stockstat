@@ -99,13 +99,13 @@ public class MarketUtil {
     }
 
     public Map<String, IncDecDTO> incdecFilterOnIncreaseValue(Market market, Map<String, IncDecDTO> incdecs,
-            Double threshold, PipelineData categoryMap, Map<String, List<List<Double>>> listMap3,
+            Double threshold, SerialPipeline categoryMap, Map<String, List<List<Double>>> listMap3,
             Integer offsetDays, boolean inc) {
         Map<String, IncDecDTO> incdecsFilter = new HashMap<>();
         for(IncDecDTO item : incdecs.values()) {
             String key = item.getId();
             if (listMap3 == null) {
-                if (categoryMap != null) {
+                if (!categoryMap.isEmpty()) {
                     //log.debug("" + categoryMap.keySet());
                 }
                 log.debug("market null map {}", market.getConfig().getMarket());
@@ -157,9 +157,9 @@ public class MarketUtil {
         }
         Map<String, List<List<Double>>> listMap3 = null;
         for (String entry : PipelineUtils.getPipelineMapFirstKeys(maps)) { //  TODO
-            PipelineData map = PipelineUtils.getPipeline(maps, entry, PipelineConstants.LIST, inmemory);
-            if (category.equals(PipelineUtils.getCatTitle(maps, entry, inmemory))) {
-                listMap3 = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(map));
+            SerialPipeline map = PipelineUtils.getPipelines(maps, entry, PipelineConstants.CATEGORYTITLE, inmemory);
+            if (!map.isEmpty() && category.equals(PipelineUtils.getCatTitle(maps, entry, inmemory))) {
+                listMap3 = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(maps, entry, PipelineConstants.LIST, inmemory)));
             }
         }
         return listMap3;
