@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
+import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.model.TimingDTO;
 import roart.common.pipeline.PipelineConstants;
@@ -413,6 +414,7 @@ public class ComponentData {
     }
     
     // blae
+    // almost @Deprecated
     public void getAndSetCategoryValueMap(boolean useMl) {
         getService().coremlconf.getConfigData().setDate(getFutureDate());
         Map<String, Object> setValueMap = new HashMap<>();

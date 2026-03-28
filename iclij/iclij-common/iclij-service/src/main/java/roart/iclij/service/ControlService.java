@@ -496,7 +496,9 @@ public class ControlService {
             scoreMap.putAll(PipelineUtils.getSerialMapPlain(result.getPipelineData(), PipelineConstants.EVOLVE, PipelineConstants.SCORE, null, null));
             // rec with own result
             // TODO  cast seriallistmap
-            resultMap.add(PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE, PipelineConstants.RESULT, inmemory)); // TODO overwrite
+            SerialPipeline result2 = PipelineUtils.getPipelines(result.getPipelineData(), PipelineConstants.EVOLVE, PipelineConstants.RESULT, inmemory);
+            log.info("Result {}", result2.length());
+            resultMap.add(result2); // TODO overwrite
         }
         return result.getList();
         //return result.getMaps().get("update");
@@ -532,7 +534,9 @@ public class ControlService {
             scoreMap.putAll(PipelineUtils.getSerialMapPlain(result.getPipelineData(), PipelineConstants.EVOLVE, PipelineConstants.SCORE, null, null));
             // rec with own result
             // TODO  cast seriallistmap
-            resultMap.add(PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE, PipelineConstants.RESULT, inmemory)); // TODO overwrite
+            SerialPipeline result2 = PipelineUtils.getPipelines(result.getPipelineData(), PipelineConstants.EVOLVE, PipelineConstants.RESULT, inmemory);
+            log.info("Result {}", result2.length());
+            resultMap.add(result2); // TODO overwrite
             //Map<String, Object> updateMap = result.getMaps().get("update");
             //conf.getConfigValueMap().putAll(updateMap);
             //return updateMap;

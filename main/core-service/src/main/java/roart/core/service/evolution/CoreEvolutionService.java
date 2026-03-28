@@ -161,7 +161,7 @@ public class CoreEvolutionService {
         list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.UPDATE, null, new SerialMapPlain(updateMap), false));
         list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.SCORE, null, new SerialMapPlain(scoreMap), false));
         // rec with own result
-        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, resultMap, false));
+        list.add(resultMap);
         return list;
     }
 
@@ -205,7 +205,7 @@ public class CoreEvolutionService {
                 try {
                 	fittestIndividual = evolution.getFittest(evolutionConfig, indicatorEval0, individuals, null, null);
                 } catch (InterruptedException e) {
-                    resultMap.add(new PipelineData(PipelineConstants.EVOLVE, null, EvolveConstants.ID, new SerialString("interrupted"), false));
+                    resultMap.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, EvolveConstants.ID, new SerialString("interrupted"), false));
                     //resultMap.put(EvolveConstants.ID, "interrupted");
                     return;
                 }

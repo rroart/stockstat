@@ -166,7 +166,7 @@ public class MachineLearningEvolutionService {
         //maps.setName(PipelineConstants.EVOLVE);
         list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.UPDATE, null, new SerialMapPlain(updateMap), false));
         list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.SCORE, null, new SerialMapPlain(scoreMap), false));
-        list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, resultMap, false));
+        list.add(resultMap);
         return list;
     }
 
@@ -214,7 +214,7 @@ public class MachineLearningEvolutionService {
             try {
             	best = evolution.getFittest(evolutionConfig, chromosome, individuals, results, null);
             } catch (InterruptedException e) {
-                resultMap.add(new PipelineData(PipelineConstants.EVOLVE, null, EvolveConstants.ID, new SerialString("interrupted"), false));
+                resultMap.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, EvolveConstants.ID, new SerialString("interrupted"), false));
                 //resultMap.put(EvolveConstants.ID, "interrupted");
                 //resultMap.add(new PipelineData("name", EvolveConstants.ID, null, new SerialString("interrupted")));
                 return;
@@ -267,10 +267,10 @@ public class MachineLearningEvolutionService {
             resultMap.put(EvolveConstants.DEFAULT, new SerialNeuralNetConfig(nnconfig));
             */
             SerialPipeline list = new SerialPipeline();
-            list.add(new PipelineData(PipelineConstants.EVOLVE, filename, null, new SerialList(results), false));
-            list.add(new PipelineData(PipelineConstants.EVOLVE, EvolveConstants.ID, null, new SerialString(filename), false));
-            list.add(new PipelineData(PipelineConstants.EVOLVE, EvolveConstants.TITLETEXT, null, new SerialString(title), false));
-            list.add(new PipelineData(PipelineConstants.EVOLVE, EvolveConstants.DEFAULT, null, new SerialNeuralNetConfig(nnconfig), false));
+            list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, filename, null, new SerialList(results), false));
+            list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, EvolveConstants.ID, null, new SerialString(filename), false));
+            list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, EvolveConstants.TITLETEXT, null, new SerialString(title), false));
+            list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, EvolveConstants.DEFAULT, null, new SerialNeuralNetConfig(nnconfig), false));
             resultMap.add(list);
 
             ResultItemTableRow row = new ResultItemTableRow();
@@ -315,7 +315,7 @@ public class MachineLearningEvolutionService {
             	best = evolution.getFittest(evolutionConfig, chromosome, individuals, results, null);
             } catch (InterruptedException e) {
                 //resultMap.put(EvolveConstants.ID, "interrupted");
-                resultMap.add(new PipelineData(PipelineConstants.EVOLVE, null, EvolveConstants.ID, new SerialString("interrupted"), false));
+                resultMap.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, EvolveConstants.ID, new SerialString("interrupted"), false));
                 //resultMap.add(new PipelineData("name", EvolveConstants.ID, null, new SerialString("interrupted")));
             	return;
             }
@@ -342,10 +342,10 @@ public class MachineLearningEvolutionService {
             resultMap.put(EvolveConstants.DEFAULT, new SerialNeuralNetConfig(nnconfig));
 */
             SerialPipeline list = new SerialPipeline();
-            list.add(new PipelineData(PipelineConstants.EVOLVE, filename, null, new SerialList(results), false));
-            list.add(new PipelineData(PipelineConstants.EVOLVE, null, EvolveConstants.TITLETEXT, new SerialString(title), false));
-            list.add(new PipelineData(PipelineConstants.EVOLVE, null, EvolveConstants.ID, new SerialString(filename), false));
-            list.add(new PipelineData(PipelineConstants.EVOLVE, null, EvolveConstants.DEFAULT, new SerialNeuralNetConfig(nnconfig), false));
+            list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, filename, null, new SerialList(results), false));
+            list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, EvolveConstants.TITLETEXT, new SerialString(title), false));
+            list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, EvolveConstants.ID, new SerialString(filename), false));
+            list.add(new PipelineData(PipelineConstants.EVOLVE, PipelineConstants.RESULT, EvolveConstants.DEFAULT, new SerialNeuralNetConfig(nnconfig), false));
             resultMap.add(list);
 
             ResultItemTableRow row = new ResultItemTableRow();

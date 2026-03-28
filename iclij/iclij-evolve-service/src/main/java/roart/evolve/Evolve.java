@@ -102,16 +102,19 @@ public class Evolve {
         TypeReference ref = new TypeReference<List<LinkedHashMap<Double, AbstractChromosome>>>(){};
         SerialPipeline data = JsonUtil.convertnostrip(param, SerialPipeline.class);
         // TODO we got mlrsi or something
+        /*
         String name = PipelineConstants.EVOLVE;
         log.info("name" + name);
         SerialPipeline data0 = data;
         //data = PipelineUtils.getPipelinesRest(data, name, inmemory);
         SerialPipeline map = (SerialPipeline) PipelineUtils.getPipelineValue(data, name, PipelineConstants.RESULT, null, inmemory);
-        String id = PipelineUtils.getString(map, PipelineConstants.EVOLVE, EvolveConstants.ID, null, null);
+
+         */
+        String id = PipelineUtils.getString(data, PipelineConstants.EVOLVE, PipelineConstants.RESULT, EvolveConstants.ID, null);
         //String id = map.get(EvolveConstants.ID).toString();
         // TODO_
         // TODO fix npe
-        List myList00 = PipelineUtils.getList(map, PipelineConstants.EVOLVE, id, null, null);
+        List myList00 = PipelineUtils.getList(data, PipelineConstants.EVOLVE, PipelineConstants.RESULT, id, null);
         //List myList00 = ((SerialList) map.get(id)).getList();
         List<SerialScoreChromosome> myList0 = myList00;
         if (myList0 == null) {
@@ -121,7 +124,7 @@ public class Evolve {
         //Map<String, Object> aconf = PipelineUtils.getMap(data, EvolveConstants.DEFAULT);
         //System.out.println("aconf" + aconf);
         //if (true) return;
-        String title = PipelineUtils.getString(map, PipelineConstants.EVOLVE, EvolveConstants.TITLETEXT, null, null);
+        String title = PipelineUtils.getString(data, PipelineConstants.EVOLVE, PipelineConstants.RESULT, EvolveConstants.TITLETEXT, null);
         String[] parts = title.split(" ");
         String market = parts[1];
         String component = parts[2];

@@ -161,13 +161,13 @@ public abstract class Component {
             //    action.saveTimingCommon(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, evolve);
            //}
             log.info("pi {}", getPipeline());
-            PipelineData data = PipelineUtils.getPipeline(param.getResultMap(), PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, inmemory);
-            log.info("kkey {}", data.getKey());
+            //PipelineData data = PipelineUtils.getPipeline(param.getResultMap(), PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, inmemory);
+            //log.info("kkey {}", data.getKey());
             //Map<String, SerialObject> map = PipelineUtils.getSerialListMapAsMap(param.getResultMap(), data.getKey(), inmemory);
-            SerialPipeline map = (SerialPipeline) PipelineUtils.getPipelineValue(param.getResultMap(), PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, inmemory);
-            log.info("map" + PipelineUtils.getPipelineMapKeys(map));
-            if (!PipelineUtils.getPipelines(map, PipelineConstants.EVOLVE, EvolveConstants.ID, null, null).isEmpty()) {
-            interrupted = "interrupted".equals(PipelineUtils.getString(map, PipelineConstants.EVOLVE, EvolveConstants.ID, null, null));
+            //SerialPipeline map = (SerialPipeline) PipelineUtils.getPipelineValue(param.getResultMap(), PipelineConstants.EVOLVE, PipelineConstants.RESULT, null, inmemory);
+            //log.info("map" + PipelineUtils.getPipelineMapKeys(map));
+            if (!PipelineUtils.getPipelines(param.getResultMap(), PipelineConstants.EVOLVE, PipelineConstants.RESULT, EvolveConstants.ID, null, null).isEmpty()) {
+            interrupted = "interrupted".equals(PipelineUtils.getString(param.getResultMap(), PipelineConstants.EVOLVE, PipelineConstants.RESULT, EvolveConstants.ID, null));
             }
             log.info("Interrupted {}", interrupted); //, PipelineUtils.getString(map, PipelineConstants.EVOLVE, EvolveConstants.ID, null, inmemory));
             //log.info("Interrupted {} {}", interrupted, ((SerialString) map.get(EvolveConstants.ID)).getString());
