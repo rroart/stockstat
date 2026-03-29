@@ -2,12 +2,12 @@ package roart.common.pipeline.data;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class SerialPipeline extends SerialObject implements Iterable<PipelineData> {
     private PipelineData[] pipelineData = new PipelineData[0];
+
+    private Set<SerialPipelineKey> keys = new HashSet<>();
 
     public PipelineData[] getPipelineData() {
         return pipelineData;
@@ -62,6 +62,9 @@ public class SerialPipeline extends SerialObject implements Iterable<PipelineDat
     }
 
     public boolean keyExists(SerialPipelineKey key) {
+        if (true) {
+            return keys.contains(key);
+        }
         for (PipelineData data : pipelineData) {
             if (data.getKey().equals(key)) {
                 return true;

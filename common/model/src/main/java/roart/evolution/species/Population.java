@@ -38,6 +38,7 @@ public class Population {
                     defaultChromosome = evaluation;
                 }
                 individual = new Individual(defaultChromosome).getNewWithValueCopyAndRandomFactory();
+                System.out.println("Created individual " + individual);
             }
             this.population.add(individual);
         }
