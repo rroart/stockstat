@@ -1,13 +1,11 @@
 package roart.controller;
 
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,11 +15,8 @@ import java.util.Map;
 
 import roart.common.constants.Constants;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.curator.framework.CuratorFramework;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,14 +29,11 @@ import tools.jackson.databind.json.JsonMapper;
 import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
 import roart.constants.IclijConstants;
-import roart.common.util.ArraysUtil;
 import roart.action.ActionThread;
-import roart.action.FindProfitAction;
 import roart.category.AbstractCategory;
 import roart.category.util.CategoryUtil;
 import roart.common.cache.MyCache;
 import roart.common.communication.factory.CommunicationFactory;
-import roart.common.communication.model.Communication;
 import roart.common.config.ConfigConstants;
 import roart.common.config.ConfigMaps;
 import roart.common.config.MLConstants;
@@ -51,22 +43,13 @@ import roart.common.model.MetaDTO;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialListPlain;
-import roart.common.pipeline.data.SerialMapTA;
-import roart.common.springdata.repository.AboveBelowRepository;
-import roart.common.springdata.repository.SpringAboveBelowRepository;
 import roart.common.util.JsonUtil;
-import roart.common.util.ServiceConnectionUtil;
-import roart.common.util.TimeUtil;
-import roart.db.common.DbDS;
 import roart.db.dao.DbDao;
 import roart.db.dao.IclijDbDao;
-import roart.db.spring.DbSpring;
-import roart.db.spring.DbSpringDS;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
-import roart.iclij.config.IclijXMLConfig;
-import roart.iclij.config.bean.ConfigC;
 import roart.iclij.config.bean.ConfigI;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
@@ -78,15 +61,9 @@ import roart.result.model.ResultItem;
 import roart.stockutil.StockUtil;
 import roart.testdata.TestConstants;
 import roart.testdata.TestData;
-import roart.util.ServiceUtil;
-import roart.sim.Sim;
 import roart.model.io.IO;
 
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.predictor.util.PredictorUtils;
@@ -95,18 +72,11 @@ import static org.mockito.Mockito.*;
 import roart.iclij.model.Parameters;
 import roart.common.model.MyDataSource;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.Collection;
 import java.util.Collections;
 import roart.filesystem.FileSystemDao;
 import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.config.AutoSimulateInvestConfig;
-import roart.util.ServiceUtil;
 import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 
@@ -185,11 +155,11 @@ public class AllIT {
           System.out.println("mark" + market);
           Map<String, StockData> extraStockDataMap = new TestData().getExtraStockdataMap(conf);
           
-          PipelineData[] pipelinedata = new PipelineData[0];
+          SerialPipeline pipelinedata = new SerialPipeline();
 
           ExtraReader extraReader = new ExtraReader(conf, stockData.marketdatamap, 0, stockData);
           Pipeline[] datareaders = iu.getDataReaders(conf, stockData.periodText,
-                  stockData.marketdatamap, stockData, extraStockDataMap, extraReader);
+                  stockData.marketdatamap, stockData, extraStockDataMap, extraReader, inmemory);
 
           pipelinedata = iu.createDatareaderPipelineData(conf, pipelinedata, stockData, datareaders);
 
@@ -234,7 +204,7 @@ public class AllIT {
         //IclijServiceResult result = getContentM(new ArrayList<>(), origparam );
         
         List<ResultItem> retlist = result.getList();
-        PipelineData[] pipelineData = result.getPipelineData();
+        SerialPipeline pipelineData = result.getPipelineData();
         
         StockData stockData = new StockUtil().getStockData(conf, pipelineData, inmemory);
 
@@ -275,10 +245,10 @@ public class AllIT {
                 if (predictors[i] == null) {
                     continue;
                 }
-                Map map = predictors[i].putData().getMap();
+                //Map map = predictors[i].putData().getMap();
                 log.debug("ca {}", predictors[i].getName());
-                PipelineData singlePipelinedata = predictors[i].putData();
-                pipelineData = ArrayUtils.add(pipelineData, singlePipelinedata);
+                SerialPipeline singlePipelinedata = predictors[i].putData();
+                pipelineData.add(singlePipelinedata);
             }
             for (int i = 0; i < aggregates.length; i++) {
                 if (aggregates[i] == null) {
@@ -288,9 +258,9 @@ public class AllIT {
                     continue;
                 }
                 log.debug("ag {}", aggregates[i].getName());
-                Map map = aggregates[i].putData().getMap();
-                PipelineData singlePipelinedata = aggregates[i].putData();
-                pipelineData = ArrayUtils.add(pipelineData, singlePipelinedata);
+                //Map map = aggregates[i].putData().getMap();
+                SerialPipeline singlePipelinedata = aggregates[i].putData();
+                pipelineData.add(singlePipelinedata);
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -530,7 +500,7 @@ public class AllIT {
     @Deprecated
     /// TODO too big
     public void getDates(IclijConfig conf, IclijServiceResult result) throws Exception {
-        PipelineData[] pipelineData = new PipelineData[0];
+        SerialPipeline pipelineData = new SerialPipeline();
         Map<String, Object> aMap = new HashMap<>();
         /*
         aMap.put(ConfigConstants.MACHINELEARNING, false);
@@ -551,10 +521,10 @@ public class AllIT {
         StockData stockData = new TestData().getStockdata(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), TestConstants.MARKET, 26, false, Constants.INDEXVALUECOLUMN, false);
         //StockData stockData = new Extract(dbDao).getStockData(conf);
         if (stockData != null) {
-            PipelineData map = new PipelineData();
-            map.setName(PipelineConstants.DATELIST);
-            map.put(PipelineConstants.DATELIST, new SerialListPlain(stockData.stockdates));
-            pipelineData = ArrayUtils.add(pipelineData, map);
+            PipelineData map = new PipelineData(PipelineConstants.DATELIST, PipelineConstants.DATELIST, null, new SerialListPlain(stockData.stockdates), false);
+            //map.setName(PipelineConstants.DATELIST);
+            //map.put(PipelineConstants.DATELIST, new SerialListPlain(stockData.stockdates));
+            pipelineData.add(map);
             result.setPipelineData(pipelineData);
             return;
         }
@@ -578,10 +548,10 @@ public class AllIT {
 
         try {
             Collections.sort(dates);
-            PipelineData map = new PipelineData();
-            map.setName(PipelineConstants.DATELIST);
-            map.put(PipelineConstants.DATELIST, new SerialListPlain(dates));
-            pipelineData = ArrayUtils.add(pipelineData, map);
+            PipelineData map = new PipelineData(PipelineConstants.DATELIST, PipelineConstants.DATELIST, null, new SerialListPlain(dates), false);
+            //map.setName(PipelineConstants.DATELIST);
+            //map.put(PipelineConstants.DATELIST, new SerialListPlain(dates));
+            pipelineData.add(map);
             result.setPipelineData(pipelineData);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

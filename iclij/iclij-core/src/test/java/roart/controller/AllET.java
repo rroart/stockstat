@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,12 +15,9 @@ import java.util.Map;
 
 import roart.common.constants.Constants;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.curator.framework.CuratorFramework;
 import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,14 +30,11 @@ import tools.jackson.databind.json.JsonMapper;
 import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
 import roart.constants.IclijConstants;
-import roart.common.util.ArraysUtil;
 import roart.action.ActionThread;
-import roart.action.FindProfitAction;
 import roart.category.AbstractCategory;
 import roart.category.util.CategoryUtil;
 import roart.common.cache.MyCache;
 import roart.common.communication.factory.CommunicationFactory;
-import roart.common.communication.model.Communication;
 import roart.common.config.ConfigConstants;
 import roart.common.config.ConfigMaps;
 import roart.common.config.MLConstants;
@@ -52,20 +45,14 @@ import roart.common.model.MyDataSource;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialListPlain;
-import roart.common.pipeline.data.SerialMapTA;
 import roart.common.util.JsonUtil;
-import roart.common.util.ServiceConnectionUtil;
-import roart.common.util.TimeUtil;
-import roart.db.common.DbDS;
 import roart.db.dao.DbDao;
 import roart.db.dao.IclijDbDao;
 import roart.db.spring.DbSpringDS;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
-import roart.iclij.config.IclijXMLConfig;
-import roart.iclij.config.bean.ConfigC;
-import roart.iclij.config.bean.ConfigI;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 import roart.indicator.util.IndicatorUtils;
@@ -76,44 +63,31 @@ import roart.result.model.ResultItem;
 import roart.stockutil.StockUtil;
 import roart.testdata.TestConstants;
 import roart.testdata.TestData;
-import roart.util.ServiceUtil;
-import roart.sim.Sim;
 import roart.model.io.IO;
 
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.predictor.util.PredictorUtils;
 import roart.aggregator.util.AggregatorUtils;
 import static org.mockito.Mockito.*;
 import roart.iclij.model.Parameters;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.Collection;
 import java.util.Collections;
 import roart.filesystem.FileSystemDao;
 import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.config.AutoSimulateInvestConfig;
-import roart.util.ServiceUtil;
 import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 
 @TestInstance(Lifecycle.PER_CLASS)
-@ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
+//@ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
 @SpringJUnitConfig
 //@TestPropertySource("file:${user.dir}/../../../../config/test/application.properties") 
 //@ComponentScan(basePackages = "roart.testdata")
 //@SpringBootTest(classes = TestConfiguration.class)
-@SpringBootTest(classes = { IclijConfig.class, IclijDbDao.class, ConfigI.class, ConfigDb.class } )
+//@SpringBootTest(classes = { IclijConfig.class, IclijDbDao.class, ConfigI.class, ConfigDb.class } )
+@SpringBootTest(classes = IclijController.class ) //(classes = { IclijConfig.class, IclijDbDao.class, ConfigI.class, DbSpring.class, ConfigDb.class, SimConfig.class } )
 public class AllET {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -185,11 +159,11 @@ public class AllET {
           System.out.println("mark" + market);
           Map<String, StockData> extraStockDataMap = new TestData().getExtraStockdataMap(conf);
           
-          PipelineData[] pipelinedata = new PipelineData[0];
+          SerialPipeline pipelinedata = new SerialPipeline();
 
           ExtraReader extraReader = new ExtraReader(conf, stockData.marketdatamap, 0, stockData);
           Pipeline[] datareaders = iu.getDataReaders(conf, stockData.periodText,
-                  stockData.marketdatamap, stockData, extraStockDataMap, extraReader);
+                  stockData.marketdatamap, stockData, extraStockDataMap, extraReader, inmemory);
 
           pipelinedata = iu.createDatareaderPipelineData(conf, pipelinedata, stockData, datareaders);
 
@@ -234,7 +208,7 @@ public class AllET {
         //IclijServiceResult result = getContentM(new ArrayList<>(), origparam );
         
         List<ResultItem> retlist = result.getList();
-        PipelineData[] pipelineData = result.getPipelineData();
+        SerialPipeline pipelineData = result.getPipelineData();
         
         StockData stockData = new StockUtil().getStockData(conf, pipelineData, inmemory);
 
@@ -275,10 +249,10 @@ public class AllET {
                 if (predictors[i] == null) {
                     continue;
                 }
-                Map map = predictors[i].putData().getMap();
+                //Map map = predictors[i].putData().getMap();
                 log.debug("ca {}", predictors[i].getName());
-                PipelineData singlePipelinedata = predictors[i].putData();
-                pipelineData = ArrayUtils.add(pipelineData, singlePipelinedata);
+                SerialPipeline singlePipelinedata = predictors[i].putData();
+                pipelineData.add(singlePipelinedata);
             }
             for (int i = 0; i < aggregates.length; i++) {
                 if (aggregates[i] == null) {
@@ -288,9 +262,9 @@ public class AllET {
                     continue;
                 }
                 log.debug("ag {}", aggregates[i].getName());
-                Map map = aggregates[i].putData().getMap();
-                PipelineData singlePipelinedata = aggregates[i].putData();
-                pipelineData = ArrayUtils.add(pipelineData, singlePipelinedata);
+                //Map map = aggregates[i].putData().getMap();
+                SerialPipeline singlePipelinedata = aggregates[i].putData();
+                pipelineData.add(singlePipelinedata);
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -306,18 +280,16 @@ public class AllET {
     
     @BeforeAll
     public void before() throws Exception {
-        iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.FALSE);
+        iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
         ConfigMaps configMaps = IclijConfig.instanceC();
         conf = new IclijConfig(configMaps, "coreconfig", null);
         conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.FALSE);
         //conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.FALSE);
-        String market = TestConstants.MARKET;
-        dataSource = new TestDataSource(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), market, 26, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null);
 
         dbDao = new DbDao(conf, dataSource);
         iclijDbDao = new IclijDbDao(iconf, dbSpringDS);
 
-        webFluxUtil = new TestWebFluxUtil(conf, dataSource);
+        webFluxUtil = new TestWebFluxUtil(conf,null);
         parameters = new Parameters();
         parameters.setThreshold(1.0);
         parameters.setFuturedays(10);
@@ -325,12 +297,12 @@ public class AllET {
         fileSystemDao = mock(FileSystemDao.class);
         doReturn("dummy.txt").when(fileSystemDao).writeFile(any(), any(), any(), any());
 
-        CuratorFramework curatorClient = mock(CuratorFramework.class);
+        CuratorFramework curatorClient = new TestCuratorFramework();
         
         inmemory = inmemoryFactory.get(iconf);
 
-        DbDao coreDbDao = new DbDao(iconf, dataSource);
-        io = new IO(iclijDbDao, coreDbDao , webFluxUtil, fileSystemDao, inmemoryFactory, communicationFactory, curatorClient);
+        //DbDao coreDbDao = new DbDao(iconf, dataSource);
+        io = new IO(iclijDbDao, dbDao , webFluxUtil, fileSystemDao, inmemoryFactory, communicationFactory, curatorClient);
         ((TestWebFluxUtil)webFluxUtil).setIo(io);
         ((TestCommunicationFactory)communicationFactory).setIo(io);
         ((TestCommunicationFactory)communicationFactory).setConfig(iconf);
@@ -433,7 +405,8 @@ public class AllET {
 
     @Test
     public void testFilter() throws Exception {
-        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.IMPROVEFILTER, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        String market = System.getenv("MARKET");
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.IMPROVEFILTER, PipelineConstants.FILTER, null, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
@@ -443,7 +416,9 @@ public class AllET {
 
     @Test
     public void testAboveBelow() throws Exception {
-        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.IMPROVEABOVEBELOW, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        // todo
+        String market = System.getenv("MARKET");
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.IMPROVEABOVEBELOW, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
@@ -524,7 +499,7 @@ public class AllET {
     @Deprecated
     /// TODO too big
     public void getDates(IclijConfig conf, IclijServiceResult result) throws Exception {
-        PipelineData[] pipelineData = new PipelineData[0];
+        SerialPipeline pipelineData = new SerialPipeline();
         Map<String, Object> aMap = new HashMap<>();
         /*
         aMap.put(ConfigConstants.MACHINELEARNING, false);
@@ -545,10 +520,10 @@ public class AllET {
         StockData stockData = new TestData().getStockdata(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), TestConstants.MARKET, 26, false, Constants.INDEXVALUECOLUMN, false);
         //StockData stockData = new Extract(dbDao).getStockData(conf);
         if (stockData != null) {
-            PipelineData map = new PipelineData();
-            map.setName(PipelineConstants.DATELIST);
-            map.put(PipelineConstants.DATELIST, new SerialListPlain(stockData.stockdates));
-            pipelineData = ArrayUtils.add(pipelineData, map);
+            PipelineData map = new PipelineData(PipelineConstants.DATELIST, PipelineConstants.DATELIST, null, new SerialListPlain(stockData.stockdates), false);
+            //map.setName(PipelineConstants.DATELIST);
+            //map.put(PipelineConstants.DATELIST, new SerialListPlain(stockData.stockdates));
+            pipelineData.add(map);
             result.setPipelineData(pipelineData);
             return;
         }
@@ -572,10 +547,10 @@ public class AllET {
 
         try {
             Collections.sort(dates);
-            PipelineData map = new PipelineData();
-            map.setName(PipelineConstants.DATELIST);
-            map.put(PipelineConstants.DATELIST, new SerialListPlain(dates));
-            pipelineData = ArrayUtils.add(pipelineData, map);
+            PipelineData map = new PipelineData(PipelineConstants.DATELIST, PipelineConstants.DATELIST, null, new SerialListPlain(dates), false);
+            //map.setName(PipelineConstants.DATELIST);
+            //map.put(PipelineConstants.DATELIST, new SerialListPlain(dates));
+            pipelineData.add(map);
             result.setPipelineData(pipelineData);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
