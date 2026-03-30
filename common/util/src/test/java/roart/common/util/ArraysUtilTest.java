@@ -200,4 +200,54 @@ public class ArraysUtilTest {
         List<Double> list2 = Arrays.asList(new Double[] { 2.0, 1.0, 3.0 });
         assertEquals(3, new ArraysUtil().getNonNullListNew(list2).size());
     }
+    
+    @Test
+    public void searchForwardLimitTest() {
+        double[] array = { 10,10,10,10,10,10,10,10,-10,-10,-10,-10,-10,10,10,10,10};
+        Map<Integer, Integer>[] map = ArraysUtil.searchForwardLimit(array, -5, 5);
+        Map<Integer, Integer> pos = map[0];
+        Map<Integer, Integer> neg = map[1];
+        System.out.println("pos " + pos);
+        System.out.println("neg " + neg);
+        assertEquals(pos.get(0), new Integer(7));
+        assertEquals(pos.get(13), new Integer(16));
+        assertEquals(neg.get(8), new Integer(12));  
+        Map<Integer, Integer> newPos = ArraysUtil.getAcceptedRanges(pos, 5, 5, array.length, true);
+        Map<Integer, Integer> newNeg = ArraysUtil.getAcceptedRanges(neg, 5, 5, array.length, true);
+        System.out.println("newpos " + newPos);
+        System.out.println("newneg " + newNeg);
+        assertEquals(newPos.size(), 1);
+        assertEquals(newPos.get(3), new Integer(7));
+        assert(newNeg.isEmpty());
+        Map<Integer, Integer> fresh = ArraysUtil.getFreshRanges(pos, 4, 5, array.length);
+        System.out.println("fresh " + fresh);
+        assertEquals(fresh.get(13), new Integer(16));
+    }
+
+    @Test
+    public void getBatchOrEmptyTest() {
+        List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
+        
+        // Test first batch
+        List<Integer> batch0 = ArraysUtil.getBatchOrEmpty(list, 0, 3);
+        assertEquals(3, batch0.size());
+        assertEquals(1, batch0.get(0));
+        
+        // Test middle batch
+        List<Integer> batch1 = ArraysUtil.getBatchOrEmpty(list, 1, 3);
+        assertEquals(3, batch1.size());
+        assertEquals(4, batch1.get(0));
+        
+        // Test last partial batch
+        List<Integer> batch2 = ArraysUtil.getBatchOrEmpty(list, 2, 3);
+        assertEquals(1, batch2.size());
+        assertEquals(7, batch2.get(0));
+        
+        // Test out of bounds batch
+        List<Integer> batch3 = ArraysUtil.getBatchOrEmpty(list, 3, 3);
+        assertTrue(batch3.isEmpty());
+        
+        // Test null list
+        assertNull(ArraysUtil.getBatchOrEmpty(null, 0, 10));
+    }
 }

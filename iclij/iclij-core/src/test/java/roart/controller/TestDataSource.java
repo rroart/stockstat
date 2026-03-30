@@ -1,10 +1,6 @@
 package roart.controller;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import roart.common.model.MetaDTO;
 import roart.common.model.MyDataSource;
 import roart.common.model.StockDTO;
+import roart.common.util.ArraysUtil;
 import roart.db.dao.DbDao;
 import roart.etl.db.Extract;
 import roart.iclij.config.IclijConfig;
@@ -58,6 +55,7 @@ public class TestDataSource extends MyDataSource {
         metas = testData.getMetas(marketName, periods, ohlc);
         try {
             stocks = testData.getStockDTO(startDate, endDate, marketName, size, weekdays, column, ohlc, periods, idTemplate );
+            stocks = Collections.unmodifiableList(stocks);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -81,6 +79,7 @@ public class TestDataSource extends MyDataSource {
         metas = testData.getMetas(marketName, periods, ohlc);
         try {
             stocks = testData.getPeriodStockDTO(startDate, endDate, marketName, size, weekdays, column, ohlc, periods, idTemplate, period, stockcount, days);
+            stocks = Collections.unmodifiableList(stocks);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -130,7 +129,8 @@ public class TestDataSource extends MyDataSource {
 
     @Override
     public List<StockDTO> getAll(String market, IclijConfig conf, boolean disableCache, int batch, int batchSize) throws Exception {
-        throw new UnsupportedOperationException("Unsupported operation");
+        List<StockDTO> list = getAll(market, conf, disableCache);
+        return ArraysUtil.getBatchOrEmpty(list, batch, batchSize);
     }
 
     @Override

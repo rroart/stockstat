@@ -14,6 +14,7 @@ import roart.common.constants.Constants;
 import roart.common.model.MetaDTO;
 import roart.common.model.MyDataSource;
 import roart.common.model.StockDTO;
+import roart.common.util.ArraysUtil;
 import roart.iclij.config.IclijConfig;
 
 public class TestDataSources extends MyDataSource {
@@ -66,7 +67,8 @@ public class TestDataSources extends MyDataSource {
 
     @Override
     public List<StockDTO> getAll(String market, IclijConfig conf, boolean disableCache, int batch, int batchSize) throws Exception {
-        throw new UnsupportedOperationException("Unsupported operation");
+        List<StockDTO> list = getAll(market, conf, disableCache);
+        return ArraysUtil.getBatchOrEmpty(list, batch, batchSize);
     }
 
     @Override

@@ -872,5 +872,16 @@ public class ArraysUtil {
     public static <E> E getLast(List<E> list) {
         return !list.isEmpty() ? list.get(list.size() -1 ) : null;
     }
+
+    public static List getBatchOrEmpty(List list, int batch, int batchSize) {
+        if (list == null) {
+            return null;
+        }
+        if (batch * batchSize >= list.size()) {
+            return List.of();
+        }
+        return Collections.unmodifiableList(list.subList(batch * batchSize, Math.min((batch + 1) * batchSize, list.size())));
+
+    }
 }
 

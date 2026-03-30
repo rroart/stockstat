@@ -75,6 +75,15 @@
               <para>Description: Enable Spring Database backend</para>
             </listitem>
           </varlistentry>
+
+          <varlistentry>
+            <term>database.batchsize (ConfigConstants.DATABASEBATCHSIZE)</term>
+            <listitem>
+              <para>Type: Integer</para>
+              <para>Default: 0</para>
+              <para>Description: Database batchsize</para>
+            </listitem>
+          </varlistentry>
         </variablelist>
       </section>
 
@@ -276,6 +285,15 @@
               <para>Type: Boolean</para>
               <para>Default: false</para>
               <para>Description: Enable in-memory pipeline</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>misc.inmemory.pipeline.batchsize (IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE)</term>
+            <listitem>
+              <para>Type: Integer</para>
+              <para>Default: 0</para>
+              <para>Description: Enable in-memory pipeline batchsize</para>
             </listitem>
           </varlistentry>
         </variablelist>
