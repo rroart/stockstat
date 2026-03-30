@@ -270,6 +270,7 @@ public class TestData {
             }
         }
         list = StockETL.filterWeekend(conf, list);
+        list = Collections.unmodifiableList(list);
         return list;
     }
 

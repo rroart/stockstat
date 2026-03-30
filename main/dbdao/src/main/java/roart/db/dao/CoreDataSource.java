@@ -1,6 +1,7 @@
 package roart.db.dao;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,6 +58,7 @@ public class CoreDataSource extends MyDataSource {
         long time0 = System.currentTimeMillis();
         List<StockDTO> list = ds.getStocksByMarket(type);
         log.info("StockDTO getall {}", (System.currentTimeMillis() - time0) / 1000);
+        list = Collections.unmodifiableList(list);
         return list;
     }
 
@@ -71,6 +73,7 @@ public class CoreDataSource extends MyDataSource {
         long time0 = System.currentTimeMillis();
         list = ds.getStocksByMarket(market);
         list = StockETL.filterWeekend(conf, list);
+        list = Collections.unmodifiableList(list);
         log.info("StockDTO getall {} {}", market, (System.currentTimeMillis() - time0) / 1000);
         if (!disableCache) {
             MyCache.getInstance().put(key, list);
