@@ -1,5 +1,6 @@
 package roart.etl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class MarketDataETL {
         log.info("prestocks");
         log.info("stocks {}", stocks.size());
         MarketData marketdata = new MarketData();
-        marketdata.stocks = stocks;
+        marketdata.stocks = new ArrayList<>(stocks);
         marketdata.periodtext = periodText;
         marketdata.meta = meta;
         Map<String, List<StockDTO>> stockdatemap = StockUtil.splitDate(stocks);
