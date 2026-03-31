@@ -5,9 +5,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -51,7 +53,7 @@ public class Extract {
         this.dataSource = dataSource;
     }
     */
-    
+
     public StockData getStockData(IclijConfig conf, String market, boolean disableCache) {
         String[] periodText;
         periodText = DbDaoUtil.getPeriodText(market, conf, dbDao);
@@ -63,11 +65,12 @@ public class Extract {
         }
 
         int batchSize = conf.getDbBatchsize();
+        if (batchSize > 0) {
+            return getStockDataBatch(conf, market, disableCache);
+        }
         List<StockDTO> stocks = null;
         try {
             stocks = dbDao.getAll(market, conf, disableCache);
-            int batch = 0;
-            //stocks = dbDao.getAll(market, conf, disableCache, batch, batchSize);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -75,11 +78,52 @@ public class Extract {
             return null;
         }
         log.info("stocks {}", stocks.size());
-        //log.info("stocks {}", JsonUtil.convert(stocks));
         return getStockData(conf, market, stocks, meta, periodText);
     }
 
-    public StockData getStockData(IclijConfig conf, String market, List<StockDTO> stocks, MetaDTO meta, String[] periodText) {    
+    public StockData getStockDataBatch(IclijConfig conf, String market, boolean disableCache) {
+        String[] periodText;
+        periodText = DbDaoUtil.getPeriodText(market, conf, dbDao);
+        MetaDTO meta = null;
+        try {
+            meta = dbDao.getById(market, conf);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+
+        int batchSize = conf.getDbBatchsize();
+        List<StockDTO> stocks = null;
+        StockData result = null;
+        try {
+                int batch = 0;
+                while (true) {
+                    log.info("batch {} {}", batch, batchSize);
+                    List<StockDTO> batchStocks = dbDao.getAll(market, conf, disableCache, batch, batchSize);
+                    if (batchStocks.isEmpty()) {
+                        break;
+                    }
+                    StockData partial = getStockData(conf, market, batchStocks, meta, periodText);
+                    if (partial != null) {
+                        if (result == null) {
+                            result = partial;
+                        } else {
+                            merge(result, partial);
+                        }
+                    }
+                    batch++;
+                    log.info("batch {}", batch);
+                }
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        if (result == null) {
+            return null;
+        }
+        log.info("stocks total {}", result.datedstocks.size());
+        return result;
+    }
+
+    public StockData getStockData(IclijConfig conf, String market, List<StockDTO> stocks, MetaDTO meta, String[] periodText) {
         Map<String, List<StockDTO>> stockidmap = StockUtil.splitId(stocks);
         Map<String, List<StockDTO>> stockdatemap = StockUtil.splitDate(stocks);
         stockdatemap = StockUtil.filterFew(stockdatemap, conf.getFilterDate());
@@ -207,5 +251,70 @@ public class Extract {
         return periodText;
     }
 
+    // Github Copilot
+
+    public void merge(StockData main, StockData partial) {
+        // merge stockidmap
+        if (partial.stockidmap != null) {
+            for (Entry<String, List<StockDTO>> entry : partial.stockidmap.entrySet()) {
+                main.stockidmap.computeIfAbsent(entry.getKey(), k -> new ArrayList<>()).addAll(entry.getValue());
+            }
+        }
+        // merge stockdatemap
+        if (partial.stockdatemap != null) {
+            for (Entry<String, List<StockDTO>> entry : partial.stockdatemap.entrySet()) {
+                main.stockdatemap.computeIfAbsent(entry.getKey(), k -> new ArrayList<>()).addAll(entry.getValue());
+            }
+        }
+        // merge marketdatamap
+        if (partial.marketdatamap != null && main.marketdatamap != null) {
+            for (Entry<String, MarketData> entry : partial.marketdatamap.entrySet()) {
+                String key = entry.getKey();
+                MarketData partialMd = entry.getValue();
+                MarketData mainMd = main.marketdatamap.get(key);
+                if (mainMd == null) {
+                    main.marketdatamap.put(key, partialMd);
+                } else {
+                    mainMd.stocks.addAll(partialMd.stocks);
+                    for (int i = 0; i < partialMd.datedstocklists.length; i++) {
+                        if (mainMd.datedstocklists[i] == null) {
+                            mainMd.datedstocklists[i] = partialMd.datedstocklists[i];
+                        } else if (partialMd.datedstocklists[i] != null) {
+                            mainMd.datedstocklists[i].addAll(partialMd.datedstocklists[i]);
+                        }
+                    }
+                }
+            }
+        }
+        // merge datedstocklists
+        if (partial.datedstocklists != null && main.datedstocklists != null) {
+            for (int i = 0; i < Math.min(partial.datedstocklists.length, main.datedstocklists.length); i++) {
+                if (main.datedstocklists[i] == null) {
+                    main.datedstocklists[i] = partial.datedstocklists[i];
+                } else if (partial.datedstocklists[i] != null) {
+                    main.datedstocklists[i].addAll(partial.datedstocklists[i]);
+                }
+            }
+            //main.datedstocks = main.datedstocklists[0];
+        }
+        // merge stockdates
+        if (partial.stockdates != null) {
+            Set<String> dates = new HashSet<>(main.stockdates != null ? main.stockdates : new ArrayList<>());
+            dates.addAll(partial.stockdates);
+            main.stockdates = new ArrayList<>(dates);
+            Collections.sort(main.stockdates);
+        }
+        // merge idNameMap
+        if (partial.idNameMap != null) {
+            if (main.idNameMap != null) {
+                main.idNameMap.putAll(partial.idNameMap);
+            }
+        }
+        // merge datedstocks
+        if (partial.datedstocks != null && main.datedstocks != null) {
+            log.info("len" + main.datedstocks.size() + " " + partial.datedstocks.size());
+            main.datedstocks.addAll(partial.datedstocks);
+        }
+    }
 
 }

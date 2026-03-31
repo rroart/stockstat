@@ -389,6 +389,9 @@ public abstract class IndicatorAggregator extends Aggregator {
         headrow.addarr(objs);
     }
 
+    // mapMap is map of SubType (atr etc) to map of ids to offsetmap, learnmap, classifymap
+    // then to a list [start, end], array and eventual classification
+
     private void doLearnTestClassify(NeuralNetConfigs nnConfigs, IclijConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
             Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult,
             Map<Double, String> labelMapShort, Map<SubType, MLMeta> metaMap, NeuralNetCommand neuralnetcommand, Double threshold) {
@@ -2166,6 +2169,48 @@ public abstract class IndicatorAggregator extends Aggregator {
         return subType.isMerge ? "MRG" : "";
     }
 
+    // Github Copilot
+
+    /**
+     * Merge two complex nested maps with structure:
+     * Map&lt;SubType, Map&lt;String, Map&lt;String, List&lt;Pair&lt;double[], Pair&lt;Object, Double&gt;&gt;&gt;&gt;&gt;&gt;
+     * 
+     * @param target the target map to merge into
+     * @param source the source map to merge from
+     */
+    private void mergeMapMap(Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> target, 
+                            Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> source) {
+        if (source == null) {
+            return;
+        }
+        
+        for (Entry<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> subTypeEntry : source.entrySet()) {
+            SubType subType = subTypeEntry.getKey();
+            Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>> sourceMap = subTypeEntry.getValue();
+            
+            Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>> targetMap = 
+                target.computeIfAbsent(subType, k -> new HashMap<>());
+            
+            for (Entry<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>> keyEntry : sourceMap.entrySet()) {
+                String key = keyEntry.getKey();
+                Map<String, List<Pair<double[], Pair<Object, Double>>>> sourceInnerMap = keyEntry.getValue();
+                
+                Map<String, List<Pair<double[], Pair<Object, Double>>>> targetInnerMap = 
+                    targetMap.computeIfAbsent(key, k -> new HashMap<>());
+                
+                for (Entry<String, List<Pair<double[], Pair<Object, Double>>>> pairEntry : sourceInnerMap.entrySet()) {
+                    String pairKey = pairEntry.getKey();
+                    List<Pair<double[], Pair<Object, Double>>> sourcePairList = pairEntry.getValue();
+                    
+                    List<Pair<double[], Pair<Object, Double>>> targetPairList = 
+                        targetInnerMap.computeIfAbsent(pairKey, k -> new ArrayList<>());
+                    
+                    targetPairList.addAll(sourcePairList);
+                }
+            }
+        }
+    }
+
     protected List<SubType> usedSubTypes() {
         return usedSubTypes;
     }
@@ -2322,6 +2367,291 @@ public abstract class IndicatorAggregator extends Aggregator {
             this.countMap = countMap;
         }
 
+    }
+
+    // Github Copilot
+
+    /**
+     * Compares two Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> objects for equality.
+     * This method performs a deep comparison of the nested structures.
+     *
+     * @param map1 the first map to compare
+     * @param map2 the second map to compare
+     * @return true if both maps are equal, false otherwise
+     */
+    public boolean compareMaps(Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> map1,
+                               Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> map2) {
+        if (map1 == map2) {
+            return true;
+        }
+        if (map1 == null || map2 == null) {
+            return false;
+        }
+        if (map1.keySet().size() != map2.keySet().size()) {
+            return false;
+        }
+
+        for (SubType subType : map1.keySet()) {
+            if (!map2.containsKey(subType)) {
+                return false;
+            }
+
+            Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>> innerMap1 = map1.get(subType);
+            Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>> innerMap2 = map2.get(subType);
+
+            if (!compareInnerMaps(innerMap1, innerMap2)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Helper method to compare inner maps recursively.
+     *
+     * @param map1 the first inner map
+     * @param map2 the second inner map
+     * @return true if both inner maps are equal, false otherwise
+     */
+    private boolean compareInnerMaps(Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>> map1,
+                                     Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>> map2) {
+        if (map1 == map2) {
+            return true;
+        }
+        if (map1 == null || map2 == null) {
+            return false;
+        }
+        if (map1.keySet().size() != map2.keySet().size()) {
+            return false;
+        }
+
+        for (String key : map1.keySet()) {
+            if (!map2.containsKey(key)) {
+                return false;
+            }
+
+            Map<String, List<Pair<double[], Pair<Object, Double>>>> innerMap1 = map1.get(key);
+            Map<String, List<Pair<double[], Pair<Object, Double>>>> innerMap2 = map2.get(key);
+
+            if (!compareStringListMaps(innerMap1, innerMap2)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Helper method to compare maps with String keys and list values.
+     *
+     * @param map1 the first map
+     * @param map2 the second map
+     * @return true if both maps are equal, false otherwise
+     */
+    private boolean compareStringListMaps(Map<String, List<Pair<double[], Pair<Object, Double>>>> map1,
+                                          Map<String, List<Pair<double[], Pair<Object, Double>>>> map2) {
+        if (map1 == map2) {
+            return true;
+        }
+        if (map1 == null || map2 == null) {
+            return false;
+        }
+        if (map1.keySet().size() != map2.keySet().size()) {
+            return false;
+        }
+
+        for (String key : map1.keySet()) {
+            if (!map2.containsKey(key)) {
+                return false;
+            }
+
+            List<Pair<double[], Pair<Object, Double>>> list1 = map1.get(key);
+            List<Pair<double[], Pair<Object, Double>>> list2 = map2.get(key);
+
+            if (!comparePairLists(list1, list2)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Helper method to compare lists of Pair objects.
+     *
+     * @param list1 the first list
+     * @param list2 the second list
+     * @return true if both lists are equal, false otherwise
+     */
+    private boolean comparePairLists(List<Pair<double[], Pair<Object, Double>>> list1,
+                                     List<Pair<double[], Pair<Object, Double>>> list2) {
+        if (list1 == list2) {
+            return true;
+        }
+        if (list1 == null || list2 == null) {
+            return false;
+        }
+        if (list1.size() != list2.size()) {
+            return false;
+        }
+
+        for (int i = 0; i < list1.size(); i++) {
+            Pair<double[], Pair<Object, Double>> pair1 = list1.get(i);
+            Pair<double[], Pair<Object, Double>> pair2 = list2.get(i);
+
+            if (!comparePairs(pair1, pair2)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Helper method to compare individual Pair objects.
+     *
+     * @param pair1 the first pair
+     * @param pair2 the second pair
+     * @return true if both pairs are equal, false otherwise
+     */
+    private boolean comparePairs(Pair<double[], Pair<Object, Double>> pair1,
+                                 Pair<double[], Pair<Object, Double>> pair2) {
+        if (pair1 == pair2) {
+            return true;
+        }
+        if (pair1 == null || pair2 == null) {
+            return false;
+        }
+
+        double[] array1 = pair1.getLeft();
+        double[] array2 = pair2.getLeft();
+
+        if (!Arrays.equals(array1, array2)) {
+            return false;
+        }
+
+        Pair<Object, Double> innerPair1 = pair1.getRight();
+        Pair<Object, Double> innerPair2 = pair2.getRight();
+
+        if (!Objects.equals(innerPair1, innerPair2)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Performs a deep comparison of the map and list sizes of two 
+     * Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> objects.
+     * This method checks the structure and dimensions without comparing actual values.
+     *
+     * @param map1 the first map to compare
+     * @param map2 the second map to compare
+     * @return true if the structures have the same sizes at all levels, false otherwise
+     */
+    public boolean compareMapAndListSizes(Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> map1,
+                                          Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> map2) {
+        if (map1 == map2) {
+            return true;
+        }
+        if (map1 == null || map2 == null) {
+            return false;
+        }
+        if (map1.keySet().size() != map2.keySet().size()) {
+            return false;
+        }
+
+        for (SubType subType : map1.keySet()) {
+            if (!map2.containsKey(subType)) {
+                return false;
+            }
+
+            Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>> innerMap1 = map1.get(subType);
+            Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>> innerMap2 = map2.get(subType);
+
+            if (!compareInnerMapSizes(innerMap1, innerMap2)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Helper method to compare inner map sizes recursively.
+     *
+     * @param map1 the first inner map
+     * @param map2 the second inner map
+     * @return true if both inner maps have the same structure sizes, false otherwise
+     */
+    private boolean compareInnerMapSizes(Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>> map1,
+                                         Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>> map2) {
+        if (map1 == map2) {
+            return true;
+        }
+        if (map1 == null || map2 == null) {
+            return false;
+        }
+        if (map1.keySet().size() != map2.keySet().size()) {
+            return false;
+        }
+
+        for (String key : map1.keySet()) {
+            if (!map2.containsKey(key)) {
+                return false;
+            }
+
+            Map<String, List<Pair<double[], Pair<Object, Double>>>> innerMap1 = map1.get(key);
+            Map<String, List<Pair<double[], Pair<Object, Double>>>> innerMap2 = map2.get(key);
+
+            if (!compareStringListMapSizes(innerMap1, innerMap2)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Helper method to compare sizes of maps with String keys and list values.
+     *
+     * @param map1 the first map
+     * @param map2 the second map
+     * @return true if both maps have the same structure sizes, false otherwise
+     */
+    private boolean compareStringListMapSizes(Map<String, List<Pair<double[], Pair<Object, Double>>>> map1,
+                                              Map<String, List<Pair<double[], Pair<Object, Double>>>> map2) {
+        if (map1 == map2) {
+            return true;
+        }
+        if (map1 == null || map2 == null) {
+            return false;
+        }
+        if (map1.keySet().size() != map2.keySet().size()) {
+            return false;
+        }
+
+        for (String key : map1.keySet()) {
+            if (!map2.containsKey(key)) {
+                return false;
+            }
+
+            List<Pair<double[], Pair<Object, Double>>> list1 = map1.get(key);
+            List<Pair<double[], Pair<Object, Double>>> list2 = map2.get(key);
+
+            if (list1 == null && list2 == null) {
+                continue;
+            }
+            if (list1 == null || list2 == null) {
+                return false;
+            }
+            if (list1.size() != list2.size()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public abstract String getFilenamePart();
