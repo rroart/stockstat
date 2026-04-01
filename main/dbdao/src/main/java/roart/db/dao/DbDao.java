@@ -53,6 +53,6 @@ public class DbDao {
     }
 
     public boolean hasStockBatch() {
-        return dataSource instanceof DbSpringDS;
+        return false; // TODO dataSource instanceof DbSpringDS;
     }
 }
