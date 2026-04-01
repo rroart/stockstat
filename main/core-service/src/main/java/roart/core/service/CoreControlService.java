@@ -105,8 +105,12 @@ public class CoreControlService {
         try {
             Map<String, String> stockMap = new HashMap<>();
             List<StockDTO> stocks = io.getDbDao().getAll(market, conf, true);
-            stocks.remove(null);
+            //stocks.remove(null);
             for (StockDTO stock : stocks) {
+                if (stock == null) {
+                    log.error("Stock is null");
+                    continue;
+                }
                 String name = stock.getName();
                 if (name != null && !name.isEmpty() && !name.isBlank()) {
                     stockMap.put(stock.getId(), stock.getName());
@@ -509,6 +513,7 @@ public class CoreControlService {
             Map<String, StockData> stockDataMap = new HashMap<>();
             Set<String> markets = new ServiceUtil().getMarkets(ids);
             for (String market : markets) {
+                int batchSize = conf.getDbBatchsize();
                 StockData stockData = new Extract(io.getDbDao()).getStockData(conf, market, true);
                 if (stockData == null) {
                     return new ArrayList<>();
