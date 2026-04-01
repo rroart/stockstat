@@ -89,6 +89,7 @@ class IndicatorAggregatorTest {
 
     @Test
     void testAddResultItemTitle() {
+        aggregator.usedSubTypes = List.of(); // TODO or not empty?
         ResultItemTableRow headrow = new ResultItemTableRow();
         aggregator.addResultItemTitle(headrow);
         // Check that headrow has been populated

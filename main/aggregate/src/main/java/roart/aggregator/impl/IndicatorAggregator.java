@@ -1205,7 +1205,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     protected String[] posneg = { POSTYPESTR, NEGTYPESTR };
     protected String[] abovebelow = { Constants.ABOVE, Constants.BELOW };
 
-    private List<SubType> usedSubTypes;
+    List<SubType> usedSubTypes;
 
     protected Map<String, Double> createShortLabelMap2() {
         Map<String, Double> labelMap2 = new HashMap<>();
