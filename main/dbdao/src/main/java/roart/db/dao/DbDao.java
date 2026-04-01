@@ -51,4 +51,8 @@ public class DbDao {
     public MetaDTO getById(String market, IclijConfig conf) throws Exception {
         return dataSource.getById(market, conf);
     }
+
+    public boolean hasStockBatch() {
+        return dataSource instanceof DbSpringDS;
+    }
 }
