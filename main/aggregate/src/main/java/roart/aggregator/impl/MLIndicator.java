@@ -382,7 +382,7 @@ public class MLIndicator extends Aggregator {
 
     }
 
-    private Double[] getThresholds(IclijConfig conf) {
+    Double[] getThresholds(IclijConfig conf) {
         boolean gui = conf.getConfigData().getConfigValueMap().get(ConfigConstants.MISCTHRESHOLD) != null;
         log.info("GUI thresholds {}", gui);
         String thresholdString = conf.getAggregatorsIndicatorThreshold();
@@ -1085,7 +1085,7 @@ public class MLIndicator extends Aggregator {
         return market + "_" + getName() + "_" + dao.getName() + "_" +  model.getName() + "_" + getFilenamePart(indicators) + conf.getAggregatorsIndicatorFuturedays() + "_" + threshold + "_" + in + "_" + out;
     }
     
-    private double getCat(double change, double threshold) {
+    double getCat(double change, double threshold) {
         if (conf.wantUseBinary()) {
             if (change > threshold) {
                 return 1.0;
