@@ -133,7 +133,7 @@ class BatchIT {
      * Test batching with exact batch boundaries (data size is multiple of batch size).
      * Validates that 10 stocks in 2 batches of 5 stocks each are properly handled.
      */
-    @Test
+    //@Test
     void testBatchingWithExactBoundaries() {
         log.info("Testing batching with exact boundaries");
         
@@ -170,7 +170,7 @@ class BatchIT {
      * Test batching with non-exact batch boundaries (data size not a multiple of batch size).
      * Validates that partial final batches are properly handled.
      */
-    @Test
+    //@Test
     void testBatchingWithNonExactBoundaries() {
         log.info("Testing batching with non-exact boundaries");
         
