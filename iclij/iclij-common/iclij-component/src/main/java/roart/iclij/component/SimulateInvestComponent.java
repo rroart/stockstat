@@ -83,7 +83,7 @@ public class SimulateInvestComponent extends ComponentML {
 
     public boolean eventUnique = true;
 
-    public boolean debugFuture = true;
+    public boolean debugFuture = false;
     
     public static boolean doprev = true;
     
@@ -1504,11 +1504,15 @@ public class SimulateInvestComponent extends ComponentML {
                         newids = " -> " + idsnew;
                         idsnewtxt = getText(data.stocks, idsnew);
                     }
-                    log.info("Extradelay {}", extradelay);
+                    if (debugFuture) {
+                        log.info("Extradelay {}", extradelay);
+                    }
                     if (true && extradelay > 0) {
                         // remove recents from eventhistorymap
-                        log.info("num {} {} {}", getBSIndexOffset(mydate, simConfig), extradelay, endIndexOffset);
-                        log.info("Event history map {}", onerun.eventHistoryMap.keySet());
+                        if (debugFuture) {
+                            log.info("num {} {} {}", getBSIndexOffset(mydate, simConfig), extradelay, endIndexOffset);
+                            log.info("Event history map {}", onerun.eventHistoryMap.keySet());
+                        }
                         List<String> recentSells = onerun.eventHistoryMap.entrySet().stream()
                                 .filter(e -> e.getKey() > getBSIndexOffset(mydate, simConfig) - extradelay && e.getKey() <= getBSIndexOffset(mydate, simConfig))
                                 .flatMap(m -> m.getValue() .getOrDefault("SELL", new ArrayList<>())
@@ -1519,9 +1523,11 @@ public class SimulateInvestComponent extends ComponentML {
                                 .flatMap(m -> m.getValue() .getOrDefault("BUY", new ArrayList<>())
                                         .stream()
                                         .map(SimulateStock::getId)).toList();
-                        log.info("Recent sells {}", recentSells);
-                        log.info("Recent buys {}", recentBuys);
-                        log.info("Buyids before {}", buyids);
+                        if (debugFuture) {
+                            log.info("Recent sells {}", recentSells);
+                            log.info("Recent buys {}", recentBuys);
+                            log.info("Buyids before {}", buyids);
+                        }
                         List<String> idsnew = new ArrayList<>();
                         idsnew.addAll(buyids);
                         idsnew.removeAll(ids);
@@ -1529,7 +1535,9 @@ public class SimulateInvestComponent extends ComponentML {
                         idsnew.removeAll(recentBuys);
                         //newids = " -> " + idsnew;
                        //idsnewtxt = getText(data.stocks, idsnew);
-                        log.info("Buyids after {}", idsnew);
+                        if (debugFuture) {
+                            log.info("Buyids after {}", idsnew);
+                        }
                         idsnew = new ArrayList<>();
                         idsnew.addAll(sellids);
                         //idsnew.removeAll(ids);
@@ -1537,16 +1545,20 @@ public class SimulateInvestComponent extends ComponentML {
                         idsnew.removeAll(recentBuys);
                         //newids = " -> " + idsnew;
                        //idsnewtxt = getText(data.stocks, idsnew);
-                        log.info("Sellids after {}", idsnew);
+                        if (debugFuture) {
+                            log.info("Sellids after {}", idsnew);
+                        }
                     }
                     if (true) {
                         int jj = 0;
                         // remove from buy sell if in event map
                         List<String> recentBuys = onerun.eventMap.values().stream().flatMap(m -> m.getOrDefault("BUY", new ArrayList<>()).stream().map(SimulateStock::getId)).collect(Collectors.toList());
                         List<String> recentSells = onerun.eventMap.values().stream().flatMap(m -> m.getOrDefault("SELL", new ArrayList<>()).stream().map(SimulateStock::getId)).collect(Collectors.toList());
-                        log.info("Recent sells {}", recentSells);
-                        log.info("Recent buys {}", recentBuys);
-                        log.info("Buyids before {}", buyids);
+                        if (debugFuture) {
+                            log.info("Recent sells {}", recentSells);
+                            log.info("Recent buys {}", recentBuys);
+                            log.info("Buyids before {}", buyids);
+                        }
                         List<String> idsnew = new ArrayList<>();
                         idsnew.addAll(buyids);
                         idsnew.removeAll(ids);
@@ -1554,7 +1566,9 @@ public class SimulateInvestComponent extends ComponentML {
                         idsnew.removeAll(recentBuys);
                         //newids = " -> " + idsnew;
                        //idsnewtxt = getText(data.stocks, idsnew);
-                        log.info("Buyids after {}", idsnew);
+                        if (debugFuture) {
+                            log.info("Buyids after {}", idsnew);
+                        }
                         idsnew = new ArrayList<>();
                         idsnew.addAll(sellids);
                         //idsnew.removeAll(ids);
@@ -1562,7 +1576,9 @@ public class SimulateInvestComponent extends ComponentML {
                         idsnew.removeAll(recentBuys);
                         //newids = " -> " + idsnew;
                        //idsnewtxt = getText(data.stocks, idsnew);
-                        log.info("Sellids after {}", idsnew);
+                        if (debugFuture) {
+                            log.info("Sellids after {}", idsnew);
+                        }
                     }
                     /*
                     String buytxt = getText(data.stocks, buyids);
@@ -1605,7 +1621,9 @@ public class SimulateInvestComponent extends ComponentML {
     
     private void getNewBS(SimulateInvestConfig simConfig, int extradelay, OneRun onerun, Mydate mydate, NewBS newBS) {
         for (int x = 0; x <= extradelay; x++) {
-            log.info("offsets {} {}", mydate.indexOffset - x - 1, onerun.eventMap.keySet());
+            if (debugFuture) {
+                log.info("offsets {} {}", mydate.indexOffset - x - 1, onerun.eventMap.keySet());
+            }
             boolean last = x == extradelay;
             Map<String, List<SimulateStock>> myMaps = onerun.eventMap.get(mydate.indexOffset - x - 1);
             if (myMaps == null) {
@@ -1719,14 +1737,20 @@ public class SimulateInvestComponent extends ComponentML {
             futurestocks.removeAll(stocks.stream().map(SimulateStock::getId).collect(Collectors.toList()));
         } else if ("BUY".equals(bs)) {
             // removed from stocks which are in futurestocks
-            log.info("stocks before filter {} {}", stocks.size(), stocks.stream().map(SimulateStock::getId).collect(Collectors.joining(",")));
+            if (debugFuture) {
+                log.info("stocks before filter {} {}", stocks.size(), stocks.stream().map(SimulateStock::getId).collect(Collectors.joining(",")));
+            }
             stocks = stocks.stream().filter(s -> !futurestocks.contains(s.getId())).collect(Collectors.toList());
 
-            log.info("stocks after filter {} {}", stocks.size(), stocks.stream().map(SimulateStock::getId).collect(Collectors.joining(",")));
+            if (debugFuture) {
+                log.info("stocks after filter {} {}", stocks.size(), stocks.stream().map(SimulateStock::getId).collect(Collectors.joining(",")));
+            }
 
             // find stocks that can be added
             stocks = stocks.stream().limit(simConfig.getStocks() - futurestocks.size()).collect(Collectors.toList());
-            log.info("stocks after limit {} {}", stocks.size(), stocks.stream().map(SimulateStock::getId).collect(Collectors.joining(",")));
+            if (debugFuture) {
+                log.info("stocks after limit {} {}", stocks.size(), stocks.stream().map(SimulateStock::getId).collect(Collectors.joining(",")));
+            }
             futurestocks.addAll(stocks.stream().map(SimulateStock::getId).collect(Collectors.toList()));
             //int canadd = simConfig.getStocks() - futurestocks.size();
             /*
