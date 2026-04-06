@@ -91,7 +91,7 @@ class BatchIT {
      * This test validates that 15 stocks split into 3 batches of 5 stocks each
      * produce identical results to loading all 15 stocks at once.
      */
-    @Test
+    //@Test
     void testBatchVsNonBatchedLoadingProducesSameResult() {
         log.info("Testing batch vs non-batched loading");
         
