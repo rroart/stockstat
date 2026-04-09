@@ -193,6 +193,10 @@ public class PipelineUtils {
         return getPipelineValue(pipelines, new SerialPipelineKey(new String[] { key, secondKey, thirdKey, fourthKey, null}), inmemory);
     }
 
+    public static SerialObject getPipelineValueBatch(SerialPipeline pipelines, String key, String secondKey, int batch, Inmemory inmemory) {
+        return getPipelineValueBatch(pipelines, new SerialPipelineKey(new String[] { key, secondKey, null, null, null}), batch, inmemory);
+    }
+
     /*
     public static SerialObject getPipelineValueOld(SerialPipeline pipelines, String name, String key, String secondKey, Inmemory inmemory) {
         for (PipelineData pipeline : pipelines) {
@@ -244,6 +248,25 @@ public class PipelineUtils {
         }
     }
 
+    public static SerialObject getPipelineValueBatch(SerialPipeline pipelines, SerialPipelineKey key, int batch, Inmemory inmemory) {
+        //log.info("Pipe len" + pipelines.length());
+        PipelineData pipeline = getPipeline(pipelines, key);
+        if (pipeline != null) {
+            getPipelineValue(pipeline, batch, inmemory);
+            return pipeline.getValue(batch);
+        } else {
+            log.error("No key {}", key.toString());
+            log.error("Keys {}", getPipelineMapKeys(pipelines));
+            try {
+                String s = null;
+                s.length();
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            return null;
+        }
+    }
+
     public static PipelineData getPipeline(SerialPipeline pipelines, SerialPipelineKey key) {
         SerialPipeline list = new SerialPipeline();
         for (PipelineData pipeline : pipelines) {
@@ -282,6 +305,21 @@ public class PipelineUtils {
             }
             datareader.setValue(JsonUtil.convertnostrip(str, SerialObject.class, mapper));
             datareader.setLoaded(true);
+            //log.info("Pipeline read {} {} {}", datareader.getId(), datareader, str.length());
+        }
+    }
+
+    public static void getPipelineValue(PipelineData datareader, int batch, Inmemory inmemory) {
+        if (!datareader.isLoaded()) {
+            InmemoryMessage msg = JsonUtil.convertnostrip(datareader.getMessage(batch), InmemoryMessage.class);
+            String str = inmemory.read(msg);
+            if (str != null) {
+                //log.info("Pipeline reading {}", str.length());
+            } else {
+                log.error("No pipeline reading {}", msg.getId());
+            }
+            datareader.setValue(JsonUtil.convertnostrip(str, SerialObject.class, mapper), batch);
+            datareader.setLoaded(true, batch);
             //log.info("Pipeline read {} {} {}", datareader.getId(), datareader, str.length());
         }
     }

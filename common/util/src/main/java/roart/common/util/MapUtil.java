@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class MapUtil {
 
@@ -72,4 +73,14 @@ public class MapUtil {
         return newMap;
     }
 
+    public static <K, V> Map<K, V> subMap(Map<K, V> map, List<K> keys) {
+        Map<K, V> subMap = map.entrySet().stream()
+                .filter(x -> keys.contains(x.getKey()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        if (true) return subMap;
+        Map<K, V> newMap = new HashMap<>(map);
+        newMap.keySet().retainAll(keys);
+        return newMap;
+    }
 }

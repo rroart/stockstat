@@ -2,6 +2,9 @@ package roart.common.pipeline.data;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PipelineData extends SerialObject {
 
     private String id;
@@ -21,6 +24,8 @@ public class PipelineData extends SerialObject {
     private SerialPipelineKey key;
 
     private SerialObject value;
+
+    private List<PipelineDataBatch> batch = new ArrayList<>();
 
     private boolean useInmemory;
 
@@ -236,5 +241,29 @@ public class PipelineData extends SerialObject {
 
     public void restKey() {
         this.key = key.rotateLeft(null);
+    }
+
+    public void add(PipelineData datum, int batchnum) {
+        batch.add(new PipelineDataBatch(datum));
+        if (batch.size() != batchnum + 1) {
+            log.error("Wrong batch");
+        }
+    }
+
+    public SerialObject getValue(int batchnum) {
+        return batch.get(batchnum).getValue();
+    }
+
+    public String getMessage(int batchnum) {
+        return batch.get(batchnum).getMessage();
+    }
+
+    public void setLoaded(boolean b, int batchnum) {
+        batch.get(batchnum).setLoaded(b);
+
+    }
+
+    public void setValue(SerialObject value, int batchnum) {
+        batch.get(batchnum).setValue(value);
     }
 }

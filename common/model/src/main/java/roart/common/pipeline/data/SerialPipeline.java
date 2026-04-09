@@ -5,17 +5,19 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.*;
 
 public class SerialPipeline extends SerialObject implements Iterable<PipelineData> {
-    private PipelineData[] pipelineData = new PipelineData[0];
 
-    private Set<SerialPipelineKey> keys = new HashSet<>();
+    private Map<SerialPipelineKey, PipelineData> pipeMap = new HashMap<>();
 
+    /*
     public PipelineData[] getPipelineData() {
-        return pipelineData;
+        return pipeMap.values().toArray(new PipelineData[0];
     }
 
     public void setPipelineData(PipelineData[] pipelineData) {
         this.pipelineData = pipelineData;
     }
+
+     */
 /*
     public void add(List<PipelineData> data) {
         add(data.toArray(new PipelineData[0]));
@@ -30,12 +32,8 @@ public class SerialPipeline extends SerialObject implements Iterable<PipelineDat
     // TODO check for dups?
 
     public void add(SerialPipeline data) {
-        add(data, false);
-    }
-
-    public void add(SerialPipeline data, boolean overwrite) {
         for (PipelineData datum : data) {
-            if (!overwrite && keyExists(datum.getKey())) {
+            if (keyExists(datum.getKey())) {
                 log.error("Key exists {}", ArrayUtils.toString(datum.getKey()));
                 try {
                     String s = null;
@@ -45,7 +43,7 @@ public class SerialPipeline extends SerialObject implements Iterable<PipelineDat
                 }
             }
         }
-        pipelineData = ArrayUtils.addAll(pipelineData, data.pipelineData);
+        pipeMap.putAll(data.pipeMap);
     }
 
     public void add(PipelineData datum) {
@@ -58,31 +56,45 @@ public class SerialPipeline extends SerialObject implements Iterable<PipelineDat
                 log.error("Exception", e);
             }
         }
-        pipelineData = ArrayUtils.add(pipelineData, datum);
+        pipeMap.put(datum.getKey(), datum);
+    }
+
+    public void add(PipelineData datum, int batch) {
+        if (batch == 0 && keyExists(datum.getKey())) {
+            log.error("Key exists {}", ArrayUtils.toString(datum.getKey()));
+            try {
+                String s = null;
+                s.length();
+            } catch (Exception e) {
+                log.error("Exception", e);
+            }
+        }
+        if (batch == 0) {
+            pipeMap.put(datum.getKey(), datum);
+            datum.add(datum, batch);
+            //dataMap.put(datum.getKey(), datum);
+        } else {
+            PipelineData d = pipeMap.get(datum.getKey());
+            d.add(datum, batch);
+            //PipelineData data = get(datum.getKey());
+            //data.add();
+        }
     }
 
     public boolean keyExists(SerialPipelineKey key) {
-        if (true) {
-            return keys.contains(key);
-        }
-        for (PipelineData data : pipelineData) {
-            if (data.getKey().equals(key)) {
-                return true;
-            }
-        }
-        return false;
+        return pipeMap.keySet().contains(key);
     }
 
     @Override
     public Iterator<PipelineData> iterator() {
-        return Arrays.asList(pipelineData).iterator();
+        return pipeMap.values().iterator();
     }
 
     public int length() {
-        return pipelineData.length;
+        return pipeMap.size();
     }
 
     public boolean isEmpty() {
-        return pipelineData.length == 0;
+        return pipeMap.isEmpty();
     }
 }
