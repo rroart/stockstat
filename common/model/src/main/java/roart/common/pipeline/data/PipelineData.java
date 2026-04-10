@@ -251,6 +251,9 @@ public class PipelineData extends SerialObject {
     }
 
     public SerialObject getValue(int batchnum) {
+        if (batchnum >= batch.size()) {
+            return null;
+        }
         return batch.get(batchnum).getValue();
     }
 

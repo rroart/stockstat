@@ -7,8 +7,10 @@ public class PipelineDataBatch {
 
     private SerialObject value;
 
-    public PipelineDataBatch(SerialObject value) {
-        this.value = value;
+    public PipelineDataBatch(PipelineData data) {
+        this.loaded = data.isLoaded();
+        this.message = data.getMessage();
+        this.value = data.getValue();
     }
 
     public boolean isLoaded() {
