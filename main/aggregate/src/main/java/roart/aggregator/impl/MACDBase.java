@@ -36,9 +36,9 @@ public class MACDBase extends Aggregator {
             log.info("empty {}", category);
             return;
         }
-        Map<String, Double[][]> aListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, catName, PipelineConstants.LIST, inmemory));
-        Map<String, double[][]> fillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, catName, PipelineConstants.TRUNCFILLLIST, inmemory));
-        Map<String, double[][]>  base100FillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, catName, PipelineConstants.TRUNCBASE100FILLLIST, inmemory));
+        Map<String, Double[][]> aListMap = PipelineUtils.getPipelineValueAndsconvertMapDD(datareaders, catName, PipelineConstants.LIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
+        Map<String, double[][]> fillListMap = PipelineUtils.getPipelineValueAndsconvertMapdd(datareaders, catName, PipelineConstants.TRUNCFILLLIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
+        Map<String, double[][]>  base100FillListMap = PipelineUtils.getPipelineValueAndsconvertMapdd(datareaders, catName, PipelineConstants.TRUNCBASE100FILLLIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
         this.listMap = fillListMap;
     }
 

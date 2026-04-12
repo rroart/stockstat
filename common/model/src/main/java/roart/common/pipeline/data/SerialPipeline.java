@@ -1,14 +1,34 @@
 package roart.common.pipeline.data;
 
 import org.apache.commons.lang3.ArrayUtils;
+import roart.common.util.JsonUtil;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.KeyDeserializer;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.ser.jdk.JDKKeySerializers;
 
 import java.util.*;
 
 public class SerialPipeline extends SerialObject implements Iterable<PipelineData> {
 
+    //@JsonSerialize(keyUsing = MyCustomSerializer.class)
+    @JsonDeserialize(keyUsing = SerialPipelineKeyDeserializer.class)
+@JsonSerialize(keyUsing = SerialPipelineKeySerialiser.class)
     private Map<SerialPipelineKey, PipelineData> pipeMap = new HashMap<>();
 
-    /*
+    // for jackson
+    public Map<SerialPipelineKey, PipelineData> getPipeMap() {
+        return pipeMap;
+    }
+
+    // for jackson
+    public void setPipeMap(Map<SerialPipelineKey, PipelineData> pipeMap) {
+        this.pipeMap = pipeMap;
+    }
+/*
     public PipelineData[] getPipelineData() {
         return pipeMap.values().toArray(new PipelineData[0];
     }
@@ -97,4 +117,29 @@ public class SerialPipeline extends SerialObject implements Iterable<PipelineDat
     public boolean isEmpty() {
         return pipeMap.isEmpty();
     }
+
+    private static class SerialPipelineKeySerialiser extends JDKKeySerializers.StringKeySerializer {
+        public SerialPipelineKeySerialiser() {
+            // for jackson
+        }
+
+        @Override
+        public void serialize(Object value, JsonGenerator g, SerializationContext provider) {
+            // unnecessary assignment for readability
+            String newKeyValue = JsonUtil.convert(value);
+            g.writeName(newKeyValue);
+        }
+    }
+
+    private static class SerialPipelineKeyDeserializer extends KeyDeserializer {
+        public SerialPipelineKeyDeserializer() {
+            // for jackson
+        }
+
+        @Override
+        public Object deserializeKey(String key, DeserializationContext ctxt) {
+            return JsonUtil.convertnostrip(key, SerialPipelineKey.class);
+        }
+    }
+
 }

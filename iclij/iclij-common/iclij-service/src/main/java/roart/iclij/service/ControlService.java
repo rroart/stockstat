@@ -116,7 +116,8 @@ public class ControlService {
         if (iclijConfig.wantsInmemoryPipeline()) {
             //log.info("Wants {}", coremlconf.wantsInmemoryPipeline());
             coremlconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
-            log.info("Wants {}", coremlconf.wantsInmemoryPipeline());
+            coremlconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, iclijConfig.wantsInmemoryPipelineBatchsize());
+            log.info("Wants {} {}", coremlconf.wantsInmemoryPipeline(), coremlconf.wantsInmemoryPipelineBatchsize());
         }
     }
 

@@ -277,7 +277,7 @@ public abstract class AbstractIndicator extends Calculatable {
 
     // TODO?
     protected Map<String, Double[][]> getListMap() {
-        return PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareader, key, PipelineConstants.LIST, inmemory));
+        return PipelineUtils.getPipelineValueAndsconvertMapDD(datareader, key, PipelineConstants.LIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
     }
 
     public String getKey() {

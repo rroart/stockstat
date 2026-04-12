@@ -114,8 +114,8 @@ public abstract class Indicator extends AbstractIndicator {
             //    datareader = null; // TODO mypipelineMap.get(Constants.PRICE);
            //     log.debug("TODO temp workaround");
             //}
-            Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, PipelineConstants.EXTRAREADER, market, cat, PipelineConstants.FILLLIST, inmemory));
-            Map<String, double[][]> truncFillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, PipelineConstants.EXTRAREADER, market, cat, PipelineConstants.TRUNCFILLLIST, inmemory));
+            Map<String, Double[][]> fillListMap = PipelineUtils.getPipelineValueAndsconvertMapDD(datareaders, PipelineConstants.EXTRAREADER, market, cat, PipelineConstants.FILLLIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
+            Map<String, double[][]> truncFillListMap = PipelineUtils.getPipelineValueAndsconvertMapdd(datareaders, PipelineConstants.EXTRAREADER, market, cat, PipelineConstants.TRUNCFILLLIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
             Object[] arr = null;
             //Double[][] fillList0 = fillListMap.get(ms.getId());
             double[][] fillList = truncFillListMap != null ? truncFillListMap.get(ms.getId()) : null;
@@ -181,8 +181,8 @@ public abstract class Indicator extends AbstractIndicator {
         if (wantPercentizedPriceIndex() != null) {
             //wantPercentizedPriceIndex = wantPercentizedPriceIndex();
         }
-        Map<String, double[][]> truncFillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.TRUNCFILLLIST, inmemory));
-        Map<String, double[][]> truncBase100FillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.TRUNCBASE100FILLLIST, inmemory));
+        Map<String, double[][]> truncFillListMap = PipelineUtils.getPipelineValueAndsconvertMapdd(datareaders, key, PipelineConstants.TRUNCFILLLIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
+        Map<String, double[][]> truncBase100FillListMap = PipelineUtils.getPipelineValueAndsconvertMapdd(datareaders, key, PipelineConstants.TRUNCBASE100FILLLIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
         List<Map> resultList = getMarketCalcResults(wantPercentizedPriceIndex ? truncBase100FillListMap : truncFillListMap);
         objectMap = resultList.get(0);
         calculatedMap = resultList.get(1);

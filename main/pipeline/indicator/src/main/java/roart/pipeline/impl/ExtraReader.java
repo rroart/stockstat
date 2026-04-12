@@ -187,7 +187,7 @@ public class ExtraReader extends Pipeline {
         if (extra != null && !extra.getComplex().isEmpty()) {
             Map<String, List<Double>> newMap = new HashMap<>();
             for (MarketStockExpression mse : extra.getComplex()) {
-                new ComplexETL().method(mse, commonDates, stockDataMap, dataReaderMap, newMap, inmemory);
+                new ComplexETL().method(conf, mse, commonDates, stockDataMap, dataReaderMap, newMap, inmemory);
             }
             for (Entry<String, List<Double>> entry : newMap.entrySet()) {
                 String id = entry.getKey();
@@ -366,7 +366,7 @@ public class ExtraReader extends Pipeline {
             List<String> dateList = PipelineUtils.getDatelist(datareaders, PipelineConstants.EXTRAREADER, inmemory);
             int dateIndex = dateList.indexOf(date);
             int prevDateIndex = dateList.indexOf(prevDate);
-            Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, PipelineConstants.EXTRAREADER, market, cat, PipelineConstants.FILLLIST, inmemory));
+            Map<String, Double[][]> fillListMap = PipelineUtils.getPipelineValueAndsconvertMapDD(datareaders, PipelineConstants.EXTRAREADER, market, cat, PipelineConstants.FILLLIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
             Object[] arr = null;
             Double[][] fillList = fillListMap.get(entry.getId());
             Double value = fillList[0][dateIndex];
@@ -425,7 +425,7 @@ public class ExtraReader extends Pipeline {
             List<String> dateList = PipelineUtils.getDatelist(datareaders, PipelineConstants.EXTRAREADER, inmemory); // TODO
             int dateIndex = dateList.size() - dateList.indexOf(commonDate);
             int prevDateIndex = dateList.indexOf(prevDate);
-            Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, PipelineConstants.EXTRAREADER, market, cat, PipelineConstants.FILLLIST, inmemory));
+            Map<String, Double[][]> fillListMap = PipelineUtils.getPipelineValueAndsconvertMapDD(datareaders, PipelineConstants.EXTRAREADER, market, cat, PipelineConstants.FILLLIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
             Object[] arr = null;
             Double[][] fillList = fillListMap.get(entry.getId());
             dateIndex = fillList[0].length - dateIndex;

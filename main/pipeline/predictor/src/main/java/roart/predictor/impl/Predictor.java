@@ -145,10 +145,10 @@ public abstract class Predictor extends AbstractPredictor {
             log.info("empty {}", category);
             return;
         }
-        this.listMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.LIST, null, inmemory));
-        this.fillListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.FILLLIST, null, inmemory));
+        this.listMap = PipelineUtils.getPipelineValueAndsconvertMapDD(datareaders, key, PipelineConstants.LIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
+        this.fillListMap = PipelineUtils.getPipelineValueAndsconvertMapDD(datareaders, key, PipelineConstants.FILLLIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
         //this.truncListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCLIST));       
-        this.truncFillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.TRUNCFILLLIST, null, inmemory));
+        this.truncFillListMap = PipelineUtils.getPipelineValueAndsconvertMapdd(datareaders, key, PipelineConstants.TRUNCFILLLIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
         //this.base100ListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.BASE100LIST));
         //this.base100FillListMap = PipelineUtils.convertTwoDimD((Map<String, TwoDimD>) datareader.get(PipelineConstants.BASE100FILLLIST));
         //this.truncBase100ListMap = PipelineUtils.convertTwoDimd((Map<String, TwoDimd>) datareader.get(PipelineConstants.TRUNCBASE100LIST));       
@@ -550,7 +550,7 @@ public abstract class Predictor extends AbstractPredictor {
     @Override
     public boolean hasValue() {
         SerialPipeline datareader = PipelineUtils.getPipelines(datareaders, key, inmemory);
-        return anythingHereA(PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareader, key, PipelineConstants.LIST, null, inmemory)));
+        return anythingHereA(PipelineUtils.getPipelineValueAndsconvertMapDD(datareader, key, PipelineConstants.LIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory));
     }
     
     @Override

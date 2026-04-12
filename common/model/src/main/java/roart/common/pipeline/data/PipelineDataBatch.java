@@ -1,6 +1,6 @@
 package roart.common.pipeline.data;
 
-public class PipelineDataBatch {
+public class PipelineDataBatch extends SerialObject {
     private boolean loaded = true;
 
     private String message;

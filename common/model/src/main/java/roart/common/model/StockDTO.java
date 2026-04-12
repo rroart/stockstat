@@ -211,4 +211,7 @@ public class StockDTO {
         period[i] = d;
     }
 
+    public String toString() {
+        return marketid + id;
+    }
 }

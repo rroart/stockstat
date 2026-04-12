@@ -3,6 +3,7 @@ package roart.pipeline.impl;
 import java.util.*;
 
 import roart.common.pipeline.data.*;
+import roart.common.util.MapUtil;
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
@@ -42,7 +43,9 @@ public class DataReader extends Pipeline {
 
     private Map<String, Long[]> volumeMap;
     private Map<String, String> currencyMap;
-    
+
+    private List<String> ids;
+
     @Override
     public SerialPipeline putData() {
         SerialPipeline list = getData();
@@ -50,14 +53,32 @@ public class DataReader extends Pipeline {
             int jj = 0;
         }
         //map.setName(categoryTitle);
+        if (conf.wantsInmemoryPipelineBatchsize() > 0) {
+            int batch = 0;
+            int batchSize = conf.wantsInmemoryPipelineBatchsize();
+            while (true) {
+                List<String> batchIds = ArraysUtil.getBatchOrEmpty(this.ids, batch, batchSize);
+                if (batchIds.isEmpty()) {
+                    break;
+                }
+                list.add(new PipelineData(categoryTitle, PipelineConstants.LIST, null, new SerialMapDD(MapUtil.subMap(listMap, batchIds)), true), batch);
+                list.add(new PipelineData(categoryTitle, PipelineConstants.FILLLIST, null, new SerialMapDD(MapUtil.subMap(fillListMap, batchIds)), true), batch);
+                list.add(new PipelineData(categoryTitle, PipelineConstants.BASE100LIST, null, new SerialMapDD(MapUtil.subMap(base100ListMap, batchIds)), true), batch);
+                list.add(new PipelineData(categoryTitle, PipelineConstants.TRUNCFILLLIST, null, new SerialMapdd(MapUtil.subMap(truncFillListMap, batchIds)), true), batch);
+                list.add(new PipelineData(categoryTitle, PipelineConstants.TRUNCBASE100LIST, null, new SerialMapdd(MapUtil.subMap(truncBase100ListMap, batchIds)), true), batch);
+                list.add(new PipelineData(categoryTitle, PipelineConstants.TRUNCBASE100FILLLIST, null, new SerialMapdd(MapUtil.subMap(truncBase100FillListMap, batchIds)), true), batch);
+                batch++;
+           }
+        } else {
         list.add(new PipelineData(categoryTitle, PipelineConstants.LIST, null, new SerialMapDD(listMap), true));
-        list.add(new PipelineData(categoryTitle, PipelineConstants.VOLUME, null, new SerialMapL(volumeMap), true));
-        list.add(new PipelineData(categoryTitle, PipelineConstants.CURRENCY, null, new SerialMapPlain(currencyMap), true));
         list.add(new PipelineData(categoryTitle, PipelineConstants.FILLLIST, null, new SerialMapDD(fillListMap), true));
         list.add(new PipelineData(categoryTitle, PipelineConstants.BASE100LIST, null, new SerialMapDD(base100ListMap), true));
         list.add(new PipelineData(categoryTitle, PipelineConstants.TRUNCFILLLIST, null, new SerialMapdd(truncFillListMap), true));
         list.add(new PipelineData(categoryTitle, PipelineConstants.TRUNCBASE100LIST, null, new SerialMapdd(truncBase100ListMap), true));
         list.add(new PipelineData(categoryTitle, PipelineConstants.TRUNCBASE100FILLLIST, null, new SerialMapdd(truncBase100FillListMap), true));
+        }
+        list.add(new PipelineData(categoryTitle, PipelineConstants.VOLUME, null, new SerialMapL(volumeMap), true));
+        list.add(new PipelineData(categoryTitle, PipelineConstants.CURRENCY, null, new SerialMapPlain(currencyMap), true));
         list.add(new PipelineData(categoryTitle, PipelineConstants.NAME, null, new SerialMapPlain(nameMap), true));
         list.add(new PipelineData(categoryTitle, PipelineConstants.DATELIST, null, new SerialListPlain(dateList), true));
         list.add(new PipelineData(categoryTitle, PipelineConstants.CATEGORYTITLE, null, new SerialString(categoryTitle), false)); // TODO
@@ -86,6 +107,7 @@ public class DataReader extends Pipeline {
     private void readData(IclijConfig conf, Map<String, MarketData> marketdatamap, int category, String market) throws Exception {
         String dateme = TimeUtil.format(conf.getConfigData().getDate());
         MarketData marketData = marketdatamap.get(market);
+        this.ids = marketData.ids;
         // note that there are nulls in the lists with sparse
         boolean currentYear = false;
         if (category >= 0) {

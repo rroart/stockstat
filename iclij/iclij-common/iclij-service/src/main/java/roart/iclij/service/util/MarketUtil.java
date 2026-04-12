@@ -14,8 +14,6 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.model.IncDecDTO;
 import roart.common.model.MemoryDTO;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialObject;
 import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.MapUtil;
@@ -143,7 +141,7 @@ public class MarketUtil {
         return incdecsFilter;
     }
 
-    public Map<String, List<List<Double>>> getCategoryList(SerialPipeline maps, String category, Inmemory inmemory) {
+    public Map<String, List<List<Double>>> getCategoryList(SerialPipeline maps, String category, Inmemory inmemory, IclijConfig conf) {
         String newCategory = null;
         if (Constants.PRICE.equals(category)) {
             newCategory = "" + Constants.PRICECOLUMN;
@@ -152,14 +150,13 @@ public class MarketUtil {
             newCategory = "" + Constants.INDEXVALUECOLUMN;
         }
         if (newCategory != null) {
-            SerialObject map = PipelineUtils.getPipelineValue(maps, newCategory, PipelineConstants.LIST, inmemory);
-            return MapUtil.convertA2L(PipelineUtils.sconvertMapDD(map));
+            return MapUtil.convertA2L(PipelineUtils.getPipelineValueAndsconvertMapDD(maps, newCategory, PipelineConstants.LIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory));
         }
         Map<String, List<List<Double>>> listMap3 = null;
         for (String entry : PipelineUtils.getPipelineMapFirstKeys(maps)) { //  TODO
             SerialPipeline map = PipelineUtils.getPipelines(maps, entry, PipelineConstants.CATEGORYTITLE, inmemory);
             if (!map.isEmpty() && category.equals(PipelineUtils.getCatTitle(maps, entry, inmemory))) {
-                listMap3 = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(maps, entry, PipelineConstants.LIST, inmemory)));
+                listMap3 = MapUtil.convertA2L(PipelineUtils.getPipelineValueAndsconvertMapDD(maps, entry, PipelineConstants.LIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory));
             }
         }
         return listMap3;

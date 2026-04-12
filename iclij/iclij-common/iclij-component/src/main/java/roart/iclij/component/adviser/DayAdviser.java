@@ -60,9 +60,9 @@ public class DayAdviser extends Adviser {
             Map<String, List<List<Double>>> aCategoryValueMap;
             Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig());
             if (simulateConfig.getInterpolate()) {
-                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(resultMaps, "" + cat, PipelineConstants.FILLLIST, inmemory)));
+                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.getPipelineValueAndsconvertMapDD(resultMaps, "" + cat, PipelineConstants.FILLLIST, param.getService().getIclijConfig().wantsInmemoryPipelineBatchsize() > 0, inmemory));
             } else {
-                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(resultMaps, "" + cat, PipelineConstants.LIST, inmemory)));
+                aCategoryValueMap = MapUtil.convertA2L(PipelineUtils.getPipelineValueAndsconvertMapDD(resultMaps, "" + cat, PipelineConstants.LIST, param.getService().getIclijConfig().wantsInmemoryPipelineBatchsize() > 0, inmemory));
             }
             categoryValueMap = aCategoryValueMap;
         } else {

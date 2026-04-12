@@ -275,7 +275,7 @@ public class MLIndicator extends Aggregator {
 
         Map<String, List<AggregatorMLIndicator>> usedIndicators = AggregatorMLIndicator.getUsedAggregatorMLIndicators(conf);
         Set<String> ids = new HashSet<>();
-        Map<String, Double[][]> list0 = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.LIST, null, inmemory));
+        Map<String, Double[][]> list0 = PipelineUtils.getPipelineValueAndsconvertMapDD(datareaders, key, PipelineConstants.LIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
         ids.addAll(list0.keySet());
         List<String> indicators = getIndicators(datareaders, usedIndicators, ids, inmemory);
         log.info("INDIC" + usedIndicators.values().iterator().next().stream().map(AggregatorMLIndicator::indicator).toList());
@@ -672,7 +672,7 @@ public class MLIndicator extends Aggregator {
                 String indicatorName = indicator;
                 SerialPipeline indicatorResult = PipelineUtils.getPipelines(datareaders, indicatorName, inmemory);
                 if (!indicatorResult.isEmpty()) {
-                    Map<String, Double[][]> aListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, this.key, PipelineConstants.LIST, inmemory));
+                    Map<String, Double[][]> aListMap = PipelineUtils.getPipelineValueAndsconvertMapDD(datareaders, this.key, PipelineConstants.LIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
                     Double[][] aResult = aListMap.get(id);
                     arrayResult = ArrayUtils.addAll(arrayResult, aResult[0]);
                 }
@@ -797,7 +797,7 @@ public class MLIndicator extends Aggregator {
                 SerialPipeline indicatorResult = PipelineUtils.getPipelines(datareaders, indicator, inmemory);
                 if (indicatorResult != null) {
                     indicators.add(indicator);
-                    Map<String, Double[][]> aResult = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, this.key, PipelineConstants.LIST, null, inmemory));
+                    Map<String, Double[][]> aResult = PipelineUtils.getPipelineValueAndsconvertMapDD(datareaders, this.key, PipelineConstants.LIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
                     //Map<String, Object[]> aResult = (Map<String, Object[]>) indicatorResult.get(PipelineConstants. LIST);
                     ids.retainAll(aResult.keySet());
                 } else {

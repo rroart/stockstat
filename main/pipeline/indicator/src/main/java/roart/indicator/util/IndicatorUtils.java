@@ -448,7 +448,7 @@ public class IndicatorUtils {
             // ohlc is false and getinputarrays is 3
             if (objMap.getMap() != null && !objMap.getMap().isEmpty()) { 
                 objectMapsList.add(objMap);
-                Map<String, Double[][]> list0 = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, PipelineUtils.getMetaCat(datareaders, inmemory), PipelineConstants.LIST, inmemory));
+                Map<String, Double[][]> list0 = PipelineUtils.getPipelineValueAndsconvertMapDD(datareaders, PipelineUtils.getMetaCat(datareaders, inmemory), PipelineConstants.LIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
                 listList.add(list0);
                 AbstractIndicator indicator = dummyfactory(conf, indicatorName);
                 arraySize += indicator.getResultSize();
@@ -509,7 +509,7 @@ public class IndicatorUtils {
                     //datareader = pipelineMap.get(Constants.PRICE);
                     log.debug("TODO temp workaround");
                 }
-                Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, PipelineUtils.getMetaCat(datareaders, inmemory), PipelineConstants.FILLLIST, inmemory));
+                Map<String, Double[][]> fillListMap = PipelineUtils.getPipelineValueAndsconvertMapDD(datareaders, PipelineUtils.getMetaCat(datareaders, inmemory), PipelineConstants.FILLLIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
                 if (fillListMap == null) {
                     int jj = 0;
                     log.error("Temp log, fillListMap null {} {}", entry.getMarket(), entry.getCategory());

@@ -19,10 +19,11 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         property = "_class")
 @JsonSubTypes({  
     @Type(value = PipelineData.class, name = "PipelineData"),
+    @Type(value = PipelineDataBatch.class, name = "PipelineDataBatch"),
     @Type(value = SerialDouble.class, name = "SerialDouble"),
     @Type(value = SerialIncDec.class, name = "SerialIncDec"),
     @Type(value = SerialInteger.class, name = "SerialInteger"),
-    @Type(value = SerialPipelineKey.class, name = "SerialKey"),
+    @Type(value = SerialPipelineKey.class, name = "SerialPipelineKey"),
     @Type(value = SerialKeyValue.class, name = "SerialKeyValue"),
     @Type(value = SerialList.class, name = "SerialList"),
     @Type(value = SerialListMap.class, name = "SerialListMap"),
@@ -36,6 +37,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @Type(value = SerialMeta.class, name = "SerialMeta"),
     @Type(value = SerialOneDim.class, name = "SerialOneDim"),
     @Type(value = SerialPipeline.class, name = "SerialPipeline"),
+    @Type(value = SerialPipelineKey.class, name = "SerialPipelineKey"),
     @Type(value = SerialPlain.class, name = "SerialPlain"),
     @Type(value = SerialResultMeta.class, name = "SerialResultMeta"),
     @Type(value = SerialString.class, name = "SerialString"),

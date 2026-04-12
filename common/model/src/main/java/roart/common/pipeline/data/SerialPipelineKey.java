@@ -6,7 +6,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class SerialPipelineKey {
+public class SerialPipelineKey extends SerialObject {
     private static final int len = 5;
 
     private String[] key = new String[5];
@@ -76,7 +76,12 @@ public class SerialPipelineKey {
 
     @Override
     public String toString() {
-        return "PipelineKey " + ArrayUtils.toString(key);
+        return "SerialPipelineKey " + ArrayUtils.toString(key);
+    }
+
+    //@Override
+    public String fromString() {
+        return "SerialPipelineKey " + ArrayUtils.toString(key);
     }
 
     public boolean matches(SerialPipelineKey otherKey) {

@@ -16,15 +16,15 @@ import roart.common.config.MarketStockExpression;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.util.PipelineUtils;
+import roart.iclij.config.IclijConfig;
 import roart.model.data.StockData;
 import roart.pipeline.Pipeline;
 
 public class ComplexETL {
 
-    public void method(MarketStockExpression mse, Set<String> commonDates, Map<String, StockData> stockDataMap,
+    public void method(IclijConfig conf, MarketStockExpression mse, Set<String> commonDates, Map<String, StockData> stockDataMap,
                        Map<String, Pipeline[]> dataReaderMap, Map<String, List<Double>> newMap, Inmemory inmemory) {
         List<MarketStock> marketStockList = mse.getItems();
         String expression = mse.getExpression();
@@ -48,8 +48,8 @@ public class ComplexETL {
                 // interpolation does not work yet
                 SerialPipeline data = datareader.putData();
                 List<String> datelist = PipelineUtils.getDatelist(data, "" + cat, inmemory);
-                Map<String, Double[][]> listMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(data, "" + cat, PipelineConstants.LIST, inmemory));
-                Map<String, Double[][]> fillListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(data, "" + cat, PipelineConstants.FILLLIST, inmemory));
+                Map<String, Double[][]> listMap = PipelineUtils.getPipelineValueAndsconvertMapDD(data, "" + cat, PipelineConstants.LIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
+                Map<String, Double[][]> fillListMap = PipelineUtils.getPipelineValueAndsconvertMapDD(data, "" + cat, PipelineConstants.FILLLIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
                 Double[][] fillList = fillListMap.get(id);
                 try {
                     int dateIndex = datelist.size() - datelist.indexOf(date);

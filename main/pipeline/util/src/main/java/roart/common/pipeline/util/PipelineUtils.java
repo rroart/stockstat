@@ -463,7 +463,75 @@ public class PipelineUtils {
         }
         return newMap;
     }
-    
+
+    public static Map<String, double[][]> getPipelineValueAndsconvertMapdd(SerialPipeline pipelines, String key, String secondKey, String thirdkey, String fourthkey, boolean batch, Inmemory inmemory) {
+        return getPipelineValueAndsconvertMapdd(pipelines, new SerialPipelineKey(new String[] { key, secondKey, thirdkey, fourthkey, null}), batch, inmemory);
+    }
+
+    public static Map<String, double[][]> getPipelineValueAndsconvertMapdd(SerialPipeline pipelines, String key, String secondKey, String thirdkey, boolean batch, Inmemory inmemory) {
+        return getPipelineValueAndsconvertMapdd(pipelines, new SerialPipelineKey(new String[] { key, secondKey, thirdkey, null, null}), batch, inmemory);
+    }
+
+    public static Map<String, double[][]> getPipelineValueAndsconvertMapdd(SerialPipeline pipelines, String key, String secondKey, boolean batch, Inmemory inmemory) {
+        return getPipelineValueAndsconvertMapdd(pipelines, new SerialPipelineKey(new String[] { key, secondKey, null, null, null}), batch, inmemory);
+    }
+
+    public static Map<String, double[][]> getPipelineValueAndsconvertMapdd(SerialPipeline pipelines, SerialPipelineKey key, boolean batch, Inmemory inmemory) {
+        Map<String, double[][]> retMap = new HashMap<>();
+        Object object;
+        int batchnum = 0;
+        if (!batch) {
+            object = PipelineUtils.getPipelineValue(pipelines, key, inmemory);
+        } else {
+            object = PipelineUtils.getPipelineValueBatch(pipelines, key, batchnum, inmemory);
+        }
+        while (object != null) {
+            Map<String, double[][]> map = PipelineUtils.sconvertMapdd(object);
+            batchnum++;
+            if (!batch) {
+                break;
+            } else {
+                object = PipelineUtils.getPipelineValueBatch(pipelines, key, batchnum, inmemory);
+            }
+            retMap.putAll(map);
+        }
+        return retMap;
+    }
+
+    public static Map<String, Double[][]> getPipelineValueAndsconvertMapDD(SerialPipeline pipelines, String key, String secondKey, String thirdkey, String fourthkey, boolean batch, Inmemory inmemory) {
+        return getPipelineValueAndsconvertMapDD(pipelines, new SerialPipelineKey(new String[] { key, secondKey, thirdkey, fourthkey, null}), batch, inmemory);
+    }
+
+    public static Map<String, Double[][]> getPipelineValueAndsconvertMapDD(SerialPipeline pipelines, String key, String secondKey, String thirdkey, boolean batch, Inmemory inmemory) {
+        return getPipelineValueAndsconvertMapDD(pipelines, new SerialPipelineKey(new String[] { key, secondKey, thirdkey, null, null}), batch, inmemory);
+    }
+
+    public static Map<String, Double[][]> getPipelineValueAndsconvertMapDD(SerialPipeline pipelines, String key, String secondKey, boolean batch, Inmemory inmemory) {
+        return getPipelineValueAndsconvertMapDD(pipelines, new SerialPipelineKey(new String[] { key, secondKey, null, null, null}), batch, inmemory);
+    }
+
+    public static Map<String, Double[][]> getPipelineValueAndsconvertMapDD(SerialPipeline pipelines, SerialPipelineKey key, boolean batch, Inmemory inmemory) {
+        Map<String, Double[][]> retMap = new HashMap<>();
+        Object object;
+        int batchnum = 0;
+        if (!batch) {
+            object = PipelineUtils.getPipelineValue(pipelines, key, inmemory);
+        } else {
+            object = PipelineUtils.getPipelineValueBatch(pipelines, key, batchnum, inmemory);
+        }
+        while (object != null) {
+            Map<String, Double[][]> map = PipelineUtils.sconvertMapDD(object);
+            batchnum++;
+            if (!batch) {
+                break;
+            } else {
+                object = PipelineUtils.getPipelineValueBatch(pipelines, key, batchnum, inmemory);
+            }
+            retMap.putAll(map);
+        }
+        return retMap;
+    }
+
     private static final List<String> strings = List.of(PipelineConstants.MLINDICATOR, PipelineConstants.MLATR, PipelineConstants.MLCCI, PipelineConstants.MLMACD, PipelineConstants.MLMULTI, PipelineConstants.MLRSI, PipelineConstants.MLSTOCH);
 
     private static final List<String> othermap = List.of(PipelineConstants.MARKETOBJECT);
