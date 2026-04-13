@@ -3,6 +3,7 @@ package roart.aggregator.impl;
 import java.util.List;
 import java.util.Map;
 
+import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.data.*;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
@@ -104,5 +105,15 @@ public class MACDBase extends Aggregator {
         list.add(new PipelineData(getName(), PipelineConstants.RESULT, null, new SerialMapPlain(resultMap), true));
         return list;
     }
-    
+
+    @Override
+    public void calculateMe(IclijConfig conf, SerialPipeline datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+
+    }
+
+    @Override
+    public void cleanMLDaos() {
+
+    }
+
 }

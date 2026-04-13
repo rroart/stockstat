@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import roart.category.AbstractCategory;
+import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.iclij.config.IclijConfig;
@@ -111,6 +112,16 @@ public class RecommenderRSI extends Aggregator {
     @Override
     public String getName() {
         return PipelineConstants.RECOMMENDERRSI;
+    }
+
+    @Override
+    public void calculateMe(IclijConfig conf, SerialPipeline datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+
+    }
+
+    @Override
+    public void cleanMLDaos() {
+
     }
 
 }
