@@ -74,6 +74,9 @@ public class MapUtil {
     }
 
     public static <K, V> Map<K, V> subMap(Map<K, V> map, List<K> keys) {
+        if (map == null) {
+            return null;
+        }
         Map<K, V> subMap = map.entrySet().stream()
                 .filter(x -> keys.contains(x.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));

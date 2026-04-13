@@ -66,7 +66,7 @@ public class IncDecUtil {
                 } else {
                     threshold = market.getFilter().getDecthreshold();
                 }
-                Map<String, List<List<Double>>> listMap3 = new MarketUtil().getCategoryList(maps, category, param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig()));
+                Map<String, List<List<Double>>> listMap3 = new MarketUtil().getCategoryList(maps, category, param.getService().getIo().getInmemoryFactory().get(param.getService().getIclijConfig()), param.getService().getIclijConfig());
                 System.out.println("lm3" + listMap3.keySet());
                 Map<String, IncDecDTO> buysFilter = new MarketUtil().incdecFilterOnIncreaseValue(market, inc ? profitdata.getBuys() : profitdata.getSells(), threshold, categoryMap, listMap3,
                         offsetDays, inc);

@@ -493,7 +493,9 @@ public class PipelineUtils {
             } else {
                 object = PipelineUtils.getPipelineValueBatch(pipelines, key, batchnum, inmemory);
             }
-            retMap.putAll(map);
+            if (map != null) {
+                retMap.putAll(map);
+            }
         }
         return retMap;
     }
@@ -527,7 +529,9 @@ public class PipelineUtils {
             } else {
                 object = PipelineUtils.getPipelineValueBatch(pipelines, key, batchnum, inmemory);
             }
-            retMap.putAll(map);
+            if (map != null) {
+                retMap.putAll(map);
+            }
         }
         return retMap;
     }

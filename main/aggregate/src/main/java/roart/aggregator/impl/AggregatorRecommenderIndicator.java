@@ -235,7 +235,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
 
     @Override
     public void calculateMe(IclijConfig conf, SerialPipeline datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
-        
+
     }
 
     @Override
