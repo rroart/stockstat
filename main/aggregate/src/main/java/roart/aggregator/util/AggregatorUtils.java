@@ -21,6 +21,7 @@ import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialPipeline;
 import roart.iclij.config.IclijConfig;
 import roart.pipeline.common.aggregate.Aggregator;
+import roart.pipeline.common.predictor.AbstractPredictor;
 
 public class AggregatorUtils {
 
@@ -49,4 +50,13 @@ public class AggregatorUtils {
         return aggregates;
     }
 
+    public void calculateAggregators(Aggregator[] aggregates, IclijConfig conf, SerialPipeline pipelineData,
+                                     NeuralNetCommand neuralnetcommand) throws Exception {
+        for (Aggregator aggregate : aggregates) {
+            if (aggregate != null && aggregate.isEnabled()) {
+                aggregate.calculateMe(conf, pipelineData, neuralnetcommand);
+                aggregate.cleanMLDaos();
+            }
+        }
+    }
 }
