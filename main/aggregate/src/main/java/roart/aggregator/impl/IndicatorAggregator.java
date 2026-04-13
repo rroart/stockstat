@@ -14,7 +14,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
-import java.time.LocalDate;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Triple;
@@ -25,55 +24,35 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.ObjectMapper;
-
-import roart.aggregator.impl.IndicatorAggregator.AfterBeforeLimit;
-import roart.aggregator.impl.IndicatorAggregator.SubType;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
-import roart.common.constants.ResultMetaConstants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialPipeline;
-import roart.common.pipeline.data.SerialIncDec;
-import roart.common.pipeline.data.SerialList;
 import roart.common.pipeline.data.SerialMapTA;
 import roart.common.pipeline.data.SerialResultMeta;
 import roart.common.pipeline.data.SerialTA;
-import roart.common.pipeline.data.TwoDimD;
-import roart.common.pipeline.data.TwoDimd;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.ArraysUtil;
 import roart.common.util.JsonUtil;
-import roart.common.util.MiscUtil;
-import roart.common.util.TimeUtil;
 import roart.executor.MyExecutors;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
-import roart.ml.common.MLClassifyDS;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
 import roart.ml.dao.MLClassifyDao;
 import roart.ml.dao.MLClassifyLearnTestPredictCallable;
 import roart.ml.model.LearnClassify;
 import roart.ml.model.LearnTestClassifyResult;
-import roart.ml.pytorch.MLClassifyPytorchModel;
-import roart.model.data.PeriodData;
-import roart.pipeline.Pipeline;
 import roart.pipeline.common.aggregate.Aggregator;
 import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
-import roart.result.model.ResultMeta;
-import roart.stockutil.StockUtil;
-import roart.talib.util.TaConstants;
 
 public abstract class IndicatorAggregator extends Aggregator {
 
@@ -109,6 +88,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     protected Map<String, double[][]> listMap;
 
+    // TODO cut
     protected int fieldSize = 0;
 
     protected Object[] emptyField;
@@ -170,7 +150,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         if (conf.wantOtherStats()) {
             eventTableRows = new ArrayList<>();
         }
-        if (isEnabled()) {
+        if (false && isEnabled()) {
             calculateMe(conf, datareaders, neuralnetcommand);    
             cleanMLDaos();
         }
@@ -180,63 +160,26 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     protected abstract AfterBeforeLimit getAfterBefore();
 
-    private void calculateMe(IclijConfig conf,
-            SerialPipeline datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+    @Override
+    public void calculateMe(IclijConfig conf,
+                            SerialPipeline datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+        resultMap = new HashMap<>();
+        otherResultMap = new HashMap<>();
+        objectMap = new HashMap<>();
+        accuracyMap = new HashMap<>();
+        lossMap = new HashMap<>();
         log.info("checkthis {}", key.equals(title));
         SerialPipeline datareader  = PipelineUtils.getPipelines(datareaders, key, inmemory);
         if (datareader.isEmpty()) {
             log.info("empty {}", category);
             return;
         }
-        Map<String, Double[][]> aListMap = PipelineUtils.sconvertMapDD(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.LIST, inmemory));
-        Map<String, double[][]> fillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.TRUNCFILLLIST, inmemory));
-        Map<String, double[][]>  base100FillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.TRUNCBASE100FILLLIST, inmemory)) ;
-        // TODO
-        this.listMap = /*conf.wantPercentizedPriceIndex() ? base100FillListMap :*/ fillListMap;
-
-        long time0 = System.currentTimeMillis();
-        // note that there are nulls in the lists with sparse
-        if (!anythingHereA(aListMap)) {
-            log.debug("empty {}", key);
-            return;
-        }
-        log.info("time0 {}", (System.currentTimeMillis() - time0));
-        resultMap = new HashMap<>();
-        otherResultMap = new HashMap<>();
-        objectMap = new HashMap<>();
-        accuracyMap = new HashMap<>();
-        lossMap = new HashMap<>();
-        long time2 = System.currentTimeMillis();
-        AfterBeforeLimit afterbefore = getAfterBefore();
-        makeWantedSubTypes(afterbefore);
-        //makeWantedSubTypesMap(wantedSubTypes());
-        //log.debug("imap " + objectMap.size());
-        log.info("time2 {}", (System.currentTimeMillis() - time2));
-        log.info("subtypes {} {}", wantedSubTypes().size(), wantedSubTypes());
-        long time1 = System.currentTimeMillis();
-        log.debug("listmap {} {}", listMap.size(), listMap.keySet());
-
-        //Map<Double, Pair> thresholdMap = new HashMap<>();
-        Map<Double, Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>>> mapResult0 = new HashMap<>();
+        //PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.TRUNCFILLLIST, inmemory));
+        //Map<String, double[][]>  base100FillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.TRUNCBASE100FILLLIST, inmemory)) ;
         Double[] thresholds = getThresholds();
         for (Double threshold : thresholds) {
-        
-        // a map from subtype h/m + maptype com/neg/pos to a map<values, label>
-        Map<SubType, MLMeta> metaMap = new HashMap<>();
-        Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = createPosNegMaps(conf, metaMap, threshold);
-        for (Entry<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> entry : mapMap.entrySet()) {
-            SubType akey = entry.getKey();
-            Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>> avalue = entry.getValue();
-            log.info("Entry {}", akey);
-            log.info("keyset {}", avalue.keySet());
-        }
-        doMergeLearn(conf, mapMap, afterbefore, metaMap, threshold);
-        
-        usedSubTypes = new ArrayList<>(mapMap.keySet());
-        fieldSize = fieldSize() * thresholds.length;
-        // map from h/m to model to posnegcom map<model, results>
-        Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult = new HashMap<>();
-        mapResult0.put(threshold, mapResult);
+            Map<SubType, MLMeta> metaMap = new HashMap<>();
+            Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = getMapMap(threshold, metaMap);
         log.debug("Period {} {}", title, mapMap.keySet());
         String nnconfigString = getNeuralNetConfig();
         NeuralNetConfigs nnConfigs = null;
@@ -245,6 +188,8 @@ public abstract class IndicatorAggregator extends Aggregator {
         }
         if (conf.wantML()) {
             Map<Double, String> labelMapShort = createLabelMapShort();
+            // TODO cut mapResult?
+            Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult = new HashMap<>();
             boolean multi = neuralnetcommand.isMldynamic() || (neuralnetcommand.isMlclassify() && !neuralnetcommand.isMllearn());
             if (false /*multi*/ /*conf.wantMLMP()*/) {
                 doLearnTestClassifyFuture(nnConfigs, conf, mapMap, mapResult, labelMapShort, metaMap, neuralnetcommand, threshold);
@@ -253,11 +198,76 @@ public abstract class IndicatorAggregator extends Aggregator {
             }
         }        
         handleOtherStats(conf, mapMap);
-        log.info("time1 {}", (System.currentTimeMillis() - time1));
-        createResultMap(conf, mapResult0, mapMap);
+        //log.info("time1 {}", (System.currentTimeMillis() - time1));
+        if (false) {
+            // I331
+            //createResultMap(conf, mapResult0, mapMap);
+        }
         }
         handleSpentTime(conf);
 
+    }
+
+    private Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> getMapMap(Double threshold, Map<SubType, MLMeta> metaMap) {
+        Map<String, Double[][]> aListMap = PipelineUtils.getPipelineValueAndsconvertMapDD(datareaders, key, PipelineConstants.LIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
+        int batchnum = 0;
+        boolean batch = conf.wantsInmemoryPipelineBatchsize() > 0;
+        Object object;
+        if (!batch) {
+            object = PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.TRUNCFILLLIST, inmemory);
+        } else {
+            object = PipelineUtils.getPipelineValueBatch(datareaders, key, PipelineConstants.TRUNCFILLLIST, batchnum, inmemory);
+        }
+        long time1 = System.currentTimeMillis();
+        Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = new HashMap<>();
+        while (object != null) {
+            // TODO
+            Map<String, double[][]> fillListMap = PipelineUtils.sconvertMapdd(object);
+            Map<String, double[][]> listMap = /*conf.wantPercentizedPriceIndex() ? base100FillListMap :*/ fillListMap;
+
+            long time0 = System.currentTimeMillis();
+            // note that there are nulls in the lists with sparse
+            if (!anythingHereA(aListMap)) {
+                log.debug("empty {}", key);
+                break; // TODO return;
+            }
+            log.info("time0 {}", (System.currentTimeMillis() - time0));
+            long time2 = System.currentTimeMillis();
+            AfterBeforeLimit afterbefore = getAfterBefore();
+            makeWantedSubTypes(afterbefore);
+            //makeWantedSubTypesMap(wantedSubTypes());
+            //log.debug("imap " + objectMap.size());
+            log.info("time2 {}", (System.currentTimeMillis() - time2));
+            log.info("subtypes {} {}", wantedSubTypes().size(), wantedSubTypes());
+            log.debug("listmap {} {}", listMap.size(), listMap.keySet());
+
+            //Map<Double, Pair> thresholdMap = new HashMap<>();
+            //Map<Double, Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>>> mapResult0 = new HashMap<>();
+
+            // a map from subtype h/m + maptype com/neg/pos to a map<values, label>
+            //Map<SubType, MLMeta> partialMetaMap = new HashMap<>();
+            Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> partialMapMap = createPosNegMaps(conf, metaMap, threshold, listMap);
+            for (Entry<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> entry : partialMapMap.entrySet()) {
+                SubType akey = entry.getKey();
+                Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>> avalue = entry.getValue();
+                log.info("Entry {}", akey);
+                log.info("keyset {}", avalue.keySet());
+            }
+            doMergeLearn(conf, partialMapMap, afterbefore, metaMap, threshold, listMap);
+
+            usedSubTypes = new ArrayList<>(partialMapMap.keySet());
+            //fieldSize = fieldSize() * thresholds.length;
+            // map from h/m to model to posnegcom map<model, results>
+            //mapResult0.put(threshold, mapResult);
+            mergeMapMap(mapMap, partialMapMap);
+            batchnum++;
+            if (!batch) {
+                break;
+            } else {
+                object = PipelineUtils.getPipelineValueBatch(datareaders, key, PipelineConstants.TRUNCFILLLIST, batchnum, inmemory);
+            }
+        }
+        return mapMap;
     }
 
     private Double[] getThresholds() {
@@ -1067,8 +1077,9 @@ public abstract class IndicatorAggregator extends Aggregator {
         }
         return mapType != CMNTYPE;
     }
-    
-    protected Map<String, double[][]> getListMap() {
+
+    @Deprecated
+    protected Map<String, double[][]> getListMapDeprecated() {
         return listMap;
     }
 
@@ -1718,28 +1729,29 @@ public abstract class IndicatorAggregator extends Aggregator {
     }
 
     /**
-     * 
-     * @param conf
-     * @param metaMap 
-     * @param threshold TODO
+     *
      * @param range
      * @param afterbefore
      * @param objectMaps
      * @param otherResultMaps
+     * @param conf
+     * @param metaMap
+     * @param threshold       TODO
+     * @param listMap
      * @return a complex map
-     * 
+     * <p>
      * maps for learning
      * a map from the id subtype short name + posnegcmn to a map of a value list to labels
-     *
+     * <p>
      * next: a map from subtype to a map with posnegcmn to a map from stock id to list of (pair (range, pair of value array and eventual label))
      * a similar without label, to be classified
-     * 
+     *
      */
 
-    private Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> createPosNegMaps(IclijConfig conf, Map<SubType, MLMeta> metaMap, Double threshold) {
+    private Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> createPosNegMaps(IclijConfig conf, Map<SubType, MLMeta> metaMap, Double threshold, Map<String, double[][]> listMap) {
         Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = new HashMap<>();
-        for (String id : getListMap().keySet()) {
-            double[][] list = getListMap().get(id);
+        for (String id : listMap.keySet()) {
+            double[][] list = listMap.get(id);
             log.debug("t {}", Arrays.toString(list[0]));
             log.debug("listsize {}", list.length);
             /*
@@ -1867,8 +1879,8 @@ public abstract class IndicatorAggregator extends Aggregator {
     }
 
     private void doMergeLearn(IclijConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
-            AfterBeforeLimit afterbefore,
-            Map<SubType, MLMeta> metaMap, Double threshold) {
+                              AfterBeforeLimit afterbefore,
+                              Map<SubType, MLMeta> metaMap, Double threshold, Map<String, double[][]> listMap) {
         Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> newMapMap = new HashMap<>();
         Map<String, Double> labelMap2 = createShortLabelMap2();
         List<SubType> subTypes = getWantedSubTypes(afterbefore);
@@ -1912,8 +1924,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                 int jj = 0;
             }
            // map from h/m + posnegcom to map<model, results>
-            for (String id : getListMap().keySet()) {
-                double[][] list = getListMap().get(id);
+            for (String id : listMap.keySet()) {
+                double[][] list = listMap.get(id);
                 log.debug("t {}", Arrays.toString(list[0]));
                 log.debug("listsize {}", list.length);
                 log.debug("list {} {} ", list.length, Arrays.asList(list));
@@ -2215,7 +2227,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         return usedSubTypes;
     }
 
-    private void cleanMLDaos() {
+    public void cleanMLDaos() {
         for (MLClassifyDao mldao : mldaos) {
             mldao.clean();
         }        

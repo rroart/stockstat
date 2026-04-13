@@ -19,6 +19,7 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.util.JsonUtil;
 import roart.executor.MyExecutors;
 import roart.iclij.config.IclijConfig;
@@ -110,13 +111,13 @@ public class MLDataset extends Aggregator {
         if (conf.wantOtherStats()) {
             eventTableRows = new ArrayList<>();
         }
-        if (isEnabled()) {
-            calculate(conf, neuralnetcommand);
+        if (false && isEnabled()) {
+            calculateMe(conf, null, neuralnetcommand);
             cleanMLDaos();
         }
     }
 
-    private void cleanMLDaos() {
+    public void cleanMLDaos() {
         for (MLClassifyDao mldao : mldaos) {
             mldao.clean();
         }        
@@ -140,7 +141,8 @@ public class MLDataset extends Aggregator {
 
     private Map<Integer, String> mapTypes = new HashMap<>();
 
-    private void calculate(IclijConfig conf, NeuralNetCommand neuralnetcommand) throws Exception {
+    @Override
+    public void calculateMe(IclijConfig conf, SerialPipeline datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         Map<String, Pipeline> pipelineMap = new HashMap<>();
         long time0 = System.currentTimeMillis();
         log.info("time0 {}", (System.currentTimeMillis() - time0));

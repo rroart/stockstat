@@ -126,7 +126,7 @@ public class MachineLearningControlService {
             
             Aggregator[] aggregates = new AggregatorUtils().getAggregates(conf, pipelineData,
                     disableList, stockData.idNameMap, stockData.catName, stockData.cat, neuralnetcommand, stockData.stockdates, inmemory);
-
+            new AggregatorUtils().calculateAggregators(aggregates, conf, pipelineData, neuralnetcommand);
             /*
             for (AbstractCategory category : categories) {
                 List<AbstractPredictor> predictors = category.getPredictors();
@@ -231,6 +231,7 @@ public class MachineLearningControlService {
         MyCache.getInstance().put(pipekey, result.getPipelineData());
         log.info("key found {}", result.getPipelineData().length());
         clonePipeline(result);
+        log.info("key found {}", result.getPipelineData().length());
         {
         long[] mem0 = MemUtil.mem();
         log.info("MEM {}", MemUtil.print(mem0));

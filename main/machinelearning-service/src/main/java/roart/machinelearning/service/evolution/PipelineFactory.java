@@ -16,13 +16,13 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.model.PipelineResultData;
 import roart.common.util.JsonUtil;
 import roart.evolution.chromosome.impl.NeuralNetChromosome;
 import roart.gene.NeuralNetConfigGene;
 import roart.iclij.config.IclijConfig;
+import roart.pipeline.common.aggregate.Aggregator;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.predictor.impl.PredictorPytorchGRU;
 import roart.predictor.impl.PredictorPytorchLSTM;
@@ -74,6 +74,10 @@ public class PipelineFactory {
             conf.getConfigData().getConfigValueMap().put(ConfigConstants.DATASETMLCONFIG, value);
             pipelineData = new MLDataset(conf, catName, null, catName, cat, neuralnetcommand, inmemory);
         }
+        if (pipelineData != null) {
+            ((Aggregator)pipelineData).calculateMe(conf, dataReaders, neuralnetcommand);
+        }
+
         if (ml.equals(PipelineConstants.PREDICTOR)) {
             conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGPREDICTORSMLCONFIG, value);
             //value = mapper.writeValueAsString(nnConfigs.getTensorflowConfig().getTensorflowLSTMConfig());

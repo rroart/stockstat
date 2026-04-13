@@ -18,7 +18,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import roart.common.pipeline.data.SerialObject;
 import tools.jackson.core.exc.StreamReadException;
 import tools.jackson.databind.DatabindException;
 
@@ -132,13 +131,13 @@ public class MLIndicator extends Aggregator {
         if (conf.wantOtherStats()) {
             eventTableRows = new ArrayList<>();
         }
-        if (isEnabled()) {
-            calculateMomentums(conf, datareaders, neuralnetcommand);
+        if (false && isEnabled()) {
+            calculateMe(conf, datareaders, neuralnetcommand);
             cleanMLDaos();
         }
     }
 
-    private void cleanMLDaos() {
+    public void cleanMLDaos() {
         for (MLClassifyDao mldao : mldaos) {
             mldao.clean();
         }        
@@ -254,8 +253,9 @@ public class MLIndicator extends Aggregator {
             }
     }
 
-    private void calculateMomentums(IclijConfig conf, SerialPipeline datareaders,
-            NeuralNetCommand neuralnetcommand) throws Exception {
+    @Override
+    public void calculateMe(IclijConfig conf, SerialPipeline datareaders,
+                            NeuralNetCommand neuralnetcommand) throws Exception {
         log.info("checkthis {}", key.equals(title));
         SerialPipeline datareader = PipelineUtils.getPipelines(datareaders, key, null, inmemory);
         SerialPipeline extrareader = PipelineUtils.getPipelines(datareaders, PipelineConstants.EXTRAREADER, null, inmemory);

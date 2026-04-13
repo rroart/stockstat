@@ -6,6 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.data.*;
 import roart.iclij.config.IclijConfig;
 import roart.common.inmemory.model.Inmemory;
@@ -125,4 +126,7 @@ public abstract class Aggregator extends PipelineResultData {
         return MathUtil.round3(objs, places);
     }
 
+    public abstract void calculateMe(IclijConfig conf,
+                                     SerialPipeline datareaders, NeuralNetCommand neuralnetcommand) throws Exception;
+    public abstract void cleanMLDaos();
 }
