@@ -487,14 +487,14 @@ public class PipelineUtils {
         }
         while (object != null) {
             Map<String, double[][]> map = PipelineUtils.sconvertMapdd(object);
+            if (map != null) {
+                retMap.putAll(map);
+            }
             batchnum++;
             if (!batch) {
                 break;
             } else {
                 object = PipelineUtils.getPipelineValueBatch(pipelines, key, batchnum, inmemory);
-            }
-            if (map != null) {
-                retMap.putAll(map);
             }
         }
         return retMap;
@@ -523,14 +523,14 @@ public class PipelineUtils {
         }
         while (object != null) {
             Map<String, Double[][]> map = PipelineUtils.sconvertMapDD(object);
+            if (map != null) {
+                retMap.putAll(map);
+            }
             batchnum++;
             if (!batch) {
                 break;
             } else {
                 object = PipelineUtils.getPipelineValueBatch(pipelines, key, batchnum, inmemory);
-            }
-            if (map != null) {
-                retMap.putAll(map);
             }
         }
         return retMap;
