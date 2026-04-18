@@ -85,7 +85,10 @@ public class CoreDataSource extends MyDataSource {
 
     @Override
     public List<StockDTO> getAll(String market, IclijConfig conf, boolean disableCache, int batch, int batchSize) throws Exception {
-        throw new UnsupportedOperationException("Unsupported operation");
+        List<StockDTO> list = ds.getStocksByMarket(market, batch, batchSize);
+        list = StockETL.filterWeekend(conf, list);
+        //log.info("StockDTO getall {}", (System.currentTimeMillis() - time0) / 1000);
+        return Collections.unmodifiableList(list);
     }
 
     public List<String> getDates(String market, IclijConfig conf) throws Exception {

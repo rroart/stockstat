@@ -1,5 +1,6 @@
 package roart.db.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,20 @@ public class DbDao {
     }
 
     public List<StockDTO> getAll(String market, IclijConfig conf, boolean disableCache) throws Exception {
-        return dataSource.getAll(market, iclijConfig, disableCache);      
+        if (hasStockBatch() && iclijConfig.getDbBatchsize() > 0) {
+            List<StockDTO> list = new ArrayList<>();
+            int batch = 0;
+            while (true) {
+                List<StockDTO> batchStocks = dataSource.getAll(market, conf, false, batch, iclijConfig.getDbBatchsize());
+                if (batchStocks.isEmpty()) {
+                    break;
+                }
+                list.addAll(batchStocks);
+                batch++;
+            }
+            return list;
+        }
+        return dataSource.getAll(market, iclijConfig, disableCache);
     }
 
     public List<StockDTO> getAll(String market, IclijConfig conf, boolean disableCache, int batch, int batchSize) throws Exception {
@@ -53,6 +67,6 @@ public class DbDao {
     }
 
     public boolean hasStockBatch() {
-        return false; // TODO dataSource instanceof DbSpringDS;
+        return !iclijConfig.wantDbHibernate();
     }
 }
