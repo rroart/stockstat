@@ -192,7 +192,7 @@ public class BenchmarkPipelineET {
         log.info("Running test with batch size: {}", iconf.wantsInmemoryPipelineBatchsize());
         long time = System.currentTimeMillis();
         String id = UUID.randomUUID().toString();
-        String uuid = id + "/" + UUID.randomUUID().toString();
+        String uuid = UUID.randomUUID().toString();
 
         ExtraReader extraReader = new ExtraReader(conf, stockData.marketdatamap, 0, stockData);
         Map<String, StockData> extraStockDataMap = new IndicatorUtils().getExtraStockDataMap(conf, io.getDbDao(), extraReader, true);
@@ -208,7 +208,7 @@ public class BenchmarkPipelineET {
 
         pipelinedata = iu.createPipelineDataCategories(pipelinedata, categories, stockData);
 
-        PipelineUtils.setPipelineMap(pipelinedata, uuid);
+        PipelineUtils.setPipelineMap(pipelinedata, id + "/" + uuid);
         pipelinedata = PipelineUtils.setPipelineMap(pipelinedata, inmemory, io.getCuratorClient());
 
         IndicatorAggregator mlMulti = new MLMulti(conf, stockData.catName, stockData.catName, stockData.cat, stockData.idNameMap, pipelinedata, neuralnetcommand, stockData.stockdates, inmemory);
