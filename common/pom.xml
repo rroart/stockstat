@@ -32,6 +32,7 @@
     <module>queue</module>
     <module>queueutil</module>
     <module>service</module>
+    <module>synchronization</module>
     <module>util</module>
     <module>webflux</module>
     <module>zookeeper</module>
