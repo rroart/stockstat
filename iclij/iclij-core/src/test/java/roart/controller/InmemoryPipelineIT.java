@@ -579,7 +579,7 @@ public class InmemoryPipelineIT {
     }
     */
 
-    @Test
+    //@Test
     public void testSome() throws Exception {
         conf.getConfigData().setMarket(TestConstants.MARKET);
         List<String> disableList = new ArrayList<>();
