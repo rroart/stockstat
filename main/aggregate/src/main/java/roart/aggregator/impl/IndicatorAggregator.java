@@ -208,7 +208,23 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     }
 
-    private Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> getMapMap(Double threshold, Map<SubType, MLMeta> metaMap) {
+    public Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> getMapMap(Double threshold, Map<SubType, MLMeta> metaMap) {
+        AfterBeforeLimit afterbefore = getAfterBefore();
+        // TODO wtf duplic
+        makeWantedSubTypes(afterbefore);
+        for (var i : this.wantedSubTypes) {
+            log.info("sub {} {}", i.hashCode(), i);
+        }
+        // TODO wtf duplic
+        List<SubType> subTypes = getWantedSubTypes(afterbefore);
+        for (var i : subTypes) {
+            i.mergekey = true;
+            log.info("sub {} {}", i.hashCode(), i);
+        }
+        List<SubType> mergelist = wantedMergeSubTypes();
+        for (var i : mergelist) {
+            log.info("sub {} {}", i.hashCode(), i);
+        }
         Map<String, Double[][]> aListMap = PipelineUtils.getPipelineValueAndsconvertMapDD(datareaders, key, PipelineConstants.LIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
         int batchnum = 0;
         boolean batch = conf.wantsInmemoryPipelineBatchsize() > 0;
@@ -220,21 +236,22 @@ public abstract class IndicatorAggregator extends Aggregator {
         }
         long time1 = System.currentTimeMillis();
         Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = new HashMap<>();
+        log.info("object" + object);
+        log.info("alistm" + aListMap);
         while (object != null) {
             // TODO
             Map<String, double[][]> fillListMap = PipelineUtils.sconvertMapdd(object);
             Map<String, double[][]> listMap = /*conf.wantPercentizedPriceIndex() ? base100FillListMap :*/ fillListMap;
+            log.info("alistm" + listMap);
 
             long time0 = System.currentTimeMillis();
             // note that there are nulls in the lists with sparse
             if (!anythingHereA(aListMap)) {
-                log.debug("empty {}", key);
+                log.info("empty {}", key);
                 break; // TODO return;
             }
             log.info("time0 {}", (System.currentTimeMillis() - time0));
             long time2 = System.currentTimeMillis();
-            AfterBeforeLimit afterbefore = getAfterBefore();
-            makeWantedSubTypes(afterbefore);
             //makeWantedSubTypesMap(wantedSubTypes());
             //log.debug("imap " + objectMap.size());
             log.info("time2 {}", (System.currentTimeMillis() - time2));
@@ -253,9 +270,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                 log.info("Entry {}", akey);
                 log.info("keyset {}", avalue.keySet());
             }
-            doMergeLearn(conf, partialMapMap, afterbefore, metaMap, threshold, listMap);
+            doMergeLearn(conf, partialMapMap, afterbefore, metaMap, threshold, listMap, subTypes, mergelist);
 
-            usedSubTypes = new ArrayList<>(partialMapMap.keySet());
             //fieldSize = fieldSize() * thresholds.length;
             // map from h/m to model to posnegcom map<model, results>
             //mapResult0.put(threshold, mapResult);
@@ -267,6 +283,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                 object = PipelineUtils.getPipelineValueBatch(datareaders, key, PipelineConstants.TRUNCFILLLIST, batchnum, inmemory);
             }
         }
+        usedSubTypes = new ArrayList<>(mapMap.keySet());
+        log.info("usedSubTypes " + usedSubTypes);
         return mapMap;
     }
 
@@ -493,6 +511,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             String path = model.getPath();
                             boolean mldynamic = conf.wantMLDynamic();
                             //indicators.add(this);
+                            log.info("Filename base {} {} {} {} {} {}", subType, mldao.getName(), model.getName(), mapTypeInt, mapType, mapName);
                             log.info("Filename {}", filename);
                             log.info("Doing {} {} {}", mldao.getName(), model.getName(), mapName);
                             if (simplelog) {
@@ -1749,6 +1768,9 @@ public abstract class IndicatorAggregator extends Aggregator {
      */
 
     private Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> createPosNegMaps(IclijConfig conf, Map<SubType, MLMeta> metaMap, Double threshold, Map<String, double[][]> listMap) {
+        for (SubType subType : wantedSubTypes) {
+            log.info("subtype " + subType.toString() + " " + subType.mySubType.name());
+        }
         Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = new HashMap<>();
         for (String id : listMap.keySet()) {
             double[][] list = listMap.get(id);
@@ -1880,39 +1902,13 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     private void doMergeLearn(IclijConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
                               AfterBeforeLimit afterbefore,
-                              Map<SubType, MLMeta> metaMap, Double threshold, Map<String, double[][]> listMap) {
+                              Map<SubType, MLMeta> metaMap, Double threshold, Map<String, double[][]> listMap, List<SubType> subTypes, List<SubType> mergelist) {
         Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> newMapMap = new HashMap<>();
         Map<String, Double> labelMap2 = createShortLabelMap2();
-        List<SubType> subTypes = getWantedSubTypes(afterbefore);
-        List<SubType> mergelist = wantedMergeSubTypes();
-        // for each wanted merge trigger
-        for (SubType mergeSubType : mergelist) {
-            int wanteds = 0;
-            for (int i = 0; i < subTypes.size(); i++) {
-                SubType aSubType = subTypes.get(i);
-                if (aSubType.useMerged) {
-                    wanteds++;
-                }
-            }
-            SubType mySubType = getMySubType(subTypes, mergeSubType);
-            if (!metaMap.containsKey(mySubType)) {
-                MLMeta mlmeta = new MLMeta();
-                mlmeta.timeseries = true;
-                mlmeta.classify = true;
-                mlmeta.dim1 = mergeSubType.afterbefore.before;
-                mlmeta.dim2 = wanteds;
-                if (wanteds == 1) {
-                    log.error("Only one dim");
-                }
-                mlmeta.also1d = true;
-                metaMap.put(mySubType, mlmeta);
-            } else {
-                MLMeta mlmeta = metaMap.get(mergeSubType);
-                if (mlmeta != null) {
-                    int jj = 0;
-                }
-            }
+        for (SubType subType : mergelist) {
+            log.info("subtype " + subType.toString() + " " + subType.mySubType.name());
         }
+        handleMergeMetaMap(metaMap, subTypes, mergelist);
         for (SubType mergeSubType : mergelist) {
             SubType mySubType = getMySubType(subTypes, mergeSubType);
             MLMeta mlmeta = metaMap.get(mySubType);
@@ -2106,6 +2102,42 @@ public abstract class IndicatorAggregator extends Aggregator {
         mapMap.putAll(newMapMap);
     }
 
+    private void handleMergeMetaMap(Map<SubType, MLMeta> metaMap, List<SubType> subTypes, List<SubType> mergelist) {
+        // for each wanted merge trigger
+        for (SubType mergeSubType : mergelist) {
+            int wanteds = 0;
+            for (int i = 0; i < subTypes.size(); i++) {
+                SubType aSubType = subTypes.get(i);
+                if (aSubType.useMerged) {
+                    wanteds++;
+                }
+            }
+            SubType mySubType = getMySubType(subTypes, mergeSubType);
+            log.info("sub {} {}", mySubType.hashCode(), mySubType);
+            for (var i : metaMap.keySet()) {
+                log.info("sub {} {}", i.hashCode(), i);
+            }
+            log.info("metamap {} {} {}", metaMap.keySet(), mySubType, metaMap.containsKey(mySubType));
+            if (!metaMap.containsKey(mySubType)) {
+                MLMeta mlmeta = new MLMeta();
+                mlmeta.timeseries = true;
+                mlmeta.classify = true;
+                mlmeta.dim1 = mergeSubType.afterbefore.before;
+                mlmeta.dim2 = wanteds;
+                if (wanteds == 1) {
+                    log.error("Only one dim");
+                }
+                mlmeta.also1d = true;
+                metaMap.put(mySubType, mlmeta);
+            } else {
+                MLMeta mlmeta = metaMap.get(mergeSubType);
+                if (mlmeta != null) {
+                    int jj = 0;
+                }
+            }
+        }
+    }
+
     private double[] createArray(double[] anArray, int begOfArray, int endOfArray) {
         double[] newArray = new double[begOfArray + endOfArray];
         return newArray;
@@ -2259,7 +2291,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         }
     }
 
-    protected abstract class SubType {
+    public abstract class SubType {
         public abstract String getType();
         public abstract String getName();
         public abstract int getArrIdx();
@@ -2277,15 +2309,48 @@ public abstract class IndicatorAggregator extends Aggregator {
         public boolean useMerged = false;
         public boolean isMerge = false;
         public MySubType mySubType;
+        public boolean mergekey = false;
+        SubType() {
+            log.info("here");
+            try {
+                String s = null;
+                //s.length();
+            } catch (Exception e) {
+                log.error("trace", e);
+            }
+        }
         @Override
         public String toString() {
-            return getType();
+            return getType() + mergekey;
         }
+        public String toString2() {
+            return getType() + " " + getName() + useDirectly + useMerged + useMergeLimitTrigger + isMerge + mySubType;
+        }
+        @Override
+        public int hashCode() {
+            return Objects.hash(getType(), mergekey);
+            }
+
+        @Override
+        public boolean equals(Object obj) {
+            //if (true) return super(obj);
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null || !(obj instanceof SubType)) {
+                return false;
+            }
+            SubType other = (SubType) obj;
+            return Objects.equals(getType(), other.getType()) && mergekey == other.mergekey;
+        }
+
     }
 
     protected class MergeSubType extends SubType {
 
         public MergeSubType(AfterBeforeLimit afterbefore) {
+            super();
+            log.info("here");
             this.afterbefore = afterbefore;
             useMergeLimitTrigger = true;
             useMerged = true;
@@ -2400,11 +2465,13 @@ public abstract class IndicatorAggregator extends Aggregator {
             return false;
         }
         if (map1.keySet().size() != map2.keySet().size()) {
+            log.info("keyset {} {}", map1.keySet(), map2.keySet());
             return false;
         }
 
         for (SubType subType : map1.keySet()) {
             if (!map2.containsKey(subType)) {
+                log.info("not containing {} {}", map1.keySet(), map2.keySet());
                 return false;
             }
 
@@ -2412,6 +2479,7 @@ public abstract class IndicatorAggregator extends Aggregator {
             Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>> innerMap2 = map2.get(subType);
 
             if (!compareInnerMaps(innerMap1, innerMap2)) {
+                log.info("inner map differs {} {}, {}", subType, innerMap1, innerMap2);
                 return false;
             }
         }
@@ -2435,11 +2503,13 @@ public abstract class IndicatorAggregator extends Aggregator {
             return false;
         }
         if (map1.keySet().size() != map2.keySet().size()) {
+            log.info("diff keyset {} {}", map1.keySet(), map2.keySet());
             return false;
         }
 
         for (String key : map1.keySet()) {
             if (!map2.containsKey(key)) {
+                log.info("not containing {} {}", map1.keySet(), map2.keySet());
                 return false;
             }
 
@@ -2447,6 +2517,7 @@ public abstract class IndicatorAggregator extends Aggregator {
             Map<String, List<Pair<double[], Pair<Object, Double>>>> innerMap2 = map2.get(key);
 
             if (!compareStringListMaps(innerMap1, innerMap2)) {
+                log.info("diff keyset {} {}", innerMap1.keySet(), innerMap2.keySet());
                 return false;
             }
         }
@@ -2470,11 +2541,13 @@ public abstract class IndicatorAggregator extends Aggregator {
             return false;
         }
         if (map1.keySet().size() != map2.keySet().size()) {
+            log.info("not containing {} {}", map1.keySet(), map2.keySet());
             return false;
         }
 
         for (String key : map1.keySet()) {
             if (!map2.containsKey(key)) {
+                log.info("not containing {} {}", map1.keySet(), map2.keySet());
                 return false;
             }
 
@@ -2482,6 +2555,7 @@ public abstract class IndicatorAggregator extends Aggregator {
             List<Pair<double[], Pair<Object, Double>>> list2 = map2.get(key);
 
             if (!comparePairLists(list1, list2)) {
+                log.info("diff list {} {}", list1, list2);
                 return false;
             }
         }
@@ -2513,6 +2587,7 @@ public abstract class IndicatorAggregator extends Aggregator {
             Pair<double[], Pair<Object, Double>> pair2 = list2.get(i);
 
             if (!comparePairs(pair1, pair2)) {
+                log.info("pairs {} {} {} {}", pair1.getLeft(), pair2.getLeft(), pair1.getRight(), pair2.getRight());
                 return false;
             }
         }
@@ -2540,13 +2615,25 @@ public abstract class IndicatorAggregator extends Aggregator {
         double[] array2 = pair2.getLeft();
 
         if (!Arrays.equals(array1, array2)) {
+            log.info("arr" + Arrays.asList(array1) + " " + Arrays.asList(array2));
             return false;
         }
 
         Pair<Object, Double> innerPair1 = pair1.getRight();
         Pair<Object, Double> innerPair2 = pair2.getRight();
 
-        if (!Objects.equals(innerPair1, innerPair2)) {
+        if (innerPair1 == null && innerPair2 == null) {
+            if (true) return true;
+            log.info("pairs" + innerPair1 + " " + innerPair2);
+            return false;
+        }
+        if (innerPair1.getLeft() instanceof double[] && !Arrays.equals((double[])innerPair1.getLeft(), (double[])innerPair2.getLeft()) || !Objects.equals(innerPair1.getRight(), innerPair2.getRight())) {
+            log.info("pairs {} {} {} {}", innerPair1.getLeft(), innerPair2.getLeft(), innerPair1.getRight(), innerPair2.getRight());
+            return false;
+        }
+
+        if (innerPair1.getLeft() instanceof double[][] && !Arrays.deepEquals((double[][])innerPair1.getLeft(), (double[][])innerPair2.getLeft()) || !Objects.equals(innerPair1.getRight(), innerPair2.getRight())) {
+            log.info("pairs {} {} {} {}", innerPair1.getLeft(), innerPair2.getLeft(), innerPair1.getRight(), innerPair2.getRight());
             return false;
         }
 
@@ -2571,11 +2658,13 @@ public abstract class IndicatorAggregator extends Aggregator {
             return false;
         }
         if (map1.keySet().size() != map2.keySet().size()) {
+            log.info("diff keyset {} {}", map1.keySet(), map2.keySet());
             return false;
         }
 
         for (SubType subType : map1.keySet()) {
             if (!map2.containsKey(subType)) {
+                log.info("not containing {} {}", map1.keySet(), map2.keySet());
                 return false;
             }
 
@@ -2583,6 +2672,7 @@ public abstract class IndicatorAggregator extends Aggregator {
             Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>> innerMap2 = map2.get(subType);
 
             if (!compareInnerMapSizes(innerMap1, innerMap2)) {
+                log.info("diff {} {}", innerMap1, innerMap2);
                 return false;
             }
         }

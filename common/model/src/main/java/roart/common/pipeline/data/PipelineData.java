@@ -185,6 +185,10 @@ public class PipelineData extends SerialObject {
         this.value = value;
     }
 
+    public List<PipelineDataBatch> getBatch() {
+        return batch;
+    }
+
     public boolean isUseInmemory() {
         return useInmemory;
     }
@@ -250,6 +254,10 @@ public class PipelineData extends SerialObject {
         }
     }
 
+    public boolean exists(int batchnum) {
+        return !(batchnum >= batch.size());
+    }
+
     public SerialObject getValue(int batchnum) {
         if (batchnum >= batch.size()) {
             return null;
@@ -261,9 +269,12 @@ public class PipelineData extends SerialObject {
         return batch.get(batchnum).getMessage();
     }
 
+    public boolean isLoaded(int batchnum) {
+        return batch.get(batchnum).isLoaded();
+    }
+
     public void setLoaded(boolean b, int batchnum) {
         batch.get(batchnum).setLoaded(b);
-
     }
 
     public void setValue(SerialObject value, int batchnum) {

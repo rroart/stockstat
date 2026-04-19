@@ -6,11 +6,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.curator.framework.CuratorFramework;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,6 +21,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import roart.aggregator.impl.IndicatorAggregator;
+import roart.aggregator.impl.MLRSI;
+import roart.common.pipeline.util.PipelineUtils;
+import roart.ml.common.MLMeta;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -40,19 +42,15 @@ import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.model.ActionComponentDTO;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialPipeline;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
 import roart.constants.IclijConstants;
-import roart.constants.SimConstants;
 import roart.db.dao.DbDao;
 import roart.db.dao.IclijDbDao;
 import roart.etl.db.Extract;
 import roart.filesystem.FileSystemDao;
-import roart.iclij.component.SimulateInvestComponent;
-import roart.iclij.config.AutoSimulateInvestConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.SimulateInvestConfig;
@@ -340,6 +338,8 @@ public class InmemoryPipelineBatchIT {
      */
     @Test
     public void testIndicatorAggregatorGetMapMapDirectComparison() throws Exception {
+        conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSMINIMUMSIZE, 1);
+        conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
         String market = TestConstants.MARKET;
         conf.getConfigData().setMarket(market);
         List<String> disableList = new ArrayList<>();
@@ -372,7 +372,8 @@ public class InmemoryPipelineBatchIT {
         log.info("Running non-batched test with batch size: {}", conf.wantsInmemoryPipelineBatchsize());
 
         MLMulti mlMultiNonBatch = new MLMulti(conf, stockData.catName, stockData.catName, stockData.cat, stockData.idNameMap, pipelinedata, neuralnetcommand, stockData.stockdates, inmemory);
-        mlMultiNonBatch.putData();
+         mlMultiNonBatch.calculateMe(conf, pipelinedata, neuralnetcommand);
+       mlMultiNonBatch.putData();
 
         inmemory.stat();
 
@@ -382,15 +383,16 @@ public class InmemoryPipelineBatchIT {
         inmemory.stat();
 
         // Recreate pipeline data for batched test
-        pipelinedata = new SerialPipeline();
-        pipelinedata = iu.createDatareaderPipelineData(conf, pipelinedata, stockData, datareaders);
-        pipelinedata = iu.createPipelineDataCategories(pipelinedata, categories, stockData);
+        // pipelinedata = new SerialPipeline();
+        // pipelinedata = iu.createDatareaderPipelineData(conf, pipelinedata, stockData, datareaders);
+        // pipelinedata = iu.createPipelineDataCategories(pipelinedata, categories, stockData);
 
         // Test with batched mode
         conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
         log.info("Running batched test with batch size: {}", conf.wantsInmemoryPipelineBatchsize());
 
-        MLMulti mlMultiBatch = new MLMulti(conf, stockData.catName, stockData.catName, stockData.cat, stockData.idNameMap, pipelinedata, neuralnetcommand, stockData.stockdates, inmemory);
+        IndicatorAggregator mlMultiBatch = new MLMulti(conf, stockData.catName, stockData.catName, stockData.cat, stockData.idNameMap, pipelinedata, neuralnetcommand, stockData.stockdates, inmemory);
+        mlMultiBatch.calculateMe(conf, pipelinedata, neuralnetcommand);
         mlMultiBatch.putData();
 
         inmemory.stat();
@@ -398,5 +400,82 @@ public class InmemoryPipelineBatchIT {
         // Verify both completed successfully without errors
         log.info("Both batched and non-batched processing completed successfully");
         assertEquals(true, inmemory.isEmpty());
+    }
+
+    // but github copilot did not actually do it, made my own
+
+    @Test
+    public void testIndicatorAggregatorGetMapMapDirectComparisonReal() throws Exception {
+        String market = TestConstants.MARKET;
+        conf.getConfigData().setMarket(market);
+        List<String> disableList = new ArrayList<>();
+        StockData stockData = new Extract(io.getDbDao()).getStockData(conf, true);
+
+        NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
+        neuralnetcommand.setMlclassify(false);
+        neuralnetcommand.setMllearn(true);
+        neuralnetcommand.setMldynamic(true);
+
+        IndicatorUtils iu = new IndicatorUtils();
+
+        log.info("Stock data keys: {}", stockData.marketdatamap.keySet());
+
+        conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 0);
+        Map<IndicatorAggregator.SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = getMapMap(conf, stockData, neuralnetcommand, iu, inmemory);
+
+        // Clear state
+        testutils.cacheinvalidate();
+        testutils.deletepipeline(ControlService.id);
+        inmemory.stat();
+
+        // Recreate pipeline data for batched test
+        // Test with batched mode
+        conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
+
+        Map<IndicatorAggregator.SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMapBatch = getMapMap(conf, stockData, neuralnetcommand, iu, inmemory);
+
+        boolean compared = new MLMulti(conf, stockData.catName, stockData.catName, stockData.cat, stockData.idNameMap, new SerialPipeline(), neuralnetcommand, stockData.stockdates, inmemory).compareMaps(mapMap, mapMapBatch);
+
+        log.info("map batch {}", mapMapBatch);
+        log.info("map no batch {}", mapMap);
+        assertTrue(compared, "Batched and non-batched mapMap should be equivalent");
+
+        inmemory.stat();
+
+        // Verify both completed successfully without errors
+        log.info("Both batched and non-batched processing completed successfully");
+        assertEquals(true, inmemory.isEmpty());
+    }
+
+    private Map<IndicatorAggregator.SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> getMapMap(IclijConfig conf, StockData stockData, NeuralNetCommand neuralnetcommand, IndicatorUtils iu, TestInmemory inmemory) throws Exception {
+        log.info("Running test with batch size: {}", conf.wantsInmemoryPipelineBatchsize());
+
+        ExtraReader extraReader = new ExtraReader(conf, stockData.marketdatamap, 0, stockData);
+        Map<String, StockData> extraStockDataMap = new IndicatorUtils().getExtraStockDataMap(conf, io.getDbDao(), extraReader, true);
+        Pipeline[] datareaders = iu.getDataReaders(conf, stockData.periodText,
+                stockData.marketdatamap, stockData, extraStockDataMap, extraReader, inmemory);
+
+        SerialPipeline pipelinedata = new SerialPipeline();
+        pipelinedata = iu.createDatareaderPipelineData(conf, pipelinedata, stockData, datareaders);
+
+        List<StockDTO> dayStocks = iu.getDayStocks(conf, stockData);
+        List<AbstractCategory> categories = Arrays.asList(new CategoryUtil().getCategories(conf, dayStocks,
+                stockData.periodText, pipelinedata, inmemory));
+
+        pipelinedata = iu.createPipelineDataCategories(pipelinedata, categories, stockData);
+
+        IndicatorAggregator mlMulti = new MLMulti(conf, stockData.catName, stockData.catName, stockData.cat, stockData.idNameMap, pipelinedata, neuralnetcommand, stockData.stockdates, inmemory);
+        //mlMulti.putData();
+        String key = stockData.catName;
+        SerialPipeline datareader  = PipelineUtils.getPipelines(pipelinedata, key, inmemory);
+        //PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.TRUNCFILLLIST, inmemory));
+        //Map<String, double[][]>  base100FillListMap = PipelineUtils.sconvertMapdd(PipelineUtils.getPipelineValue(datareaders, key, PipelineConstants.TRUNCBASE100FILLLIST, inmemory)) ;
+        Double threshold = 1.0;
+        Map<IndicatorAggregator.SubType, MLMeta> metaMap = new HashMap<>();
+        Map<IndicatorAggregator.SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = mlMulti.getMapMap(threshold, metaMap);
+
+        inmemory.stat();
+
+        return mapMap;
     }
 }

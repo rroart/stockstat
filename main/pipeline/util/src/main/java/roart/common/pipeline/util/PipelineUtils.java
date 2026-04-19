@@ -252,6 +252,9 @@ public class PipelineUtils {
         //log.info("Pipe len" + pipelines.length());
         PipelineData pipeline = getPipeline(pipelines, key);
         if (pipeline != null) {
+            if (!pipeline.exists(batch)) {
+                return null;
+            }
             getPipelineValue(pipeline, batch, inmemory);
             return pipeline.getValue(batch);
         } else {
@@ -310,7 +313,7 @@ public class PipelineUtils {
     }
 
     public static void getPipelineValue(PipelineData datareader, int batch, Inmemory inmemory) {
-        if (!datareader.isLoaded()) {
+        if (!datareader.isLoaded(batch)) {
             InmemoryMessage msg = JsonUtil.convertnostrip(datareader.getMessage(batch), InmemoryMessage.class);
             String str = inmemory.read(msg);
             if (str != null) {
@@ -1106,14 +1109,27 @@ public class PipelineUtils {
                     String id = split[1];
                     log.info("Pipe " + data + " " + " " + serviceId + " " + id);
                     //   todo
-                    msg = inmemory.send(id + "-" + ArrayUtils.toString(data.getKey()), data.getValue(), md5);
-                    log.info("Sent size {} {} {}", msg.getId(), msg.getCount(), JsonUtil.convert(data.getValue(), mapper).length());
-                    //result.message = msg;
-                    curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
-                    log.info("Path write {}", "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id + "/" + msg.getId());
-                    data.setValue(null);
-                    data.setMessage(JsonUtil.convert(msg));
-                    data.setLoaded(false);
+                    if (data.getValue() != null) {
+                        msg = inmemory.send(id + "-" + ArrayUtils.toString(data.getKey()), data.getValue(), md5);
+                        log.info("Sent size {} {} {}", msg.getId(), msg.getCount(), JsonUtil.convert(data.getValue(), mapper).length());
+                        //result.message = msg;
+                        curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
+                        log.info("Path write {}", "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id + "/" + msg.getId());
+                        data.setValue(null);
+                        data.setMessage(JsonUtil.convert(msg));
+                        data.setLoaded(false);
+                    }
+                    int batchNum = 0;
+                    for (PipelineDataBatch batch : data.getBatch()) {
+                        msg = inmemory.send(id + "-" + ArrayUtils.toString(data.getKey()) + "_" + batchNum++, batch.getValue(), md5);
+                        log.info("Sent size {} {} {}", msg.getId(), msg.getCount(), JsonUtil.convert(batch.getValue(), mapper).length());
+                        //result.message = msg;
+                        curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
+                        log.info("Path write {}", "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id + "/" + msg.getId());
+                        batch.setValue(null);
+                        batch.setMessage(JsonUtil.convert(msg));
+                        batch.setLoaded(false);
+                    }
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
