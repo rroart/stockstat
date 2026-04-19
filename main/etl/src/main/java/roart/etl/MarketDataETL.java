@@ -21,21 +21,22 @@ public class MarketDataETL {
     /**
      * For a given set of markets
      * Create a map to the marketdata
-     * the marketdata being the periodtexts, all stocks and 
+     * the marketdata being the periodtexts, all stocks and
      * datedstocklist
-     * 
+     *
+     * @param markets    to iterate
      * @param days
-     * @param markets to iterate
      * @param conf
-     * @param stocks TODO
+     * @param stocks     TODO
      * @param periodText TODO
-     * @param meta TODO
+     * @param meta       TODO
+     * @param ids
      * @return
      * @throws Exception
      */
     
     public Map<String, MarketData> getMarketdatamap(int days,
-            String market, IclijConfig conf, List<StockDTO> stocks, String[] periodText, MetaDTO meta) throws Exception {
+                                                    String market, IclijConfig conf, List<StockDTO> stocks, String[] periodText, MetaDTO meta, List<String> ids) throws Exception {
         Map<String, MarketData> marketdatamap = new HashMap();
         log.info("prestocks");
         log.info("stocks {}", stocks.size());
@@ -43,6 +44,7 @@ public class MarketDataETL {
         marketdata.stocks = new ArrayList<>(stocks);
         marketdata.periodtext = periodText;
         marketdata.meta = meta;
+        marketdata.ids = ids;
         Map<String, List<StockDTO>> stockdatemap = StockUtil.splitDate(stocks);
         stockdatemap = StockUtil.filterFew(stockdatemap, conf.getFilterDate());
         log.info("keyset {}", stockdatemap.keySet());

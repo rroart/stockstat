@@ -33,6 +33,14 @@ public class StockData {
         super();
     }
 
+    /*
+    @Override
+    public int hashCode() {
+        return Arrays.
+    }
+
+     */
+
     // Github Copilot
 
     /**
@@ -49,47 +57,74 @@ public class StockData {
         
         // Compare primitive/wrapper fields
         if (!Objects.equals(this.cat, other.cat)) {
+            System.out.println("" + this.cat + " " + other.cat);
             return false;
         }
         if (!Objects.equals(this.catName, other.catName)) {
+            System.out.println("" + this.catName + " " + other.catName);
             return false;
         }
         if (!Objects.equals(this.days, other.days)) {
+            System.out.println("" + this.days + " " + other.days);
             return false;
         }
         
         // Compare arrays
         if (!Arrays.equals(this.periodText, other.periodText)) {
+            System.out.println("" + this.periodText + " " + other.periodText);
             return false;
         }
         
         // Compare List<String>
         if (!Objects.equals(this.stockdates, other.stockdates)) {
+            System.out.println("" + this.stockdates + " " + other.stockdates);
             return false;
         }
         
         // Compare List<StockDTO>
         if (!Objects.equals(this.datedstocks, other.datedstocks)) {
+            System.out.println("" + this.datedstocks + " " + other.datedstocks);
             return false;
         }
         
         // Compare Map<String, String>
         if (!Objects.equals(this.idNameMap, other.idNameMap)) {
+            System.out.println("" + this.idNameMap + " " + other.idNameMap);
             return false;
         }
         
         // Compare Map<String, MarketData>
-        if (!Objects.equals(this.marketdatamap, other.marketdatamap)) {
+        if (!Objects.equals(this.marketdatamap.keySet(), other.marketdatamap.keySet())) {
+            System.out.println("" + this.marketdatamap + " " + other.marketdatamap);
             return false;
         }
-        
+
         // Compare Map<String, List<StockDTO>>
         if (!Objects.equals(this.stockdatemap, other.stockdatemap)) {
+            System.out.println("" + this.stockdatemap + " " + other.stockdatemap);
+            return false;
+        }
+        System.out.println("stockdatemap ok");
+
+        // Compare Map<String, MarketData>
+        for (String key : this.marketdatamap.keySet()) {
+            MarketData m1 = this.marketdatamap.get(key);
+            MarketData m2 = other.marketdatamap.get(key);
+            if (!Objects.equals(m1, m2)) {
+                System.out.println("mstock " + m1.stocks + " " + m2.stocks);
+                return false;
+            }
+        }
+
+        // Compare Map<String, List<StockDTO>>
+        if (!Objects.equals(this.stockdatemap, other.stockdatemap)) {
+            System.out.println("" + this.stockdatemap + " " + other.stockdatemap);
             return false;
         }
         
         // Compare Map<String, List<StockDTO>>
         if (!Objects.equals(this.stockidmap, other.stockidmap)) {
+            System.out.println("" + this.stockidmap + " " + other.stockidmap);
             return false;
         }
         
@@ -163,7 +198,14 @@ public class StockData {
         int otherStockidmapSize = other.stockidmap != null ? other.stockidmap.size() : 0;
         sb.append("stockidmap size: ").append(thisStockidmapSize).append(" vs ").append(otherStockidmapSize);
         sb.append(thisStockidmapSize == otherStockidmapSize ? " [MATCH]" : " [MISMATCH]");
-        
+
+        for (int i = 0; i < this.datedstocklists.length; i++) {
+            sb.append("this " + this.datedstocklists[i].size());
+        }
+        for (int i = 0; i < other.datedstocklists.length; i++) {
+            sb.append("other " + other.datedstocklists[i].size());
+        }
+
         return sb.toString();
     }
 

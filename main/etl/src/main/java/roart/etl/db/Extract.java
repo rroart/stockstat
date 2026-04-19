@@ -11,12 +11,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.util.JsonUtil;
 import roart.iclij.config.IclijConfig;
 import roart.common.constants.Constants;
 import roart.common.model.MetaDTO;
@@ -64,8 +62,9 @@ public class Extract {
             log.error(Constants.EXCEPTION, e);
         }
 
+        // TODO not possible
         int batchSize = conf.getDbBatchsize();
-        if (batchSize > 0) {
+        if (false && dbDao.hasStockBatch() && batchSize > 0) {
             return getStockDataBatch(conf, market, disableCache);
         }
         List<StockDTO> stocks = null;
@@ -107,7 +106,7 @@ public class Extract {
                         if (result == null) {
                             result = partial;
                         } else {
-                            merge(result, partial);
+                            merge(result, partial, conf);
                         }
                     }
                     batch++;
@@ -145,7 +144,7 @@ public class Extract {
     
         Map<String, MarketData> marketdatamap = null;
         try {
-            marketdatamap = new MarketDataETL().getMarketdatamap(days, market, conf, stocks, periodText, meta);
+            marketdatamap = new MarketDataETL().getMarketdatamap(days, market, conf, stocks, periodText, meta, new ArrayList<>(stockidmap.keySet()));
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -253,7 +252,7 @@ public class Extract {
 
     // Github Copilot
 
-    public void merge(StockData main, StockData partial) {
+    public void merge(StockData main, StockData partial, IclijConfig conf) {
         // merge stockidmap
         if (partial.stockidmap != null) {
             for (Entry<String, List<StockDTO>> entry : partial.stockidmap.entrySet()) {
@@ -288,14 +287,15 @@ public class Extract {
         }
         // merge datedstocklists
         if (partial.datedstocklists != null && main.datedstocklists != null) {
-            for (int i = 0; i < Math.min(partial.datedstocklists.length, main.datedstocklists.length); i++) {
+            for (int i = 0; false && i < Math.min(partial.datedstocklists.length, main.datedstocklists.length); i++) {
                 if (main.datedstocklists[i] == null) {
                     main.datedstocklists[i] = partial.datedstocklists[i];
                 } else if (partial.datedstocklists[i] != null) {
                     main.datedstocklists[i].addAll(partial.datedstocklists[i]);
                 }
             }
-            //main.datedstocks = main.datedstocklists[0];
+            main.datedstocklists = StockUtil.getDatedstocklists(main.stockdatemap, conf.getConfigData().getDate(), 2, conf.getTableMoveIntervalDays());
+            main.datedstocks = main.datedstocklists[0];
         }
         // merge stockdates
         if (partial.stockdates != null) {
@@ -313,7 +313,7 @@ public class Extract {
         // merge datedstocks
         if (partial.datedstocks != null && main.datedstocks != null) {
             log.info("len" + main.datedstocks.size() + " " + partial.datedstocks.size());
-            main.datedstocks.addAll(partial.datedstocks);
+            //main.datedstocks.addAll(partial.datedstocks);
         }
     }
 
