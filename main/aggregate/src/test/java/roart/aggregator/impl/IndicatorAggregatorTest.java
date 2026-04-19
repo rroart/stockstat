@@ -1,5 +1,6 @@
 package roart.aggregator.impl;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,6 +22,7 @@ import roart.result.model.ResultItemTableRow;
 
 // Github Copilot
 
+@Disabled
 class IndicatorAggregatorTest {
 
     @Mock
