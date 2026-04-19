@@ -84,4 +84,7 @@ public class Constants {
     public static final String DATA = "data";
     
     public static final String APPID = "APPID";
+
+    public static final String CURATOR = "curator";
+    public static final String LOCAL = "local";
 }
