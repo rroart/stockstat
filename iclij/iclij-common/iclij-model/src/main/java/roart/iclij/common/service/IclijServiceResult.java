@@ -1,14 +1,11 @@
-package roart.iclij.service;
+package roart.iclij.common.service;
 
 import java.util.List;
 import java.util.Map;
 
 import roart.common.config.ConfigData;
 import roart.common.model.MetaDTO;
-import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialPipeline;
-import roart.iclij.config.IclijConfig;
-import roart.iclij.model.WebData;
 import roart.iclij.model.WebDataJson;
 import roart.result.model.ResultItem;
 

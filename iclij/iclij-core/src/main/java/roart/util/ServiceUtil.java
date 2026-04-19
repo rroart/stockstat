@@ -32,7 +32,7 @@ import roart.iclij.config.Market;
 import roart.iclij.model.WebData;
 import roart.iclij.model.WebDataJson;
 import roart.iclij.model.component.ComponentInput;
-import roart.iclij.service.IclijServiceResult;
+import roart.iclij.common.service.IclijServiceResult;
 import roart.iclij.service.util.MarketUtil;
 import roart.model.io.IO;
 

@@ -42,7 +42,7 @@ import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.config.bean.ConfigI;
 import roart.iclij.model.Parameters;
-import roart.iclij.service.IclijServiceResult;
+import roart.iclij.common.service.IclijServiceResult;
 import roart.model.io.IO;
 import roart.testdata.TestConstants;
 import roart.testdata.TestData;

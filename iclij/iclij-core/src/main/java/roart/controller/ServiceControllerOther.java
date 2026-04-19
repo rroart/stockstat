@@ -9,13 +9,12 @@ import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.constants.ServiceConstants;
 import roart.common.controller.ServiceControllerOtherAbstract;
-import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.util.JsonUtil;
 import roart.iclij.config.IclijConfig;
-import roart.iclij.service.IclijServiceParam;
-import roart.iclij.service.IclijServiceResult;
+import roart.iclij.common.service.IclijServiceParam;
+import roart.iclij.common.service.IclijServiceResult;
 import roart.populate.PopulateThread;
 import roart.model.io.IO;
 

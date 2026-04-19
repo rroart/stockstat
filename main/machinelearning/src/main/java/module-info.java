@@ -85,4 +85,5 @@ open module machinelearning {
     requires common.inmemory.factory;
     requires common.inmemory.model;
     requires common.queue;
+    requires iclij.common.model;
 }

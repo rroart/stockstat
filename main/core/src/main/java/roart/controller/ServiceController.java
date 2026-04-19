@@ -9,8 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.sql.DataSource;
-
 //import javax.sql.DataSource;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -21,17 +19,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,22 +35,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import tools.jackson.core.exc.StreamReadException;
-import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.DatabindException;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
 import roart.common.cache.MyCache;
-import roart.common.config.ConfigConstantMaps;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
-import roart.common.ml.NeuralNetCommand;
-import roart.common.pipeline.data.PipelineData;
-import roart.common.pipeline.data.SerialPipeline;
-import roart.common.service.ServiceParam;
-import roart.common.service.ServiceResult;
-import roart.common.util.JsonUtil;
 import roart.common.util.MemUtil;
 import roart.core.service.CoreControlService;
 import roart.core.service.evolution.CoreEvolutionService;
@@ -66,12 +50,10 @@ import roart.executor.MyExecutors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import roart.db.dao.DbDao;
-import roart.iclij.service.IclijServiceParam;
-import roart.iclij.service.IclijServiceResult;
+import roart.iclij.common.service.IclijServiceParam;
+import roart.iclij.common.service.IclijServiceResult;
 import roart.model.io.IO;
 import roart.iclij.config.IclijConfig;
-import roart.iclij.config.IclijConfigConstants;
-import roart.iclij.config.IclijXMLConfig;
 
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.common.config,roart.iclij.config")
 @EnableJdbcRepositories("roart.common.springdata.repository")
@@ -314,6 +296,13 @@ public class ServiceController implements CommandLineRunner {
         if (iclijConfig.wantDbHibernate()) {
             new DatabaseThread().start();
         }
+        if (false) {
+            Runnable runnable = new QueueRunner(iclijConfig, getInstance(null));
+            Thread thread = new Thread(runnable);
+            thread.setName("ConvertWorker");
+            thread.start();
+        }
+
         MyCache.setCache(instance.wantCache());
         MyCache.setCacheTTL(instance.getCacheTTL());
         //new MemRunner().run();

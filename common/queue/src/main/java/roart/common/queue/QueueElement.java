@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import roart.common.inmemory.model.InmemoryMessage;
+import roart.iclij.common.service.IclijServiceParam;
+import roart.iclij.common.service.IclijServiceResult;
 
 public class QueueElement {
     private String id = UUID.randomUUID().toString();
@@ -23,6 +25,9 @@ public class QueueElement {
 
     private long timestamp;
 
+    private IclijServiceParam param;
+
+    private IclijServiceResult result;
     // for Jackson
     public QueueElement() {
         super();
@@ -101,5 +106,19 @@ public class QueueElement {
         this.timestamp = timestamp;
     }
 
+    public IclijServiceParam getParam() {
+        return param;
+    }
 
+    public void setParam(IclijServiceParam param) {
+        this.param = param;
+    }
+
+    public IclijServiceResult getResult() {
+        return result;
+    }
+
+    public void setResult(IclijServiceResult result) {
+        this.result = result;
+    }
 }

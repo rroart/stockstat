@@ -20,7 +20,6 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.Market;
 import roart.iclij.model.component.ComponentInput;
-import roart.iclij.service.IclijServiceList;
 import roart.iclij.service.util.MarketUtil;
 
 public class RelationUtil {

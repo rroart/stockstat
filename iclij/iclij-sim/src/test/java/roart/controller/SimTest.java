@@ -20,6 +20,7 @@ import org.springframework.context.annotation.ComponentScan;
 import static org.mockito.Mockito.*;
 
 import roart.common.pipeline.data.PipelineData;
+import roart.common.pipeline.data.SerialPipeline;
 import roart.common.util.JsonUtil;
 import roart.db.dao.IclijDbDao;
 import roart.filesystem.FileSystemDao;

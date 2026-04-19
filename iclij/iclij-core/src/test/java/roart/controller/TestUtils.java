@@ -12,7 +12,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.model.component.ComponentInput;
-import roart.iclij.service.IclijServiceResult;
+import roart.iclij.common.service.IclijServiceResult;
 import roart.model.io.IO;
 import roart.util.ServiceUtil;
 

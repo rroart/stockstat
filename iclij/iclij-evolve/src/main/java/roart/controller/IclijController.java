@@ -6,27 +6,18 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import tools.jackson.core.exc.StreamReadException;
 import tools.jackson.databind.DatabindException;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
 
 import roart.common.cache.MyCache;
 import roart.common.constants.Constants;
 import roart.common.constants.ServiceConstants;
 import roart.common.queueutil.QueueLiveThread;
-import roart.db.dao.IclijDbDao;
 import roart.db.thread.DatabaseThread;
 import roart.executor.MyExecutors;
-import roart.filesystem.FileSystemDao;
 import roart.iclij.config.IclijConfig;
-import roart.iclij.config.IclijXMLConfig;
-import roart.iclij.service.ControlService;
-import roart.iclij.service.IclijServiceParam;
+import roart.iclij.common.service.IclijServiceParam;
 import roart.model.io.IO;
 
-import org.apache.curator.RetryPolicy;
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +29,6 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.web.bind.annotation.RestController;
 
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
 @EnableJdbcRepositories("roart.common.springdata.repository")

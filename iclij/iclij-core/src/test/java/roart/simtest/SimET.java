@@ -56,7 +56,7 @@ import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.WebDataJson;
-import roart.iclij.service.IclijServiceResult;
+import roart.iclij.common.service.IclijServiceResult;
 import roart.model.io.IO;
 
 @TestInstance(Lifecycle.PER_CLASS)

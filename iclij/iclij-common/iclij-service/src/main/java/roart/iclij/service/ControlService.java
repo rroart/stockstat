@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 //import org.springframework.http.converter.json.JsonMapper;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import roart.iclij.common.service.IclijServiceParam;
+import roart.iclij.common.service.IclijServiceResult;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -23,7 +25,6 @@ import roart.common.communication.model.Communication;
 import roart.common.config.CacheConstants;
 import roart.common.config.ConfigData;
 import roart.common.config.ConfigTreeMap;
-import roart.common.config.MarketStock;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.inmemory.model.Inmemory;
@@ -43,7 +44,6 @@ import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.model.WebData;
 import roart.iclij.model.WebDataJson;
 import roart.iclij.model.component.ComponentInput;
-import roart.model.data.StockData;
 import roart.result.model.ResultItem;
 import roart.common.queueutil.QueueUtils;
 import roart.model.io.IO;

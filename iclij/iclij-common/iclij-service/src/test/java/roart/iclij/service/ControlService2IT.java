@@ -1,9 +1,10 @@
 package roart.iclij.service;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import roart.iclij.common.service.IclijServiceParam;
+import roart.iclij.common.service.IclijServiceResult;
 import tools.jackson.databind.ObjectMapper;
 
 import roart.common.communication.factory.CommunicationFactory;
@@ -12,8 +13,6 @@ import roart.common.constants.CommunicationConstants;
 import roart.common.util.ServiceConnectionUtil;
 import roart.common.webflux.WebFluxUtil;
 import roart.iclij.config.IclijConfig;
-import roart.iclij.config.IclijConfigConstants;
-import roart.iclij.config.IclijXMLConfig;
 import roart.model.io.IO;
 
 public class ControlService2IT {

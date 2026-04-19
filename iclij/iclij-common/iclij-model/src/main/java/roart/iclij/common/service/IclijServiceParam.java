@@ -1,4 +1,4 @@
-package roart.iclij.service;
+package roart.iclij.common.service;
 
 import java.util.List;
 import java.util.Set;

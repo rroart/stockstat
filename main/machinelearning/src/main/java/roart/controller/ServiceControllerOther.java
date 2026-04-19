@@ -3,7 +3,6 @@ package roart.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 
 import roart.common.communication.model.Communication;
 import roart.common.constants.Constants;
@@ -13,8 +12,8 @@ import roart.common.queue.QueueElement;
 import roart.common.service.ServiceParam;
 import roart.common.util.JsonUtil;
 import roart.iclij.config.IclijConfig;
-import roart.iclij.service.IclijServiceParam;
-import roart.iclij.service.IclijServiceResult;
+import roart.iclij.common.service.IclijServiceParam;
+import roart.iclij.common.service.IclijServiceResult;
 import roart.model.io.IO;
 
 public class ServiceControllerOther extends ServiceControllerOtherAbstract {

@@ -4,10 +4,11 @@ import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.util.Arrays;
-import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.iclij.common.service.IclijServiceParam;
+import roart.iclij.common.service.IclijServiceResult;
 import tools.jackson.databind.ObjectMapper;
 
 import roart.common.communication.factory.CommunicationFactory;
@@ -17,7 +18,6 @@ import roart.common.constants.ServiceConstants;
 import roart.common.util.ServiceConnectionUtil;
 import roart.common.webflux.WebFluxUtil;
 import roart.iclij.config.IclijConfig;
-import roart.iclij.config.IclijXMLConfig;
 import roart.model.io.IO;
 
 import java.util.function.Function;
@@ -30,9 +30,6 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import roart.testdata.TestConfiguration;
 import roart.testdata.TestUtils;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
 
 @SpringJUnitConfig
 @TestPropertySource("file:${user.dir}/../../../config/test/application.properties") 

@@ -9,23 +9,18 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import tools.jackson.core.exc.StreamReadException;
 import tools.jackson.databind.DatabindException;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.SerializationFeature;
-import tools.jackson.databind.cfg.DateTimeFeature;
 import tools.jackson.databind.json.JsonMapper;
 
-import roart.action.Action;
 import roart.action.ActionThread;
 import roart.action.LeaderRunner;
-import roart.action.MainAction;
 import roart.common.cache.MyCache;
 import roart.common.constants.Constants;
 import roart.common.util.MemUtil;
-import roart.db.dao.IclijDbDao;
 import roart.db.thread.DatabaseThread;
 import roart.executor.MyExecutors;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.ControlService;
-import roart.iclij.service.IclijServiceParam;
+import roart.iclij.common.service.IclijServiceParam;
 import roart.populate.PopulateThread;
 import roart.queue.PipelineThread;
 import roart.queue.QueueThread;
@@ -42,7 +37,6 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
 @EnableJdbcRepositories("roart.common.springdata.repository")

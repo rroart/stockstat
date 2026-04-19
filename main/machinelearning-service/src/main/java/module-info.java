@@ -82,4 +82,5 @@ module machinelearningservice {
     requires common.queue;
     requires pipeline.util;
     requires iclij.common.constants;
+    requires iclij.common.model;
 }

@@ -22,7 +22,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import roart.aggregator.impl.IndicatorAggregator;
-import roart.aggregator.impl.MLRSI;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.ml.common.MLMeta;
 import tools.jackson.databind.ObjectMapper;
@@ -57,7 +56,7 @@ import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.config.bean.ConfigI;
 import roart.iclij.model.Parameters;
 import roart.iclij.service.ControlService;
-import roart.iclij.service.IclijServiceResult;
+import roart.iclij.common.service.IclijServiceResult;
 import roart.indicator.util.IndicatorUtils;
 import roart.model.data.StockData;
 import roart.model.io.IO;

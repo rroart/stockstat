@@ -10,4 +10,6 @@ module common.queue {
     requires common.inmemory.model;
     requires com.fasterxml.jackson.annotation;
     requires org.slf4j;
+    requires iclij.common.config;
+    requires iclij.common.model;
 }

@@ -9,6 +9,7 @@ module iclij.common.model {
     exports roart.iclij.model.action;
     exports roart.iclij.model.config;
     exports roart.iclij.model.parse;
+    exports roart.iclij.common.service;
 
     requires common.util;
     requires common.config;
@@ -17,4 +18,5 @@ module iclij.common.model {
     requires org.apache.commons.lang3;
     requires org.slf4j;
     requires common.constants;
+    requires common.model;
 }

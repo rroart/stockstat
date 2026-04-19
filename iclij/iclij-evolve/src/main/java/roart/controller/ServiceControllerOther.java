@@ -1,34 +1,13 @@
 package roart.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-
-import tools.jackson.databind.ObjectMapper;
-
-import roart.common.communication.factory.CommunicationFactory;
 import roart.common.communication.model.Communication;
-import roart.common.constants.CommunicationConstants;
-import roart.common.constants.Constants;
-import roart.common.constants.EurekaConstants;
 import roart.common.constants.ServiceConstants;
 import roart.common.util.JsonUtil;
-import roart.common.util.ServiceConnectionUtil;
 import roart.evolve.Evolve;
 import roart.iclij.config.IclijConfig;
-import roart.iclij.config.IclijXMLConfig;
-import roart.iclij.model.component.ComponentInput;
-import roart.iclij.service.IclijServiceParam;
-import roart.iclij.service.IclijServiceResult;
+import roart.iclij.common.service.IclijServiceParam;
+import roart.iclij.common.service.IclijServiceResult;
 import roart.common.controller.ServiceControllerOtherAbstract;
-import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.queue.QueueElement;
 import roart.common.queueutil.QueueUtils;

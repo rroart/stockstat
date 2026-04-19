@@ -18,12 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
-import roart.db.dao.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.ControlService;
-import roart.iclij.service.IclijServiceParam;
-import roart.iclij.service.IclijServiceResult;
+import roart.iclij.common.service.IclijServiceParam;
+import roart.iclij.common.service.IclijServiceResult;
 import roart.model.io.IO;
 import roart.webcore.util.ServiceUtil;
 
