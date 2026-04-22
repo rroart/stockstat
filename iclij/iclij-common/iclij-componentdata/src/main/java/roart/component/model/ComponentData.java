@@ -12,6 +12,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//import roart.common.cache.CacheConstants;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
@@ -21,6 +22,7 @@ import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.MapUtil;
 import roart.common.util.TimeUtil;
+import roart.iclij.common.service.IclijServiceResult;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
 import roart.iclij.model.action.MarketActionData;
@@ -550,6 +552,7 @@ public class ComponentData {
         }
         service.coremlconf.getConfigData().setDate(getBaseDate());
         SerialPipeline maps = service.getContent(id, useMl, getDisableList(), disableCache, keepPipeline);
+        //SerialPipeline maps = getContentAsync(useMl, keepPipeline);
         this.resultMaps = maps;
         //System.out.println(maps.keySet());
         SerialPipeline aMap = null;
@@ -562,6 +565,50 @@ public class ComponentData {
         this.resultMap = aMap;
         return aMap;  
     }
+
+    /*
+    // github copilot
+    private @Nullable SerialPipeline getContentAsync(boolean useMl, boolean keepPipeline) {
+        String common = "";
+        if (!keepPipeline) {
+            common = id;
+        }
+        String key = common + CacheConstants.CONTENT + service.coremlconf.getConfigData().getMarket() + service.coremlconf.getConfigData().getMlmarket() + service.coremlconf.getConfigData().getDate() + service.coremlconf.getConfigData().getConfigValueMap();
+        SerialPipeline cached = (SerialPipeline) MyCache.getInstance().get(key);
+        SerialPipeline maps;
+        if (cached != null) {
+            maps = cached;
+        } else {
+            String replyQueue = UUID.randomUUID().toString();
+            String trackId = service.getContentAsync(id, useMl, getDisableList(), disableCache, keepPipeline, replyQueue);
+            Inmemory inmemory = service.getIo().getInmemoryFactory().get(config);
+            maps = null;
+            while (maps == null) {
+                Object obj = inmemory.get(replyQueue);
+                if (obj != null) {
+                    IclijServiceResult result = (IclijServiceResult) obj;
+                    maps = result.getPipelineData();
+                    if (!disableCache) {
+                        MyCache.getInstance().put(key, maps);
+                        if (keepPipeline) {
+                            MyCache.getInstance().pipeline(id);
+                        }
+                    }
+                } else {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        log.error("Interrupted while waiting for async result", e);
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
+            }
+        }
+        return maps;
+    }
+
+     */
 
     public void setCategory(SerialPipeline aMap, String mapName, Inmemory inmemory) {
         if (aMap == null) {

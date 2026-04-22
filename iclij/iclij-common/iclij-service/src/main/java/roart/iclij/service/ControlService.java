@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 //import org.springframework.http.converter.json.JsonMapper;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import roart.common.util.JsonUtil;
 import roart.iclij.common.service.IclijServiceParam;
 import roart.iclij.common.service.IclijServiceResult;
 import tools.jackson.databind.ObjectMapper;
@@ -638,6 +639,76 @@ public class ControlService {
     public IO getIo() {
         return io;
     }
-    
-    
+
+    // github copilot
+
+    /**
+     * Async version of getContent using queue-based communication.
+     * Instead of direct HTTP calls via sendCMe, this method sends the request
+     * to ServiceControllerOther via the queue and returns immediately.
+     * The result will be retrieved through the return service specified in param.
+     *
+     * @param uuid the unique identifier
+     * @param useMl whether to use ML
+     * @param disableList list of components to disable
+     * @param disableCache whether to disable caching
+     * @param keepPipeline whether to keep pipeline
+     * @param replyQueue the queue name where the result should be sent back
+     * @return the element id that can be used to track the request
+     */
+    public String getContentAsync(String uuid, boolean useMl, List<String> disableList, boolean disableCache, boolean keepPipeline, String replyQueue) {
+        log.info("Starting async getContent for uuid {}", uuid);
+
+        String common = "";
+        if (!keepPipeline) {
+            common = uuid;
+        }
+
+        String key = common + CacheConstants.CONTENT + coremlconf.getConfigData().getMarket() + coremlconf.getConfigData().getMlmarket() + coremlconf.getConfigData().getDate() + coremlconf.getConfigData().getConfigValueMap();
+        log.info("Content key {}", key.hashCode());
+
+        // Check cache first
+        SerialPipeline cachedList = (SerialPipeline) MyCache.getInstance().get(key);
+        if (cachedList != null) {
+            log.info("Found in cache, would return immediately in async context");
+            // In async context, you might still want to queue this for consistency
+        }
+
+        IclijServiceParam param = new IclijServiceParam();
+        log.info("Wants {}", iclijConfig.wantsInmemoryPipeline());
+        if (iclijConfig.wantsInmemoryPipeline()) {
+            log.info("InmemoryPipeline {} {}", id, uuid);
+            param.setId(id + "/" + uuid);
+        }
+        param.setConfigData(coremlconf.getConfigData());
+        param.setWantMaps(true);
+        param.setConfList(disableList);
+        NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
+        neuralnetcommand.setMllearn(coremlconf.wantMLLearn());
+        neuralnetcommand.setMlclassify(coremlconf.wantMLClassify());
+        neuralnetcommand.setMldynamic(coremlconf.wantMLDynamic());
+        neuralnetcommand.setMlcross(coremlconf.wantMLCross());
+        param.setNeuralnetcommand(neuralnetcommand);
+        param.setWebpath(replyQueue);
+
+        // Create queue element for async processing
+        QueueElement element = new QueueElement(id, replyQueue);
+        element.setParam(param);
+        String elementId = element.getId();
+
+        // Determine which service to send to
+        String service = EurekaConstants.GETCONTENT;
+
+        try {
+            // Send asynchronously to ServiceControllerOther via send method
+            send(service, element, iclijConfig);
+            log.info("Async request sent with element id {}", elementId);
+        } catch (Exception e) {
+            log.error("Error sending async getContent request", e);
+            throw new RuntimeException("Failed to send async getContent request", e);
+        }
+
+        return elementId;
+    }
+
 }
