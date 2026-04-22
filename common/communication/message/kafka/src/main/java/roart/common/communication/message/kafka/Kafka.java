@@ -97,7 +97,9 @@ public class Kafka extends MessageCommunication {
             //props.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, MSGSIZE);
             consumer = new KafkaConsumer<>(props);
 
-            List<TopicPartition> partitions = new ArrayList<>(); 
+            consumer.subscribe(Collections.singletonList(getReceiveService()));
+            /*
+            List<TopicPartition> partitions = new ArrayList<>();
             List<PartitionInfo> partitionInfos = null;
             partitionInfos = consumer.partitionsFor(getReceiveService());
             if (partitionInfos != null) {
@@ -107,6 +109,7 @@ public class Kafka extends MessageCommunication {
             }
             consumer.assign(partitions);
 
+             */
         }
     }
     
@@ -178,11 +181,10 @@ public class Kafka extends MessageCommunication {
     public void destroyTmp() {
         // TODO Auto-generated method stub
         Properties config = new Properties();
-        config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.122.219:9092");
+        config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, connection);
         AdminClient admin = AdminClient.create(config);
         List<String> list = new ArrayList<>();
         list.add(getReceiveService());
         DeleteTopicsResult deleteTopicsResult = admin.deleteTopics(list);
-
     }
 }

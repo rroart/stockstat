@@ -10,7 +10,11 @@ import org.apache.kafka.streams.kstream.KTable;
 import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.state.KeyValueStore;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.test.EmbeddedKafkaBroker;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
@@ -19,8 +23,19 @@ import java.util.Properties;
 
 @SpringJUnitConfig
 // @TestPropertySource("file:${user.dir}/../../../../config/test/application.properties")
+@EmbeddedKafka //(partitions = 1, topics = {"my-new-topic"})
+
 public class KafkaIT {
     // TODO embed @Test
+
+    String BROKER_ADDR = "localhost:9092";
+
+    @BeforeEach
+    public void before(@Autowired EmbeddedKafkaBroker embeddedKafka) {
+        System.out.println("before");
+        BROKER_ADDR = embeddedKafka.getBrokersAsString();
+    }
+
     public void method() {
     Properties props = new Properties();
     props.put(StreamsConfig.APPLICATION_ID_CONFIG, "wordcount-application");
