@@ -1151,4 +1151,31 @@ public class PipelineUtils {
         }
         return pipelineData;
     }
+    public static boolean unloadPipelineValueBatch(SerialPipeline pipelines, String key, String secondKey, int batch, Inmemory inmemory) {
+        return unloadPipelineValueBatch(pipelines, new SerialPipelineKey(new String[] { key, secondKey, null, null, null}), batch, inmemory);
+    }
+
+    public static boolean unloadPipelineValueBatch(SerialPipeline pipelines, SerialPipelineKey key, int batch, Inmemory inmemory) {
+        PipelineData pipeline = getPipeline(pipelines, key);
+        boolean state = pipeline.isLoaded(batch);
+        if (state) {
+            pipeline.setValue(null, batch);
+            pipeline.setLoaded(false, batch);
+        }
+        return state;
+    }
+
+    public static boolean unloadPipelineValue(SerialPipeline pipelines, String key, String secondKey, Inmemory inmemory) {
+        return unloadPipelineValue(pipelines, new SerialPipelineKey(new String[] { key, secondKey, null, null, null}), inmemory);
+    }
+
+    public static boolean unloadPipelineValue(SerialPipeline pipelines, SerialPipelineKey key, Inmemory inmemory) {
+        PipelineData pipeline = getPipeline(pipelines, key);
+        boolean state = pipeline.isLoaded();
+        if (state) {
+            pipeline.setValue(null);
+            pipeline.setLoaded(false);
+        }
+        return state;
+    }
 }

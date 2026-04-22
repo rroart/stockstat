@@ -276,10 +276,11 @@ public abstract class IndicatorAggregator extends Aggregator {
             // map from h/m to model to posnegcom map<model, results>
             //mapResult0.put(threshold, mapResult);
             mergeMapMap(mapMap, partialMapMap);
-            batchnum++;
             if (!batch) {
                 break;
             } else {
+                PipelineUtils.unloadPipelineValueBatch(datareaders, key, PipelineConstants.TRUNCFILLLIST, batchnum, inmemory);
+                batchnum++;
                 object = PipelineUtils.getPipelineValueBatch(datareaders, key, PipelineConstants.TRUNCFILLLIST, batchnum, inmemory);
             }
         }
