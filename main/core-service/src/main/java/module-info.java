@@ -86,4 +86,5 @@ open module coreservice {
     requires common.inmemory.model;
     requires pipeline.util;
     requires iclij.common.model;
+    requires common.queue;
 }

@@ -1,39 +1,29 @@
-package roart.controller;
+package roart.core.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.stereotype.Component;
 import roart.common.cache.MyCache;
 import roart.common.communication.model.Communication;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
+import roart.common.constants.ServiceConstants;
 import roart.common.controller.ServiceControllerOtherAbstract;
+import roart.common.inmemory.model.Inmemory;
+import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.queue.QueueElement;
-import roart.common.service.ServiceParam;
+import roart.common.util.JsonUtil;
 import roart.common.util.MemUtil;
-import roart.core.service.CoreControlService;
 import roart.iclij.common.service.IclijServiceParam;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.common.service.IclijServiceResult;
 import roart.model.io.IO;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-@Component
 public class ServiceControllerOther extends ServiceControllerOtherAbstract {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    IclijConfig iclijConfig;
-
-    @Autowired
-    IO io;
 
     private CoreControlService getInstance(IclijServiceParam param) {
         return new CoreControlService(io);
@@ -44,15 +34,21 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
     }
 
     public void get(Object object, Communication c) {
-        QueueElement element = (QueueElement) object;
-        IclijServiceParam param = element.getParam();
+        QueueElement element = JsonUtil.convert((String) object, QueueElement.class);
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
+        String content = inmemory.read(element.getMessage());
+        inmemory.delete(element.getMessage());
+
+        IclijServiceParam param = JsonUtil.convertnostrip(content, IclijServiceParam.class);
         IclijServiceResult r = null;
         log.info("Cserv {}", c.getService());
+        QueueElement elementReply = new QueueElement();
         if (serviceMatch(EurekaConstants.GETCONFIG, c)) {
             r = new IclijServiceResult();
             try {
                 r.setConfigData(iclijConfig.getConfigData());
-                log.info("configs {}", r.getConfigData());
+                InmemoryMessage msg = inmemory.send(EurekaConstants.GETCONFIG + UUID.randomUUID(), r, null);
+                elementReply.setMessage(msg);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
                 r.setError(e.getMessage());
@@ -77,25 +73,13 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
                 long[] memdiff = MemUtil.diff(mem1, mem0);
                 log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
                 log.info("Cache {}", MyCache.getInstance().toString());
-                if (maps != null) {
-                    //log.info("Length {}", JsonUtil.convert(maps).length());
-                }
-                //System.out.println(VM.current().details());
-                //System.out.println(GraphLayout.parseInstance(maps).toFootprint());
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
                 result.setError(e.getMessage());
             }
             element.setResult(result);
-            sendReply(element.getQueue(), c, element);
-            //return result;
-
         }
-        /*
-        if (param instanceof ServiceParam) {
-            sendReply(((ServiceParam) param).getWebpath(), c, r);
-        }
-
-         */
+        log.info("replyto {}", element.getQueue());
+        sendReply(element.getQueue(), c, elementReply);
     }
 }

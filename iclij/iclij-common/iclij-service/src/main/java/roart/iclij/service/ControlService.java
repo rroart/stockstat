@@ -149,7 +149,13 @@ public class ControlService {
         if (list == null) {
             IclijServiceParam param = new IclijServiceParam();
             param.setConfigData(iclijConfig.getConfigData());
-            IclijServiceResult result = sendAMe(IclijServiceResult.class, param, "i" + EurekaConstants.GETCONFIG, objectMapper);
+            IclijServiceResult result;
+            if (false) {
+                result = sendAMe(IclijServiceResult.class, param, "i" + EurekaConstants.GETCONFIG, objectMapper);
+            } else {
+                result = sendReceive(IclijServiceResult.class, param, "i" + EurekaConstants.GETCONFIG);
+
+            }
             list = result.getConfigData();
             MyCache.getInstance().put(key, list);
         }
@@ -595,10 +601,38 @@ public class ControlService {
         return data;
     }
 
+    public <T> T[] sendReceive(String service, QueueElement object, ObjectMapper objectMapper) {
+        //IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
+        String appid = System.getenv(Constants.APPID);
+        if (appid != null) {
+            service = service + appid; // can not handle domain, only eureka
+        }
+        zkRegister = (new QueueUtils(io.getCuratorClient()))::zkRegister;
+        Communication c = io.getCommunicationFactory().get(sc.getLeft(), String.class, service, objectMapper, true, true, true, sc.getRight(), zkRegister, io.getWebFluxUtil());
+        object.setQueue(c.getReturnService());
+        return c.sendReceive(object);
+    }
+
     public <T> T sendReceive(Communication c, IclijServiceParam param) {
         param.setWebpath(c.getReturnService());
         T r = (T) c.sendReceive(param);
         return r;
+    }
+
+    public <T> T sendReceive(Class<T> clazz, Object param, String service) {
+        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig);
+        QueueElement element = new QueueElement();
+        InmemoryMessage msg = inmemory.send(service + UUID.randomUUID(), param, null);
+        element.setMessage(msg);
+        String[] array = sendReceive(service, element, null);
+        String s = array[0];
+        QueueElement q = JsonUtil.convert(s, QueueElement.class);
+        String content = inmemory.read(q.getMessage());
+        inmemory.delete(q.getMessage());
+        System.out.println("content"+ content);
+        Class<T> tClazz = clazz;
+        return JsonUtil.convertnostrip(content, clazz);
     }
 
     @Deprecated
