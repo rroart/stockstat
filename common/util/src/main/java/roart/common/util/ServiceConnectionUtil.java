@@ -100,4 +100,9 @@ public class ServiceConnectionUtil {
         }
         return url;
     }
+
+    public boolean useService(String service, String services) {
+        Map<String, String> serviceMap = JsonUtil.convert(services, Map.class);
+        return serviceMap.containsKey(service);
+    }
 }

@@ -259,6 +259,7 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MISCMERGECY, Boolean.class);
         map.put(ConfigConstants.MISCMYSERVICES, String.class);
         map.put(ConfigConstants.MISCSERVICES, String.class);
+        map.put(ConfigConstants.MISCSERVICESREST, Boolean.class);
         map.put(ConfigConstants.MISCCOMMUNICATIONS, String.class);
         map.put(ConfigConstants.MISCCACHE, Boolean.class);
         map.put(ConfigConstants.MISCCACHETTL, Integer.class);
@@ -690,6 +691,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MISCMERGECY, Boolean.TRUE);
         deflt.put(ConfigConstants.MISCMYSERVICES, "{}");
         deflt.put(ConfigConstants.MISCSERVICES, "{}");
+        deflt.put(ConfigConstants.MISCSERVICESREST, Boolean.TRUE);
         deflt.put(ConfigConstants.MISCCOMMUNICATIONS, "{}");
         deflt.put(ConfigConstants.MISCCACHE, Boolean.TRUE);
         deflt.put(ConfigConstants.MISCCACHETTL, 3600);
@@ -1111,6 +1113,7 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.MISCMERGECY, "Merge current years");
         text.put(ConfigConstants.MISCMYSERVICES, "Services starting");
         text.put(ConfigConstants.MISCSERVICES, "Services and communications");
+        text.put(ConfigConstants.MISCSERVICESREST, "Services and communications REST");
         text.put(ConfigConstants.MISCCOMMUNICATIONS, "Communications and connections");
         text.put(ConfigConstants.MISCCACHE, "Cache enable");
         text.put(ConfigConstants.MISCCACHETTL, "Cache TTL");
@@ -1591,6 +1594,7 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MISCMERGECY, new XMLType( Boolean.class, Boolean.TRUE, "Merge current years"));
         mymap.put(ConfigConstants.MISCMYSERVICES, new XMLType( String.class, "{}", "Services starting"));
         mymap.put(ConfigConstants.MISCSERVICES, new XMLType( String.class, "{}", "Services and communications"));
+        mymap.put(ConfigConstants.MISCSERVICESREST, new XMLType( Boolean.class, Boolean.TRUE, "Services and communications REST"));
         mymap.put(ConfigConstants.MISCCOMMUNICATIONS, new XMLType( String.class, "{}", "Communications and connections"));
         mymap.put(ConfigConstants.MISCCACHE, new XMLType( Boolean.class, Boolean.TRUE, "Cache enable"));
         mymap.put(ConfigConstants.MISCCACHETTL, new XMLType( Boolean.class, Boolean.TRUE, "Cache TTL"));
@@ -1756,6 +1760,7 @@ public class ConfigConstantMaps {
         common.add(ConfigConstants.MISCINMEMORYSERVER);
         common.add(ConfigConstants.MISCMYSERVICES);
         common.add(ConfigConstants.MISCSERVICES);
+        common.add(ConfigConstants.MISCSERVICESREST);
         common.add(ConfigConstants.MISCZOOKEEPER);
         common.add(ConfigConstants.EVOLVESAVELOCATION);
         common.add(ConfigConstants.EVOLVESAVEPATH);

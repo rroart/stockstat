@@ -845,6 +845,10 @@ public abstract class MyMyConfig extends MyConfig {
         return (String) getValueOrDefault(ConfigConstants.MISCSERVICES);
     }
 
+    public boolean wantRestServices() {
+        return (boolean) getValueOrDefault(ConfigConstants.MISCSERVICESREST);
+    }
+
     public String getCommunications() {
         return (String) getValueOrDefault(ConfigConstants.MISCCOMMUNICATIONS);
     }
