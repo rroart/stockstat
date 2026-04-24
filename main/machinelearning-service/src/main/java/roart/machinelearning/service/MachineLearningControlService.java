@@ -10,6 +10,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.constants.ServiceConstants;
+import roart.common.queueutil.QueueUtils;
+import roart.model.io.util.IOUtils;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -43,8 +46,6 @@ import roart.model.io.IO;
 
 public class MachineLearningControlService {
     private Logger log = LoggerFactory.getLogger(this.getClass());
-
-    private Function<String, Boolean> zkRegister;
 
     private static final ObjectMapper mapper = new JsonMapper().builder().build();
 
@@ -198,9 +199,8 @@ public class MachineLearningControlService {
             log.info("InmemoryPipeline {}", origparam.getId());
         }
         // TODO retry or queue
-        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
-
-        /// TODO list2 = ImmutabilityUtil.immute(list2);
+        IclijServiceResult result = new IOUtils(io, conf, mapper).sendReceiveC(IclijServiceResult.class, param, EurekaConstants.GETCONTENT, ServiceConstants.GETCONTENT);
+       /// TODO list2 = ImmutabilityUtil.immute(list2);
         MyCache.getInstance().put(key, result);
         MyCache.getInstance().put(pipekey, result.getPipelineData());
         log.info("key found {}", result.getPipelineData().length());
@@ -272,6 +272,7 @@ public class MachineLearningControlService {
         if (appid != null) {
             service = service + appid; // can not handle domain, only eureka
         }
+        Function<String, Boolean> zkRegister = (new QueueUtils(io.getCuratorClient()))::zkRegister;
         Communication c = io.getCommunicationFactory().get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, io.getWebFluxUtil());
         c.send(object);
     }

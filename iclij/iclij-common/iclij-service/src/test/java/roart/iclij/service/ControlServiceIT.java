@@ -4,11 +4,15 @@ import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.util.Arrays;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.db.dao.IclijDbDao;
 import roart.iclij.common.service.IclijServiceParam;
 import roart.iclij.common.service.IclijServiceResult;
+import roart.iclij.config.bean.ConfigI;
+import roart.model.io.util.IOUtils;
 import tools.jackson.databind.ObjectMapper;
 
 import roart.common.communication.factory.CommunicationFactory;
@@ -30,11 +34,15 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import roart.testdata.TestConfiguration;
 import roart.testdata.TestUtils;
+import org.springframework.kafka.test.EmbeddedKafkaBroker;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 
+@EmbeddedKafka(partitions = 1, topics = {"my-new-topic"})
 @SpringJUnitConfig
-@TestPropertySource("file:${user.dir}/../../../config/test/application.properties") 
-@ComponentScan(basePackages = "roart.testdata")
-@SpringBootTest(classes = { TestConfiguration.class, TestUtils.class } )
+//@TestPropertySource("file:${user.dir}/../../../config/test/application.properties")
+//@ComponentScan(basePackages = "roart.testdata")
+//@SpringBootTest(classes = { TestConfiguration.class, TestUtils.class } )
+@SpringBootTest(classes = { IclijConfig.class }) //, IclijDbDao.class, ConfigI.class, ConfigDb.class } )
 public class ControlServiceIT {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
@@ -47,7 +55,6 @@ public class ControlServiceIT {
     @Autowired
     private TestUtils testUtils;
     
-    @Autowired
     private IO io;
 
     // TODO @Test
@@ -56,7 +63,7 @@ public class ControlServiceIT {
         param.setWebpath("TST");
         ObjectMapper objectMapper = new ObjectMapper();
         Communication c = new CommunicationFactory().get(CommunicationConstants.CAMEL, IclijServiceParam.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "rabbitmq://localhost:5672", null, webFluxUtil);
-        IclijServiceParam[] result = new ControlService(iclijConfig, io).sendReceive(c, param);
+        IclijServiceParam[] result = new IOUtils(io, iclijConfig, objectMapper).sendReceive(c, param);
         log.info("zzz"+result[0]);
         log.info(param.getWebpath());
     }
@@ -89,7 +96,7 @@ public class ControlServiceIT {
         param.setWebpath("TST");
         ObjectMapper objectMapper = new ObjectMapper();
         Communication c = new CommunicationFactory().get(CommunicationConstants.SPRING, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "localhost", this::print, webFluxUtil);
-        IclijServiceResult result[] = new ControlService(iclijConfig, io).sendReceive(c, param);
+        IclijServiceResult result[] = new IOUtils(io, iclijConfig, objectMapper).sendReceive(c, param);
         log.info("zzz"+result[0]);
         log.info("t2" + param.getWebpath());
     }
@@ -100,7 +107,7 @@ public class ControlServiceIT {
         param.setWebpath("TST");
         ObjectMapper objectMapper = new ObjectMapper();
         Communication c = new CommunicationFactory().get(CommunicationConstants.KAFKA, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "kafka9:9092", this::print, webFluxUtil);
-        IclijServiceResult[] result = new ControlService(iclijConfig, io).sendReceive(c, param);
+        IclijServiceResult[] result = new IOUtils(io, iclijConfig, objectMapper).sendReceive(c, param);
         log.info("t3" + param.getWebpath());
     }
     //@Test
@@ -110,11 +117,11 @@ public class ControlServiceIT {
         param.setWebpath("TST");
         ObjectMapper objectMapper = new ObjectMapper();
         Communication c = new CommunicationFactory().get(CommunicationConstants.PULSAR, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "pulsar://kafka9:6650", this::print, webFluxUtil);
-        IclijServiceResult[] result = new ControlService(iclijConfig, io).sendReceive(c, param);
+        IclijServiceResult[] result = new IOUtils(io, iclijConfig, objectMapper).sendReceive(c, param);
         log.info("t4" + param.getWebpath());
     }
     
-    // TODO @Test
+    @Test
     public void comms() {
         int counter = 0;
         List<String> comms = List.of(CommunicationConstants.KAFKA, CommunicationConstants.PULSAR, CommunicationConstants.CAMEL, CommunicationConstants.SPRING);

@@ -8,12 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import roart.action.ActionThread;
 import roart.common.cache.MyCache;
 import roart.common.communication.factory.CommunicationFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.config.ConfigMaps;
+import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.constants.ServiceConstants;
 import roart.common.inmemory.factory.InmemoryFactory;
@@ -21,57 +23,61 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.MyDataSource;
 import roart.common.queue.QueueElement;
-import roart.common.util.JsonUtil;
+import roart.common.util.TimeUtil;
 import roart.common.webflux.WebFluxUtil;
 import roart.controller.*;
 import roart.core.service.ServiceControllerOther;
 import roart.db.dao.DbDao;
 import roart.db.dao.IclijDbDao;
-import roart.db.spring.DbSpringDS;
 import roart.filesystem.FileSystemDao;
 import roart.iclij.common.service.IclijServiceParam;
-import roart.iclij.common.service.IclijServiceResult;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
+import roart.iclij.config.bean.ConfigI;
 import roart.iclij.model.Parameters;
 import roart.iclij.service.ControlService;
 import roart.model.io.IO;
 import roart.model.io.util.IOUtils;
+import roart.testdata.TestConstants;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import org.springframework.kafka.test.EmbeddedKafkaBroker;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 
+@EmbeddedKafka // did not work (ports = { 9092 })
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-//@ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
+@ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
 @SpringJUnitConfig
 //@TestPropertySource("file:${user.dir}/../../../../config/test/application.properties")
 //@ComponentScan(basePackages = "roart.testdata")
 //@SpringBootTest(classes = TestConfiguration.class)
-//@SpringBootTest(classes = { IclijConfig.class, IclijDbDao.class, ConfigI.class, ConfigDb.class } )
-@SpringBootTest(classes = IclijController.class ) //(classes = { IclijConfig.class, IclijDbDao.class, ConfigI.class, DbSpring.class, ConfigDb.class, SimConfig.class } )
-public class AsyncET {
+@SpringBootTest(classes = { IclijConfig.class, IclijDbDao.class, ConfigI.class, ConfigDb.class } )
+public class AsyncIT {
     private Logger log = LoggerFactory.getLogger(this.getClass());
+
+    //, SpringAboveBelowRepository.class
+
+    @Autowired
+    private EmbeddedKafkaBroker kafkaEmbedded;
 
     @Autowired
     IclijConfig iconf = null;
 
-    IclijDbDao iclijDbDao;
+    IclijDbDao iclijDbDao = mock(IclijDbDao.class);
 
     // no autowiring
     IclijConfig conf = null;
 
+    MyDataSource dataSource;
+
     private static final ObjectMapper mapper = JsonMapper.builder().build();
-
-    @Autowired
-    private MyDataSource dataSource;
-
-    @Autowired
-    private DbSpringDS dbSpringDS;
 
     DbDao dbDao;
 
@@ -92,18 +98,42 @@ public class AsyncET {
     private CommunicationFactory communicationFactory = new CommunicationFactory();
 
     private TestUtils testutils;
+    TestDataSource[][] periodDataSources;
+
     @BeforeAll
     public void before() throws Exception {
+        String brokers = kafkaEmbedded.getBrokersAsString();
+        System.out.println("brokers" + brokers);
+        //String[] split = brokers.split(":");
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.MISCCOMMUNICATIONS, "{ \"kafka\" : \"" + brokers + "\"}");
+        System.out.println("before" + System.getProperty("config") + " "+ System.getProperty("coreconfig"));
+        log.info("Wants {}", iconf.wantsInmemoryPipeline());
         iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
+        log.info("Wants {}", iconf.wantsInmemoryPipeline());
         ConfigMaps configMaps = IclijConfig.instanceC();
         conf = new IclijConfig(configMaps, "coreconfig", null);
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.FALSE);
+        conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.TRUE);
+        conf.getConfigData().getConfigValueMap().put(ConfigConstants.MISCCOMMUNICATIONS, "{ \"kafka\" : \"" + brokers + "\"}");
         //conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.FALSE);
+        //String market = TestConstants.MARKET;
+        //dataSource = new TestDataSource(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), market, 26, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null);
 
-        dbDao = new DbDao(conf, dataSource);
-        iclijDbDao = new IclijDbDao(iconf, dbSpringDS);
+        String market = TestConstants.MARKET;
+        String start = "2022.01.01";
+        String end = "2025.01.01";
+        TestDataSource dataSource1 = new TestDataSource(conf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), market, 26, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null);
+        TestDataSource dataSource2 = new TestDataSource(conf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), TestConstants.MARKET2, 20, false, Constants.PRICECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, "impid");
+        dataSource = new TestDataSources(List.of(dataSource1, dataSource2));
+        periodDataSources = new TestDataSource[4][4];
+        for (int i = 1; i < periodDataSources.length; i++) { // stockcount
+            for (int j = 1; j < periodDataSources[i].length; j++) { // days
+                periodDataSources[i][j] = new TestDataSource(conf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), TestConstants.SLOWMARKET, 20, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null, 0, i, j);
+            }
+        }
 
-        webFluxUtil = new TestWebFluxUtil(conf,null);
+        dbDao = new DbDao(iconf, dataSource);
+
+        webFluxUtil = new TestWebFluxUtil(conf, null);
         parameters = new Parameters();
         parameters.setThreshold(1.0);
         parameters.setFuturedays(10);
@@ -115,8 +145,7 @@ public class AsyncET {
 
         inmemory = inmemoryFactory.get(iconf);
 
-        //DbDao coreDbDao = new DbDao(iconf, dataSource);
-        io = new IO(iclijDbDao, dbDao , webFluxUtil, fileSystemDao, inmemoryFactory, communicationFactory, curatorClient);
+        io = new IO(iclijDbDao, dbDao, webFluxUtil, fileSystemDao, inmemoryFactory, communicationFactory, curatorClient);
         ((TestWebFluxUtil)webFluxUtil).setIo(io);
         //((CommunicationFactory)communicationFactory).setIo(io);
         //((CommunicationFactory)communicationFactory).setConfig(iconf);
@@ -132,24 +161,22 @@ public class AsyncET {
         String myservices = conf.getMyservices();
         String services = conf.getServices();
         String communications = conf.getCommunications();
-        log.info("Myservices {}", myservices);
         new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, conf.copy(), io).start();
-        // TODO ...
-        //new roart.machinelearning.service.ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, conf.copy(), io).start();
     }
 
     @Test
     public void test() {
-        String market = System.getenv("MARKET");
-        conf.getConfigData().setMarket(market);
-
+        iconf.getConfigData().setMarket(TestConstants.MARKET);
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(iconf.getConfigData());
-        try {
-            IclijServiceResult r = new IOUtils(io, iconf, null).sendReceive(IclijServiceResult.class, param, EurekaConstants.GETCONFIG);
-                log.info("ConfigData {}", r.getConfigData());
-        } catch (Exception e) {
-            e.printStackTrace();;
-        }
+        QueueElement element = new QueueElement();
+        InmemoryMessage msg = inmemory.send(ServiceConstants.SIMFILTER + UUID.randomUUID(), param, null);
+        //element.setOpid(ServiceConstants.SIM);
+        element.setMessage(msg);
+        //IclijServiceParam serviceparam = new IclijServiceParam();
+        //element.setParam(serviceparam);
+        log.info("icsev" + iconf.getServices());
+        new IOUtils(io, iconf, null).sendReceive(EurekaConstants.GETCONFIG, element, null);
+
     }
 }

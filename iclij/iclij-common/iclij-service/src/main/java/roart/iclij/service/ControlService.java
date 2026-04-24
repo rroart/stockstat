@@ -14,9 +14,11 @@ import org.slf4j.LoggerFactory;
 //import org.springframework.http.converter.json.JsonMapper;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import roart.common.constants.ServiceConstants;
 import roart.common.util.JsonUtil;
 import roart.iclij.common.service.IclijServiceParam;
 import roart.iclij.common.service.IclijServiceResult;
+import roart.model.io.util.IOUtils;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -62,8 +64,6 @@ public class ControlService {
 
     private IclijConfig iclijConfig;
 
-    private Function<String, Boolean> zkRegister;
-    
     private IO io;
     
     private static final ObjectMapper mapper = new JsonMapper().builder().build();
@@ -84,7 +84,7 @@ public class ControlService {
 
     public List<String> getTasks() {
         try {
-            return sendAMe(List.class, null, EurekaConstants.GETTASKS, null);
+            return new IOUtils(io, iclijConfig, objectMapper).sendReceiveA(List.class, null, EurekaConstants.GETTASKS, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -128,7 +128,7 @@ public class ControlService {
         if (list == null) {
             IclijServiceParam param = new IclijServiceParam();
             param.setConfigData(iclijConfig.getConfigData());
-            IclijServiceResult result = sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG);
+            IclijServiceResult result = new IOUtils(io, iclijConfig, objectMapper).sendReceiveC(IclijServiceResult.class, param, EurekaConstants.GETCONFIG, ServiceConstants.GETCONFIG);
             list = result.getConfigData();
             MyCache.getInstance().put(key, list);
         }
@@ -136,11 +136,11 @@ public class ControlService {
     }
 
     public IclijServiceResult getCoreContent(IclijServiceParam param) {
-        return sendCMe(IclijServiceResult.class, param, "core/" + EurekaConstants.GETCONTENT);
+        return new IOUtils(io, iclijConfig, objectMapper).sendReceiveC(IclijServiceResult.class, param, "core/" + EurekaConstants.GETCONTENT, ServiceConstants.GETCONTENT);
     }
 
     public IclijServiceResult getCoreContentGraph(IclijServiceParam param) {
-        return sendCMe(IclijServiceResult.class, param, "core/" + EurekaConstants.GETCONTENTGRAPH);
+        return new IOUtils(io, iclijConfig, objectMapper).sendReceiveC(IclijServiceResult.class, param, "core/" + EurekaConstants.GETCONTENTGRAPH, ServiceConstants.GETCONTENTGRAPH);
     }
 
     public ConfigData getConfig() {
@@ -149,70 +149,11 @@ public class ControlService {
         if (list == null) {
             IclijServiceParam param = new IclijServiceParam();
             param.setConfigData(iclijConfig.getConfigData());
-            IclijServiceResult result;
-            if (false) {
-                result = sendAMe(IclijServiceResult.class, param, "i" + EurekaConstants.GETCONFIG, objectMapper);
-            } else {
-                result = sendReceive(IclijServiceResult.class, param, "i" + EurekaConstants.GETCONFIG);
-
-            }
+            IclijServiceResult result = new IOUtils(io, iclijConfig, objectMapper).sendReceiveA(IclijServiceResult.class, param, "i" + EurekaConstants.GETCONFIG, ServiceConstants.GETCONFIG);
             list = result.getConfigData();
             MyCache.getInstance().put(key, list);
         }
         return list;
-    }
-
-    private <T> T sendCMe(Class<T> myclass, IclijServiceParam param, String service) {
-        //IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
-        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
-        T[] result;// = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG        
-        Communication c = new CommunicationFactory().get(sc.getLeft(), myclass, service, objectMapper, true, true, true, sc.getRight(), zkRegister, io.getWebFluxUtil());
-        param.setWebpath(c.getReturnService());
-        result = c.sendReceive(param);
-        return result[0];
-    }
-
-    private <T> T sendAMe(Class<T> myclass, IclijServiceParam param, String service, ObjectMapper objectMapper) {
-        //IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
-        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
-        T[] result;// = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG        
-        zkRegister = (new QueueUtils(io.getCuratorClient()))::zkRegister;
-        Communication c = io.getCommunicationFactory().get(sc.getLeft(), myclass, service, objectMapper, true, true, true, sc.getRight(), zkRegister, io.getWebFluxUtil());
-        param.setWebpath(c.getReturnService());
-        result = c.sendReceive(param);
-        return result[0];
-    }
-
-    public void send(String service, Object object, ObjectMapper objectMapper) {
-        //IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
-        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
-        String appid = System.getenv(Constants.APPID);
-        if (appid != null) {
-            service = service + appid; // can not handle domain, only eureka
-        }
-        zkRegister = (new QueueUtils(io.getCuratorClient()))::zkRegister;
-        Communication c = io.getCommunicationFactory().get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, io.getWebFluxUtil());
-        c.send(object);
-    }
-
-    public void send(String service, QueueElement element, IclijConfig config) {
-        element.setQueue(service);
-        send(service, element);
-    }
-
-    public void send(String service, Object object, IclijConfig config) {
-        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig.getInmemoryServer(), iclijConfig.getInmemoryHazelcast(), iclijConfig.getInmemoryRedis());
-        String id = service + System.currentTimeMillis() + UUID.randomUUID();
-        InmemoryMessage message = inmemory.send(id, object);
-        send(service, message);
-    }
-
-    public void send(String service, Object object) {
-        if (object == null) {
-            log.error("Empty msg for {}", service);
-            return;
-        }
-        send(service, object, mapper);
     }
 
     private void print(ConfigTreeMap map2, int indent) {
@@ -231,8 +172,8 @@ public class ControlService {
     public List<String> getMarkets() {
         IclijServiceParam param = new IclijServiceParam();
         //param.setConfigData(conf.getConfigData());
-        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETMARKETS);
-        return result.getMarkets();    	
+        IclijServiceResult result = new IOUtils(io, iclijConfig, objectMapper).sendReceiveC(IclijServiceResult.class, param, EurekaConstants.GETMARKETS, ServiceConstants.GETMARKETS);
+        return result.getMarkets();
     }
     
     public List<MetaDTO> getMetas() {
@@ -243,7 +184,7 @@ public class ControlService {
         }
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(coremlconf.getConfigData());
-        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETMETAS);
+        IclijServiceResult result = new IOUtils(io, iclijConfig, objectMapper).sendReceiveC(IclijServiceResult.class, param, EurekaConstants.GETMETAS, ServiceConstants.GETMETAS);
         list = result.getMetas();
         MyCache.getInstance().put(key, list);
         return list;
@@ -269,7 +210,7 @@ public class ControlService {
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(coremlconf.getConfigData());
         param.setMarket(market);
-        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETSTOCKS);
+        IclijServiceResult result = new IOUtils(io, iclijConfig, objectMapper).sendReceiveC(IclijServiceResult.class, param, EurekaConstants.GETSTOCKS, ServiceConstants.GETSTOCKS);
         list = result.getStocks();
         MyCache.getInstance().put(key, list);
         return list;   	
@@ -300,7 +241,7 @@ public class ControlService {
             log.info("InmemoryPipeline {} {}", id, uuid);
             param.setId(id + "/" + uuid);
         }
-        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETDATES);
+        IclijServiceResult result = new IOUtils(io, iclijConfig, objectMapper).sendReceiveC(IclijServiceResult.class, param, EurekaConstants.GETDATES, ServiceConstants.GETDATES);
         list = PipelineUtils.getDatelist(result.getPipelineData(), PipelineConstants.DATELIST, inmemory);
         new PipelineThreadUtils(getIclijConfig(), inmemory, getIo().getCuratorClient()).cleanPipeline(id, uuid);
         MyCache.getInstance().put(key, list);
@@ -370,11 +311,11 @@ public class ControlService {
             String key2 = CacheConstants.CONTENT + coremlconf.getConfigData().getMarket() + coremlconf.getConfigData().getMlmarket() + coremlconf.getConfigData().getDate() + valueMap);
             log.info("Content key {}", key2.hashCode());
             */
-            
-            result = io.getWebFluxUtil().sendMMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
+
+            result = new IOUtils(io, iclijConfig, objectMapper).sendReceiveM(IclijServiceResult.class, param, EurekaConstants.GETCONTENT, ServiceConstants.GETMCONTENT);
         } else {
             // todo send queue core
-            result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENT);
+            result = new IOUtils(io, iclijConfig, objectMapper).sendReceiveC(IclijServiceResult.class, param, EurekaConstants.GETCONTENT, ServiceConstants.GETCONTENT);
         }
         // todo icore queue listen
         //log.info("blblbl" + JsonUtil.convert(result).length());
@@ -422,7 +363,7 @@ public class ControlService {
     public List getContentGraph() {
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(coremlconf.getConfigData());
-        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH);
+        IclijServiceResult result = new IOUtils(io, iclijConfig, objectMapper).sendReceiveC(IclijServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH, ServiceConstants.GETCONTENTGRAPH);
         return result.getList();
     }
 
@@ -442,7 +383,7 @@ public class ControlService {
     	IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(coremlconf.getConfigData());
         param.setIds(idset);
-        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH2);
+        IclijServiceResult result = new IOUtils(io, iclijConfig, objectMapper).sendReceiveC(IclijServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH2, ServiceConstants.GETCONTENTGRAPH2);
         return result.getList();
     }
 
@@ -458,7 +399,7 @@ public class ControlService {
         neuralnetcommand.setMldynamic(coremlconf.wantMLDynamic());
         neuralnetcommand.setMlcross(coremlconf.wantMLCross());
         param.setNeuralnetcommand(neuralnetcommand);
-        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, "/findprofit");
+        IclijServiceResult result = new IOUtils(io, iclijConfig, objectMapper).sendReceiveC(IclijServiceResult.class, param, "/findprofit", null);
         return result.getPipelineData();
     }
 
@@ -475,14 +416,14 @@ public class ControlService {
     public List getContentStat() {
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(coremlconf.getConfigData());
-        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONTENTSTAT);
+        IclijServiceResult result = new IOUtils(io, iclijConfig, objectMapper).sendReceiveC(IclijServiceResult.class, param, EurekaConstants.GETCONTENTSTAT, ServiceConstants.GETCONTENTSTAT);
         return result.getList();
     }
 
     public void dbengine(Boolean useSpark) throws Exception {
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(coremlconf.getConfigData());
-        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.SETCONFIG);
+        IclijServiceResult result = new IOUtils(io, iclijConfig, objectMapper).sendReceiveC(IclijServiceResult.class, param, EurekaConstants.SETCONFIG, EurekaConstants.SETCONFIG);
         getAndSetCoreConfig();
     }
 
@@ -496,7 +437,7 @@ public class ControlService {
         param.setConfigData(coremlconf.getConfigData());
         param.setConfList(disableList);
         
-        IclijServiceResult result = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVERECOMMENDER);
+        IclijServiceResult result = new IOUtils(io, iclijConfig, objectMapper).sendReceiveC(IclijServiceResult.class, param, EurekaConstants.GETEVOLVERECOMMENDER, ServiceConstants.GETEVOLVERECOMMENDER);
         if (doSet) {
             //conf = new MyMyConfig(result.getConfig());
             //PipelineData datum = PipelineUtils.getPipeline(result.getPipelineData(), PipelineConstants.EVOLVE, inmemory);
@@ -533,7 +474,7 @@ public class ControlService {
         param.setNeuralnetcommand(neuralnetcommand);
         // TODO retry or queue
         // TODO cache not
-        IclijServiceResult result = io.getWebFluxUtil().sendMMe(IclijServiceResult.class, param, EurekaConstants.GETEVOLVENN);
+        IclijServiceResult result = new IOUtils(io, iclijConfig, objectMapper).sendReceiveM(IclijServiceResult.class, param, EurekaConstants.GETEVOLVENN, ServiceConstants.GETEVOLVENN);
         
         if (doSet) {
             Inmemory inmemory = io.getInmemoryFactory().get(conf);
@@ -594,45 +535,11 @@ public class ControlService {
         param.setConfigData(componentInput.getConfigData());
         param.setWebpath(EurekaConstants.ACTION + "/" + action);
         param.setOffset(componentInput.getLoopoffset());
-        IclijServiceResult result = io.getWebFluxUtil().sendAMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
+        IclijServiceResult result = new IOUtils(io, iclijConfig, objectMapper).sendReceiveA(IclijServiceResult.class, param, param.getWebpath(), param.getWebpath());
 
         WebDataJson dataJson = result.getWebdatajson();
         WebData data = convert(dataJson);
         return data;
-    }
-
-    public <T> T[] sendReceive(String service, QueueElement object, ObjectMapper objectMapper) {
-        //IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
-        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
-        String appid = System.getenv(Constants.APPID);
-        if (appid != null) {
-            service = service + appid; // can not handle domain, only eureka
-        }
-        zkRegister = (new QueueUtils(io.getCuratorClient()))::zkRegister;
-        Communication c = io.getCommunicationFactory().get(sc.getLeft(), String.class, service, objectMapper, true, true, true, sc.getRight(), zkRegister, io.getWebFluxUtil());
-        object.setQueue(c.getReturnService());
-        return c.sendReceive(object);
-    }
-
-    public <T> T sendReceive(Communication c, IclijServiceParam param) {
-        param.setWebpath(c.getReturnService());
-        T r = (T) c.sendReceive(param);
-        return r;
-    }
-
-    public <T> T sendReceive(Class<T> clazz, Object param, String service) {
-        Inmemory inmemory = io.getInmemoryFactory().get(iclijConfig);
-        QueueElement element = new QueueElement();
-        InmemoryMessage msg = inmemory.send(service + UUID.randomUUID(), param, null);
-        element.setMessage(msg);
-        String[] array = sendReceive(service, element, null);
-        String s = array[0];
-        QueueElement q = JsonUtil.convert(s, QueueElement.class);
-        String content = inmemory.read(q.getMessage());
-        inmemory.delete(q.getMessage());
-        System.out.println("content"+ content);
-        Class<T> tClazz = clazz;
-        return JsonUtil.convertnostrip(content, clazz);
     }
 
     @Deprecated
@@ -642,7 +549,7 @@ public class ControlService {
         param.setConfigData(componentInput.getConfigData());
         param.setWebpath(EurekaConstants.GETVERIFY);
         param.setOffset(componentInput.getLoopoffset());
-        IclijServiceResult result = sendAMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
+        IclijServiceResult result = null; //new IOUtils(io, iclijConfig, objectMapper).sendReceiveA(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
         /*
         Communication c = CommunicationFactory.get(sc.getLeft(), IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, true, sc.getRight());
         param.setWebpath(c.getReturnService());
@@ -735,7 +642,7 @@ public class ControlService {
 
         try {
             // Send asynchronously to ServiceControllerOther via send method
-            send(service, element, iclijConfig);
+            // TODO send(service, element, iclijConfig);
             log.info("Async request sent with element id {}", elementId);
         } catch (Exception e) {
             log.error("Error sending async getContent request", e);
@@ -745,4 +652,8 @@ public class ControlService {
         return elementId;
     }
 
+    // for the actions
+    public void send(String service, QueueElement element, IclijConfig config) {
+        new IOUtils(io, config, objectMapper).send(service, element, config);
+    }
 }
