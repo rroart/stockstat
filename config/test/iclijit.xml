@@ -11,7 +11,7 @@
     </cache>
     <abnormalchange>3.0</abnormalchange>
     <myservices></myservices>
-    <services>{ "simfilter" : "kafka", "simauto" : "kafka", "simrun" : "kafka", "evolvefilterevolve" : "kafka", "evolvefilterprofit" : "kafka", "evolvefilterfilter" : "kafka", "evolvefilterabovebelow" : "kafka" }</services>
+    <services>{ "simfilter" : "kafka", "simauto" : "kafka", "simrun" : "kafka", "evolvefilterevolve" : "kafka", "evolvefilterprofit" : "kafka", "evolvefilterfilter" : "kafka", "evolvefilterabovebelow" : "kafka", "getconfig" : "kafka" }</services>
     <communications>{ "kafka" : "127.0.0.1:9092" }</communications>
     <inmemory><server>redis</server></inmemory>
     <inmemory><redis>http://localhost:6379</redis></inmemory>

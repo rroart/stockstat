@@ -57,7 +57,7 @@ public class ControlService {
 
     public static String id = UUID.randomUUID().toString();
     
-    // Config for the core, not iclij
+    // Config for the core, not iclij, for the evolved
     public IclijConfig coremlconf;
 
     ObjectMapper objectMapper;
@@ -116,8 +116,8 @@ public class ControlService {
         print(map2, 0);
         if (iclijConfig.wantsInmemoryPipeline()) {
             //log.info("Wants {}", coremlconf.wantsInmemoryPipeline());
-            coremlconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
-            coremlconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, iclijConfig.wantsInmemoryPipelineBatchsize());
+            //coremlconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
+            //coremlconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, iclijConfig.wantsInmemoryPipelineBatchsize());
             log.info("Wants {} {}", coremlconf.wantsInmemoryPipeline(), coremlconf.wantsInmemoryPipelineBatchsize());
         }
     }

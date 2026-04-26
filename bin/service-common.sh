@@ -43,8 +43,8 @@ if [ $core -eq 1 ]; then
     $COMMAND "java --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED $DB -Dconfig=stockstat.xml $COREDEBUG -jar stockstat-core-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/core$OUTNAME.out $REDIRECT" &
 fi
 if [ $icore -eq 1 ]; then
-    $COMMAND "java $DB -Dconfig=iclij.xml $ICOREDEBUG -jar stockstat-iclij-core-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclij$OUTNAME.out $REDIRECT" &
-    $COMMAND "java $DB -Dconfig=iclij.xml $IWEBCOREDEBUG -jar stockstat-iclij-webcore-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclijwebcore$OUTNAME.out $REDIRECT" &
+    $COMMAND "java $DB -Dconfig=stockstat.xml $ICOREDEBUG -jar stockstat-iclij-core-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclij$OUTNAME.out $REDIRECT" &
+    $COMMAND "java $DB -Dconfig=stockstat.xml $IWEBCOREDEBUG -jar stockstat-iclij-webcore-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclijwebcore$OUTNAME.out $REDIRECT" &
 fi
 if [ $web -eq 1 ]; then
     echo
@@ -52,13 +52,13 @@ if [ $web -eq 1 ]; then
     #$COMMAND "java -jar $WEBDEBUG stockstat-web-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/web$OUTNAME.out $REDIRECT" &
 fi
 if [ $isim -eq 1 ]; then
-    $COMMAND "java $DB -Dconfig=isim.xml $ISIMDEBUG -jar stockstat-iclij-sim-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/isim$OUTNAME.out $REDIRECT" &
+    $COMMAND "java $DB -Dconfig=stockstat.xml $ISIMDEBUG -jar stockstat-iclij-sim-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/isim$OUTNAME.out $REDIRECT" &
 fi
 if [ $ievolve -eq 1 ]; then
-    $COMMAND "java $DB -Dconfig=ievolve.xml $IEVOLVEDEBUG -jar stockstat-iclij-evolve-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/ievolve$OUTNAME.out $REDIRECT" &
+    $COMMAND "java $DB -Dconfig=stockstat.xml $IEVOLVEDEBUG -jar stockstat-iclij-evolve-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/ievolve$OUTNAME.out $REDIRECT" &
 fi
 if [ $local -eq 1 ]; then
-    $COMMAND "java $LOCAL -Dconfig=stockstat.xml $LOCALDEBUG -jar stockstat-local-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/local$OUTNAME.out $REDIRECT" &
+    $COMMAND "java $LOCAL -Dconfig=local.xml $LOCALDEBUG -jar stockstat-local-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/local$OUTNAME.out $REDIRECT" &
 fi
 if [ $ml -eq 1 ]; then
     $COMMAND "java --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED $DB -Dconfig=stockstat.xml $MLDEBUG -jar stockstat-machinelearning-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/ml$OUTNAME.out $REDIRECT" &

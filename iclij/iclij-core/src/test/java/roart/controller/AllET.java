@@ -98,7 +98,7 @@ public class AllET {
     IclijDbDao iclijDbDao;
     
     // no autowiring
-    IclijConfig conf = null;
+    //IclijConfig conf = null;
    
     private static final ObjectMapper mapper = JsonMapper.builder().build();
 
@@ -282,14 +282,14 @@ public class AllET {
     public void before() throws Exception {
         iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
         ConfigMaps configMaps = IclijConfig.instanceC();
-        conf = new IclijConfig(configMaps, "coreconfig", null);
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.FALSE);
+        //conf = new IclijConfig(configMaps, "coreconfig", null);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.FALSE);
         //conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.FALSE);
 
-        dbDao = new DbDao(conf, dataSource);
+        dbDao = new DbDao(iconf, dataSource);
         iclijDbDao = new IclijDbDao(iconf, dbSpringDS);
 
-        webFluxUtil = new TestWebFluxUtil(conf,null);
+        webFluxUtil = new TestWebFluxUtil(iconf,null);
         parameters = new Parameters();
         parameters.setThreshold(1.0);
         parameters.setFuturedays(10);

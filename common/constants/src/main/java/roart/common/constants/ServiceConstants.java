@@ -27,7 +27,14 @@ public class ServiceConstants {
     public static final String EVOLVEFILTERFILTER = "evolvefilterfilter";
     public static final String EVOLVEFILTERABOVEBELOW = "evolvefilterabovebelow";
     public static final String POPULATE = "populate";
-    
+
+    public static final String CORE = "core";
+    public static final String ICORE = "icore";
+    public static final String ML = "ml";
+    public static final String SPARK = "spark";
     public static final String SIM = "sim";
     public static final String EVOLVE = "evolve";
+    public static final String WEBCORE = "webcore";
+    public static final String LOCAL = "local";
+
 }

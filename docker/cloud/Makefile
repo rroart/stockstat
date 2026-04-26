@@ -22,14 +22,14 @@ iclij-core:
 ifneq ($(ICLIJTMPL),)
 	rsync -a $$ICLIJTMPL iclij-core/iclij.xml.tmpl
 endif
-	$(MAKE) -C $@ -f ../Makefile iclij.xml
+	$(MAKE) -C $@ -f ../Makefile stockstat.xml
 #	$(MAKE) -C $@ -f ../Makefile stockstat-$@-${VERSION}.jar
 
 iclij-webcore:
 ifneq ($(ICLIJTMPL),)
-	rsync -a $$ICLIJTMPL iclij-webcore/iclij.xml.tmpl
+	rsync -a $$ICLIJTMPL iclij-webcore/webcore.xml.tmpl
 endif
-	$(MAKE) -C $@ -f ../Makefile iclij.xml
+	$(MAKE) -C $@ -f ../Makefile stockstat.xml
 #	$(MAKE) -C $@ -f ../Makefile stockstat-$@-${VERSION}.jar
 
 webr iclij-webr:

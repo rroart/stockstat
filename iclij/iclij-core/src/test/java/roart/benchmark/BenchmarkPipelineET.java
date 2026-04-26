@@ -71,7 +71,7 @@ public class BenchmarkPipelineET {
     IclijDbDao iclijDbDao;
 
     // no autowiring
-    IclijConfig conf = null;
+    //IclijConfig conf = null;
 
     private static final ObjectMapper mapper = JsonMapper.builder().build();
 
@@ -105,15 +105,15 @@ public class BenchmarkPipelineET {
     public void before() throws Exception {
         iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
         ConfigMaps configMaps = IclijConfig.instanceC();
-        conf = new IclijConfig(configMaps, "coreconfig", null);
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.FALSE);
-        conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
+        //conf = new IclijConfig(configMaps, "coreconfig", null);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.FALSE);
+        iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
         //conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.FALSE);
 
-        dbDao = new DbDao(conf, dataSource);
+        dbDao = new DbDao(iconf, dataSource);
         iclijDbDao = new IclijDbDao(iconf, dbSpringDS);
 
-        webFluxUtil = new TestWebFluxUtil(conf, null);
+        webFluxUtil = new TestWebFluxUtil(iconf, null);
         parameters = new Parameters();
         parameters.setThreshold(1.0);
         parameters.setFuturedays(10);
@@ -145,9 +145,9 @@ public class BenchmarkPipelineET {
     @Test
     public void test() throws Exception {
         String market = System.getenv("MARKET");
-        conf.getConfigData().setMarket(market);
+        iconf.getConfigData().setMarket(market);
         List<String> disableList = new ArrayList<>();
-        StockData stockData = new Extract(io.getDbDao()).getStockData(conf, true);
+        StockData stockData = new Extract(io.getDbDao()).getStockData(iconf, true);
 
         NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
         neuralnetcommand.setMlclassify(false);
@@ -158,7 +158,7 @@ public class BenchmarkPipelineET {
 
         log.info("Stock data keys: {}", stockData.marketdatamap.keySet());
 
-        Map<IndicatorAggregator.SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = getMapMap(conf, stockData, neuralnetcommand, iu, inmemory, 0);
+        Map<IndicatorAggregator.SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = getMapMap(iconf, stockData, neuralnetcommand, iu, inmemory, 0);
 
         // Clear state
         testutils.cacheinvalidate();
@@ -167,11 +167,11 @@ public class BenchmarkPipelineET {
         for (int i = 0, batchSize = 128; i < 5; i++, batchSize *= 2) {
             // Recreate pipeline data for batched test
             // Test with batched mode
-            conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
+            iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
 
-            Map<IndicatorAggregator.SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMapBatch = getMapMap(conf, stockData, neuralnetcommand, iu, inmemory, batchSize);
+            Map<IndicatorAggregator.SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMapBatch = getMapMap(iconf, stockData, neuralnetcommand, iu, inmemory, batchSize);
 
-            boolean compared = new MLMulti(conf, stockData.catName, stockData.catName, stockData.cat, stockData.idNameMap, new SerialPipeline(), neuralnetcommand, stockData.stockdates, inmemory).compareMaps(mapMap, mapMapBatch);
+            boolean compared = new MLMulti(iconf, stockData.catName, stockData.catName, stockData.cat, stockData.idNameMap, new SerialPipeline(), neuralnetcommand, stockData.stockdates, inmemory).compareMaps(mapMap, mapMapBatch);
 
             log.info("map batch {}", mapMapBatch);
             log.info("map no batch {}", mapMap);

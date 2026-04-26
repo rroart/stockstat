@@ -22,6 +22,7 @@ import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.model.MyDataSource;
 import roart.common.queue.QueueElement;
 import roart.common.util.JsonUtil;
+import roart.common.util.ServiceConnectionUtil;
 import roart.common.webflux.WebFluxUtil;
 import roart.controller.*;
 import roart.core.service.ServiceControllerOther;
@@ -63,7 +64,7 @@ public class AsyncET {
     IclijDbDao iclijDbDao;
 
     // no autowiring
-    IclijConfig conf = null;
+    //IclijConfig conf = null;
 
     private static final ObjectMapper mapper = JsonMapper.builder().build();
 
@@ -96,14 +97,14 @@ public class AsyncET {
     public void before() throws Exception {
         iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
         ConfigMaps configMaps = IclijConfig.instanceC();
-        conf = new IclijConfig(configMaps, "coreconfig", null);
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.FALSE);
+        //conf = new IclijConfig(configMaps, "coreconfig", null);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.FALSE);
         //conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.FALSE);
 
-        dbDao = new DbDao(conf, dataSource);
+        dbDao = new DbDao(iconf, dataSource);
         iclijDbDao = new IclijDbDao(iconf, dbSpringDS);
 
-        webFluxUtil = new TestWebFluxUtil(conf,null);
+        webFluxUtil = new TestWebFluxUtil(iconf,null);
         parameters = new Parameters();
         parameters.setThreshold(1.0);
         parameters.setFuturedays(10);
@@ -129,11 +130,12 @@ public class AsyncET {
         MyCache.setCache(iconf.wantCache());
         MyCache.setCacheTTL(iconf.getCacheTTL());
 
-        String myservices = conf.getMyservices();
-        String services = conf.getServices();
-        String communications = conf.getCommunications();
+        String myservices = iconf.getMyservices();
+        myservices = new ServiceConnectionUtil().getMyServices(ServiceConstants.CORE, myservices);
+        String services = iconf.getServices();
+        String communications = iconf.getCommunications();
         log.info("Myservices {}", myservices);
-        new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, conf.copy(), io).start();
+        new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iconf.copy(), io).start();
         // TODO ...
         //new roart.machinelearning.service.ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, conf.copy(), io).start();
     }
@@ -141,7 +143,7 @@ public class AsyncET {
     @Test
     public void test() {
         String market = System.getenv("MARKET");
-        conf.getConfigData().setMarket(market);
+        iconf.getConfigData().setMarket(market);
 
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(iconf.getConfigData());

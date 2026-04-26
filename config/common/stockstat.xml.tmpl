@@ -1,6 +1,7 @@
 <config>
+  <-- core and icore -->
   <database>
-    <spark enable='$SPARK'>
+    <spark enable='$SPARKDB'>
       <sparkmaster>$SPARKMASTER</sparkmaster>
     </spark>
     <hibernate enable='$HIBERNATE'/>
@@ -8,6 +9,48 @@
     <maxholes>0</maxholes>
     <batchsize>$DBBATCHSIZE</batchsize>
   </database>
+  <misc>
+    <!-- core -->
+    <percentizepriceindex enable='true'/>
+    <mlstats enable='true'/>
+    <otherstats enable='true'/>
+    <mydays>180</mydays>
+    <mytopbottom>10</mytopbottom>
+    <mytabledays>180</mytabledays>
+    <mytablemoveintervaldays>5</mytablemoveintervaldays>
+    <mytableintervaldays>1</mytableintervaldays>
+    <myequalize enable='true'/>
+    <mygraphequalize enable='true'/>
+    <mygraphequalizeunify enable='true'/>
+    <!-- machinelearning -->
+    <threshold>$THRESHOLD</threshold>
+    <!--threshold>[ 0.90, 0.95, 1.0, 1.05, 1.10 ]</threshold-->
+    <!-- icore -->
+    <shutdownhour>$SHUTDOWNHOUR</shutdownhour>
+    <populate enable="$POPULATE"/>
+    <abnormalchange>$ABNORMALCHANGE</abnormalchange>
+
+    <!-- common -->
+    <cache enable='$CACHE'>
+      <ttl>$CACHETTL</ttl>
+    </cache>
+    <zookeeper>$ZOOKEEPER</zookeeper>
+    <inmemory><server>$INMEMORYSERVER</server></inmemory>
+    <inmemory><redis>$INMEMORYREDIS</redis></inmemory>
+    <myservices>$MYSERVICESCORE</myservices>
+    <services>$SERVICES</services>
+    <servicerest enable="$SERVICEREST"/>
+    <communications>$COMMUNICATIONS</communications>
+    <inmemory>
+    <pipeline enable="$INMEMORYPIPELINE">
+    <batchsize>$PIPELINEBATCHSIZE</batchsize>
+    </pipeline>
+    </inmemory>
+  </misc>
+  <misc>
+  </misc>
+
+  <!-- machinelearning -->
   <machinelearning enable='$MACHINELEARNING'>
     <mp enable='true'>
       <cpu>0.5</cpu>
@@ -72,6 +115,8 @@
     <mldynamic enable='false'/>
     <usebinary enable='true'/>
   </machinelearning>
+
+  <!-- core -->
   <indicators enable='true'>
     <move enable='true'/>
     <macd enable='true'>
@@ -127,32 +172,7 @@
       <stochdeltadays>3</stochdeltadays>
     </stoch>
   </indicators>
-  <misc>
-    <percentizepriceindex enable='true'/>
-    <mlstats enable='true'/>
-    <otherstats enable='true'/>
-    <mydays>180</mydays>
-    <mytopbottom>10</mytopbottom>
-    <mytabledays>180</mytabledays>
-    <mytablemoveintervaldays>5</mytablemoveintervaldays>
-    <mytableintervaldays>1</mytableintervaldays>
-    <myequalize enable='true'/>
-    <mygraphequalize enable='true'/>
-    <mygraphequalizeunify enable='true'/>
-    <threshold>[ 1.0 ]</threshold>
-    <!--threshold>[ 0.90, 0.95, 1.0, 1.05, 1.10 ]</threshold-->
-    <cache enable='$CACHE'>
-      <ttl>$CACHETTL</ttl>
-    </cache>
-    <zookeeper>$ZOOKEEPER</zookeeper>
-    <inmemory><server>$INMEMORYSERVER</server></inmemory>
-    <inmemory><redis>$INMEMORYREDIS</redis></inmemory>
-    <myservices>$MYSERVICESCORE</myservices>
-    <services>$SERVICES</services>
-    <servicerest enable="$SERVICEREST"/>
-    <communications>$COMMUNICATIONS</communications>
-  </misc>
-  <evolve>
+  <evolution>
     <indicatorrecommender>
       <evolutionconfig>{ "generations" : 100, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
       <simple>
@@ -171,7 +191,9 @@
 	<location>$SAVELOCATION</location>
 	<path>$SAVEPATH</path>
     </save>
-  </evolve>
+  </evolution>
+
+  <!-- machinelearning -->
   <aggregators enable='true'>
     <indicatorrecommender enable='true'>
       <simple enable='true'>
@@ -344,6 +366,8 @@
     <usecurve enable='false'/>
     <useconfusion enable='false'/>
   </aggregators>
+
+  <!-- local only? -->
   <filesystem>
     <hdfs enable="$HDFS">
       <hdfsconffs>$HDFSCONFFS</hdfsconffs>
@@ -362,4 +386,184 @@
 	<secretkey>$S3SECRETKEY</secretkey>
     </s3>
   </filesystem>
+
+  <!-- icore -->
+  <mp>
+    <server>
+      <cpu>0.5</cpu>
+    </server>
+    <client>
+      <cpu>0.5</cpu>
+    </client>
+  </mp>
+  <iclij>
+  <schedule enable='$SCHEDULE'/>
+  </iclij>
+  <evolve priority="50">
+    <indicatorrecommender enable='true'>
+      <evolutionconfig>{ "generations" : 100, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 0, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true, "shutdownhour" : $SHUTDOWNHOUR }</evolutionconfig>
+    </indicatorrecommender>
+    <ml enable='true'>
+      <evolutionconfig>{ "generations" : 1, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 0, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true, "shutdownhour" : $SHUTDOWNHOUR }</evolutionconfig>
+      <mlconfig>{ "spark" : { "mlpc" : { "load" : true, "save" : true, "enable" : $SPARK, "evolve" : true }, "lor" : { "load" : true, "save" : true, "enable" : $SPARK, "evolve" : true }, "ovr" : { "load" : true, "save" : true, "enable" : $SPARK, "evolve" : true }, "lsvc" : { "load" : true, "save" : true, "enable" : $SPARK, "evolve" : true } }, "tensorflow" : { "dnn" : { "load" : true, "save" : true, "enable" : $TENSORFLOW, "evolve" : true },  "lic" : { "load" : true, "save" : true, "enable" : $TENSORFLOW, "evolve" : true }, "lir" : { "load" : true, "save" : true, "enable" : $TENSORFLOW, "evolve" : true }, "mlp" : { "load" : true, "save" : true, "enable" : $TENSORFLOW, "evolve" : true }, "cnn" : { "load" : true, "save" : true, "enable" : $TENSORFLOW, "evolve" : true }, "cnn2" : { "load" : true, "save" : true, "enable" : $TENSORFLOW, "evolve" : true }, "rnn" : { "load" : true, "save" : true, "enable" : $TENSORFLOW, "evolve" : true }, "lstm" : { "load" : true, "save" : true, "enable" : $TENSORFLOW, "evolve" : true }, "gru" : { "load" : true, "save" : true, "enable" : $TENSORFLOW, "evolve" : true } }, "pytorch" : { "mlp" : { "load" : true, "save" : true, "enable" : $PYTORCH, "evolve" : true }, "cnn" : { "load" : true, "save" : true, "enable" : $PYTORCH, "evolve" : true }, "cnn2" : { "load" : true, "save" : true, "enable" : $PYTORCH, "evolve" : true }, "rnn" : { "load" : true, "save" : true, "enable" : $PYTORCH, "evolve" : true }, "lstm" : { "load" : true, "save" : true, "enable" : $PYTORCH, "evolve" : true }, "gru" : { "load" : true, "save" : true, "enable" : $PYTORCH, "evolve" : true } }, "gem" : { "ewc" : { "load" : true, "save" : true, "enable" : $GEM, "evolve" : true }, "gem" : { "load" : true, "save" : true, "enable" : $GEM, "evolve" : true }, "i" : { "load" : true, "save" : true, "enable" : $GEM, "evolve" : true }, "icarl" : { "load" : true, "save" : true, "enable" : false, "evolve" : true }, "mm" : { "load" : true, "save" : true, "enable" : $GEM, "evolve" : true }, "s" : { "load" : true, "save" : true, "enable" : $GEM, "evolve" : true } } }</mlconfig>
+    </ml>
+    <predictor enable='false'>
+    </predictor>
+    <autorun enable="$EVOLVE"/>
+    <update enable='$EVOLVEUPDATE'/>
+  </evolve>
+  <findprofit priority="10">
+    <threshold>$THRESHOLD</threshold>
+    <futuredays>$FUTUREDAYS</futuredays>
+    <autorun enable="$FINDPROFIT"/>
+    <update enable='$FINDPROFITUPDATE'/>
+    <mldynamic enable='false'/>
+    <recommender enable='false'/>
+    <mlmacd enable='true'>
+    </mlmacd>
+    <mlrsi enable='true'>
+    </mlrsi>
+    <mlatr enable='true'>
+    </mlatr>
+    <mlcci enable='true'>
+    </mlcci>
+    <mlstoch enable='true'>
+    </mlstoch>
+    <mlmulti enable='true'>
+    </mlmulti>
+    <mlindicator enable='true'>
+    </mlindicator>
+    <predictor enable='true'>
+      <evolutionconfig>{ "generations" : 1, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 0, "select" : 4, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
+    </predictor>
+  </findprofit>
+  <improveprofit priority="60">
+    <autorun enable="$IMPROVEPROFIT"/>
+    <update enable='$IMPROVEPROFITUPDATE'/>
+    <recommender enable='true'/>
+    <mlmacd enable='true'>
+    </mlmacd>
+    <mlrsi enable='true'>
+    </mlrsi>
+    <mlatr enable='true'>
+    </mlatr>
+    <mlcci enable='true'>
+    </mlcci>
+    <mlstoch enable='true'>
+    </mlstoch>
+    <mlmulti enable='true'>
+    </mlmulti>
+    <mlindicator enable='true'>
+    </mlindicator>
+    <predictor enable='false'>
+    </predictor>
+  </improveprofit>
+  <improvefilter priority="30">
+    <autorun enable="$IMPROVEFILTER"/>
+    <recommender enable='true'/>
+    <mlmacd enable='true'>
+    </mlmacd>
+    <mlrsi enable='true'>
+    </mlrsi>
+    <mlatr enable='true'>
+    </mlatr>
+    <mlcci enable='true'>
+    </mlcci>
+    <mlstoch enable='true'>
+    </mlstoch>
+    <mlmulti enable='true'>
+    </mlmulti>
+    <mlindicator enable='true'>
+    </mlindicator>
+    <predictor enable='false'>
+    </predictor>
+  </improvefilter>
+  <improveabovebelow priority="20">
+    <autorun enable="$IMPROVEABOVEBELOW"/>
+    <evolutionconfig>{ "generations" : 100, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 0, "select" : 32, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
+    <fitnessminimum>5</fitnessminimum>
+  </improveabovebelow>
+  <machinelearning priority="0">
+    <autorun enable="$ML"/>
+    <update enable='$MLUPDATE'/>
+    <threshold>$THRESHOLD</threshold>
+    <futuredays>$FUTUREDAYS</futuredays>
+    <mlmacd enable='true'>
+    </mlmacd>
+    <mlrsi enable='true'>
+    </mlrsi>
+    <mlatr enable='true'>
+    </mlatr>
+    <mlcci enable='true'>
+    </mlcci>
+    <mlstoch enable='true'>
+    </mlstoch>
+    <mlmulti enable='true'>
+    </mlmulti>
+    <mlindicator enable='true'>
+    </mlindicator>
+    <predictor enable='true' priority="80">
+    </predictor>
+  </machinelearning>
+  <dataset priority="70">
+    <autorun enable="$DATASET"/>
+    <update enable='$DATASETUPDATE'/>
+    <predictor enable='false'>
+    </predictor>
+  </dataset>
+  <crosstest  priority="40">
+    <autorun enable="$CROSSTEST"/>
+    <predictor enable='true' priority="50">
+    </predictor>
+    <market id="nordfund">
+      <config>{ "market" : "nordfund", "persisttime" : 30, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150, "startoffset" : 1 }</config>
+    </market>
+  </crosstest>
+  <simulateinvest priority="0">
+    <autorun enable="$SIMULATEINVEST"/>
+  </simulateinvest>
+  <improvesimulateinvest priority="0">
+    <autorun enable="$IMPROVESIMULATEINVEST"/>
+    <evolutionconfig>{ "generations" : 100, "shutdownhour" : 24 }</evolutionconfig>
+  </improvesimulateinvest>
+  <improveautosimulateinvest priority="0">
+    <autorun enable="$IMPROVEAUTOSIMULATEINVEST"/>
+    <evolutionconfig>{ "generations" : 100, "shutdownhour" : 24 }</evolutionconfig>
+  </improveautosimulateinvest>
+  <filter priority="90">
+    <autorun enable="true"/>
+    <recommender enable='true'/>
+    <mlmacd enable='true'>
+    </mlmacd>
+    <mlrsi enable='true'>
+    </mlrsi>
+    <mlatr enable='true'>
+    </mlatr>
+    <mlcci enable='true'>
+    </mlcci>
+    <mlstoch enable='true'>
+    </mlstoch>
+    <mlmulti enable='true'>
+    </mlmulti>
+    <mlindicator enable='true'>
+    </mlindicator>
+    <predictor enable='false'>
+    </predictor>
+  </filter>
+  <singlemarket>
+    <loops>5</loops>
+  </singlemarket>
+  <verification>
+    <loops>5</loops>
+    <days>10</days>
+    <improveprofit enable='false'/>
+    <!--recommender>
+      <topbottom>10</topbottom>
+    </recommender-->
+  </verification>
+
+  <!-- icore, place for marketlist -->
+  $MARKETS
+  <!-- isim -->
+  $ISIMMARKETS
 </config>

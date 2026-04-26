@@ -15,39 +15,25 @@ docbookhtml/figures/%.svg: docbook/figures/%.fig
 %.pdf: %.fo
 	fop $< -pdf $@
 
-SUBDIRS = core iclij-core iclij-sim iclij-evolve
+SUBDIRS = common local
 #weba iclij-weba
 
-core:
+common:
 	mkdir -p conf
 ifneq ($(STOCKSTATTMPL),)
 	rsync -a $$STOCKSTATTMPL conf/stockstat.xml.tmpl
 endif
 	$(MAKE) -C conf -f ../Makefile stockstat.xml
 
-iclij-core:
-	mkdir -p conf
-ifneq ($(ICLIJTMPL),)
-	rsync -a $$ICLIJTMPL conf/iclij.xml.tmpl
-endif
-	$(MAKE) -C conf -f ../Makefile iclij.xml
-
-iclij-sim:
-	mkdir -p conf
-ifneq ($(ISIMTMPL),)
-	rsync -a $$ISIMTMPL conf/isim.xml.tmpl
-endif
-	$(MAKE) -C conf -f ../Makefile isim.xml
-
-iclij-evolve:
-	mkdir -p conf
-ifneq ($(IEVOLVETMPL),)
-	rsync -a $$IEVOLVETMPL conf/ievolve.xml.tmpl
-endif
-	$(MAKE) -C conf -f ../Makefile ievolve.xml
-
 weba:
 	weba/scripts/genenv.sh
+
+local:
+	mkdir -p conf
+ifneq ($(LOCALTMPL),)
+	rsync -a $$LOCALTMPL conf/local.xml.tmpl
+endif
+	$(MAKE) -C conf -f ../Makefile local.xml
 
 iclij-weba:
 	iclij/iclij-weba/scripts/genenv.sh

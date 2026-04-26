@@ -60,9 +60,9 @@ public class ConfigMaps {
     public void keys(Set<String> mykeys) {
         log.debug("Keys: {}", mykeys);
         log.debug("Deflt keys {}", deflt.keySet());
-        map.keySet().retainAll(mykeys);
-        deflt.keySet().retainAll(mykeys);
-        text.keySet().retainAll(mykeys);
+        //map.keySet().retainAll(mykeys);
+        //deflt.keySet().retainAll(mykeys);
+        //text.keySet().retainAll(mykeys);
         log.debug("Deflt keys {}", deflt.keySet());
         if (true) return;
         retain(map.keySet(), mykeys);

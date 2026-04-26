@@ -33,6 +33,7 @@ import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -56,7 +57,7 @@ public class BenchmarkDbET {
     IclijDbDao iclijDbDao;
 
     // no autowiring
-    IclijConfig conf = null;
+    //IclijConfig conf = null;
 
     private static final ObjectMapper mapper = JsonMapper.builder().build();
 
@@ -89,14 +90,14 @@ public class BenchmarkDbET {
     public void before() throws Exception {
         iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
         ConfigMaps configMaps = IclijConfig.instanceC();
-        conf = new IclijConfig(configMaps, "coreconfig", null);
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.FALSE);
+        //conf = new IclijConfig(configMaps, "coreconfig", null);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.FALSE);
         //conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.FALSE);
 
-        dbDao = new DbDao(conf, dataSource);
+        dbDao = new DbDao(iconf, dataSource);
         iclijDbDao = new IclijDbDao(iconf, dbSpringDS);
 
-        webFluxUtil = new TestWebFluxUtil(conf,null);
+        webFluxUtil = new TestWebFluxUtil(iconf,null);
         parameters = new Parameters();
         parameters.setThreshold(1.0);
         parameters.setFuturedays(10);
@@ -137,12 +138,12 @@ public class BenchmarkDbET {
     }
 
     private Set<String> handleBenchmark(int batchsize, String market) throws Exception {
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.DATABASEBATCHSIZE, batchsize);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.DATABASEBATCHSIZE, batchsize);
         long time = System.currentTimeMillis();
-        List<StockDTO> l = dbDao.getAll(market, conf, true);
+        List<StockDTO> l = dbDao.getAll(market, iconf, true);
         log.info("time {} {}", l.size(), (System.currentTimeMillis() - time)/1000);
         long ids = l.stream().map(StockDTO::getDbid).count();
         log.info("count {}", ids);
-        return l.stream().map(StockDTO::getId).collect(java.util.stream.Collectors.toSet());
+        return l.stream().map(StockDTO::getId).collect(Collectors.toSet());
     }
 }

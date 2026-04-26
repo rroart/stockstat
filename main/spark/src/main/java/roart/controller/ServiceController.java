@@ -26,6 +26,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import roart.common.communication.factory.CommunicationFactory;
+import roart.common.constants.ServiceConstants;
+import roart.common.inmemory.factory.InmemoryFactory;
+import roart.common.util.ServiceConnectionUtil;
+import roart.common.webflux.WebFluxUtil;
+import roart.iclij.common.service.IclijServiceParam;
+import roart.model.io.IO;
 import tools.jackson.core.exc.StreamReadException;
 import tools.jackson.databind.DatabindException;
 //import tools.jackson.databind.JsonSerializer;
@@ -133,8 +140,11 @@ public class ServiceController implements CommandLineRunner {
         log.info("Using profile {}", activeProfile);
         IclijConfig instance = iclijConfig;
         String myservices = instance.getMyservices();
+        myservices = new ServiceConnectionUtil().getMyServices(ServiceConstants.SPARK, myservices);
         String services = instance.getServices();
         String communications = instance.getCommunications();
+         IO io = new IO(null, null, new WebFluxUtil(), null, new InmemoryFactory(), new CommunicationFactory(), null);
+        new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig.copy(), io).start();
         // TODO not yet collision with other services
         // MyCache.setCache(instance.wantCache());
         // MyCache.setCacheTTL(instance.getCacheTTL());

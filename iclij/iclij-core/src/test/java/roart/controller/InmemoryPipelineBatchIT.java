@@ -84,7 +84,7 @@ public class InmemoryPipelineBatchIT {
     IclijDbDao iclijDbDao = mock(IclijDbDao.class);
 
     // no autowiring
-    IclijConfig conf = null;
+    //IclijConfig conf = null;
 
     MyDataSource dataSource;
 
@@ -117,8 +117,8 @@ public class InmemoryPipelineBatchIT {
     @BeforeAll
     public void before() throws Exception {
         ConfigMaps configMaps = IclijConfig.instanceC();
-        conf = new IclijConfig(configMaps, "coreconfig", null);
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.TRUE);
+        //conf = new IclijConfig(configMaps, "coreconfig", null);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.TRUE);
         log.info("Wants {}", iconf.wantsInmemoryPipeline());
         iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
         log.info("Wants {}", iconf.wantsInmemoryPipeline());
@@ -129,19 +129,19 @@ public class InmemoryPipelineBatchIT {
         String market = TestConstants.MARKET;
         String start = "2022.01.01";
         String end = "2025.01.01";
-        TestDataSource dataSource1 = new TestDataSource(conf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), market, 26, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null);
-        TestDataSource dataSource2 = new TestDataSource(conf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), TestConstants.MARKET2, 20, false, Constants.PRICECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, "impid");
+        TestDataSource dataSource1 = new TestDataSource(iconf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), market, 26, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null);
+        TestDataSource dataSource2 = new TestDataSource(iconf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), TestConstants.MARKET2, 20, false, Constants.PRICECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, "impid");
         dataSource = new TestDataSources(List.of(dataSource1, dataSource2));
         periodDataSources = new TestDataSource[4][4];
         for (int i = 1; i < periodDataSources.length; i++) { // stockcount
             for (int j = 1; j < periodDataSources[i].length; j++) { // days
-                periodDataSources[i][j] = new TestDataSource(conf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), TestConstants.SLOWMARKET, 20, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null, 0, i, j);
+                periodDataSources[i][j] = new TestDataSource(iconf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), TestConstants.SLOWMARKET, 20, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null, 0, i, j);
             }
         }
 
         dbDao = new DbDao(iconf, dataSource);
 
-        webFluxUtil = new TestWebFluxUtil(conf, null);
+        webFluxUtil = new TestWebFluxUtil(iconf, null);
         parameters = new Parameters();
         parameters.setThreshold(1.0);
         parameters.setFuturedays(10);
@@ -183,8 +183,8 @@ public class InmemoryPipelineBatchIT {
     @Test
     public void testIndicatorAggregatorGetMapMapBatchedNonBatchedConsistency() throws Exception {
         // Run test without batching
-        conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 0);
-        log.info("Batch size: {}", conf.wantsInmemoryPipelineBatchsize());
+        iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 0);
+        log.info("Batch size: {}", iconf.wantsInmemoryPipelineBatchsize());
 
         ActionComponentDTO aciNonBatch = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null, 0, JsonUtil.convert(parameters));
         try {
@@ -199,8 +199,8 @@ public class InmemoryPipelineBatchIT {
         testutils.deletepipeline(ControlService.id);
         inmemory.stat();
 
-        conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
-        log.info("Batch size: {}", conf.wantsInmemoryPipelineBatchsize());
+        iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
+        log.info("Batch size: {}", iconf.wantsInmemoryPipelineBatchsize());
 
         ActionComponentDTO aciBatch = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null, 0, JsonUtil.convert(parameters));
         try {
@@ -219,8 +219,8 @@ public class InmemoryPipelineBatchIT {
      */
     @Test
     public void testBatchedPipelineSmallBatchSize() throws Exception {
-        conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 2);
-        log.info("Batch size: {}", conf.wantsInmemoryPipelineBatchsize());
+        iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 2);
+        log.info("Batch size: {}", iconf.wantsInmemoryPipelineBatchsize());
 
         ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null, 0, JsonUtil.convert(parameters));
         try {
@@ -237,8 +237,8 @@ public class InmemoryPipelineBatchIT {
      */
     @Test
     public void testBatchedPipelineLargeBatchSize() throws Exception {
-        conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 100);
-        log.info("Batch size: {}", conf.wantsInmemoryPipelineBatchsize());
+        iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 100);
+        log.info("Batch size: {}", iconf.wantsInmemoryPipelineBatchsize());
 
         ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null, 0, JsonUtil.convert(parameters));
         try {
@@ -252,8 +252,8 @@ public class InmemoryPipelineBatchIT {
 
     @Test
     public void testMachineLearningBatched() throws Exception {
-        conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
-        log.info("Batch size: {}", conf.wantsInmemoryPipelineBatchsize());
+        iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
+        log.info("Batch size: {}", iconf.wantsInmemoryPipelineBatchsize());
 
         ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.MACHINELEARNING, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
@@ -267,8 +267,8 @@ public class InmemoryPipelineBatchIT {
 
     @Test
     public void testFindProfitBatched() throws Exception {
-        conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
-        log.info("Batch size: {}", conf.wantsInmemoryPipelineBatchsize());
+        iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
+        log.info("Batch size: {}", iconf.wantsInmemoryPipelineBatchsize());
 
         ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
@@ -281,8 +281,8 @@ public class InmemoryPipelineBatchIT {
 
     @Test
     public void testSimBatched() throws Exception {
-        conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
-        log.info("Batch size: {}", conf.wantsInmemoryPipelineBatchsize());
+        iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
+        log.info("Batch size: {}", iconf.wantsInmemoryPipelineBatchsize());
         log.info("Wants it {}", iconf.wantsInmemoryPipeline());
 
         SimulateInvestConfig simConfig = testutils.getSimConfigDefault();
@@ -303,8 +303,8 @@ public class InmemoryPipelineBatchIT {
 
     @Test
     public void testEvolveBatched() throws Exception {
-        conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
-        log.info("Batch size: {}", conf.wantsInmemoryPipelineBatchsize());
+        iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
+        log.info("Batch size: {}", iconf.wantsInmemoryPipelineBatchsize());
 
         ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.EVOLVE, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
@@ -318,8 +318,8 @@ public class InmemoryPipelineBatchIT {
 
     @Test
     public void testImproveProfitBatched() throws Exception {
-        conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
-        log.info("Batch size: {}", conf.wantsInmemoryPipelineBatchsize());
+        iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
+        log.info("Batch size: {}", iconf.wantsInmemoryPipelineBatchsize());
 
         ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.IMPROVEPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
@@ -337,12 +337,12 @@ public class InmemoryPipelineBatchIT {
      */
     @Test
     public void testIndicatorAggregatorGetMapMapDirectComparison() throws Exception {
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSMINIMUMSIZE, 1);
-        conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.AGGREGATORSMINIMUMSIZE, 1);
+        iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
         String market = TestConstants.MARKET;
-        conf.getConfigData().setMarket(market);
+        iconf.getConfigData().setMarket(market);
         List<String> disableList = new ArrayList<>();
-        StockData stockData = new Extract(io.getDbDao()).getStockData(conf, true);
+        StockData stockData = new Extract(io.getDbDao()).getStockData(iconf, true);
 
         NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
         neuralnetcommand.setMlclassify(false);
@@ -350,28 +350,28 @@ public class InmemoryPipelineBatchIT {
         neuralnetcommand.setMldynamic(true);
 
         IndicatorUtils iu = new IndicatorUtils();
-        ExtraReader extraReader = new ExtraReader(conf, stockData.marketdatamap, 0, stockData);
-        Map<String, StockData> extraStockDataMap = new IndicatorUtils().getExtraStockDataMap(conf, io.getDbDao(), extraReader, true);
+        ExtraReader extraReader = new ExtraReader(iconf, stockData.marketdatamap, 0, stockData);
+        Map<String, StockData> extraStockDataMap = new IndicatorUtils().getExtraStockDataMap(iconf, io.getDbDao(), extraReader, true);
 
         log.info("Stock data keys: {}", stockData.marketdatamap.keySet());
-        Pipeline[] datareaders = iu.getDataReaders(conf, stockData.periodText,
+        Pipeline[] datareaders = iu.getDataReaders(iconf, stockData.periodText,
                 stockData.marketdatamap, stockData, extraStockDataMap, extraReader, inmemory);
 
         SerialPipeline pipelinedata = new SerialPipeline();
-        pipelinedata = iu.createDatareaderPipelineData(conf, pipelinedata, stockData, datareaders);
+        pipelinedata = iu.createDatareaderPipelineData(iconf, pipelinedata, stockData, datareaders);
 
-        List<StockDTO> dayStocks = iu.getDayStocks(conf, stockData);
-        List<AbstractCategory> categories = Arrays.asList(new CategoryUtil().getCategories(conf, dayStocks,
+        List<StockDTO> dayStocks = iu.getDayStocks(iconf, stockData);
+        List<AbstractCategory> categories = Arrays.asList(new CategoryUtil().getCategories(iconf, dayStocks,
                 stockData.periodText, pipelinedata, inmemory));
 
         pipelinedata = iu.createPipelineDataCategories(pipelinedata, categories, stockData);
 
         // Test with non-batched mode
-        conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 0);
-        log.info("Running non-batched test with batch size: {}", conf.wantsInmemoryPipelineBatchsize());
+        iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 0);
+        log.info("Running non-batched test with batch size: {}", iconf.wantsInmemoryPipelineBatchsize());
 
-        MLMulti mlMultiNonBatch = new MLMulti(conf, stockData.catName, stockData.catName, stockData.cat, stockData.idNameMap, pipelinedata, neuralnetcommand, stockData.stockdates, inmemory);
-         mlMultiNonBatch.calculateMe(conf, pipelinedata, neuralnetcommand);
+        MLMulti mlMultiNonBatch = new MLMulti(iconf, stockData.catName, stockData.catName, stockData.cat, stockData.idNameMap, pipelinedata, neuralnetcommand, stockData.stockdates, inmemory);
+         mlMultiNonBatch.calculateMe(iconf, pipelinedata, neuralnetcommand);
        mlMultiNonBatch.putData();
 
         inmemory.stat();
@@ -387,11 +387,11 @@ public class InmemoryPipelineBatchIT {
         // pipelinedata = iu.createPipelineDataCategories(pipelinedata, categories, stockData);
 
         // Test with batched mode
-        conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
-        log.info("Running batched test with batch size: {}", conf.wantsInmemoryPipelineBatchsize());
+        iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
+        log.info("Running batched test with batch size: {}", iconf.wantsInmemoryPipelineBatchsize());
 
-        IndicatorAggregator mlMultiBatch = new MLMulti(conf, stockData.catName, stockData.catName, stockData.cat, stockData.idNameMap, pipelinedata, neuralnetcommand, stockData.stockdates, inmemory);
-        mlMultiBatch.calculateMe(conf, pipelinedata, neuralnetcommand);
+        IndicatorAggregator mlMultiBatch = new MLMulti(iconf, stockData.catName, stockData.catName, stockData.cat, stockData.idNameMap, pipelinedata, neuralnetcommand, stockData.stockdates, inmemory);
+        mlMultiBatch.calculateMe(iconf, pipelinedata, neuralnetcommand);
         mlMultiBatch.putData();
 
         inmemory.stat();
@@ -406,9 +406,9 @@ public class InmemoryPipelineBatchIT {
     @Test
     public void testIndicatorAggregatorGetMapMapDirectComparisonReal() throws Exception {
         String market = TestConstants.MARKET;
-        conf.getConfigData().setMarket(market);
+        iconf.getConfigData().setMarket(market);
         List<String> disableList = new ArrayList<>();
-        StockData stockData = new Extract(io.getDbDao()).getStockData(conf, true);
+        StockData stockData = new Extract(io.getDbDao()).getStockData(iconf, true);
 
         NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
         neuralnetcommand.setMlclassify(false);
@@ -419,8 +419,8 @@ public class InmemoryPipelineBatchIT {
 
         log.info("Stock data keys: {}", stockData.marketdatamap.keySet());
 
-        conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 0);
-        Map<IndicatorAggregator.SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = getMapMap(conf, stockData, neuralnetcommand, iu, inmemory);
+        iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 0);
+        Map<IndicatorAggregator.SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = getMapMap(iconf, stockData, neuralnetcommand, iu, inmemory);
 
         // Clear state
         testutils.cacheinvalidate();
@@ -429,11 +429,11 @@ public class InmemoryPipelineBatchIT {
 
         // Recreate pipeline data for batched test
         // Test with batched mode
-        conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
+        iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
 
-        Map<IndicatorAggregator.SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMapBatch = getMapMap(conf, stockData, neuralnetcommand, iu, inmemory);
+        Map<IndicatorAggregator.SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMapBatch = getMapMap(iconf, stockData, neuralnetcommand, iu, inmemory);
 
-        boolean compared = new MLMulti(conf, stockData.catName, stockData.catName, stockData.cat, stockData.idNameMap, new SerialPipeline(), neuralnetcommand, stockData.stockdates, inmemory).compareMaps(mapMap, mapMapBatch);
+        boolean compared = new MLMulti(iconf, stockData.catName, stockData.catName, stockData.cat, stockData.idNameMap, new SerialPipeline(), neuralnetcommand, stockData.stockdates, inmemory).compareMaps(mapMap, mapMapBatch);
 
         log.info("map batch {}", mapMapBatch);
         log.info("map no batch {}", mapMap);
@@ -447,7 +447,7 @@ public class InmemoryPipelineBatchIT {
     }
 
     private Map<IndicatorAggregator.SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> getMapMap(IclijConfig conf, StockData stockData, NeuralNetCommand neuralnetcommand, IndicatorUtils iu, TestInmemory inmemory) throws Exception {
-        log.info("Running test with batch size: {}", conf.wantsInmemoryPipelineBatchsize());
+        log.info("Running test with batch size: {}", iconf.wantsInmemoryPipelineBatchsize());
 
         ExtraReader extraReader = new ExtraReader(conf, stockData.marketdatamap, 0, stockData);
         Map<String, StockData> extraStockDataMap = new IndicatorUtils().getExtraStockDataMap(conf, io.getDbDao(), extraReader, true);

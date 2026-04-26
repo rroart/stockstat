@@ -1,0 +1,29 @@
+<config>
+  <misc>
+    <zookeeper>$ZOOKEEPER</zookeeper>
+    <inmemory><server>$INMEMORYSERVER</server></inmemory>
+    <inmemory><redis>$INMEMORYREDIS</redis></inmemory>
+    <myservices>$MYSERVICESCORE</myservices>
+    <services>$SERVICES</services>
+    <servicerest enable="$SERVICEREST"/>
+    <communications>$COMMUNICATIONS</communications>
+  </misc>
+  <filesystem>
+    <hdfs enable="$HDFS">
+      <hdfsconffs>$HDFSCONFFS</hdfsconffs>
+    </hdfs>
+    <swift enable="$SWIFT">
+      <swiftconfurl>$SWIFTCONFURL</swiftconfurl>
+      <swiftconfuser>$SWIFTCONFUSER</swiftconfuser>
+      <swiftconfkey>$SWIFTCONFKEY</swiftconfkey>
+      <swiftconfcontainer>$SWIFTCONFCONTAINER</swiftconfcontainer>
+    </swift>
+    <s3 enable="$S3">
+	<host>$S3HOST</host>
+	<port>$S3PORT</port>
+	<region>$S3REGION</region>
+	<accesskey>$S3ACCESSKEY</accesskey>
+	<secretkey>$S3SECRETKEY</secretkey>
+    </s3>
+  </filesystem>
+</config>

@@ -105,4 +105,9 @@ public class ServiceConnectionUtil {
         Map<String, String> serviceMap = JsonUtil.convert(services, Map.class);
         return serviceMap.containsKey(service);
     }
+
+    public String getMyServices(String key, String myservicesMap) {
+        Map<String, Map> mapMap = JsonUtil.convertnostrip(myservicesMap, Map.class);
+        return JsonUtil.convert(mapMap.get(key));
+    }
 }

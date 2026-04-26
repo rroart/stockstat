@@ -3,6 +3,7 @@ package roart.controller;
 import java.io.IOException;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import roart.common.util.ServiceConnectionUtil;
 import tools.jackson.core.exc.StreamReadException;
 import tools.jackson.databind.DatabindException;
 import tools.jackson.databind.ObjectMapper;
@@ -59,6 +60,7 @@ public class IclijController implements CommandLineRunner {
             MyExecutors.initThreads("dev".equals(activeProfile));
             MyExecutors.init(new double[] { instance.mpServerCpu() } );
             String myservices = instance.getMyservices();
+            myservices = new ServiceConnectionUtil().getMyServices(ServiceConstants.EVOLVE, myservices);
             String services = instance.getServices();
             String communications = instance.getCommunications();
             new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig, io).start();

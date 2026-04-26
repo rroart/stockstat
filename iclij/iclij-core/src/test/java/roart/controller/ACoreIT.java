@@ -63,7 +63,7 @@ public class ACoreIT {
     IclijDbDao iclijDbDao = mock(IclijDbDao.class);
     
     // no autowiring
-    IclijConfig conf = null;
+    //IclijConfig conf = null;
    
     MyDataSource dataSource;
     
@@ -94,8 +94,8 @@ public class ACoreIT {
     @BeforeAll
     public void before() throws Exception {
         ConfigMaps configMaps = IclijConfig.instanceC();
-        conf = new IclijConfig(configMaps, "coreconfig", null);
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.TRUE);
+        //conf = new IclijConfig(configMaps, "coreconfig", null);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.TRUE);
         log.info("Wants {}", iconf.wantsInmemoryPipeline());
         iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
         log.info("Wants {}", iconf.wantsInmemoryPipeline());
@@ -106,13 +106,13 @@ public class ACoreIT {
         String market = TestConstants.MARKET;
         String start = "2022.01.01";
         String end = "2025.01.01";
-        TestDataSource dataSource1 = new TestDataSource(conf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), market, 26, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null);
-        TestDataSource dataSource2 = new TestDataSource(conf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), TestConstants.MARKET2, 20, false, Constants.PRICECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, "impid");
+        TestDataSource dataSource1 = new TestDataSource(iconf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), market, 26, false, Constants.INDEXVALUECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, null);
+        TestDataSource dataSource2 = new TestDataSource(iconf, new TimeUtil().convertDate2(start), new TimeUtil().convertDate2(end), TestConstants.MARKET2, 20, false, Constants.PRICECOLUMN, false, new String[] { "1d", "1w", "1m", "3m", "1y", "3y", "5y", "10y" }, "impid");
         dataSource = new TestDataSources(List.of(dataSource1, dataSource2));
 
         dbDao = new DbDao(iconf, dataSource);
         
-        webFluxUtil = new TestWebFluxUtil(conf, null);
+        webFluxUtil = new TestWebFluxUtil(iconf, null);
         parameters = new Parameters();
         parameters.setThreshold(1.0);
         parameters.setFuturedays(10);

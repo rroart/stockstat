@@ -30,6 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import roart.common.constants.ServiceConstants;
+import roart.common.util.ServiceConnectionUtil;
 import tools.jackson.core.exc.StreamReadException;
 import tools.jackson.databind.DatabindException;
 import tools.jackson.databind.ObjectMapper;
@@ -187,6 +189,7 @@ public class ServiceController implements CommandLineRunner {
         MyExecutors.initThreads("dev".equals(activeProfile));
         MyExecutors.init(new double[] { 0, iclijConfig.getMLMPCpu() } );
         String myservices = instance.getMyservices();
+        myservices = new ServiceConnectionUtil().getMyServices(ServiceConstants.ML, myservices);
         String services = instance.getServices();
         String communications = instance.getCommunications();
         new roart.machinelearning.service.ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig.copy(), io).start();

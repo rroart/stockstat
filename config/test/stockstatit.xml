@@ -1,7 +1,7 @@
 <config>
   <database>
     <spark enable='false'>
-      <sparkmaster>spark://127.0.0.1:17077</sparkmaster>
+      <sparkmaster>spark://127.0.0.1:7077</sparkmaster>
     </spark>
     <hibernate enable=''/>
     <spring enable=''/>
@@ -12,7 +12,7 @@
       <cpu>0.5</cpu>
     </mp>
     <sparkml enable='false'>
-      <sparkmaster>spark://127.0.0.1:17077</sparkmaster>
+      <sparkmaster>spark://127.0.0.1:7077</sparkmaster>
       <sparknetworktimeout>600</sparknetworktimeout>
       <mlpc enable='true'/>
       <lor enable='true'/>
@@ -145,8 +145,8 @@
     <zookeeper>127.0.0.1:2181</zookeeper>
     <inmemory><server>redis</server></inmemory>
     <inmemory><redis>http://localhost:6379</redis></inmemory>
-    <myservices></myservices>
-    <services>{ "simfilter" : "kafka", "simauto" : "kafka", "evolvefilterevolve" : "kafka", "evolvefilterprofit" : "kafka", "evolvefilterfilter" : "kafka", "evolvefilterabovebelow" : "kafka" }</services>
+    <myservices>{ "core" : { "getmarkets" : "", "getcontent" : "", "getconfig" : "", "getcontentstat" : "", "getcontentgraph" : "", "getcontentgraph2" : "", "getmetas" : "", "getstocks" : "", "getdates" : "", "getevolverecommender" : "" }, "icore" : { "populate" : "" }, "evolve" : { "evolvefilterevolve" : "", "evolvefilterprofit" : "", "evolvefilterfilter" : "", "evolvefilterabovebelow" : "" }, "sim" : { "simfilter" : "", "simauto" : "", "simrun" : "", "ml" : { "getmcontent" : "", "getmconfig" : "", "getevolvenn" : "" }, "spark" : { "clean" : "", "learntestclassify" : "" } }</myservices>
+    <services>{ "getmarkets" : "kafka", "getcontent" : "kafka", "getconfig" : "kafka", "getcontentstat" : "kafka", "getcontentgraph" : "kafka", "getcontentgraph2" : "kafka", "getmetas" : "kafka", "getstocks" : "kafka", "getdates" : "kafka", "getevolverecommender" : "kafka", "populate" : "kafka", "evolvefilterevolve" : "kafka", "evolvefilterprofit" : "kafka", "evolvefilterfilter" : "kafka", "evolvefilterabovebelow" : "kafka", "simfilter" : "kafka", "simauto" : "kafka", "simrun" : "kafka", "ml" : { "getmcontent" : "kafka", "getmconfig" : "kafka", "getevolvenn" : "kafka", "clean" : "kafka", "learntestclassify" : "kafka" }</services>
     <communications>{ "kafka" : "127.0.0.1:9092" }</communications>
   </misc>
   <evolve>

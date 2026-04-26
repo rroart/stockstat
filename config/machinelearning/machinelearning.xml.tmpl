@@ -153,20 +153,10 @@
     <communications>$COMMUNICATIONS</communications>
   </misc>
   <evolve>
-    <indicatorrecommender>
-      <evolutionconfig>{ "generations" : 100, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
-      <simple>
-	<futuredays>10</futuredays>
-	<intervaldays>5</intervaldays>
-      </simple>
-      <complex>
-	<futuredays>10</futuredays>
-	<intervaldays>5</intervaldays>
-      </complex>
-      <!--intervaltimes>10</intervaltimes>
-      <iterations>100</iterations>
-      <period>Price</period-->
-    </indicatorrecommender>
+    <ml>
+      <evolutionconfig>{ "generations" : 10, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
+      <!--evolutionconfig>{ "generations" : 0, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 4, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig-->
+    </ml>
     <save>
 	<location>$SAVELOCATION</location>
 	<path>$SAVEPATH</path>
