@@ -31,7 +31,7 @@ public class OtherIT {
         String myservices = "{ \"TSTSR3\" : \"r\" }";
         String services = "{ \"TSTSR\" : \"camel\", \"TSTSR2\" : \"spring\", \"TSTSR3\" : \"kafka\", \"TSTSR4\" : \"pulsar\" }";
         String communications = "{ \"camel\" : \"rabbitmq://localhost:5672\", \"spring\" : \"localhost\", \"kafka\" : \"192.168.122.219:9092\", \"pulsar\" : \"pulsar://kafka9:6650\" }";
-        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, services, communications);
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, services, communications, iclijConfig.wantRestServices());
         System.out.println("scsc" + sc.getLeft() + " " + sc.getRight());
         ObjectMapper objectMapper = new ObjectMapper();
         //Communication comm = CommunicationFactory.get(communication, IclijServiceResult.class, service, objectMapper, false, true, false, connection);

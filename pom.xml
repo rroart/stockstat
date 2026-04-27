@@ -83,8 +83,7 @@
         </executions>
         <configuration>
           <argLine>${jacocoArgLine}
-	  -Dconfig=${maven.multiModuleProjectDirectory}/config/test/iclijit.xml
-	  -Dcoreconfig=stockstatit.xml
+	  -Dconfig=${maven.multiModuleProjectDirectory}/config/test/stockstatit.xml
             --add-opens java.base/sun.nio.ch=stockstat.shadow.spark
           </argLine>
           <useModulePath>false</useModulePath>

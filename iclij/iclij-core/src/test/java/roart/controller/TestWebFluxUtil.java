@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
@@ -22,8 +21,8 @@ import roart.common.webflux.WebFluxUtil;
 import roart.core.service.CoreControlService;
 import roart.core.service.evolution.CoreEvolutionService;
 import roart.iclij.config.IclijConfig;
-import roart.iclij.service.IclijServiceParam;
-import roart.iclij.service.IclijServiceResult;
+import roart.iclij.common.service.IclijServiceParam;
+import roart.iclij.common.service.IclijServiceResult;
 import roart.machinelearning.service.MachineLearningControlService;
 import roart.machinelearning.service.evolution.MachineLearningEvolutionService;
 import roart.filesystem.FileSystemDao;
@@ -81,6 +80,9 @@ public class TestWebFluxUtil extends WebFluxUtil {
     public <T> T sendCMe(Class<T> clazz, Object param, String path) {
         log.info("Calling {}", path);
         //
+        if (EurekaConstants.GETCONFIG.equals(path)) {
+            return (T) getConfig((IclijServiceParam) param);
+        }
         if (EurekaConstants.GETDATES.equals(path)) {
             return (T) getDates((IclijServiceParam) param);
         }
@@ -189,7 +191,7 @@ public class TestWebFluxUtil extends WebFluxUtil {
             }
             //getContentC( new IclijConfig(param.getConfigData()), disableList, result);
             new CoreControlService(io).getContent( new IclijConfig(param.getConfigData()), disableList, result, param);
-    
+
             long[] mem1 = MemUtil.mem();
             long[] memdiff = MemUtil.diff(mem1, mem0);
             log.info("MEM {} Δ {}", MemUtil.print(mem1), MemUtil.print(memdiff));
@@ -198,6 +200,18 @@ public class TestWebFluxUtil extends WebFluxUtil {
             }
             //System.out.println(VM.current().details());
             //System.out.println(GraphLayout.parseInstance(maps).toFootprint());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            result.setError(e.getMessage());
+        }
+        return result;
+    }
+
+    private IclijServiceResult getConfig(IclijServiceParam param) {
+        IclijServiceResult result = new IclijServiceResult();
+        try {
+            System.out.println("Conf use " + param.getConfigData());
+            result.setConfigData(conf.getConfigData());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());

@@ -29,7 +29,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import roart.common.pipeline.PipelineConstants;
-import roart.common.pipeline.data.SerialList;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
@@ -37,7 +36,6 @@ import tools.jackson.databind.json.JsonMapper;
 import roart.common.config.ConfigConstants;
 import roart.common.config.Extra;
 import roart.iclij.config.IclijConfig;
-import roart.common.config.MyXMLConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.constants.ServiceConstants;
@@ -51,14 +49,12 @@ import roart.common.model.AboveBelowDTO;
 import roart.common.model.ActionComponentDTO;
 import roart.common.model.ConfigDTO;
 import roart.common.model.MLMetricsDTO;
-import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialPipeline;
 import roart.common.pipeline.data.SerialScoreChromosome;
 import roart.common.pipeline.util.PipelineUtils;
 import roart.common.util.JsonUtil;
 import roart.common.util.MathUtil;
 import roart.common.util.TimeUtil;
-import roart.db.dao.IclijDbDao;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.NeuralNetChromosome;
 import roart.gene.NeuralNetConfigGene;
@@ -66,7 +62,6 @@ import roart.iclij.evolution.marketfilter.chromosome.impl.AboveBelowChromosome;
 import roart.iclij.model.Parameters;
 import roart.iclij.service.util.MiscUtil;
 import roart.iclij.config.IclijConfigConstants;
-import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.constants.IclijConstants;
 import roart.gene.impl.ConfigMapGene;
@@ -683,7 +678,7 @@ public class Evolve {
     }
 
     public void send(String service, Object object, ObjectMapper objectMapper) {
-        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications(), iclijConfig.wantRestServices());
         Communication c = io.getCommunicationFactory().get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, null);
         c.send(object);
     }

@@ -7,16 +7,11 @@ import java.util.concurrent.Executors;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.curator.RetryPolicy;
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tools.jackson.databind.ObjectMapper;
 
-import roart.common.communication.factory.CommunicationFactory;
 import roart.common.communication.model.Communication;
 import roart.common.constants.CommunicationConstants;
 import roart.common.constants.Constants;
@@ -123,7 +118,7 @@ public abstract class ServiceControllerOtherAbstract {
         log.info("ReplyPath {}" + replypath);
         if (replypath != null) {
             String service = replypath;
-            Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(c.getService(), services, communications);
+            Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(c.getService(), services, communications, iclijConfig.wantRestServices());
             log.info("ServiceConnection {} {}", sc.getLeft(), sc.getRight());
             Communication c2 = io.getCommunicationFactory().get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, null);
             c2.send(r);

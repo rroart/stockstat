@@ -10,11 +10,11 @@ import roart.common.constants.EurekaConstants;
 
 public class ServiceConnectionUtil {
 
-    public Pair<String, String> getCommunicationConnection(String service, String services, String communications) {
+    public Pair<String, String> getCommunicationConnection(String service, String services, String communications, boolean wantRest) {
         Map<String, String> serviceMap = JsonUtil.convert(services, Map.class);
         Map<String, String> communicationsMap = JsonUtil.convert(communications, Map.class);
         String communication = serviceMap.get(service);
-        if (communication == null) {
+        if (communication == null || wantRest) {
             communication = CommunicationConstants.REST;
         }
         String connection = communicationsMap.get(communication);

@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import roart.common.communication.factory.CommunicationFactory;
 import roart.common.communication.model.Communication;
 import roart.common.constants.Constants;
-import roart.common.constants.EurekaConstants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.queue.QueueElement;
@@ -14,7 +13,6 @@ import roart.common.queueutil.QueueUtils;
 import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
 import roart.iclij.common.service.IclijServiceParam;
-import roart.iclij.common.service.IclijServiceResult;
 import roart.iclij.config.IclijConfig;
 import roart.model.io.IO;
 import tools.jackson.databind.ObjectMapper;
@@ -39,7 +37,7 @@ public class IOUtils {
 
     private <T> T sendCMe(Class<T> myclass, IclijServiceParam param, String service) {
         //IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
-        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications(), iclijConfig.wantRestServices());
         T[] result;// = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG
         Function<String, Boolean> zkRegister = (new QueueUtils(io.getCuratorClient()))::zkRegister;
         Communication c = new CommunicationFactory().get(sc.getLeft(), myclass, service, mapper, true, true, true, sc.getRight(), zkRegister, io.getWebFluxUtil());
@@ -50,7 +48,7 @@ public class IOUtils {
 
     private <T> T sendAMe(Class<T> myclass, IclijServiceParam param, String service) {
         //IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
-        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications(), iclijConfig.wantRestServices());
         T[] result;// = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG
         Function<String, Boolean> zkRegister = (new QueueUtils(io.getCuratorClient()))::zkRegister;
         Communication c = io.getCommunicationFactory().get(sc.getLeft(), myclass, service, mapper, true, true, true, sc.getRight(), zkRegister, io.getWebFluxUtil());
@@ -61,7 +59,7 @@ public class IOUtils {
 
     public void send(String service, Object object, ObjectMapper objectMapper) {
         //IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
-        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications(), iclijConfig.wantRestServices());
         String appid = System.getenv(Constants.APPID);
         if (appid != null) {
             service = service + appid; // can not handle domain, only eureka
@@ -93,7 +91,7 @@ public class IOUtils {
 
     public <T> T[] sendReceive(String service, QueueElement object, ObjectMapper objectMapper) {
         //IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
-        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications(), iclijConfig.wantRestServices());
         String appid = System.getenv(Constants.APPID);
         if (appid != null) {
             service = service + appid; // can not handle domain, only eureka
@@ -127,7 +125,8 @@ public class IOUtils {
 
     public <T> T sendReceiveA(Class<T> clazz, Object param, String rest, String service) {
         if (iclijConfig.wantRestServices() || !new ServiceConnectionUtil().useService(service, iclijConfig.getServices())) {
-            return sendAMe(clazz, (IclijServiceParam) param, rest);
+            return io.getWebFluxUtil().sendAMe(clazz, param, rest);
+            //return sendAMe(clazz, (IclijServiceParam) param, rest);
         } else {
             return sendReceive(clazz, param, service);
         }
@@ -135,7 +134,8 @@ public class IOUtils {
 
     public <T> T sendReceiveC(Class<T> clazz, Object param, String rest, String service) {
         if (iclijConfig.wantRestServices() || !new ServiceConnectionUtil().useService(service, iclijConfig.getServices())) {
-            return sendCMe(clazz, (IclijServiceParam) param, rest);
+            return io.getWebFluxUtil().sendCMe(clazz, param, rest);
+            //return sendCMe(clazz, (IclijServiceParam) param, rest);
         } else {
             return sendReceive(clazz, param, service);
         }

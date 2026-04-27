@@ -28,7 +28,7 @@ public class ControlService2IT {
     public void t0(String service) {
         final String MISCSERVICES = "{ \"TSTSR\" : \"camel\", \"TSTSR2\" : \"spring\", \"TSTSR3\" : \"kafka\", \"TSTSR4\" : \"pulsar\" }";
         final String MISCCOMMUNICATIONS = "{ \"camel\" : \"rabbitmq://localhost:5672\", \"spring\" : \"localhost\", \"kafka\" : \"192.168.122.219:9092\", \"pulsar\" : \"pulsar://kafka9:6650\" }";
-        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, MISCSERVICES, MISCCOMMUNICATIONS);
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, MISCSERVICES, MISCCOMMUNICATIONS, iclijConfig.wantRestServices());
         System.out.println("scsc" + sc.getLeft() + " " + sc.getRight());
         ObjectMapper objectMapper = new ObjectMapper();
         IclijServiceParam param = new IclijServiceParam();
@@ -54,7 +54,7 @@ public class ControlService2IT {
         return r;
     }
     private <T> T sendCMe(Class<T> myclass, IclijServiceParam param, String service) {
-        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, "{}", "{}");
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, "{}", "{}", iclijConfig.wantRestServices());
         T[] result;// = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG        
         System.out.println("mnc"+myclass);
         Communication c = new CommunicationFactory().get(sc.getLeft(), myclass, service, new ObjectMapper(), true, true, true, sc.getRight(), null, webFluxUtil);

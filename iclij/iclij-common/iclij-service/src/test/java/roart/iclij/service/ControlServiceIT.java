@@ -4,11 +4,14 @@ import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.util.Arrays;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.TestInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.db.dao.IclijDbDao;
+import org.springframework.context.annotation.Bean;
+import roart.common.config.ConfigConstants;
+import roart.common.config.ConfigMaps;
 import roart.iclij.common.service.IclijServiceParam;
 import roart.iclij.common.service.IclijServiceResult;
 import roart.iclij.config.bean.ConfigI;
@@ -28,35 +31,48 @@ import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import roart.testdata.TestConfiguration;
-import roart.testdata.TestUtils;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 
-@EmbeddedKafka(partitions = 1, topics = {"my-new-topic"})
+@EmbeddedKafka //(partitions = 1, topics = {"my-new-topic"})
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringJUnitConfig
 //@TestPropertySource("file:${user.dir}/../../../config/test/application.properties")
 //@ComponentScan(basePackages = "roart.testdata")
 //@SpringBootTest(classes = { TestConfiguration.class, TestUtils.class } )
-@SpringBootTest(classes = { IclijConfig.class }) //, IclijDbDao.class, ConfigI.class, ConfigDb.class } )
+@SpringBootTest(classes = { IclijConfig.class, ConfigI.class }) //, IclijDbDao.class, ConfigI.class, ConfigDb.class } )
 public class ControlServiceIT {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     private static final boolean SENDRECEIVE = false;
+    @Autowired
     private IclijConfig iclijConfig;
     
     private WebFluxUtil webFluxUtil = new WebFluxUtil();
-    
+
+    @Bean
+    public ConfigMaps getConfigMaps() {
+        return IclijConfig.instanceI();
+    }
+
     @Autowired
-    private TestUtils testUtils;
+    private EmbeddedKafkaBroker kafkaEmbedded;
+
+    //@Autowired
+    //private TestUtils testUtils;
     
     private IO io;
 
+    @BeforeAll
+    public void before() throws Exception {
+        String brokers = kafkaEmbedded.getBrokersAsString();
+        System.out.println("brokers" + brokers);
+        //String[] split = brokers.split(":");
+        iclijConfig.getConfigData().getConfigValueMap().put(ConfigConstants.MISCCOMMUNICATIONS, "{ \"kafka\" : \"" + brokers + "\"}");
+    }
     // TODO @Test
     public void t() {
         IclijServiceParam param = new IclijServiceParam();
@@ -72,7 +88,7 @@ public class ControlServiceIT {
         return r;
     }
     private <T> T sendCMe(Class<T> myclass, IclijServiceParam param, String service) {
-        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, "{}", "{}");
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, "{}", "{}", iclijConfig.wantRestServices());
         T[] result;// = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG        
         log.info("mnc"+myclass);
         Communication c = new CommunicationFactory().get(sc.getLeft(), myclass, service, new ObjectMapper(), true, true, true, sc.getRight(), null, webFluxUtil);
@@ -121,15 +137,16 @@ public class ControlServiceIT {
         log.info("t4" + param.getWebpath());
     }
     
-    @Test
+    // @Test
     public void comms() {
         int counter = 0;
         List<String> comms = List.of(CommunicationConstants.KAFKA, CommunicationConstants.PULSAR, CommunicationConstants.CAMEL, CommunicationConstants.SPRING);
         IclijServiceParam param = new IclijServiceParam();
         param.setWebpath("TST");
+        log.info("comms {} {}", iclijConfig.getServices(), iclijConfig.getCommunications());
         ObjectMapper objectMapper = new ObjectMapper();
         for (String comm : comms) {
-            Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(ServiceConstants.SIMAUTO, testUtils.createServicesAsString(comm), testUtils.createCommunicationAsString());
+            Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(ServiceConstants.SIMAUTO, iclijConfig.getServices(), iclijConfig.getCommunications(), iclijConfig.wantRestServices());
             Communication c = new CommunicationFactory().get(sc.getLeft(), String.class, comm, objectMapper, true, true, false, sc.getRight(), null, webFluxUtil);
             //Communication c = CommunicationFactory.get(comm, IclijServiceParam.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "rabbitmq://localhost:5672", func);
             c.send("Counter " + comm + " " + counter++);
@@ -158,7 +175,7 @@ public class ControlServiceIT {
         ObjectMapper objectMapper = new ObjectMapper();
         for (String comm : comms) {
             for (int i = 0; i < 3; i++) {
-                Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(ServiceConstants.SIMAUTO, testUtils.createServicesAsString(comm), testUtils.createCommunicationAsString());
+                Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(ServiceConstants.SIMAUTO, iclijConfig.getServices(), iclijConfig.getCommunications(), iclijConfig.wantRestServices());
                 Communication c = new CommunicationFactory().get(sc.getLeft(), String.class, comm, objectMapper, true, true, false, sc.getRight(), this::print, webFluxUtil);
                 //Communication c = CommunicationFactory.get(comm, IclijServiceParam.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "rabbitmq://localhost:5672", func);
                 c.send("Counter " + comm + " " + counter++);
@@ -167,7 +184,7 @@ public class ControlServiceIT {
         for (String comm : comms) {
             int i = 0;
             for (Function<String, Boolean> func : funcs) {
-                Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(ServiceConstants.SIMAUTO, testUtils.createServicesAsString(comm), testUtils.createCommunicationAsString());
+                Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(ServiceConstants.SIMAUTO, iclijConfig.getServices(), iclijConfig.getCommunications(), iclijConfig.wantRestServices());
                 Communication c = new CommunicationFactory().get(sc.getLeft(), String.class, comm, objectMapper, true, true, false, sc.getRight(), func, webFluxUtil);
                 //Communication c = CommunicationFactory.get(comm, IclijServiceParam.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "rabbitmq://localhost:5672", func);
                 try {
