@@ -7,6 +7,10 @@ public class PipelineDataBatch extends SerialObject {
 
     private SerialObject value;
 
+    public PipelineDataBatch() {
+        // jackson
+    }
+
     public PipelineDataBatch(PipelineData data) {
         this.loaded = data.isLoaded();
         this.message = data.getMessage();
