@@ -99,6 +99,7 @@ public class AsyncET {
         ConfigMaps configMaps = IclijConfig.instanceC();
         //conf = new IclijConfig(configMaps, "coreconfig", null);
         iconf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.FALSE);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.MISCSERVICESREST, Boolean.FALSE);
         //conf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.FALSE);
 
         dbDao = new DbDao(iconf, dataSource);

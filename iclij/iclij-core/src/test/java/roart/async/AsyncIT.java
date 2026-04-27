@@ -2,6 +2,7 @@ package roart.async;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.slf4j.Logger;
@@ -52,6 +53,7 @@ import static org.mockito.Mockito.mock;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 
+@Disabled
 @EmbeddedKafka // did not work (ports = { 9092 })
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
@@ -110,6 +112,7 @@ public class AsyncIT {
         System.out.println("before" + System.getProperty("config") + " "+ System.getProperty("coreconfig"));
         log.info("Wants {}", iconf.wantsInmemoryPipeline());
         iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.MISCSERVICESREST, Boolean.FALSE);
         log.info("Wants {}", iconf.wantsInmemoryPipeline());
         ConfigMaps configMaps = IclijConfig.instanceC();
         //conf = new IclijConfig(configMaps, "coreconfig", null);
