@@ -150,7 +150,7 @@ public class AllET {
           List<String> indicators = List.of(PipelineConstants.INDICATORATR, PipelineConstants.INDICATORCCI, PipelineConstants.INDICATORMACD, PipelineConstants.INDICATORRSI, PipelineConstants.INDICATORSTOCH, PipelineConstants.INDICATORSTOCHRSI);
           List<SerialMapTA> objectMapsList = new ArrayList<>();
           List<Map<String, Double[][]>> listList = new ArrayList<>();
-          conf.getConfigData().setMarket(TestConstants.MARKET);
+          conf.getConfigData().setMarket(market);
           */
           String market = conf.getConfigData().getMarket();
           StockData stockData = new TestData().getStockdata(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), market, 26, false, Constants.INDEXVALUECOLUMN, false);
@@ -319,7 +319,8 @@ public class AllET {
 
     @Test
     public void testMachineLearning() throws Exception {
-        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.MACHINELEARNING, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        String market = System.getenv("MARKET");
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.MACHINELEARNING, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         //aci.setBuy(null);
         //aci.setRecord(LocalDate.now());
         try {
@@ -331,7 +332,8 @@ public class AllET {
 
     @Test
     public void testFindProfit() throws Exception {
-        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        String market = System.getenv("MARKET");
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.FINDPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         //aci.setBuy(null);
         //aci.setRecord(LocalDate.now());
         try {
@@ -343,7 +345,8 @@ public class AllET {
 
     @Test
     public void testFindProfitPredictor() throws Exception {
-        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.PREDICTOR, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        String market = System.getenv("MARKET");
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.FINDPROFIT, PipelineConstants.PREDICTOR, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         //aci.setBuy(null);
         //aci.setRecord(LocalDate.now());
         try {
@@ -355,7 +358,8 @@ public class AllET {
 
     @Test
     public void testEvolve() throws Exception {
-        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.EVOLVE, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        String market = System.getenv("MARKET");
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.EVOLVE, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
@@ -365,7 +369,8 @@ public class AllET {
 
     @Test
     public void testEvolveARI() throws Exception {
-        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.EVOLVE, PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null, 0, JsonUtil.convert(parameters));
+        String market = System.getenv("MARKET");
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.EVOLVE, PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
@@ -375,7 +380,8 @@ public class AllET {
 
     @Test
     public void testImproveProfit() throws Exception {
-        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.IMPROVEPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        String market = System.getenv("MARKET");
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.IMPROVEPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
@@ -385,7 +391,8 @@ public class AllET {
 
     @Test
     public void testImproveProfit2() throws Exception {
-        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.IMPROVEPROFIT, PipelineConstants.MLINDICATOR, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        String market = System.getenv("MARKET");
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.IMPROVEPROFIT, PipelineConstants.MLINDICATOR, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
@@ -395,7 +402,8 @@ public class AllET {
 
     @Test
     public void testCrosstest() throws Exception {
-        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.CROSSTEST, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        String market = System.getenv("MARKET");
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.CROSSTEST, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
@@ -429,7 +437,7 @@ public class AllET {
     @Test
     public void testSim() throws Exception {
         SimulateInvestConfig simConfig = testutils.getSimConfigDefault();
-        String market = TestConstants.MARKET;
+        String market = System.getenv("MARKET");
         simConfig.setStartdate("2024-11-01");
         simConfig.setEnddate("2024-12-01");
         IclijServiceResult result = null;
@@ -445,7 +453,7 @@ public class AllET {
     @Test
     public void testAutoSim() throws Exception {
         AutoSimulateInvestConfig simConfig = testutils.getAutoSimConfigDefault();
-        String market = TestConstants.MARKET;
+        String market = System.getenv("MARKET");
         simConfig.setStartdate("2024-11-01");
         simConfig.setEnddate("2024-12-01");
         IclijServiceResult result = null;
@@ -461,7 +469,7 @@ public class AllET {
     @Test
     public void testImproveSim() throws Exception {
         SimulateInvestConfig simConfig = testutils.getImproveSimConfigDefault();
-        String market = TestConstants.MARKET;
+        String market = System.getenv("MARKET");
         simConfig.setStartdate("2024-11-01");
         simConfig.setEnddate("2024-12-01");
         IclijServiceResult result = null;
@@ -477,7 +485,7 @@ public class AllET {
     @Test
     public void testImproveAutoSim() throws Exception {
         AutoSimulateInvestConfig simConfig = testutils.getImproveAutoSimConfigDefault();
-        String market = TestConstants.MARKET;
+        String market = System.getenv("MARKET");
         simConfig.setStartdate("2024-11-01");
         simConfig.setEnddate("2024-12-01");
         IclijServiceResult result = null;
@@ -499,6 +507,7 @@ public class AllET {
     @Deprecated
     /// TODO too big
     public void getDates(IclijConfig conf, IclijServiceResult result) throws Exception {
+        String market = System.getenv("MARKET");
         SerialPipeline pipelineData = new SerialPipeline();
         Map<String, Object> aMap = new HashMap<>();
         /*
@@ -517,7 +526,7 @@ public class AllET {
         conf.setConfigValueMap(new HashMap<>(conf.getConfigValueMap()));
         */
         conf.getConfigData().getConfigValueMap().putAll(aMap);
-        StockData stockData = new TestData().getStockdata(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), TestConstants.MARKET, 26, false, Constants.INDEXVALUECOLUMN, false);
+        StockData stockData = new TestData().getStockdata(conf, new TimeUtil().convertDate2("2024.01.01"), new TimeUtil().convertDate2("2025.01.01"), market, 26, false, Constants.INDEXVALUECOLUMN, false);
         //StockData stockData = new Extract(dbDao).getStockData(conf);
         if (stockData != null) {
             PipelineData map = new PipelineData(PipelineConstants.DATELIST, PipelineConstants.DATELIST, null, new SerialListPlain(stockData.stockdates), false);
