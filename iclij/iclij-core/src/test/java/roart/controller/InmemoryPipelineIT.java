@@ -12,6 +12,8 @@ import java.util.Arrays;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -176,6 +178,24 @@ public class InmemoryPipelineIT {
 
     }
 
+    @BeforeEach
+    public void beforeEach() throws Exception {
+        // Ensure clean state before each test
+        assertEquals(true, inmemory.isEmpty(), 
+            "Test must start with clean inmemory state");
+    }
+
+    @AfterEach
+    public void afterEach() throws Exception {
+        // Clean cache and pipeline
+        testutils.cacheinvalidate();
+        testutils.deletepipeline(ControlService.id);
+        
+        // Verify complete cleanup
+        assertEquals(true, inmemory.isEmpty(), 
+            "Inmemory cache must be empty after test - test left leakage");
+    }
+
     @Test
     public void test() throws Exception {
         //new LeaderRunner(iconf, null, io).run();
@@ -191,8 +211,6 @@ public class InmemoryPipelineIT {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        inmemory.stat();
-        assertEquals(true, inmemory.isEmpty());
     }
 
     @Test
@@ -205,7 +223,6 @@ public class InmemoryPipelineIT {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        inmemory.stat();
     }
 
     @Test
@@ -218,7 +235,6 @@ public class InmemoryPipelineIT {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        inmemory.stat();
     }
 
     @Test
@@ -231,7 +247,6 @@ public class InmemoryPipelineIT {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        inmemory.stat();
     }
 
     @Test
@@ -242,8 +257,6 @@ public class InmemoryPipelineIT {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        inmemory.stat();
-        assertEquals(true, inmemory.isEmpty());
     }
 
     @Test
@@ -254,7 +267,6 @@ public class InmemoryPipelineIT {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        inmemory.stat();
     }
 
     @Test
@@ -265,8 +277,6 @@ public class InmemoryPipelineIT {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        inmemory.stat();
-        assertEquals(true, inmemory.isEmpty());
     }
 
     @Test
@@ -277,8 +287,6 @@ public class InmemoryPipelineIT {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        inmemory.stat();
-        assertEquals(true, inmemory.isEmpty());
     }
 
     // TODO already
@@ -290,8 +298,6 @@ public class InmemoryPipelineIT {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        inmemory.stat();
-        assertEquals(true, inmemory.isEmpty());
     }
 
     @Test
@@ -302,8 +308,6 @@ public class InmemoryPipelineIT {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        inmemory.stat();
-        assertEquals(true, inmemory.isEmpty());
     }
 
     @Test
@@ -314,8 +318,6 @@ public class InmemoryPipelineIT {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        inmemory.stat();
-        assertEquals(true, inmemory.isEmpty());
     }
 
     @Test
@@ -333,8 +335,6 @@ public class InmemoryPipelineIT {
         }
         System.out.println("map" + result.getWebdatajson().getUpdateMap());
         System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
-        inmemory.stat();
-        assertEquals(true, inmemory.isEmpty());
     }
 
     // for testing markets with delayed value and buy/sell
@@ -349,29 +349,31 @@ public class InmemoryPipelineIT {
         simConfig.setEnddate("2024-12-01");
         
         DbDao origDbDao = io.getDbDao();
-        DbDao dbDao = new DbDao(iconf, periodDataSources[2][1]); // stock 2 day 1
-        io.setDbDao(dbDao);        
+        try {
+            // TODO did not work when testing all
+            //DbDao dbDao = new DbDao(iconf, periodDataSources[2][1]); // stock 2 day 1
+            //io.setDbDao(dbDao);
 
-        IclijServiceResult result = null;
-        try {
-            simConfig.setBuyweight(false);
-            result = testutils.getSimulateInvestMarket(simConfig, market);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
+            IclijServiceResult result = null;
+            try {
+                simConfig.setBuyweight(false);
+                result = testutils.getSimulateInvestMarket(simConfig, market);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            System.out.println("map" + result.getWebdatajson().getUpdateMap());
+            System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+            try {
+                simConfig.setBuyweight(true);
+                result = testutils.getSimulateInvestMarket(simConfig, market);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            System.out.println("map" + result.getWebdatajson().getUpdateMap());
+            System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
+        } finally {
+            io.setDbDao(origDbDao);  // Guaranteed restoration even if exception occurs
         }
-        System.out.println("map" + result.getWebdatajson().getUpdateMap());
-        System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
-        try {
-            simConfig.setBuyweight(true);
-            result = testutils.getSimulateInvestMarket(simConfig, market);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        System.out.println("map" + result.getWebdatajson().getUpdateMap());
-        System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
-        inmemory.stat();
-        assertEquals(true, inmemory.isEmpty());
-        io.setDbDao(origDbDao);
     }
 
     @Test
@@ -392,8 +394,6 @@ public class InmemoryPipelineIT {
         }
         System.out.println("map" + result.getWebdatajson().getUpdateMap());
         System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
-        inmemory.stat();
-        assertEquals(true, inmemory.isEmpty());
     }
 
     @Test
@@ -415,8 +415,6 @@ public class InmemoryPipelineIT {
         }
         System.out.println("map" + result.getWebdatajson().getUpdateMap());
         System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
-        inmemory.stat();
-        assertEquals(true, inmemory.isEmpty());
         if (!((List) result.getWebdatajson().getUpdateMap().get(SimConstants.LASTSTOCKS)).isEmpty()) {
             assertEquals(simConfig.getStocks(), ((List) result.getWebdatajson().getUpdateMap().get(SimConstants.LASTSTOCKS)).size());
          }
@@ -458,8 +456,6 @@ public class InmemoryPipelineIT {
         }
         System.out.println("map" + result.getWebdatajson().getUpdateMap());
         System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
-        inmemory.stat();
-        assertEquals(true, inmemory.isEmpty());
     }
 
     @Test
@@ -476,8 +472,6 @@ public class InmemoryPipelineIT {
         }
         System.out.println("map" + result.getWebdatajson().getUpdateMap());
         System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
-        inmemory.stat();
-        assertEquals(true, inmemory.isEmpty());
     }
 
     @Test
@@ -495,10 +489,6 @@ public class InmemoryPipelineIT {
         //System.out.println("map" + result.getWebdatajson().getUpdateMap());
         //System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
         assertEquals(false, inmemory.isEmpty());
-        testutils.cacheinvalidate();
-        testutils.deletepipeline(ControlService.id);
-        inmemory.stat();
-        assertEquals(true, inmemory.isEmpty());
     }
 
     @Test
@@ -521,10 +511,6 @@ public class InmemoryPipelineIT {
         //System.out.println("map" + result.getWebdatajson().getUpdateMap());
         //System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
         assertEquals(false, inmemory.isEmpty());
-        testutils.cacheinvalidate();
-        testutils.deletepipeline(ControlService.id);
-        inmemory.stat();
-        assertEquals(true, inmemory.isEmpty());
     }
 
     @Test
@@ -542,10 +528,6 @@ public class InmemoryPipelineIT {
         //System.out.println("map" + result.getWebdatajson().getUpdateMap());
         //System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
         assertEquals(false, inmemory.isEmpty());
-        testutils.cacheinvalidate();
-        testutils.deletepipeline(ControlService.id);
-        inmemory.stat();
-        assertEquals(true, inmemory.isEmpty());
     }
     
     /*

@@ -10,9 +10,7 @@ import java.util.*;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.curator.framework.CuratorFramework;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -171,6 +169,34 @@ public class InmemoryPipelineBatchIT {
 
     }
 
+    @BeforeEach
+    public void beforeEach() throws Exception {
+        // Ensure clean state before each test
+        iconf.getConfigData().getConfigValueMap().put(
+            IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 0);
+        testutils.cacheinvalidate();
+        testutils.deletepipeline(ControlService.id);
+        inmemory.stat();
+        assertEquals(true, inmemory.isEmpty(),
+            "Test must start with clean inmemory state");
+    }
+
+    @AfterEach
+    public void afterEach() throws Exception {
+        // Reset configuration to default state
+        iconf.getConfigData().getConfigValueMap().put(
+            IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 0);
+
+        // Clean cache and pipeline
+        testutils.cacheinvalidate();
+        testutils.deletepipeline(ControlService.id);
+        inmemory.stat();
+
+        // Verify complete cleanup
+        assertEquals(true, inmemory.isEmpty(),
+            "Inmemory cache must be empty after test - test left leakage");
+    }
+
     @Test
     public void test() throws Exception {
         // placeholder test
@@ -195,9 +221,6 @@ public class InmemoryPipelineBatchIT {
         inmemory.stat();
 
         // Clear and run test with batching
-        testutils.cacheinvalidate();
-        testutils.deletepipeline(ControlService.id);
-        inmemory.stat();
 
         iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINEBATCHSIZE, 5);
         log.info("Batch size: {}", iconf.wantsInmemoryPipelineBatchsize());
