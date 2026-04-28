@@ -19,4 +19,7 @@ module ml.spark {
     requires pipeline.model;
     requires tools.jackson.databind;
     requires org.apache.commons.lang3;
+    requires common.io;
+    requires common.communication.factory;
+    requires common.inmemory.factory;
 }

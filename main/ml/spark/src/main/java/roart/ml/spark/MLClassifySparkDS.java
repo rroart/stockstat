@@ -4,12 +4,16 @@ import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 
+import roart.common.communication.factory.CommunicationFactory;
+import roart.common.constants.ServiceConstants;
+import roart.common.inmemory.factory.InmemoryFactory;
 import roart.ml.common.MLClassifyDS;
 import roart.common.webflux.WebFluxUtil;
 import roart.iclij.config.IclijConfig;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.ml.model.LearnTestClassifyResult;
+import roart.model.io.IO;
 import roart.pipeline.common.aggregate.Aggregator;
 import roart.common.config.MLConstants;
 import roart.common.constants.EurekaConstants;
@@ -18,6 +22,8 @@ import roart.ml.common.MLMeta;
 import roart.ml.model.LearnClassify;
 import roart.ml.model.LearnTestClassify;
 import roart.ml.model.LearnTestClassifyDS;
+import tools.jackson.databind.ObjectMapper;
+import roart.model.io.util.IOUtils;
 
 public class MLClassifySparkDS extends MLClassifyDS {
 
@@ -81,7 +87,9 @@ public class MLClassifySparkDS extends MLClassifyDS {
         param.mlmeta = mlmeta;
         param.classify = classify;
         //param.modelid.setConf(null);
-        return webFluxUtil.sendSMe(LearnTestClassifyResult.class, param, EurekaConstants.LEARNTESTCLASSIFY);
+        IO io = new IO(null, null, new WebFluxUtil(), null, new InmemoryFactory(), new CommunicationFactory(), null);
+        return new IOUtils(io, conf, new ObjectMapper()).sendReceiveS(LearnTestClassifyResult.class, param,  EurekaConstants.LEARNTESTCLASSIFY);
+        //return webFluxUtil.sendSMe(LearnTestClassifyResult.class, param, EurekaConstants.LEARNTESTCLASSIFY);
     }
 
     @Override

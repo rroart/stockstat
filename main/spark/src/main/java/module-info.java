@@ -52,4 +52,12 @@ open module core {
     //requires jakarta.interceptor;
     requires iclij.common.config;
     requires iclij.common.service;
+    requires iclij.common.model;
+    requires common.communication.model;
+    requires common.queue;
+    requires common.io;
+    requires common.inmemory.model;
+    requires common.communication.factory;
+    requires common.inmemory.factory;
+    requires common.webflux;
 }
