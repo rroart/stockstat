@@ -143,7 +143,9 @@ public class DataReader extends Pipeline {
             this.listMap = null;
             return;
         }
-        this.listMap = ValueETL.abnormalChange(this.listMap, conf);
+        if (category == -1 || category == -2) {
+            this.listMap = ValueETL.abnormalChange(this.listMap, conf);
+        }
         if (MetaUtil.normalPeriod(marketData, category, categoryTitle)) {
         this.fillListMap = ValueETL.getReverseArrSparseFillHolesArr(conf, listMap);
         this.truncListMap = ArraysUtil.getTruncListArr(this.listMap);
@@ -179,4 +181,7 @@ public class DataReader extends Pipeline {
     }
 
 
+    public Map<String, Double[][]> getListMap() {
+        return this.listMap;
+    }
 }
