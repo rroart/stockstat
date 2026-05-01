@@ -48,7 +48,7 @@ class BatchIT {
     IclijConfig iconf = null;
     
     // no autowiring
-    IclijConfig conf = null;
+    //IclijConfig conf = null;
    
     MyDataSource dataSource;
     
@@ -61,15 +61,15 @@ class BatchIT {
         log.info("Setting up batch integration tests");
         
         ConfigMaps configMaps = IclijConfig.instanceC();
-        conf = new IclijConfig(configMaps, "coreconfig", null);
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.TRUE);
+        //conf = new IclijConfig(configMaps, "coreconfig", null);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.TRUE);
         
         String market = TestConstants.MARKET;
         String start = "2022.01.01";
         String end = "2025.01.01";
         
         try {
-            TestDataSource dataSource1 = new TestDataSource(conf, 
+            TestDataSource dataSource1 = new TestDataSource(iconf, 
                 TimeUtil.convertDate2(start), 
                 TimeUtil.convertDate2(end), 
                 market, 26, false, Constants.INDEXVALUECOLUMN, false, 
@@ -98,16 +98,16 @@ class BatchIT {
         String market = TestConstants.MARKET;
         
         // Setup batch size for batched loading
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.DATABASEBATCHSIZE, 5);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.DATABASEBATCHSIZE, 5);
         
         // Load data batch-wise
-        StockData batchedResult = extract.getStockData(conf, market, true);
+        StockData batchedResult = extract.getStockData(iconf, market, true);
         
         // Setup non-batched loading (batch size 0)
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.DATABASEBATCHSIZE, 0);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.DATABASEBATCHSIZE, 0);
         
         // Load all data at once
-        StockData nonBatchedResult = extract.getStockData(conf, market, true);
+        StockData nonBatchedResult = extract.getStockData(iconf, market, true);
         
         // Verify results are equivalent using comparison methods
         assertNotNull(batchedResult, "Batched result should not be null");
@@ -140,16 +140,16 @@ class BatchIT {
         String market = TestConstants.MARKET;
         
         // Setup batch size for exact boundary testing
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.DATABASEBATCHSIZE, 5);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.DATABASEBATCHSIZE, 5);
         
         // Load batched result
-        StockData batchedResult = extract.getStockData(conf, market, true);
+        StockData batchedResult = extract.getStockData(iconf, market, true);
         
         // Setup non-batched loading
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.DATABASEBATCHSIZE, 0);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.DATABASEBATCHSIZE, 0);
         
         // Load non-batched result
-        StockData nonBatchedResult = extract.getStockData(conf, market, true);
+        StockData nonBatchedResult = extract.getStockData(iconf, market, true);
         
         assertNotNull(batchedResult, "Batched result should not be null");
         assertNotNull(nonBatchedResult, "Non-batched result should not be null");
@@ -177,16 +177,16 @@ class BatchIT {
         String market = TestConstants.MARKET;
         
         // Setup smaller batch size to test partial batches
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.DATABASEBATCHSIZE, 7);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.DATABASEBATCHSIZE, 7);
         
         // Load batched result with partial final batch
-        StockData batchedResult = extract.getStockData(conf, market, true);
+        StockData batchedResult = extract.getStockData(iconf, market, true);
         
         // Setup non-batched loading
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.DATABASEBATCHSIZE, 0);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.DATABASEBATCHSIZE, 0);
         
         // Load non-batched result
-        StockData nonBatchedResult = extract.getStockData(conf, market, true);
+        StockData nonBatchedResult = extract.getStockData(iconf, market, true);
         
         assertNotNull(batchedResult, "Batched result should not be null");
         assertNotNull(nonBatchedResult, "Non-batched result should not be null");
@@ -214,9 +214,9 @@ class BatchIT {
         String market = TestConstants.MARKET;
         
         // Setup large batch size so all data fits in one batch
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.DATABASEBATCHSIZE, 1000);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.DATABASEBATCHSIZE, 1000);
         
-        StockData result = extract.getStockData(conf, market, true);
+        StockData result = extract.getStockData(iconf, market, true);
         
         assertNotNull(result, "Result should not be null");
         assertNotNull(result.datedstocks, "Dated stocks should not be null");
@@ -236,9 +236,9 @@ class BatchIT {
         String market = TestConstants.MARKET;
         
         // Setup batch size for merging test
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.DATABASEBATCHSIZE, 5);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.DATABASEBATCHSIZE, 5);
         
-        StockData batchedResult = extract.getStockData(conf, market, true);
+        StockData batchedResult = extract.getStockData(iconf, market, true);
         
         assertNotNull(batchedResult, "Batched result should not be null");
         assertNotNull(batchedResult.stockidmap, "Stock ID map should not be null");
@@ -258,9 +258,9 @@ class BatchIT {
         String market = TestConstants.MARKET;
         
         // Setup batch size for merging test
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.DATABASEBATCHSIZE, 5);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.DATABASEBATCHSIZE, 5);
         
-        StockData batchedResult = extract.getStockData(conf, market, true);
+        StockData batchedResult = extract.getStockData(iconf, market, true);
         
         assertNotNull(batchedResult, "Batched result should not be null");
         assertNotNull(batchedResult.stockdatemap, "Stock date map should not be null");

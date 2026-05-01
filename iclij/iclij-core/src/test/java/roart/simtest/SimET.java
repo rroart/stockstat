@@ -96,7 +96,7 @@ public class SimET {
     IclijDbDao iclijDbDao;
     
     // no autowiring
-    IclijConfig conf = null;
+    //IclijConfig conf = null;
    
     private static final ObjectMapper mapper = JsonMapper.builder().build();
 
@@ -127,8 +127,8 @@ public class SimET {
     @BeforeAll
     public void before() throws Exception {
         ConfigMaps configMaps = IclijConfig.instanceC();
-        conf = new IclijConfig(configMaps, "coreconfig", null);
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.TRUE);
+        //conf = new IclijConfig(configMaps, "coreconfig", null);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.TRUE);
         log.info("Wants {}", iconf.wantsInmemoryPipeline());
         iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
         log.info("Wants {}", iconf.wantsInmemoryPipeline());
@@ -136,10 +136,10 @@ public class SimET {
         MyCache.setCache(iconf.wantCache());
         MyCache.setCacheTTL(iconf.getCacheTTL());
 
-        dbDao = new DbDao(conf, dataSource);
+        dbDao = new DbDao(iconf, dataSource);
         iclijDbDao = new IclijDbDao(iconf, dbSpringDS);
         
-        webFluxUtil = new TestWebFluxUtil(conf, null);
+        webFluxUtil = new TestWebFluxUtil(iconf, null);
         parameters = new Parameters();
         parameters.setThreshold(1.0);
         parameters.setFuturedays(10);

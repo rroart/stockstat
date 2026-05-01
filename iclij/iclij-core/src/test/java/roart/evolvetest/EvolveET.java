@@ -82,7 +82,7 @@ public class EvolveET {
     IclijDbDao iclijDbDao;
     
     // no autowiring
-    IclijConfig conf = null;
+    //IclijConfig conf = null;
    
     private static final ObjectMapper mapper = JsonMapper.builder().build();
 
@@ -109,30 +109,32 @@ public class EvolveET {
     private CommunicationFactory communicationFactory = new TestCommunicationFactory();
 
     private TestInmemory inmemory;
-    
+
+    String market = System.getenv("MARKET");
+
     @BeforeAll
     public void before() throws Exception {
         ConfigMaps configMaps = IclijConfig.instanceC();
-        conf = new IclijConfig(configMaps, "coreconfig", null);
-        conf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.FALSE);
+        //conf = new IclijConfig(configMaps, "coreconfig", null);
+        iconf.getConfigData().getConfigValueMap().put(ConfigConstants.MACHINELEARNINGRANDOM, Boolean.FALSE);
         log.info("Wants {}", iconf.wantsInmemoryPipeline());
         iconf.getConfigData().getConfigValueMap().put(IclijConfigConstants.MISCINMEMORYPIPELINE, Boolean.TRUE);
         log.info("Wants {}", iconf.wantsInmemoryPipeline());
-        log.info("keys" + conf.getConfigData().getConfigValueMap().get(ConfigConstants.AGGREGATORSUSECURVE));
-        log.info("keys" + conf.getConfigData().getConfigValueMap().get(ConfigConstants.AGGREGATORSUSECONFUSION));
-        log.info("keys" + conf.getConfigData().getConfigValueMap().get(ConfigConstants.MACHINELEARNINGUSEBINARY));
-        log.info("Use curve {}", conf.wantAggregatorsUsecurve());
-        log.info("Use confusion {}", conf.wantAggregatorsUseConfusion());
-        log.info("Use binary {}", conf.wantUseBinary());
+        log.info("keys" + iconf.getConfigData().getConfigValueMap().get(ConfigConstants.AGGREGATORSUSECURVE));
+        log.info("keys" + iconf.getConfigData().getConfigValueMap().get(ConfigConstants.AGGREGATORSUSECONFUSION));
+        log.info("keys" + iconf.getConfigData().getConfigValueMap().get(ConfigConstants.MACHINELEARNINGUSEBINARY));
+        log.info("Use curve {}", iconf.wantAggregatorsUsecurve());
+        log.info("Use confusion {}", iconf.wantAggregatorsUseConfusion());
+        log.info("Use binary {}", iconf.wantUseBinary());
         //log.info("Use binary {}", iconf.wantUseBinary());
 
         MyCache.setCache(iconf.wantCache());
         MyCache.setCacheTTL(iconf.getCacheTTL());
 
-        dbDao = new DbDao(conf, dataSource);
+        dbDao = new DbDao(iconf, dataSource);
         iclijDbDao = new IclijDbDao(iconf, dbSpringDS);
         
-        webFluxUtil = new TestWebFluxUtil(conf, null);
+        webFluxUtil = new TestWebFluxUtil(iconf, null);
         parameters = new Parameters();
         parameters.setThreshold(1.0);
         parameters.setFuturedays(10);
@@ -196,7 +198,7 @@ public class EvolveET {
 
     @Test
     public void testFindProfit() throws Exception {
-        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.FINDPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         //aci.setBuy(null);
         //aci.setRecord(LocalDate.now());
         try {
@@ -209,7 +211,7 @@ public class EvolveET {
 
     @Test
     public void testFindProfitARI() throws Exception {
-        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null, 0, JsonUtil.convert(parameters));
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.FINDPROFIT, PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null, 0, JsonUtil.convert(parameters));
         //aci.setBuy(null);
         //aci.setRecord(LocalDate.now());
         try {
@@ -222,7 +224,7 @@ public class EvolveET {
 
     @Test
     public void testFindProfitPredictor() throws Exception {
-        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.FINDPROFIT, PipelineConstants.PREDICTOR, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.FINDPROFIT, PipelineConstants.PREDICTOR, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         //aci.setBuy(null);
         //aci.setRecord(LocalDate.now());
         try {
@@ -251,7 +253,7 @@ public class EvolveET {
 
     @Test
     public void testImproveProfit() throws Exception {
-        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.IMPROVEPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.IMPROVEPROFIT, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
@@ -263,7 +265,7 @@ public class EvolveET {
 
     @Test
     public void testImproveProfitMLI() throws Exception {
-        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.IMPROVEPROFIT, PipelineConstants.MLINDICATOR, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.IMPROVEPROFIT, PipelineConstants.MLINDICATOR, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
@@ -276,7 +278,7 @@ public class EvolveET {
     // TODO already
     @Test
     public void testCrosstest() throws Exception {
-        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.CROSSTEST, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.CROSSTEST, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
@@ -288,7 +290,7 @@ public class EvolveET {
 
     @Test
     public void testFilter() throws Exception {
-        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.IMPROVEFILTER, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.IMPROVEFILTER, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
@@ -300,7 +302,7 @@ public class EvolveET {
 
     @Test
     public void testAboveBelow() throws Exception {
-        ActionComponentDTO aci = new ActionComponentDTO(TestConstants.MARKET, IclijConstants.IMPROVEABOVEBELOW, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
+        ActionComponentDTO aci = new ActionComponentDTO(market, IclijConstants.IMPROVEABOVEBELOW, PipelineConstants.MLRSI, MLConstants.TENSORFLOW + " " + MLConstants.GRU, 0, JsonUtil.convert(parameters));
         try {
             ac.runAction(iconf, aci, new ArrayList<>());
         } catch (Exception e) {
@@ -342,9 +344,9 @@ public class EvolveET {
 
     @Test
     public void testSome() throws Exception {
-        conf.getConfigData().setMarket(TestConstants.MARKET);
+        iconf.getConfigData().setMarket(market);
         List<String> disableList = new ArrayList<>();
-        StockData stockData = new Extract(io.getDbDao()).getStockData(conf, true);
+        StockData stockData = new Extract(io.getDbDao()).getStockData(iconf, true);
         
         NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
         neuralnetcommand.setMlclassify(false);
@@ -352,11 +354,11 @@ public class EvolveET {
         neuralnetcommand.setMldynamic(true);
         
         IndicatorUtils iu = new IndicatorUtils();
-        ExtraReader extraReader = new ExtraReader(conf, stockData.marketdatamap, 0, stockData);
-        Map<String, StockData> extraStockDataMap = new IndicatorUtils().getExtraStockDataMap(conf, io.getDbDao(), extraReader, true);
+        ExtraReader extraReader = new ExtraReader(iconf, stockData.marketdatamap, 0, stockData);
+        Map<String, StockData> extraStockDataMap = new IndicatorUtils().getExtraStockDataMap(iconf, io.getDbDao(), extraReader, true);
 
         log.info("grr" + stockData.marketdatamap.keySet() + " " + stockData.periodText + " " + extraStockDataMap.keySet());
-        Pipeline[] datareaders = iu.getDataReaders(conf, stockData.periodText,
+        Pipeline[] datareaders = iu.getDataReaders(iconf, stockData.periodText,
                 stockData.marketdatamap, stockData, extraStockDataMap, extraReader, inmemory);
 
         /*
@@ -367,13 +369,13 @@ public class EvolveET {
         // pipelinedata from datareaders and new meta
 
         SerialPipeline pipelinedata = new SerialPipeline();
-        pipelinedata = iu.createDatareaderPipelineData(conf, pipelinedata, stockData, datareaders);
+        pipelinedata = iu.createDatareaderPipelineData(iconf, pipelinedata, stockData, datareaders);
 
         // for categories and adding to pipelinedata
 
-        List<StockDTO> dayStocks = iu.getDayStocks(conf, stockData);
+        List<StockDTO> dayStocks = iu.getDayStocks(iconf, stockData);
         
-        List<AbstractCategory> categories = Arrays.asList(new CategoryUtil().getCategories(conf, dayStocks,
+        List<AbstractCategory> categories = Arrays.asList(new CategoryUtil().getCategories(iconf, dayStocks,
                 stockData.periodText, pipelinedata, inmemory));
         
         // add all indicators for the category
@@ -387,7 +389,7 @@ public class EvolveET {
                 stockData.marketdatamap, categories.toArray(new AbstractCategory[0]), pipelinedata , disableList, stockData.catName, stockData.cat, stockData.stockdates, inmemory));
 */
         //new MLIndicator(conf, stockData.catName, stockData.catName, stockData.cat, pipelinedata, neuralnetcommand, stockData.stockdates, inmemory);
-        new MLMulti(conf, stockData.catName, stockData.catName, stockData.cat, stockData.idNameMap, pipelinedata, neuralnetcommand, stockData.stockdates, inmemory);
+        new MLMulti(iconf, stockData.catName, stockData.catName, stockData.cat, stockData.idNameMap, pipelinedata, neuralnetcommand, stockData.stockdates, inmemory);
         /*
         Aggregator[] aggregates = new AggregatorUtils().getAggregates(conf, pipelinedata,
                 disableList, stockData.idNameMap, stockData.catName, stockData.cat, neuralnetcommand, stockData.stockdates, inmemory);
