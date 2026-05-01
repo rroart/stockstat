@@ -55,9 +55,10 @@ public class MACDBase extends Aggregator {
         String id = stock.getId();
         Double[] result = resultObject.get(id);
         if (listMap.get(id) == null) {
-            log.info("LM" + listMap.size() + " " + id);
+            log.info("Excluded get null {}" + id);
         }
-        double[] vals = listMap.get(id)[0];
+        //double[] vals = listMap.get(id)[0];
+        double[] vals = listMap.get(id) != null ? listMap.get(id)[0] : new double[0];
         Double val = null;
         if (vals.length > 0) {
         val = vals[vals.length - 1];
