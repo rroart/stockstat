@@ -88,7 +88,6 @@ open module core {
     requires common.inmemory.factory;
     requires common.inmemory.model;
     requires common.webflux;
-    requires common.synchronization;
     requires iclij.common.model;
     requires common.queue;
 }

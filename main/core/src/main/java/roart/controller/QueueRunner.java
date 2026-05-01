@@ -3,7 +3,7 @@ package roart.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import roart.common.constants.Constants;
-import roart.common.synchronization.MySemaphore;
+//import roart.common.synchronization.MySemaphore;
 import roart.common.util.TimeUtil;
 import roart.core.service.CoreControlService;
 import roart.db.thread.Queues;
@@ -81,6 +81,7 @@ public class QueueRunner implements Runnable {
          */
     }
 
+    /*
     private void unlockSemaphores(Queue<MySemaphore> locks) {
         if (!locks.isEmpty()) {
             log.info("unlock");
@@ -93,4 +94,6 @@ public class QueueRunner implements Runnable {
             }
         }
     }
+    
+     */
 }
