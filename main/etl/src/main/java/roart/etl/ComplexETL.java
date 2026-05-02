@@ -11,6 +11,8 @@ import java.util.Stack;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import roart.common.config.MarketStock;
 import roart.common.config.MarketStockExpression;
 import roart.common.constants.Constants;
@@ -23,6 +25,8 @@ import roart.model.data.StockData;
 import roart.pipeline.Pipeline;
 
 public class ComplexETL {
+
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     public void method(IclijConfig conf, MarketStockExpression mse, Set<String> commonDates, Map<String, StockData> stockDataMap,
                        Map<String, Pipeline[]> dataReaderMap, Map<String, List<Double>> newMap, Inmemory inmemory) {
@@ -46,10 +50,14 @@ public class ComplexETL {
                 Map<String, Pipeline> pipelineMap = getPipelineMap(datareaders);
                 Pipeline datareader = pipelineMap.get("" + cat); // used id 0-9
                 // interpolation does not work yet
-                SerialPipeline data = datareader.putData();
-                List<String> datelist = PipelineUtils.getDatelist(data, "" + cat, inmemory);
-                Map<String, Double[][]> listMap = PipelineUtils.getPipelineValueAndsconvertMapDD(data, "" + cat, PipelineConstants.LIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
-                Map<String, Double[][]> fillListMap = PipelineUtils.getPipelineValueAndsconvertMapDD(data, "" + cat, PipelineConstants.FILLLIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
+                // double market fix
+                SerialPipeline data = datareader.getData();
+                if (data.isEmpty()) {
+                    data = datareader.putData();
+                }
+                List<String> datelist = PipelineUtils.getDatelist(data, stockData.catName, inmemory);
+                Map<String, Double[][]> listMap = PipelineUtils.getPipelineValueAndsconvertMapDD(data, stockData.catName, PipelineConstants.LIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
+                Map<String, Double[][]> fillListMap = PipelineUtils.getPipelineValueAndsconvertMapDD(data, stockData.catName, PipelineConstants.FILLLIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
                 Double[][] fillList = fillListMap.get(id);
                 try {
                     int dateIndex = datelist.size() - datelist.indexOf(date);
