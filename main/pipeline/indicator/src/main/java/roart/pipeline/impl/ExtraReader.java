@@ -237,14 +237,22 @@ public class ExtraReader extends Pipeline {
             StockData stockData = stockDataMap.get(entry.getKey());
             log.info("X"+stockData);
             log.info("X"+stockData.marketdatamap);
-            log.info("X"+stockData.marketdatamap.keySet());
+            if (stockData.marketdatamap != null) {
+                log.info("X" + stockData.marketdatamap.keySet());
+            }
+            /*
             SerialPipeline singlePipelineData = new IndicatorUtils().getMetadata(conf, stockData, entry.getKey());
             for (PipelineData pipe : singlePipelineData) {
                 list.add(new PipelineData(pipe.getKey().rotateRight(PipelineConstants.EXTRAREADER, entry.getKey()), pipe.getValue(), true));
             }
+            
+             */
             Pipeline[] pipeline = entry.getValue();
             for (int i = 0; i < pipeline.length; i++) {
-                SerialPipeline secondPipeline = pipeline[i].putData();
+                SerialPipeline secondPipeline = pipeline[i].getData();
+                if (secondPipeline.isEmpty()) {
+                    secondPipeline = pipeline[i].putData();
+                }
                 for (PipelineData secondPipelineData : secondPipeline) {
                     log.info("Seconf pipeline" + secondPipelineData);
                     list.add(new PipelineData(secondPipelineData.getKey().rotateRight(PipelineConstants.EXTRAREADER, entry.getKey()), secondPipelineData.getValue(), true));
