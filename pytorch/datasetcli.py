@@ -34,7 +34,7 @@ def learn(ds = "mnist", path = None, cf = config.PYTORCHMLP, steps = None, take 
     myjson = json.dumps(data)
     result = dataset.do_dataset(queue, myjson)
     #cache[cf+myds] = response
-    #result = queue.get()
+    result = queue.get()
     print (result)
     return result
 
