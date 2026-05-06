@@ -303,6 +303,7 @@ class Classify:
             The return value of the observer (if any).
         """
         # Basic type checks
+        print("cpunit", inputs.device, labels.device)
         if not hasattr(model, 'parameters'):
             raise TypeError('model must be nn.Module-like')
         if not isinstance(inputs, torch.Tensor):
@@ -324,14 +325,14 @@ class Classify:
         ds = CustomDataset(v_x, v_y)
 
         # Dataloaders
-        loader = DataLoader(TensorDataset(v_x, v_y), batch_size=16, shuffle=True, drop_last=True)
+        loader = DataLoader(TensorDataset(v_x, v_y), batch_size=config.batchsize, shuffle=True, drop_last=True)
 
         #loader = torch.utils.data.DataLoader(ds, batch_size=config.batchsize, shuffle=True)
         if not val is None:
 
             valds = CustomDataset(val, valcat.long().to(dev))
             valloader = torch.utils.data.DataLoader(valds, batch_size=config.batchsize, shuffle=True)
-            valloader = DataLoader(TensorDataset(val, valcat.long().to(dev)), batch_size=16)
+            valloader = DataLoader(TensorDataset(val, valcat.long().to(dev)), batch_size=config.batchsize)
             print("valloader")
         else:
             valloader = loader
@@ -754,12 +755,54 @@ class Classify:
         Returns:
             (accuracy, loss)
         """
-        y_hat = model(x)
-        loss_outputs, loss_target = get_loss_inputs(config, y_hat, cat)
-        loss = model.bce(loss_outputs, loss_target)
-        (max_vals0, arg_maxs0) = torch.max(y_hat.data, dim=1)
-        num_correct0 = torch.sum(cat == arg_maxs0.to(dtype=torch.float32))
-        accuracy = float(num_correct0) / len(cat)
+        if config.batchsize is None or config.batchsize == 0:
+            # skip remainder
+            #size = int(cat.shape[0] /config.batchsize)
+            #size = size * config.batchsize
+            #print("size",size)
+            #cat = cat[0:size]
+            #x = x[0:size]
+            #print("size2", x.shape[0])
+            #print("size2", x.shape[0]/config.batchsize)
+            y_hat = model(x)
+            loss_outputs, loss_target = get_loss_inputs(config, y_hat, cat)
+            loss = model.bce(loss_outputs, loss_target)
+            (max_vals0, arg_maxs0) = torch.max(y_hat.data, dim=1)
+            num_correct0 = torch.sum(cat == arg_maxs0.to(dtype=torch.float32))
+            accuracy = float(num_correct0) / len(cat)
+            #print("accloss0 ", accuracy, loss)
+            #except Exception:
+        else:
+            print("batching loss")
+            accuracy, loss = self.get_multi_accuracy_loss_batch(config, model, x, cat)
+        return accuracy, loss
+
+    def get_multi_accuracy_loss_batch(self, config, model, x, cat) -> tuple[float, float]:
+        #size = int(cat.shape[0] / config.batchsize)
+        #size = size * config.batchsize
+        #print("size", size)
+        #cat = cat[0:size]
+        #x = x[0:size]
+        #print("size2", x.shape[0])
+        #print("size2", x.shape[0] / config.batchsize)
+        accuracy = 0.0
+        loss = 0.0
+        test_loader = DataLoader(TensorDataset(x, cat), batch_size=config.batchsize, shuffle=True, drop_last=True)
+        for i, (inputs, labels) in enumerate(test_loader):
+            cat = labels
+            y_hat = model(inputs)
+            loss_outputs, loss_target = get_loss_inputs(config, y_hat, cat)
+            loss += model.bce(loss_outputs, loss_target)
+            (max_vals0, arg_maxs0) = torch.max(y_hat.data, dim=1)
+            num_correct0 = torch.sum(cat == arg_maxs0.to(dtype=torch.float32))
+            accuracy += float(num_correct0) / len(cat)
+        #print("accloss1 ", i, accuracy / i, loss / i)
+        #print("accloss2 ", i - 1, accuracy / (i - 1), loss / (i - 1))
+        #print("accloss3 ", i + 1, accuracy / (i + 1), loss / (i + 1))
+        #print("accloss3 ", i + 2, accuracy / (i + 2), loss / (i + 2))
+        #print("accloss3 ", i + 3, accuracy / (i + 3), loss / (3 + 3))
+        accuracy /= i + 1
+        loss /= i + 1
         return accuracy, loss
 
     def get_binary_accuracy_loss(self, config, model, dev, x, cat) -> float:
