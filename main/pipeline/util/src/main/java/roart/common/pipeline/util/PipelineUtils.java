@@ -1110,7 +1110,8 @@ public class PipelineUtils {
                     log.info("Pipe " + data + " " + " " + serviceId + " " + id);
                     //   todo
                     if (data.getValue() != null) {
-                        msg = inmemory.send(id + "-" + ArrayUtils.toString(data.getKey()), data.getValue(), md5);
+                        // fix for zk path
+                        msg = inmemory.send(id + "-" + ArrayUtils.toString(data.getKey()).replace("/", "slash"), data.getValue(), md5);
                         log.info("Sent size {} {} {}", msg.getId(), msg.getCount(), JsonUtil.convert(data.getValue(), mapper).length());
                         //result.message = msg;
                         curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
@@ -1121,7 +1122,8 @@ public class PipelineUtils {
                     }
                     int batchNum = 0;
                     for (PipelineDataBatch batch : data.getBatch()) {
-                        msg = inmemory.send(id + "-" + ArrayUtils.toString(data.getKey()) + "_" + batchNum++, batch.getValue(), md5);
+                        // fix for zk path
+                        msg = inmemory.send(id + "-" + ArrayUtils.toString(data.getKey()).replace("/", "slash") + "_" + batchNum++, batch.getValue(), md5);
                         log.info("Sent size {} {} {}", msg.getId(), msg.getCount(), JsonUtil.convert(batch.getValue(), mapper).length());
                         //result.message = msg;
                         curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
