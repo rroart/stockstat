@@ -192,7 +192,7 @@ class Classify:
             array = layerutils.normalize(array)
           if not getattr(config, 'binary', False):
            if True:
-            intlist, problist = self.get_multi_cat_and_probability(model, array)
+            intlist, problist = self.get_multi_cat_and_probability(model, config, array)
            else:
             print("Classify", array.shape)
             predictions = model(array)
@@ -865,9 +865,16 @@ class Classify:
             print("WARNING: only one result", intlist)
         return predictedcat, catprobabilitylist
 
-    def get_multi_cat_and_probability(self, model, x):
-        """Return predicted class indices and max-probabilities for multiclass models."""
-        predictions = model(x)
+    def get_multi_cat_and_probability(self, model, config, x):
+        """Return predicted class indices and max-probabilities for multiclass models.
+        :param config:
+        """
+        if config.batchsize is None or config.batchsize == 0:
+            predictions = model(x)
+        else:
+            print("batching")
+            predictions = self.get_multi_cat_and_probability_batch(model, config, x)
+        #print(predictions)
         _, predicted = torch.max(predictions, 1)
         # TODO torch.round
         intlist = predicted.tolist()
@@ -880,6 +887,17 @@ class Classify:
             print("WARNING: only one result", intlist)
         return intlist, problist
 
+    def get_multi_cat_and_probability_batch(self, model, config, x):
+        cat = []
+        # but not TensorDataset(x)
+        loader = DataLoader(x, batch_size=config.batchsize, shuffle=False, drop_last=False)
+        for i, (inputs) in enumerate(loader):
+            y_hat = model(inputs)
+            cat += y_hat.tolist()
+        dev = self.getdev()
+        #print("cat", type(cat), cat[0:100])
+        cat = torch.FloatTensor(cat).to(dev)
+        return cat
 
     def onlyOneResult(self, list) -> bool:
         return len(set(list)) == 1
