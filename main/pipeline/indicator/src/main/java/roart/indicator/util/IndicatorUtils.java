@@ -409,7 +409,7 @@ public class IndicatorUtils {
             String ind = indicators.get(idx++);
             SerialTA objsIndicator = objectMap.get(id);
             //PipelineData pipeline = PipelineUtils.getPipeline(datareaders, ind, null, inmemory);
-            result = appendDayResult(conf, j, result  , ind, objsIndicator);
+            result = appendDayResult(conf, j, result  , ind, objsIndicator, inmemory);
         }
         return result;
     }
@@ -429,7 +429,7 @@ public class IndicatorUtils {
             List<String> dateList2 = PipelineUtils.getDatelist(datareaders, PipelineUtils.getMetaCat(datareaders, inmemory), inmemory);
             j = dateList2.size() - 1 - dateList2.indexOf(commonDate);
             SerialTA objsIndicator = objectMap.get(id);
-            result = appendDayResult(conf, j, result, indicatorName, objsIndicator);
+            result = appendDayResult(conf, j, result, indicatorName, objsIndicator, inmemory);
         }
         return result;
     }
@@ -450,7 +450,7 @@ public class IndicatorUtils {
                 objectMapsList.add(objMap);
                 Map<String, Double[][]> list0 = PipelineUtils.getPipelineValueAndsconvertMapDD(datareaders, PipelineUtils.getMetaCat(datareaders, inmemory), PipelineConstants.LIST, conf.wantsInmemoryPipelineBatchsize() > 0, inmemory);
                 listList.add(list0);
-                AbstractIndicator indicator = dummyfactory(conf, indicatorName);
+                AbstractIndicator indicator = dummyfactory(conf, indicatorName, inmemory);
                 arraySize += indicator.getResultSize();
                 log.info("sizes {}", listList.get(listList.size() - 1).size());
             } else {
@@ -564,7 +564,7 @@ public class IndicatorUtils {
                     SerialMap<String, SerialTA> objectMap = marketEntry.getValue();
                     for (Entry<String, SerialTA> entry : objectMap.entrySet()) {
                         SerialTA objsIndicator = entry.getValue();
-                        result = appendDayResult(conf, j, result, indicator.indicatorName(), objsIndicator);
+                        result = appendDayResult(conf, j, result, indicator.indicatorName(), objsIndicator, inmemory);
                     }
                 }
             }
@@ -601,11 +601,7 @@ public class IndicatorUtils {
                     SerialMarketStock marketStock = marketStockMap.get(market);
                     String cat = marketStock.getCategory();
                     if (cat == null) {
-                        cat = Constants.EXTRA;
-                        SerialPipeline pipe = PipelineUtils.getPipelinesRest(datareaders, PipelineConstants.EXTRAREADER, inmemory);
-                        pipe = PipelineUtils.getPipelinesRest(pipe, market, inmemory);
-                        cat = PipelineUtils.getMetaCat(pipe, inmemory);
-                        //log.info("cat" + cat);
+                        cat = PipelineUtils.getExtraReaderCat(datareaders, inmemory, market);
                     }
 
                     //PipelineData pipeline = null; // mypipelineMap.get(cat);
@@ -622,7 +618,7 @@ public class IndicatorUtils {
                     for (Entry<String, SerialTA> entry2 : objectMap.entrySet()) {
                         SerialTA objsIndicator = entry2.getValue();
                         //PipelineData pipelineData = PipelineUtils.getPipeline(datareaders, PipelineConstants.EXTRAREADER, market, indicator.indicatorName(), inmemory);
-                        result = appendDayResult(conf, j, result, indicator.indicatorName() /*pipelineData.getKey().getFirst()*/, objsIndicator);
+                        result = appendDayResult(conf, j, result, indicator.indicatorName() /*pipelineData.getKey().getFirst()*/, objsIndicator, inmemory);
                     }
                 }
             }
@@ -656,8 +652,8 @@ public class IndicatorUtils {
         return size;
     }
 
-    private static Double[] appendDayResult(IclijConfig conf, int j, Double[] result, String indicator, SerialTA objsIndicator) {
-        Object[] arr = dummyfactory(conf, indicator).getDayResult(objsIndicator, j);
+    private static Double[] appendDayResult(IclijConfig conf, int j, Double[] result, String indicator, SerialTA objsIndicator, Inmemory inmemory) {
+        Object[] arr = dummyfactory(conf, indicator, inmemory).getDayResult(objsIndicator, j);
         if (arr != null && arr.length > 0) {
             result = (Double[]) ArrayUtils.addAll(result, arr);
         } else {
@@ -671,28 +667,29 @@ public class IndicatorUtils {
     private static void getAllIndicators(List<AbstractIndicator> allIndicators, IclijConfig conf, List<SerialMarketStock> marketStocks,
             SerialPipeline datareaders, Inmemory inmemory) throws Exception {
         Set<String> indicatorSet = new HashSet<>();
+        log.info("marketstocksize {}", marketStocks.size());
         for (SerialMarketStock pairEntry : marketStocks) {
             String market = pairEntry.getMarket();
             String cat = pairEntry.getCategory();
+            log.info("market {} category {}", market, conf.getConfigData().getMarket());
             if (market.equals(conf.getConfigData().getMarket())) {
                  if (cat == null) {
-                     cat = Constants.EXTRA;
-                     SerialPipeline pipe = PipelineUtils.getPipelinesRest(datareaders, PipelineConstants.EXTRAREADER, inmemory);
-                     pipe = PipelineUtils.getPipelinesRest(pipe, market, inmemory);
-                     cat = PipelineUtils.getMetaCat(pipe, inmemory);
-                     log.info("cat" + cat);
-                }
+                     // todo
+                     cat = PipelineUtils.getExtraReaderCat(datareaders, inmemory, market);
+                 }
                 if (cat == null) {
                     int jj = 0;
                 }
                 // ok to use as long as only with keys and no values
-                Map<String, PipelineData> indicatorMap = null; // TODO PipelineUtils.getPipelineMapStartsWith(datareaders, PipelineConstants.INDICATOR);
-                for (Entry<String, PipelineData> entry : indicatorMap.entrySet()) {
+                // todo
+                Set<String> indicatorMap = PipelineUtils.getPipelineMapStartsWith(datareaders, PipelineConstants.INDICATOR);
+                log.info("keys" + indicatorMap);
+                for (String entry : indicatorMap) {
 
-                    AbstractIndicator indicator = dummyfactory(conf, entry.getKey());
+                    AbstractIndicator indicator = dummyfactory(conf, entry, inmemory);
                     if (indicator.wantForExtras()) {
                         allIndicators.add(indicator);
-                        indicatorSet.add(entry.getKey());
+                        indicatorSet.add(entry);
                     }
                 }
             }
@@ -718,8 +715,7 @@ public class IndicatorUtils {
         }
     }
 
-    public static AbstractIndicator dummyfactory(IclijConfig conf, String indicator) {
-        Inmemory inmemory = null;
+    public static AbstractIndicator dummyfactory(IclijConfig conf, String indicator, Inmemory inmemory) {
         if (indicator.equals(PipelineConstants.INDICATORMACD)) {
             return new IndicatorMACD(conf, null, null, Constants.NOCOLUMN, null, true, inmemory);       
         }

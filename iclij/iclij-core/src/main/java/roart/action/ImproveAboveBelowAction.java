@@ -321,7 +321,7 @@ public class ImproveAboveBelowAction extends MarketAction {
             }
 
             SerialPipeline results = param.getResultMap();
-            if (!results.isEmpty()) {
+            if (results != null && !results.isEmpty()) {
                 log.info("Content {}", JsonUtil.convert(results));
                 Inmemory inmemory = param.getService().getIo().getInmemoryFactory().get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
                 QueueElement element = new QueueElement();

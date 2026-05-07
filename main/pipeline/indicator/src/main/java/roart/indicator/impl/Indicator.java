@@ -97,11 +97,8 @@ public abstract class Indicator extends AbstractIndicator {
             int category = 0; // extraData.category;
             String cat = ms.getCategory();
             if (cat == null) {
-                cat = Constants.EXTRA;
-                SerialPipeline pipe = PipelineUtils.getPipelinesRest(datareaders, PipelineConstants.EXTRAREADER, inmemory);
-                pipe = PipelineUtils.getPipelinesRest(pipe, market, inmemory);
-                cat = PipelineUtils.getMetaCat(pipe, inmemory);
-                log.info("cat" + cat);
+                // todo
+                cat = PipelineUtils.getExtraReaderCat(datareaders, inmemory, market);
             }
             //SerialList mydatareaders = (SerialList) dataReaderMap.get(market);
             //Map<String, PipelineData> mypipelineMap = IndicatorUtils.getPipelineMap(mydatareaders);
@@ -212,6 +209,7 @@ public abstract class Indicator extends AbstractIndicator {
 
         Map<String, Object[]> myResultMap = getResultMap(conf, myObjectMap, myCalculatedMap);
         log.info("time1 {}", (System.currentTimeMillis() - time1));
+        // the indicator results, the current/last calculated, web fields
         resultList.add(myObjectMap);
         resultList.add(myCalculatedMap);
         resultList.add(myResultMap);

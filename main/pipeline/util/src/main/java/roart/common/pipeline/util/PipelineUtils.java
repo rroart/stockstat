@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +49,16 @@ public class PipelineUtils {
             pipelineKeys.add(datareader.getKey());
         }
         return pipelineKeys;
+    }
+
+    public static Set<String> getPipelineMapStartsWith(SerialPipeline datareaders, String startsWith) {
+        Set<String> pipelineMap = new HashSet<>();
+        for (PipelineData datareader : datareaders) {
+            if (datareader.getKey().getFirst().startsWith(startsWith)) {
+                pipelineMap.add(datareader.getKey().getFirst());
+            }
+        }
+        return pipelineMap;
     }
 
 /*
@@ -1179,5 +1190,18 @@ public class PipelineUtils {
             pipeline.setLoaded(false);
         }
         return state;
+    }
+
+    public static @Nullable String getExtraReaderCat(SerialPipeline datareaders, Inmemory inmemory, String market) {
+        String cat = Constants.EXTRA;
+        // TODO
+        SerialPipeline pipe = getPipelinesRest(datareaders, PipelineConstants.EXTRAREADER, inmemory);
+        pipe = getPipelinesRest(pipe, market, inmemory);
+        SerialPipeline meta = getPipelines(pipe, PipelineConstants.META, PipelineConstants.CATEGORY, inmemory);
+        if (!meta.isEmpty()) {
+            cat = getMetaCat(pipe, inmemory);
+        }
+        //log.info("todocat" + cat);
+        return cat;
     }
 }

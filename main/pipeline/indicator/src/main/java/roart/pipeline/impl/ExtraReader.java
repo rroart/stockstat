@@ -239,14 +239,14 @@ public class ExtraReader extends Pipeline {
             log.info("X"+stockData.marketdatamap);
             if (stockData.marketdatamap != null) {
                 log.info("X" + stockData.marketdatamap.keySet());
-            }
-            /*
+            // todo
+
             SerialPipeline singlePipelineData = new IndicatorUtils().getMetadata(conf, stockData, entry.getKey());
             for (PipelineData pipe : singlePipelineData) {
-                list.add(new PipelineData(pipe.getKey().rotateRight(PipelineConstants.EXTRAREADER, entry.getKey()), pipe.getValue(), true));
+                list.add(new PipelineData(pipe.getKey().rotateRight(PipelineConstants.EXTRAREADER, entry.getKey()), pipe.getValue(), pipe.isUseInmemory()));
             }
-            
-             */
+            }
+
             Pipeline[] pipeline = entry.getValue();
             for (int i = 0; i < pipeline.length; i++) {
                 SerialPipeline secondPipeline = pipeline[i].getData();
@@ -255,7 +255,7 @@ public class ExtraReader extends Pipeline {
                 }
                 for (PipelineData secondPipelineData : secondPipeline) {
                     log.info("Seconf pipeline" + secondPipelineData);
-                    list.add(new PipelineData(secondPipelineData.getKey().rotateRight(PipelineConstants.EXTRAREADER, entry.getKey()), secondPipelineData.getValue(), true));
+                    list.add(new PipelineData(secondPipelineData.getKey().rotateRight(PipelineConstants.EXTRAREADER, entry.getKey()), secondPipelineData.getValue(), secondPipelineData.isUseInmemory()));
                     //list.add(new PipelineData(new String[] { PipelineConstants.EXTRAREADER, secondPipelineData.getKey()[0], secondPipelineData.getKey()[1], secondPipelineData.getKey()[2], secondPipelineData.getKey()[3]}, secondPipelineData.getValue(), true));
                 }
             }
@@ -357,11 +357,8 @@ public class ExtraReader extends Pipeline {
             //Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
             String cat = entry.getCategory();
             if (cat == null) {
-                cat = Constants.EXTRA;
-                SerialPipeline pipe = PipelineUtils.getPipelinesRest(datareaders, PipelineConstants.EXTRAREADER, inmemory);
-                pipe = PipelineUtils.getPipelinesRest(pipe, market, inmemory);
-                cat = PipelineUtils.getMetaCat(pipe, inmemory);
-                log.info("cat" + cat);
+                // todo
+                cat = PipelineUtils.getExtraReaderCat(datareaders, inmemory, market);
             }
             /*
             PipelineData datareader = pipelineMap.get(cat);
@@ -416,11 +413,8 @@ public class ExtraReader extends Pipeline {
             //Map<String, PipelineData> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
             String cat = entry.getCategory();
             if (cat == null) {
-                cat = Constants.EXTRA;
-                SerialPipeline pipe = PipelineUtils.getPipelinesRest(datareaders, PipelineConstants.EXTRAREADER, inmemory);
-                pipe = PipelineUtils.getPipelinesRest(pipe, market, inmemory);
-                cat = PipelineUtils.getMetaCat(pipe, inmemory);
-                //log.info("cat" + cat);
+                // todo
+                cat = PipelineUtils.getExtraReaderCat(datareaders, inmemory, market);
             }
             Map<String, PipelineData> pipelineMap = null ; // TODO
             //PipelineData datareader = pipelineMap.get(cat);

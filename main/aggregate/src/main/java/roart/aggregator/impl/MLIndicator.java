@@ -1043,7 +1043,7 @@ public class MLIndicator extends Aggregator {
     public String getFilenamePart(List<String> indicators) {
         String ret = "";
         for (String indicatorName : indicators) {
-            AbstractIndicator indicator = IndicatorUtils.dummyfactory(conf, indicatorName);
+            AbstractIndicator indicator = IndicatorUtils.dummyfactory(conf, indicatorName, inmemory);
             ret = ret + indicator.getName() + "_";
             if (indicator.wantForExtras()) {
                 ret = ret + "d" + "_";

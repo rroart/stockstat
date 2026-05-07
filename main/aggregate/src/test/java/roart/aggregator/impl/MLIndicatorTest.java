@@ -8,14 +8,12 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.test.context.TestPropertySource;
 import roart.iclij.config.IclijConfig;
 import roart.common.pipeline.data.SerialPipeline;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.config.ConfigData;
 import roart.common.config.ConfigConstants;
-import roart.common.constants.Constants;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
 import roart.ml.common.MLClassifyModel;
@@ -277,8 +275,8 @@ public class MLIndicatorTest {
             when(mockIndicator2.getName()).thenReturn("RSI");
             when(mockIndicator2.wantForExtras()).thenReturn(false);
 
-            mockedStatic.when(() -> IndicatorUtils.dummyfactory(any(IclijConfig.class), eq("indicator1"))).thenReturn(mockIndicator1);
-            mockedStatic.when(() -> IndicatorUtils.dummyfactory(any(IclijConfig.class), eq("indicator2"))).thenReturn(mockIndicator2);
+            mockedStatic.when(() -> IndicatorUtils.dummyfactory(any(IclijConfig.class), eq("indicator1"), mockInmemory)).thenReturn(mockIndicator1);
+            mockedStatic.when(() -> IndicatorUtils.dummyfactory(any(IclijConfig.class), eq("indicator2"), mockInmemory)).thenReturn(mockIndicator2);
 
             List<String> indicators = Arrays.asList("indicator1", "indicator2");
             String filenamePart = mlIndicator.getFilenamePart(indicators);
@@ -317,8 +315,8 @@ public class MLIndicatorTest {
             when(mockIndicator2.getName()).thenReturn("RSI");
             when(mockIndicator2.wantForExtras()).thenReturn(false);
 
-            mockedStatic.when(() -> IndicatorUtils.dummyfactory(any(IclijConfig.class), eq("indicator1"))).thenReturn(mockIndicator1);
-            mockedStatic.when(() -> IndicatorUtils.dummyfactory(any(IclijConfig.class), eq("indicator2"))).thenReturn(mockIndicator2);
+            mockedStatic.when(() -> IndicatorUtils.dummyfactory(any(IclijConfig.class), eq("indicator1"), mockInmemory)).thenReturn(mockIndicator1);
+            mockedStatic.when(() -> IndicatorUtils.dummyfactory(any(IclijConfig.class), eq("indicator2"), mockInmemory)).thenReturn(mockIndicator2);
 
             String filename = mlIndicator.getFilename(mockDao, mockModel, "input_dim", "output_dim", "NASDAQ", indicators, threshold);
 
@@ -351,7 +349,7 @@ public class MLIndicatorTest {
             AbstractIndicator mockIndicatorA = mock(AbstractIndicator.class);
             when(mockIndicatorA.getName()).thenReturn("CCI");
             when(mockIndicatorA.wantForExtras()).thenReturn(false);
-            mockedStatic.when(() -> IndicatorUtils.dummyfactory(any(IclijConfig.class), eq("indicatorA"))).thenReturn(mockIndicatorA);
+            mockedStatic.when(() -> IndicatorUtils.dummyfactory(any(IclijConfig.class), eq("indicatorA"), mockInmemory)).thenReturn(mockIndicatorA);
 
             String filename = mlIndicator.getFilename(mockDao, mockModel, "in", "out", "NASDAQ", indicators, threshold);
 
