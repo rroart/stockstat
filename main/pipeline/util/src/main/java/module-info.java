@@ -22,6 +22,7 @@ module pipeline.util {
     requires stockstat.shadow.zookeeper;
     requires org.checkerframework.checker.qual;
     requires org.apache.commons.lang3;
+    requires org.jspecify;
     // for test
     //requires evolution.model;
 }
