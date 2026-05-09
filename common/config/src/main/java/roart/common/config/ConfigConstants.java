@@ -234,7 +234,7 @@ public class ConfigConstants {
     public static final String MISCMYSERVICES = "misc.myservices";
     public static final String MISCSERVICES = "misc.services";
     public static final String MISCCOMMUNICATIONS = "misc.communications";
-    public static final String MISCSERVICESREST = "misc.services.rest";
+    public static final String MISCSERVICESREST = "misc.servicerest";
     public static final String MISCCACHE = "misc.cache";
     public static final String MISCCACHETTL = "misc.cache.ttl";
     public static final String MISCINMEMORY = "misc.inmemory";
