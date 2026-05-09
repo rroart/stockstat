@@ -1,19 +1,35 @@
 package roart.common.util;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import roart.common.constants.CommunicationConstants;
+import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 
 public class ServiceConnectionUtil {
 
     public Pair<String, String> getCommunicationConnection(String service, String services, String communications, boolean wantRest) {
+        String appid = System.getenv(Constants.APPID);
+        if (appid != null) {
+            //service = service + appid; // can not handle domain, only eureka
+        }
         Map<String, String> serviceMap = JsonUtil.convert(services, Map.class);
         Map<String, String> communicationsMap = JsonUtil.convert(communications, Map.class);
-        String communication = serviceMap.get(service);
+/*
+        Map<String, String> newServiceMap = new HashMap();
+        String appid = System.getenv(Constants.APPID);
+        for (Map.Entry<String, String> entry : serviceMap.entrySet()) {
+            newServiceMap.put(entry.getKey() + appid, entry.getValue());
+        }
+        serviceMap = newServiceMap;
+*/
+
+        System.out.println("ServiceMap {} {}"+  serviceMap + " " + service);
+         String communication = serviceMap.get(service);
         if (communication == null || wantRest) {
             communication = CommunicationConstants.REST;
         }

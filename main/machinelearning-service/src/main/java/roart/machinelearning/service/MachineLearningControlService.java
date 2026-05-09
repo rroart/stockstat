@@ -268,10 +268,6 @@ public class MachineLearningControlService {
         //IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
         IclijConfig iclijConfig = null;
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications(), iclijConfig.wantRestServices());
-        String appid = System.getenv(Constants.APPID);
-        if (appid != null) {
-            service = service + appid; // can not handle domain, only eureka
-        }
         Function<String, Boolean> zkRegister = (new QueueUtils(io.getCuratorClient()))::zkRegister;
         Communication c = io.getCommunicationFactory().get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, io.getWebFluxUtil());
         c.send(object);
