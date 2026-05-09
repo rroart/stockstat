@@ -65,7 +65,7 @@ public class PipelineThreadUtils {
         }
         List<String> children = curatorClient.getChildren().forPath(path);
         log.debug("Children {}", children.size());
-        log.info("Children {}", children);
+        log.debug("Children {}", children);
         if (false && !children.isEmpty()) {
             try {
                 String s = null;
@@ -79,14 +79,15 @@ public class PipelineThreadUtils {
             log.debug("Time {} {}", System.currentTimeMillis(), stat.getMtime());;
             long time = System.currentTimeMillis() - stat.getMtime();
             log.debug("Time {}", time);
+            log.debug("Path child {}", path + "/" + child);
             byte[] data = curatorClient.getData().forPath(path + "/" + child);
             String str = new String(data);
-            log.info("Element deleted {}", str);
+            log.debug("Element deleted {}", str);
             //InmemoryMessage m = new InmemoryMessage(iclijConfig.getInmemoryServer(), id + "-" + child, 0);
             InmemoryMessage m = JsonUtil.convert(str, InmemoryMessage.class);
             inmemory.delete(m);
             curatorClient.delete().forPath(path + "/" + child);
-            log.info("Path deleted {}", path + "/" + child);
+            log.debug("Path deleted {}", path + "/" + child);
         }
         curatorClient.delete().forPath(path);
         log.info("Path deleted {}", path);

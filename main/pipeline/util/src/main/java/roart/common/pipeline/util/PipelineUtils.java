@@ -1108,7 +1108,7 @@ public class PipelineUtils {
                 try {
                     data.setOld(true);
                     if (!data.isUseInmemory()) {
-                        log.info("Pipe not " + data + JsonUtil.convert(data.getValue()).length());
+                        log.debug("Pipe not {}", "" + data + JsonUtil.convert(data.getValue()).length());
                         continue;
                     }
                     //PipelineData d = JsonUtil.convertAndBack(data, null);
@@ -1118,7 +1118,7 @@ public class PipelineUtils {
                     String[] split = serviceIdUuid.split("/");
                     String serviceId = split[0];
                     String id = split[1];
-                    log.info("Pipe " + data + " " + " " + serviceId + " " + id);
+                    log.debug("Pipe {}", "" + data + " " + " " + serviceId + " " + id);
                     //   todo
                     if (data.getValue() != null) {
                         // fix for zk path
@@ -1135,10 +1135,12 @@ public class PipelineUtils {
                     for (PipelineDataBatch batch : data.getBatch()) {
                         // fix for zk path
                         msg = inmemory.send(id + "-" + ArrayUtils.toString(data.getKey()).replace("/", "slash") + "_" + batchNum++, batch.getValue(), md5);
-                        log.info("Sent size {} {} {}", msg.getId(), msg.getCount(), JsonUtil.convert(batch.getValue(), mapper).length());
+                        if (false) {
+                            log.info("Sent size {} {} {}", msg.getId(), msg.getCount(), JsonUtil.convert(batch.getValue(), mapper).length());
+                        }
                         //result.message = msg;
                         curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
-                        log.info("Path write {}", "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id + "/" + msg.getId());
+                        log.debug("Path write {}", "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id + "/" + msg.getId());
                         batch.setValue(null);
                         batch.setMessage(JsonUtil.convert(msg));
                         batch.setLoaded(false);
