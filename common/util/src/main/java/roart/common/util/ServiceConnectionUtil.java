@@ -13,7 +13,7 @@ import roart.common.constants.EurekaConstants;
 public class ServiceConnectionUtil {
 
     public Pair<String, String> getCommunicationConnection(String service, String services, String communications, boolean wantRest) {
-        String appid = System.getenv(Constants.APPID);
+        String appid = null; //System.getenv(Constants.APPID);
         if (appid != null) {
             //service = service + appid; // can not handle domain, only eureka
         }

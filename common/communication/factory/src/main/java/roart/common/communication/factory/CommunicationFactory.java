@@ -2,6 +2,7 @@ package roart.common.communication.factory;
 
 import java.util.function.Function;
 
+import roart.common.constants.Constants;
 import tools.jackson.databind.ObjectMapper;
 import roart.common.communication.model.Communication;
 import roart.common.communication.integration.camel.Camel;
@@ -14,6 +15,10 @@ import roart.common.webflux.WebFluxUtil;
 
 public class CommunicationFactory {
     public Communication get(String name, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection, Function<String, Boolean> storeMessage, WebFluxUtil webFluxUtil) {
+        String appid = System.getenv(Constants.APPID);
+        if (appid != null && !CommunicationConstants.REST.equals(name)) {
+            service = service + appid; // can not handle domain, only eureka
+        }
         switch (name) {
         case CommunicationConstants.REST:
             return new REST(name, myclass, service, mapper, send, receive, sendreceive, connection, storeMessage, webFluxUtil);
