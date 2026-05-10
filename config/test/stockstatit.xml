@@ -33,6 +33,7 @@
     <!-- add pipeline and batch -->
     <myservices>{ "core" : { "getmarkets" : "", "getcontent" : "", "getconfig" : "", "getcontentstat" : "", "getcontentgraph" : "", "getcontentgraph2" : "", "getmetas" : "", "getstocks" : "", "getdates" : "", "getevolverecommender" : "" }, "icore" : { "populate" : "" }, "evolve" : { "evolvefilterevolve" : "", "evolvefilterprofit" : "", "evolvefilterfilter" : "", "evolvefilterabovebelow" : "" }, "sim" : { "simfilter" : "", "simauto" : "", "simrun" : "" }, "ml" : { "getmcontent" : "", "getmconfig" : "", "getevolvenn" : "" }, "spark" : { "clean" : "", "learntestclassify" : "" } }</myservices>
     <services>{ "getmarkets" : "kafka", "getcontent" : "kafka", "getconfig" : "kafka", "getcontentstat" : "kafka", "getcontentgraph" : "kafka", "getcontentgraph2" : "kafka", "getmetas" : "kafka", "getstocks" : "kafka", "getdates" : "kafka", "getevolverecommender" : "kafka", "populate" : "kafka", "evolvefilterevolve" : "kafka", "evolvefilterprofit" : "kafka", "evolvefilterfilter" : "kafka", "evolvefilterabovebelow" : "kafka", "simfilter" : "kafka", "simauto" : "kafka", "simrun" : "kafka", "getmcontent" : "kafka", "getmconfig" : "kafka", "getevolvenn" : "kafka", "clean" : "kafka", "learntestclassify" : "kafka" }</services>
+    <servicerest enable="true"/>
     <communications>{ "kafka" : "127.0.0.1:9092" }</communications>
   </misc>
   <machinelearning enable='true'>
