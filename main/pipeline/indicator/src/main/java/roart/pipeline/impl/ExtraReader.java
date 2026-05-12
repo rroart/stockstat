@@ -254,7 +254,7 @@ public class ExtraReader extends Pipeline {
                     secondPipeline = pipeline[i].putData();
                 }
                 for (PipelineData secondPipelineData : secondPipeline) {
-                    log.info("Seconf pipeline" + secondPipelineData);
+                    log.debug("Second pipeline" + secondPipelineData);
                     list.add(new PipelineData(secondPipelineData.getKey().rotateRight(PipelineConstants.EXTRAREADER, entry.getKey()), secondPipelineData.getValue(), secondPipelineData.isUseInmemory()));
                     //list.add(new PipelineData(new String[] { PipelineConstants.EXTRAREADER, secondPipelineData.getKey()[0], secondPipelineData.getKey()[1], secondPipelineData.getKey()[2], secondPipelineData.getKey()[3]}, secondPipelineData.getValue(), true));
                 }
