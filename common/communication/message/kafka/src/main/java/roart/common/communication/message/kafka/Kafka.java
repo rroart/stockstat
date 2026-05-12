@@ -95,8 +95,12 @@ public class Kafka extends MessageCommunication {
                     StringDeserializer.class.getName());
             //props.put("fetch.message.max.bytes", MSGSIZE);
             //props.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, MSGSIZE);
+            if (sendreceive) {
+                props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+            }
             consumer = new KafkaConsumer<>(props);
 
+            log.info("subscribing {}", getReceiveService());
             consumer.subscribe(Collections.singletonList(getReceiveService()));
             /*
             List<TopicPartition> partitions = new ArrayList<>();
@@ -135,7 +139,7 @@ public class Kafka extends MessageCommunication {
             int count = 0;
             for (ConsumerRecord<String, String> record : records) {
                 retRecord[count++] = record.value();
-                log.debug("offset = {}, key = {}, value = {}\n", 
+                log.debug("offset = {}, key = {}, value = {}\n",
                         record.offset(), record.key(), record.value());
             }
         }
@@ -151,6 +155,7 @@ public class Kafka extends MessageCommunication {
         String[] retRecord = null;
         int returned = 0;
         while (returned == 0) {
+            log.debug("Polling" + consumer.subscription());
             ConsumerRecords<String, String> records = consumer.poll(duration);
             returned = records.count();
             retRecord = new String[returned];
@@ -159,7 +164,7 @@ public class Kafka extends MessageCommunication {
             for (ConsumerRecord<String, String> record : records) {
                 retRecord[count++] = record.value();
                 stored &= storeMessage.apply(record.value());
-                log.debug("offset = {}, key = {}, value = {}\n", 
+                log.debug("offset = {}, key = {}, value = {}\n",
                         record.offset(), record.key(), record.value());
             }
             if (stored && count > 0) {
