@@ -14,9 +14,9 @@ import roart.common.constants.CommunicationConstants;
 import roart.common.webflux.WebFluxUtil;
 
 public class CommunicationFactory {
-    public Communication get(String name, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection, Function<String, Boolean> storeMessage, WebFluxUtil webFluxUtil) {
+    public Communication get(String name, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection, Function<String, Boolean> storeMessage, WebFluxUtil webFluxUtil, boolean withAppid) {
         String appid = System.getenv(Constants.APPID);
-        if (appid != null && !CommunicationConstants.REST.equals(name)) {
+        if (withAppid && appid != null && !CommunicationConstants.REST.equals(name)) {
             service = service + appid; // can not handle domain, only eureka
         }
         switch (name) {

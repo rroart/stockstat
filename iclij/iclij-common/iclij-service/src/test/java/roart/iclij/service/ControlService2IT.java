@@ -33,14 +33,14 @@ public class ControlService2IT {
         ObjectMapper objectMapper = new ObjectMapper();
         IclijServiceParam param = new IclijServiceParam();
         param.setWebpath(service);
-        Communication c = new CommunicationFactory().get(sc.getLeft(), IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, sc.getRight(), null, webFluxUtil);
+        Communication c = new CommunicationFactory().get(sc.getLeft(), IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, sc.getRight(), null, webFluxUtil, true);
         System.out.println("zzz0");
         IclijServiceResult[] result = new IOUtils(io, iclijConfig, objectMapper).sendReceive(c, param);
         //if (true) return;
         System.out.println("zzz"+result[0]);
         System.out.println(param.getWebpath());
         param.setWebpath(service);
-        Communication c2 = new CommunicationFactory().get(sc.getLeft(), IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, sc.getRight(), null, webFluxUtil);
+        Communication c2 = new CommunicationFactory().get(sc.getLeft(), IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, sc.getRight(), null, webFluxUtil, true);
         IclijServiceResult[] result2 = new IOUtils(io, iclijConfig, objectMapper).sendReceive(c2, param);
         System.out.println("zzz"+result2[0]);
         System.out.println(param.getWebpath());
@@ -57,7 +57,7 @@ public class ControlService2IT {
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, "{}", "{}", iclijConfig.wantRestServices());
         T[] result;// = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG        
         System.out.println("mnc"+myclass);
-        Communication c = new CommunicationFactory().get(sc.getLeft(), myclass, service, new ObjectMapper(), true, true, true, sc.getRight(), null, webFluxUtil);
+        Communication c = new CommunicationFactory().get(sc.getLeft(), myclass, service, new ObjectMapper(), true, true, true, sc.getRight(), null, webFluxUtil, true);
         param.setWebpath(c.getReturnService());
         //result = sendReceive(c, param);
         result = (T[]) c.sendReceive(param);
@@ -77,7 +77,7 @@ public class ControlService2IT {
         IclijServiceParam param = new IclijServiceParam();
         param.setWebpath("TST");
         ObjectMapper objectMapper = new ObjectMapper();
-        Communication c = new CommunicationFactory().get(CommunicationConstants.SPRING, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "localhost", null, webFluxUtil);
+        Communication c = new CommunicationFactory().get(CommunicationConstants.SPRING, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "localhost", null, webFluxUtil, true);
         IclijServiceResult result[] = new IOUtils(io, iclijConfig, objectMapper).sendReceive(c, param);
         System.out.println("zzz"+result[0]);
         System.out.println("t2" + param.getWebpath());
@@ -88,7 +88,7 @@ public class ControlService2IT {
         IclijServiceParam param = new IclijServiceParam();
         param.setWebpath("TST");
         ObjectMapper objectMapper = new ObjectMapper();
-        Communication c = new CommunicationFactory().get(CommunicationConstants.KAFKA, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "kafka9:9092", null, webFluxUtil);
+        Communication c = new CommunicationFactory().get(CommunicationConstants.KAFKA, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "kafka9:9092", null, webFluxUtil, true);
         IclijServiceResult[] result = new IOUtils(io, iclijConfig, objectMapper).sendReceive(c, param);
         System.out.println("t3" + param.getWebpath());
     }
@@ -98,7 +98,7 @@ public class ControlService2IT {
         IclijServiceParam param = new IclijServiceParam();
         param.setWebpath("TST");
         ObjectMapper objectMapper = new ObjectMapper();
-        Communication c = new CommunicationFactory().get(CommunicationConstants.PULSAR, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "pulsar://kafka9:6650", null, webFluxUtil);
+        Communication c = new CommunicationFactory().get(CommunicationConstants.PULSAR, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "pulsar://kafka9:6650", null, webFluxUtil, true);
         IclijServiceResult[] result = new IOUtils(io, iclijConfig, objectMapper).sendReceive(c, param);
         System.out.println("t4" + param.getWebpath());
     }

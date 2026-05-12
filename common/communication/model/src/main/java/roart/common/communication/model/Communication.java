@@ -8,6 +8,7 @@ import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.constants.CommunicationConstants;
 import tools.jackson.databind.ObjectMapper;
 
 import roart.common.util.JsonUtil;
@@ -42,6 +43,10 @@ public abstract class Communication {
         if (sendreceive) {
             try {
                 this.returnService = service + InetAddress.getLocalHost().getHostAddress() + System.currentTimeMillis();
+                String appid = System.getenv(Constants.APPID);
+                if (appid != null) {
+                    //this.returnService += appid; // can not handle domain, only eureka
+                }
             } catch (UnknownHostException e) {
                 log.error(Constants.EXCEPTION, e);
             }
@@ -91,7 +96,11 @@ public abstract class Communication {
     protected String getSendService() {
         return service;
     }
-    
+
+    public String getConnection() {
+        return connection;
+    }
+
     protected String getReceiveService() {
         if (returnService != null) {
             return returnService;            

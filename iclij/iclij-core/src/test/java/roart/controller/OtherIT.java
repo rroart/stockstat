@@ -35,7 +35,7 @@ public class OtherIT {
         System.out.println("scsc" + sc.getLeft() + " " + sc.getRight());
         ObjectMapper objectMapper = new ObjectMapper();
         //Communication comm = CommunicationFactory.get(communication, IclijServiceResult.class, service, objectMapper, false, true, false, connection);
-        Communication c = new CommunicationFactory().get(sc.getLeft(), IclijServiceParam.class, service, objectMapper, false, true, false, sc.getRight(), null, webFluxUtil);
+        Communication c = new CommunicationFactory().get(sc.getLeft(), IclijServiceParam.class, service, objectMapper, false, true, false, sc.getRight(), null, webFluxUtil, true);
         ServiceControllerOther co = new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iclijConfig, null);
         co.get(c);
         try {

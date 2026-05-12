@@ -3,6 +3,7 @@ package roart.async;
 import org.apache.curator.framework.CuratorFramework;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.slf4j.Logger;
@@ -33,6 +34,7 @@ import roart.db.dao.DbDao;
 import roart.db.dao.IclijDbDao;
 import roart.filesystem.FileSystemDao;
 import roart.iclij.common.service.IclijServiceParam;
+import roart.iclij.common.service.IclijServiceResult;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.bean.ConfigI;
@@ -53,7 +55,7 @@ import static org.mockito.Mockito.mock;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 
-@Disabled
+//@Disabled
 @EmbeddedKafka // did not work (ports = { 9092 })
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ComponentScan(basePackages = "roart.controller,roart.db.dao,roart.db.spring,roart.model,roart.common.springdata.repository,roart.iclij.config,roart.common.config")
@@ -163,14 +165,18 @@ public class AsyncIT {
         MyCache.setCacheTTL(iconf.getCacheTTL());
 
         String myservices = iconf.getMyservices();
+        log.info("myservices {}", myservices);
         myservices = new ServiceConnectionUtil().getMyServices(ServiceConstants.CORE, myservices);
+        log.info("myservices {}", myservices);
         String services = iconf.getServices();
+        log.info("services {}", services);
         String communications = iconf.getCommunications();
         new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iconf.copy(), io).start();
     }
 
     @Test
-    public void test() {
+    public void test() throws Exception {
+        //if (true) return;
         iconf.getConfigData().setMarket(TestConstants.MARKET);
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(iconf.getConfigData());
@@ -181,7 +187,12 @@ public class AsyncIT {
         //IclijServiceParam serviceparam = new IclijServiceParam();
         //element.setParam(serviceparam);
         log.info("icsev" + iconf.getServices());
-        new IOUtils(io, iconf, null).sendReceive(EurekaConstants.GETCONFIG, element, null);
+        new IOUtils(io, iconf, null).send(EurekaConstants.GETCONFIG, element);
+        Thread.sleep(10000);
+        //new IOUtils(io, iconf, null).sendReceive(EurekaConstants.GETCONFIG, element, null);
+        IclijServiceResult r = new IOUtils(io, iconf, null).sendReceive(IclijServiceResult.class, param, EurekaConstants.GETCONFIG);
+        log.info("ConfigData {}", r.getConfigData());
+        assertNotNull(r.getConfigData());
 
     }
 }

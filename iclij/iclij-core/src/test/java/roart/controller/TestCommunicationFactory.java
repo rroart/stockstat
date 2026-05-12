@@ -15,7 +15,7 @@ public class TestCommunicationFactory extends CommunicationFactory {
     private IclijConfig conf;
 
     @Override
-    public Communication get(String name, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection, Function<String, Boolean> storeMessage, WebFluxUtil webFluxUtil) {
+    public Communication get(String name, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection, Function<String, Boolean> storeMessage, WebFluxUtil webFluxUtil, boolean withAppid) {
         Communication communication = new TestCommunication(name, myclass, service, mapper, send, receive, sendreceive, connection, storeMessage);
         ((TestCommunication)communication).setIo(io);
         ((TestCommunication)communication).setConfig(conf);

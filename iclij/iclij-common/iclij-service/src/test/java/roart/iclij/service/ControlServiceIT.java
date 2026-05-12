@@ -78,7 +78,7 @@ public class ControlServiceIT {
         IclijServiceParam param = new IclijServiceParam();
         param.setWebpath("TST");
         ObjectMapper objectMapper = new ObjectMapper();
-        Communication c = new CommunicationFactory().get(CommunicationConstants.CAMEL, IclijServiceParam.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "rabbitmq://localhost:5672", null, webFluxUtil);
+        Communication c = new CommunicationFactory().get(CommunicationConstants.CAMEL, IclijServiceParam.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "rabbitmq://localhost:5672", null, webFluxUtil, true);
         IclijServiceParam[] result = new IOUtils(io, iclijConfig, objectMapper).sendReceive(c, param);
         log.info("zzz"+result[0]);
         log.info(param.getWebpath());
@@ -91,7 +91,7 @@ public class ControlServiceIT {
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, "{}", "{}", iclijConfig.wantRestServices());
         T[] result;// = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG        
         log.info("mnc"+myclass);
-        Communication c = new CommunicationFactory().get(sc.getLeft(), myclass, service, new ObjectMapper(), true, true, true, sc.getRight(), null, webFluxUtil);
+        Communication c = new CommunicationFactory().get(sc.getLeft(), myclass, service, new ObjectMapper(), true, true, true, sc.getRight(), null, webFluxUtil, true);
         param.setWebpath(c.getReturnService());
         //result = sendReceive(c, param);
         result = (T[]) c.sendReceive(param);
@@ -111,7 +111,7 @@ public class ControlServiceIT {
         IclijServiceParam param = new IclijServiceParam();
         param.setWebpath("TST");
         ObjectMapper objectMapper = new ObjectMapper();
-        Communication c = new CommunicationFactory().get(CommunicationConstants.SPRING, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "localhost", this::print, webFluxUtil);
+        Communication c = new CommunicationFactory().get(CommunicationConstants.SPRING, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "localhost", this::print, webFluxUtil, true);
         IclijServiceResult result[] = new IOUtils(io, iclijConfig, objectMapper).sendReceive(c, param);
         log.info("zzz"+result[0]);
         log.info("t2" + param.getWebpath());
@@ -122,7 +122,7 @@ public class ControlServiceIT {
         IclijServiceParam param = new IclijServiceParam();
         param.setWebpath("TST");
         ObjectMapper objectMapper = new ObjectMapper();
-        Communication c = new CommunicationFactory().get(CommunicationConstants.KAFKA, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "kafka9:9092", this::print, webFluxUtil);
+        Communication c = new CommunicationFactory().get(CommunicationConstants.KAFKA, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "kafka9:9092", this::print, webFluxUtil, true);
         IclijServiceResult[] result = new IOUtils(io, iclijConfig, objectMapper).sendReceive(c, param);
         log.info("t3" + param.getWebpath());
     }
@@ -132,7 +132,7 @@ public class ControlServiceIT {
         IclijServiceParam param = new IclijServiceParam();
         param.setWebpath("TST");
         ObjectMapper objectMapper = new ObjectMapper();
-        Communication c = new CommunicationFactory().get(CommunicationConstants.PULSAR, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "pulsar://kafka9:6650", this::print, webFluxUtil);
+        Communication c = new CommunicationFactory().get(CommunicationConstants.PULSAR, IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "pulsar://kafka9:6650", this::print, webFluxUtil, true);
         IclijServiceResult[] result = new IOUtils(io, iclijConfig, objectMapper).sendReceive(c, param);
         log.info("t4" + param.getWebpath());
     }
@@ -147,7 +147,7 @@ public class ControlServiceIT {
         ObjectMapper objectMapper = new ObjectMapper();
         for (String comm : comms) {
             Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(ServiceConstants.SIMAUTO, iclijConfig.getServices(), iclijConfig.getCommunications(), iclijConfig.wantRestServices());
-            Communication c = new CommunicationFactory().get(sc.getLeft(), String.class, comm, objectMapper, true, true, false, sc.getRight(), null, webFluxUtil);
+            Communication c = new CommunicationFactory().get(sc.getLeft(), String.class, comm, objectMapper, true, true, false, sc.getRight(), null, webFluxUtil, true);
             //Communication c = CommunicationFactory.get(comm, IclijServiceParam.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "rabbitmq://localhost:5672", func);
             c.send("Counter " + comm + " " + counter++);
             try {
@@ -176,7 +176,7 @@ public class ControlServiceIT {
         for (String comm : comms) {
             for (int i = 0; i < 3; i++) {
                 Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(ServiceConstants.SIMAUTO, iclijConfig.getServices(), iclijConfig.getCommunications(), iclijConfig.wantRestServices());
-                Communication c = new CommunicationFactory().get(sc.getLeft(), String.class, comm, objectMapper, true, true, false, sc.getRight(), this::print, webFluxUtil);
+                Communication c = new CommunicationFactory().get(sc.getLeft(), String.class, comm, objectMapper, true, true, false, sc.getRight(), this::print, webFluxUtil, true);
                 //Communication c = CommunicationFactory.get(comm, IclijServiceParam.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "rabbitmq://localhost:5672", func);
                 c.send("Counter " + comm + " " + counter++);
             }
@@ -185,7 +185,7 @@ public class ControlServiceIT {
             int i = 0;
             for (Function<String, Boolean> func : funcs) {
                 Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(ServiceConstants.SIMAUTO, iclijConfig.getServices(), iclijConfig.getCommunications(), iclijConfig.wantRestServices());
-                Communication c = new CommunicationFactory().get(sc.getLeft(), String.class, comm, objectMapper, true, true, false, sc.getRight(), func, webFluxUtil);
+                Communication c = new CommunicationFactory().get(sc.getLeft(), String.class, comm, objectMapper, true, true, false, sc.getRight(), func, webFluxUtil, true);
                 //Communication c = CommunicationFactory.get(comm, IclijServiceParam.class, param.getWebpath(), objectMapper, true, true, SENDRECEIVE, "rabbitmq://localhost:5672", func);
                 try {
                     Thread.sleep(1000);

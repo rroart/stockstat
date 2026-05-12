@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import roart.common.communication.factory.CommunicationFactory;
 import roart.common.communication.model.Communication;
-import roart.common.constants.Constants;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.queue.QueueElement;
@@ -40,7 +39,7 @@ public class IOUtils {
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications(), iclijConfig.wantRestServices());
         T[] result;// = WebFluxUtil.sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG
         Function<String, Boolean> zkRegister = (new QueueUtils(io.getCuratorClient()))::zkRegister;
-        Communication c = new CommunicationFactory().get(sc.getLeft(), myclass, service, mapper, true, true, true, sc.getRight(), zkRegister, io.getWebFluxUtil());
+        Communication c = new CommunicationFactory().get(sc.getLeft(), myclass, service, mapper, true, true, true, sc.getRight(), zkRegister, io.getWebFluxUtil(), true);
         param.setWebpath(c.getReturnService());
         result = c.sendReceive(param);
         return result[0];
@@ -51,7 +50,7 @@ public class IOUtils {
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications(), iclijConfig.wantRestServices());
         T[] result;// = io.getWebFluxUtil().sendCMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG
         Function<String, Boolean> zkRegister = (new QueueUtils(io.getCuratorClient()))::zkRegister;
-        Communication c = io.getCommunicationFactory().get(sc.getLeft(), myclass, service, mapper, true, true, true, sc.getRight(), zkRegister, io.getWebFluxUtil());
+        Communication c = io.getCommunicationFactory().get(sc.getLeft(), myclass, service, mapper, true, true, true, sc.getRight(), zkRegister, io.getWebFluxUtil(), true);
         param.setWebpath(c.getReturnService());
         result = c.sendReceive(param);
         return result[0];
@@ -61,7 +60,7 @@ public class IOUtils {
         //IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications(), iclijConfig.wantRestServices());
         Function<String, Boolean> zkRegister = (new QueueUtils(io.getCuratorClient()))::zkRegister;
-        Communication c = io.getCommunicationFactory().get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, io.getWebFluxUtil());
+        Communication c = io.getCommunicationFactory().get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, io.getWebFluxUtil(), true);
         c.send(object);
     }
 
@@ -89,7 +88,7 @@ public class IOUtils {
         //IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications(), iclijConfig.wantRestServices());
         Function<String, Boolean> zkRegister = (new QueueUtils(io.getCuratorClient()))::zkRegister;
-        Communication c = io.getCommunicationFactory().get(sc.getLeft(), String.class, service, objectMapper, true, true, true, sc.getRight(), zkRegister, io.getWebFluxUtil());
+        Communication c = io.getCommunicationFactory().get(sc.getLeft(), String.class, service, objectMapper, true, true, true, sc.getRight(), zkRegister, io.getWebFluxUtil(), true);
         object.setQueue(c.getReturnService());
         return c.sendReceive(object);
     }

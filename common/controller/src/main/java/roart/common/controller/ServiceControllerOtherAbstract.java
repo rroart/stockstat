@@ -6,7 +6,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +16,6 @@ import roart.common.constants.CommunicationConstants;
 import roart.common.constants.Constants;
 import roart.common.queueutil.QueueUtils;
 import roart.common.util.JsonUtil;
-import roart.common.util.ServiceConnectionUtil;
 import roart.iclij.config.IclijConfig;
 import roart.model.io.IO;
 
@@ -82,6 +80,7 @@ public abstract class ServiceControllerOtherAbstract {
         }
         Map<String, String> myservicelist = JsonUtil.convert(myservices, Map.class);
         Map<String, String> serviceMap = JsonUtil.convert(services, Map.class);
+        log.info("serviceMap {}", serviceMap);
         Map<String, String> communicationsMap = JsonUtil.convert(communications, Map.class);
         for (Entry<String, String> myserviceEntry : myservicelist.entrySet()) {
             String myservice = myserviceEntry.getKey();
@@ -103,26 +102,25 @@ public abstract class ServiceControllerOtherAbstract {
             if (reply) {
                 myclass = replyclass;
             }
-            String appid = System.getenv(Constants.APPID);
+            String appid = null; // System.getenv(Constants.APPID);
             if (appid != null) {
                 myservice = myservice + appid; // can not handle domain, only eureka
             }
             zkRegister = (new QueueUtils(io.getCuratorClient()))::zkRegister;
-            Communication comm = io.getCommunicationFactory().get(communication, myclass, myservice, objectMapper, false, true, false, connection, zkRegister, null);
+            Communication comm = io.getCommunicationFactory().get(communication, myclass, myservice, objectMapper, false, true, false, connection, zkRegister, null, true);
             get(comm);
         }        
     }
     
     protected void sendReply(String replypath, Communication c, Object r) {
         ObjectMapper objectMapper = new ObjectMapper();
-        log.info("ReplyPath {}" + replypath);
+        log.info("ReplyPath {}", replypath);
         if (replypath != null) {
             String service = replypath;
-            Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(c.getService(), services, communications, iclijConfig.wantRestServices());
-            log.info("ServiceConnection {} {}", sc.getLeft(), sc.getRight());
-            Communication c2 = io.getCommunicationFactory().get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, null);
+            //Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(c.getService(), services, communications, iclijConfig.wantRestServices());
+            //log.info("ServiceConnection {} {}", sc.getLeft(), sc.getRight());
+            Communication c2 = io.getCommunicationFactory().get(c.getMyname(), null, service, objectMapper, true, false, false, c.getConnection(), zkRegister, null, false);
             c2.send(r);
-            c2.destroy();
         }
     }
     
@@ -131,6 +129,7 @@ public abstract class ServiceControllerOtherAbstract {
         if (appid == null) {
             appid = "";
         }
+        log.info("" + c.getService() + " " + str + appid);
         return c.getService().equals(str + appid);
     }
 
