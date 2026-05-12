@@ -1123,10 +1123,12 @@ public class PipelineUtils {
                     if (data.getValue() != null) {
                         // fix for zk path
                         msg = inmemory.send(id + "-" + ArrayUtils.toString(data.getKey()).replace("/", "slash"), data.getValue(), md5);
-                        log.info("Sent size {} {} {}", msg.getId(), msg.getCount(), JsonUtil.convert(data.getValue(), mapper).length());
+                        if (false) {
+                            log.info("Sent size {} {} {}", msg.getId(), msg.getCount(), JsonUtil.convert(data.getValue(), mapper).length());
+                        }
                         //result.message = msg;
                         curatorClient.create().creatingParentsIfNeeded().forPath("/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id + "/" + msg.getId(), JsonUtil.convert(msg).getBytes());
-                        log.info("Path write {}", "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id + "/" + msg.getId());
+                        log.debug("Path write {}", "/" + Constants.STOCKSTAT + "/" + Constants.PIPELINE + "/" + serviceId + "/" + id + "/" + msg.getId());
                         data.setValue(null);
                         data.setMessage(JsonUtil.convert(msg));
                         data.setLoaded(false);
