@@ -269,7 +269,7 @@ public class MachineLearningControlService {
         IclijConfig iclijConfig = null;
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications(), iclijConfig.wantRestServices());
         Function<String, Boolean> zkRegister = (new QueueUtils(io.getCuratorClient()))::zkRegister;
-        Communication c = io.getCommunicationFactory().get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, io.getWebFluxUtil());
+        Communication c = io.getCommunicationFactory().get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight(), zkRegister, io.getWebFluxUtil(), true);
         c.send(object);
     }
 

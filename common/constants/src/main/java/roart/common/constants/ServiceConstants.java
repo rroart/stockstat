@@ -11,6 +11,7 @@ public class ServiceConstants {
     public static final String GETSTOCKS = "getstocks";
     public static final String GETDATES = "getdates";
     public static final String GETEVOLVERECOMMENDER = "getevolverecommender";
+    public static final String HELLO = "hello";
 
     public static final String GETMCONTENT = "getmcontent";
     public static final String GETMCONFIG = "getmconfig";

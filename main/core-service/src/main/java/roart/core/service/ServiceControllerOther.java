@@ -166,6 +166,14 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
                 result.setError(e.getMessage());
             }
         }
+        if (serviceMatch(ServiceConstants.HELLO, c)) {
+            try {
+                result.setError("World");
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+                result.setError(e.getMessage());
+            }
+        }
         return result;
     }
 }
