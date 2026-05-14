@@ -38,7 +38,7 @@ public class TensorflowCNNConfigGene extends TensorflowPreFeedConfigGene {
             super.mutate(task);
             return;
         }
-	task = task - RANDOMS;
+	    task = task - RANDOMS;
         switch (task) {
         case 0:
             myconfig.setKernelsize(generateKernelsize());

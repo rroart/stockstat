@@ -33,10 +33,10 @@ public abstract class PytorchFeedConfigGene extends PytorchConfigGene {
         myconfig.setLayers(generateLayers());
     }
     
-    @Override
-    public void mutate() {
+    //@Override
+    public void mutate(int task) {
         PytorchFeedConfig myconfig = (PytorchFeedConfig) getConfig();
-        int task = random.nextInt(RANDOMS + 2);
+        //int task = random.nextInt(RANDOMS + 2);
         if (task < RANDOMS) {
             super.mutate(task);
             return;

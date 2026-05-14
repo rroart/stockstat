@@ -38,9 +38,9 @@ public abstract class TensorflowPreFeedConfigGene extends TensorflowConfigGene {
     }
     
     @Override
-    public void mutate() {
+    public void mutate(int task) {
         TensorflowPreFeedConfig myconfig = (TensorflowPreFeedConfig) getConfig();
-        int task = random.nextInt(RANDOMS + 3);
+        //int task = random.nextInt(RANDOMS + 3);
         if (task < RANDOMS) {
             super.mutate(task);
             return;

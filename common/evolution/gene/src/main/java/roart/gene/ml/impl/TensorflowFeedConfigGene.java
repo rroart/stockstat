@@ -38,14 +38,14 @@ public abstract class TensorflowFeedConfigGene extends TensorflowConfigGene {
     }
     
     @Override
-    public void mutate() {
+    public void mutate(int task) {
         TensorflowFeedConfig myconfig = (TensorflowFeedConfig) getConfig();
-	int task = random.nextInt(RANDOMS + 2);
+	    //int task = random.nextInt(RANDOMS + 2);
         if (task < RANDOMS) {
             super.mutate(task);
             return;
         }
-	task = task - RANDOMS;
+	    task = task - RANDOMS;
         switch (task) {
         case 0:
             myconfig.setHidden(generateHidden());

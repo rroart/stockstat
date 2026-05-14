@@ -21,6 +21,12 @@ public class TensorflowMLPConfigGene extends TensorflowFeedConfigGene {
     }
 
     @Override
+    public void mutate() {
+        int task = random.nextInt(RANDOMS + 1 + 3);
+        super.mutate(task);
+    }
+
+    @Override
     public AbstractGene crossover(AbstractGene otherNN) {
         TensorflowMLPConfigGene offspring = new TensorflowMLPConfigGene((TensorflowMLPConfig) getConfig(), predictor);
         offspring.crossover((TensorflowConfigGene) otherNN);

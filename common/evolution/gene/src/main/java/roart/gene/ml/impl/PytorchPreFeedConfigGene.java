@@ -37,10 +37,10 @@ public abstract class PytorchPreFeedConfigGene extends PytorchConfigGene {
         myconfig.setHidden(generateHidden());
     }
     
-    @Override
-    public void mutate() {
+    //@Override
+    public void mutate(int task) {
         PytorchPreFeedConfig myconfig = (PytorchPreFeedConfig) getConfig();
-        int task = random.nextInt(RANDOMS + 3);
+        //int task = random.nextInt(RANDOMS + 3);
         if (task < RANDOMS) {
             super.mutate(task);
             return;

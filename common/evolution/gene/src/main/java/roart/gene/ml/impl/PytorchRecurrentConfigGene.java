@@ -39,7 +39,7 @@ public abstract class PytorchRecurrentConfigGene extends PytorchFeedConfigGene {
         PytorchRecurrentConfig myconfig = (PytorchRecurrentConfig) getConfig();
         int task = random.nextInt(RANDOMS + 1 + 3);
         if (task < RANDOMS + 3) {
-            super.mutate();
+            super.mutate(task);
             return;
         }
         task = task - RANDOMS - 3;

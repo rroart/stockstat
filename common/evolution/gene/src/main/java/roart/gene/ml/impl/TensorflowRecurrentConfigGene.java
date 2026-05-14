@@ -40,10 +40,10 @@ public abstract class TensorflowRecurrentConfigGene extends TensorflowFeedConfig
         TensorflowRecurrentConfig myconfig = (TensorflowRecurrentConfig) getConfig();
         int task = random.nextInt(RANDOMS + 2);
         if (task < RANDOMS + 2) {
-            super.mutate();
+            super.mutate(task);
             return;
         }
-	task = task - RANDOMS - 2;
+	    task = task - RANDOMS - 2;
         switch (task) {
         case 0:
             myconfig.setSlide(generateSlide());
