@@ -56,7 +56,8 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
             boolean useMax, AbstractChromosome chromosome, List<String> individuals, AbstractChromosome defaultChromosome) throws StreamReadException, DatabindException, IOException, InterruptedException, ExecutionException {
         //printmap(population.getFittest().getConf().getConfigValueMap());
         //printmap(population.getIndividuals().get(population.size() - 1).getConf().getConfigValueMap());
-        
+
+        log.info("Generations {} population {}", getEvolutionConfig().getGenerations(), population.size());
         for (int i = 0; i < getEvolutionConfig().getGenerations(); i++){
             log.debug("Iteration {} of {}", i, getEvolutionConfig().getGenerations());
             population.truncate(Math.min(population.size(), getEvolutionConfig().getSelect()));
