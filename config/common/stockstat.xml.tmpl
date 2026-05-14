@@ -193,6 +193,16 @@
   </evolution>
 
   <!-- machinelearning -->
+  <evolve>
+    <ml>
+      <evolutionconfig>{ "generations" : 10, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
+      <!--evolutionconfig>{ "generations" : 0, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 4, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig-->
+    </ml>
+    <save>
+	<location>$SAVELOCATION</location>
+	<path>$SAVEPATH</path>
+    </save>
+  </evolve>
   <aggregators enable='true'>
     <indicatorrecommender enable='true'>
       <simple enable='true'>
