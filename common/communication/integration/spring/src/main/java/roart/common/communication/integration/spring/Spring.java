@@ -103,7 +103,9 @@ public class Spring extends IntegrationCommunication {
             template.containerAckMode(null);
             Object object = template.receiveAndConvert(getReceiveService(), 1000);
             if (object == null) {
-                break;
+                continue;
+                // TODO
+                //break;
             }
             //System.out.println("boj" + Arrays.asList(object));
             if (object == null || object instanceof String) {
@@ -112,6 +114,7 @@ public class Spring extends IntegrationCommunication {
                 string = new String((byte[]) object);
             }
             strings = ArrayUtils.addAll(strings, string);
+            break;
         }
         template.destroy();
         ((CachingConnectionFactory)connectionFactory()).destroy();
