@@ -41,8 +41,10 @@ import roart.model.io.util.IOUtils;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
+import java.util.Map;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -143,16 +145,54 @@ public class AsyncET {
 
     @Test
     public void test() {
+        //if (true) return;
         String market = System.getenv("MARKET");
         iconf.getConfigData().setMarket(market);
 
         IclijServiceParam param = new IclijServiceParam();
         param.setConfigData(iconf.getConfigData());
         try {
+            Thread.sleep(60000);
+            log.info("Sending");
             IclijServiceResult r = new IOUtils(io, iconf, null).sendReceive(IclijServiceResult.class, param, EurekaConstants.GETCONFIG);
-                log.info("ConfigData {}", r.getConfigData());
+            log.info("ConfigData {}", r.getConfigData());
+            assertNotNull(r.getConfigData());
         } catch (Exception e) {
             e.printStackTrace();;
+        }
+    }
+
+    @Test
+    public void testOther() {
+        String origserv = iconf.getServices();
+        String[] comms = new String[] { "pulsar", "spring", "camel" };
+        String myservices = "{ \"hello\" : \"\" }";
+        String servicesPulsar = "{ \"hello\" : \"pulsar\" }";
+        String servicesSpring = "{ \"hello\" : \"spring\" }";
+        String servicesCamel = "{ \"hello\" : \"camel\" }";
+        String communications = iconf.getCommunications();
+        log.info("Myservices {}", myservices);
+        Map<String, String> allservicesMap = Map.of("pulsar", servicesPulsar, "spring", servicesSpring, "camel", servicesCamel);
+        allservicesMap = Map.of("camel", servicesCamel);
+        allservicesMap = Map.of("spring", servicesSpring);
+        for (Map.Entry<String, String> entry : allservicesMap.entrySet()) {
+            String key = entry.getKey();
+            String service = entry.getValue();
+            IclijServiceParam param = new IclijServiceParam();
+            param.setConfigData(iconf.getConfigData());
+            try {
+                String serv = origserv.replaceAll("kafka", key);
+                iconf.getConfigData().getConfigValueMap().put(ConfigConstants.MISCSERVICES, serv);
+                new ServiceControllerOther(myservices, service, communications, IclijServiceParam.class, iconf.copy(), io).start();
+                Thread.sleep(10000);
+                log.info("Sending {}", key);
+                IclijServiceResult r = new IOUtils(io, iconf, null).sendReceive(IclijServiceResult.class, param, ServiceConstants.HELLO);
+                log.info("Return {} {}", key, r.getError());
+                assertNotNull(r.getError());
+            } catch (Exception e) {
+                e.printStackTrace();;
+            }
+
         }
     }
 }
