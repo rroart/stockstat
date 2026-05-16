@@ -30,6 +30,7 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
     public Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome chromosome, List<String> individuals, List<SerialScoreChromosome> results, AbstractChromosome defaultChromosome) throws Exception {
         int selectionSize = getEvolutionConfig().getSelect();
         Population population = new Population(selectionSize, evolutionConfig, chromosome, false, defaultChromosome);
+        log.info("Generations {} population {}", getEvolutionConfig().getGenerations(), population.size());
         if (getEvolutionConfig().getUseoldelite() && !chromosome.isEmpty()) {
             population.getIndividuals().add(new Individual(chromosome).getNewWithValueCopyFactory());
         }
@@ -57,9 +58,8 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
         //printmap(population.getFittest().getConf().getConfigValueMap());
         //printmap(population.getIndividuals().get(population.size() - 1).getConf().getConfigValueMap());
 
-        log.info("Generations {} population {}", getEvolutionConfig().getGenerations(), population.size());
         for (int i = 0; i < getEvolutionConfig().getGenerations(); i++){
-            log.debug("Iteration {} of {}", i, getEvolutionConfig().getGenerations());
+            log.info("Iteration {} of {} with population {}", i, getEvolutionConfig().getGenerations(), population.size());
             population.truncate(Math.min(population.size(), getEvolutionConfig().getSelect()));
            
             List<Individual> children = crossover(getEvolutionConfig().getCrossover(), population.getIndividuals(), useMax, chromosome);
