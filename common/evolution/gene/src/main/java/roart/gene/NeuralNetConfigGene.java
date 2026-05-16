@@ -41,6 +41,8 @@ public abstract class NeuralNetConfigGene extends AbstractGene {
         this.config = config;
     }
 
+    protected int sizeNN = 0; // 0 small 1 medium 2 large
+
     public NeuralNetConfigGene(NeuralNetConfig config) {
         super();
         this.config = config;
@@ -55,9 +57,18 @@ public abstract class NeuralNetConfigGene extends AbstractGene {
     protected boolean generateBoolean() {
         return random.nextBoolean();
     }
-    
+
     protected int generateSteps() {
-        return RandomUtil.random(random, 100, 100, 10);
+        switch (sizeNN) {
+            case 0:
+                return RandomUtil.random(random, 10, 10, 10);
+            case 1:
+                return RandomUtil.random(random, 100, 100, 10);
+            case 2:
+                return RandomUtil.random(random, 1000, 1000, 10);
+            default:
+                return RandomUtil.random(random, 1000, 1000, 10);
+        }
     }
 
     // from 1 to 0.0001
@@ -66,7 +77,7 @@ public abstract class NeuralNetConfigGene extends AbstractGene {
     }
 
     protected int generateLayers() {
-        return RandomUtil.random(random, 1, 5);
+        return RandomUtil.random(random, 1, 3 + sizeNN); // was 5
     }
 
     protected int generateCnnLayers() {
