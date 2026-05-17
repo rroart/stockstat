@@ -9,22 +9,158 @@ R: Reject
 ********
 
 Hot
-psql up
-zk
-ValidateUtil [ValidateUtil.java:13] Size mismatch 366 vs 336, last month, sim
+
+UnsupportedOperationException: getSubject is not supported
+Evolve ml with small medium big sizing
+ML test cpu vs gpu with benchmark
+Flasktf slow start and stockstatml exceptions
+
+Too many improvefilter
+
 11-13/14 ose del
-bom for conda
-non-db sources
-reserve sources
-touched/used
-"String.equals(Object)"
-ari
-check imp abo bel filter, afree result
-hibernate
-async
-gzip
-kafka dwh pipeline
-0301
+
+Check kafka send and receive
+Kafka partition error
+
+0601
+
+Myservices with "r"?
+Async camel
+Async pure
+
+Cache usage check
+Cache content
+
+Batch/data unload
+Drop specific resultmap
+Evolve with no cache, one pipeline
+
+conf normal batchnorm regulariz dropout etc
+Lstm shape
+Lstm etc compare tensorflow with pytorch
+Usecurve use, add filename, filename unique check
+Too many only one
+
+High
+Docs
+Non-db sources
+Reserve sources
+Refactor componentdata mess
+Incdec deprecated method used?
+
+Drop using macd/val
+Cheks use of 100s
+Rebase not anymore
+
+Medium
+Upgrade talib
+Not working improveabovebelow
+Check improvefilter ose
+Check incdec & filter?
+Check improveabovebelow filter, afree result
+Not working predictor
+Not working ari
+Getting abnormal for no price/index in datareader::calculateotherlistmaps
+More extra complex calculations
+Prod package-lock.json
+Prod build
+Split pipeline more
+Simrun metadata periods diffs, rerun
+Check trainaccuracy vs test, score from test?
+
+Buy sell line with correlations
+Use stock list history for buy/sell
+Pending no extradelay ose
+Use futurestockids
+Check extradelay swap
+Check bottom nch=f etc
+Check ose bottom 3y
+Doc: indicatorreverse also for period
+New sims check periodadv
+Use extradelay last date
+Check nordfund and delay
+Check working intervalwhole
+Simulate action/component value settings indicators
+Correlation graph genaration
+
+Gpt with best load save
+
+Low pri/annoying/not so important:
+Xml id with _ ignored?
+NaN
+Move extrareadercat to getdayindicatormap
+Start using testarray
+Protocol unneeded classifyarray sent
+Protocol unneeded trainingarray sent
+AI for queue recovery other than kafka
+Check py.py fix
+Frontend with done findprof
+Check lib.py not converting to from df
+Testdata filter with indeclist
+Dbid and merge check if ok
+IndicatorAggregator rest batch, talib (but small yet)
+
+Other:
+Grafana with kubernetes errors
+Kafka dwh pipeline
+Amq etc messaging, platform
+News feed
+
+v intlli2019 measure
+v kafka config values
+v appid send
+v rerun nordfund with index
+? mutate < + 3 error
+v interrupted
+# ...ids print config
+# SerialVolume
+# Extradelay 0/2
+# test zk setData
+# ValidateUtil [ValidateUtil.java:13] Size mismatch 366 vs 336, last month, sim
+# nordfund <-> etf other nodelay
+# Simrundata cross
+# Add back basic input
+# hibernate
+# async
+# gzip
+# mlindicator map null componentdata
+# psql up
+# zk
+# march kub cert
+# bom for conda
+v 500 oom
+# early stopping
+#dropout only when learn
+v frontend no findprofit run i331
+# debug usecurve
+# pytorch valid
+# usecurve not read?
+# no curve config choice
+# no ohlc
+# lib.py mytopgraph etc
+# "String.equals(Object)"
+# Rabbit
+# Next?: timings,autosimconfig,simdata
+# not get: mlcontent
+# mornind/cat with rel for most cats
+# ML with min tut size
+# num model minimum size config
+# posneg 180 len
+
+java.lang.NullPointerException: Cannot invoke "roart.common.pipeline.data.PipelineData.setLoaded(boolean)" because "datareaders[i]" is null
+        at roart.common.pipeline.util.PipelineUtils.getPipeline(PipelineUtils.java:113)
+        at roart.iclij.component.adviser.PeriodAdviser.<init>(PeriodAdviser.java:71)
+2025-04-04 11:42:29,143 ERROR [pool-7-thread-4] r.sim.Sim [Sim.java:277] Exception
+java.text.ParseException: Unparseable date: "improvesim"
+        at java.base/java.text.DateFormat.parse(DateFormat.java:399)
+        at roart.common.util.TimeUtil.convertDate(TimeUtil.java:38)
+        at roart.sim.Sim.method(Sim.java:275)
+2025-04-04 11:42:29,145 ERROR [pool-7-thread-4] r.sim.Sim [Sim.java:291] Exception
+java.text.ParseException: Unparseable date: "lateinvest"
+        at java.base/java.text.DateFormat.parse(DateFormat.java:399)
+        at roart.common.util.TimeUtil.convertDate(TimeUtil.java:38)
+        at roart.sim.Sim.method(Sim.java:289)
+
 
 afree
 afree with simulate, free prod with above aggr etc
@@ -40,6 +176,11 @@ read data -> indicators* -> ml model teach
 read data -> indicators* -> ml data cat/gen -> simulate invest
 read data -> indicators* -> simulate invest
 -> sim/evolve
+
+storage/source:
+db fs web temp:inmem
+datasource: db src file web
+io: db datasource tcpip fs inmem comm(rabbit,kafka) zk
 
 Iclij
 T: controlservice getcontentgraph fix quick workaround for serialization
@@ -599,13 +740,24 @@ v https://www.kiplinger.com/slideshow/investing/T031-S001-market-indicators/inde
 !git log|grep "(I"|cut -f2 -d\( |cut -f1 -d\)|cut -c2- |sort -n|uniq > /tmp/fi2
 !for X in `seq 0 180`; do echo $X >> /tmp/fi; done
 
-Misc fixes (321)
+Size estimate for evolve ml (I332)
+Frontend only with indicator run, ML from db (I331)
+Db and pipeline batch (I330)
+Test coverage (I329)
+Docs (I328)
+Refactor Pytorch (I327)
+Binary ML (I326)
+ML model changes (I325)
+ML model variants (I324)
+Refactor, rename and patterns (I323)
+Crawler (I322)
+Misc fixes (I321)
 Java 21 (I320)
 Other tests (I319)
 ML tests (I318)
 Dataset model and neuralnetconfig (I317)
 Generative ML (I316)
-Move payload to redis (I315)
+Move pipeline payload to inmemory (I315)
 Concurrency (I314)
 Predictor fix (I313)
 Fix tabledays (I312)
