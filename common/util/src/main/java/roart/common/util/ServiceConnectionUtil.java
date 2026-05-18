@@ -29,7 +29,10 @@ public class ServiceConnectionUtil {
 */
 
         System.out.println("ServiceMap {} {}"+  serviceMap + " " + service);
-         String communication = serviceMap.get(service);
+        String communication = serviceMap.get(service);
+        if (wantRest && (service.startsWith("sim") || service.startsWith("evolve"))) {
+            wantRest = false;
+        }
         if (communication == null || wantRest) {
             communication = CommunicationConstants.REST;
         }
