@@ -19,15 +19,15 @@ endif
 #	$(MAKE) -C $@ -f ../Makefile stockstat-$@-${VERSION}.jar
 
 iclij-core:
-ifneq ($(ICLIJTMPL),)
-	rsync -a $$ICLIJTMPL iclij-core/iclij.xml.tmpl
+ifneq ($(STOCKSTATTMPL),)
+	rsync -a $$STOCKSTATTMPL iclij-core/stockstat.xml.tmpl
 endif
 	$(MAKE) -C $@ -f ../Makefile stockstat.xml
 #	$(MAKE) -C $@ -f ../Makefile stockstat-$@-${VERSION}.jar
 
 iclij-webcore:
-ifneq ($(ICLIJTMPL),)
-	rsync -a $$ICLIJTMPL iclij-webcore/webcore.xml.tmpl
+ifneq ($(STOCKSTATTMPL),)
+	rsync -a $$STOCKSTATTMPL iclij-webcore/stockstat.xml.tmpl
 endif
 	$(MAKE) -C $@ -f ../Makefile stockstat.xml
 #	$(MAKE) -C $@ -f ../Makefile stockstat-$@-${VERSION}.jar
@@ -37,16 +37,16 @@ webr iclij-webr:
 	rsync -a ../../distribution/target/stockstat-distribution-0.6-SNAPSHOT-bin/stockstat-distribution-0.6-SNAPSHOT/$@/docroot/ $@/files/docroot
 
 iclij:
-ifneq ($(ICLIJTMPL),)
-	rsync -a $$ICLIJTMPL iclij/iclij.xml.tmpl
+ifneq ($(STOCKSTATTMPL),)
+	rsync -a $$STOCKSTATTMPL iclij/stockstat.xml.tmpl
 endif
-	$(MAKE) -C $@ -f ../Makefile iclij.xml
+	$(MAKE) -C $@ -f ../Makefile stockstat.xml
 ifneq ($(ISIMTMPL),)
-	rsync -a $$ISIMTMPL iclij/isim.xml.tmpl
+	rsync -a $$ISIMTMPL iclij/stockstat.xml.tmpl
 endif
 	$(MAKE) -C $@ -f ../Makefile isim.xml
 ifneq ($(IEVOLVETMPL),)
-	rsync -a $$IEVOLVETMPL iclij/ievolve.xml.tmpl
+	rsync -a $$IEVOLVETMPL iclij/stockstat.xml.tmpl
 endif
 	$(MAKE) -C $@ -f ../Makefile ievolve.xml
 ifneq ($(STOCKSTATTMPL),)
