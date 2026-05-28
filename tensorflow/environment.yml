@@ -9,9 +9,9 @@ dependencies:
     - keras_nlp
     - matplotlib
     - numpy
-    - pandas
     #- scikit_learn
-    - tensorflow[and-cuda]==2.20.0
+    - tensorflow[and-cuda]==2.21.0
+    #- tensorflow-text
     - tensorflow_datasets
     - Werkzeug
     - cyclonedx-bom

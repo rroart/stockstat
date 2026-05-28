@@ -9,11 +9,11 @@ dependencies:
     - numpy
     - pandas
     #- scikit_learn
-    - tensorflow==2.15.0
+    - tensorflow==2.18.1
     - tensorflow_datasets
     - Werkzeug
     # not yet, conflicts, - cyclonedx-bom==5.1.1
     - cirq
     - seaborn
     #- sympy
-    - tensorflow_quantum==0.7.3
+    - tensorflow_quantum==0.7.6
