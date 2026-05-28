@@ -1,0 +1,22 @@
+name: tf220gpt
+dependencies:
+  - python=3.12
+  - pip:
+    - Flask
+    - gdown
+    - imageio
+    - keras
+    - keras_nlp
+    - matplotlib
+    - numpy
+    #- scikit_learn
+    - tensorflow==2.20.0
+    - tensorflow-text
+    - tensorflow_datasets
+    - Werkzeug
+    - cyclonedx-bom
+    - pretty_midi
+    #- cirq
+    #- seaborn
+    #- sympy
+    #- tensorflow_quantum
