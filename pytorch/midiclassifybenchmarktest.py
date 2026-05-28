@@ -1,3 +1,5 @@
+import sys
+
 import unittest
 
 import config
@@ -22,6 +24,8 @@ class MyTestCase(unittest.TestCase):
         testlist = [ config.PYTORCHGPTMIDIFIGARO ]
         testlist = [ config.PYTORCHGPTMIDI, config.PYTORCHGPTMIDIRPR] #, config.PYTORCHGPTMIDIMMT ]
         testlist = [ config.PYTORCHGPTMIDIMMT ]
+        if len(sys.argv) > 1 and sys.argv[1] == "figaro":
+            testlist = [ config.PYTORCHGPTMIDIFIGARO ]
         loss = {}
         times = {}
 
