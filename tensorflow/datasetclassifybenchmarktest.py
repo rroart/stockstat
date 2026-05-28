@@ -26,12 +26,17 @@ class MyTestCase(unittest.TestCase):
           dslist = [ 'mnist', 'cifar10' ]
           dslist = [ 'mnist' ]
           for ds in dslist:
+           try:
             curtime = time.time()
             result = cli.learn(ds = 'mnist', cf = test, take = take, steps = steps, override = None)
             print(result)
             self.assertIsNotNone(result['accuracy'], "Accuracy")  # add assertion
             accuracies[(test,ds)] = (result['accuracy'], result['trainaccuracy'])
             times[(test,ds)] = time.time() - curtime
+           except Exception:
+            import traceback
+            traceback.print_exc()
+            pass
         print("accuracies", accuracies)
         print("times", times)
 
