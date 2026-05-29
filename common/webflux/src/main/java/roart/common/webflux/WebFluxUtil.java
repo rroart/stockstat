@@ -27,8 +27,10 @@ import tools.jackson.databind.json.JsonMapper;
 
 public class WebFluxUtil {
     private static Logger log = LoggerFactory.getLogger(WebFluxUtil.class);
-
-    protected static ObjectMapper objectMapper = JsonMapper.builder().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).configure(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS, true).build();
+    protected static ObjectMapper objectMapper = JsonMapper.builder()
+            .enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .build();
 
     private static int retry = 3;
     
