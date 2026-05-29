@@ -971,7 +971,10 @@ class Classify:
             myobj.classes = meta.classes
             (ds.train, ds.traincat, ds.test, ds.testcat, shape, val, valcat) = self.gettraintest(myobj, config, meta.classify)
         #print("classez2", myobj.classes)
-        model = Model.Model(myobj, config, meta.classify, shape)
+        if 'shape' in locals():
+            model = Model.Model(myobj, config, meta.classify, shape)
+        else:
+            model = Model.Model(myobj, config, meta.classify)
         exists = False # not yet: self.exists(myobj)
         # load model if:
         # exists and not dynamic and wantclassify
@@ -985,7 +988,10 @@ class Classify:
             else:
                 model = Model.Model(myobj, config, meta.classify, shape)
         else:
-            model = Model.Model(myobj, config, meta.classify, shape)
+            if 'shape' in locals():
+                model = Model.Model(myobj, config, meta.classify, shape)
+            else:
+                model = Model.Model(myobj, config, meta.classify)
         # load end
         #print("classez2", myobj.classes)
         print(model)
