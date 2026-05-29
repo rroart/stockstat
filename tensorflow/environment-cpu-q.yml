@@ -9,7 +9,7 @@ dependencies:
     - numpy
     - pandas
     #- scikit_learn
-    - tensorflow[and-cuda]==2.18.1
+    - tensorflow==2.18.1
     - tensorflow_datasets
     - Werkzeug
     # not yet, conflicts, - cyclonedx-bom==5.1.1
