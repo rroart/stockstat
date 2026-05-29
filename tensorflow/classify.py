@@ -1,6 +1,9 @@
 import learntest as lt
 import os
 
+if "tfq2181" == os.environ['CONDA_DEFAULT_ENV']:
+    os.environ["TF_USE_LEGACY_KERAS"] = "1"
+
 import tensorflow as tf
 import keras
 import numpy as np
