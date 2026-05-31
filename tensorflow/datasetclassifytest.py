@@ -1,4 +1,5 @@
 import unittest
+import sys
 
 import config
 import datasetcli as cli
@@ -18,6 +19,8 @@ activations = [ "celu", "elu", "exponential", "gelu", "hard_shrink", "hard_sigmo
 # "glu",, "threshold"
 
 class MyTestCase(unittest.TestCase):
+    argdslist = None
+    argsteps = None
     def test_something(self):
         testlist = [ config.TENSORFLOWDNN, config.TENSORFLOWLIC, config.TENSORFLOWMLP, config.TENSORFLOWRNN, config.TENSORFLOWCNN, config.TENSORFLOWLSTM, config.TENSORFLOWGRU, config.TENSORFLOWCNN2 ]
         testlist = [ config.TENSORFLOWCNN2 ]
@@ -27,10 +30,22 @@ class MyTestCase(unittest.TestCase):
         testlist = [ config.TENSORFLOWDNN ]
         testlist = [ config.TENSORFLOWMLP ]
         testlist = [ config.TENSORFLOWCNN, config.TENSORFLOWCNN2 ]
+        testlist = [ config.TENSORFLOWLSTM ]
+        dslist = ['mnist', 'cifar10']
+        #dslist = ['cifar10']
+        #dslist = ['mnist']
+        #dslist = ['iris']
+        #dslist = ['mnist']
+        if MyTestCase.argdslist is not None:
+            dslist = MyTestCase.argdslist
+
+        if MyTestCase.argsteps is not None:
+            steps = MyTestCase.argsteps
+
+        print("dslist", dslist)
+        print("steps", steps)
+
         for test in testlist:
-          dslist = [ 'mnist', 'cifar10' ]
-          dslist = [ 'cifar10']
-          dslist = [ 'mnist' ]
           for ds in dslist:
             override = {'convlayers': 3, 'layers': 2, 'steps' : 1, 'kernelsize' : 4, 'maxpool': 4 }
             result = cli.learn(ds = ds, cf = test, take = take, steps = steps, override = override)
@@ -40,6 +55,9 @@ class MyTestCase(unittest.TestCase):
         # here
 
     def test_cnn(self):
+        ds = 'iris'
+        ds = 'mnist'
+
         steps = 1
 
         testlist = [ config.TENSORFLOWCNN, config.TENSORFLOWCNN2 ]
@@ -50,7 +68,7 @@ class MyTestCase(unittest.TestCase):
                     for k in [1, 2, 3, 4]:
                         for l in [1, 2, 3, 4]:
                             override = { 'convlayers' : i, 'layers' : j, 'maxpool' : k, 'kernelsize' : l }
-                            result = cli.learn(ds = 'mnist', cf = test, take = take, steps = steps, override = override)
+                            result = cli.learn(ds = ds, cf = test, take = take, steps = steps, override = override)
                             print(result)
             #self.assertIsNotNone(result['accuracy'], "Accuracy")  # add assertion
         # here
@@ -88,4 +106,10 @@ class MyTestCase(unittest.TestCase):
         # here
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        print("argv", sys.argv)
+        MyTestCase.argsteps = int(sys.argv.pop())
+        print("args", MyTestCase.argdslist, MyTestCase.argsteps)
+        MyTestCase.argdslist = [sys.argv.pop()]
+        print("args", MyTestCase.argdslist, MyTestCase.argsteps)
     unittest.main()
