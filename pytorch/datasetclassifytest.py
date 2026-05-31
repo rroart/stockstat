@@ -1,4 +1,5 @@
 import unittest
+import sys
 
 import config
 import datasetcli as cli
@@ -20,6 +21,8 @@ activations = [ "elu", "hard_shrink", "hard_sigmoid", "hard_tanh", "hard_swish",
 # "multihead_attention" "threshold","glu","soft_max_2d",, "adaptive_log_soft_max_with_loss"
 
 class MyTestCase(unittest.TestCase):
+    argdslist = None
+    argsteps = None
     def test_something(self):
         steps = 10
         testlist = [ config.PYTORCHMLP, config.PYTORCHRNN, config.PYTORCHLSTM, config.PYTORCHGRU, config.PYTORCHCNN, config.PYTORCHCNN2 ]
@@ -29,10 +32,19 @@ class MyTestCase(unittest.TestCase):
         testlist = [ config.PYTORCHMLP ]
         testlist = [ config.PYTORCHCNN, config.PYTORCHCNN2 ]
         testlist = [ config.PYTORCHCNN2 ]
+        testlist = [ config.PYTORCHLSTM ]
+        #testlist = [ config.PYTORCHCNN ]
+        dslist = ['mnist', 'cifar10']
+        if MyTestCase.argdslist is not None:
+            dslist = MyTestCase.argdslist
+
+        if MyTestCase.argsteps is not None:
+            steps = MyTestCase.argsteps
 
         for test in testlist:
+          for ds in dslist:
             override = {'convlayers': 3, 'layers': 2, 'steps' : 1, 'kernelsize' : 4, 'maxpool': 4 }
-            result = cli.learn(ds = 'mnist', cf = test, take = take, steps = steps, override = override)
+            result = cli.learn(ds = ds, cf = test, take = take, steps = steps, override = override)
             print(result)
             self.assertIsNotNone(result['accuracy'], "Accuracy")  # add assertion
         # here
@@ -81,4 +93,10 @@ class MyTestCase(unittest.TestCase):
         # here
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        print("argv", sys.argv)
+        MyTestCase.argsteps = int(sys.argv.pop())
+        print("args", MyTestCase.argdslist, MyTestCase.argsteps)
+        MyTestCase.argdslist = [sys.argv.pop()]
+        print("args", MyTestCase.argdslist, MyTestCase.argsteps)
     unittest.main()
