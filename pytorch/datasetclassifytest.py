@@ -25,7 +25,6 @@ class MyTestCase(unittest.TestCase):
     argsteps = None
     def test_something(self):
         steps = 10
-        testlist = [ config.PYTORCHMLP, config.PYTORCHRNN, config.PYTORCHLSTM, config.PYTORCHGRU, config.PYTORCHCNN, config.PYTORCHCNN2 ]
 
         testlist = [ config.PYTORCHRNN ]
         testlist = [ config.PYTORCHGRU ]
@@ -34,6 +33,7 @@ class MyTestCase(unittest.TestCase):
         testlist = [ config.PYTORCHCNN2 ]
         testlist = [ config.PYTORCHLSTM ]
         #testlist = [ config.PYTORCHCNN ]
+        testlist = [ config.PYTORCHMLP, config.PYTORCHRNN, config.PYTORCHLSTM, config.PYTORCHGRU, config.PYTORCHCNN, config.PYTORCHCNN2 ]
         dslist = ['mnist', 'cifar10']
         if MyTestCase.argdslist is not None:
             dslist = MyTestCase.argdslist
@@ -43,7 +43,8 @@ class MyTestCase(unittest.TestCase):
 
         for test in testlist:
           for ds in dslist:
-            override = {'convlayers': 3, 'layers': 2, 'steps' : 1, 'kernelsize' : 4, 'maxpool': 4 }
+            #override = {'convlayers': 3, 'layers': 2, 'steps' : 1, 'kernelsize' : 4, 'maxpool': 4 }
+            override = None
             result = cli.learn(ds = ds, cf = test, take = take, steps = steps, override = override)
             print(result)
             self.assertIsNotNone(result['accuracy'], "Accuracy")  # add assertion
