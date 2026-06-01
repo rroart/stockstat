@@ -1,3 +1,3 @@
 eval "$(conda shell.bash hook)"
-conda activate tf220gpt
-python gptclassifybenchmarktest.py
+conda activate $1
+python gptclassifybenchmarktest.py MyTestCase.test_something $2 $3

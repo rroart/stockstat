@@ -22,7 +22,6 @@ class MyTestCase(unittest.TestCase):
     argdslist = None
     argsteps = None
     def test_something(self):
-        testlist = [ config.TENSORFLOWDNN, config.TENSORFLOWLIC, config.TENSORFLOWMLP, config.TENSORFLOWRNN, config.TENSORFLOWCNN, config.TENSORFLOWLSTM, config.TENSORFLOWGRU, config.TENSORFLOWCNN2 ]
         testlist = [ config.TENSORFLOWCNN2 ]
         testlist = [ config.TENSORFLOWRNN ]
         testlist = [ config.TENSORFLOWLSTM ]
@@ -31,6 +30,7 @@ class MyTestCase(unittest.TestCase):
         testlist = [ config.TENSORFLOWMLP ]
         testlist = [ config.TENSORFLOWCNN, config.TENSORFLOWCNN2 ]
         testlist = [ config.TENSORFLOWLSTM ]
+        testlist = [ config.TENSORFLOWDNN, config.TENSORFLOWLIC, config.TENSORFLOWMLP, config.TENSORFLOWRNN, config.TENSORFLOWCNN, config.TENSORFLOWLSTM, config.TENSORFLOWGRU, config.TENSORFLOWCNN2 ]
         dslist = ['mnist', 'cifar10']
         #dslist = ['cifar10']
         #dslist = ['mnist']
@@ -47,7 +47,8 @@ class MyTestCase(unittest.TestCase):
 
         for test in testlist:
           for ds in dslist:
-            override = {'convlayers': 3, 'layers': 2, 'steps' : 1, 'kernelsize' : 4, 'maxpool': 4 }
+            #override = {'convlayers': 3, 'layers': 2, 'steps' : 1, 'kernelsize' : 4, 'maxpool': 4 }
+            override = None
             result = cli.learn(ds = ds, cf = test, take = take, steps = steps, override = override)
             print(result)
             self.assertIsNotNone(result['accuracy'], "Accuracy")  # add assertion
