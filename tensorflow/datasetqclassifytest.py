@@ -1,9 +1,14 @@
 import unittest
+import sys
 
 import config
 import datasetcli as cli
 
+steps = 10
+
 class MyTestCase(unittest.TestCase):
+    argdslist = None
+    argsteps = None
     def test_something(self):
         testmap = { }
         testmap [ config.TENSORFLOWQNN ] = [ 'mnist', 'fashion_mnist' ]
@@ -17,12 +22,12 @@ class MyTestCase(unittest.TestCase):
         testmap [ config.TENSORFLOWQNN ] = [ 'mnist', 'fashion_mnist' ]
         testmap [ config.TENSORFLOWQCNN ] = [ 'mnist',  'fashion_mnist' ]
 
-        testlist = [ config.TENSORFLOWQNN, config.TENSORFLOWQCNN ] #, config.TENSORFLOWPQK ]
         #testlist = [ config.TENSORFLOWQCNN, config.TENSORFLOWPQK ]
         #testlist = [config.TENSORFLOWQNN]
         testlist = [config.TENSORFLOWPQK]
         #testlist = [config.TENSORFLOWQNN]
         testlist = [config.TENSORFLOWQCNN]
+        testlist = [ config.TENSORFLOWQNN, config.TENSORFLOWQCNN ] #, config.TENSORFLOWPQK ]
 
         # originally:
         # qnn + mnist
@@ -32,11 +37,17 @@ class MyTestCase(unittest.TestCase):
         # ok qnn: mnist qcnn: mnist fashion_mnist
         # not ok: qnn: fashion_mnist
 
+        if MyTestCase.argdslist is not None:
+            dslist = MyTestCase.argdslist
+
+        if MyTestCase.argsteps is not None:
+            steps = MyTestCase.argsteps
+
         for test in testlist:
             dslist = testmap[test]
             for ds in dslist:
                 print("Doing", test, ds)
-                result = cli.learn(ds = ds, cf = test, take = 40, steps = 1, q = True)
+                result = cli.learn(ds = ds, cf = test, take = 40, steps = steps, q = True)
                 #result = cli.learn(ds = 'mnist', cf = test, take = 40, steps = 1, q = True)
                 #result = cli.learn(ds = 'fashion_mnist', cf = test, take = 40, steps = 1, q = True)
                 #result = cli.learn(ds = 'iris2', cf = test, take = 40, steps = 1, q = True)
@@ -47,4 +58,10 @@ class MyTestCase(unittest.TestCase):
         # here
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        print("argv", sys.argv)
+        MyTestCase.argsteps = int(sys.argv.pop())
+        print("args", MyTestCase.argdslist, MyTestCase.argsteps)
+        MyTestCase.argdslist = [sys.argv.pop()]
+        print("args", MyTestCase.argdslist, MyTestCase.argsteps)
     unittest.main()

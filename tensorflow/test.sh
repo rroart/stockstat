@@ -28,8 +28,8 @@ if [ $o -eq 1 ]; then
 fi
 
 if [ $q -eq 1 ]; then
-    sh datasetqclassifytest.sh tfq 1
-    sh datasetqclassifytest.sh tfq2181 1
+    sh datasetqclassifytest.sh tfq mnist 1
+    sh datasetqclassifytest.sh tfq2181 mnist 1
 fi
 
 if [ $g -eq 1 ]; then
