@@ -66,11 +66,19 @@ class Model(MyModel):
     history = self.qcnn_model.fit(x=train_excitations,
                                y=train_labels,
                                batch_size=16,
-                               epochs=25,
+                               epochs=self.config.steps,
                                verbose=1,
                                validation_data=(test_excitations, test_labels))
-    print("History", history)
-    return 0, 0, 0
+    print("History", history, history.history.keys())
+    #print("History", qnn_history)
+    qnn_results = self.qcnn_model.evaluate(train_excitations, train_labels)
+    print("Results", qnn_results)
+    train_loss = history.history['loss'][0]
+    train_accuracy = history.history['custom_accuracy'][0]
+    val_loss = history.history['val_loss'][0]
+    val_accuracy = history.history['val_custom_accuracy'][0]
+    return qnn_results[1], qnn_results[0], train_accuracy, train_loss, val_accuracy, val_loss
+    return 0, qnn_results[0], qnn_results[1], 0, 0, 0
 
 
   def localsave(self):

@@ -61,14 +61,25 @@ class Model(MyModel):
       qnn_history = self.model.fit(
           x_train_sub, y_train_sub,
           batch_size=BATCH_SIZE,
-          epochs=EPOCHS,
+          epochs=self.config.steps,
           verbose=1,
           validation_data=(dataset.x_test, y_test))
 
-      print("History", qnn_history)
+      print("History", qnn_history, qnn_history.history.keys())
       qnn_results = self.model.evaluate(dataset.x_test, dataset.y_test)
       print("Results", qnn_results)
-      return 0, qnn_results[0], qnn_results[1]
+      train_loss = qnn_history.history['loss'][0]
+      if hinge:
+          train_accuracy = qnn_history.history['hinge_accuracy'][0]
+      else:
+          train_accuracy = qnn_history.history['custom_accuracy'][0]
+      val_loss = qnn_history.history['val_loss'][0]
+      if hinge:
+          val_accuracy = qnn_history.history['val_hinge_accuracy'][0]
+      else:
+          val_accuracy = qnn_history.history['val_custom_accuracy'][0]
+      # ?, loss, accuracy
+      return qnn_results[1], qnn_results[0], train_accuracy, train_loss, val_accuracy, val_loss
 
   def localsave(self):
       return False
