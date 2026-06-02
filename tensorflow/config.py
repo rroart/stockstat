@@ -36,14 +36,14 @@ TENSORFLOWLSTMCONFIG = { 'name' : 'lstm', **TENSORFLOWCOMMONFEED, **TENSORFLOWCO
 TENSORFLOWGRUCONFIG = { 'name' : 'gru', **TENSORFLOWCOMMONFEED, **TENSORFLOWCOMMON }
 TENSORFLOWLIRCONFIG = { 'name' : 'lir',  }
 TENSORFLOWQNNCONFIG = { 'name' : 'qnn', 'steps' : 3 }
-TENSORFLOWQCNNCONFIG = { 'name' : 'qcnn', 'steps' : 3 }
+TENSORFLOWQCNNCONFIG = { 'name' : 'qcnn', 'steps' : 25 }
 TENSORFLOWDCGANCONFIG = { 'name' : 'dcgan', 'steps' : 20, 'lr' : 0.0001 }
 TENSORFLOWCONDITIONALGANCONFIG = { 'name' : 'conditionalgan', 'steps' : 20, 'lr' : 0.0003 }
 TENSORFLOWNEURALSTYLETRANSFERCONFIG = { 'name' : 'neural_style_transfer', 'steps' : 20 }
 TENSORFLOWMINIATUREGPTCONFIG = { 'name' : 'miniature_gpt', 'steps' : 25 }
 TENSORFLOWGPTCONFIG = { 'name' : 'gpt', 'steps' : 5 }
 TENSORFLOWGPT2CONFIG = { 'name' : 'gpt2', 'steps' : 1 }
-TENSORFLOWPQKCONFIG = { 'name' : 'pqk', 'steps' : 3 }
+TENSORFLOWPQKCONFIG = { 'name' : 'pqk', 'steps' : 10 }
 TENSORFLOWVAECONFIG = { 'name' : 'vae', 'steps' : 30 }
 
 def get(cf, predictor = False, binary = False):
