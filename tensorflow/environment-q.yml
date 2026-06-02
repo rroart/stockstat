@@ -17,3 +17,4 @@ dependencies:
     - seaborn
     #- sympy
     - tensorflow_quantum==0.7.6
+    - pydot
