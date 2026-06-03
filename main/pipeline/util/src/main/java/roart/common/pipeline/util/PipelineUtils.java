@@ -783,11 +783,11 @@ public class PipelineUtils {
     }
 
     public static void printmap(SerialPipeline data) {
-        log.info("Printkeys");
+        log.debug("Printkeys");
         for (PipelineData datum : data) {
             //Set<String> keys = datum.keySet();
             //log.info("Data {} {}", datum.getName(), keys);
-            log.info("Data {}", ArrayUtils.toString(datum.getKey()));
+            log.debug("Data {}", ArrayUtils.toString(datum.getKey()));
         }
     }
 
@@ -1093,6 +1093,7 @@ public class PipelineUtils {
     }
 
     public static SerialPipeline setPipelineMap(SerialPipeline pipelineData, Inmemory inmemory, CuratorFramework curatorClient) {
+        //checkUnload(pipelineData);
         if (false) {
             try {
                 String s = null;
@@ -1168,6 +1169,24 @@ public class PipelineUtils {
         }
         return pipelineData;
     }
+
+    private static void checkUnload(SerialPipeline pipelineData) {
+        for (PipelineData data : pipelineData) {
+            if (data.getValue() != null) {
+                if (data.getKey().match("list")) {
+                    log.info("match {}", data.getKey());
+                }
+            }
+            for (PipelineDataBatch batch : data.getBatch()) {
+                if (batch.getValue() != null) {
+                    if (data.getKey().match("list")) {
+                        log.info("match {}", data.getKey());
+                    }
+                }
+            }
+        }
+    }
+
     public static boolean unloadPipelineValueBatch(SerialPipeline pipelines, String key, String secondKey, int batch, Inmemory inmemory) {
         return unloadPipelineValueBatch(pipelines, new SerialPipelineKey(new String[] { key, secondKey, null, null, null}), batch, inmemory);
     }
