@@ -98,4 +98,13 @@ public class SerialPipelineKey extends SerialObject {
     public SerialPipelineKey clone() {
         return new SerialPipelineKey(key.clone());
     }
+
+    public boolean match(String match) {
+        for (String str : key) {
+            if (str != null && str.contains(match)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
