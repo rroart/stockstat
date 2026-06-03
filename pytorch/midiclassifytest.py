@@ -10,8 +10,9 @@ submodels = ['vq-vae', 'figaro-expert', 'figaro-inst', 'figaro-chord', 'figaro-m
 submodels = ['vq-vae', 'figaro-learned', 'figaro']
 
 class MyTestCase(unittest.TestCase):
-    argdslist = None
+    argtestlist = None
     argsteps = None
+    argdir = None
     def test_something(self):
         #return
         testmap = { }
@@ -26,8 +27,8 @@ class MyTestCase(unittest.TestCase):
         testlist = [ config.PYTORCHGPTMIDIFIGARO ]
         testlist = [ config.PYTORCHGPTMIDI, config.PYTORCHGPTMIDIRPR] #, config.PYTORCHGPTMIDIMMT ]
         testlist = [ config.PYTORCHGPTMIDIMMT ]
-        if MyTestCase.argdslist is not None:
-            dslist = MyTestCase.argdslist
+        if MyTestCase.argtestlist is not None:
+            testlist = MyTestCase.argtestlist
 
         if MyTestCase.argsteps is not None:
             steps = MyTestCase.argsteps
@@ -38,14 +39,14 @@ class MyTestCase(unittest.TestCase):
             for ds in dslist:
                 submodel = None
                 if test == config.PYTORCHGPTMIDIFIGARO:
-                    #submodel = 'figaro-expert'
-                    submodel = 'vq-vae'
-                    submodel = 'figaro'
-                result = cli.learn(ds = ds, cf = test, take = 40, steps = steps, submodel = submodel)
+                    submodel = 'figaro-expert'
+                    #submodel = 'vq-vae'
+                    #submodel = 'figaro'
+                result = cli.learn(ds = ds, path = MyTestCase.argdir, cf = test, take = 40, steps = steps, submodel = submodel)
                 print(result)
                 #return
                 self.assertIsNotNone(result['accuracy'], "Accuracy")  # add assertion
-                result = cli.generate(text ="I like travelling", ds = ds, cf = test, take = 40, submodel = submodel)
+                result = cli.generate(text ="I like travelling", ds = ds, path = MyTestCase.argdir, cf = test, take = 40, submodel = submodel)
                 print(result)
                 #self.assertIsNotNone(result['classifyarray'][0], "Text")  # add assertion
         # here
@@ -96,7 +97,8 @@ class MyTestCase(unittest.TestCase):
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         print("argv", sys.argv)
+        MyTestCase.argdir = sys.argv.pop()
         MyTestCase.argsteps = int(sys.argv.pop())
-        print("args", MyTestCase.argdslist, MyTestCase.argsteps)
-        MyTestCase.argdslist = [sys.argv.pop()]
+        print("args", MyTestCase.argtestlist, MyTestCase.argsteps)
+        MyTestCase.argtestlist = [sys.argv.pop()]
     unittest.main()

@@ -23,9 +23,9 @@ if [ $o -eq 1 ]; then
 fi
 
 if [ $m -eq 1 ]; then
-    if conda env list 2>&1|grep -q ptlxxx; then 
-	sh midiclassifytest.sh ptl figaro 1
+    sh midiclassifytest.sh ptl264 pytorchGPTMIDIFigaroConfig 1 "$TMPDIR"
+    if conda env list 2>&1|grep -q ptl255; then 
+	sh midiclassifytest.sh ptl255 pytorchGPTMIDIFigaroConfig 1 "$TMPDIR"
     fi
-    sh midiclassifytest.sh ptl264 figaro 1
 fi
 
