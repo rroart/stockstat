@@ -9,6 +9,8 @@ from torch.nn.init import *
 
 from torch.nn.functional import linear, softmax, dropout
 
+import torch
+
 class TransformerEncoderRPR(Module):
 
     def __init__(self, encoder_layer, num_layers, norm=None):
