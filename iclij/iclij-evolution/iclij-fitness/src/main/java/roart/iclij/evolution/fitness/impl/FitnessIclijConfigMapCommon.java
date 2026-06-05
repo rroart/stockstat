@@ -75,7 +75,7 @@ public class FitnessIclijConfigMapCommon {
             titletexts.add(titletext);
             Object[] result = component.calculateAccuracy(componentData2);
             score = (Double) result[0];
-            if (resultMap != null) {
+            if (resultMap != null && componentData2.getResultMap() != null) {
                 // TODO TODOE
                 //log.info("TODO" + componentData2.getResultMap().getSmap().getMap());
                 //resultMap.putAll(componentData2.getResultMap().getSmap().getMap());
@@ -84,7 +84,7 @@ public class FitnessIclijConfigMapCommon {
                 PipelineUtils.printkeys(componentData2.getResultMap());
                 for (PipelineData data : componentData2.getResultMap()) {
                     Map<String, SerialObject> amap = PipelineUtils.getSerialListMapAsMap(componentData2.getResultMap(), data.getKey(), inmemory);
-                    log.info("dataaa" + data + " " + data.getValue() + " " + amap);
+                    log.debug("dataaa" + data + " " + data.getValue() + " " + amap);
                     resultMap.putAll(amap);
                 }
                 PipelineUtils.printkeys(componentData2.getResultMap());
