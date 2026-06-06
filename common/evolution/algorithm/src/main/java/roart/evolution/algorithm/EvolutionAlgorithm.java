@@ -145,6 +145,7 @@ public abstract class EvolutionAlgorithm {
     	for (Individual individual : pop) {
             Integer shutdownhour = evolutionConfig.getShutdownhour();
             if (shutdownhour != null) {
+                /*
             	LocalTime now = LocalTime.now();
             	int minutes = 60 * now.getHour() + now.getMinute();
             	if (calc > 0) {
@@ -158,6 +159,35 @@ public abstract class EvolutionAlgorithm {
             		interrupted = true;
             		continue;
             	}
+
+                 */
+                if (interrupted) {
+                    break;
+                }
+                Callable callable = new EvolutionCallable(individual);
+                Future<Individual> future = MyExecutors.run(callable, 0);
+                while (true) {
+                    LocalTime now = LocalTime.now();
+                    if (now.getHour() >= shutdownhour) {
+                        log.error("Interrupting evolution due to time");
+                        future.cancel(true);
+                        if (individual.getFitness() == null) {
+                            individual.setFitness(-1.0);
+                        }
+                        interrupted = true;
+                        break;
+                    }
+                    try {
+                        Thread.sleep(100); // 0.1s
+                    } catch (Exception e) {
+
+                    }
+                    if (future.isDone()) {
+                        future.get();
+                    }
+                }
+                calc++;
+                totalTime += ((double) individual.getCalculateTime()) / 1000;
             }
             if (individual.getFitness() == null) {
                 long start = System.currentTimeMillis();
