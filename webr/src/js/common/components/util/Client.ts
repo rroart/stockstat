@@ -2,6 +2,13 @@
 
 import { env } from '../../../../env'
 
+// Store for auth token - will be set by Redux middleware
+let authToken: string | null = null;
+
+export const setAuthToken = (token: string | null) => {
+    authToken = token;
+};
+
 function getPort() {
     console.log(env.NODE_ENV);
     if (typeof env.REACT_APP_MYPORT !== 'undefined') {
@@ -53,12 +60,30 @@ function getAHost() {
     return "localhost";
 }
 
+/**
+ * Build headers with OAuth2 Authorization header if available
+ */
+function buildHeaders(additionalHeaders: Record<string, string> = {}): Record<string, string> {
+    const headers: Record<string, string> = {
+        'Accept': 'application/json;charset=utf-8',
+        'Content-Type': 'application/json',
+        ...additionalHeaders,
+    };
+
+    // Add OAuth2 Authorization header if token is available
+    if (authToken) {
+        headers['Authorization'] = `Bearer ${authToken}`;
+    }
+
+    return headers;
+}
+
 function search(query, serviceparam, cb) {
     console.log(JSON.stringify(serviceparam));
     /*
   var bla = fetch(`http://localhost:22345` + query, {
       method: "POST",
-      headers: { 'Accept': 'application/json;charset=utf-8', 'Content-Type': 'application/json', },
+      headers: buildHeaders(),
       body: JSON.stringify(serviceparam),
   }).then(checkStatus);
     console.log(bla);
@@ -66,7 +91,7 @@ function search(query, serviceparam, cb) {
     console.log("http://" + getHost() + ":" + getPort() + query);
     return fetch("http://" + getHost() + ":" + getPort() + query, {
       method: "POST",
-      headers: { 'Accept': 'application/json;charset=utf-8', 'Content-Type': 'application/json', },
+      headers: buildHeaders(),
       body: JSON.stringify(serviceparam),
   }).then(checkStatus)
 	.then(parseJSON)
@@ -79,7 +104,7 @@ function searchsynch(query, serviceparam) {
     console.log(JSON.stringify(serviceparam));
     fetch("http://" + getHost() + ":" + getPort() + query, {
       method: "POST",
-      headers: { 'Accept': 'application/json;charset=utf-8', 'Content-Type': 'application/json', },
+      headers: buildHeaders(),
       body: JSON.stringify(serviceparam),
   }).then(checkStatus)
     .then(parseJSON)
@@ -110,7 +135,7 @@ const fetchApi = {
         console.log("http://" + getHost() + ":" + getPort() + query);
 	return fetch("http://" + getHost() + ":" + getPort() + query, {
 	    method: "POST",
-	    headers: { 'Accept': 'application/json;charset=utf-8', 'Content-Type': 'application/json', },
+	    headers: buildHeaders(),
 	    body: JSON.stringify(serviceparam),
 	})
 	    .then(statusHelper)
@@ -124,7 +149,7 @@ const fetchApi = {
         console.log("http://" + getIHost() + ":" + getIPort() + query);
 	return fetch("http://" + getIHost() + ":" + getIPort() + query, {
 	    method: "POST",
-	    headers: { 'Accept': 'application/json;charset=utf-8', 'Content-Type': 'application/json', },
+	    headers: buildHeaders(),
 	    body: JSON.stringify(serviceparam),
 	})
 	    .then(statusHelper)
@@ -138,7 +163,7 @@ const fetchApi = {
         console.log("http://" + getAHost() + ":" + getAPort() + query);
 	return fetch("http://" + getAHost() + ":" + getAPort() + query, {
 	    method: "POST",
-	    headers: { 'Accept': 'application/json;charset=utf-8', 'Content-Type': 'application/json', },
+	    headers: buildHeaders(),
 	    body: JSON.stringify(serviceparam),
 	})
 	    .then(statusHelper)

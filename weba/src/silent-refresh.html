@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Silent Refresh</title>
+</head>
+<body>
+    <script>
+        parent.postMessage(location.hash, location.origin);
+    </script>
+</body>
+</html>

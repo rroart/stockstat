@@ -1,4 +1,4 @@
-import { NgModule, Optional, SkipSelf, ErrorHandler } from '@angular/core';
+import { NgModule, Optional, SkipSelf, ErrorHandler, APP_INITIALIZER } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
@@ -12,17 +12,24 @@ import { environment } from '@env/environment';
 import { LocalStorageService } from './local-storage/local-storage.service';
 import { AuthEffects } from './auth/auth.effects';
 import { AuthGuardService } from './auth/auth-guard.service';
+import { OAuth2Service } from './auth/oauth2.service';
+import { oauth2Config } from './auth/oauth2.config';
 import { AnimationsService } from './animations/animations.service';
 import { TitleService } from './title/title.service';
 import { reducers, metaReducers } from './core.state';
 import { AppErrorHandler } from './error-handler/app-error-handler.service';
 import { httpInterceptorProviders } from '@app/core/http-interceptors';
+import { OAuthModule } from 'angular-oauth2-oidc';
 import {
   StoreRouterConnectingModule,
   RouterStateSerializer
 } from '@ngrx/router-store';
 import { CustomSerializer } from './router/custom-serializer';
 import { NotificationService } from './notifications/notification.service';
+
+export function initializeOAuth2Factory(oauth2Service: OAuth2Service): () => Promise<boolean> {
+  return () => oauth2Service.initializeOAuth2(oauth2Config);
+}
 
 @NgModule({
   imports: [
@@ -41,6 +48,7 @@ import { NotificationService } from './notifications/notification.service';
         }),
 
     // 3rd party
+    OAuthModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -51,9 +59,16 @@ import { NotificationService } from './notifications/notification.service';
   ],
   declarations: [],
   providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeOAuth2Factory,
+      deps: [OAuth2Service],
+      multi: true
+    },
     NotificationService,
     LocalStorageService,
     AuthGuardService,
+    OAuth2Service,
     AnimationsService,
     httpInterceptorProviders,
     TitleService,

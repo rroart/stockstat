@@ -23,5 +23,16 @@ export const environment = {
     angularCli: packageJson.devDependencies['@angular/cli'],
     typescript: packageJson.devDependencies['typescript'],
     cypress: packageJson.devDependencies['cypress']
+  },
+  oauth2: {
+    clientId: '',
+    issuer: '',
+    loginUrl: '',
+    tokenEndpoint: '',
+    userinfoEndpoint: '',
+    logoutUrl: '',
+    scope: 'openid profile email',
+    responseType: 'code',
+    redirectUri: ''
   }
 };

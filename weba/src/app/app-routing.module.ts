@@ -3,8 +3,14 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { SettingsContainerComponent } from './settings';
 import { MainComponent } from './main';
+import { OAuth2CallbackComponent } from './shared/components/oauth2-callback.component';
 
 const routes: Routes = [
+  {
+    path: 'callback',
+    component: OAuth2CallbackComponent,
+    data: { title: 'OAuth2 Callback' }
+  },
   {
     path: '',
     //redirectTo: 'main',

@@ -93,6 +93,7 @@ library.add(
 
 import { BigInputComponent } from './big-input/big-input.component';
 import { BigInputActionComponent } from './big-input/big-input-action.component';
+import { OAuth2CallbackComponent } from './components/oauth2-callback.component';
 
 @NgModule({
   imports: [
@@ -121,7 +122,7 @@ import { BigInputActionComponent } from './big-input/big-input-action.component'
 
     FontAwesomeModule
   ],
-  declarations: [BigInputComponent, BigInputActionComponent],
+  declarations: [BigInputComponent, BigInputActionComponent, OAuth2CallbackComponent],
   exports: [
     CommonModule,
     FormsModule,
@@ -153,7 +154,8 @@ import { BigInputActionComponent } from './big-input/big-input-action.component'
     FontAwesomeModule,
 
     BigInputComponent,
-    BigInputActionComponent
+    BigInputActionComponent,
+    OAuth2CallbackComponent
   ]
 })
 export class SharedModule {}

@@ -25,6 +25,11 @@
                 "output": "/"
               },
               {
+                "glob": "silent-refresh.html",
+                "input": "src",
+                "output": "/"
+              },
+              {
                 "glob": "**/*",
                 "input": "src/assets",
                 "output": "/assets"

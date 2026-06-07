@@ -7,7 +7,10 @@ import {
   Routes,
   Route,
 } from 'react-router-dom';
-import { Header } from './common/components/Header';
+import Header from './common/components/Header/Header';
+import Login from './common/components/Auth/Login';
+import OAuthCallback from './common/components/Auth/OAuthCallback';
+import ProtectedRoute from './common/components/Auth/ProtectedRoute';
 import MainRouteHandler from './views/main';
 
 const JustAnotherPage = () => (
@@ -41,9 +44,28 @@ const amodule = (
     <hr />
       <div className="container__content">
       <Routes>
-        <Route exact path="/" element={<MainRouteHandler/>} />
-        <Route path="/page" component={<JustAnotherPage/>} />
-          <Route path="*" component={<MainRouteHandler/>} />
+        {/* Public routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/auth/callback" element={<OAuthCallback />} />
+        
+        {/* Protected routes */}
+        <Route exact path="/" element={
+          <ProtectedRoute>
+            <MainRouteHandler/>
+          </ProtectedRoute>
+        } />
+        <Route path="/page" element={
+          <ProtectedRoute>
+            <JustAnotherPage/>
+          </ProtectedRoute>
+        } />
+        
+        {/* Catch-all route */}
+        <Route path="*" element={
+          <ProtectedRoute>
+            <MainRouteHandler/>
+          </ProtectedRoute>
+        } />
       </Routes>
     </div>
   </div>

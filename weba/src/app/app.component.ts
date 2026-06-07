@@ -8,8 +8,8 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import {
-  ActionAuthLogin,
-  ActionAuthLogout,
+  ActionOAuth2Login,
+  ActionOAuth2Logout,
   AnimationsService,
   TitleService,
   selectAuth,
@@ -99,11 +99,11 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onLoginClick() {
-    this.store.dispatch(new ActionAuthLogin());
+    this.store.dispatch(new ActionOAuth2Login());
   }
 
   onLogoutClick() {
-    this.store.dispatch(new ActionAuthLogout());
+    this.store.dispatch(new ActionOAuth2Logout());
   }
 
   onLanguageSelect({ value: language }) {
