@@ -3,7 +3,6 @@ import { AnimationsService, LocalStorageService } from '@app/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { asyncScheduler, interval, of } from 'rxjs';
-import { MytableComponent } from './table/mytable.component';
 
 export const MAIN_KEY = 'EXAMPLES.MAIN';
 
@@ -80,7 +79,6 @@ export class MainEffects {
       debounceTime(debounce, scheduler),
       switchMap((action: ActionGetmarkets) => {
         console.log(action);
-        const res = this.service.retrieve2('/core/getmarkets', {});
 	// action.payload.url
 	//console.log(res);
 	//const res3 = res.pipe(map(res => { console.log(res); return res; } ));
@@ -104,7 +102,6 @@ export class MainEffects {
       debounceTime(debounce, scheduler),
       switchMap((action: ActionGetconfig) => {
         console.log(action);
-        const res = this.service.retrieve2('/core/getconfig', {});
 	// action.payload.url
 	//console.log(res);
 	//const res3 = res.pipe(map(res => { console.log(res); return res; } ));
@@ -128,7 +125,6 @@ export class MainEffects {
       debounceTime(debounce, scheduler),
       switchMap((action: ActionGetconfig2) => {
         console.log(action);
-        const res = this.service.retrieve3('/getconfig', {});
 	// action.payload.url
 	//console.log(res);
 	//const res3 = res.pipe(map(res => { console.log(res); return res; } ));
@@ -260,9 +256,9 @@ export class MainEffects {
 
   getcontent2$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
-      ofType<ActionGetcontent>(MainActionTypes.GETCONTENT2),
+      ofType<ActionGetcontent2>(MainActionTypes.GETCONTENT2),
       debounceTime(debounce, scheduler),
-      switchMap((action: ActionGetcontent) => {
+      switchMap((action: ActionGetcontent2) => {
         console.log(action);
         const config = action.payload; //.config;
         console.log(config);
@@ -554,61 +550,6 @@ export class MainEffects {
     )
   );
 
-  getevolve2$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
-    this.actions$.pipe(
-      ofType<ActionGetevolve>(MainActionTypes.GETEVOLVE),
-      debounceTime(debounce, scheduler),
-      switchMap((action: ActionGetevolve) => {
-        console.log(action);
-        const array = action.payload;
-        const webpath = array[0];
-        const set = array[1];
-        const config = array[2];
-        const id = array[3];
-        const serviceparam = new Object();
-        // todo date is not here
-        const date = config['enddate'];
-        serviceparam['market'] = config['market'];
-        console.log(serviceparam['market']);
-        console.log(date);
-        serviceparam['configData'] = getConfigData(
-          config,
-          serviceparam['market'],
-          date
-        );
-        if (id != null) {
-          console.log(id);
-          const ids = [id];
-          serviceparam['ids'] = ids;
-        }
-        //serviceparam.market = '0';
-        console.log('hereevolve');
-        console.log(webpath);
-        //console.log(JSON.stringify(serviceparam));
-        return this.service.retrieve2('/' + webpath, serviceparam).pipe(
-          map(result => {
-            console.log(result);
-            if (set) {
-              const update = result.maps.update;
-              for (const [key, value] of Object.entries(update)) {
-                //console.log(key);
-                new ActionSetconfigvaluemap([key, value]);
-              }
-            }
-            const list = result.list;
-            console.log('here');
-            return new ActionNewtab(result.list);
-            console.log('here');
-          }),
-          catchError(error => of(new ActionError({ error })))
-        );
-        //console.log(res);
-        //return new ActionSetmarkets({ markets: res['markets']});
-        //return res['markets'];
-      })
-    )
-  );
-    
   gettasks$ = createEffect(() => ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGettasks>(MainActionTypes.GETTASKS),
