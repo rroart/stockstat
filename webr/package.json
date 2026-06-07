@@ -10,6 +10,7 @@
     "build": "./node_modules/.bin/cross-env NODE_ENV=production node bin/commands.js build",
     "build:stage": "cross-env NODE_ENV=stage node bin/commands.js build",
     "clean": "./node_modules/.bin/rimraf docroot",
+    "testnew": "web-test-runner __tests__/**/*.spec.* --node-resolve",
     "test": "./node_modules/.bin/jest --no-cache",
     "lint": "node bin/commands.js lint"
   },
@@ -41,6 +42,8 @@
     "@types/react-responsive": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^8.21.0",
     "@typescript-eslint/parser": "^8.21.0",
+    "@web/dev-server-esbuild": "^1.0.3",
+    "@web/test-runner": "^0.19.0",
     "assets-webpack-plugin": "^7.1.1",
     "babel-jest": "^29.7.0",
     "babel-loader": "^9.2.1",
