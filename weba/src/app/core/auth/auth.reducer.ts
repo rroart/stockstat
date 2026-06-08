@@ -19,10 +19,10 @@ export function authReducer(
   switch (action.type) {
     // Legacy auth
     case AuthActionTypes.LOGIN:
-      return { ...state, isAuthenticated: true, provider: 'local' };
+      return { ...state, isAuthenticated: true, provider: AuthProvider.LOCAL };
 
     case AuthActionTypes.LOGOUT:
-      return { ...state, isAuthenticated: false, provider: 'local' };
+      return { ...state, isAuthenticated: false, provider: AuthProvider.LOCAL };
 
     // OAuth2 actions
     case AuthActionTypes.OAUTH2_INITIALIZE:
@@ -49,7 +49,7 @@ export function authReducer(
         token: action.payload.token,
         loading: false,
         error: null,
-        provider: 'oauth2'
+        provider: AuthProvider.OAUTH2,
       };
 
     case AuthActionTypes.OAUTH2_LOGIN_FAILURE:
@@ -66,7 +66,7 @@ export function authReducer(
     case AuthActionTypes.OAUTH2_LOGOUT_SUCCESS:
       return {
         ...initialState,
-        provider: 'oauth2'
+        provider: AuthProvider.OAUTH2
       };
 
     case AuthActionTypes.OAUTH2_REFRESH_TOKEN:
