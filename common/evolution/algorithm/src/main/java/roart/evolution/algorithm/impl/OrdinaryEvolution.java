@@ -30,6 +30,7 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
     public Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome chromosome, List<String> individuals, List<SerialScoreChromosome> results, AbstractChromosome defaultChromosome) throws Exception {
         int selectionSize = getEvolutionConfig().getSelect();
         Population population = new Population(selectionSize, evolutionConfig, chromosome, false, defaultChromosome);
+        log.info("shutdownhour {}", evolutionConfig.getShutdownhour());
         log.info("Generations {} population {}", getEvolutionConfig().getGenerations(), population.size());
         if (getEvolutionConfig().getUseoldelite() && !chromosome.isEmpty()) {
             population.getIndividuals().add(new Individual(chromosome).getNewWithValueCopyFactory());
