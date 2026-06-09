@@ -186,15 +186,7 @@
       <iterations>100</iterations>
       <period>Price</period-->
     </indicatorrecommender>
-    <save>
-	<location>$SAVELOCATION</location>
-	<path>$SAVEPATH</path>
-    </save>
-  </evolution>
-
-  <!-- machinelearning -->
-  <!-- todo -->
-  <evolve>
+    <!-- machinelearning -->
     <ml>
       <evolutionconfig>{ "generations" : 10, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true, "shutdownhour" : $SHUTDOWNHOUR }</evolutionconfig>
       <!--evolutionconfig>{ "generations" : 0, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 4, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig-->
@@ -203,7 +195,8 @@
 	<location>$SAVELOCATION</location>
 	<path>$SAVEPATH</path>
     </save>
-  </evolve>
+  </evolution>
+
   <aggregators enable='true'>
     <indicatorrecommender enable='true'>
       <simple enable='true'>
