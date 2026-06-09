@@ -162,7 +162,10 @@ public abstract class EvolutionAlgorithm {
 
                  */
                 if (interrupted) {
-                    break;
+                    if (individual.getFitness() == null) {
+                        individual.setFitness(-1.0);
+                    }
+                    continue;
                 }
                 Callable callable = new EvolutionCallable(individual);
                 Future<Individual> future = MyExecutors.run(callable, 0);

@@ -29,9 +29,12 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
     @Override
     public Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome chromosome, List<String> individuals, List<SerialScoreChromosome> results, AbstractChromosome defaultChromosome) throws Exception {
         int selectionSize = getEvolutionConfig().getSelect();
+        System.out.println("old chromosome: " + chromosome);
+        System.out.println(""+getEvolutionConfig().getUseoldelite() );
         Population population = new Population(selectionSize, evolutionConfig, chromosome, false, defaultChromosome);
         log.info("shutdownhour {}", evolutionConfig.getShutdownhour());
         log.info("Generations {} population {}", getEvolutionConfig().getGenerations(), population.size());
+        printmap(population.getIndividuals(), individuals);
         if (getEvolutionConfig().getUseoldelite() && !chromosome.isEmpty()) {
             population.getIndividuals().add(new Individual(chromosome).getNewWithValueCopyFactory());
         }
@@ -69,10 +72,19 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
             List<Individual> clonedmutated = clonedmutated(getEvolutionConfig().getElitecloneandmutate(), population.getIndividuals().get(0).getEvaluation(), defaultChromosome);
             mutateList(children, 0, population.size(), getEvolutionConfig().getMutate(), true, useMax);
             
+            for (Individual ind : children) {
+                System.out.println("Child individual " + ind);
+            }
+            for (Individual ind : clonedmutated) {
+                System.out.println("Cloned individual " + ind);
+            }
             population.getIndividuals().addAll(children);
             population.getIndividuals().addAll(clonedmutated);
             
             List<Individual> created = created(getEvolutionConfig().getGenerationcreate(), chromosome, defaultChromosome);
+            for (Individual ind : created) {
+                System.out.println("Cre individual " + ind);
+            }
             population.getIndividuals().addAll(created);
             boolean interrupted = calculate(population.getIndividuals());
             Collections.sort(population.getIndividuals());
