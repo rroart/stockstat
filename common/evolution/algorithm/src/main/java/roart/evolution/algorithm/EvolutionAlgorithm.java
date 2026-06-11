@@ -187,6 +187,7 @@ public abstract class EvolutionAlgorithm {
                     }
                     if (future.isDone()) {
                         future.get();
+                        break;
                     }
                 }
                 calc++;
