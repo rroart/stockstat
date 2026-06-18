@@ -82,7 +82,7 @@ public class WebFluxUtil {
     }
 
     public <T> T sendMe(Class<T> myclass, Object param, String url) {
-        return sendMeInner(myclass, param, url, null);
+        return sendMeInner(myclass, param, url, objectMapper);
     }
     
     public <T> T sendMe(Class<T> myclass, String url, Object param, String path) {
