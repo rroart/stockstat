@@ -87,7 +87,7 @@ public abstract class MarketAction extends Action {
         return getActionData().getName();
     }
     
-    protected List<String> getProfitComponents(IclijConfig config, boolean wantThree) {
+    public List<String> getProfitComponents(IclijConfig config, boolean wantThree) {
         return getActionData().getComponents(config, wantThree);
     }
 
@@ -329,18 +329,18 @@ public abstract class MarketAction extends Action {
         return myData;
     }
     
-    protected List<TimingDTO> getCurrentTimings(LocalDate olddate, List<TimingDTO> timings, Market market, String name,
+    public List<TimingDTO> getCurrentTimings(LocalDate olddate, List<TimingDTO> timings, Market market, String name,
             Short time, boolean b, List<String> stockDates) {
         return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
     }
 
-    protected boolean isDataset() {
+    public boolean isDataset() {
         return getActionData().isDataset();
     }
 
     protected static final int AVERAGE_SIZE = 5;
 
-    private List<ActionComponentDTO> getList(String action, Map<String, Component> componentMapFiltered, List<TimingDTO> timings, Market market, ComponentData param, List<TimingDTO> currentTimings, List<TimingDTO> timingsdone, IclijConfig iclijConfig) {
+    public List<ActionComponentDTO> getList(String action, Map<String, Component> componentMapFiltered, List<TimingDTO> timings, Market market, ComponentData param, List<TimingDTO> currentTimings, List<TimingDTO> timingsdone, IclijConfig iclijConfig) {
         List<MLMetricsDTO> mltests = null;
         try {
             mltests = param.getService().getIo().getIdbDao().getAllMLMetrics(market.getConfig().getMarket(), null, null);
@@ -395,9 +395,9 @@ public abstract class MarketAction extends Action {
                         String parameterString = JsonUtil.convert(parameters);
                         Boolean[] booleans = getActionData().getBooleans();
                         for (Boolean buy : booleans) {
-                            List<TimingDTO> currentTimingFiltered = currentTimings.stream().filter(m -> m != null 
-                                    && componentName.equals(m.getComponent()) 
-                                    && (subComponents == null || myequals(subComponent, m.getSubcomponent())) 
+                            List<TimingDTO> currentTimingFiltered = currentTimings.stream().filter(m -> m != null
+                                    && componentName.equals(m.getComponent())
+                                    && (subComponents == null || myequals(subComponent, m.getSubcomponent()))
                                     && (m.getParameters() == null || parameterString.equals(m.getParameters())) 
                                     && (buy == null || ((m.getBuy() == null || m.getBuy() == buy)))).collect(Collectors.toList());
                             if (!currentTimingFiltered.isEmpty()) {

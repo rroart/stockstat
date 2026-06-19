@@ -190,9 +190,10 @@ public class ImproveFilterAction extends MarketAction {
     public void setValMap(ComponentData param) {
         param.getAndSetWantedCategoryValueMap(false);
     }
-    
-    @Override
-    protected List<TimingDTO> getCurrentTimings(LocalDate olddate, List<TimingDTO> timings, Market market, String name,
+
+    // TODO this gave a repeated full list each day
+    //@Override
+    public List<TimingDTO> getCurrentTimingsNot(LocalDate olddate, List<TimingDTO> timings, Market market, String name,
             Short time, boolean b, List<String> stockDates) {
         String mldate = ((ImproveFilterActionData) getActionData()).getMlDate(market, stockDates);
         String mldaysdate = ((ImproveFilterActionData) getActionData()).getMlDays(market, stockDates);

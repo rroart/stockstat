@@ -162,7 +162,7 @@ public class ImproveProfitAction extends MarketAction {
     }
     
     @Override
-    protected List<TimingDTO> getCurrentTimings(LocalDate olddate, List<TimingDTO> timings, Market market, String name,
+    public List<TimingDTO> getCurrentTimings(LocalDate olddate, List<TimingDTO> timings, Market market, String name,
             Short time, boolean b, List<String> stockDates) {
         String mldate = ((ImproveProfitActionData) getActionData()).getMlDate(market, stockDates);
         String mldaysdate = ((ImproveProfitActionData) getActionData()).getMlDays(market, stockDates);

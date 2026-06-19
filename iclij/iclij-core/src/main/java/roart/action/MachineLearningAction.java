@@ -120,7 +120,7 @@ public class MachineLearningAction extends MarketAction {
     }
     
     @Override
-    protected List<TimingDTO> getCurrentTimings(LocalDate olddate, List<TimingDTO> timings, Market market, String name,
+    public List<TimingDTO> getCurrentTimings(LocalDate olddate, List<TimingDTO> timings, Market market, String name,
             Short time, boolean b, List<String> stockDates) {
         String mldate = ((MachineLearningActionData) getActionData()).getMlDate(market, stockDates);
         String mldaysdate = ((MachineLearningActionData) getActionData()).getMlDays(market, stockDates);
