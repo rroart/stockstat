@@ -1,11 +1,13 @@
 package roart.controller;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,6 +15,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import roart.action.FindProfitAction;
+import roart.action.ImproveFilterAction;
+import roart.action.MarketAction;
 import roart.common.constants.Constants;
 
 import org.apache.curator.framework.CuratorFramework;
@@ -22,6 +27,14 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import roart.common.model.*;
+import roart.common.model.util.MetaUtil;
+import roart.component.model.ComponentData;
+import roart.iclij.component.Component;
+import roart.iclij.config.*;
+import roart.iclij.model.component.ComponentInput;
+import roart.iclij.service.ControlService;
+import roart.iclij.service.util.MarketUtil;
 import roart.pipeline.common.aggregate.Aggregator;
 
 import tools.jackson.databind.ObjectMapper;
@@ -39,10 +52,6 @@ import roart.common.config.ConfigConstants;
 import roart.common.config.ConfigMaps;
 import roart.common.config.MLConstants;
 import roart.common.ml.NeuralNetCommand;
-import roart.common.model.ActionComponentDTO;
-import roart.common.model.MetaDTO;
-import roart.common.model.MyDataSource;
-import roart.common.model.StockDTO;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.data.PipelineData;
 import roart.common.pipeline.data.SerialPipeline;
@@ -51,8 +60,6 @@ import roart.common.util.JsonUtil;
 import roart.db.dao.DbDao;
 import roart.db.dao.IclijDbDao;
 import roart.db.spring.DbSpringDS;
-import roart.iclij.config.IclijConfig;
-import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.common.service.IclijServiceParam;
 import roart.iclij.common.service.IclijServiceResult;
 import roart.indicator.util.IndicatorUtils;
@@ -75,8 +82,6 @@ import roart.iclij.model.Parameters;
 import java.util.Set;
 import java.util.Collections;
 import roart.filesystem.FileSystemDao;
-import roart.iclij.config.SimulateInvestConfig;
-import roart.iclij.config.AutoSimulateInvestConfig;
 import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 
@@ -498,7 +503,120 @@ public class AllET {
         //System.out.println("queue" + ActionThread.queue.size() + " " + ActionThread.queued.size());
     }
 
-    @Deprecated
+    @Disabled
+    @Test
+    public void testtest() throws Exception {
+        List<TimingDTO> timingsdone = new ArrayList<>();
+        List<Market> markets = new MarketUtil().getMarkets(false, iconf);
+        Market market = markets.get(0);
+        for (Market m : markets) {
+            if ("dax".equals(m.getConfig().getMarket())) {
+                market = m;
+                break;
+            }
+        }
+        Integer priority = null;
+
+        ComponentInput inputTemplate = new ComponentInput(iconf.getConfigData(), null, market.getConfig().getMarket(), null, null, false, false, new ArrayList<>(), new HashMap<>());
+
+        ComponentData paramTemplate = null;
+        try {
+            paramTemplate = ComponentData.getParam(iconf, inputTemplate, 0, io);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+
+        MarketAction action = new ImproveFilterAction(iconf);
+        //action = new FindProfitAction(iconf);
+
+        List<ActionComponentDTO> marketTimes = new ArrayList<>();
+        Map<String, ComponentData> componentDataMap = new HashMap<>();
+
+        log.info("Market {}", market.getConfig().getMarket());
+        if (market.getConfig().getEnable() != null && !market.getConfig().getEnable()) {
+            //continue;
+        }
+        String marketName = market.getConfig().getMarket();
+        //MetaDTO meta = new MetaUtil().findMeta(metas, marketName);
+        boolean wantThree = false; // meta != null && Boolean.TRUE.equals(meta.isLhc());
+        LocalDate enddate = null;
+        boolean siminvestmod = false; // TODO true is broken
+        if (siminvestmod && "simulateinvest".equals(action.getName())) {
+            enddate = paramTemplate.getInput().getEnddate();
+        }
+        ComponentInput input = new ComponentInput(iconf.getConfigData(), null, marketName, enddate, 0, paramTemplate.getInput().isDoSave(), false, new ArrayList<>(), paramTemplate.getInput().getValuemap());
+        ComponentData param = null;
+        try {
+            // TODO mess?
+            param = ComponentData.getParam(iconf, input, 0, market, paramTemplate.getService().getIo());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        param.setAction(action.getName());
+        ControlService srv = new ControlService(iconf, param.getService().getIo());
+        //srv.getConfig();
+        param.setService(srv);
+        srv.coremlconf.getConfigData().setMarket(market.getConfig().getMarket());
+
+        if (siminvestmod && "simulateinvest".equals(action.getName())) {
+            srv.coremlconf.getConfigData().setDate(enddate);
+        }
+
+        boolean skipIsDataset = !timingsdone.isEmpty();
+        List<String> stockDates = null;
+        if (skipIsDataset || !action.isDataset()) {
+            stockDates = param.getService().getDates(marketName, param.getId());
+            if (stockDates == null || stockDates.isEmpty()) {
+                //continue;
+            }
+
+            action.getParamDates(market, param, stockDates);
+        }
+        componentDataMap.put(marketName, param);
+        LocalDate olddate = param.getInput().getEnddate();
+
+        Short time = action.getActionData().getTime(market);
+        log.info("olddate {}", olddate);
+        log.info("time {}", time);
+
+        TimingDTO timingDTO = new TimingDTO();
+        timingDTO.setRecord(LocalDate.now());
+        timingDTO.setDate(LocalDate.now());
+        timingDTO.setMarket(marketName);
+        timingDTO.setMlmarket(marketName);
+        timingDTO.setAction(action.getName());
+        timingDTO.setEvolve(true);
+        timingDTO.setComponent("filter");
+        //List<TimingDTO> timings = List.of(timingDTO); // TODO
+        List<TimingDTO> timings = null;
+        try {
+            timings = param.getService().getIo().getIdbDao().getAllTiming();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        log.info("cu" + timings.size());
+        log.info("ac" + action.getName());
+        log.info("m" + market.getConfig().getMarket());
+        List<TimingDTO> currentTimings = action.getCurrentTimings(olddate, timings, market, action.getName(), time, false, stockDates);
+        log.info("cu" + currentTimings.size() + " " + currentTimings);
+
+        List<String> componentList = action.getProfitComponents(iconf, wantThree);
+        Map<String, Component> componentMap = action.getComponentMap(componentList, market);
+        Map<String, Component> componentMapFiltered = new HashMap<>();
+        for (Map.Entry<String, Component> entry : componentMap.entrySet()) {
+            String mypriorityKey = action.getActionData().getPriority();
+            int aPriority = action.getPriority(iconf, mypriorityKey);
+            int mypriority = aPriority + entry.getValue().getConfig().getPriority(iconf);
+            if (priority == null || (mypriority >= priority && mypriority < (priority + 9))) {
+                componentMapFiltered.put(entry.getKey(),  entry.getValue());
+            }
+        }
+        List<ActionComponentDTO> marketTime = action.getList(action.getName(), componentMapFiltered, timings, market, param, currentTimings, timingsdone, iconf);
+        marketTimes.addAll(marketTime);
+        log.info("Market {}", marketTime);
+   }
+
+        @Deprecated
     private Object sendMMe(Class<IclijServiceResult> class1, Object any, String getcontent) {
         // TODO Auto-generated method stub
         return null;
