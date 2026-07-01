@@ -327,9 +327,10 @@ def getlmdfull(myobj, config):
     import mmt.convert_lmd_full
     dir = getpath(myobj)
     if not pathlib.Path(dir + "lmd_full/original-names.txt").exists():
-        url = 'http://hog.ee.columbia.edu/craffel/lmd/lmd_full.tar.gz'
-        torchvision.datasets.utils.download_url(url, dir)
-        torchvision.datasets.utils.extract_archive(dir + "lmd_full.tar.gz", dir + "lmd_full")
+        if not pathlib.Path(dir + "lmd_full").exists():
+            url = 'http://hog.ee.columbia.edu/craffel/lmd/lmd_full.tar.gz'
+            torchvision.datasets.utils.download_url(url, dir)
+            torchvision.datasets.utils.extract_archive(dir + "lmd_full.tar.gz", dir + "lmd_full")
         midi_files = glob.glob(os.path.join(dir + "lmd_full", '**/*.mid'), recursive=True)
         xml_files = glob.glob(os.path.join(dir + "lmd_full", '**/*.xml'), recursive=True)
         midi_files.append(xml_files)
