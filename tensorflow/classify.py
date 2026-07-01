@@ -1106,7 +1106,7 @@ class Classify:
             #myobj.size = size # TODO
             myobj.classes = classes
 
-            model = Model.Model(myobj, config)
+            model = Model.Model(myobj, config, size)
         if modelname == 'neural_style_transfer':
             model = Model.Model(myobj, config, filename, filename2)
 
@@ -1366,7 +1366,8 @@ class Classify:
         print("new size", img_nrows, img_ncols)
         # duplicated
         # Util function to open, resize and format pictures into appropriate tensors
-        img = keras.utils.load_img(image_path, target_size=(img_nrows, img_ncols))
+        #img = keras.utils.load_img(image_path, target_size=(img_nrows, img_ncols))
+        img = keras.utils.load_img(image_path)
         print("sh", img.size)
         img = keras.utils.img_to_array(img)
         print("sh", img.size, img.shape)
