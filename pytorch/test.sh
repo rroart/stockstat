@@ -23,9 +23,15 @@ if [ $o -eq 1 ]; then
 fi
 
 if [ $m -eq 1 ]; then
+    sh midiclassifytest.sh pt29 pytorchGPTMIDIConfig 1 "$TMPDIR"
+    sh midiclassifytest.sh pt29 pytorchGPTMIDIRPRConfig 1 "$TMPDIR"
+    #sh midiclassifytest.sh pt29 pytorchGPTMIDIMMTConfig 1 "$TMPDIR"
+    sh midiclassifytest.sh pt212 pytorchGPTMIDIRPRConfig 1 "$TMPDIR"
+    sh midiclassifytest.sh pt212 pytorchGPTMIDIMMTConfig 1 "$TMPDIR"
+    #sh midiclassifytest.sh mtmt pytorchGPTMIDIMMTConfig 1 "$TMPDIR"
     sh midiclassifytest.sh ptl264 pytorchGPTMIDIFigaroConfig 1 "$TMPDIR"
-    if conda env list 2>&1|grep -q ptl255; then 
-	sh midiclassifytest.sh ptl255 pytorchGPTMIDIFigaroConfig 1 "$TMPDIR"
-    fi
+    #if conda env list 2>&1|grep -q ptl255; then 
+	#sh midiclassifytest.sh ptl255 pytorchGPTMIDIFigaroConfig 1 "$TMPDIR"
+    #fi
 fi
 
