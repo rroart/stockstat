@@ -46,7 +46,8 @@ class MyTestCase(unittest.TestCase):
                 print(result)
                 #return
                 self.assertIsNotNone(result['accuracy'], "Accuracy")  # add assertion
-                result = cli.generate(text ="I like travelling", ds = ds, path = MyTestCase.argdir, cf = test, take = 40, submodel = submodel)
+
+                result = cli.generate(text ="I like travelling", ds = ds, path = MyTestCase.argdir, cf = test, take = 40, submodel = submodel, size = 256)
                 print(result)
                 #self.assertIsNotNone(result['classifyarray'][0], "Text")  # add assertion
         # here
