@@ -1,12 +1,13 @@
 import unittest
-import keras
+import sys
 
 import config
 import imgcli as cli
 
 class MyTestCase(unittest.TestCase):
+    argdslist = None
+    argsteps = None
     def test_something(self):
-        return
         ads = 'mnist'
         result = cli.conditionalgan(ds = ads, take = 10)
         print(result)
@@ -17,13 +18,11 @@ class MyTestCase(unittest.TestCase):
         self.assertIsNotNone(result['classifycatarray'], "Cat")  # add assertion
 
     def test_something2(self):
-        return
         result = cli.dcgan(take = 10)
         print(result)
         self.assertIsNotNone(result['loss'], "Loss")  # add assertion
 
     def test_something3(self):
-        return
         #base_image_path = keras.utils.get_file("paris.jpg", "https://i.imgur.com/F28w3Ac.jpg")
         #style_reference_image_path = keras.utils.get_file("starry_night.jpg", "https://i.imgur.com/9ooB60I.jpg")
         base_image_path = "paris.jpg"
@@ -40,4 +39,10 @@ class MyTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        print("argv", sys.argv)
+        MyTestCase.argsteps = int(sys.argv.pop())
+        print("args", MyTestCase.argdslist, MyTestCase.argsteps)
+        MyTestCase.argdslist = [sys.argv.pop()]
+        print("args", MyTestCase.argdslist, MyTestCase.argsteps)
     unittest.main()

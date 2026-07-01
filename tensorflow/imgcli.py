@@ -84,6 +84,7 @@ def dataset(ds = 'mnist', cf = config.TENSORFLOWMLP):
 def classify(path, ds = 'mnist', cf = config.TENSORFLOWMLP):
     neuralnetcommand = { 'mldynamic' : None, 'mlclassify' : None, 'mllearn' : None }
     cfname, modelInt, thecf = config.get(cf)
+    thecf['binary'] = False
     filename = getfilename(thecf, ds)
     data = { 'modelInt' : modelInt, 'dataset' : ds, 'filename' : filename, 'zero' : True, 'neuralnetcommand' : neuralnetcommand, cfname : thecf }
     filenames = [ path ]

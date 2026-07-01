@@ -1,9 +1,11 @@
 o=0
 g=0
+i=0
 q=0
 if [ "$1" = "" ]; then
     q=1
     g=1
+    i=1
     o=1
 fi
 
@@ -14,6 +16,10 @@ fi
 
 if [ "$1" = "g" ]; then
     g=1
+fi
+
+if [ "$1" = "i" ]; then
+    i=1
 fi
 
 if [ "$1" = "o" ]; then
@@ -34,6 +40,10 @@ fi
 
 if [ $g -eq 1 ]; then
     sh gptclassifytest.sh tf220gpt 1
+fi
+
+if [ $i -eq 1 ]; then
+    sh imgclassifytest.sh tf220 1
 fi
 
 #python datasetclassifytest.py "" 1
