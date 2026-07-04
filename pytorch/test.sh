@@ -1,5 +1,6 @@
 o=0
 m=0
+d=0
 
 if [ "$1" = "" ]; then
     o=1
@@ -13,6 +14,10 @@ fi
 
 if [ "$1" = "o" ]; then
     o=1
+fi
+
+if [ "$1" = "d" ]; then
+    d=1
 fi
 shift
 done
@@ -33,5 +38,10 @@ if [ $m -eq 1 ]; then
     #if conda env list 2>&1|grep -q ptl255; then 
 	#sh midiclassifytest.sh ptl255 pytorchGPTMIDIFigaroConfig 1 "$TMPDIR"
     #fi
+fi
+
+if [ $d -eq 1 ]; then
+    sh diffusionclassifytest.sh pt212 1 0 0
+    #cifar
 fi
 

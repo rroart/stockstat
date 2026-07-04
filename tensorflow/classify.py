@@ -750,6 +750,9 @@ class Classify:
         if myobj.modelInt == 19:
             modelname = 'vae'
             config = myobj.tensorflowVAEConfig
+        if myobj.modelInt == 20:
+            modelname = 'diffusion'
+            config = myobj.tensorflowDiffusionConfig
         return config, modelname
       if hasattr(myobj, 'modelName'):
         if myobj.modelName == 'dnn':
@@ -1378,6 +1381,106 @@ class Classify:
         #print("img", img)
         print("sh", img.shape)
         return tf.convert_to_tensor(img)
+
+
+    def do_diffusion(self, queue, myjson, cachedata):
+        import diffusionutils
+        dt = datetime.now()
+        timestamp = dt.timestamp()
+        print(myjson)
+        myobj = json.loads(myjson, object_hook=lt.LearnTest)
+        (config, modelname) = self.getModel(myobj)
+        Model = importlib.import_module('model.' + modelname)
+        if hasattr(myobj, 'normalizevalue'):
+            import mydatasetsq
+            (ds, meta) = mydatasetsq.getdataset(myobj, config, self)
+        else:
+            #(ds, meta) = mydatasets.getdataset(myobj, config, self)
+            (ds, meta) = mydatasets.getcifar10plain()
+        diffusionutils.show_examples(ds.train)
+        diffusionutils.show_examples2(ds.train)
+
+        ds.train = ds.train[ds.traincat.squeeze() == 1]
+        ds.train = (ds.train / 127.5) - 1
+        if hasattr(ds, 'trainnot'):
+            train = np.array(ds.train)
+            myobj.trainingarray = ds.train
+            myobj.trainingcatarray = ds.traincat
+            # myobj.size = meta.size # TODO
+            myobj.classes = meta.classes
+            (ds.train, ds.traincat, ds.test, ds.testcat, shape, val, valcat) = self.gettraintest(myobj, config,
+                                                                                                 meta.classify)
+        # print("classez2", myobj.classes)
+        if 'shape' in locals():
+            model = Model.Model(myobj, config, meta.classify, shape)
+        else:
+            model = Model.Model(myobj, config, meta.classify, ds.train.shape)
+        exists = False  # not yet: self.exists(myobj)
+        # load model if:
+        # exists and not dynamic and wantclassify
+        if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
+            if Model.Model.localsave():
+                # dummy variable to allow saver
+                model = Model.Model(myobj, config, meta.classify, shape)
+                print("Restoring")
+                model.model = tf.keras.models.load_model(self.getfullpath(myobj))
+                print("Restoring done")
+            else:
+                model = Model.Model(myobj, config, meta.classify, shape)
+        else:
+            if 'shape' in locals():
+                model = Model.Model(myobj, config, meta.classify, shape)
+            else:
+                model = Model.Model(myobj, config, meta.classify, ds.train.shape)
+        # load end
+        # print("classez2", myobj.classes)
+        print(model)
+        self.printgpus()
+        classifier = model
+        if hasattr(ds, 'trainnot'):
+            (accuracy_score, loss, train_accuracy_score, train_loss, val_accuracy, val_loss) = self.do_learntestinner(
+                myobj, config, classifier, ds.train, ds.traincat, ds.test, ds.testcat, meta.classify, val, valcat)
+            myobj.classifyarray = train
+            (intlist, problist) = self.do_classifyinner(myobj, model, config, meta.classify)
+        else:
+            #(accuracy_score, loss, train_accuracy_score, train_loss, val_accuracy, val_loss) = classifier.train(ds)
+            for _ in range(10):
+                print("type", type(model))
+                model.train(ds.train, 2) # todo was 50
+                # reduce learning rate for next training
+                model.optimizer.learning_rate = max(0.000001, model.optimizer.learning_rate * 0.9)
+
+                # show result
+                model.predict()
+                model.predict_step()
+                import matplotlib.pyplot as plt
+                plt.show()
+                #model.predict()
+            # (accuracy_score, loss, train_accuracy_score) = (0, 0, 0)
+        global dictclass
+        # dictclass[str(myobj.modelInt) + myobj.period + myobj.modelname] = classifier
+        # global dicteval
+        # dicteval[myobj.modelname] = float(accuracy_score)
+        # print("seteval" + str(myobj.modelname))
+
+        if not self.wantDynamic(myobj) and self.wantLearn(myobj):
+            if model.localsave():
+                print("Saving")
+                model.save(self.getfullpath(myobj))
+
+        classifier.tidy()
+        del classifier
+        if not accuracy_score is None:
+            accuracy_score = float(accuracy_score)
+        if not train_accuracy_score is None:
+            train_accuracy_score = float(train_accuracy_score)
+        if not loss is None:
+            loss = float(loss)
+        dt = datetime.now()
+        print("millis ", (dt.timestamp() - timestamp) * 1000)
+        queue.put(
+            {"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, 'train_loss': train_loss,
+             'valaccuracy': val_accuracy, 'val_loss': val_loss, "classify": meta.classify, "gpu": self.hasgpu()})
 
     def getpath(self, myobj):
         """Return filesystem path for saving/loading model files.

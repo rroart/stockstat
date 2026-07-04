@@ -2,6 +2,7 @@ o=0
 g=0
 i=0
 q=0
+d=0
 if [ "$1" = "" ]; then
     q=1
     g=1
@@ -25,6 +26,10 @@ fi
 if [ "$1" = "o" ]; then
     o=1
 fi
+
+if [ "$1" = "d" ]; then
+    d=1
+fi
 shift
 done
 
@@ -44,6 +49,10 @@ fi
 
 if [ $i -eq 1 ]; then
     sh imgclassifytest.sh tf220 1
+fi
+
+if [ $d -eq 1 ]; then
+    sh diffusionclassifytest.sh tf221 1
 fi
 
 #python datasetclassifytest.py "" 1

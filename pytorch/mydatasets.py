@@ -200,6 +200,67 @@ def getcifar10(myobj, config):
     #print("mydim", mydim)
     return x_train, y_train, x_valid, y_valid, x_train.shape, 10, True
 
+
+def getcifarplain(myobj):
+    import torchvision
+    from torchvision import transforms
+    import diffusionutils
+    transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
+    ])
+
+    all_trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
+
+    # filter training imgs
+    idx = [i for i, (img, label) in enumerate(all_trainset) if label == 1]
+    sub_trainset = torch.utils.data.Subset(all_trainset, idx)
+
+    trainloader = torch.utils.data.DataLoader(sub_trainset, batch_size=diffusionutils.BATCH_SIZE, shuffle=True, num_workers=2)
+    return trainloader
+    dir = getpath(myobj)
+    dl = DataLoader(torchvision.datasets.CIFAR10(dir + 'datasets/cifar10', train=True, download=True))
+
+    tensor = dl.dataset.data
+    # print(tensor.shape)
+    tensor = torch.FloatTensor(tensor)
+    tensor = tensor.to(dtype=torch.float32)
+    # print("tt", tensor.shape)
+    tr = tensor
+    # .reshape(tensor.size(0), -1)
+    # print("tt", tr.shape)
+    tr = tr / 128
+    targets = dl.dataset.targets
+    targets = torch.FloatTensor(targets)
+    targets = targets.to(dtype=torch.float)
+
+    x_train = tr[0:40000]
+    y_train = targets[0:40000]
+    x_valid = tr[40000:50000]
+    y_valid = targets[40000:50000]
+
+    y_valid = y_valid.to(dtype=torch.long)
+
+    # bs=64
+
+    # train_ds = TensorDataset(x_train, y_train)
+    # train_dl = DataLoader(train_ds, batch_size=bs, drop_last=False, shuffle=True)
+
+    # valid_ds = TensorDataset(x_valid, y_valid)
+    # valid_dl = DataLoader(valid_ds, batch_size=bs * 2)
+
+    # loaders={}
+    # loaders['train'] = train_dl
+    # loaders['valid'] = valid_dl
+    # print("X", x_train.shape)
+    mydim = (x_train.shape[1], x_train.shape[2])
+    # print(type(x_train), x_train.shape)
+    # print(type(y_train), y_train.shape)
+    # print(type(x_valid), x_valid.shape)
+    # print("mydim", mydim)
+    return x_train, y_train, x_valid, y_valid, x_train.shape, 10, True
+
+
 def getdailymintemperatures(myobj, config):
     dir = getpath(myobj)
     url = 'https://raw.githubusercontent.com/jbrownlee/Datasets/master/daily-min-temperatures.csv'

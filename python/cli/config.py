@@ -8,6 +8,7 @@ PYTORCHGPTMIDI = 'pytorchGPTMIDIConfig'
 PYTORCHGPTMIDIRPR = 'pytorchGPTMIDIRPRConfig'
 PYTORCHGPTMIDIFIGARO = 'pytorchGPTMIDIFigaroConfig'
 PYTORCHGPTMIDIMMT = 'pytorchGPTMIDIMMTConfig'
+PYTORCHDIFFUSION = 'pytorchDiffusionConfig'
 
 TENSORFLOWDNN = 'tensorflowDNNConfig'
 TENSORFLOWLIC = 'tensorflowLICConfig'
@@ -28,6 +29,7 @@ TENSORFLOWGPT = 'tensorflowGPTConfig'
 TENSORFLOWGPT2 = 'tensorflowGPT2Config'
 TENSORFLOWPQK = 'tensorflowPQKConfig'
 TENSORFLOWVAE = 'tensorflowVAEConfig'
+TENSORFLOWDIFFUSION = 'tensorflowDiffusionConfig'
 
 TENSORFLOWCOMMONCLASSIFY = { 'loss' : 'sparse_categorical_crossentropy', 'optimizer' : 'adam', 'activation' : 'relu', 'lastactivation' : 'softmax' }
 TENSORFLOWCOMMONCLASSIFYCNN = { 'loss' : 'sparse_categorical_crossentropy', 'optimizer' : 'adam', 'activation' : 'leaky_relu', 'lastactivation' : 'softmax' }
@@ -56,6 +58,8 @@ TENSORFLOWGPTCONFIG = { 'name' : 'gpt', 'steps' : 5 }
 TENSORFLOWGPT2CONFIG = { 'name' : 'gpt2', 'steps' : 1 }
 TENSORFLOWPQKCONFIG = { 'name' : 'pqk', 'steps' : 10 }
 TENSORFLOWVAECONFIG = { 'name' : 'vae', 'steps' : 30 }
+TENSORFLOWDIFFUSIONCONFIG = { 'name' : 'diffusion' }
+
 
 PYTORCHCOMMONCLASSIFY = { 'loss' : 'cross_entropy', 'optimizer' : 'sgd', 'activation' : 'relu', 'lastactivation' : 'softmax' }
 PYTORCHCOMMONCLASSIFYCNN = { 'loss' : 'cross_entropy', 'optimizer' : 'sgd', 'activation' : 'relu', 'lastactivation' : 'softmax' }
@@ -75,6 +79,7 @@ PYTORCHGPTMIDICONFIG = { 'name' : 'gptmidi', 'steps' : 1 }
 PYTORCHGPTMIDIRPRCONFIG = { 'name' : 'gptmidirpr', 'rpr' : True, 'steps' : 1 }
 PYTORCHGPTMIDIFIGAROCONFIG = { 'name' : 'gptmidifigaro', 'steps' : 1 }
 PYTORCHGPTMIDIMMTCONFIG = { 'name' : 'gptmidimmt', 'steps' : 50, 'valid_steps' : 10 }
+PYTORCHDIFFUSIONCONFIG = { 'name' : 'diffusion' }
 
 def get(cf, predictor = False, binary = False):
     if cf == TENSORFLOWDNN:
@@ -142,6 +147,8 @@ def get(cf, predictor = False, binary = False):
         return cf, 18, TENSORFLOWPQKCONFIG
     elif cf == TENSORFLOWVAE:
         return cf, 19, TENSORFLOWVAECONFIG
+    elif cf == TENSORFLOWDIFFUSION:
+        return cf, 20, TENSORFLOWDIFFUSIONCONFIG
     if cf == PYTORCHMLP:
         if predictor:
             PYTORCHMLPCONFIG.update(PYTORCHCOMMONPREDICT)
@@ -198,5 +205,7 @@ def get(cf, predictor = False, binary = False):
         return cf, 9, PYTORCHGPTMIDIFIGAROCONFIG
     elif cf == PYTORCHGPTMIDIMMT:
         return cf, 10, PYTORCHGPTMIDIMMTCONFIG
+    elif cf == PYTORCHDIFFUSION:
+        return cf, 11, PYTORCHDIFFUSIONCONFIG
     print("Unknown config", cf)
     return None

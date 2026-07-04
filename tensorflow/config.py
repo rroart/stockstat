@@ -17,6 +17,7 @@ TENSORFLOWGPT = 'tensorflowGPTConfig'
 TENSORFLOWGPT2 = 'tensorflowGPT2Config'
 TENSORFLOWPQK = 'tensorflowPQKConfig'
 TENSORFLOWVAE = 'tensorflowVAEConfig'
+TENSORFLOWDIFFUSION = 'tensorflowDiffusionConfig'
 
 TENSORFLOWCOMMONCLASSIFY = { 'loss' : 'sparse_categorical_crossentropy', 'optimizer' : 'adam', 'activation' : 'relu', 'lastactivation' : 'softmax' }
 TENSORFLOWCOMMONCLASSIFYCNN = { 'loss' : 'sparse_categorical_crossentropy', 'optimizer' : 'adam', 'activation' : 'leaky_relu', 'lastactivation' : 'softmax' }
@@ -45,6 +46,7 @@ TENSORFLOWGPTCONFIG = { 'name' : 'gpt', 'steps' : 5 }
 TENSORFLOWGPT2CONFIG = { 'name' : 'gpt2', 'steps' : 1 }
 TENSORFLOWPQKCONFIG = { 'name' : 'pqk', 'steps' : 10 }
 TENSORFLOWVAECONFIG = { 'name' : 'vae', 'steps' : 30 }
+TENSORFLOWDIFFUSIONCONFIG = { 'name' : 'diffusion' }
 
 def get(cf, predictor = False, binary = False):
     if cf == TENSORFLOWDNN:
@@ -112,5 +114,7 @@ def get(cf, predictor = False, binary = False):
         return cf, 18, TENSORFLOWPQKCONFIG
     elif cf == TENSORFLOWVAE:
         return cf, 19, TENSORFLOWVAECONFIG
+    elif cf == TENSORFLOWDIFFUSION:
+        return cf, 20, TENSORFLOWDIFFUSIONCONFIG
     print("Unknown config", cf)
     return None

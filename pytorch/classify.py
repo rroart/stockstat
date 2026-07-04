@@ -936,6 +936,9 @@ class Classify:
         if myobj.modelInt == 10:
             modelname = 'gptmidimmt'
             config = myobj.pytorchGPTMIDIMMTConfig
+        if myobj.modelInt == 11:
+            modelname = 'diffusion'
+            config = myobj.pytorchDiffusionConfig
         return config, modelname
       if hasattr(myobj, 'modelName'):
         if myobj.modelName == 'mlp':
@@ -1385,6 +1388,51 @@ class Classify:
         queue.put({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify": None,
              "gpu": self.hasgpu(), "files" : files })
         return model
+
+    def do_diffusion(self, queue, myjson, cachedata):
+        import diffusionutils
+        import matplotlib.pyplot as plt
+        torch.cuda.empty_cache()
+        dt = datetime.now()
+        timestamp = dt.timestamp()
+        print("myjson", myjson)
+        myobj = json.loads(myjson, object_hook=lt.LearnTest)
+        (config, modelname) = self.getModel(myobj)
+        Model = importlib.import_module('model.' + modelname)
+        #(train, traincat, test, testcat, shape, classes, classify) = mydatasets.getdataset(myobj, config, self)
+        trainloader = mydatasets.getcifarplain(myobj)
+        x, _ = next(iter(trainloader))
+        diffusionutils.show_examples(x)
+        model = Model.Net(myobj, config, None, None)
+        #model = Model.Net()
+        if torch.cuda.is_available():
+            model.cuda()
+            #cudnn.benchmark = True
+        for _ in range(10):
+            model.train(trainloader, 2) # todo was 50
+            # reduce learning rate for next training
+            for pg in model.model.opt.param_groups:
+                pg['lr'] = max(0.000001, pg['lr'] * 0.9)
+
+            # show result
+            model.predict()
+            model.predict_step()
+            plt.show()
+
+        model.predict()
+        model.predict_step()
+
+        if not accuracy_score is None:
+            accuracy_score = float(accuracy_score)
+        if not train_accuracy_score is None:
+            train_accuracy_score = float(train_accuracy_score)
+        if not loss is None:
+            loss = float(loss) # TODO warning
+        if not loss is None and np.isnan(loss):
+            loss = None
+        dt = datetime.now()
+        print ("millis ", (dt.timestamp() - timestamp)*1000)
+        queue.put({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify" : classify, "valaccuracy": val_accuracy_score, "gpu" : self.hasgpu() })
 
     def get_file(self, request):
         """Extract uploaded filenames from a Flask-like request.files object."""

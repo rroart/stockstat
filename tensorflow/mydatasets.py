@@ -159,9 +159,19 @@ def getmnist(myobj, config):
             #mydim = (28, 28, 1)
             x_train = x_train.reshape(x_train.shape[0], 28, 28, 1)
             x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
-    x_test = np.float16(x_test)        
+    x_test = np.float16(x_test)
     #print(x_train.shape)
     #print(y_train.shape)
+    dsdict = { 'train' : x_train, 'traincat' : y_train, 'test' : x_test, 'testcat' : y_test }
+    ds = DictToObject(dsdict)
+    metadict = { 'origsize' : mydimorig, 'size' : x_train.shape, 'classes' : 10, 'classify' : True }
+    meta = DictToObject(metadict)
+
+    return ds, meta
+
+def getcifar10plain():
+    (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
+    mydimorig = x_train.shape
     dsdict = { 'train' : x_train, 'traincat' : y_train, 'test' : x_test, 'testcat' : y_test }
     ds = DictToObject(dsdict)
     metadict = { 'origsize' : mydimorig, 'size' : x_train.shape, 'classes' : 10, 'classify' : True }
@@ -293,7 +303,7 @@ def getiris(myobj, config):
     ds = DictToObject(dsdict)
     mydim = train_ds.shape
     metadict = { 'origsize' : mydim, 'size' : mydim, 'classes' : 3, 'classify' : True }
-    meta = DictToObject(dsdict)
+    meta = DictToObject(metadict)
     return ds, meta
 
 def imdbdir(myobj, config):
