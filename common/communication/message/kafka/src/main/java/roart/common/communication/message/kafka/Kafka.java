@@ -63,12 +63,11 @@ public class Kafka extends MessageCommunication {
         if (send) {
             Properties props = new Properties();
             props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, connection); // List of brokers that the producer asks to get the topic leader
-            // TODO
-            // same as default props.put(ProducerConfig.ACKS_CONFIG, "all");
-            // 2147483647 default props.put(ProducerConfig.RETRIES_CONFIG, 0);
-            // same as default props.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
-            // 5 default props.put(ProducerConfig.LINGER_MS_CONFIG, 1);
-            // same as defualt props.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
+            
+            // Reliability configurations
+            props.put(ProducerConfig.ACKS_CONFIG, "all");
+            props.put(ProducerConfig.RETRIES_CONFIG, 3);
+            props.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1);
             
             props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, 
                StringSerializer.class.getName());
@@ -120,20 +119,33 @@ public class Kafka extends MessageCommunication {
     
     public void send(String s) {
         String md5Hex = DigestUtils.md5Hex(s).toUpperCase();      
-        producer.send(new ProducerRecord<>(getSendService(), md5Hex, s));
-        log.debug("Message sent successfully");
-        producer.close();
+        try {
+            producer.send(new ProducerRecord<>(getSendService(), md5Hex, s)).get();
+            log.debug("Message sent successfully");
+        } catch (InterruptedException e) {
+            log.error("Send interrupted", e);
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Message send interrupted", e);
+        } catch (ExecutionException e) {
+            log.error("Send failed", e);
+            throw new RuntimeException("Message send failed", e);
+        }
     }
     
     @Override
     public String[] receiveString() {
         Duration duration = Duration.ofSeconds(1);
-
-        //print the topic name
         log.debug("Subscribed to topic {}", getReceiveService());
         String[] retRecord = null;
         int returned = 0;
+        long startTime = System.currentTimeMillis();
+        long timeout = 60000; // 60 second timeout
+        
         while (returned == 0) {
+            if (System.currentTimeMillis() - startTime > timeout) {
+                log.warn("Receive timeout after {}ms", timeout);
+                return new String[0];
+            }
             ConsumerRecords<String, String> records = consumer.poll(duration);
             returned = records.count();
             retRecord = new String[returned];
@@ -150,12 +162,17 @@ public class Kafka extends MessageCommunication {
     @Override
     public String[] receiveStringAndStore() {
         Duration duration = Duration.ofSeconds(1);
-
-        //print the topic name
         log.debug("Subscribed to topic {}", getReceiveService());
         String[] retRecord = null;
         int returned = 0;
+        long startTime = System.currentTimeMillis();
+        long timeout = 60000; // 60 second timeout
+        
         while (returned == 0) {
+            if (System.currentTimeMillis() - startTime > timeout) {
+                log.warn("Receive timeout after {}ms", timeout);
+                return new String[0];
+            }
             log.debug("Polling" + consumer.subscription());
             ConsumerRecords<String, String> records = consumer.poll(duration);
             returned = records.count();
@@ -180,7 +197,13 @@ public class Kafka extends MessageCommunication {
 
     @Override
     public void destroy() {
-        // TODO Auto-generated method stub        
+        if (producer != null) {
+            producer.flush();
+            producer.close(Duration.ofSeconds(10));
+        }
+        if (consumer != null) {
+            consumer.close(Duration.ofSeconds(10));
+        }
     }
     
     @Override
