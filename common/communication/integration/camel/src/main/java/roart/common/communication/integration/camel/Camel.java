@@ -10,8 +10,12 @@ import org.apache.camel.component.amqp.AMQPComponent;
 import org.apache.camel.component.springrabbit.SpringRabbitMQComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.connection.AbstractConnectionFactory;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.context.annotation.Bean;
 
 import tools.jackson.databind.ObjectMapper;
@@ -21,6 +25,8 @@ import roart.common.util.JsonUtil;
 import roart.common.constants.Constants;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public class Camel extends IntegrationCommunication {
@@ -29,16 +35,20 @@ public class Camel extends IntegrationCommunication {
     ProducerTemplate producer;
     ConsumerTemplate consumer;
     String vhost = "task";
+    String parsedConnection;
+
+    // Define a unique name for your Camel component
+    //private final String componentName = "myrabbitmq";
+    private final String componentName = "spring-rabbitmq"; //"RMQ_CAMEL_CONSUMER";
 
     public Camel(String myname, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection, Function<String, Boolean> storeMessage) {
         super(myname, myclass, service, mapper, send, receive, sendreceive, connection, storeMessage);
 
+        parsedConnection = connection; //.replace("spring-rabbitmq://", "");
+
         context = new DefaultCamelContext();
 
         //Exchange ex; ex.
-        
-        // Define a unique name for your Camel component
-        String componentName = "RMQ_CAMEL_CONSUMER";
 
         log.info("Components " + context.getComponentNames());
 
@@ -52,17 +62,29 @@ public class Camel extends IntegrationCommunication {
             component.setAutoStartup(true); // Automatically start the component
 
             // Register the component with Camel context
-            context.addComponent(componentName, component);
+            context.addComponent("spring-rabbitmq", component);
         } catch (IOException e) {
             log.error(Constants.EXCEPTION, e);
         }
         log.info("Components " + context.getComponentNames());
         
         context.start();
+        context.getRegistry().bind("rmq", connectionFactory());
         if (send) {
-            Endpoint endpoint = context.getEndpoint(connection + "/" + vhost + getSendService() + "?routingKey=camel&arg.queue.autoDelete=true&connectionFactory=rmq");
+            //Endpoint endpoint = context.getEndpoint(parsedConnection + "/" + vhost + getSendService() + "?routingKey=camel");
+            //Endpoint endpoint = context.getEndpoint(componentName + ":" + "amq.direct" + "?routingKey=" + getSendService() + "&queues=" + getSendService());
+            Endpoint endpoint = context.getEndpoint(componentName + ":" + "amq.direct" + "?routingKey=" + getSendService() + "&queues=" + getSendService());
+            //Endpoint endpoint = context.getEndpoint("spring-rabbitmq://localhost:5672" + "/" + vhost + getSendService() + "?routingKey=camel&arg.queue.autoDelete=true");
+            //Endpoint endpoint = context.getEndpoint("spring-rabbitmq:amq.direct" + "/" + vhost + getSendService() + "?routingKey=camel&arg.queue.autoDelete=true");
+// &connectionFactory=rmq
             producer = context.createProducerTemplate();
+            try {
+                // producer = context.createProducerTemplate().getDefaultEndpoint().createAsyncProducer();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             producer.setDefaultEndpoint(endpoint);
+            //producer.set
          }
         if (receive) {
             consumer = context.createConsumerTemplate();
@@ -88,19 +110,39 @@ public class Camel extends IntegrationCommunication {
 
     public void send(String s) {
         log.info("Components " + producer.getCamelContext().getComponentNames());
-        producer.sendBody(s);        
+        producer.sendBody(s);
+        //producer.asyncSendBody(producer.getDefaultEndpoint(), s);
+        try {
+            producer.getDefaultEndpoint().start();
+            CompletableFuture<Object> x = producer.asyncSendBody(producer.getDefaultEndpoint(), s);
+            producer.sendBody(s);
+            Object o = producer.requestBody(s);
+            log.info("Object {}", o);
+            log.info("routes {}", producer.getCamelContext().getRouteIds());
+            producer.getDefaultEndpoint().stop();
+            //producer.close();
+            System.out.println("xxxx " + x.get());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+
+        log.info("Components " + producer.getCamelContext().getComponentNames());
     }
 
     @Override
     public String[] receiveString() {
-        Endpoint endpoint = context.getEndpoint(connection + "/" + vhost + getReceiveService() + "?acknowledgeMode=AUTO&routingKey=camel&connectionFactory=rmq&queues=" + getReceiveService());
+        //Endpoint endpoint = context.getEndpoint("rabbitmq://" + parsedConnection + "/" + vhost + getReceiveService() + "?acknowledgeMode=AUTO&routingKey=camel&queues=" + getReceiveService());
+        //Endpoint endpoint = context.getEndpoint(componentName + ":" + "amq.direct" + "?acknowledgeMode=AUTO&routingKey=" + getReceiveService() + "&queues=" + getReceiveService());
+        Endpoint endpoint = context.getEndpoint("spring-rabbitmq://localhost:5672" + "/" + vhost + getReceiveService() + "?acknowledgeMode=AUTO&routingKey=camel&queues=" + getReceiveService());
         Exchange receive = consumer.receive(endpoint);
         return new String[] { receive.getIn().getBody(String.class) };
     }
 
     @Override
     public String[] receiveStringAndStore() {
-        Endpoint endpoint = context.getEndpoint(connection + "/" + vhost + getReceiveService() + "?acknowledgeMode=MANUAL&routingKey=camel&queues=" + getReceiveService());
+        //Endpoint endpoint = context.getEndpoint("rabbitmq://" + parsedConnection + "/" + vhost + getReceiveService() + "?acknowledgeMode=MANUAL&routingKey=camel&queues=" + getReceiveService());
+        Endpoint endpoint = context.getEndpoint(componentName + ":" + "amq.direct" +  "?acknowledgeMode=MANUAL&routingKey=" + getReceiveService() + "&queues=" + getReceiveService());
+
         Exchange receive = consumer.receive(endpoint);
         String body = receive.getIn().getBody(String.class);
         boolean stored = storeMessage.apply(body);
@@ -117,11 +159,12 @@ public class Camel extends IntegrationCommunication {
 
     //@Bean
     public ConnectionFactory connectionFactory() {
-        CachingConnectionFactory connectionFactory =
-            new CachingConnectionFactory(connection);
+        AbstractConnectionFactory connectionFactory =
+            new CachingConnectionFactory(parsedConnection);
         connectionFactory.setUsername("username");
         connectionFactory.setPassword("password");
-        /*
+        //connectionFactory.set
+        //connectionFactory.set
         if (sendreceive) {
             AmqpAdmin admin = new RabbitAdmin(connectionFactory);
             admin.declareQueue(new Queue(getSendService()));
@@ -130,6 +173,7 @@ public class Camel extends IntegrationCommunication {
             if (send) {
                 AmqpAdmin admin = new RabbitAdmin(connectionFactory);
                 admin.declareQueue(new Queue(getSendService()));
+                admin.declareQueue(new Queue("camel"));
             }
             if (receive) {
                 AmqpAdmin admin = new RabbitAdmin(connectionFactory);
@@ -138,8 +182,210 @@ public class Camel extends IntegrationCommunication {
         }
         //connectionFactory.setUsername("guest");
         //connectionFactory.setPassword("guest");
-        */
         return connectionFactory;
     }
-    
+
+    // github copilot
+
+    public void printout() {
+        printout(context);
+    }
+
+    public void printout(CamelContext ctx) {
+        if (ctx == null) {
+            log.warn("CamelContext is null, cannot print information");
+            return;
+        }
+
+        log.info("========== CAMEL CONTEXT INFORMATION ==========");
+
+        // Context basic info
+        log.info("Context Name: {}", ctx.getName());
+        log.info("Context State: {}", ctx.getStatus());
+        log.info("Context Version: {}", ctx.getVersion());
+        if (ctx.getManagementName() != null) {
+            log.info("Management Name: {}", ctx.getManagementName());
+        }
+
+        // === ROUTES ===
+        printRouteInfo(ctx);
+
+        // === COMPONENTS ===
+        printComponentInfo(ctx);
+
+        // === ENDPOINTS ===
+        printEndpointInfo(ctx);
+
+        // === PRODUCER AND CONSUMER INFO ===
+        printProducerConsumerInfo();
+
+        // === REGISTRY ===
+        printRegistryInfo(ctx);
+
+        log.info("\n========== END CAMEL CONTEXT INFORMATION ==========\n");
+    }
+
+    private void printRouteInfo(CamelContext ctx) {
+        log.info("\n--- ROUTES ---");
+        try {
+            java.util.List<org.apache.camel.Route> routes = ctx.getRoutes();
+            log.info("Total Routes: {}", routes.size());
+            if (!routes.isEmpty()) {
+                for (org.apache.camel.Route route : routes) {
+                    log.info("  Route ID: {}", route.getId());
+                    log.info("    Consumer: {}", route.getConsumer());
+                    log.info("    Endpoint: {}", route.getEndpoint());
+                    log.info("    Processor: {}", route.getProcessor());
+                }
+            } else {
+                log.info("  No routes configured");
+            }
+        } catch (Exception e) {
+            log.warn("Error retrieving routes: {}", e.getMessage());
+        }
+    }
+
+    private void printComponentInfo(CamelContext ctx) {
+        log.info("\n--- COMPONENTS ---");
+        try {
+            java.util.Set<String> componentNames = ctx.getComponentNames();
+            log.info("Total Components: {}", componentNames.size());
+            for (String compName : componentNames) {
+                org.apache.camel.Component component = ctx.getComponent(compName);
+                log.info("  Component: {} ({})", compName, component.getClass().getSimpleName());
+            }
+        } catch (Exception e) {
+            log.warn("Error retrieving components: {}", e.getMessage());
+        }
+    }
+
+    private void printEndpointInfo(CamelContext ctx) {
+        log.info("\n--- ENDPOINTS ---");
+        try {
+            org.apache.camel.spi.EndpointRegistry endpointRegistry = ctx.getEndpointRegistry();
+            Collection<Endpoint> endpoints = endpointRegistry.values();// .getEndpoints();
+            log.info("Total Endpoints: {}", endpoints.size());
+            for (Endpoint endpoint : endpoints) {
+                log.info("  URI: {}", endpoint.getEndpointUri());
+                log.info("    Endpoint Class: {}", endpoint.getClass().getSimpleName());
+            }
+        } catch (Exception e) {
+            log.warn("Error retrieving endpoints: {}", e.getMessage());
+        }
+    }
+
+    private void printProducerConsumerInfo() {
+        log.info("\n--- PRODUCERS AND CONSUMERS ---");
+        try {
+            if (producer != null) {
+                log.info("  Producer Template exists");
+                log.info("    Default Endpoint: {}", producer.getDefaultEndpoint());
+                log.info("    Camel Context: {}", producer.getCamelContext().getName());
+            } else {
+                log.info("  Producer Template: Not initialized");
+            }
+
+            if (consumer != null) {
+                log.info("  Consumer Template exists");
+                log.info("    Camel Context: {}", consumer.getCamelContext().getName());
+            } else {
+                log.info("  Consumer Template: Not initialized");
+            }
+        } catch (Exception e) {
+            log.warn("Error retrieving producer/consumer info: {}", e.getMessage());
+        }
+    }
+
+    private void printRegistryInfo(CamelContext ctx) {
+        log.info("\n--- REGISTRY ---");
+        try {
+            org.apache.camel.spi.Registry registry = ctx.getRegistry();
+            log.info("  Registry Class: {}", registry.getClass().getSimpleName());
+
+            // Try to get ConnectionFactory
+            try {
+                ConnectionFactory cf = registry.lookupByNameAndType("rmq", ConnectionFactory.class);
+                if (cf != null) {
+                    log.info("  ConnectionFactory 'rmq' found: {}", cf.getClass().getSimpleName());
+                }
+            } catch (Exception e) {
+                log.debug("  No ConnectionFactory 'rmq' in registry");
+            }
+        } catch (Exception e) {
+            log.warn("Error retrieving registry info: {}", e.getMessage());
+        }
+    }
+
+    public void printexchanges() {
+        printexchanges(context);
+    }
+
+    public void printexchanges(CamelContext ctx) {
+        if (ctx == null) {
+            log.warn("CamelContext is null, cannot print exchange information");
+            return;
+        }
+
+        log.info("\n========== EXCHANGES AND RELATIONSHIPS ==========");
+
+        try {
+            // Get all endpoints from the registry
+            org.apache.camel.spi.EndpointRegistry endpointRegistry = ctx.getEndpointRegistry();
+            Collection<Endpoint> endpoints = endpointRegistry.values();
+
+            log.info("Total Exchanges (Endpoints): {}", endpoints.size());
+
+            for (Endpoint endpoint : endpoints) {
+                printExchangeDetails(ctx, endpoint);
+            }
+
+        } catch (Exception e) {
+            log.warn("Error retrieving exchange information: {}", e.getMessage());
+        }
+
+        log.info("\n========== END EXCHANGES AND RELATIONSHIPS ==========\n");
+    }
+
+    private void printExchangeDetails(CamelContext ctx, Endpoint endpoint) {
+        try {
+            log.info("\n--- Exchange: {} ---", endpoint.getEndpointUri());
+            log.info("  Endpoint Class: {}", endpoint.getClass().getSimpleName());
+            log.info("  Endpoint Key: {}", endpoint.getEndpointKey());
+
+            // Find related routes
+            printRelatedRoutes(ctx, endpoint);
+
+        } catch (Exception e) {
+            log.warn("Error processing exchange details: {}", e.getMessage());
+        }
+    }
+
+    private void printRelatedRoutes(CamelContext ctx, Endpoint endpoint) {
+        try {
+            java.util.List<org.apache.camel.Route> routes = ctx.getRoutes();
+            java.util.List<org.apache.camel.Route> relatedRoutes = new java.util.ArrayList<>();
+
+            // Find routes that use this endpoint
+            for (org.apache.camel.Route route : routes) {
+                Endpoint routeEndpoint = route.getEndpoint();
+                if (routeEndpoint != null && routeEndpoint.getEndpointUri().equals(endpoint.getEndpointUri())) {
+                    relatedRoutes.add(route);
+                }
+            }
+
+            if (!relatedRoutes.isEmpty()) {
+                log.info("  Related Routes: {}", relatedRoutes.size());
+                for (org.apache.camel.Route route : relatedRoutes) {
+                    log.info("    Route ID: {}", route.getId());
+                    log.info("      Consumer: {}", route.getConsumer());
+                    log.info("      Processor: {}", route.getProcessor());
+                }
+            } else {
+                log.info("  Related Routes: None");
+            }
+        } catch (Exception e) {
+            log.debug("Error retrieving related routes: {}", e.getMessage());
+        }
+    }
+
 }
