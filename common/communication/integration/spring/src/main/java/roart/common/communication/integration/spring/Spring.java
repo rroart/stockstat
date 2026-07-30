@@ -123,39 +123,95 @@ public class Spring extends IntegrationCommunication {
     
     @Override
     public String[] receiveStringAndStore() {
-        //template.rec
         String[] strings = new String[0];
         String string = null;
-        while (true) {
+        Message message = null;
+        Channel ch = null;
+        
+        try {
             template.containerAckMode(AcknowledgeMode.MANUAL);
-            Message message = template.receive(getReceiveService(), 1000);
+            message = template.receive(getReceiveService(), 1000);
+            
             if (message == null) {
-                break;
+                return new String[0];
             }
+            
             Object object = message.getBody();
             if (object == null || object instanceof String) {
                 string = (String) object;
             } else {
                 string = new String((byte[]) object);
             }
-            boolean stored = storeMessage.apply(new String(string));
+            
             long tag = message.getMessageProperties().getDeliveryTag();
+            
             try {
-                Channel ch = template.getConnectionFactory().createConnection().createChannel(false);
-                if (stored) {
-                    ch.basicAck(tag, false);
-                } else {
-                    ch.basicNack(tag, false, true);                    
+                ch = template.getConnectionFactory().createConnection().createChannel(false);
+                
+                boolean stored = false;
+                try {
+                    stored = storeMessage.apply(new String(string));
+                } catch (Exception e) {
+                    log.error("Error storing message, will redeliver: {}", e.getMessage(), e);
+                    // If storage fails, nack with requeue
+                    try {
+                        ch.basicNack(tag, false, true);
+                    } catch (IOException nackError) {
+                        log.error("Failed to send nack: {}", nackError.getMessage(), nackError);
+                    }
+                    return new String[0];
                 }
-            } catch (IOException e) {
-                log.error(Constants.EXCEPTION, e);
+                
+                if (stored) {
+                    try {
+                        ch.basicAck(tag, false);
+                        strings = ArrayUtils.addAll(strings, string);
+                    } catch (IOException ackError) {
+                        log.error("Failed to send ack: {}", ackError.getMessage(), ackError);
+                        // Try to nack if ack fails
+                        try {
+                            ch.basicNack(tag, false, true);
+                        } catch (IOException nackError) {
+                            log.error("Failed to send nack after ack error: {}", nackError.getMessage(), nackError);
+                        }
+                    }
+                } else {
+                    try {
+                        ch.basicNack(tag, false, true);
+                    } catch (IOException nackError) {
+                        log.error("Failed to send nack: {}", nackError.getMessage(), nackError);
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Error creating channel: {}", e.getMessage(), e);
+                return new String[0];
+            } finally {
+                // Close channel safely
+                if (ch != null && ch.isOpen()) {
+                    try {
+                        ch.close();
+                    } catch (Exception closeError) {
+                        log.debug("Error closing channel: {}", closeError.getMessage());
+                    }
+                }
             }
-            if (stored) {
-                strings = ArrayUtils.addAll(strings, string);
+        } catch (Exception e) {
+            log.error("Error in receiveStringAndStore: {}", e.getMessage(), e);
+            return new String[0];
+        } finally {
+            // Clean up template and connection factory
+            try {
+                template.destroy();
+            } catch (Exception e) {
+                log.debug("Error destroying template: {}", e.getMessage());
+            }
+            try {
+                ((CachingConnectionFactory)connectionFactory()).destroy();
+            } catch (Exception e) {
+                log.debug("Error destroying connection factory: {}", e.getMessage());
             }
         }
-        template.destroy();
-        ((CachingConnectionFactory)connectionFactory()).destroy();
+        
         return strings;
     }
     

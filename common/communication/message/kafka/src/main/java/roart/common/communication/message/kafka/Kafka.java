@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.kafka.clients.admin.AdminClient;
@@ -57,24 +58,24 @@ public class Kafka extends MessageCommunication {
     
     Producer<String, String> producer;
     KafkaConsumer<String, String> consumer;
-    
+     
     public Kafka(String myname, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection, Function<String, Boolean> storeMessage) {
         super(myname, myclass, service, mapper, send, receive, sendreceive, connection, storeMessage);
         if (send) {
             Properties props = new Properties();
             props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, connection); // List of brokers that the producer asks to get the topic leader
-            
+             
             // Reliability configurations
             props.put(ProducerConfig.ACKS_CONFIG, "all");
             props.put(ProducerConfig.RETRIES_CONFIG, 3);
             props.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1);
-            
+             
             props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, 
                StringSerializer.class.getName());
-               
+                
             props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, 
                     StringSerializer.class.getName());
-            
+             
             //props.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, MSGSIZE);
             producer = new KafkaProducer<>(props);
 
@@ -82,9 +83,11 @@ public class Kafka extends MessageCommunication {
         String auto_commit = storeMessage == null ? "true" : "false";
         if (receive) {
             Properties props = new Properties();
-            
+             
             props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, connection);
-            props.put(ConsumerConfig.GROUP_ID_CONFIG, "test");
+            // Use unique group ID for sendReceive pattern to ensure fresh offset reads
+            String groupId = sendreceive ? "sendreceive-" + UUID.randomUUID() : "test";
+            props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
             props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, auto_commit); // true default
             // 5000 default props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
             // 45000 default props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
@@ -102,21 +105,29 @@ public class Kafka extends MessageCommunication {
 
             log.info("subscribing {}", getReceiveService());
             consumer.subscribe(Collections.singletonList(getReceiveService()));
-            /*
-            List<TopicPartition> partitions = new ArrayList<>();
-            List<PartitionInfo> partitionInfos = null;
-            partitionInfos = consumer.partitionsFor(getReceiveService());
-            if (partitionInfos != null) {
-                for (PartitionInfo partition : partitionInfos)
-                    partitions.add(new TopicPartition(partition.topic(),
-                        partition.partition()));
+             
+            // Warmup poll to ensure consumer is assigned to partitions before any send
+            if (sendreceive) {
+                ensureConsumerReady();
             }
-            consumer.assign(partitions);
-
-             */
         }
     }
-    
+     
+    private void ensureConsumerReady() {
+        long startTime = System.currentTimeMillis();
+        long timeout = 5000; // 5 second timeout
+         
+        while (consumer.assignment().isEmpty()) {
+            if (System.currentTimeMillis() - startTime > timeout) {
+                log.warn("Consumer partition assignment timeout after {}ms", timeout);
+                break;
+            }
+            // Poll with minimal timeout to trigger partition assignment
+            consumer.poll(Duration.ofMillis(100));
+        }
+        log.debug("Consumer ready with partitions: {}", consumer.assignment());
+    }
+     
     public void send(String s) {
         String md5Hex = DigestUtils.md5Hex(s).toUpperCase();      
         try {

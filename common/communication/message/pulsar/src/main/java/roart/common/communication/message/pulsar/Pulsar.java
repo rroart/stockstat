@@ -148,42 +148,51 @@ public class Pulsar extends MessageCommunication {
     @Override
     public String[] receiveStringAndStore() {
         String string = null;
-        // Wait for a message
-
+        Message msg = null;
+        
         try {
-            Message msg = consumer.receive();
+            msg = consumer.receive(5, java.util.concurrent.TimeUnit.SECONDS);
+            
+            if (msg == null) {
+                return new String[0];
+            }
 
             try {
                 // Do something with the message
                 string = new String(msg.getData());
                 
-                boolean stored = storeMessage.apply(string);
+                boolean stored = false;
+                try {
+                    stored = storeMessage.apply(string);
+                } catch (Exception e) {
+                    log.error("Error storing message, will redeliver: {}", e.getMessage(), e);
+                    // If storage fails, redeliver the message
+                    consumer.negativeAcknowledge(msg);
+                    return new String[0];
+                }
 
                 // Acknowledge the message so that it can be deleted by the message broker
                 if (stored) {
                     consumer.acknowledge(msg);
+                    return new String[] { string };
                 } else {
                     consumer.negativeAcknowledge(msg);
                     return new String[0];
                 }
             } catch (Exception e) {
-                // Message failed to process, redeliver later
-                consumer.negativeAcknowledge(msg);
+                // Message failed to process, ensure redeliver
+                log.error("Error processing message, redelivering: {}", e.getMessage(), e);
+                try {
+                    consumer.negativeAcknowledge(msg);
+                } catch (Exception ackError) {
+                    log.error("Failed to send negative ack: {}", ackError.getMessage(), ackError);
+                }
                 return new String[0];
             }
         } catch (PulsarClientException e) {
-            log.error(Constants.EXCEPTION, e);
+            log.error("Pulsar receive error: {}", Constants.EXCEPTION, e);
             return new String[0];
         }
-        /*
-        try {
-            client.close();
-        } catch (PulsarClientException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        */
-        return new String[] { string };
 
     }
 

@@ -140,17 +140,52 @@ public class Camel extends IntegrationCommunication {
 
     @Override
     public String[] receiveStringAndStore() {
-        //Endpoint endpoint = context.getEndpoint("rabbitmq://" + parsedConnection + "/" + vhost + getReceiveService() + "?acknowledgeMode=MANUAL&routingKey=camel&queues=" + getReceiveService());
         Endpoint endpoint = context.getEndpoint(componentName + ":" + "amq.direct" +  "?acknowledgeMode=MANUAL&routingKey=" + getReceiveService() + "&queues=" + getReceiveService());
-
-        Exchange receive = consumer.receive(endpoint);
-        String body = receive.getIn().getBody(String.class);
-        boolean stored = storeMessage.apply(body);
-        if (stored) {
-            receive.getUnitOfWork().done(receive);
-            return new String[] { body };
+        
+        Exchange receive = null;
+        try {
+            receive = consumer.receive(endpoint, 5000);
+            
+            if (receive == null) {
+                return new String[] { };
+            }
+            
+            String body = null;
+            try {
+                body = receive.getIn().getBody(String.class);
+                
+                boolean stored = false;
+                try {
+                    stored = storeMessage.apply(body);
+                } catch (Exception e) {
+                    log.error("Error storing message, will redeliver: {}", e.getMessage(), e);
+                    // If storage fails, reject the message (rollback)
+                    receive.setException(e);
+                    return new String[] { };
+                }
+                
+                if (stored) {
+                    // Acknowledge on successful processing
+                    receive.getUnitOfWork().done(receive);
+                    return new String[] { body };
+                } else {
+                    // Nack - will be redelivered
+                    receive.setException(new RuntimeException("Message not stored"));
+                    return new String[] { };
+                }
+            } catch (Exception e) {
+                log.error("Error processing message, redelivering: {}", e.getMessage(), e);
+                try {
+                    receive.setException(e);
+                } catch (Exception setExError) {
+                    log.error("Failed to set exception on exchange: {}", setExError.getMessage(), setExError);
+                }
+                return new String[] { };
+            }
+        } catch (Exception e) {
+            log.error("Error receiving message: {}", e.getMessage(), e);
+            return new String[] { };
         }
-        return new String[] { };
     }
 
     public void destroy() {
