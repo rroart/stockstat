@@ -120,25 +120,27 @@ public class EarlyMessagesET {
         myservices = new ServiceConnectionUtil().getMyServices(ServiceConstants.CORE, myservices);
         String services = iconf.getServices();
         String communications = iconf.getCommunications();
-        log.info("Myservices {}", myservices);
-        new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iconf.copy(), io).start();
+        //log.info("Myservices {}", myservices);
+        //new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iconf.copy(), io).start();
     }
 
     @Test
     public void testEarlyMessagesWithDifferentCommunications() {
         String origserv = iconf.getServices();
-        String[] comms = new String[] { "pulsar", "spring", "camel" };
-        comms = new String[] { "spring", "camel" };
-        comms = new String[] { "camel" };
+        String[] comms = new String[] { "pulsar", "spring", "camel", "kafka" };
+        //comms = new String[] { "spring", "camel" };
+        //comms = new String[] { "camel" };
+        //comms = new String[] { "spring" };
         String myservices = "{ \"hello\" : \"\" }";
         String servicesPulsar = "{ \"hello\" : \"pulsar\" }";
         String servicesSpring = "{ \"hello\" : \"spring\" }";
         String servicesCamel = "{ \"hello\" : \"camel\" }";
+        String servicesKafka = "{ \"hello\" : \"kafka\" }";
         String communications = iconf.getCommunications();
         
         log.info("Testing early messages with different communication mechanisms: {}", comms);
-        Map<String, String> allservicesMap = Map.of("camel", servicesCamel);
-        allservicesMap = Map.of("spring", servicesSpring);
+        Map<String, String> allservicesMap = Map.of("camel", servicesCamel, "spring", servicesSpring, "pulsar", servicesPulsar, "kafka", servicesKafka);
+       //allservicesMap = Map.of("spring", servicesSpring);
         
         for (Map.Entry<String, String> entry : allservicesMap.entrySet()) {
             String key = entry.getKey();
@@ -149,14 +151,22 @@ public class EarlyMessagesET {
                 String serv = origserv.replaceAll("kafka", key);
                 iconf.getConfigData().getConfigValueMap().put(ConfigConstants.MISCSERVICES, serv);
                 
+                Runnable run = () -> {
+                        // Now start the service controller
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    log.info("Starting service controller for {}", key);
+                    new ServiceControllerOther(myservices, service, communications, IclijServiceParam.class, iconf.copy(), io).start();
+                };
+                new Thread(run).start();
+
                 // Send message BEFORE service is started (early message)
                 log.info("Sending early message before consumer starts listening for {}", key);
                 IclijServiceResult rEarly = new IOUtils(io, iconf, null).sendReceive(IclijServiceResult.class, param, ServiceConstants.HELLO);
-                
-                // Now start the service controller
-                log.info("Starting service controller for {}", key);
-                new ServiceControllerOther(myservices, service, communications, IclijServiceParam.class, iconf.copy(), io).start();
-                
+
                 // Wait for consumer to be ready
                 Thread.sleep(10000);
                 
