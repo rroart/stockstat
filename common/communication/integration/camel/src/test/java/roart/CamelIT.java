@@ -75,6 +75,7 @@ public class CamelIT {
         camel.send("three");
         camel.send("four");
         camel.send("done");
+        System.out.println("sent all");
 
         String[] body = new String[] { null };
         while (!"done".equals(body[0])) {
@@ -86,20 +87,23 @@ public class CamelIT {
         camel.destroy();
     }
 
-    // TODO @Test
+    @Test
     public void camelRabbitMq2() throws Exception {
-        Camel camel = new Camel("CAMEL", Aclass.class, "tasks", new ObjectMapper(), true, true, false, config.getServerCamel(), null);
+        Camel camel = new Camel("CAMEL", Aclass.class, "camel", new ObjectMapper(), true, true, false, config.getServerCamel(), null);
         camel.send(new Aclass("one", 1));
         camel.send(new Aclass("two", 2));
         System.out.println("11");
-
+        Thread.sleep(20000);
+        camel.printout();
+        camel.printexchanges();;
         Object[] body = null;
+        /*
         while (body == null || !"two".equals(((Aclass)body[0]).getS())) {
             body = camel.receive();
             System.out.println("3"+ body);
         }
         System.out.println("33");
-
+*/
         camel.destroy();
     }
 

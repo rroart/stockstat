@@ -20,4 +20,5 @@ module common.communication.integration.camel {
     requires camel.spring.rabbitmq;
     requires common.constants;
     requires org.slf4j;
+    requires spring.amqp;
 }
