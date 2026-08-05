@@ -109,24 +109,13 @@ public class Camel extends IntegrationCommunication {
      */
 
     public void send(String s) {
-        log.info("Components " + producer.getCamelContext().getComponentNames());
-        producer.sendBody(s);
-        //producer.asyncSendBody(producer.getDefaultEndpoint(), s);
+        log.info("Sending message to RabbitMQ via Camel");
         try {
-            producer.getDefaultEndpoint().start();
-            CompletableFuture<Object> x = producer.asyncSendBody(producer.getDefaultEndpoint(), s);
             producer.sendBody(s);
-            Object o = producer.requestBody(s);
-            log.info("Object {}", o);
-            log.info("routes {}", producer.getCamelContext().getRouteIds());
-            producer.getDefaultEndpoint().stop();
-            //producer.close();
-            System.out.println("xxxx " + x.get());
+            log.info("Message sent successfully");
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-
-        log.info("Components " + producer.getCamelContext().getComponentNames());
     }
 
     @Override
