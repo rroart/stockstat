@@ -17,6 +17,7 @@
     <module>webr</module>
     <module>distribution</module>
     <module>jacoco</module>
+    <module>gateway</module>
   </modules>
   <build>
     <pluginManagement>
