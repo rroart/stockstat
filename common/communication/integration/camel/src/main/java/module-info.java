@@ -9,6 +9,7 @@ module common.communication.integration.camel {
     exports roart.common.communication.integration.camel;
     requires camel.api;
     requires camel.core.engine;
+    requires transitive camel.core;
     requires common.communication.integration.model;
     requires common.util;
     requires camel.amqp;
@@ -21,4 +22,5 @@ module common.communication.integration.camel {
     requires common.constants;
     requires org.slf4j;
     requires spring.amqp;
+    requires camel.core.model;
 }
