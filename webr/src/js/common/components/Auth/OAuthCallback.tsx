@@ -10,7 +10,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Container, Spinner, Alert } from 'react-bootstrap';
-import { selectIsLoading, selectAuthError, selectIsAuthenticated } from '../../redux/selectors/authSelector';
+import { selectIsLoading, selectAuthError, selectIsAuthenticated } from '../../../redux/selectors/authSelector';
 
 interface OAuthCallbackProps {
   redirectTo?: string;

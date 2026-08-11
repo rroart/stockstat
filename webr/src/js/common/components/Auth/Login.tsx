@@ -8,7 +8,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button, Container, Row, Col, Card, Alert, Spinner } from 'react-bootstrap';
-import { selectIsAuthenticated, selectIsLoading, selectAuthError } from '../../redux/selectors/authSelector';
+import { selectIsAuthenticated, selectIsLoading, selectAuthError } from '../../../redux/selectors/authSelector';
 
 interface LoginProps {
   redirectTo?: string;

@@ -8,7 +8,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
-import { selectIsAuthenticated, selectIsLoading } from '../../redux/selectors/authSelector';
+import { selectIsAuthenticated, selectIsLoading } from '../../../redux/selectors/authSelector';
 import { Container, Spinner } from 'react-bootstrap';
 
 interface ProtectedRouteProps {
