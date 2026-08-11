@@ -6,8 +6,8 @@
  */
 
 import { select, takeEvery } from 'redux-saga/effects';
-import { setAuthToken } from '../../common/components/util/Client';
-import { selectAccessToken } from '../selectors/authSelector';
+import { setAuthToken, setOnBehalfOf } from '../../common/components/util/Client';
+import { selectAccessToken, selectUser } from '../selectors/authSelector';
 
 /**
  * Watch for auth state changes and update Client token
@@ -17,9 +17,10 @@ export function* authTokenSyncSaga() {
   yield takeEvery('*', function* () {
     try {
       const accessToken: string | null = yield select(selectAccessToken);
+      const user = yield select(selectUser);
+      const onBehalfOf = user?.sub || user?.email || null;
+
       setAuthToken(accessToken);
-    } catch (error) {
-      console.error('Error syncing auth token:', error);
-    }
+      setOnBehalfOf(onBehalfOf);
   });
 }

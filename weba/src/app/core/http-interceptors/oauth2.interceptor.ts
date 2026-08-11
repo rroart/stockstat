@@ -41,10 +41,11 @@ export class OAuth2HttpInterceptor implements HttpInterceptor {
       return next.handle(request);
     }
 
-    // Add authorization header if token is available
+    // Add authorization and on-behalf-of headers if token is available
     const token = this.oauth2Service.getAccessToken();
     if (token) {
       request = this.addAuthorizationHeader(request, token);
+      request = this.addOnBehalfOfHeader(request, token);
     }
 
     return next.handle(request).pipe(
@@ -64,6 +65,14 @@ export class OAuth2HttpInterceptor implements HttpInterceptor {
     return request.clone({
       setHeaders: {
         'Authorization': `Bearer ${token}`
+      }
+    });
+  }
+
+  private addOnBehalfOfHeader(request: HttpRequest<any>, token: string): HttpRequest<any> {
+    return request.clone({
+      setHeaders: {
+        'X-On-Behalf-Of': `Bearer ${token}`
       }
     });
   }

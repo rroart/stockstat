@@ -2,11 +2,16 @@
 
 import { env } from '../../../../env'
 
-// Store for auth token - will be set by Redux middleware
+// Store for auth token and on-behalf-of identity - will be set by Redux middleware
 let authToken: string | null = null;
+let onBehalfOf: string | null = null;
 
 export const setAuthToken = (token: string | null) => {
     authToken = token;
+};
+
+export const setOnBehalfOf = (value: string | null) => {
+    onBehalfOf = value;
 };
 
 function getPort() {
@@ -73,6 +78,11 @@ function buildHeaders(additionalHeaders: Record<string, string> = {}): Record<st
     // Add OAuth2 Authorization header if token is available
     if (authToken) {
         headers['Authorization'] = `Bearer ${authToken}`;
+    }
+
+    // Add on-behalf-of header when an authenticated user identity is available
+    if (onBehalfOf) {
+        headers['On-Behalf-Of'] = onBehalfOf;
     }
 
     return headers;

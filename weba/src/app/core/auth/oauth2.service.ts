@@ -239,4 +239,14 @@ export class OAuth2Service {
     const token = this.getAccessToken();
     return token ? `Bearer ${token}` : null;
   }
+
+  /**
+   * Get the on-behalf-of header value for backend requests.
+   * This allows the backend to use the user's access token
+   * when calling downstream APIs on behalf of the user.
+   */
+  public getOnBehalfOfHeader(): { [header: string]: string } | null {
+    const token = this.getAccessToken();
+    return token ? { 'X-On-Behalf-Of': `Bearer ${token}` } : null;
+  }
 }
