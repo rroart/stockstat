@@ -1,4 +1,5 @@
 import { selectAuth, selectIsAuthenticated } from './auth.selectors';
+import { AuthProvider } from './auth.models';
 
 describe('Auth Selectors', () => {
   it('selectAuth', () => {
@@ -15,7 +16,14 @@ describe('Auth Selectors', () => {
 function createAuthState() {
   return {
     auth: {
-      isAuthenticated: false
+      isAuthenticated: false,
+      user: null,
+      token: null,
+      loading: false,
+      error: null,
+      provider: AuthProvider.NONE,
+      lastAuthTime: undefined,
+      refreshingToken: false
     },
     router: {} as any
   };

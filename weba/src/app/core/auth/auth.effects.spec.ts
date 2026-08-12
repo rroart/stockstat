@@ -20,7 +20,7 @@ describe('AuthEffects', () => {
   describe('login', () => {
     it('should not dispatch any action', () => {
       const actions = new Actions(EMPTY);
-      const effect = new AuthEffects(actions, localStorageService, router);
+      const effect = new AuthEffects(actions, localStorageService, router, null);
       const metadata = getEffectsMetadata(effect);
 
       // expect(metadata.login$).toEqual({ dispatch: false });
@@ -30,7 +30,7 @@ describe('AuthEffects', () => {
       const loginAction = new ActionAuthLogin();
       const source = cold('a', { a: loginAction });
       const actions = new Actions(source);
-      const effect = new AuthEffects(actions, localStorageService, router);
+      const effect = new AuthEffects(actions, localStorageService, router, null);
 
       effect.login$.subscribe(() => {
         expect(localStorageService.setItem).toHaveBeenCalledWith(AUTH_KEY, {
@@ -43,7 +43,7 @@ describe('AuthEffects', () => {
   describe('logout', () => {
     it('should not dispatch any action', () => {
       const actions = new Actions(EMPTY);
-      const effect = new AuthEffects(actions, localStorageService, router);
+      const effect = new AuthEffects(actions, localStorageService, router, null);
       const metadata = getEffectsMetadata(effect);
 
       // expect(metadata.logout$).toEqual({ dispatch: false });
@@ -53,7 +53,7 @@ describe('AuthEffects', () => {
       const logoutAction = new ActionAuthLogout();
       const source = cold('a', { a: logoutAction });
       const actions = new Actions(source);
-      const effect = new AuthEffects(actions, localStorageService, router);
+      const effect = new AuthEffects(actions, localStorageService, router, null);
 
       effect.login$.subscribe(() => {
         expect(localStorageService.setItem).toHaveBeenCalledWith(AUTH_KEY, {
