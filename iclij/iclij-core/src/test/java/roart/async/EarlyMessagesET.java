@@ -138,10 +138,12 @@ public class EarlyMessagesET {
         String servicesKafka = "{ \"hello\" : \"kafka\" }";
         String communications = iconf.getCommunications();
         
-        log.info("Testing early messages with different communication mechanisms: {}", comms);
+        //log.info("Testing early messages with different communication mechanisms: {}", comms);
         Map<String, String> allservicesMap = Map.of("camel", servicesCamel, "spring", servicesSpring, "pulsar", servicesPulsar, "kafka", servicesKafka);
-       //allservicesMap = Map.of("spring", servicesSpring);
-        
+        //allservicesMap = Map.of("camel", servicesCamel);
+        allservicesMap = Map.of("camel", servicesCamel, "spring", servicesSpring, "pulsar", servicesPulsar, "kafka", servicesKafka);
+        //allservicesMap = Map.of("kafka", servicesKafka);
+
         for (Map.Entry<String, String> entry : allservicesMap.entrySet()) {
             String key = entry.getKey();
             String service = entry.getValue();
@@ -154,7 +156,7 @@ public class EarlyMessagesET {
                 Runnable run = () -> {
                         // Now start the service controller
                     try {
-                        Thread.sleep(10000);
+                        Thread.sleep(30000);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
@@ -165,15 +167,21 @@ public class EarlyMessagesET {
 
                 // Send message BEFORE service is started (early message)
                 log.info("Sending early message before consumer starts listening for {}", key);
-                IclijServiceResult rEarly = new IOUtils(io, iconf, null).sendReceive(IclijServiceResult.class, param, ServiceConstants.HELLO);
+                //new IOUtils(io, iconf, null).send(ServiceConstants.HELLO, param);
 
                 // Wait for consumer to be ready
-                Thread.sleep(10000);
+                Thread.sleep(60000);
+                IclijServiceResult rEarly = new IOUtils(io, iconf, null).sendReceive(IclijServiceResult.class, param, ServiceConstants.HELLO);
+                IOUtils.verifyCorrelation(param, rEarly);
+
+                // Wait for consumer to be ready
+                Thread.sleep(60000);
                 
                 // Send message AFTER service is started (normal message)
                 log.info("Sending message after consumer started for {}", key);
                 IclijServiceResult r = new IOUtils(io, iconf, null).sendReceive(IclijServiceResult.class, param, ServiceConstants.HELLO);
-                
+                IOUtils.verifyCorrelation(param, r);
+
                 log.info("Early message result {} - error: {}", key, rEarly.getError());
                 log.info("Normal message result {} - error: {}", key, r.getError());
                 assertNotNull(r.getError());
