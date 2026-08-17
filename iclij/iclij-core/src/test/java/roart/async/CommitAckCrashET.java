@@ -150,11 +150,15 @@ public class CommitAckCrashET {
         String myservices = "{ \"hello\" : \"\" }";
         String servicesSpring = "{ \"hello\" : \"spring\" }";
         String servicesCamel = "{ \"hello\" : \"camel\" }";
+        String servicesPulsar = "{ \"hello\" : \"pulsar\" }";
+        String servicesKafka = "{ \"hello\" : \"kafka\" }";
         String communications = iconf.getCommunications();
         
         log.info("Testing successful commit/acknowledge behavior for communication mechanisms");
         Map<String, String> allservicesMap = Map.of("spring", servicesSpring, "camel", servicesCamel);
-        
+        allservicesMap = Map.of("camel", servicesCamel, "spring", servicesSpring, "pulsar", servicesPulsar, "kafka", servicesKafka);
+        allservicesMap = Map.of("spring", servicesSpring, "pulsar", servicesPulsar, "kafka", servicesKafka);
+
         for (Map.Entry<String, String> entry : allservicesMap.entrySet()) {
             String key = entry.getKey();
             String service = entry.getValue();
@@ -203,11 +207,14 @@ public class CommitAckCrashET {
         String myservices = "{ \"hello\" : \"\" }";
         String servicesSpring = "{ \"hello\" : \"spring\" }";
         String servicesCamel = "{ \"hello\" : \"camel\" }";
+        String servicesPulsar = "{ \"hello\" : \"pulsar\" }";
+        String servicesKafka = "{ \"hello\" : \"kafka\" }";
         String communications = iconf.getCommunications();
         
         log.info("Testing crash handling and message redelivery");
         Map<String, String> allservicesMap = Map.of("spring", servicesSpring, "camel", servicesCamel);
-        
+        allservicesMap = Map.of("spring", servicesSpring, "pulsar", servicesPulsar, "kafka", servicesKafka);
+
         for (Map.Entry<String, String> entry : allservicesMap.entrySet()) {
             String key = entry.getKey();
             String service = entry.getValue();
@@ -259,11 +266,14 @@ public class CommitAckCrashET {
         String myservices = "{ \"hello\" : \"\" }";
         String servicesSpring = "{ \"hello\" : \"spring\" }";
         String servicesCamel = "{ \"hello\" : \"camel\" }";
+        String servicesPulsar = "{ \"hello\" : \"pulsar\" }";
+        String servicesKafka = "{ \"hello\" : \"kafka\" }";
         String communications = iconf.getCommunications();
         
         log.info("Testing receiveStringAndStore with storage callback failures");
         Map<String, String> allservicesMap = Map.of("spring", servicesSpring, "camel", servicesCamel);
-        
+        allservicesMap = Map.of("spring", servicesSpring, "pulsar", servicesPulsar, "kafka", servicesKafka);
+
         for (Map.Entry<String, String> entry : allservicesMap.entrySet()) {
             String key = entry.getKey();
             String service = entry.getValue();
@@ -319,11 +329,14 @@ public class CommitAckCrashET {
         String myservices = "{ \"hello\" : \"\" }";
         String servicesSpring = "{ \"hello\" : \"spring\" }";
         String servicesCamel = "{ \"hello\" : \"camel\" }";
+        String servicesPulsar = "{ \"hello\" : \"pulsar\" }";
+        String servicesKafka = "{ \"hello\" : \"kafka\" }";
         String communications = iconf.getCommunications();
         
         log.info("Testing multiple consumer crashes and eventual success");
         Map<String, String> allservicesMap = Map.of("spring", servicesSpring, "camel", servicesCamel);
-        
+        allservicesMap = Map.of("spring", servicesSpring, "pulsar", servicesPulsar, "kafka", servicesKafka);
+
         for (Map.Entry<String, String> entry : allservicesMap.entrySet()) {
             String key = entry.getKey();
             String service = entry.getValue();
