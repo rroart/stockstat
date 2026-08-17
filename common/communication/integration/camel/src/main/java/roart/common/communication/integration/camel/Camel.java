@@ -56,14 +56,14 @@ public class Camel extends IntegrationCommunication {
         component.setConnectionFactory(connectionFactory());
         component.setTestConnectionOnStartup(true);
         component.setAutoStartup(true);
-        
+
         context.addComponent("spring-rabbitmq", component);
 
         log.info("Components " + context.getComponentNames());
 
         try {
             // Add routes to connect producer and consumer
-            context.addRoutes(new RabbitMQRouteBuilder(this));
+            context.addRoutes(new RabbitMQRouteBuilder(this, send, receive));
         } catch (Exception e) {
             log.error("Error adding routes: {}", Constants.EXCEPTION, e);
         }
@@ -75,12 +75,18 @@ public class Camel extends IntegrationCommunication {
             producer = context.createProducerTemplate();
             // Use direct:send as the producer endpoint - the route will forward to RabbitMQ
             Endpoint sendEndpoint = context.getEndpoint("direct:send?block=false&failIfNoConsumers=false");
+            sendEndpoint = context.getEndpoint("direct:send");
+            //sendEndpoint = context.getEndpoint("spring-rabbitmq:amq.direct?routingKey=" + getSendService() + "&queues=" + getSendService());
             producer.setDefaultEndpoint(sendEndpoint);
         }
 
         if (receive) {
             consumer = context.createConsumerTemplate();
-        }
+             Endpoint sendEndpoint = context.getEndpoint("direct:send?block=false&failIfNoConsumers=false");
+            sendEndpoint = context.getEndpoint("direct:send");
+            //sendEndpoint = context.getEndpoint("spring-rabbitmq:amq.direct?routingKey=" + getSendService() + "&queues=" + getSendService());
+            //consumer. .setDefaultEndpoint(sendEndpoint);
+       }
     }
 
     /*
@@ -112,11 +118,15 @@ public class Camel extends IntegrationCommunication {
 
     @Override
     public String[] receiveString() {
+        log.info("Receiving message from RabbitMQ via Camel" + this.getReceiveService());
         Endpoint endpoint = context.getEndpoint("direct:receive");
         Exchange receive = consumer.receive(endpoint, 5000);
+        //Exchange receive = consumer.rec .receive();
         if (receive == null) {
+            log.info("No message received within 5 seconds");
             return new String[] { };
         }
+        printme(receive);
         return new String[] { receive.getIn().getBody(String.class) };
     }
 
@@ -146,8 +156,15 @@ public class Camel extends IntegrationCommunication {
                 }
                 
                 if (stored) {
-                    receive.getUnitOfWork().done(receive);
-                    return new String[] { body };
+                    log.info("Message stored successfully");
+                    log.info("Receive" + receive);
+                    printme(receive);
+                    if (receive.getUnitOfWork() != null) {
+                        receive.getUnitOfWork().done(receive);
+                    } else {
+                        log.info("No unit of work available");
+                    }
+                     return new String[] { body };
                 } else {
                     receive.setException(new RuntimeException("Message not stored"));
                     return new String[] { };
@@ -402,38 +419,66 @@ public class Camel extends IntegrationCommunication {
         }
     }
 
+
+    private void printme(Exchange receive) {
+        log.info("Receive " + receive.toString());
+        log.info("Receive " + receive.getExchangeId());
+        log.info("Receive " + receive.getFromRouteGroup());
+        log.info("Receive " + receive.getFromRouteId());
+        log.info("Receive " + receive.getAllProperties());
+        log.info("Receive " + receive.getVariables());
+        log.info("Receive " + receive.getUnitOfWork());
+        log.info("Receive " + receive.toString());
+    }
 }
 
 class RabbitMQRouteBuilder extends RouteBuilder {
     private final Camel camel;
+    private final boolean send;
+    private final boolean receive;
 
-    public RabbitMQRouteBuilder(Camel camel) {
+    public RabbitMQRouteBuilder(Camel camel, boolean send, boolean receive) {
         this.camel = camel;
+        this.send = send;
+        this.receive = receive;
     }
 
     //@Override
-    public void configure2() throws Exception {
-        if (camel.send) {
+    public void configure() throws Exception {
+        if (send) {
             from("direct:send")
                     .to("spring-rabbitmq:amq.direct?routingKey=camel");
         }
 
-        if (camel.receive) {
+        if (receive) {
             from("spring-rabbitmq:amq.direct?routingKey=camel")
                     .to("direct:receive");
         }
     }
 
-    @Override
-    public void configure() throws Exception {
-        if (camel.send) {
+    //@Override
+    public void configure3() throws Exception {
+        if (send) {
             from("direct:send?block=false&failIfNoConsumers=false")
-                .to("spring-rabbitmq:amq.direct?routingKey=" + camel.getSendService() + "&queues=" + camel.getSendService() + "&args.durable=true&arg.durable=true");
+                .to("spring-rabbitmq:amq.direct?routingKey=" + camel.getSendService() + "&queues=" + camel.getSendService() + "&args.durable=true&arg.durable=true&autoDeclare=false");
         }
 
-        if (camel.receive) {
-            from("spring-rabbitmq:amq.direct?routingKey=" + camel.getReceiveService() + "&queues=" + camel.getReceiveService() + "&args.durable=true&arg.durable=true")
+        if (receive) {
+            from("spring-rabbitmq:amq.direct?routingKey=" + camel.getReceiveService() + "&queues=" + camel.getReceiveService() + "&args.durable=true&arg.durable=true&autoDeclare=false")
                 .to("direct:receive");
+        }
+    }
+
+    public void configure2() throws Exception {
+        if (send) {
+            //from("direct:send?block=false&failIfNoConsumers=false")
+            from("direct:send")
+                    .to("spring-rabbitmq:amq.direct?routingKey=" + camel.getSendService());
+        }
+
+        if (receive) {
+            from("spring-rabbitmq:amq.direct?routingKey=" + camel.getReceiveService())
+                    .to("direct:receive");
         }
     }
 }
