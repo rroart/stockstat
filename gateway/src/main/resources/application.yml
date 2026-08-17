@@ -8,3 +8,47 @@ spring:
         uri: baeldung.com
       - id: myOtherRouting
         uri: localhost:9999
+
+spring.security.oauth2:
+  client:
+    registration:
+      user-accounts-app-oidc:
+        provider: spring
+        client-id: user-accounts-app
+        client-secret: secret
+        authorization-grant-type: authorization_code
+        redirect-uri: "http://127.0.0.1:8080/login/oauth2/code/{registrationId}"
+        scope: openid, profile, accounts.read
+        client-name: user-accounts-app-oidc
+    provider:
+      spring:
+        issuer-uri: http://localhost:9000
+    resourceserver:
+      jwt:
+        jwk-set-uri: http://localhost:9000/oauth2/jwks
+
+
+oauth2:
+  authorizationserver:
+    client:
+      user-accounts-app:
+        registration:
+          client-id: "user-accounts-app"
+          client-secret: "{noop}secret"
+          client-authentication-methods:
+            - "client_secret_basic"
+          authorization-grant-types:
+            - "authorization_code"
+            - "refresh_token"
+            - "client_credentials"
+          redirect-uris:
+            - "http://127.0.0.1:8080/login/oauth2/code/user-accounts-app-oidc"
+            - "http://127.0.0.1:8080/authorized"
+          post-logout-redirect-uris:
+            - "http://127.0.0.1:8080/logged-out"
+          scopes:
+            - "openid"
+            - "profile"
+            - "accounts.read"
+            - "accounts.write"
+        require-authorization-consent: true
