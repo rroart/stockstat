@@ -150,6 +150,7 @@ public class ControlService {
             IclijServiceParam param = new IclijServiceParam();
             param.setConfigData(iclijConfig.getConfigData());
             IclijServiceResult result = new IOUtils(io, iclijConfig, objectMapper).sendReceiveA(IclijServiceResult.class, param, "i" + EurekaConstants.GETCONFIG, ServiceConstants.GETCONFIG);
+            IOUtils.verifyCorrelation(param, result);
             list = result.getConfigData();
             MyCache.getInstance().put(key, list);
         }

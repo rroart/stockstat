@@ -12,6 +12,7 @@ import roart.common.queueutil.QueueUtils;
 import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
 import roart.iclij.common.service.IclijServiceParam;
+import roart.iclij.common.service.IclijServiceResult;
 import roart.iclij.config.IclijConfig;
 import roart.model.io.IO;
 import tools.jackson.databind.ObjectMapper;
@@ -145,6 +146,13 @@ public class IOUtils {
             return io.getWebFluxUtil().sendSMe(clazz, param, service);
         } else {
             return sendReceive(clazz, param, service);
+        }
+    }
+
+    public static void verifyCorrelation(IclijServiceParam param, IclijServiceResult result) {
+        if (param.getRequestId() == null || result.getCorrelationId() == null || param.getRequestId().equals(result.getCorrelationId())) {
+            log.error("Correlation id not match {} {}", param.getRequestId(), result.getCorrelationId());
+            throw new RuntimeException("Correlation id not match " + param.getRequestId() + " " + result.getCorrelationId());
         }
     }
 }

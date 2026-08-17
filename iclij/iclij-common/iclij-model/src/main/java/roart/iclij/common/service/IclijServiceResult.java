@@ -31,9 +31,16 @@ public class IclijServiceResult {
     private List<ResultItem> list;
     
     private SerialPipeline pipelineData;
-    
+
+    private String correlationId;
+
     public IclijServiceResult() {
         super();
+    }
+
+    public IclijServiceResult(String id) {
+        super();
+        this.correlationId = id;
     }
 
     public List<String> getMarkets() {
@@ -115,6 +122,12 @@ public class IclijServiceResult {
     public void setPipelineData(SerialPipeline pipelineData) {
         this.pipelineData = pipelineData;
     }
-    
-    
+
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
+    public void setCorrelationId(String correlationId) {
+        this.correlationId = correlationId;
+    }
 }

@@ -50,7 +50,7 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
     }
 
     public IclijServiceResult get(IclijServiceParam param, Communication c) {
-        IclijServiceResult result = new IclijServiceResult();
+        IclijServiceResult result = new IclijServiceResult(param.getRequestId());
         log.info("Cserv {}", c.getService());
         if (serviceMatch(ServiceConstants.GETMCONFIG, c)) {
             try {

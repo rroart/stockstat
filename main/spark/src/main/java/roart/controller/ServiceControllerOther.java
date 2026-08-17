@@ -52,7 +52,7 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
     }
 
     public LearnTestClassifyResult get(LearnTestClassifyDS param, Communication c) {
-        LearnTestClassifyResult result = new LearnTestClassifyResult();
+        LearnTestClassifyResult result = new LearnTestClassifyResult(param.requestId);
         log.info("Cserv {}", c.getService());
         if (serviceMatch(ServiceConstants.CLEAN, c)) {
             try {

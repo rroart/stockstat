@@ -2,6 +2,7 @@ package roart.ml.model;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
@@ -21,5 +22,5 @@ public class LearnTestClassifyDS {
     public NeuralNetCommand neuralnetcommand;
     public MLMeta mlmeta;
     public boolean classify;
-
+    public String requestId = UUID.randomUUID().toString();
 }

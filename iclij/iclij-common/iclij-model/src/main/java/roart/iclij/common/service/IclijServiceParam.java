@@ -2,6 +2,7 @@ package roart.iclij.common.service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import roart.common.config.ConfigData;
 import roart.common.ml.NeuralNetCommand;
@@ -30,7 +31,9 @@ public class IclijServiceParam {
     private NeuralNetCommand neuralnetcommand;
 
     private GUISize guiSize;
-    
+
+    private final String requestId = UUID.randomUUID().toString();
+
     public String getId() {
         return id;
     }
@@ -124,5 +127,8 @@ public class IclijServiceParam {
     public void setGuiSize(GUISize guiSize) {
         this.guiSize = guiSize;
     }
-    
+
+    public String getRequestId() {
+        return requestId;
+    }
 }

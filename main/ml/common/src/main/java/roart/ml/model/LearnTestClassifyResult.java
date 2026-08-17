@@ -16,9 +16,16 @@ public class LearnTestClassifyResult {
     private Boolean exists;
     
     private Boolean classify;
-    
+
+    private String correlationId;
+
     public LearnTestClassifyResult() {
         super();
+    }
+
+    public LearnTestClassifyResult(String id) {
+        super();
+        this.correlationId = id;
     }
 
     public Double getAccuracy() {
@@ -77,4 +84,7 @@ public class LearnTestClassifyResult {
         this.classify = classify;
     }
 
+    public String getCorrelationId() {
+        return correlationId;
+    }
 }
