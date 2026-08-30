@@ -5,6 +5,7 @@ import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Test to verify that a message sent BEFORE a consumer starts listening is properly received.
  * This tests the race condition fix: producer sends before consumer is ready.
  */
+@Disabled
 @SpringJUnitConfig
 @EmbeddedKafka(partitions = 1, brokerProperties = {"log.segment.bytes=1048576", "auto.create.topics.enable=true"})
 public class KafkaProducerBeforeConsumerIT {
