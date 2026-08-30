@@ -98,13 +98,7 @@ pipeline {
 
         // Inline the former stockstatsonarscanner job as a declarative stage
         stage('Sonar Scan') {
-            agent {
-                dockerfile {
-                    filename 'Dockerfile.build'
-                    dir 'docker/jenkins'
-                    reuseNode true
-                }
-            }
+            agent any
             when {
                 expression { return env.MYBRANCH == 'develop' }
             }
@@ -116,7 +110,7 @@ pipeline {
                     env.GIT_DEPTH = 0
                     sh 'ls -R ${scannerHome}'
                     sh 'mvn clean verify -pl !webr -pl !weba -Dcyclonedx.skip'
-                    sh 'sonar-scanner'
+                    sh "${scannerHome}/bin/sonar-scanner"
                 }
             }
         }
