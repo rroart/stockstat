@@ -10,6 +10,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 //import javax.jms.ConnectionFactory;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,7 +28,7 @@ import roart.testdata.TestConfiguration;
 
 // this is @ExtendWith(SpringExtension.class) and @ContextConfiguration 
 @SpringJUnitConfig
-@TestPropertySource("file:${user.dir}/../../../../config/test/application.properties") 
+//@TestPropertySource("file:${user.dir}/../../../../config/test/application.properties")
 @ComponentScan(basePackages = "roart.testdata")
 @SpringBootTest(classes = TestConfiguration.class)
 public class CamelIT {
@@ -88,23 +89,53 @@ public class CamelIT {
     }
 
     @Test
+    @Order(0)
     public void camelRabbitMq2() throws Exception {
-        Camel camel = new Camel("CAMEL", Aclass.class, "camel", new ObjectMapper(), true, true, false, config.getServerCamel(), null);
+        Camel camel = new Camel("CAMEL", Aclass.class, "camelmq2", new ObjectMapper(), true, true, false, config.getServerCamel(), null);
         camel.send(new Aclass("one", 1));
         camel.send(new Aclass("two", 2));
         System.out.println("11");
         Thread.sleep(20000);
-        camel.printout();
-        camel.printexchanges();;
+        //camel.printout();
+        //camel.printexchanges();;
         Object[] body = null;
-        /*
         while (body == null || !"two".equals(((Aclass)body[0]).getS())) {
             body = camel.receive();
             System.out.println("3"+ body);
         }
         System.out.println("33");
-*/
         camel.destroy();
     }
 
+    @Test
+    @Order(1)
+    public void sendTest() throws Exception {
+        Camel camel = new Camel("CAMEL", Aclass.class, "camelmq", new ObjectMapper(), true, false, false, config.getServerCamel(), null);
+        camel.send(new Aclass("one", 1));
+        camel.send(new Aclass("two", 2));
+        System.out.println("11");
+        Thread.sleep(10000);
+        camel.printout();
+        camel.printexchanges();;
+        camel.destroy();
+    }
+
+    @Test
+    @Order(2)
+    public void receiveTest() throws Exception {
+        Camel camel = new Camel("CAMEL", Aclass.class, "camelmq", new ObjectMapper(), false, true, false, config.getServerCamel(), null);
+        Thread.sleep(10000);
+        //camel.printout();
+        //camel.printexchanges();;
+        Object[] body = null;
+        while (body == null) {
+            body = camel.receive();
+            System.out.println("size: " + body.length);
+            for (Object o : body) {
+                System.out.println("out: " + o);
+            }
+        }
+        System.out.println("33");
+        camel.destroy();
+    }
 }
