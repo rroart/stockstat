@@ -1,33 +1,26 @@
 package roart.common.communication.integration.camel;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Channel;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.amqp.AMQPComponent;
 import org.apache.camel.component.springrabbit.SpringRabbitMQComponent;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.AbstractConnectionFactory;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
-import org.springframework.context.annotation.Bean;
 
 import tools.jackson.databind.ObjectMapper;
 
 import roart.common.communication.integration.model.IntegrationCommunication;
-import roart.common.util.JsonUtil;
 import roart.common.constants.Constants;
 
-import java.io.IOException;
 import java.util.Collection;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public class Camel extends IntegrationCommunication {
@@ -63,7 +56,7 @@ public class Camel extends IntegrationCommunication {
 
         try {
             // Add routes to connect producer and consumer
-            context.addRoutes(new RabbitMQRouteBuilder(this, send, receive));
+            context.addRoutes(new RabbitMQRouteBuilder(this, send, receive, this.getSendService(), this.getReceiveService()));
         } catch (Exception e) {
             log.error("Error adding routes: {}", Constants.EXCEPTION, e);
         }
@@ -436,11 +429,15 @@ class RabbitMQRouteBuilder extends RouteBuilder {
     private final Camel camel;
     private final boolean send;
     private final boolean receive;
+    private final String sendService;
+    private final String receiveService;
 
-    public RabbitMQRouteBuilder(Camel camel, boolean send, boolean receive) {
+    public RabbitMQRouteBuilder(Camel camel, boolean send, boolean receive, String sendService, String receiveService) {
         this.camel = camel;
         this.send = send;
         this.receive = receive;
+        this.sendService = sendService;
+        this.receiveService = receiveService;
     }
 
     //@Override
@@ -460,11 +457,11 @@ class RabbitMQRouteBuilder extends RouteBuilder {
     public void configure3() throws Exception {
         if (send) {
             from("direct:send?block=false&failIfNoConsumers=false")
-                .to("spring-rabbitmq:amq.direct?routingKey=" + camel.getSendService() + "&queues=" + camel.getSendService() + "&args.durable=true&arg.durable=true&autoDeclare=false");
+                .to("spring-rabbitmq:amq.direct?routingKey=" + sendService + "&queues=" + sendService + "&args.durable=true&arg.durable=true&autoDeclare=false");
         }
 
         if (receive) {
-            from("spring-rabbitmq:amq.direct?routingKey=" + camel.getReceiveService() + "&queues=" + camel.getReceiveService() + "&args.durable=true&arg.durable=true&autoDeclare=false")
+            from("spring-rabbitmq:amq.direct?routingKey=" + receiveService + "&queues=" + receiveService + "&args.durable=true&arg.durable=true&autoDeclare=false")
                 .to("direct:receive");
         }
     }
@@ -473,11 +470,11 @@ class RabbitMQRouteBuilder extends RouteBuilder {
         if (send) {
             //from("direct:send?block=false&failIfNoConsumers=false")
             from("direct:send")
-                    .to("spring-rabbitmq:amq.direct?routingKey=" + camel.getSendService());
+                    .to("spring-rabbitmq:amq.direct?routingKey=" + sendService);
         }
 
         if (receive) {
-            from("spring-rabbitmq:amq.direct?routingKey=" + camel.getReceiveService())
+            from("spring-rabbitmq:amq.direct?routingKey=" + receiveService)
                     .to("direct:receive");
         }
     }
