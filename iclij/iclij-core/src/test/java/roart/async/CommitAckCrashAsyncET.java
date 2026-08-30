@@ -32,8 +32,10 @@ import roart.iclij.common.service.IclijServiceResult;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.model.Parameters;
+import roart.iclij.service.ControlService;
 import roart.model.io.IO;
 import roart.model.io.util.IOUtils;
+import roart.queue.QueueThread;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -135,6 +137,9 @@ public class CommitAckCrashAsyncET {
         String communications = iconf.getCommunications();
         log.info("Myservices {}", myservices);
         new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class, iconf.copy(), io).start();
+        ControlService instanceC = new ControlService(iconf, io);
+        new QueueThread(iconf, instanceC, io).start();
+        // todo run queueutil
     }
 
     /**
@@ -177,7 +182,7 @@ public class CommitAckCrashAsyncET {
                 
                 // Send message asynchronously to active consumer
                 log.info("Sending message asynchronously to active consumer for {}", key);
-                new IOUtils(io, iconf, null).send(param, ServiceConstants.HELLO);
+                new IOUtils(io, iconf, null).send(ServiceConstants.CRASH, param);
                 
                 // Wait for async processing
                 Thread.sleep(5000);
@@ -229,7 +234,7 @@ public class CommitAckCrashAsyncET {
                 
                 // Send message asynchronously before consumer is ready (or just before crash)
                 log.info("Scenario 1: Sending message asynchronously for {} before/during consumer processing", key);
-                new IOUtils(io, iconf, null).send(param, ServiceConstants.HELLO);
+                new IOUtils(io, iconf, null).send(ServiceConstants.CRASH, param);
                 
                 // Start service controller
                 log.info("Starting service controller for {}", key);
@@ -240,7 +245,7 @@ public class CommitAckCrashAsyncET {
                 
                 // Send another message asynchronously - should be received even if first attempt crashed
                 log.info("Scenario 2: Sending message asynchronously again after simulated crash for {}", key);
-                new IOUtils(io, iconf, null).send(param, ServiceConstants.HELLO);
+                new IOUtils(io, iconf, null).send(ServiceConstants.CRASH, param);
                 
                 Thread.sleep(5000);
                 log.info("Async messages sent for {}", key);
@@ -297,14 +302,14 @@ public class CommitAckCrashAsyncET {
                 
                 // First attempt: storage fails
                 log.info("First consumer attempt on {} - storage will fail", key);
-                new IOUtils(io, iconf, null).send(param, ServiceConstants.HELLO);
+                new IOUtils(io, iconf, null).send(ServiceConstants.CRASH, param);
                 storageCallCount.incrementAndGet();
                 
                 Thread.sleep(5000);
                 
                 // Retry scenario - storage should now succeed
                 log.info("Second consumer attempt on {} - storage should succeed", key);
-                new IOUtils(io, iconf, null).send(param, ServiceConstants.HELLO);
+                new IOUtils(io, iconf, null).send(ServiceConstants.CRASH, param);
                 
                 Thread.sleep(5000);
                 log.info("Async message sent after storage failure recovery for {}", key);
@@ -358,19 +363,19 @@ public class CommitAckCrashAsyncET {
                 
                 // Crash 1
                 log.info("Sending message asynchronously for crash attempt 1 on {}", key);
-                new IOUtils(io, iconf, null).send(param, ServiceConstants.HELLO);
+                new IOUtils(io, iconf, null).send(ServiceConstants.CRASH, param);
                 log.info("Crash 1 message sent for {}", key);
                 Thread.sleep(3000);
                 
                 // Crash 2
                 log.info("Sending message asynchronously for crash attempt 2 on {}", key);
-                new IOUtils(io, iconf, null).send(param, ServiceConstants.HELLO);
+                new IOUtils(io, iconf, null).send(ServiceConstants.CRASH, param);
                 log.info("Crash 2 message sent for {}", key);
                 Thread.sleep(3000);
                 
                 // Success
                 log.info("Sending message asynchronously for successful processing on {}", key);
-                new IOUtils(io, iconf, null).send(param, ServiceConstants.HELLO);
+                new IOUtils(io, iconf, null).send(ServiceConstants.CRASH, param);
                 log.info("Final success message sent for {}", key);
                 
                 Thread.sleep(5000);
