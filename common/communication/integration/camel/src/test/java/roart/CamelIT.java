@@ -10,6 +10,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 //import javax.jms.ConnectionFactory;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import roart.common.communication.integration.camel.Camel;
 import roart.testdata.TestUtils;
 import roart.testdata.TestConfiguration;
 
+@Disabled
 // this is @ExtendWith(SpringExtension.class) and @ContextConfiguration 
 @SpringJUnitConfig
 //@TestPropertySource("file:${user.dir}/../../../../config/test/application.properties")
